@@ -21,7 +21,7 @@ const Footer = () => {
             <i className="fab fa-linkedin" />
           </a>
         </div>
-        <p>© 2023 Swipscout. All rights reserved.</p>
+        <p>© 2025 Swipscout. All rights reserved.</p>
       </div>
     </footer>
   );

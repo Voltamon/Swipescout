@@ -28,7 +28,7 @@ const jobs = [
   // Add more jobs as needed
 ];
 
-const Home = () => {
+const Home2 = () => {
   return (
     <div>
       <header2 />
@@ -40,4 +40,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home2;
