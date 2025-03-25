@@ -2,35 +2,82 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0;
-  margin: 0;
+  padding: 0 20px;
   background: linear-gradient(to right, #1a032a, #290e44);
   color: #b995f8;
   height: 60px;
+  position: relative;
 }
+
 .logo {
   display: flex;
-  gap: 2px;
-  justify-content: center;
   align-items: center;
+  gap: 10px;
 }
+
+.logo img {
+  width: 36px;
+  height: 36px;
+}
+
+/* زر القائمة (الهامبرغر) */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #b995f8;
+  cursor: pointer;
+}
+
+/* القائمة */
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
 .nav a {
   text-decoration: none;
-  margin: 0 15px;
   font-size: 16px;
+  color: #b995f8;
 }
+
 .nav a:hover {
   text-decoration: underline;
 }
+
+.social-icons {
+  display: flex;
+  gap: 10px;
+}
+
 .social-icons a svg {
   color: #b995f8;
   font-size: 18px;
 }
-.social-icons {
-  margin: 0 10px;
-  font-size: 18px;
-}
-.logo img {
-  width: 36px;
-  height: 36px;
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: #290e44;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .nav.active {
+    display: flex;
+  }
+
+  .social-icons {
+    display: none;
+  }
 }
