@@ -1,6 +1,6 @@
 import React from "react";
 import "./HeroSection.css";
-import phoneImage from "../../assets/phone.png"; // تأكد من المسار الصحيح للصورة
+import phoneImage from "../../assets/phone.png";    
 
 const HeroSection = () => {
   return (

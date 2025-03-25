@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
@@ -9,21 +8,24 @@ import "./App.css";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import LandingPageNoura from "./pages/LandingPageNoura"
+import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura";
 function App() {
+  console.log("App component loaded");
+  return (
   
-
-  return <Router>
-      <Routes>
-        <Route path="/" element={<LandingPageNoura />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/Home2" element={<Home />} />
-        <Route path="/explore-jobs" element={<ExploreJobs />} />
-        <Route path="/my-applications" element={<MyApplications />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </Router>;
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPageNoura />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/Home2" element={<Home />} />
+          <Route path="/explore-jobs" element={<ExploreJobs />} />
+          <Route path="/my-applications" element={<MyApplications />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </Router>
+    
+  );
 }
 
-export default App
+export default App;
