@@ -1,115 +1,123 @@
-
 body {
-    background-color: #0c031d;
-    color: #b995f8;
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+  background-color: #0c031d;
+  color: #b995f8;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
-  h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin: 50px 0;
-    color: #c084fc;
-  }
+h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 50px 0;
+  color: #c084fc;
+}
+
+.features-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  max-width: 1200px;
+  margin: auto;
   
+}
 
+.phone-image img {
+  width: 100%;
+  max-width: 350px;
+  transform: rotate(-10deg);
+  transition: transform 0.3s ease-in-out;
+}
+
+.phone-image img:hover {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.features-text {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+}
+
+.advantage {
+  font-size: 2px;
+  font-weight: bold;
+  color: #9c037e;
+}
+
+.title {
+  font-size: 2.5rem;
+}
+
+.feature p {
+  font-size: 1rem;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #8c30f54d;
+
+  color: #ffffff;
+}
+a {
+  text-align: center;
+  text-decoration: underline;
+  display: block;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
   .features-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 80px;
-    max-width: 1200px;
-    margin: auto;
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
   }
-  
 
   .phone-image img {
-    width: 100%;
-    max-width: 350px;
-    transform: rotate(-10deg);
-    transition: transform 0.3s ease-in-out;
+    max-width: 280px;
+    transform: rotate(0deg);
   }
-  
-  .phone-image img:hover {
-    transform: rotate(-5deg) scale(1.05);
-  }
-  
 
   .features-text {
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px; 
+    max-width: 100%;
   }
-  
-  .feature:hover {
-    transform: translateY(-5px);
-  }
-  
+}
+.testimonials-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
+}
 
-  .advantage {
-    font-size: 2px;
-    font-weight: bold;
-    color: #9c037E;
-  }
-  
-  
-  .title {
-    font-size: 2.5rem;
-    
-    
-  }
-  
+.testimonial-card {
+  width: 30%;
+  box-sizing: border-box;
+}
 
-  .feature p {
-    font-size: 1rem;
-
-  }
-  
-  .feature-card{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color:#8C30F54D;
-
-    color: #FFFFFF;
-  }
-  @media (max-width: 1024px) {
-    .features-container {
-      flex-direction: column;
-      text-align: center;
-      gap: 40px;
-    }
-  
-    .phone-image img {
-      max-width: 280px;
-      transform: rotate(0deg);
-    }
-  
-    .features-text {
-      max-width: 100%;
-    }
-  }
-  .testimonials-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px; 
-    flex-wrap: wrap;  
-  }
-  
+@media (max-width: 900px) {
   .testimonial-card {
-    width: 30%; 
-    box-sizing: border-box;
+    width: 100%;
   }
-  
-  @media (max-width: 900px) {
-    .testimonial-card {
-      width: 100%;
-    }
+}
+
+.faq-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .faq-container {
+    grid-template-columns: 1fr;
   }
-  
-  
+}

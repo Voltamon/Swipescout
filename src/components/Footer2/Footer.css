@@ -1,0 +1,167 @@
+.footer-container {
+    background-color: #0a0213;
+    padding: 50px 20px;
+    color: white;
+    text-align: center;
+    position: relative;
+    margin: 100px auto 0;
+  }
+  
+  .newsletter-card {
+    background: #b071e8;
+    color: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    width: 50%;
+    margin: 0 auto;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    left: 50%;
+    top: -80px;
+    transform: translateX(-50%);
+  }
+  
+  .email-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .email-input {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: none;
+    width: 60%;
+  }
+  
+  .arrow-button {
+    background: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: 150px auto 0;
+    padding: 20px;
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .footer-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    font-size: 20px;
+    margin-top: 20px;
+  }
+  
+  .copyright {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  
+  @media (max-width: 1024px) {
+    .newsletter-card {
+      width: 70%;
+      padding: 20px;
+      top: -60px;
+    }
+  
+    .email-input {
+      width: 70%;
+    }
+  
+    .footer-content {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .footer-links {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .newsletter-card {
+      width: 90%;
+      padding: 15px;
+      top: -50px;
+    }
+  
+    .email-input {
+      width: 80%;
+    }
+  
+    .arrow-button {
+      padding: 8px 12px;
+    }
+  
+    .footer-content {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .footer-links {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  
+    .social-icons {
+      font-size: 18px;
+      gap: 10px;
+    }
+  
+    .copyright {
+      font-size: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    
+    .newsletter-card {
+      width: 95%;
+      padding: 10px;
+      top:-80px;
+    }
+  
+    .email-input {
+      width: 85%;
+      font-size: 14px;
+    }
+  
+    .arrow-button {
+      padding: 6px 10px;
+    }
+  
+    .footer-links {
+      font-size: 14px;
+    }
+  
+    .social-icons {
+      font-size: 16px;
+    }
+  }
+  

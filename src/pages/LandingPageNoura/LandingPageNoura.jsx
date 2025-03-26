@@ -10,8 +10,27 @@ import TestimonialCard from "../../components/TestimonialCard";
 import news1 from "../../assets/news1.png";
 import news2 from "../../assets/news2.png";
 import news3 from "../../assets/news3.png";
+import FAQAccordion from "../../components/FAQAccordion/FAQAccordion";
+import Footer2 from "../../components/Footer2/Footer2";
+
 const LandingPageNoura = () => {
   console.log("LandingPageNoura loaded");
+  const faqs = [
+    {
+      question: "How long until we deliver your first blog post?",
+      answer:
+        "Really boy law country she unable her sister. Feet you off its like like sea...",
+    },
+    {
+      question: "What are the benefits of using Swipe Scout?",
+      answer:
+        "Swipe Scout helps you find opportunities faster with AI-powered recommendations...",
+    },
+    {
+      question: "Is Swipe Scout available on mobile?",
+      answer: "Yes! Our app is available for both Android and iOS devices...",
+    },
+  ];
   return (
     <div>
       <Header3 />
@@ -34,8 +53,8 @@ const LandingPageNoura = () => {
           />
         </div>
       </div>
-      
-      <div className="feature-grid">
+
+      <div className="feature-grid" style={{ margin: "50px" }}>
         <FeatureCard
           icon={<LuArrowLeftRight />}
           title={"Stuff"}
@@ -66,11 +85,45 @@ const LandingPageNoura = () => {
         Here’s the latest news about SwipeScout.
       </p>
 
-      <div className="testimonials-container">
-      <TestimonialCard name={'The Snap Pixel: How It Works and How to Install '} role={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim.'} testimonial={'Read more'} image={news1} />
-      <TestimonialCard name={'The Snap Pixel: How It Works and How to Install '} role={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim.'} testimonial={'Read more'} image={news2} />
-      <TestimonialCard name={'The Snap Pixel: How It Works and How to Install '} role={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim.'} testimonial={'Read more'} image={news3} />
-    </div>
+      <div className="testimonials-container" style={{ margin: "50px" }}>
+        <TestimonialCard
+          name={"The Snap Pixel: How It Works and How to Install "}
+          role={
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim."
+          }
+          testimonial={"Read more"}
+          image={news1}
+        />
+        <TestimonialCard
+          name={"The Snap Pixel: How It Works and How to Install "}
+          role={
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim."
+          }
+          testimonial={"Read more"}
+          image={news2}
+        />
+        <TestimonialCard
+          name={"The Snap Pixel: How It Works and How to Install "}
+          role={
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim."
+          }
+          testimonial={"Read more"}
+          image={news3}
+        />
+      </div>
+      <a>Older News </a>
+      <h2>Frequently Ask Questions</h2>
+      <div className="faq-container">
+        {faqs.map((faq, index) => (
+          <React.Fragment key={index}>
+            <FAQAccordion faqs={[faq]} />
+            {index % 2 === 0 && index + 1 < faqs.length && (
+              <FAQAccordion faqs={[faqs[index + 1]]} />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+      <Footer2 />
     </div>
   );
 };

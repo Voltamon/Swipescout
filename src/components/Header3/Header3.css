@@ -78,6 +78,6 @@
   }
 
   .social-icons {
-    display: none;
+    display: none !important;
   }
 }
