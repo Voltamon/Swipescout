@@ -35,7 +35,8 @@ const LandingPageNoura = () => {
     <div>
       <Header3 />
       <HeroSection />
-      <h2>What Makes Swipe Scout Unique?</h2>
+      <div>
+      <h2 style={{color:'#5D9BCF'}}>What Makes Swipe Scout Unique?</h2>
       <div className="features-container">
         <div className="phone-image">
           <img src={phoneImage} alt="App Preview" />
@@ -53,8 +54,9 @@ const LandingPageNoura = () => {
           />
         </div>
       </div>
-
-      <div className="feature-grid" style={{ margin: "50px" }}>
+      </div>
+      <div style={{background:'#ffffff'}}>
+      <div className="feature-grid" style={{ margin: "50px"}}>
         <FeatureCard
           icon={<LuArrowLeftRight />}
           title={"Stuff"}
@@ -80,8 +82,8 @@ const LandingPageNoura = () => {
         />
       </div>
 
-      <h2>SwipeScout News </h2>
-      <p style={{ textAlign: "center" }}>
+      <h2 style={{color:"black"}}>SwipeScout News </h2>
+      <p style={{ textAlign: "center",color:"black" }}>
         Here’s the latest news about SwipeScout.
       </p>
 
@@ -112,7 +114,8 @@ const LandingPageNoura = () => {
         />
       </div>
       <a>Older News </a>
-      <h2>Frequently Ask Questions</h2>
+      </div>
+      <h2 style={{color:'#5D9BCF'}}>Frequently Ask Questions</h2>
       <div className="faq-container">
         {faqs.map((faq, index) => (
           <React.Fragment key={index}>

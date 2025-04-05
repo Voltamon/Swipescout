@@ -7,8 +7,8 @@ const TestimonialCard = ({ image, name, role, testimonial }) => {
       borderRadius: '10px',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       textAlign: 'center',
-      background:'#380F63',
-      color:'#FFFFFF'
+      background:'#ffffff',
+      color:'black'
     }}
     >
       {image && <img src={image} alt={name} className="testimonial-image"

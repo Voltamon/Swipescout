@@ -12,14 +12,13 @@ const FeatureCard = ({ icon, title, description }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "linear-gradient(52.09deg, #982DEC -11.18%, #DC8DF8 58.92%, #A9C4F3 98.44%)"
-
-        }}
+          background: "linear-gradient(52.09deg, #5D9BCF 18%, #A9C4F3 98.44%)"
+               }}
       >
         {icon}
       </div>
       <h3>{title}</h3>
-      <p style={{ color: "#898CA9" }}>{description}</p>
+      <p style={{ color: "black" }}>{description}</p>
     </div>
   );
 };

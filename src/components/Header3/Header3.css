@@ -3,8 +3,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  background: linear-gradient(to right, #1a032a, #290e44);
-  color: #b995f8;
+  background: linear-gradient(to right, #1a032a, #003366);
+  color: #5D9BCF;
   height: 60px;
   position: relative;
 }
@@ -20,13 +20,12 @@
   height: 36px;
 }
 
-/* زر القائمة (الهامبرغر) */
 .menu-toggle {
   display: none;
   background: none;
   border: none;
   font-size: 24px;
-  color: #b995f8;
+  color: #5D9BCF;
   cursor: pointer;
 }
 
@@ -39,7 +38,7 @@
 .nav a {
   text-decoration: none;
   font-size: 16px;
-  color: #b995f8;
+  color: #5D9BCF;
 }
 
 .nav a:hover {
@@ -52,7 +51,7 @@
 }
 
 .social-icons a svg {
-  color: #b995f8;
+  color: #5D9BCF;
   font-size: 18px;
 }
 
@@ -68,7 +67,7 @@
     top: 60px;
     left: 0;
     width: 100%;
-    background: #290e44;
+    background: #003366;
     text-align: center;
     padding: 20px 0;
   }

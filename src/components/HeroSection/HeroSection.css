@@ -2,8 +2,8 @@
     display: flex;
     justify-content: space-between;
     padding: 70px;
-    background: linear-gradient(to right, #1a032a, #290e44);
-    color: #b995f8;
+    background: linear-gradient(to right, #1a032a, #003366);
+    color: #5D9BCF;
     min-height: 90vh;
   }
   
@@ -19,6 +19,7 @@
   .hero-text h2 {
     font-size: 32px;
     font-weight: bold;
+    color: #5D9BCF;
   }
   
   .hero-text p {
@@ -34,7 +35,7 @@
   }
   
   .primary-btn {
-    background: #9153f4;
+    background: #5D9BCF;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -44,8 +45,8 @@
   
   .secondary-btn {
     background: transparent;
-    border: 2px solid #9153f4;
-    color: #9153f4;
+    border: 2px solid #5D9BCF;
+    color: #5D9BCF;
     padding: 10px 18px;
     border-radius: 6px;
     cursor: pointer;
