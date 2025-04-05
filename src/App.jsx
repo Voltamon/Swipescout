@@ -15,6 +15,9 @@ import JobDetailsPage from "./pages/JobDetailsPage";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import PostJobPage from "./pages/PostJobPage";
 import CandidateSearchPage from "./pages/CandidateSearchPage";
+import AuthPage from "./pages/authPage";
+import LinkedInLoginButton from './pages/LinkedInLoginButton';
+import LinkedInCallback from './pages/LinkedInCallback';
 
 
 function App() {
@@ -35,6 +38,9 @@ function App() {
         <Route path="/employer-dashboard" element={<EmployerDashboard />} />
         <Route path="/post-job" element={<PostJobPage />} />
         <Route path="/candidate-search" element={<CandidateSearchPage />} />
+        <Route path="/auth-page" element={<AuthPage />} />
+        <Route path="/auth-page2" element={<LinkedInLoginButton />} />
+        <Route path="/linkedin" element={<LinkedInCallback />} />
       </Routes>
     </Router>;
 }
