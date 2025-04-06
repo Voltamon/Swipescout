@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -39,6 +40,7 @@ const AuthPage = () => {
   });
   const [error, setError] = useState(null);
   const auth = getAuth(app);
+  const navigate = useNavigate();
 
   // Email/Password Sign-In
   const handleEmailSignIn = async e => {
@@ -54,7 +56,7 @@ const AuthPage = () => {
       );
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch("/api/signin", {
+      const response = await fetch("http://localhost:5000/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -64,6 +66,7 @@ const AuthPage = () => {
 
       const data = await response.json();
       console.log("Sign-in successful:", data);
+      navigate('/dashboard'); // Redirect to dashboard or another page
     } catch (err) {
       setError(err.message);
     } finally {
@@ -92,6 +95,7 @@ const AuthPage = () => {
 
       const data = await response.json();
       console.log("Google sign-in success:", data);
+      navigate('/dashboard'); // Redirect to dashboard or another page
     } catch (err) {
       setError(err.message);
     } finally {
@@ -115,6 +119,7 @@ const AuthPage = () => {
 
       const data = await res.json();
       console.log("LinkedIn sign-in success:", data);
+      navigate('/dashboard'); // Redirect to dashboard or another page
     } catch (err) {
       setError(err.message);
     } finally {
