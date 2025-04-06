@@ -13,6 +13,7 @@ import LoginForm from "./pages/LoginForm/LoginForm.jsx"
 import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura";
 import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
 import JobSearchPage from "./pages/JobSearchPage.jsx";
+import EmployerDashboard from './pages/EmployerDashboard.jsx'
 
 function App() {
   console.log("App component loaded");
@@ -26,6 +27,7 @@ function App() {
           <Route path="/registerform" element={<RegisterForm />} />
           <Route path="/dashboardjobseeker" element={<DashboardJobSeeker />} />
           <Route path="/jobsearch" element={<JobSearchPage />} />
+          <Route path="/employerdashboard" element={<EmployerDashboard />} />
 
           <Route path="/loginform" element={<LoginForm />} />
           <Route path="/Home2" element={<Home />} />
