@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import FeatureCard from "../components/FeatureCard";
 import TestimonialCard from "../components/TestimonialCard";
+import Navbar from "../components/Navbar";
 
 const LandingPage = () => {
   const features = [
@@ -70,6 +71,7 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      <Navbar></Navbar>
       <section className="testimonials">
         <div className="container">
           <h2>What Our Users Say</h2>
