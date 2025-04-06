@@ -8,6 +8,8 @@ import "./App.css";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
+import LoginForm from "./pages/LoginForm/LoginForm.jsx"
 import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura";
 function App() {
   console.log("App component loaded");
@@ -18,6 +20,8 @@ function App() {
           <Route path="/" element={<LandingPageNoura />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/registerform" element={<RegisterForm />} />
+          <Route path="/loginform" element={<LoginForm />} />
           <Route path="/Home2" element={<Home />} />
           <Route path="/explore-jobs" element={<ExploreJobs />} />
           <Route path="/my-applications" element={<MyApplications />} />
