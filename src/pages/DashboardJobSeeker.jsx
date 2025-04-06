@@ -386,7 +386,7 @@ export default function SwipscoutDashboard() {
                     },
                   }}
                 >
-                  Apply Now
+                  Apply Now  
                 </Button>
               </CardContent>
             </Card>
