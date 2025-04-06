@@ -12,6 +12,8 @@ import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
 import LoginForm from "./pages/LoginForm/LoginForm.jsx"
 import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura";
 import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
+import JobSearchPage from "./pages/JobSearchPage.jsx";
+
 function App() {
   console.log("App component loaded");
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/registerform" element={<RegisterForm />} />
           <Route path="/dashboardjobseeker" element={<DashboardJobSeeker />} />
+          <Route path="/jobsearch" element={<JobSearchPage />} />
+
           <Route path="/loginform" element={<LoginForm />} />
           <Route path="/Home2" element={<Home />} />
           <Route path="/explore-jobs" element={<ExploreJobs />} />
