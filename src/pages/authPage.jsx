@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Paper,
@@ -11,51 +11,59 @@ import {
   Alert,
   IconButton,
   InputAdornment,
-  Stack
-} from '@mui/material';
+  Stack,
+} from "@mui/material";
 import {
   Google as GoogleIcon,
   Visibility,
   VisibilityOff,
-  LinkedIn as LinkedInIcon
-} from '@mui/icons-material';
-import * as LinkedInOAuth from 'react-linkedin-login-oauth2'; 
+  LinkedIn as LinkedInIcon,
+} from "@mui/icons-material";
+import { LinkedIn } from "react-linkedin-login-oauth2";
 import {
   getAuth,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
-} from 'firebase/auth';
-import { app } from '../../src/firebase-config.js';
+  signInWithPopup,
+} from "firebase/auth";
+import { app } from "../../src/firebase-config.js";
 
 const AuthPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState({ email: false, google: false, linkedin: false });
+  const [loading, setLoading] = useState({
+    email: false,
+    google: false,
+    linkedin: false,
+  });
   const [error, setError] = useState(null);
   const auth = getAuth(app);
 
   // Email/Password Sign-In
-  const handleEmailSignIn = async (e) => {
+  const handleEmailSignIn = async e => {
     e.preventDefault();
     setLoading({ ...loading, email: true });
     setError(null);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch('/api/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) throw new Error(await response.text());
 
       const data = await response.json();
-      console.log('Sign-in successful:', data);
+      console.log("Sign-in successful:", data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,17 +80,18 @@ const AuthPage = () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
-
-      const response = await fetch('/api/signInWithGoogle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      console.log("Google id token:", idToken);
+  
+      const response = await fetch("http://localhost:5000/auth/signin/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
-      });
+      },console.log("Google sign-in success:", result));
 
       if (!response.ok) throw new Error(await response.text());
 
       const data = await response.json();
-      console.log('Google sign-in success:', data);
+      console.log("Google sign-in success:", data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -91,21 +100,21 @@ const AuthPage = () => {
   };
 
   // LinkedIn Sign-In
-  const handleLinkedInSuccess = async (response) => {
+  const handleLinkedInSuccess = async response => {
     setLoading({ ...loading, linkedin: true });
     setError(null);
 
     try {
-      const res = await fetch('/api/auth/linkedin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("http://localhost:5000/auth/linkedin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: response.code }),
       });
 
       if (!res.ok) throw new Error(await res.text());
 
       const data = await res.json();
-      console.log('LinkedIn sign-in success:', data);
+      console.log("LinkedIn sign-in success:", data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -113,8 +122,8 @@ const AuthPage = () => {
     }
   };
 
-  const handleLinkedInFailure = (error) => {
-    setError(error.errorMessage || 'LinkedIn sign-in failed');
+  const handleLinkedInFailure = error => {
+    setError(error.errorMessage || "LinkedIn sign-in failed");
   };
 
   return (
@@ -133,22 +142,25 @@ const AuthPage = () => {
             margin="normal"
             variant="outlined"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             required
           />
           <TextField
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             required
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
@@ -164,7 +176,7 @@ const AuthPage = () => {
             disabled={loading.email}
             sx={{ mt: 2, py: 1.5 }}
           >
-            {loading.email ? <CircularProgress size={24} /> : 'Sign In'}
+            {loading.email ? <CircularProgress size={24} /> : "Sign In"}
           </Button>
         </Box>
 
@@ -184,45 +196,44 @@ const AuthPage = () => {
             sx={{
               flex: 1,
               py: 1.5,
-              borderColor: '#DB4437',
-              color: '#DB4437',
-              '&:hover': { borderColor: '#C1351A' }
+              borderColor: "#DB4437",
+              color: "#DB4437",
+              "&:hover": { borderColor: "#C1351A" },
             }}
           >
-            {loading.google ? <CircularProgress size={24} /> : 'Google'}
+            {loading.google ? <CircularProgress size={24} /> : "Google"}
           </Button>
 
           {/* LinkedIn Button */}
-          <LinkedInOAuth.LinkedInLogin
-            clientId="78aceunh672c3c"
+          <LinkedIn
+            clientId="78aceunh672c3c" // Replace with your actual LinkedIn Client ID
             onSuccess={handleLinkedInSuccess}
-            onFailure={handleLinkedInFailure}
-            redirectUri={`${window.location.origin}/linkedin`}
-            renderElement={({ onClick, disabled }) => (
+            onError={handleLinkedInFailure}
+            redirectUri="http://localhost:5174"
+          >
+            {({ linkedInLogin }) =>
               <Button
                 variant="outlined"
-                onClick={onClick}
-                disabled={disabled || loading.linkedin}
+                onClick={linkedInLogin}
+                disabled={loading.linkedin}
                 startIcon={<LinkedInIcon />}
                 sx={{
                   flex: 1,
                   py: 1.5,
-                  borderColor: '#0077B5',
-                  color: '#0077B5',
-                  '&:hover': { borderColor: '#006097' }
+                  borderColor: "#0077B5",
+                  color: "#0077B5",
+                  "&:hover": { borderColor: "#006097" },
                 }}
               >
-                {loading.linkedin ? <CircularProgress size={24} /> : 'LinkedIn'}
-              </Button>
-            )}
-          />
+                {loading.linkedin ? <CircularProgress size={24} /> : "LinkedIn"}
+              </Button>}
+          </LinkedIn>
         </Stack>
 
-        {error && (
+        {error &&
           <Alert severity="error" sx={{ mt: 3 }}>
             {error}
-          </Alert>
-        )}
+          </Alert>}
       </Paper>
     </Container>
   );
