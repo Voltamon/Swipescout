@@ -15,6 +15,7 @@ import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
 import JobSearchPage from "./pages/JobSearchPage.jsx";
 import EmployerDashboard from './pages/EmployerDashboard.jsx'
 import CandidateSearchPage from "./pages/CandidateSearchPage.jsx";
+import CandidateProfilePage from "./pages/CandidateProfilePage.jsx";
 
 function App() {
   console.log("App component loaded");
@@ -30,6 +31,7 @@ function App() {
           <Route path="/jobsearch" element={<JobSearchPage />} />
           <Route path="/employerdashboard" element={<EmployerDashboard />} />
           <Route path="/candidatesearch" element={<CandidateSearchPage />} />
+          <Route path="/candidateprofile" element={<CandidateProfilePage />} />
 
           <Route path="/loginform" element={<LoginForm />} />
           <Route path="/Home2" element={<Home />} />

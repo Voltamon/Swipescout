@@ -32,7 +32,7 @@ const LandingPageNoura = () => {
     },
   ];
   return (
-    <div>
+    <div className="landing">
       <Header3 />
       <HeroSection />
       <div>
