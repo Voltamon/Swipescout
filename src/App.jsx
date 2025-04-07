@@ -18,6 +18,7 @@ import CandidateSearchPage from "./pages/CandidateSearchPage";
 import AuthPage from "./pages/authPage";
 import LinkedInLoginButton from './pages/LinkedInLoginButton';
 import LinkedInCallback from './pages/LinkedInCallback';
+import AdminDashboard from './pages/adminDashboard';
 
 
 function App() {
@@ -26,12 +27,12 @@ function App() {
   return <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        {/* <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/Home2" element={<Home2 />} />
         <Route path="/explore-jobs" element={<ExploreJobs />} />
         <Route path="/my-applications" element={<MyApplications />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} /> */}
         <Route path="/dashboard" element={<JobSeekerDashboard />} />
         <Route path="/search" element={<JobSearchPage />} />
         <Route path="/job/:id" element={<JobDetailsPage />} />
@@ -39,8 +40,10 @@ function App() {
         <Route path="/post-job" element={<PostJobPage />} />
         <Route path="/candidate-search" element={<CandidateSearchPage />} />
         <Route path="/auth-page" element={<AuthPage />} />
-        <Route path="/auth-page2" element={<LinkedInLoginButton />} />
-        <Route path="/linkedin" element={<LinkedInCallback />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        {/* <Route path="/auth-page2" element={<LinkedInLoginButton />} /> */}
+        {/* <Route path="/linkedin" element={<LinkedInCallback />} /> */}
+      
       </Routes>
     </Router>;
 }

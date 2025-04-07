@@ -28,6 +28,8 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { app } from "../../src/firebase-config.js";
+// import Header from "../components/Header/Header.jsx";
+// import Footer from "../components/Footer.jsx";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
@@ -107,13 +109,13 @@ const AuthPage = () => {
   const handleLinkedInSuccess = async response => {
     setLoading({ ...loading, linkedin: true });
     setError(null);
-
+console.log("LinkedIn response:", response);
     try {
-      const res = await fetch("http://localhost:5000/auth/linkedin", {
+      const res = await fetch("http://localhost:5000/auth/signin/linkedin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: response.code }),
-      });
+      },console.log("LinkedIn id token:", response.code));
 
       if (!res.ok) throw new Error(await res.text());
 
@@ -132,7 +134,9 @@ const AuthPage = () => {
   };
 
   return (
+    
     <Container maxWidth="sm" sx={{ mt: 8 }}>
+        {/* <Header></Header> */}
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Sign In
@@ -214,7 +218,7 @@ const AuthPage = () => {
             clientId="78aceunh672c3c" // Replace with your actual LinkedIn Client ID
             onSuccess={handleLinkedInSuccess}
             onError={handleLinkedInFailure}
-            redirectUri="http://localhost:5174"
+            redirectUri="http://localhost:5173/profile"
           >
             {({ linkedInLogin }) =>
               <Button
@@ -240,6 +244,7 @@ const AuthPage = () => {
             {error}
           </Alert>}
       </Paper>
+      {/* <Footer></Footer> */}
     </Container>
   );
 };
