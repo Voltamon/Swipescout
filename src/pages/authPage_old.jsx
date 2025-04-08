@@ -1,6 +1,5 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-
 import {
   Container,
   Paper,
@@ -29,8 +28,6 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { app } from "../../src/firebase-config.js";
-// import Header from "../components/Header/Header.jsx";
-// import Footer from "../components/Footer.jsx";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
@@ -46,30 +43,26 @@ const AuthPage = () => {
   const navigate = useNavigate();
 
   // Email/Password Sign-In
-  const handleEmailSignIn = async e => {
+  const handleEmailSignIn = async (e) => {
     e.preventDefault();
     setLoading({ ...loading, email: true });
     setError(null);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
 
       const response = await fetch("http://localhost:5000/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ code: response.code }),
       });
 
       if (!response.ok) throw new Error(await response.text());
 
       const data = await response.json();
       console.log("Sign-in successful:", data);
-      navigate('/dashboard'); // Redirect to dashboard or another page
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -86,19 +79,18 @@ const AuthPage = () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
-      console.log("Google id token:", idToken);
-  
+
       const response = await fetch("http://localhost:5000/auth/signin/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
-      },console.log("Google sign-in success:", result));
+      });
 
       if (!response.ok) throw new Error(await response.text());
 
       const data = await response.json();
       console.log("Google sign-in success:", data);
-      navigate('/dashboard'); // Redirect to dashboard or another page
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -106,88 +98,60 @@ const AuthPage = () => {
     }
   };
 
-  // LinkedIn Sign-In
+  // LinkedIn Success Handler
   const handleLinkedInSuccess = async (response) => {
     setLoading({ ...loading, linkedin: true });
     setError(null);
-    console.log("LinkedIn response:", response);
   
     try {
-      // 1. Send token to your backend
       const res = await fetch("http://localhost:5000/auth/signin/linkedin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_token: response.id_token }),
+        body: JSON.stringify({ 
+          id_token: response.id_token // Send id_token directly
+        }),
       });
   
       if (!res.ok) throw new Error(await res.text());
-  
       const data = await res.json();
-      console.log("LinkedIn sign-in success:", data);
-  
-      // 2. Handle popup closure and parent window redirect
-      if (window.opener) {
-        // If this is in a popup
-        window.opener.postMessage(
-          { 
-            type: "LINKEDIN_AUTH_SUCCESS", 
-            payload: data 
-          },
-          window.location.origin
-        );
-        window.close();
-      } else {
-        // If this is in the main window
-        navigate('/dashboard');
-      }
-  
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
-      if (window.opener) {
-        window.opener.postMessage(
-          { type: "LINKEDIN_AUTH_ERROR", error: err.message },
-          window.location.origin
-        );
-        window.close();
-      }
     } finally {
       setLoading({ ...loading, linkedin: false });
     }
   };
 
+  // LinkedIn Error Handler
   const handleLinkedInFailure = (error) => {
-    // Set local error state
     const errorMessage = error.errorMessage || "LinkedIn sign-in failed";
     setError(errorMessage);
     
-    // If this is a popup, communicate with parent window
     if (window.opener) {
-      window.opener.postMessage(
-        { 
-          type: "LINKEDIN_AUTH_ERROR", 
-          error: errorMessage 
-        },
-        window.location.origin
-      );
+      window.opener.postMessage({
+        type: "LINKEDIN_AUTH_ERROR",
+        error: errorMessage
+      }, window.location.origin);
       window.close();
     }
   };
 
+  // Message Listener for Popup
   useEffect(() => {
-    const handleAuthSuccess = (event) => {
+    const handleMessage = (event) => {
       if (event.origin !== window.location.origin) return;
-      if (event.data.type === "LINKEDIN_AUTH_SUCCESS") {
-        navigate('/dashboard');
+      
+      if (event.data.type === 'LINKEDIN_AUTH_RESPONSE') {
+        handleLinkedInSuccess({ id_token: event.data.id_token });
       }
     };
-    window.addEventListener('message', handleAuthSuccess);
-    return () => window.removeEventListener('message', handleAuthSuccess);
+  
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   return (
-    
     <Container maxWidth="sm" sx={{ mt: 8 }}>
-        {/* <Header></Header> */}
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Sign In
@@ -202,7 +166,7 @@ const AuthPage = () => {
             margin="normal"
             variant="outlined"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <TextField
@@ -212,7 +176,7 @@ const AuthPage = () => {
             margin="normal"
             variant="outlined"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
             InputProps={{
               endAdornment: (
@@ -265,38 +229,43 @@ const AuthPage = () => {
           </Button>
 
           {/* LinkedIn Button */}
-          <LinkedIn
-            clientId="78aceunh672c3c" // Replace with your actual LinkedIn Client ID
-            onSuccess={handleLinkedInSuccess}
-            onError={handleLinkedInFailure}
-            scope="openid profile email"
-            redirectUri="http://localhost:5173/dashboard"
-          >
-            {({ linkedInLogin }) =>
-              <Button
-                variant="outlined"
-                onClick={linkedInLogin}
-                disabled={loading.linkedin}
-                startIcon={<LinkedInIcon />}
-                sx={{
-                  flex: 1,
-                  py: 1.5,
-                  borderColor: "#0077B5",
-                  color: "#0077B5",
-                  "&:hover": { borderColor: "#006097" },
-                }}
-              >
-                {loading.linkedin ? <CircularProgress size={24} /> : "LinkedIn"}
-              </Button>}
-          </LinkedIn>
+<LinkedIn
+  clientId="78aceunh672c3c"
+  onSuccess={(response) => {
+    // Close the popup immediately after getting the response
+    window.close();
+    handleLinkedInSuccess(response);
+  }}
+  onError={(error) => {
+    window.close();
+    handleLinkedInFailure(error);
+  }}
+  redirectUri={`${window.location.origin}/linkedin-callback`} // Special callback route
+  scope="openid profile email"
+>
+  {({ linkedInLogin }) => (
+    <Button
+      variant="outlined"
+      onClick={() => {
+        // Open popup manually for better control
+        const popup = window.open('', 'linkedin-auth', 
+          'width=600,height=600,toolbar=0,location=0');
+        linkedInLogin();
+      }}
+      // ... rest of button props ...
+    >
+      {loading.linkedin ? <CircularProgress size={24} /> : "LinkedIn"}
+    </Button>
+  )}
+</LinkedIn>
         </Stack>
 
-        {error &&
+        {error && (
           <Alert severity="error" sx={{ mt: 3 }}>
             {error}
-          </Alert>}
+          </Alert>
+        )}
       </Paper>
-      {/* <Footer></Footer> */}
     </Container>
   );
 };

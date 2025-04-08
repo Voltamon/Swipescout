@@ -17,8 +17,8 @@ import PostJobPage from "./pages/PostJobPage";
 import CandidateSearchPage from "./pages/CandidateSearchPage";
 import AuthPage from "./pages/authPage";
 import LinkedInLoginButton from './pages/LinkedInLoginButton';
-import LinkedInCallback from './pages/LinkedInCallback';
 import AdminDashboard from './pages/adminDashboard';
+import LinkedInCallback from './components/LinkedInCallback';
 
 
 function App() {
@@ -43,6 +43,7 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         {/* <Route path="/auth-page2" element={<LinkedInLoginButton />} /> */}
         {/* <Route path="/linkedin" element={<LinkedInCallback />} /> */}
+        <Route path="/linkedin-callback" element={<LinkedInCallback />} />
       
       </Routes>
     </Router>;
