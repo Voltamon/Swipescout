@@ -113,12 +113,12 @@ const AboutUs = () => {
         </Grid>
 
         {/* Stats Section */}
-        <Box sx={{ bgcolor: "#003366", p: 4, borderRadius: 2, mb: 8 }}>
+        <Box sx={{ bgcolor: "#3671ac", p: 4, borderRadius: 2, mb: 8 }}>
           <Grid container spacing={4} justifyContent="center">
             {stats.map((stat, index) => <Grid item xs={6} sm={3} key={index}>
-                <Card sx={{ height: "100%", textAlign: "center", boxShadow: "none", bgcolor: "#5D9BCF", color: "#000" }}>
+                <Card sx={{ height: "100%", textAlign: "center", boxShadow: "none", bgcolor: "#92c3eb", color: "#000" }}>
                   <CardContent>
-                    <Box sx={{ color: "#003366", mb: 2 }}>
+                    <Box sx={{ color: "white", mb: 2 }}>
                       {stat.icon}
                     </Box>
                     <Typography variant="h4" component="div" gutterBottom>
@@ -149,7 +149,7 @@ const AboutUs = () => {
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    bgcolor: "#5D9BCF",
+                    bgcolor: "#76aedb",
                     color: "#000"
                   }}
                 >

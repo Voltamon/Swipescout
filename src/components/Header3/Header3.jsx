@@ -18,8 +18,8 @@ const Header3 = () => {
       </button>
 
       <nav className={`nav ${menuOpen ? "active" : ""}`}>
-        <a href="#">About</a>
-        <a href="#">FAQs</a>
+        <a href="/About">About</a>
+        <a href="/FAQs">FAQs</a>
       </nav>
 
       <div className="social-icons">

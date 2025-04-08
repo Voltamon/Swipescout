@@ -12,6 +12,7 @@ import news2 from "../../assets/news2.png";
 import news3 from "../../assets/news3.png";
 import FAQAccordion from "../../components/FAQAccordion/FAQAccordion";
 import Footer2 from "../../components/Footer2/Footer2";
+import Signfornews from "../../components/Footer2/signfornews";
 
 const LandingPageNoura = () => {
   console.log("LandingPageNoura loaded");
@@ -126,6 +127,7 @@ const LandingPageNoura = () => {
           </React.Fragment>
         ))}
       </div>
+      <Signfornews />
       <Footer2 />
     </div>
   );

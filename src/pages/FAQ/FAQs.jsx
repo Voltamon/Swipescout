@@ -98,7 +98,7 @@ const FAQPage = () => {
 
     return <Container maxWidth="false" sx={{ background: "linear-gradient(to right, #1a032a, #003366)", py: 0 }}>
         <Header3 />
-        <Container maxWidth="md" sx={{ py: 6, bgcolor: "rgb(35, 81, 128)", color: "#fff", borderRadius: 2 } // dark blue background // white text
+        <Container maxWidth="md" sx={{ py: 6, bgcolor: "rgb(50, 95, 139)", color: "#fff", borderRadius: 2 } // dark blue background // white text
           }>
           <Box textAlign="center" mb={6}>
             <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#5D9BCF" }}>
