@@ -16,6 +16,7 @@ import JobSearchPage from "./pages/JobSearchPage.jsx";
 import EmployerDashboard from './pages/EmployerDashboard.jsx'
 import CandidateSearchPage from "./pages/CandidateSearchPage.jsx";
 import CandidateProfilePage from "./pages/CandidateProfilePage.jsx";
+import JobPostingForm from "./pages/JobPostingForm.jsx";
 
 function App() {
   console.log("App component loaded");
@@ -24,20 +25,15 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPageNoura />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/registerform" element={<RegisterForm />} />
-          <Route path="/dashboardjobseeker" element={<DashboardJobSeeker />} />
-          <Route path="/jobsearch" element={<JobSearchPage />} />
-          <Route path="/employerdashboard" element={<EmployerDashboard />} />
-          <Route path="/candidatesearch" element={<CandidateSearchPage />} />
-          <Route path="/candidateprofile" element={<CandidateProfilePage />} />
+          <Route path="/register-form" element={<RegisterForm />} />
+          <Route path="/login-form" element={<LoginForm />} />
+          <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
+          <Route path="/job-search" element={<JobSearchPage />} />
+          <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+          <Route path="/candidate-search" element={<CandidateSearchPage />} />
+          <Route path="/candidate-profile" element={<CandidateProfilePage />} />
+          <Route path="/job-posting" element={<JobPostingForm />} />
 
-          <Route path="/loginform" element={<LoginForm />} />
-          <Route path="/Home2" element={<Home />} />
-          <Route path="/explore-jobs" element={<ExploreJobs />} />
-          <Route path="/my-applications" element={<MyApplications />} />
-          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     
