@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Home2 from "./pages/Home2";//to remove later
 import ExploreJobs from "./pages/ExploreJobs"; //to remove later
 import MyApplications from "./pages/MyApplications"; //to remove later
