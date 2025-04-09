@@ -17,6 +17,7 @@ import EmployerDashboard from './pages/EmployerDashboard.jsx'
 import CandidateSearchPage from "./pages/CandidateSearchPage.jsx";
 import CandidateProfilePage from "./pages/CandidateProfilePage.jsx";
 import JobPostingForm from "./pages/JobPostingForm.jsx";
+import VideoResumeUpload from './pages/VideoResumeUpload.jsx'
 
 function App() {
   console.log("App component loaded");
@@ -33,6 +34,8 @@ function App() {
           <Route path="/candidate-search" element={<CandidateSearchPage />} />
           <Route path="/candidate-profile" element={<CandidateProfilePage />} />
           <Route path="/job-posting" element={<JobPostingForm />} />
+          <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
+          <Route path="/profile" element={<Profile />} />
 
         </Routes>
       </Router>
