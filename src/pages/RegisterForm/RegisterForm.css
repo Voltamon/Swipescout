@@ -1,0 +1,107 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* background: #fff; */
+  }
+  
+  .form-container {
+    width: 400px;
+    padding: 30px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    background: #f9f9f9;
+  }
+  
+  .form-container h2 {
+    margin-bottom: 10px;
+  }
+  
+  .form-container p {
+    color: #888;
+    margin-bottom: 20px;
+  }
+  
+  form input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    background-color: #f0f4c3;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .role-selection {
+    margin: 16px 0;
+  }
+  
+  .roles {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  
+  .role {
+    /* flex: 1; */
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    cursor: pointer;
+    background: #fff;
+    user-select: none;
+  }
+  
+  .role.active {
+    background-color: #ddd;
+  }
+  
+  .signup-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 16px;
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .divider {
+    text-align: center;
+    margin: 16px 0;
+    color: #888;
+  }
+  
+  .social-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .google-btn,
+  .linkedin-btn {
+    flex: 1;
+    margin: 0 4px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .google-btn {
+    background: #fff;
+    border: 1px solid #ccc;
+  }
+  
+  .linkedin-btn {
+    background: #0077b5;
+    color: white;
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
