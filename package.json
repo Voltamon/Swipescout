@@ -2,6 +2,7 @@
   "name": "swipescoutfrontend",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://obaidofj.github.io/swipscout_deploy1",
   "type": "module",
   "scripts": {
     "dev": "vite",

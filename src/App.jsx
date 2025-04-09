@@ -21,7 +21,7 @@ import FAQs from "./pages/FAQ/FAQs.jsx";
 
 function App() {
   console.log("App component loaded");
-  return <Router>
+  return <Router basename="/swipscout_deploy1/">
       <Routes>
         <Route path="/" element={<LandingPageNoura />} />
         <Route path="/login" element={<LoginPage />} />
