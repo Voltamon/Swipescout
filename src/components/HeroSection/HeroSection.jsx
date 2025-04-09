@@ -13,7 +13,6 @@ const HeroSection = () => {
           know what to do, why it matters, and how to get it done.
         </p>
         <div className="hero-buttons">
-          <button className="primary-btn">Sign up for News</button>
         </div>
       </div>
       <div className="hero-image">
