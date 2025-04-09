@@ -26,7 +26,7 @@ import {
 
 function JobSeekerDashboard() {
   return (
-    <Box>
+    <Box >
       {/* Header */}
       <AppBar position="static">
         <Toolbar>
@@ -50,7 +50,7 @@ function JobSeekerDashboard() {
       </AppBar>
 
       {/* Dashboard Content */}
-      <Container sx={{ marginTop: 4 }}>
+      <Container sx={{ marginTop: 4 }} >
         <Typography variant="h4" gutterBottom>
           Welcome back, Alex!
         </Typography>

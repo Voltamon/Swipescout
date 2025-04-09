@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCXln2JUz_Ire8wV1zfO9mIf36W0l2milI",
-  authDomain: "swipscout.firebaseapp.com",
-  projectId: "swipscout",
-  storageBucket: "swipscout.firebasestorage.app",
-  messagingSenderId: "352199048599",
-  appId: "1:352199048599:web:5eb2570d9c331d18b598d2"
+  apiKey: import.meta.env.VITE_apiKey,
+  authDomain: import.meta.env.VITE_authDomain,
+  projectId: import.meta.env.VITE_projectId,
+  storageBucket: import.meta.env.VITE_storageBucket,
+  messagingSenderId: import.meta.env.VITE_messagingSenderId,
+  appId: import.meta.env.VITE_appId,
 };
 
 const app = initializeApp(firebaseConfig);

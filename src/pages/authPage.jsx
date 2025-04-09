@@ -2,6 +2,8 @@ import React, { useState,useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import {
+  AppBar,
+    Toolbar,
   Container,
   Paper,
   Typography,
@@ -184,10 +186,21 @@ const AuthPage = () => {
     return () => window.removeEventListener('message', handleAuthSuccess);
   }, []);
 
-  return (
-    
+  return (<Box>
+
+          {/* Header */}
+          <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Swipscout
+          </Typography>
+          
+        </Toolbar>
+      </AppBar>
+
     <Container maxWidth="sm" sx={{ mt: 8 }}>
-        {/* <Header></Header> */}
+              
+        
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Sign In
@@ -296,8 +309,27 @@ const AuthPage = () => {
             {error}
           </Alert>}
       </Paper>
-      {/* <Footer></Footer> */}
+        
     </Container>
+        {/* Footer */}
+        <Box sx={{ height: "185px" }} />  {/* Spacer for footer */}
+          
+        <Box
+        sx={{
+          backgroundColor: "#333",
+          color: "white",
+          padding: 4,
+          marginTop: 0,
+          textAlign: "center"
+        }}
+      >
+        
+        <Divider sx={{ my: 2 }} />  
+        <Typography variant="body2" sx={{ mb: 1, padding: 0 }}>
+          © 2023 Swipscout. All rights reserved.
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 
