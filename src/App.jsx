@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ExploreJobs from "./pages/ExploreJobs";
 import MyApplications from "./pages/MyApplications";
@@ -21,7 +21,7 @@ import FAQs from "./pages/FAQ/FAQs.jsx";
 
 function App() {
   console.log("App component loaded");
-  return <Router basename="/swipscout_deploy1/">
+  return <Router >
       <Routes>
         <Route path="/" element={<LandingPageNoura />} />
         <Route path="/login" element={<LoginPage />} />
