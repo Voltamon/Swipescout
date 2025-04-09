@@ -18,6 +18,7 @@ import CandidateSearchPage from "./pages/CandidateSearchPage.jsx";
 import CandidateProfilePage from "./pages/CandidateProfilePage.jsx";
 import JobPostingForm from "./pages/JobPostingForm.jsx";
 import VideoResumeUpload from './pages/VideoResumeUpload.jsx'
+import Inbox from './pages/Inbox.jsx'
 
 function App() {
   console.log("App component loaded");
@@ -36,6 +37,7 @@ function App() {
           <Route path="/job-posting" element={<JobPostingForm />} />
           <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/inbox" element={<Inbox />} />
 
         </Routes>
       </Router>
