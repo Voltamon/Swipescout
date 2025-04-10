@@ -7,10 +7,9 @@ const HeroSection = () => {
     <section className="hero">
       <div className="hero-text">
         <h1>Swipe Scout</h1>
-        <h2>something something</h2>
+        <h2>Introducing Smart Video Recruitment</h2>
         <p>
-          From the small stuff to the big picture, organizes the work so teams
-          know what to do, why it matters, and how to get it done.
+        SwipeScout replaces boring resumes with 15–45 second video pitches that let job seekers show off their personality, skills, and confidence. Employers swipe through talent fast, make smarter decisions, and connect instantly—all in a format today’s generation actually enjoys.
         </p>
         <div className="hero-buttons">
         </div>

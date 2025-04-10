@@ -1,6 +1,6 @@
 import React from "react";
 
-const FeatureCard = ({ icon, title, description }) => {
+const FeatureCard = ({ icon, title,subtitle, description }) => {
   return (
     <div className="feature-card">
       <div
@@ -18,7 +18,7 @@ const FeatureCard = ({ icon, title, description }) => {
         {icon}
       </div>
       <h3>{title}</h3>
-      <p style={{ color: "black" }}>{description}</p>
+      <p style={{ color: "black" }}>{subtitle}<br></br>  {description}</p>
     </div>
   );
 };
