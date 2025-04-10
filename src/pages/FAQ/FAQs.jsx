@@ -146,12 +146,12 @@ const FAQPage = () => {
                   elevation={2}
                   sx={{
                     mb: 2,
-                    backgroundColor: "#2d3748",
-                    color: "#ffffff",
+                    backgroundColor:"rgba(56, 115, 182, 0.67)",
+                    color: "#a0aec0",
                     borderRadius: "8px !important",
                     "&:before": { display: "none" },
                     "&:hover": {
-                      backgroundColor: "#4a5568"
+                      backgroundColor: "rgba(56, 122, 197, 0.67)"
                     }
                   }}
                 >
