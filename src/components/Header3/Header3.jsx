@@ -10,7 +10,7 @@ const Header3 = () => {
   return <header className="header">
       <div className="logo">
         <img src={logo} alt="Logo" />
-        <p>SwipeScout</p>
+        <p><a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>SwipeScout</a></p>
       </div>
 
       <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
