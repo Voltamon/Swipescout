@@ -118,6 +118,15 @@ a {
   gap: 20px;
 }
 
+.feature-container {
+  margin-left: 0;
+}
+
+@media (min-width: 1025px) {
+  .feature-container {
+    margin-left: 60px !important;
+  }
+}
 @media (max-width: 768px) {
   .faq-container {
     grid-template-columns: 1fr;

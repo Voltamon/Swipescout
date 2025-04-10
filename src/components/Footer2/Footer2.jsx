@@ -15,7 +15,6 @@ const Footer = () => {
 
         <div className="footer-links">
           <a href="#">About</a>
-          <a href="#">News</a>
           <a href="#">FAQs</a>
           <a href="#">Contact Us</a>
         </div>
