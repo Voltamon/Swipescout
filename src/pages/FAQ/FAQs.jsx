@@ -96,114 +96,113 @@ const FAQPage = () => {
     return matchesSearch && matchesCategory;
   });
 
-    return <Container maxWidth="false" sx={{ background: "linear-gradient(to right, #1a032a, #003366)", py: 0 }}>
-        <Header3 />
-        <Container maxWidth="md" sx={{ py: 6, bgcolor: "rgb(50, 95, 139)", color: "#fff", borderRadius: 2 } // dark blue background // white text
-          }>
-          <Box textAlign="center" mb={6}>
-            <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#5D9BCF" }}>
-              Frequently Asked Questions
-            </Typography>
-            <Typography variant="body1" sx={{ color: "#ddd" }}>
-              Find answers to common questions about SwipeScout
-            </Typography>
-          </Box>
-          <Box mb={4}>
-            <TextField fullWidth variant="outlined" placeholder="Search FAQs..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1, color: "#5D9BCF" }} /> }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 4, boxShadow: theme.shadows[1], backgroundColor: "#fff", color: "#000" } }} />
-          </Box>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 4, justifyContent: isMobile ? "center" : "flex-start" }}>
-            {categories.map(category =>
-              <Chip
-                key={category.id}
-                label={category.label}
-                onClick={() => setActiveCategory(category.id)}
-                color={
-                  activeCategory === category.id ? "primary" : "default"
-                }
-                variant={
-                  activeCategory === category.id ? "filled" : "outlined"
-                }
-                icon={
-                  category.id === "all" ? <HelpIcon /> : <CategoryIcon />
-                }
-                sx={{
-                  px: 1,
-                  bgcolor:
-                    activeCategory === category.id
-                      ? "#5D9BCF"
-                      : "transparent",
+  return <Container maxWidth="false" sx={{ background: "linear-gradient(to right, #1a032a, #003366)", py: 0 }}>
+      <Header3 />
+      <Container maxWidth="md" sx={{ py: 6, bgcolor: "#1a365d", color: "#ffffff", borderRadius: 2, boxShadow: 3 }}>
+        <Box textAlign="center" mb={6}>
+          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#63b3ed" }}>
+            Frequently Asked Questions
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#a0aec0" }}>
+            Find answers to common questions about SwipeScout
+          </Typography>
+        </Box>
+        <Box mb={4}>
+          <TextField fullWidth variant="outlined" placeholder="Search FAQs..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1, color: "#4299e1" }} /> }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 4, boxShadow: theme.shadows[1], backgroundColor: "#ffffff", color: "#2d3748" } }} />
+        </Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 4, justifyContent: isMobile ? "center" : "flex-start" }}>
+          {categories.map(category =>
+            <Chip
+              key={category.id}
+              label={category.label}
+              onClick={() => setActiveCategory(category.id)}
+              color={activeCategory === category.id ? "primary" : "default"}
+              variant={activeCategory === category.id ? "filled" : "outlined"}
+              icon={category.id === "all" ? <HelpIcon /> : <CategoryIcon />}
+              sx={{
+                px: 1,
+                bgcolor:
+                  activeCategory === category.id ? "#2c5282" : "transparent",
+                color: activeCategory === category.id ? "#ffffff" : "#cbd5e0",
+                borderColor: "#4299e1",
+                "& .MuiChip-icon": {
+                  fontSize: "1rem",
+                  ml: 0.5,
                   color:
-                    activeCategory === category.id ? "#fff" : "#5D9BCF",
-                  borderColor: "#5D9BCF",
-                  "& .MuiChip-icon": {
-                    fontSize: "1rem",
-                    ml: 0.5
-                  }
-                }}
-              />
-            )}
-          </Box>
-          <Box mb={6}>
-            {filteredFaqs.length > 0 ? filteredFaqs.map((faq, index) =>
-                  <Accordion
-                    key={index}
-                    elevation={2}
+                    activeCategory === category.id ? "#ffffff" : "#4299e1"
+                },
+                "&:hover": {
+                  bgcolor:
+                    activeCategory === category.id ? "#2c5282" : "#2d3748"
+                }
+              }}
+            />
+          )}
+        </Box>
+        <Box mb={6}>
+          {filteredFaqs.length > 0 ? filteredFaqs.map((faq, index) =>
+                <Accordion
+                  key={index}
+                  elevation={2}
+                  sx={{
+                    mb: 2,
+                    backgroundColor: "#2d3748",
+                    color: "#ffffff",
+                    borderRadius: "8px !important",
+                    "&:before": { display: "none" },
+                    "&:hover": {
+                      backgroundColor: "#4a5568"
+                    }
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon sx={{ color: "#63b3ed" }} />}
                     sx={{
-                      mb: 2,
-                      backgroundColor: "#003366",
-                      color: "#fff",
-                      borderRadius: "8px !important",
-                      "&:before": { display: "none" }
+                      bgcolor: "#1a365d",
+                      borderRadius: "8px 8px 0 0",
+                      "&:hover": {
+                        bgcolor: "#2c5282"
+                      }
                     }}
                   >
-                    <AccordionSummary
-                      expandIcon={
-                        <ExpandMoreIcon sx={{ color: "#5D9BCF" }} />
-                      }
-                      sx={{
-                        bgcolor: "#002244",
-                        borderRadius: "8px 8px 0 0"
-                      }}
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={600}
+                      color="#63b3ed"
                     >
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight={600}
-                        color="#5D9BCF"
-                      >
-                        {faq.question}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography variant="body1" sx={{ color: "#eee" }}>
-                        {faq.answer}
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                ) : <Box textAlign="center" py={4}>
-                  <Typography variant="h6" sx={{ color: "#eee" }}>
-                    No FAQs found matching your search
-                  </Typography>
-                  <Typography variant="body2" mt={1} sx={{ color: "#ccc" }}>
-                    Try different keywords or browse all categories
-                  </Typography>
-                </Box>}
-          </Box>
-          <Divider sx={{ my: 4, borderColor: "#5D9BCF" }} />
-          <Box textAlign="center">
-            <Typography variant="h5" gutterBottom sx={{ color: "#5D9BCF" }}>
-              Still have questions?
-            </Typography>
-            <Typography variant="body1" sx={{ color: "#ddd" }} mb={3}>
-              Our support team is happy to help
-            </Typography>
-            <Chip label="Contact Support" variant="outlined" sx={{ px: 3, py: 1.5, fontSize: "1rem", cursor: "pointer", color: "#5D9BCF", borderColor: "#5D9BCF" }} onClick={() => (window.location.href = "/contact")} />
-          </Box>
-        </Container>
-        <br />
-        <br />
-        <Footer2 />
-      </Container>;
-  
+                      {faq.question}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography variant="body1" sx={{ color: "#a0aec0" }}>
+                      {faq.answer}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ) : <Box textAlign="center" py={4}>
+                <Typography variant="h6" sx={{ color: "#e2e8f0" }}>
+                  No FAQs found matching your search
+                </Typography>
+                <Typography variant="body2" mt={1} sx={{ color: "#a0aec0" }}>
+                  Try different keywords or browse all categories
+                </Typography>
+              </Box>}
+        </Box>
+        <Divider sx={{ my: 4, borderColor: "#4299e1" }} />
+        <Box textAlign="center">
+          <Typography variant="h5" gutterBottom sx={{ color: "#63b3ed" }}>
+            Still have questions?
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#cbd5e0" }} mb={3}>
+            Our support team is happy to help
+          </Typography>
+          <Chip label="Contact Support" variant="outlined" sx={{ px: 3, py: 1.5, fontSize: "1rem", cursor: "pointer", color: "#63b3ed", borderColor: "#63b3ed", "&:hover": { bgcolor: "#3182ce", color: "#ffffff" } }} onClick={() => (window.location.href = "/contact")} />
+        </Box>
+      </Container>
+      <br />
+      <br />
+      <Footer2 />
+    </Container>;
 };
 
 export default FAQPage;
