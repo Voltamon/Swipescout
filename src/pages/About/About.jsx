@@ -76,7 +76,7 @@ const AboutUs = () => {
     }
   ];
 
-  return <Box sx={{ background: 'linear-gradient(to right, #1a032a, #003366)', color: "#ffffff", pt: 0, pb: 8 }}>
+  return <Box sx={{ background: "linear-gradient(to right, #1a032a, #003366)", color: "#ffffff", pt: 0, pb: 8 }}>
       <Header3 />
       <Container maxWidth="lg">
         {/* Hero Section */}
@@ -84,11 +84,11 @@ const AboutUs = () => {
           <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#5D9BCF" }}>
             About SwipeScout
           </Typography>
-          <Typography variant="h5" component="h2" sx={{ color: "#B0C4DE" }} gutterBottom>
+          <Typography variant="h5" component="h2" sx={{ color: "#5D9BCF" }} gutterBottom>
             Revolutionizing the way people find jobs and companies find talent
           </Typography>
-          <Typography variant="body1" maxWidth="md" mx="auto" sx={{ color: "#ffffff" }}>
-            Founded in 2022, SwipeScout combines the efficiency of modern technology with the human touch needed in recruitment. Our platform bridges the gap between talented professionals and innovative companies through intuitive video profiles and smart matching algorithms.
+          <Typography variant="body1" maxWidth="md" mx="auto" sx={{ color: "#B0C4DE" }}>
+            Founded in 2025, SwipeScout combines the efficiency of modern technology with the human touch needed in recruitment. Our platform bridges the gap between talented professionals and innovative companies through intuitive video profiles and smart matching algorithms.
           </Typography>
         </Box>
 
@@ -100,20 +100,20 @@ const AboutUs = () => {
             <Typography variant="h4" gutterBottom sx={{ color: "#5D9BCF" }}>
               Our Mission
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1" paragraph sx={{ color: "#B0C4DE" }}>
               To make job searching as engaging and effective as social networking, while giving employers better tools to discover authentic talent.
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography variant="body1" paragraph sx={{ color: "#B0C4DE" }}>
               We believe the traditional resume is outdated. Video profiles allow candidates to showcase their personality, communication skills, and passion in ways paper never could.
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Box component="img" src="/images/about-mission.jpg" alt="Team working together" sx={{ width: "100%", borderRadius: 2, boxShadow: 3 }} />
+            <Box component="img" src="/images/about-mission.jpg" alt="Team working together image" sx={{ width: "100%", borderRadius: 2, boxShadow: 3, color: "#B0C4DE" }} />
           </Grid>
         </Grid>
 
         {/* Stats Section */}
-        <Box sx={{ bgcolor: "#3671ac", p: 4, borderRadius: 2, mb: 8 }}>
+        <Box sx={{ bgcolor: "rgb(75, 117, 151)", p: 4, borderRadius: 2, mb: 8 }}>
           <Grid container spacing={4} justifyContent="center">
             {stats.map((stat, index) => <Grid item xs={6} sm={3} key={index}>
                 <Card sx={{ height: "100%", textAlign: "center", boxShadow: "none", bgcolor: "#92c3eb", color: "#000" }}>
@@ -138,7 +138,7 @@ const AboutUs = () => {
           <Typography variant="h4" align="center" gutterBottom sx={{ color: "#5D9BCF" }}>
             Meet Our Team
           </Typography>
-          <Typography variant="body1" align="center" maxWidth="md" mx="auto" mb={4}>
+          <Typography variant="body1" align="center" maxWidth="md" mx="auto" mb={4} sx={{ color: "#B0C4DE" }}>
             Passionate professionals dedicated to transforming the recruitment experience
           </Typography>
           <Grid container spacing={4}>
@@ -149,7 +149,7 @@ const AboutUs = () => {
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    bgcolor: "#76aedb",
+                    bgcolor: "rgb(154, 196, 230)",
                     color: "#000"
                   }}
                 >
@@ -188,21 +188,15 @@ const AboutUs = () => {
             <Grid item xs={12} md={4}>
               <Box display="flex" alignItems="center" mb={2}>
                 <LocationOn sx={{ color: "#5D9BCF", mr: 2 }} />
-                <Typography>
-                  123 Tech Street, San Francisco, CA 94107
-                </Typography>
+                <Typography sx={{ color: "#5D9BCF" }}>Location</Typography>
               </Box>
             </Grid>
             <Grid item xs={12} md={4}>
               <Box display="flex" alignItems="center" mb={2}>
                 <Email sx={{ color: "#5D9BCF", mr: 2 }} />
-                <Typography>hello@swipescout.com</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box display="flex" alignItems="center">
-                <Phone sx={{ color: "#5D9BCF", mr: 2 }} />
-                <Typography>(555) 123-4567</Typography>
+                <Typography sx={{ color: "#5D9BCF" }}>
+                  info@swipescout.xyz
+                </Typography>
               </Box>
             </Grid>
           </Grid>
