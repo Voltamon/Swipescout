@@ -174,7 +174,7 @@ const FAQPage = () => {
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
-                    <Typography variant="body1" sx={{ color: "#a0aec0" }}>
+                    <Typography variant="body1" sx={{ color:"rgb(173, 215, 255)"  }}>
                       {faq.answer}
                     </Typography>
                   </AccordionDetails>
