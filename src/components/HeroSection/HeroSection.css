@@ -2,10 +2,10 @@
     display: flex;
     justify-content: space-around;
     align-items: normal; 
-    padding: 70px;
+    /* padding: 70px; */
     background: linear-gradient(to right, #1a032a, #003366);
     color: #5D9BCF;
-    min-height: 90vh;
+    min-height: 5vh;
   }
   
   .hero-text {
