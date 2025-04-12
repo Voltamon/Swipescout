@@ -1,6 +1,6 @@
 .hero {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: normal; 
     padding-top: 70px;
      padding-left: 50px;
