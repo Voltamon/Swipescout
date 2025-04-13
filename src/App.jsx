@@ -19,6 +19,7 @@ import AuthPage from "./pages/authPage";
 import LinkedInLoginButton from './pages/LinkedInLoginButton';
 import LinkedInCallback from './pages/LinkedInCallback';
 import AdminDashboard from './pages/adminDashboard';
+import FeedPage from "./pages/FeedPage";
 
 
 function App() {
@@ -43,7 +44,7 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         {/* <Route path="/auth-page2" element={<LinkedInLoginButton />} /> */}
         {/* <Route path="/linkedin" element={<LinkedInCallback />} /> */}
-      
+        <Route path="/feed-page" element={<FeedPage />} />
       </Routes>
     </Router>;
 }
