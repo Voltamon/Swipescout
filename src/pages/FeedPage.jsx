@@ -35,7 +35,8 @@ const FeedPage = () => {
       company: 'TechCorp',
       title: 'Senior UX Designer',
       tags: ['Remote', '$120k', 'Flexible hours'],
-      companyLogo: 'src/public/videos/vid1.mp4',
+      videoUrl: 'public/videos/vid1.mp4',
+      companyLogo: 'src/public/logo.jpg',
       views: '1.2k',
       posted: '2 days ago'
     },
@@ -44,8 +45,8 @@ const FeedPage = () => {
       company: 'DesignHub',
       title: 'Product Designer',
       tags: ['Hybrid', '$95k', 'Stock options'],
-      videoUrl: 'src/public/videos/vid2.mkv',
-      companyLogo: '/logos/designhub.png',
+      videoUrl: 'public/videos/vid2.mkv',
+      companyLogo: 'src/public/logo.jpg',
       views: '856',
       posted: '1 week ago'
     },
@@ -54,8 +55,8 @@ const FeedPage = () => {
       company: 'DataSystems',
       title: 'UX Researcher',
       tags: ['On-site', '$110k', 'Signing bonus'],
-      videoUrl: 'src/public/videos/vid1.mp4',
-      companyLogo: '/logos/datasystems.png',
+      videoUrl: 'public/videos/vid1.mp4',
+      companyLogo: 'src/public/logo.jpg',
       views: '1.5k',
       posted: '3 days ago'
     }

@@ -19,7 +19,10 @@ import AuthPage from "./pages/authPage";
 import LinkedInLoginButton from './pages/LinkedInLoginButton';
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
-import LinkedInCallback from './components/LinkedInCallback';
+import VideoFeed from "./pages/VideoFeed";
+import EmployerExplore from "./pages/EmployerExplore";
+import JobSeekerExplore from "./pages/JobSeekerExplore";
+import SettingsPage from "./pages/SettingsPage";
 
 
 function App() {
@@ -44,8 +47,11 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         {/* <Route path="/auth-page2" element={<LinkedInLoginButton />} /> */}
         {/* <Route path="/linkedin" element={<LinkedInCallback />} /> */}
-        <Route path="/linkedin-callback" element={<LinkedInCallback />} />
         <Route path="/feed-page" element={<FeedPage />} />
+        <Route path="/video-feed" element={<VideoFeed />} />
+        <Route path="/Employer-explore" element={<EmployerExplore />} />
+        <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
+        <Route path="/Settings-page" element={<SettingsPage />} />
       </Routes>
     </Router>;
 }
