@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Drawer,
@@ -9,7 +9,7 @@ import {
   ListItemIcon,
   Typography,
   Avatar
-} from "@mui/material";
+} from '@mui/material';
 import {
   Home,
   Search,
@@ -18,136 +18,108 @@ import {
   Settings,
   VideoLibrary,
   PlayArrow
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 const EmployerExplorePage = () => {
-  const [activeTab, setActiveTab] = useState("candidates");
+  const [activeTab, setActiveTab] = useState('candidates');
   const navigate = useNavigate();
 
   // Mock video data - replace with your actual data
   const videoResumes = [
-    {
-      id: 1,
-      title: "Frontend Developer",
-      experience: "3 years",
-      thumbnail: "/placeholder1.jpg"
-    },
-    {
-      id: 2,
-      title: "UX Designer",
-      experience: "2 years",
-      thumbnail: "/placeholder2.jpg"
-    },
-    {
-      id: 3,
-      title: "Backend Engineer",
-      experience: "5 years",
-      thumbnail: "/placeholder3.jpg"
-    }
+    { id: 1, title: 'Frontend Developer', experience: '3 years', thumbnail: '/placeholder1.jpg' },
+    { id: 2, title: 'UX Designer', experience: '2 years', thumbnail: '/placeholder2.jpg' },
+    { id: 3, title: 'Backend Engineer', experience: '5 years', thumbnail: '/placeholder3.jpg' },
     // Add more videos as needed
   ];
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#000" }}>
+    <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#000' }}>
       {/* Left Sidebar */}
       <Drawer
         variant="permanent"
         sx={{
           width: 80,
           flexShrink: 0,
-          "& .MuiDrawer-paper": {
+          '& .MuiDrawer-paper': {
             width: 80,
-            boxSizing: "border-box",
-            borderRight: "none",
-            backgroundColor: "#121212",
-            display: "flex",
-            flexDirection: "column"
-          }
+            boxSizing: 'border-box',
+            borderRight: 'none',
+            backgroundColor: '#121212',
+            display: 'flex',
+            flexDirection: 'column'
+          },
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            pt: 2
-          }}
-        >
-          <Avatar
-            src="/employer-logo.png"
-            sx={{
-              width: 48,
-              height: 48,
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 2 }}>
+          <Avatar 
+            src="/employer-logo.png" 
+            sx={{ 
+              width: 48, 
+              height: 48, 
               mb: 3,
-              border: "2px solid #fff"
+              border: '2px solid #fff'
             }}
           />
-
-          <List sx={{ width: "100%" }}>
+          
+          <List sx={{ width: '100%' }}>
             {[
-              { icon: <Home />, value: "home" },
-              { icon: <Search />, value: "search" },
-              { icon: <Group />, value: "candidates" },
-              { icon: <Bookmark />, value: "saved" },
-              { icon: <VideoLibrary />, value: "video-resumes" }
-            ].map(item =>
-              <ListItem
+              { icon: <Home />, value: 'home' },
+              { icon: <Search />, value: 'search' },
+              { icon: <Group />, value: 'candidates' },
+              { icon: <Bookmark />, value: 'saved' },
+              { icon: <VideoLibrary />, value: 'video-resumes' },
+            ].map((item) => (
+              <ListItem 
                 key={item.value}
                 component="div"
                 selected={activeTab === item.value}
                 onClick={() => setActiveTab(item.value)}
-                sx={{
-                  justifyContent: "center",
+                sx={{ 
+                  justifyContent: 'center', 
                   py: 2,
-                  cursor: "pointer",
-                  "&.Mui-selected": {
-                    borderLeft: "3px solid #ff4081"
+                  cursor: 'pointer',
+                  '&.Mui-selected': {
+                    borderLeft: '3px solid #ff4081'
                   }
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: "auto",
-                    color: activeTab === item.value ? "#ff4081" : "#fff"
-                  }}
-                >
+                <ListItemIcon sx={{ 
+                  minWidth: 'auto',
+                  color: activeTab === item.value ? '#ff4081' : '#fff'
+                }}>
                   {item.icon}
                 </ListItemIcon>
               </ListItem>
-            )}
+            ))}
           </List>
         </Box>
 
-        <Box
-          sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" }}
-        >
-          <IconButton sx={{ color: "#fff" }}>
+        <Box sx={{ mt: 'auto', pb: 2, display: 'flex', justifyContent: 'center' }}>
+          <IconButton sx={{ color: '#fff' }}>
             <Settings />
           </IconButton>
         </Box>
       </Drawer>
 
       {/* Main Content Area - Video Grid */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: 2,
-          p: 2,
-          overflowY: "auto",
-          backgroundColor: "#000"
-        }}
-      >
-        {videoResumes.map(video =>
-          <VideoThumbnail
+      <Box sx={{ 
+        flexGrow: 1, 
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gap: 2,
+        p: 2,
+        overflowY: 'auto',
+        backgroundColor: '#000'
+      }}>
+        {videoResumes.map((video) => (
+          <VideoThumbnail 
             key={video.id}
             title={video.title}
             experience={video.experience}
             thumbnail={video.thumbnail}
             onClick={() => navigate(`/feed/${video.id}`)}
           />
-        )}
+        ))}
       </Box>
     </Box>
   );
@@ -155,19 +127,19 @@ const EmployerExplorePage = () => {
 
 const VideoThumbnail = ({ title, experience, thumbnail, onClick }) => {
   return (
-    <Box
+    <Box 
       onClick={onClick}
       sx={{
-        position: "relative",
+        position: 'relative',
         borderRadius: 2,
-        overflow: "hidden",
-        aspectRatio: "9/16",
-        backgroundColor: "#333",
-        cursor: "pointer",
-        transition: "transform 0.2s",
-        "&:hover": {
-          transform: "scale(1.02)",
-          "& .play-icon": {
+        overflow: 'hidden',
+        aspectRatio: '9/16',
+        backgroundColor: '#333',
+        cursor: 'pointer',
+        transition: 'transform 0.2s',
+        '&:hover': {
+          transform: 'scale(1.02)',
+          '& .play-icon': {
             opacity: 1
           }
         }
@@ -177,47 +149,45 @@ const VideoThumbnail = ({ title, experience, thumbnail, onClick }) => {
       <Box
         component="img"
         src={thumbnail}
-        sx={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
+        sx={{ 
+          width: '100%', 
+          height: '100%', 
+          objectFit: 'cover',
           opacity: 0.9
         }}
       />
-
+      
       {/* Play Button Overlay */}
-      <Box
+      <Box 
         className="play-icon"
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           opacity: 0,
-          transition: "opacity 0.3s",
-          color: "#fff",
-          backgroundColor: "rgba(255, 64, 129, 0.7)",
-          borderRadius: "50%",
+          transition: 'opacity 0.3s',
+          color: '#fff',
+          backgroundColor: 'rgba(255, 64, 129, 0.7)',
+          borderRadius: '50%',
           p: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
         <PlayArrow fontSize="large" />
       </Box>
-
+      
       {/* Video Info Overlay */}
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          p: 2,
-          background: "linear-gradient(transparent, rgba(0,0,0,0.8))"
-        }}
-      >
+      <Box sx={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        p: 2,
+        background: 'linear-gradient(transparent, rgba(0,0,0,0.8))'
+      }}>
         <Typography variant="subtitle2" color="#fff" fontWeight="bold">
           {title}
         </Typography>

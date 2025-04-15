@@ -1,4 +1,3 @@
-
 import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Home2 from "./pages/Home2";//to remove later
@@ -25,12 +24,35 @@ import JobSeekerExplore from "./pages/JobSeekerExplore";
 import SettingsPage from "./pages/SettingsPage";
 import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
 
+import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
+import LoginForm from "./pages/LoginForm/LoginForm.jsx"
+import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura";
+import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
+import CandidateProfilePage from "./pages/CandidateProfilePage.jsx";
+import JobPostingForm from "./pages/JobPostingForm.jsx";
+import VideoResumeUpload from './pages/VideoResumeUpload.jsx'
+import Inbox from './pages/Inbox.jsx'
 
 function App() {
+  console.log("App component loaded");
+  return (
   
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPageNoura />} />
+          <Route path="/register-form" element={<RegisterForm />} />
+          <Route path="/login-form" element={<LoginForm />} />
+          <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
+          <Route path="/job-search" element={<JobSearchPage />} />
+          <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+          <Route path="/candidate-search" element={<CandidateSearchPage />} />
+          <Route path="/candidate-profile" element={<CandidateProfilePage />} />
+          <Route path="/job-posting" element={<JobPostingForm />} />
+          <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/inbox" element={<Inbox />} />
 
-  return <Router>
-      <Routes>
+
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -55,7 +77,9 @@ function App() {
         <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
         <Route path="/Settings-page" element={<SettingsPage />} />
       </Routes>
-    </Router>;
+    </Router>
+    
+  );
 }
 
-export default App
+export default App;

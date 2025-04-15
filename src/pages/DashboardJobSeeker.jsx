@@ -8,13 +8,10 @@ import {
   CardContent,
   Container,
   Grid,
+  LinearProgress,
   Toolbar,
   Typography,
   useTheme,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
   IconButton,
   Drawer,
   List,
@@ -23,27 +20,15 @@ import {
   Divider,
   useMediaQuery,
 } from "@mui/material"
-import { LocationOn, ArrowForward, People, ExpandMore, VideoCall, Menu as MenuIcon, Close } from "@mui/icons-material"
+import { BusinessCenter, LocationOn, ArrowForward, Menu as MenuIcon, Close } from "@mui/icons-material"
 import { useState } from "react"
 
-export default function EmployerDashboard() {
+export default function SwipscoutDashboard() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   
-  // Connect dropdown state
-  const [anchorEl, setAnchorEl] = useState(null)
-  const open = Boolean(anchorEl)
-  
   // Mobile drawer state
   const [drawerOpen, setDrawerOpen] = useState(false)
-  
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
   
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -51,20 +36,12 @@ export default function EmployerDashboard() {
     }
     setDrawerOpen(open)
   }
-
-  // Available people for meetings
-  const availablePeople = [
-    { name: "Alice Smith", status: "Available now" },
-    { name: "Michael Johnson", status: "Available in 30 min" },
-    { name: "Sarah Williams", status: "Available now" },
-    { name: "David Brown", status: "Available tomorrow" },
-  ]
   
   // Navigation items
-  const navItems = ["Home", "Jobs", "Candidates", "Profile", "Logout"]
+  const navItems = ["Home", "Jobs", "Applications", "Profile", "Logout"]
 
   return (
-    <Box sx={{ flexGrow: 1, background: '#ffffff', height: '100%' }}>
+    <Box sx={{ flexGrow: 1,backgroundColor: "#ffffff" }}>
       {/* Navigation Bar */}
       <AppBar
         position="static"
@@ -74,7 +51,6 @@ export default function EmployerDashboard() {
       >
         <Container maxWidth="lg">
           <Toolbar sx={{ justifyContent: "space-between" }}>
-            {/* Logo */}
             <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
               <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
                 Swip
@@ -108,7 +84,7 @@ export default function EmployerDashboard() {
               </Box>
             )}
 
-            <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
+            <Avatar sx={{ bgcolor: "#3366ff" }}>JS</Avatar>
           </Toolbar>
         </Container>
       </AppBar>
@@ -132,6 +108,7 @@ export default function EmployerDashboard() {
         </Box>
         <Divider />
         <Box sx={{ p: 2 }}>
+      
           <List>
             {navItems.map((item) => (
               <ListItem key={item} disablePadding>
@@ -146,84 +123,74 @@ export default function EmployerDashboard() {
 
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
-        {/* Welcome Message and Connect Button */}
-        <Box sx={{ 
-          display: "flex", 
-          flexDirection: isMobile ? 'column' : 'row',
-          alignItems: isMobile ? "flex-start" : "center", 
-          justifyContent: "space-between", 
-          mb: 4,
-          gap: isMobile ? 2 : 0
-        }}>
-          <Typography 
-            variant="h4" 
-            component="h1" 
-            sx={{ 
-              fontWeight: "bold", 
-              color: "#333",
-              fontSize: isMobile ? '1.75rem' : '2.125rem'
-            }}
-          >
-            Welcome back, John Doe!
-          </Typography>
-          
-          <Button
-            color="primary"
-            variant="contained"
-            endIcon={<ExpandMore />}
-            onClick={handleClick}
-            sx={{ 
-              fontWeight: 500,
-              backgroundColor: "#3366ff",
-              '&:hover': {
-                backgroundColor: "#2952cc"
-              }
-            }}
-          >
-            Connect
-          </Button>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-              elevation: 3,
-              sx: { 
-                width: 250,
-                maxHeight: 300,
-                mt: 1
-              }
-            }}
-          >
-            <Typography variant="subtitle2" sx={{ px: 2, py: 1, fontWeight: 'bold', color: '#666' }}>
-              Available for Meeting
-            </Typography>
-            {availablePeople.map((person, index) => (
-              <MenuItem key={index} onClick={handleClose} sx={{ py: 1.5 }}>
-                <ListItemIcon>
-                  <Avatar sx={{ width: 32, height: 32, bgcolor: "#e3f2fd", color: "#3366ff", fontSize: '0.875rem' }}>
-                    {person.name.split(' ').map(n => n[0]).join('')}
-                  </Avatar>
-                </ListItemIcon>
-                <ListItemText 
-                  primary={person.name} 
-                  secondary={person.status}
-                  primaryTypographyProps={{ fontWeight: 500 }}
-                  secondaryTypographyProps={{ fontSize: '0.75rem' }}
-                />
-                <VideoCall fontSize="small" sx={{ color: "#3366ff" }} />
-              </MenuItem>
-            ))}
-          </Menu>
-        </Box>
+        {/* Welcome Message */}
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          sx={{ 
+            fontWeight: "bold", 
+            mb: 4,
+            fontSize: isMobile ? '1.75rem' : '2.125rem'
+          }}
+        >
+          Welcome back, John Smith!
+        </Typography>
 
-        {/* Posted Jobs */}
+        {/* Profile Completion Card */}
+        <Card sx={{ mb: 5, p: 2 }}>
+          <CardContent>
+            <Box sx={{ 
+              display: "flex", 
+              flexDirection: isMobile ? 'column' : 'row',
+              justifyContent: "space-between", 
+              alignItems: isMobile ? "flex-start" : "center", 
+              mb: isMobile ? 3 : 2,
+              gap: isMobile ? 1 : 0
+            }}>
+              <Typography variant="h6" component="div">
+                Profile Completion
+              </Typography>
+              <Typography variant="h6" component="div" sx={{ color: "#3366ff", fontWeight: "bold" }}>
+                80% Complete
+              </Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={80}
+              sx={{
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: "#e0e0e0",
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#3366ff",
+                  borderRadius: 5,
+                },
+              }}
+            />
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: "#3366ff",
+                  borderRadius: "8px",
+                  "&:hover": {
+                    bgcolor: "#2952cc",
+                  },
+                }}
+              >
+                Complete Profile
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Recent Applications */}
         <Typography variant="h5" component="h2" sx={{ color: "#3366ff", fontWeight: "bold", mb: 3 }}>
-          Posted Jobs
+          Recent Applications
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 5 }}>
-          {/* Job Card 1 */}
+          {/* Application Card 1 */}
           <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%" }}>
               <CardContent>
@@ -232,9 +199,9 @@ export default function EmployerDashboard() {
                 </Typography>
 
                 <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                  <People fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <BusinessCenter fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
                   <Typography variant="body2" color="text.secondary">
-                    24 Applications
+                    TechCorp Inc.
                   </Typography>
                 </Box>
 
@@ -242,54 +209,6 @@ export default function EmployerDashboard() {
                   <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
                   <Typography variant="body2" color="text.secondary">
                     San Francisco, CA
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 3 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e8f5e9",
-                      color: "#4caf50",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d7eeda",
-                        border: "none",
-                      },
-                    }}
-                  >
-                    Open
-                  </Button>
-
-                  <Button size="small" endIcon={<ArrowForward />} sx={{ color: "#3366ff" }}>
-                    View Details
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Job Card 2 */}
-          <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%" }}>
-              <CardContent>
-                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2 }}>
-                  UX/UI Designer
-                </Typography>
-
-                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                  <People fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    18 Applications
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                  <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Remote
                   </Typography>
                 </Box>
 
@@ -308,7 +227,7 @@ export default function EmployerDashboard() {
                       },
                     }}
                   >
-                    Filled
+                    Reviewed
                   </Button>
 
                   <Button size="small" endIcon={<ArrowForward />} sx={{ color: "#3366ff" }}>
@@ -319,25 +238,25 @@ export default function EmployerDashboard() {
             </Card>
           </Grid>
 
-          {/* Job Card 3 */}
+          {/* Application Card 2 */}
           <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%" }}>
               <CardContent>
                 <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2 }}>
-                  Backend Engineer
+                  UX/UI Designer
                 </Typography>
 
                 <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                  <People fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <BusinessCenter fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
                   <Typography variant="body2" color="text.secondary">
-                    32 Applications
+                    DesignHub
                   </Typography>
                 </Box>
 
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
                   <Typography variant="body2" color="text.secondary">
-                    New York, NY
+                    Remote
                   </Typography>
                 </Box>
 
@@ -356,7 +275,55 @@ export default function EmployerDashboard() {
                       },
                     }}
                   >
-                    Open
+                    Shortlisted
+                  </Button>
+
+                  <Button size="small" endIcon={<ArrowForward />} sx={{ color: "#3366ff" }}>
+                    View Details
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Application Card 3 */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Backend Engineer
+                </Typography>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <BusinessCenter fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    DataSystems
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    New York, NY
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 3 }}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      bgcolor: "#fff8e1",
+                      color: "#ffc107",
+                      border: "none",
+                      borderRadius: "16px",
+                      "&:hover": {
+                        bgcolor: "#ffecb3",
+                        border: "none",
+                      },
+                    }}
+                  >
+                    Pending
                   </Button>
 
                   <Button size="small" endIcon={<ArrowForward />} sx={{ color: "#3366ff" }}>
@@ -368,105 +335,138 @@ export default function EmployerDashboard() {
           </Grid>
         </Grid>
 
-        {/* Shortlisted Candidates */}
+        {/* Recommended Jobs */}
         <Typography variant="h5" component="h2" sx={{ color: "#3366ff", fontWeight: "bold", mb: 3 }}>
-          Shortlisted Candidates
+          Recommended Jobs
         </Typography>
 
-        <Grid container spacing={3} sx={{ mb: 5 }}>
-          {/* Candidate Card 1 */}
-          <Grid item xs={12} md={6}>
+        <Grid container spacing={3}>
+          {/* Job Card 1 */}
+          <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%" }}>
-              <CardContent sx={{ display: "flex", alignItems: "flex-start" }}>
-                <Avatar
-                  sx={{
-                    bgcolor: "#e3f2fd",
-                    color: "#3366ff",
-                    width: 50,
-                    height: 50,
-                    mr: 2,
-                  }}
-                >
-                  AS
-                </Avatar>
+              <CardContent>
+                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Full Stack Developer
+                </Typography>
 
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-                    Alice Smith
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Senior Frontend Developer
-                  </Typography>
-
-                  <Typography variant="body2" sx={{ color: "#9e9e9e" }}>
-                    Interview Scheduled
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <BusinessCenter fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    WebSolutions
                   </Typography>
                 </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Austin, TX
+                  </Typography>
+                </Box>
+
+                <Typography variant="body1" sx={{ color: "#4caf50", fontWeight: "medium", mb: 2 }}>
+                  $ 90,000 - $120,000
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#3366ff",
+                    borderRadius: "8px",
+                    "&:hover": {
+                      bgcolor: "#2952cc",
+                    },
+                  }}
+                >
+                  Apply Now
+                </Button>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Candidate Card 2 */}
-          <Grid item xs={12} md={6}>
+          {/* Job Card 2 */}
+          <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%" }}>
-              <CardContent sx={{ display: "flex", alignItems: "flex-start" }}>
-                <Avatar
-                  sx={{
-                    bgcolor: "#e3f2fd",
-                    color: "#3366ff",
-                    width: 50,
-                    height: 50,
-                    mr: 2,
-                  }}
-                >
-                  MJ
-                </Avatar>
+              <CardContent>
+                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Product Manager
+                </Typography>
 
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-                    Michael Johnson
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Backend Engineer
-                  </Typography>
-
-                  <Typography variant="body2" sx={{ color: "#9e9e9e" }}>
-                    Hired
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <BusinessCenter fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    ProductLabs
                   </Typography>
                 </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Chicago, IL
+                  </Typography>
+                </Box>
+
+                <Typography variant="body1" sx={{ color: "#4caf50", fontWeight: "medium", mb: 2 }}>
+                  $ 110,000 - $140,000
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#3366ff",
+                    borderRadius: "8px",
+                    "&:hover": {
+                      bgcolor: "#2952cc",
+                    },
+                  }}
+                >
+                  Apply Now
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Job Card 3 */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2 }}>
+                  DevOps Engineer
+                </Typography>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <BusinessCenter fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    CloudTech
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 1 }} />
+                  <Typography variant="body2" color="text.secondary">
+                    Remote
+                  </Typography>
+                </Box>
+
+                <Typography variant="body1" sx={{ color: "#4caf50", fontWeight: "medium", mb: 2 }}>
+                  $ 100,000 - $130,000
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#3366ff",
+                    borderRadius: "8px",
+                    "&:hover": {
+                      bgcolor: "#2952cc",
+                    },
+                  }}
+                >
+                  Apply Now  
+                </Button>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
-
-        {/* Notifications */}
-        <Typography variant="h5" component="h2" sx={{ color: "#3366ff", fontWeight: "bold", mb: 3 }}>
-          Notifications
-        </Typography>
-
-        <Card sx={{ mb: 2 }}>
-          <CardContent>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              New application for Senior Frontend Developer position.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              2 hours ago
-            </Typography>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              Michael Johnson accepted your offer for Backend Engineer.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              1 day ago
-            </Typography>
-          </CardContent>
-        </Card>
       </Container>
     </Box>
   )
