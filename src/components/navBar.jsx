@@ -16,6 +16,7 @@ const Navbar = () => {
         <Link to="/video-feed">Video Feed</Link>
         <Link to="/Employer-explore">Job Seekers Videos</Link>
         <Link to="/Job-seeker-explore">Employers Videos</Link>
+        <Link to="/Employer-explore-sidebar">Job Seekers Videos Style2</Link>
         <Link to="/Settings-page">Settings Page</Link>
       </nav>
       <nav className="navbar">

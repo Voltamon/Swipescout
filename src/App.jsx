@@ -23,6 +23,7 @@ import VideoFeed from "./pages/VideoFeed";
 import EmployerExplore from "./pages/EmployerExplore";
 import JobSeekerExplore from "./pages/JobSeekerExplore";
 import SettingsPage from "./pages/SettingsPage";
+import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
         <Route path="/video-feed" element={<VideoFeed />} />
         <Route path="/Employer-explore" element={<EmployerExplore />} />
         <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
+        <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
         <Route path="/Settings-page" element={<SettingsPage />} />
       </Routes>
     </Router>;
