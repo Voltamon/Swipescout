@@ -57,12 +57,12 @@ const ProfileCard = styled(Paper)(({ theme }) => ({
   borderRadius: '16px',
 }));
 
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  marginBottom: theme.spacing(1),
-  fontWeight: 'bold',
-  color: theme.palette.text.secondary,
-}));
+const SectionTitle = styled(Typography)({
+  marginTop: "24px", // theme.spacing(3) = 24px
+  marginBottom: "8px", // theme.spacing(1) = 8px
+  fontWeight: "bold",
+  color: "rgba(0, 0, 0, 0.6)" // Default MUI text.secondary color
+});
 
 const SettingsPage = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
