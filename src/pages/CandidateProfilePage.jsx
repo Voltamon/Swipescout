@@ -11,14 +11,61 @@ import {
   Toolbar,
   Typography,
   useTheme,
+  useMediaQuery,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
 } from "@mui/material"
-import { LocationOn, PlayArrow, Work } from "@mui/icons-material"
+import { LocationOn, PlayArrow, Work, Menu as MenuIcon, Close as CloseIcon } from "@mui/icons-material"
+import { useState } from "react"
 
 export default function CandidateProfilePage() {
   const theme = useTheme()
-  theme.palette.background.default = '#ffffff';
+  theme.palette.background.default = "#ffffff"
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+      return
+    }
+    setDrawerOpen(open)
+  }
+
+  const navLinks = [
+    { text: "Home", href: "#" },
+    { text: "Jobs", href: "#" },
+    { text: "Candidates", href: "#" },
+    { text: "Profile", href: "#" },
+    { text: "Logout", href: "#" },
+  ]
+
+  const navList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+        <IconButton onClick={toggleDrawer(false)}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <Divider />
+      <List>
+        {navLinks.map((link) => (
+          <ListItem key={link.text} disablePadding>
+            <ListItemButton component="a" href={link.href}>
+              <ListItemText primary={link.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  )
+
   return (
-    <Box sx={{ flexGrow: 1,background:'#ffffff' }}>
+    <Box sx={{ flexGrow: 1, background: "#ffffff" }}>
       {/* Navigation Bar */}
       <AppBar
         position="static"
@@ -37,33 +84,34 @@ export default function CandidateProfilePage() {
               </Box>
             </Typography>
 
-            <Box sx={{ display: "flex", gap: 3 }}>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Home
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Jobs
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Candidates
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Profile
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Logout
-              </Button>
-            </Box>
+            {isMobile ? (
+              <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+                <MenuIcon />
+              </IconButton>
+            ) : (
+              <Box sx={{ display: "flex", gap: 3 }}>
+                {navLinks.map((link) => (
+                  <Button key={link.text} color="inherit" sx={{ fontWeight: 500 }} href={link.href}>
+                    {link.text}
+                  </Button>
+                ))}
+              </Box>
+            )}
 
             <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
           </Toolbar>
         </Container>
       </AppBar>
 
+      {/* Mobile Navigation Drawer */}
+      <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+        {navList}
+      </Drawer>
+
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
         {/* Candidate Profile Header */}
-        <Box sx={{ display: "flex", alignItems: "center", mb: 5 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 5, flexDirection: { xs: "column", sm: "row" } }}>
           <Avatar
             sx={{
               bgcolor: "#f5f5f5",
@@ -72,18 +120,27 @@ export default function CandidateProfilePage() {
               height: 120,
               fontSize: "2.5rem",
               fontWeight: "bold",
-              mr: 4,
+              mr: { xs: 0, sm: 4 },
+              mb: { xs: 3, sm: 0 },
             }}
           >
             AS
           </Avatar>
 
-          <Box>
+          <Box sx={{ textAlign: { xs: "center", sm: "left" } }}>
             <Typography variant="h4" component="h1" sx={{ fontWeight: "bold", mb: 1, color: "#333" }}>
               Alice Smith
             </Typography>
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 3,
+                mb: 2,
+                justifyContent: { xs: "center", sm: "flex-start" },
+              }}
+            >
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <LocationOn fontSize="small" sx={{ color: "text.secondary", mr: 0.5 }} />
                 <Typography variant="body1" color="text.secondary">
@@ -99,7 +156,7 @@ export default function CandidateProfilePage() {
               </Box>
             </Box>
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: { xs: "center", sm: "flex-start" } }}>
               <Chip
                 label="JavaScript"
                 sx={{
@@ -206,7 +263,14 @@ export default function CandidateProfilePage() {
           </Typography>
 
           <Paper elevation={0} sx={{ p: 3, border: "1px solid #eaeaea", borderRadius: 2 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                flexDirection: { xs: "column", sm: "row" },
+              }}
+            >
               <Box>
                 <Typography variant="h6" component="h3" sx={{ fontWeight: "bold", mb: 1 }}>
                   Senior Frontend Developer
@@ -215,7 +279,7 @@ export default function CandidateProfilePage() {
                   TechCorp Inc.
                 </Typography>
               </Box>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" sx={{ mb: { xs: 2, sm: 0 } }}>
                 Jan 2020 - Present
               </Typography>
             </Box>

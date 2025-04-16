@@ -1,40 +1,47 @@
-import React from "react";
-import Header3 from "../../components/Header3/Header3";
-import HeroSection from "../../components/HeroSection/HeroSection";
-import "./LandingPageNoura.css";
-import Feature from "../../components/Feature/Feature";
-import phoneImage from "../../assets/phone.png";
-import FeatureCard from "../../components/FeatureCard";
-import { LuArrowLeftRight } from "react-icons/lu";
-import TestimonialCard from "../../components/TestimonialCard";
-import news1 from "../../assets/news1.png";
-import news2 from "../../assets/news2.png";
-import news3 from "../../assets/news3.png";
-import FAQAccordion from "../../components/FAQAccordion/FAQAccordion";
-import Footer2 from "../../components/Footer2/Footer2";
-import { useWindowSize } from "../../hooks/useWindowSize.js";
 
+import React from "react"
+import { Box, Typography, Link } from "@mui/material"
+import Header3 from "../../components/Header3/Header3"
+import HeroSection from "../../components/HeroSection/HeroSection"
+import Feature from "../../components/Feature/Feature"
+import phoneImage from "../../assets/phone.png"
+import FeatureCard from "../../components/FeatureCard"
+import { LuArrowLeftRight } from "react-icons/lu"
+import TestimonialCard from "../../components/TestimonialCard"
+import news1 from "../../assets/news1.png"
+import news2 from "../../assets/news2.png"
+import news3 from "../../assets/news3.png"
+import FAQAccordion from "../../components/FAQAccordion/FAQAccordion"
+import Footer2 from "../../components/Footer2/Footer2"
 
 const LandingPageNoura = () => {
-  console.log("LandingPageNoura loaded");
-  const { width } = useWindowSize();
+  console.log("LandingPageNoura loaded")
+
   const faqs = [
     {
       question: "How long until we deliver your first blog post?",
-      answer:
-        "Really boy law country she unable her sister. Feet you off its like like sea..."
+      answer: "Really boy law country she unable her sister. Feet you off its like like sea...",
     },
     {
       question: "What are the benefits of using Swipe Scout?",
-      answer:
-        "Swipe Scout helps you find opportunities faster with AI-powered recommendations..."
+      answer: "Swipe Scout helps you find opportunities faster with AI-powered recommendations...",
     },
     {
       question: "Is Swipe Scout available on mobile?",
-      answer: "Yes! Our app is available for both Android and iOS devices..."
-    }
-  ];
-  return <div className="landing">
+      answer: "Yes! Our app is available for both Android and iOS devices...",
+    },
+  ]
+
+  return (
+    <Box
+      sx={{
+        background: "linear-gradient(to right, #1a032a, #003366)",
+        color: "#5D9BCF",
+        fontFamily: "'Poppins', sans-serif",
+        margin: 0,
+        padding: 0,
+      }}
+    >
       <Header3 />
       <HeroSection />
       <div>
@@ -76,7 +83,9 @@ Swipe through jobs or candidates just like you would on social apps. Tap in for 
       </div>
 
       <Footer2 />
-    </div>;
-};
+    </Box>
+  )
+}
 
-export default LandingPageNoura;
+export default LandingPageNoura
+
