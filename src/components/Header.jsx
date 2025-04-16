@@ -16,12 +16,10 @@ const Header = () => {
             <li>
               <a href="/contact">Contact</a>
             </li>
+           
             <li>
-              <a href="/login">Login</a>
-            </li>
-            <li>
-              <a href="/signup" className="btn-primary">
-                Sign Up
+              <a href="/signin" className="btn-primary">
+                Sign In
               </a>
             </li>
           </ul>

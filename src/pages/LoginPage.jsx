@@ -11,6 +11,7 @@ const LoginPage = () => {
           <h2>Welcome Back!</h2>
           <form>
             <input type="email" placeholder="Enter your email" required />
+            <br></br>
             <input type="password" placeholder="Enter your password" required />
             <a href="/forgot-password" className="forgot-password">Forgot Password?</a>
             <button type="submit" className="btn-primary">Login</button>

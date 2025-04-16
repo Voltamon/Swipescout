@@ -12,11 +12,33 @@ import {
   Toolbar,
   Typography,
   useTheme,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  Divider,
+  useMediaQuery,
 } from "@mui/material"
-import { BusinessCenter, LocationOn, ArrowForward } from "@mui/icons-material"
+import { BusinessCenter, LocationOn, ArrowForward, Menu as MenuIcon, Close } from "@mui/icons-material"
+import { useState } from "react"
 
 export default function SwipscoutDashboard() {
   const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  
+  // Mobile drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return
+    }
+    setDrawerOpen(open)
+  }
+  
+  // Navigation items
+  const navItems = ["Home", "Jobs", "Applications", "Profile", "Logout"]
 
   return (
     <Box sx={{ flexGrow: 1,backgroundColor: "#ffffff" }}>
@@ -38,40 +60,93 @@ export default function SwipscoutDashboard() {
               </Box>
             </Typography>
 
-            <Box sx={{ display: "flex", gap: 3 }}>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Home
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Jobs
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Applications
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Profile
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Logout
-              </Button>
-            </Box>
+            {/* Desktop Navigation */}
+            {!isMobile && (
+              <Box sx={{ display: "flex", gap: 3 }}>
+                {navItems.map((item) => (
+                  <Button key={item} color="inherit" sx={{ fontWeight: 500 }}>
+                    {item}
+                  </Button>
+                ))}
+              </Box>
+            )}
+
+            {/* Mobile Hamburger Icon - Centered */}
+            {isMobile && (
+              <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                <IconButton 
+                  color="inherit" 
+                  aria-label="menu"
+                  onClick={toggleDrawer(true)}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Box>
+            )}
 
             <Avatar sx={{ bgcolor: "#3366ff" }}>JS</Avatar>
           </Toolbar>
         </Container>
       </AppBar>
 
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer(false)}
+        sx={{
+          '& .MuiDrawer-paper': { 
+            width: 280,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <IconButton onClick={toggleDrawer(false)}>
+            <Close />
+          </IconButton>
+        </Box>
+        <Divider />
+        <Box sx={{ p: 2 }}>
+      
+          <List>
+            {navItems.map((item) => (
+              <ListItem key={item} disablePadding>
+                <ListItemButton sx={{ borderRadius: 1 }}>
+                  <Typography variant="body1">{item}</Typography>
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
         {/* Welcome Message */}
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold", mb: 4 }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          sx={{ 
+            fontWeight: "bold", 
+            mb: 4,
+            fontSize: isMobile ? '1.75rem' : '2.125rem'
+          }}
+        >
           Welcome back, John Smith!
         </Typography>
 
         {/* Profile Completion Card */}
         <Card sx={{ mb: 5, p: 2 }}>
           <CardContent>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+            <Box sx={{ 
+              display: "flex", 
+              flexDirection: isMobile ? 'column' : 'row',
+              justifyContent: "space-between", 
+              alignItems: isMobile ? "flex-start" : "center", 
+              mb: isMobile ? 3 : 2,
+              gap: isMobile ? 1 : 0
+            }}>
               <Typography variant="h6" component="div">
                 Profile Completion
               </Typography>
@@ -396,4 +471,3 @@ export default function SwipscoutDashboard() {
     </Box>
   )
 }
-
