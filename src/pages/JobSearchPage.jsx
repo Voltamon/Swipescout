@@ -238,19 +238,6 @@ export default function JobSearchPage() {
               </CardContent>
             </Card>
           </Grid>
-<<<<<<< HEAD
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6">Data Scientist</Typography>
-                <Typography variant="body2">
-                  Netflix • Los Angeles, CA • $130K - $150K
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ marginTop: 2 }}
-=======
 
           {/* Job Card 2 */}
           <Grid item xs={12} md={4}>
@@ -550,7 +537,6 @@ export default function JobSearchPage() {
                       bgcolor: "#2952cc",
                     },
                   }}
->>>>>>> noura
                 >
                   View Details
                 </Button>
@@ -558,33 +544,6 @@ export default function JobSearchPage() {
             </Card>
           </Grid>
         </Grid>
-<<<<<<< HEAD
-        <Pagination
-          count={10}
-          sx={{ marginTop: 4, display: "flex", justifyContent: "center" }}
-        />
-      </Container>
-
-      {/* Footer */}
-      <Box
-        sx={{
-          backgroundColor: "#333",
-          color: "white",
-          padding: 4,
-          marginTop: 4,
-          textAlign: "center"
-        }}
-      >
-        <Typography variant="body2">
-          © 2023 Swipscout. All rights reserved.
-        </Typography>
-      </Box>
-    </Box>
-  );
-}
-
-export default JobSearchPage;
-=======
 
         {/* Accessibility Buttons - Fixed on the right side */}
         <Box
@@ -612,4 +571,3 @@ export default JobSearchPage;
   )
 }
 
->>>>>>> noura

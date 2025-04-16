@@ -53,7 +53,6 @@ function App() {
           <Route path="/inbox" element={<Inbox />} />
 
 
-        <Route path="/" element={<LandingPage />} />
         {/* <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/Home2" element={<Home2 />} />
