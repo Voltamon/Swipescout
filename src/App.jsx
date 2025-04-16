@@ -2,11 +2,18 @@ import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import PrivateRoute from "./pages/PrivateRoute";
 
-import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura";
+
+import ExploreJobs from "./pages/ExploreJobs";
+import MyApplications from "./pages/MyApplications";
+import "./App.css";
+
+import SignupPage from "./pages/SignupPage";
+
+
 import TempLoginPage from "./pages/TempLoginPage";
 import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
 import LoginForm from "./pages/LoginForm/LoginForm.jsx";
-
+import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura.jsx";
 
 import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
 import JobSearchPage from "./pages/JobSearchPage";
@@ -29,6 +36,8 @@ import EmployerExplore from "./pages/EmployerExplore";
 import JobSeekerExplore from "./pages/JobSeekerExplore";
 import SettingsPage from "./pages/SettingsPage";
 import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
+import About from "./pages/About/About.jsx";
+import FAQs from "./pages/FAQ/FAQs.jsx";
 
 function App() {
   return (
@@ -37,7 +46,8 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<LandingPageNoura />} />
         <Route path="/preview-login" element={<TempLoginPage />} />
-
+        <Route path="/about" element={<About />} />
+        <Route path="/FAQs" element={<FAQs />} />
 
         {/* Private Routes */}
         <Route
