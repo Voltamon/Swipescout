@@ -6,10 +6,10 @@ body {
     color: #1F2937;
   }
   
-  .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
+  .container  {
+    width: 90% ;
+    max-width: 1200px ;
+    margin: 0 auto ;
   }
   
   a {

@@ -30,7 +30,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="container">
+    <div className="register_form_container">
       <div className="form-container">
         <h2>Create Your Account</h2>
         <p>Join our platform to find your perfect job match</p>
