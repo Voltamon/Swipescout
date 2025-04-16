@@ -19,6 +19,20 @@ const Navbar = () => {
         <Link to="/Employer-explore-sidebar">Job Seekers Videos Style2</Link>
         <Link to="/Settings-page">Settings Page</Link>
       </nav>
+      <span color="rgb(22, 116, 192)">_Main Pages</span>
+      <nav className="navbar">
+        <Link to="/AppPage">App Page</Link>
+        <Link to="/register-form">Register Form</Link>
+        <Link to="/login-form">Login Form</Link>
+        <Link to="/dashboard-jobseeker">Dashboard _</Link>
+        <Link to="/job-search">Job Search _</Link>
+        <Link to="/candidate-profile">Candidate Profile</Link>
+        <Link to="/job-posting">Job Posting Form</Link>
+        <Link to="/video-resume-upload">Upload Video Resume</Link>
+        <Link to="/profile">Profile</Link>
+        <Link to="/inbox">Inbox</Link>
+        <Link to="/feed-page">Feed Page2 _</Link>
+      </nav>
       <nav className="navbar">
         <Link to="/dashboard">Job Seeker Dashboard</Link>
         <Link to="/employer-dashboard">Employer Dashboard</Link>
@@ -32,6 +46,5 @@ const Navbar = () => {
     </div>;
 };
 
-
-
+   
 export default Navbar;
