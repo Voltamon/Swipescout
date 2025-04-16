@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import FeatureCard from "../components/FeatureCard";
 import TestimonialCard from "../components/TestimonialCard";
 import Navbar from "../components/Navbar";
+import "../../public/styles3.css";
 
 const LandingPage = () => {
   const features = [
