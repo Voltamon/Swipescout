@@ -1,10 +1,12 @@
+
+
 import React from "react";
-import Header from "../components/Header3/Header3";
-import Footer from "../components/Footer";
-import FeatureCard from "../components/FeatureCard";
-import TestimonialCard from "../components/TestimonialCard";
-import Navbar from "../components/Navbar";
-import "../../public/styles3.css";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import FeatureCard from "../../components/FeatureCard";
+import TestimonialCard from "../../components/TestimonialCard";
+import Navbar from "../../components/Navbar";
+import "./LandingPage.css"; // Import your CSS file for styling
 
 const LandingPage = () => {
   const features = [
@@ -47,7 +49,7 @@ const LandingPage = () => {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <section className="hero">
         <div className="container">
           <h1>Find Your Dream Job with Swipscout</h1>

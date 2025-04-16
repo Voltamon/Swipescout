@@ -5,7 +5,7 @@ import ExploreJobs from "./pages/ExploreJobs"; //to remove later
 import MyApplications from "./pages/MyApplications"; //to remove later
 import Profile from "./pages/Profile"; //check if to remove later
 import "./App.css";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/LandingPage/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
@@ -50,7 +50,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/inbox" element={<Inbox />} />
 
-        <Route path="/AppPage" element={<LandingPage />} />
+        <Route path="/PagesNavigation" element={<LandingPage />} />
         {/* <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/Home2" element={<Home2 />} />

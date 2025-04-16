@@ -21,7 +21,7 @@ const Navbar = () => {
       </nav>
       <span color="rgb(22, 116, 192)">_Main Pages</span>
       <nav className="navbar">
-        <Link to="/AppPage">App Page</Link>
+        <Link to="/PagesNavigation">App Page</Link>
         <Link to="/register-form">Register Form</Link>
         <Link to="/login-form">Login Form</Link>
         <Link to="/dashboard-jobseeker">Dashboard _</Link>
