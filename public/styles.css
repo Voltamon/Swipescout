@@ -61,19 +61,19 @@ header nav ul li {
   display: inline;
 }
 
-/* Hero Section */
-.hero {
-  background: #F9FAFB;
+/* .hero-app Section */
+.hero-app {
+  background: #F9FAFB; 
   padding: 100px 0;
   text-align: center;
 }
 
-.hero h1 {
+.hero-app h1 {
   font-size: 36px;
   margin-bottom: 20px;
 }
 
-.hero p {
+.hero-app p {
   font-size: 18px;
   margin-bottom: 40px;
 }

@@ -50,7 +50,7 @@ const LandingPage = () => {
   return (
     <div>
        <Header />
-      <section className="hero">
+      <section className="hero-app">
         <div className="container">
           <h1>Find Your Dream Job with Swipscout</h1>
           <p>Swipe, Match, and Connect with Employers.</p>

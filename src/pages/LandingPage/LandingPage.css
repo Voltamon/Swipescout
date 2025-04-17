@@ -114,6 +114,10 @@ header nav ul li {
 }
 
 /* Hero Section */
+.hero-app {
+  background: #F9FAFB;
+
+}
 .hero {
   background: #F9FAFB;
   padding: 100px 0;
