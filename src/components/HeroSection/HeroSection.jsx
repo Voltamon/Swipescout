@@ -4,7 +4,7 @@ import phoneImage from "../../assets/phone.png";
 
 const HeroSection = () => {
   return (
-    <section className="hero">
+    <section className="hero-landing-page">
       <div className="hero-text">
         <h1>Swipe Scout</h1>
         <h2>Introducing Smart Video Recruitment</h2>

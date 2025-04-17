@@ -1,4 +1,4 @@
-.hero {
+.hero-landing-page {
     display: flex;
     justify-content: center;
     align-items: normal; 
@@ -16,6 +16,7 @@
   .hero-text h1 {
     font-size: 48px;
     font-weight: bold;
+    text-align: center;
   }
   
   .hero-text h2 {

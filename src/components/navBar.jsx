@@ -43,6 +43,7 @@ const Navbar = () => {
         <Link to="/admin-dashboard">Admin Dashboard</Link>
         {/* <Link to="/auth-page2">Auth Page 2</Link> */}
       </nav>
+      <hr />
     </div>;
 };
 
