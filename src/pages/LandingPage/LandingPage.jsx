@@ -1,7 +1,7 @@
 
 
 import React from "react";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navigationbar";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import FeatureCard from "../../components/FeatureCard";
