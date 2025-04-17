@@ -45,7 +45,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPageNoura />} />
-        <Route path="/preview-login" element={<TempLoginPage />} />
+        <Route path="/view-login" element={<TempLoginPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
 

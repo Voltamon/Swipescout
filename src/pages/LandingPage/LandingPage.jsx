@@ -9,7 +9,7 @@ import Navbar from "../../components/Navbar";
 import "./LandingPage.css"; // Import your CSS file for styling
 
 const LandingPage = () => {
-  const features = [
+  const app_features = [
     {
       icon: "fas fa-swimmer",
       title: "Swipe-Based Matching",
@@ -49,7 +49,7 @@ const LandingPage = () => {
 
   return (
     <div>
-      {/* <Header /> */}
+       <Header />
       <section className="hero">
         <div className="container">
           <h1>Find Your Dream Job with Swipscout</h1>
@@ -64,11 +64,11 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-      <section className="features">
+      <section className="app-features">
         <div className="container">
           <h2>Why Choose Swipscout?</h2>
           <div className="feature-grid">
-            {features.map((feature, index) =>
+            {app_features.map((feature, index) =>
               <FeatureCard key={index} {...feature} />
             )}
           </div>

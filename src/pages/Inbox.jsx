@@ -23,6 +23,7 @@ import {
   styled,
 } from "@mui/material"
 import { ArrowBack, Settings, Send, Videocam, Message, Person } from "@mui/icons-material"
+import { useNavigate } from "react-router-dom";
 
 // Custom styled components
 const StatusBadge = styled(Badge)(({ theme, status }) => ({
@@ -163,7 +164,7 @@ export default function Inbox() {
       setNewMessage("")
     }
   }
-
+const navigate = useNavigate();
   return (
     <Box sx={{ pb: 7, bgcolor: "#F9FAFB", minHeight: "100vh" }}>
       {/* Top Navigation */}
@@ -276,6 +277,7 @@ export default function Inbox() {
           value={bottomNavValue}
           onChange={(event, newValue) => {
             setBottomNavValue(newValue)
+            
           }}
           showLabels
           sx={{ maxWidth: 600, mx: "auto" }}
