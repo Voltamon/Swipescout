@@ -1,65 +1,30 @@
-
 import React from "react";
-import { Box, Typography, Avatar } from "@mui/material";
 
-const FeatureCard = ({ icon, title, description, sx }) => {
+const FeatureCard = ({ icon, title, subtitle, description }) => {
   return (
-    <Box
-      className="feature-card"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#E6F0FA", 
-        borderRadius: "16px", 
-        padding: "24px", 
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
-        textAlign: "center",
-        minHeight: "200px",
-        ...sx, 
-      }}
-    >
-      <Box
+    <div className="feature-card">
+      <div
         className="icon"
-        sx={{
-          width: "60px",
-          height: "60px",
+        style={{
+          width: "50px",
+          height: "50px",
           borderRadius: "50%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "linear-gradient(52.09deg, #5D9BCF 18%, #A9C4F3 98.44%)", // Gradient for the icon background
-          margin: "0 auto",
+          background: "linear-gradient(52.09deg, #5D9BCF 18%, #A9C4F3 98.44%)"
         }}
       >
-        <Avatar sx={{ background: "transparent", color: "white", fontSize: "24px" }}>
-          {icon}
-        </Avatar>
-      </Box>
-      <Typography
-        variant="h6"
-        sx={{
-          marginTop: 2,
-          fontWeight: "bold", 
-          color: "black",
-          fontSize: "1.25rem", 
-        }}
-      >
+        {icon}
+      </div>
+      <h3>
         {title}
-      </Typography>
-      <Typography
-        variant="body2"
-        sx={{
-          color: "black",
-          marginTop: 1,
-          fontSize: "0.9rem", 
-          lineHeight: 1.5, 
-        }}
-      >
-        {description}
-      </Typography>
-    </Box>
+      </h3>
+      <p style={{ color: "black" }}>
+        {subtitle}
+        <br /> {description}
+      </p>
+    </div>
   );
 };
 
