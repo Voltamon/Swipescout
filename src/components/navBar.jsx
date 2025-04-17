@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './Navbar.css'; // optional for styling
-import { Container } from 'lucide-react';
+
 
 const Navbar = () => {
   return <div>
