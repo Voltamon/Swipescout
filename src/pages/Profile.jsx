@@ -34,6 +34,7 @@ import {
   Chat as ChatIcon,
   Person as PersonIcon,
 } from "@mui/icons-material"
+import { useNavigate } from "react-router-dom";
 
 // Create a custom theme
 const theme = createTheme({
@@ -192,9 +193,10 @@ export default function ProfilePage() {
   const [anchorEl, setAnchorEl] = useState(null)
   const [videoModalOpen, setVideoModalOpen] = useState(false)
   const [availabilityOn, setAvailabilityOn] = useState(true)
-
+const navigate = useNavigate();
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
+    navigate("/event.currentTarget");
   }
 
   const handleMenuClose = () => {

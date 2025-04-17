@@ -20,9 +20,14 @@ import VideocamIcon from "@mui/icons-material/Videocam"
 import RssFeedIcon from "@mui/icons-material/RssFeed"
 import InboxIcon from "@mui/icons-material/Inbox"
 import PersonIcon from "@mui/icons-material/Person"
+import { useNavigate } from "react-router-dom";
+
+
+
 
 // Styled components
 const UploadBox = styled(Box)(({ theme }) => ({
+
   border: "2px dashed #f0f0f0",
   borderRadius: "8px",
   padding: theme.spacing(4), // Reduced padding
@@ -40,6 +45,7 @@ const UploadBox = styled(Box)(({ theme }) => ({
     backgroundColor: "#e9f7ff",
   },
 }))
+
 
 const SelectVideoButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#3366ff",
@@ -87,7 +93,7 @@ export default function VideoResumeUpload() {
     // Handle file upload logic here
     console.log("File uploaded:", event.target.files[0])
   }
-
+const navigate = useNavigate();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
       {/* Header */}
@@ -169,19 +175,31 @@ export default function VideoResumeUpload() {
       {/* Bottom Navigation */}
       <Paper sx={{ position: "sticky", bottom: 0, left: 0, right: 0 }} elevation={3}>
         <Box sx={{ display: "flex", justifyContent: "space-around", borderTop: "1px solid #e0e0e0" }}>
-          <NavButton className={activeNav === "feed" ? "active" : ""} onClick={() => setActiveNav("feed")}>
+          <NavButton className={activeNav === "feed" ? "active" : ""} onClick={() => {
+            setActiveNav("feed");
+            navigate("/video-feed");
+          }
+          }>
             <RssFeedIcon fontSize="small" />
             <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
               Feed
             </Typography>
           </NavButton>
-          <NavButton className={activeNav === "inbox" ? "active" : ""} onClick={() => setActiveNav("inbox")}>
+          <NavButton className={activeNav === "inbox" ? "active" : ""} onClick={() => {
+            setActiveNav("inbox");
+            navigate("/inbox");
+          }
+          }>
             <InboxIcon fontSize="small" />
             <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
               Inbox
             </Typography>
           </NavButton>
-          <NavButton className={activeNav === "profile" ? "active" : ""} onClick={() => setActiveNav("profile")}>
+          <NavButton className={activeNav === "profile" ? "active" : ""} onClick={() => {
+            setActiveNav("profile");
+            navigate("/profile");
+          }
+          }>
             <PersonIcon fontSize="small" />
             <Typography
               variant="caption"
