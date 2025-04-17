@@ -11,7 +11,7 @@ import "./LandingPage.css"; // Import your CSS file for styling
 
 const LandingPage = () => {
   const app_features = [
-    {
+    {  
       icon: "fas fa-swimmer",
       title: "Swipe-Based Matching",
       description: "Easily find jobs or candidates with a simple swipe."
