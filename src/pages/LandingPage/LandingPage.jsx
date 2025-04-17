@@ -1,11 +1,12 @@
 
 
 import React from "react";
+import Navbar from "../../components/Navbar";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import FeatureCard from "../../components/FeatureCard";
 import TestimonialCard from "../../components/TestimonialCard";
-import Navbar from "../../components/Navbar";
+
 import "./LandingPage.css"; // Import your CSS file for styling
 
 const LandingPage = () => {
