@@ -1,0 +1,69 @@
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Box, CircularProgress } from '@mui/material';
+import { useAuth } from './hooks/useAuth';
+
+// استيراد الصفحات
+import Login from './pages/Login';
+import Register from './pages/Register';
+import VideoFeed from './pages/VideoFeed';
+import Chat from './pages/Chat';
+import Profile from './pages/Profile';
+import JobVideos from './pages/JobVideos';
+import CompanyVideos from './pages/CompanyVideos';
+import Settings from './pages/Settings';
+import JobSeekerDashboard from './pages/JobSeekerDashboard';
+import EmployerDashboard from './pages/EmployerDashboard';
+import NotFound from './pages/NotFound';
+
+// استيراد المكونات
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+
+function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Routes>
+      {/* المسارات العامة */}
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/feed" />} />
+      <Route path="/register" element={!user ? <Register /> : <Navigate to="/feed" />} />
+      
+      {/* المسارات المحمية */}
+      <Route element={<ProtectedRoute user={user} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} />
+          
+          {/* مسارات مشتركة */}
+          <Route path="/feed" element={<VideoFeed />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:conversationId" element={<Chat />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          
+          {/* مسارات الباحث عن عمل */}
+          <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard />} />
+          <Route path="/job-videos" element={<JobVideos />} />
+          
+          {/* مسارات صاحب العمل */}
+          <Route path="/employer/dashboard" element={<EmployerDashboard />} />
+          <Route path="/company-videos" element={<CompanyVideos />} />
+        </Route>
+      </Route>
+      
+      {/* مسار غير موجود */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+export default App;

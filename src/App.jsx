@@ -39,25 +39,75 @@ import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
 import About from "./pages/About/About.jsx";
 import FAQs from "./pages/FAQ/FAQs.jsx";
 
+import {  Navigate } from 'react-router-dom';
+import { Box, CircularProgress } from '@mui/material';
+import { useAuth } from './hooks/useAuth';
+
+// استيراد الصفحات
+// import Login from './pages/Login';
+// import Register from './pages/Register';
+import VideoFeed_ from './pages/VideoFeed_';
+import Chat from './pages/Chat';
+import Profile_ from './pages/Profile_';
+import JobVideos from './pages/JobVideos';
+import CompanyVideos from './pages/CompanyVideos';
+import Settings from './pages/Settings';
+import JobSeekerDashboard_ from './pages/JobSeekerDashboard_';
+import EmployerDashboard_ from './pages/EmployerDashboard_';
+// import NotFound from './pages/NotFound';
+
+// استيراد المكونات
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+
+
+
 function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPageNoura />} />
+    <Routes>
+      {/* المسارات العامة */}
+      {/* <Route path="/login" element={!user ? <Login /> : <Navigate to="/feed" />} /> */}
+      {/* <Route path="/register" element={!user ? <Register /> : <Navigate to="/feed" />} /> */}
+         {/* Public Routes */}
+         <Route path="/" element={<LandingPageNoura />} />
         <Route path="/view-login" element={<TempLoginPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
 
-        {/* Private Routes */}
-        <Route
-          path="*"
-          element={
-            <PrivateRoute>
-              <Routes>
-              <Route path="/register-form" element={<RegisterForm />} />
+        {/* Private Routes */}     
+      {/* المسارات المحمية */}
+      <Route element={<ProtectedRoute user={user} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} />
+          
+          {/* مسارات مشتركة */}
+          <Route path="/feed" element={<VideoFeed_ />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:conversationId" element={<Chat />} />
+          <Route path="/profile" element={<Profile_ />} />
+          <Route path="/profile/:userId" element={<Profile_ />} />
+          <Route path="/settings" element={<Settings />} />
+          
+          {/* مسارات الباحث عن عمل */}
+          <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} />
+          <Route path="/job-videos" element={<JobVideos />} />
+          
+          {/* مسارات صاحب العمل */}
+          <Route path="/employer/dashboard" element={<EmployerDashboard_ />} />
+          <Route path="/company-videos" element={<CompanyVideos />} />
+          <Route path="/register-form" element={<RegisterForm />} />
               <Route path="/login-form" element={<LoginForm />} />
-                <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
+                <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker_ />} />
                 <Route path="/job-search" element={<JobSearchPage />} />
                 <Route path="/employer-dashboard" element={<EmployerDashboard />} />
                 <Route path="/candidate-search" element={<CandidateSearchPage />} />
@@ -79,13 +129,14 @@ function App() {
                 <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
                 <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
                 <Route path="/Settings-page" element={<SettingsPage />} />
-              </Routes>
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </Router>
+        </Route>
+      </Route>
+      
+      {/* مسار غير موجود */}
+      {/* <Route path="*" element={<NotFound />} /> */}
+    </Routes>
   );
 }
 
 export default App;
+
