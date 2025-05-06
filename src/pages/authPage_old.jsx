@@ -27,7 +27,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { app } from "../../src/firebase-config.js";
+import { app } from "firebase-config.js";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
