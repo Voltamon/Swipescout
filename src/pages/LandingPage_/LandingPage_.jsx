@@ -7,7 +7,7 @@ import Footer from "../../components/Footer";
 import FeatureCard from "../../components/FeatureCard";
 import TestimonialCard from "../../components/TestimonialCard";
 
-import "./LandingPage.css"; // Import your CSS file for styling
+import "./LandingPage_.css"; // Import your CSS file for styling
 
 const LandingPage = () => {
   const app_features = [

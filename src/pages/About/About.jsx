@@ -1,6 +1,7 @@
 import React from "react";
 import Header3 from "../../components/Header3/Header3";
 import HeroSection from "../../components/HeroSection/HeroSection";
+import { Helmet } from "react-helmet";
 import Footer2 from "../../components/Footer2/Footer2";
 import {
   Box,
@@ -76,7 +77,21 @@ const AboutUs = () => {
     }
   ];
 
-  return <Box sx={{ background: "linear-gradient(to right, #1a032a, #003366)", color: "#ffffff", pt: 0, pb: 8 }}>
+  return ( 
+ <>  
+  <Helmet>
+    <title>About SwipeScout | Our Mission and Team</title>
+    <meta name="description" content="Learn about SwipeScout's mission to revolutionize recruitment with video resumes and our dedicated team of professionals." />
+    <meta name="keywords" content="about SwipeScout, company mission, recruitment technology, hiring platform team" />
+    <meta property="og:title" content="About SwipeScout | Our Mission and Team" />
+    <meta property="og:description" content="Discover how SwipeScout is changing the way people find jobs and companies find talent through innovative technology." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.swipescout.xyz/about" />
+    <link rel="canonical" href="https://www.swipescout.xyz/about" />
+  </Helmet>
+
+
+  <Box sx={{ background: "linear-gradient(to right, #1a032a, #003366)", color: "#ffffff", pt: 0, pb: 8 }}>
       <Header3 />
       <Container maxWidth="lg">
         {/* Hero Section */}
@@ -204,6 +219,8 @@ const AboutUs = () => {
       </Container>
       <Footer2 />
     </Box>;
+    </>
+  );
 };
 
 export default AboutUs;
