@@ -13,7 +13,7 @@ import SignupPage from "./pages/SignupPage";
 import TempLoginPage from "./pages/TempLoginPage";
 import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
 import LoginForm from "./pages/LoginForm/LoginForm.jsx";
-import LandingPageNoura from "./pages/LandingPageNoura/LandingPageNoura.jsx";
+import LandingPage from "./pages/LandingPage/LandingPage.jsx";
 
 import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
 import JobSearchPage from "./pages/JobSearchPage";
@@ -24,7 +24,7 @@ import JobPostingForm from "./pages/JobPostingForm.jsx";
 import VideoResumeUpload from './pages/VideoResumeUpload.jsx';
 import Profile from "./pages/Profile";
 import Inbox from './pages/Inbox.jsx';
-import LandingPage from "./pages/LandingPage/LandingPage.jsx";
+import LandingPage_ from "./pages/LandingPage_/LandingPage_.jsx";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import JobDetailsPage from "./pages/JobDetailsPage";
 import PostJobPage from "./pages/PostJobPage";
@@ -44,7 +44,7 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LandingPageNoura />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/view-login" element={<TempLoginPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
@@ -66,7 +66,7 @@ function App() {
                 <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inbox" element={<Inbox />} />
-                <Route path="/PagesNavigation" element={<LandingPage />} />
+                <Route path="/PagesNavigation" element={<LandingPage_ />} />
                 <Route path="/dashboard" element={<JobSeekerDashboard />} />
                 <Route path="/search" element={<JobSearchPage />} />
                 <Route path="/job/:id" element={<JobDetailsPage />} />

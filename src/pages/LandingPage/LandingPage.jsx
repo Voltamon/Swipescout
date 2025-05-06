@@ -1,92 +1,110 @@
-
-
 import React from "react";
-import Navbar from "../../components/Navigationbar";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import FeatureCard from "../../components/FeatureCard";
-import TestimonialCard from "../../components/TestimonialCard";
-
-import "./LandingPage.css"; // Import your CSS file for styling
+import Header3 from "../../components/Header3/Header3.jsx";
+import HeroSection from "../../components/HeroSection/HeroSection.jsx";
+import "./LandingPage.css";
+import Feature from "../../components/Feature/Feature.jsx";
+import phoneImage from "../../assets/phone.png";
+import FeatureCard from "../../components/FeatureCard.jsx";
+import { LuArrowLeftRight } from "react-icons/lu";
+import TestimonialCard from "../../components/TestimonialCard.jsx";
+// import news1 from "../../assets/news1.png";
+// import news2 from "../../assets/news2.png";
+// import news3 from "../../assets/news3.png";
+import FAQAccordion from "../../components/FAQAccordion/FAQAccordion.jsx";
+import Footer2 from "../../components/Footer2/Footer2.jsx";
+import { useWindowSize } from "../../hooks/useWindowSize.js";
 
 const LandingPage = () => {
-  const app_features = [
-    {  
-      icon: "fas fa-swimmer",
-      title: "Swipe-Based Matching",
-      description: "Easily find jobs or candidates with a simple swipe."
+  console.log("LandingPageN loaded");
+  const { width } = useWindowSize();
+  const faqs = [
+    {
+      question: "How long until we deliver your first blog post?",
+      answer:
+        "Really boy law country she unable her sister. Feet you off its like like sea..."
     },
     {
-      icon: "fas fa-video",
-      title: "Video Resumes",
-      description: "Showcase your skills with video resumes."
+      question: "What are the benefits of using Swipe Scout?",
+      answer:
+        "Swipe Scout helps you find opportunities faster with AI-powered recommendations..."
     },
     {
-      icon: "fas fa-comments",
-      title: "Real-Time Chat",
-      description: "Communicate instantly with employers or job seekers."
-    },
-    {
-      icon: "fas fa-brain",
-      title: "AI-Powered Recommendations",
-      description: "Get personalized job or candidate recommendations."
+      question: "Is Swipe Scout available on mobile?",
+      answer: "Yes! Our app is available for both Android and iOS devices..."
     }
   ];
-
-  const testimonials = [
-    {
-      image: "https://via.placeholder.com/80",
-      name: "John Doe",
-      role: "Software Engineer",
-      testimonial: "Swipscout helped me find my dream job in no time!"
-    },
-    {
-      image: "https://via.placeholder.com/80",
-      name: "Jane Smith",
-      role: "HR Manager",
-      testimonial: "The AI recommendations are spot on. Highly recommend!"
-    }
-  ];
-
   return (
-    <div>
-       <Header />
-      <section className="hero-app">
-        <div className="container">
-          <h1>Find Your Dream Job with Swipscout</h1>
-          <p>Swipe, Match, and Connect with Employers.</p>
-          <div className="cta-buttons">
-            <a href="/signup" className="btn-primary">
-              Sign Up as Job Seeker
-            </a>
-            <a href="/signup" className="btn-secondary">
-              Sign Up as Employer
-            </a>
+    <div className="landing">
+      <Header3 />
+      <HeroSection />
+      <div>
+        <h2 style={{ color: "#5D9BCF" }}>What Makes Swipe Scout Unique?</h2>
+        <div className="features-container">
+          <div className="phone-image">
+            <img src={phoneImage} alt="App Preview" />
+          </div>
+          <div className="features-text">
+            <Feature
+              title="Video Resumes"
+              description="
+🔔 Showcase Personality in Seconds
+SwipeScout lets job seekers express themselves with short 15–45 second video pitches—making it easier for companies to connect with confident, creative talent."
+            />
+
+            <Feature
+              style={{ marginLeft: width >= 1025 ? 60 : -8 }}
+              className="feature-container"
+              title="Swipe Feature"
+              description="🔔 Swipe Featuregit
+Fast, Fun, and Intentional Matching
+Swipe through jobs or candidates just like you would on social apps. Tap in for full profiles, then connect if there’s mutual interest—no ghosting, no clutter."
+            />
           </div>
         </div>
-      </section>
-      <section className="app-features">
-        <div className="container">
-          <h2>Why Choose Swipscout?</h2>
-          <div className="feature-grid">
-            {app_features.map((feature, index) =>
-              <FeatureCard key={index} {...feature} />
-            )}
-          </div>
+      </div>
+      <div style={{ background: "#ffffff" }}>
+        <div className="feature-grid" style={{ margin: "50px" }}>
+          <FeatureCard
+            icon={<LuArrowLeftRight />}
+            title={"Video Resumes"}
+            subtitle={"🔔 Unlock Real Talent"}
+            description={
+              " SwipeScout lets job seekers upload 15–45 second video resumes, giving employers a real glimpse of their personality, communication, and creativity—far beyond what paper resumes can offer."
+            }
+          />
+
+          <FeatureCard
+            icon={<LuArrowLeftRight />}
+            title={"Swipe to Discover"}
+            subtitle={"🔔 Smarter Matching"}
+            description={
+              " Our intuitive swipe interface allows job seekers and employers to discover each other quickly, creating matches based on real impressions, not just text."
+            }
+          />
+
+          <FeatureCard
+            icon={<LuArrowLeftRight />}
+            title={"Real-Time Connections"}
+            subtitle={"🔔 Chat and Connect"}
+            description={
+              " Once there’s a match, messaging opens up—making it easy to schedule interviews, ask questions, and take the next step, all in-app."
+            }
+          />
         </div>
-      </section>
-      <Navbar></Navbar>
-      <section className="testimonials">
-        <div className="container">
-          <h2>What Our Users Say</h2>
-          <div className="testimonial-carousel">
-            {testimonials.map((testimonial, index) =>
-              <TestimonialCard key={index} {...testimonial} />
-            )}
-          </div>
-        </div>
-      </section>
-      <Footer />
+        {/* <h2 style={{ color: "black" }}>SwipeScout News </h2>
+        <p style={{ textAlign: "center", color: "black" }}>
+          Here’s the latest news about SwipeScout.
+        </p>
+        <div className="testimonials-container" style={{ margin: "50px" }}>
+          <TestimonialCard name={"The Snap Pixel: How It Works and How to Install "} role={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim."} testimonial={""} image={news1} />
+          <TestimonialCard name={"The Snap Pixel: How It Works and How to Install "} role={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim."} testimonial={""} image={news2} />
+          <TestimonialCard name={"The Snap Pixel: How It Works and How to Install "} role={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra nunc ante velit vitae. Est tellus vitae, nullam lobortis enim."} testimonial={""} image={news3} />
+        </div> */}
+        <br />
+        <br />{" "}
+      </div>
+
+      <Footer2 />
     </div>
   );
 };
