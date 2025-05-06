@@ -38,9 +38,28 @@ import SettingsPage from "./pages/SettingsPage";
 import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
 import About from "./pages/About/About.jsx";
 import FAQs from "./pages/FAQ/FAQs.jsx";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#5D9BCF',
+    },
+    secondary: {
+      main: '#003366',
+    },
+  },
+  typography: {
+    fontFamily: '"Poppins", sans-serif',
+  },
+});
+
+
+    
 
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <Router>
       <Routes>
         {/* Public Routes */}
@@ -85,6 +104,7 @@ function App() {
         />
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 }
 

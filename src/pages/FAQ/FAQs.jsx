@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Header3 from "../../components/Header3/Header3";
 import Footer2 from "../../components/Footer2/Footer2";
+import { Helmet } from "react-helmet";
+
 
 import {
   Container,
@@ -97,6 +99,36 @@ const FAQPage = () => {
   });
 
   return <Container maxWidth="false" sx={{ background: "linear-gradient(to right, #1a032a, #003366)", py: 0 }}>
+      <Helmet>
+    <title>SwipeScout FAQs | Answers to Common Questions</title>
+    <meta name="description" content="Find answers to frequently asked questions about SwipeScout's video resume platform, job matching, and employer solutions." />
+    <meta name="keywords" content="SwipeScout FAQ, video resume questions, job matching help, employer solutions, recruitment platform support" />
+    <meta property="og:title" content="SwipeScout FAQs | Get Help With Our Platform" />
+    <meta property="og:description" content="Answers to common questions about using SwipeScout for job seekers and employers." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.swipescout.xyz/faq" />
+    <link rel="canonical" href="https://www.swipescout.xyz/faq" />
+    
+    <script type="application/ld+json">
+      {`
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            ${faqData.map(faq => `
+            {
+              "@type": "Question",
+              "name": "${faq.question}",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "${faq.answer.replace(/"/g, '\\"')}"
+              }
+            }`).join(',')}
+          ]
+        }
+      `}
+    </script>
+  </Helmet>
       <Header3 />
       <Container maxWidth="md" sx={{ py: 6, bgcolor: "#1a365d", color: "#ffffff", borderRadius: 2, boxShadow: 3 }}>
         <Box textAlign="center" mb={6}>
