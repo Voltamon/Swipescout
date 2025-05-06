@@ -16,12 +16,14 @@ import HeroSection from "../../components/HeroSection/HeroSection";
 import Feature from "../../components/Feature/Feature";
 import phoneImage from "../../assets/phone.png";
 import { LuArrowLeftRight } from "react-icons/lu";
+import { Helmet } from "react-helmet";
+
 import FAQAccordion from "../../components/FAQAccordion/FAQAccordion";
 import Footer2 from "../../components/Footer2/Footer2";
 
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: '100%',
-  backgroundColor:'rgb(216, 228, 255)',
+  backgroundColor:'rgb(216, 230, 242)',
   borderRadius: '16px',
   boxShadow: '0 4px 20px rgba(93, 155, 207, 0.15)',
   transition: 'all 0.3s ease',
@@ -67,7 +69,17 @@ const LandingPage = () => {
     }
   ];
 
-  return (
+  return (<>
+  <Helmet>
+        <title>SwipeScout | Modern Job Matching Platform with Video Resumes</title>
+        <meta name="description" content="SwipeScout revolutionizes job searching with video resumes and swipe-based matching. Connect with employers or candidates in a modern, engaging way." />
+        <meta name="keywords" content="job search, video resumes, recruitment, hiring platform, career matching" />
+        <meta property="og:title" content="SwipeScout | Modern Job Matching Platform" />
+        <meta property="og:description" content="Find your dream job or perfect candidate with SwipeScout's innovative video resume and swipe matching system." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.swipescout.xyz" />
+        <link rel="canonical" href="https://www.swipescout.xyz" />
+      </Helmet>
     <Box sx={{ 
       background: "linear-gradient(to right, #1a032a, #003366)",
       minHeight: "100vh",
@@ -84,7 +96,7 @@ const LandingPage = () => {
       }}>
         <Typography variant="h3" component="h2" sx={{ 
           textAlign: "center", 
-          mb: 6,
+          mb: 4,
           fontWeight: 700,
           color: "#5D9BCF",
           px: { xs: 2, sm: 0 } // Added horizontal padding on mobile
@@ -218,7 +230,7 @@ const LandingPage = () => {
       
       <Footer2 />
     </Box>
-  );
+    </>);
 };
 
 export default LandingPage;

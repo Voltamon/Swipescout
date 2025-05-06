@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Button, useMediaQuery, useTheme } from "@mui/material";
 import phoneImage from "../../assets/phone.png";
 
+
 const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -31,8 +32,9 @@ const HeroSection = () => {
         }}
       >
         <Typography
-          variant={isMobile ? "h3" : "h2"}
-          component="h1"
+          variant={isMobile ? "h4" : "h3"}
+          align="center"
+          component="h2"
           sx={{
             fontWeight: 'bold',
             mb: 2,
