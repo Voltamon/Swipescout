@@ -23,12 +23,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { useAuth } from '../hooks/useAuth';
-// import { 
-//   getConversations, 
-//   getMessages, 
-//   sendMessage, 
-//   markAsRead 
-// } from '../services/chatService';
+import { 
+  getConversations, 
+  getMessages, 
+  sendMessage, 
+  markAsRead 
+} from '../services/chatService';
 import { initializeSocket, disconnectSocket } from '../services/socketService';
 
 const ChatContainer = styled(Box)(({ theme }) => ({

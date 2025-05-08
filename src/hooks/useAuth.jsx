@@ -1,17 +1,8 @@
 import { useState, useEffect } from "react";
 
-// Define the User type
-type User = {
-  id: string,
-  name: string,
-  email: string
-  // Add other user fields
-};
-
-const useAuth = () => {
-  // Corrected the useState hook type definition
-  const [user, setUser] = (useState < User) | (null > null);
-  const [loading, setLoading] = useState < boolean > true;
+export const useAuth = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -21,7 +12,7 @@ const useAuth = () => {
           setLoading(false);
           return;
         }
-
+ 
         const response = await fetch("/api/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`
@@ -42,7 +33,7 @@ const useAuth = () => {
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email, password) => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -68,4 +59,5 @@ const useAuth = () => {
   return { user, loading, login, logout };
 };
 
-export default useAuth;
+// Only one default export per file
+ 
