@@ -1,36 +1,43 @@
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
 
-// src/services/socketService.js
-import { io } from "socket.io-client";
+import io from 'socket.io-client';
 
-let socket = null;
+let socketInstance = null;
 
-dotenv.config();
-
-export const initializeSocket = userId => {
-  if (!socket) {
-    socket = io(process.env.REACT_APP_SOCKET_URL || "http://localhost:3001", {
+export const initializeSocket = (userId) => {
+  if (!socketInstance) {
+    socketInstance = io(import.meta.env.REACT_APP_SOCKET_URL, {
       query: { userId },
-      transports: ["websocket"],
-      withCredentials: true
+      transports: ['websocket'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
+    socketInstance.on('connect', () => {
+      console.log('Connected to socket server');
     });
 
-    socket.on("disconnect", () => {
-      console.log("Socket disconnected");
+    socketInstance.on('disconnect', () => {
+      console.log('Disconnected from socket server');
+    });
+
+    socketInstance.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
     });
   }
-
-  return socket;
+  
+  return socketInstance;
 };
 
-export const disconnectSocket = socketInstance => {
-  if (socketInstance && socketInstance.connected) {
-    socketInstance.disconnect();
+export const disconnectSocket = (socket) => {
+  if (socket) {
+    socket.disconnect();
+    socketInstance = null;
+    console.log('Socket disconnected');
   }
-  socket = null;
+};
+
+export const getSocket = () => {
+  return socketInstance;
 };
