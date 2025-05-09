@@ -48,6 +48,7 @@ import CompanyVideos from './pages/CompanyVideos';
 import Settings from './pages/Settings';
 import JobSeekerDashboard_ from './pages/JobSeekerDashboard_';
 import EmployerDashboard_ from './pages/EmployerDashboard_';
+import LoginPage from "./pages/LoginPage";
 
 // Components
 import Layout from './components/Layout';
@@ -69,6 +70,7 @@ function App() {
       {/* Public Routes */}
       <Route path="/" element={<LandingPageNoura />} />
       <Route path="/view-login" element={<TempLoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/FAQs" element={<FAQs />} />
 
