@@ -1,6 +1,11 @@
+// import React from "react";
+// import { HashRouter as Router, Routes, Route } from "react-router-dom";
+// import { Navigate } from 'react-router-dom';
+// import { Box, CircularProgress } from '@mui/material';
+// import { useAuth } from './hooks/useAuth';
+
 import React from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import { Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { useAuth } from './hooks/useAuth';
 
