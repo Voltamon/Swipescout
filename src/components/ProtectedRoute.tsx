@@ -1,33 +1,39 @@
 // src/components/ProtectedRoute.tsx
-import { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { User } from '../types';
+import { ReactNode, useEffect } from 'react';
+import { useLocation, Navigate, Outlet } from 'react-router-dom';
+
+interface User {
+  uid: string;
+  email: string;
+  emailVerified: boolean;
+  role?: string;
+}
 
 interface ProtectedRouteProps {
   user: User | null;
+  role?: string[];
+  loading?: boolean;
   children?: ReactNode;
-  roles?: string[];
 }
 
-const ProtectedRoute = ({ user, children, roles }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ user, role, loading = false, children }: ProtectedRouteProps) => {
   const location = useLocation();
+
+  if (loading) return <div>Loading...</div>;
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (roles && !roles.includes(user.role)) {
+  if (role && !role.includes(user.role || '')) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <>{children}</>;
+  return      <> {children || (
+    <Layout>
+      <Outlet />
+    </Layout>
+  )} </>;
 };
 
 export default ProtectedRoute;
-
-// Usage examples:
-// Basic protection (any authenticated user)
-// <Route element={<ProtectedRoute user={user} />}>...</Route>
-
-// Role-specific protection
-// <Route element={<ProtectedRoute user={user} roles={['employer']} />}>...</Route>

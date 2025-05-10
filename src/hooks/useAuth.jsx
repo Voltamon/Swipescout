@@ -1,44 +1,64 @@
 import { useState, useEffect } from "react";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
+import { app } from "../firebase-config.js";
 
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-const auth = getAuth();
 
+const auth = getAuth(app);
+
+const verifyToken = async (token) => {
+  try {
+    // GET requests shouldn't have a body - use URL parameters instead
+    const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error("Token verification failed:", err);
+    throw err;
+  }
+};
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-          setLoading(false);
-          return;
-        }
- 
-        const response = await fetch(apiUrl+"/api/verify-token?verifyOnly=true", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.user);
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-      } finally {
+  
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
         setLoading(false);
+        return;
       }
-    };
 
+      const data = await verifyToken(token);
+      setUser(data.user);
+      setError(null);
+    } catch (err) {
+      console.error("Auth check failed:", err);
+      setError(err.message);
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     checkAuth();
   }, []);
-
-const login = async (email, password) => {
+  
+const loginByEmailAndPassword = async (email, password) => {
   try {
     const response = await fetch(apiUrl+"/api/auth/signin", {
       method: "POST",
@@ -46,6 +66,7 @@ const login = async (email, password) => {
       body: JSON.stringify({ email, password })
     });
 
+       
     // Check if response has content before parsing
     const text = await response.text();
     const data = text ? JSON.parse(text) : {};
@@ -58,10 +79,14 @@ const login = async (email, password) => {
         status: response.status
       };
     }
+    console.log("Login response:", data.token);
 
-    const userCredential = await signInWithCustomToken(auth, data.accessToken);
+    const userCredential = await signInWithCustomToken(auth, data.token);
+    const user = userCredential.user;
+      
+    // Get the ID token
     const idToken = await user.getIdToken();
-    
+    console.log("ID Token:", idToken);
     localStorage.setItem("accessToken", idToken);
 
     setUser(data.user);
@@ -85,7 +110,7 @@ const login = async (email, password) => {
     setUser(null);
   };
 
-  return { user, loading, login, logout };
+  return { user, loading, loginByEmailAndPassword, logout };
 };
 
 // Only one default export per file

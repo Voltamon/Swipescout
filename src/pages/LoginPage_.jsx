@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom"; // If using React Router
 
+
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate(); // For navigation after login
