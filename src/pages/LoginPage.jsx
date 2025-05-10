@@ -27,15 +27,30 @@ import {
 import { LinkedIn } from "react-linkedin-login-oauth2";
 import {
   getAuth,
-  signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { app } from "../firebase-config.js";
+import { app } from "../firebase-config.js"; 
+import { useAuth } from "../hooks/useAuth.jsx";
 // import Header from "../components/Header/Header.jsx";
 // import Footer from "../components/Footer.jsx";
 
 const LoginPage = () => {
+    const { loginByEmailAndPassword } = useAuth();
+    const [formData, setFormData] = useState({
+      email: "",
+      password: ""
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+  
+    const handleChange = e => {
+      const { name, value } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    };
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -48,36 +63,80 @@ const LoginPage = () => {
   const auth = getAuth(app);
   const navigate = useNavigate();
 
+//   const handleSubmit = async e => {
+//   e.preventDefault();
+//   setError(null);
+//   setIsSubmitting(true);
+
+//   // Basic validation
+//   if (!formData.email || !formData.password) {
+//     setError("Please fill in all fields");
+//     setIsSubmitting(false);
+//     return;
+//   }
+
+//   const result = await login(formData.email, formData.password);
+
+//   if (result.error) {
+//     setError(result.message || "Login failed. Please try again.");
+//   } else {
+//     // Redirect on success
+//     navigate("/post-job"); // or use navigate if using React Router
+//   }
+
+//   setIsSubmitting(false);
+// };
   // Email/Password Sign-In
   const handleEmailSignIn = async e => {
     e.preventDefault();
     setLoading({ ...loading, email: true });
     setError(null);
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const idToken = await userCredential.user.getIdToken();
+      // Basic validation
+  if (!formData.email || !formData.password) {
+    setError("Please fill in all fields");
+    setIsSubmitting(false);
+    return;
+  }
 
-      const response = await fetch("http://localhost:5000/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const result = await loginByEmailAndPassword(formData.email, formData.password);
 
-      if (!response.ok) throw new Error(await response.text());
-
-      const data = await response.json();
-      console.log("Sign-in successful:", data);
-      navigate('/dashboard'); // Redirect to dashboard or another page
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading({ ...loading, email: false });
+    if (result.error) {
+      setError(result.message || "Login failed. Please try again.");
+    } else {
+      // Redirect on success
+      navigate("/settings"); // or use navigate if using React Router
+      // console.log("Login successful:", result);
     }
+  
+    setIsSubmitting(false);
+    setLoading({ ...loading, email: false });
+
+
+    // try {
+    //   const userCredential = await signInWithEmailAndPassword(
+    //     auth,
+    //     email,
+    //     password
+    //   );
+    //   const idToken = await userCredential.user.getIdToken();
+
+    //   const response = await fetch("http://localhost:5000/api/auth/signin", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ email, password }),
+    //   });
+
+    //   if (!response.ok) throw new Error(await response.text());
+
+    //   const data = await response.json();
+    //   console.log("Sign-in successful:", data);
+    //   navigate('/dashboard'); // Redirect to dashboard or another page
+    // } catch (err) {
+    //   setError(err.message);
+    // } finally {
+    //   setLoading({ ...loading, email: false });
+    // }
   };
 
   // Google Sign-In
@@ -215,8 +274,9 @@ const LoginPage = () => {
             fullWidth
             margin="normal"
             variant="outlined"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            value={formData.email}
+            name="email"
+            onChange={handleChange}
             required
           />
           <TextField
@@ -225,8 +285,9 @@ const LoginPage = () => {
             fullWidth
             margin="normal"
             variant="outlined"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
+            value={formData.password}
+            name="password"
+            onChange={handleChange}
             required
             InputProps={{
               endAdornment: (

@@ -49,6 +49,7 @@ import Settings from './pages/Settings';
 import JobSeekerDashboard_ from './pages/JobSeekerDashboard_';
 import EmployerDashboard_ from './pages/EmployerDashboard_';
 import LoginPage from "./pages/LoginPage";
+import UnauthorizedPage from "./pages/Unauthorized";
 
 // Components
 import Layout from './components/Layout';
@@ -73,10 +74,14 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/FAQs" element={<FAQs />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
       {/* Private Routes */}     
-      <Route element={<ProtectedRoute user={user} />}>
-        <Route element={<Layout />}>
+
+      <Route element={<ProtectedRoute user={user} loading={loading} />}>
+          <Route path="/settings" element={<Settings />} />
+      </Route>
+      <Route element={<Layout />}> 
           <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} />
           
           {/* Common Routes */}
@@ -85,7 +90,6 @@ function App() {
           <Route path="/chat/:conversationId" element={<Chat />} />
           <Route path="/profile" element={<Profile_ />} />
           <Route path="/profile/:userId" element={<Profile_ />} />
-          <Route path="/settings" element={<Settings />} />
           
           {/* Job Seeker Routes */}
           <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} />
@@ -119,7 +123,7 @@ function App() {
           <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
           <Route path="/Settings-page" element={<SettingsPage />} />
         </Route>
-      </Route>
+      
     </Routes>
   );
 }
