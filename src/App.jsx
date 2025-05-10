@@ -30,7 +30,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import JobDetailsPage from "./pages/JobDetailsPage";
 import PostJobPage from "./pages/PostJobPage";
-import AuthPage from "./pages/authPage";
+
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
 import VideoFeed from "./pages/VideoFeed";
@@ -110,7 +110,7 @@ function App() {
           <Route path="/search" element={<JobSearchPage />} />
           <Route path="/job/:id" element={<JobDetailsPage />} />
           <Route path="/post-job" element={<PostJobPage />} />
-          <Route path="/auth-page" element={<AuthPage />} />
+ 
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/feed-page" element={<FeedPage />} />
           <Route path="/video-feed" element={<VideoFeed />} />
