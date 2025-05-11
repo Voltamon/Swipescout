@@ -79,14 +79,14 @@ function App() {
       {/* Private Routes */}     
 
       <Route element={<ProtectedRoute user={user} loading={loading} />}>
-          <Route path="/settings" element={<Settings />} />
-      </Route>
-      <Route element={<Layout />}> 
+         
+      
           <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} />
           
           {/* Common Routes */}
           <Route path="/feed" element={<VideoFeed_ />} />
-          <Route path="/chat" element={<Chat />} />
+         <Route path="/chat" element={<Chat />} />
+         <Route path="/settings" element={<Settings />} />
           <Route path="/chat/:conversationId" element={<Chat />} />
           <Route path="/profile" element={<Profile_ />} />
           <Route path="/profile/:userId" element={<Profile_ />} />
@@ -123,7 +123,6 @@ function App() {
           <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
           <Route path="/Settings-page" element={<SettingsPage />} />
         </Route>
-      
     </Routes>
   );
 }

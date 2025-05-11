@@ -21,58 +21,58 @@ const LayoutContent = styled(Box)(({ theme, open, isMobile }) => ({
   },
 }));
 
-const MainContent = styled(Box)(({ theme, open, isMobile }) => ({
-  flex: '1 1 auto',
-  width: '100%',
-  transition: theme.transitions.create('margin', {
+const MainContent = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(3)
+}));
+
+const MainArea = styled(Box)(({ theme, open, isMobile }) => ({
+  flex: 1,
+  transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
+    duration: theme.transitions.duration.leavingScreen
   }),
-  ...(open && !isMobile && {
-    marginRight: 240,
-    transition: theme.transitions.create('margin', {
+  ...(open &&
+  !isMobile && {
+    marginLeft: 240,
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
+      duration: theme.transitions.duration.enteringScreen
+    })
+  })
 }));
 
 const Layout = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [sidebarOpen, setSidebarOpen] = React.useState(!isMobile);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);//!isMobile
 
   const handleSidebarToggle = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   const handleSidebarClose = () => {
-    if (isMobile) {
+    if (1===1) {//isMobile
       setSidebarOpen(false);
     }
   };
 
   React.useEffect(() => {
-    setSidebarOpen(!isMobile);
-  }, [isMobile]);
+                          setSidebarOpen(false); //!isMobile
+                        }, [isMobile]); // check ! isMobile
 
-  return (
-    <LayoutRoot>
+  return <LayoutRoot>
       <CssBaseline />
-      <Header onSidebarToggle={handleSidebarToggle} />
-      <LayoutContent open={sidebarOpen} isMobile={isMobile}>
-        <Sidebar 
-          open={sidebarOpen} 
-          onClose={handleSidebarClose} 
-          variant={isMobile ? 'temporary' : 'persistent'} 
-        />
-        <MainContent open={sidebarOpen} isMobile={isMobile}>
-          <Outlet />
-        </MainContent>
-      </LayoutContent>
+      <MainArea open={sidebarOpen} isMobile={isMobile}>
+        <Header onSidebarToggle={handleSidebarToggle} />
+        <LayoutContent open={sidebarOpen} isMobile={isMobile}>
+          <Sidebar open={sidebarOpen} onClose={handleSidebarClose} variant={isMobile ? "temporary" : "temporary"} /> 
+          <MainContent open={sidebarOpen} isMobile={isMobile}>
+            <Outlet />
+          </MainContent>
+        </LayoutContent>
+      </MainArea>
       {isMobile && <MobileNavigation />}
-    </LayoutRoot>
-  );
+    </LayoutRoot>;
 };
 
 export default Layout;

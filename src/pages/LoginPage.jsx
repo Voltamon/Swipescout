@@ -105,8 +105,8 @@ const LoginPage = () => {
       setError(result.message || "Login failed. Please try again.");
     } else {
       // Redirect on success
-      navigate("/settings"); // or use navigate if using React Router
-      // console.log("Login successful:", result);
+      navigate("/dashboard"); // or use navigate if using React Router
+      console.log("Login successful:", result);
     }
   
     setIsSubmitting(false);
@@ -388,7 +388,7 @@ const LoginPage = () => {
         
         <Divider sx={{ my: 2 }} />  
         <Typography variant="body2" sx={{ mb: 1, padding: 0 }}>
-          © 2023 Swipscout. All rights reserved.
+          © 2025 Swipscout. All rights reserved.
         </Typography>
       </Box>
     </Box>
