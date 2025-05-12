@@ -7,28 +7,39 @@ import Sidebar from "./Sidebar";
 import MobileNavigation from "./MobileNavigation";
 
 const LayoutRoot = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  minHeight: "100vh"
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
 }));
 
 const LayoutContent = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flex: "1 1 auto",
-  width: "100%"
+  display: 'flex',
+  flex: '1 1 auto',
+  width: '100%',
 }));
 
-const SidebarWrapper = styled(Box)(({ isSidebarVisible }) => ({
-  width: isSidebarVisible ? 240 : 0,
+const HeaderWrapper = styled(Box)(({ open, isMobile }) =>({
+  height: 44,
+  position: 'relative',  
+  top: 0,
+  right: 0,
+marginBottom: 8,
+  left : open && !isMobile ? 200 :72 ,
+  width: open && !isMobile ? 'calc(100% - 240px)' : '100%',
+}));
+
+const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
+  width: open ? (isMobile ? 'auto' : 200) : 72,
   flexShrink: 0,
-  overflowX: "hidden" // Prevent potential scrollbar when width is 0
+  overflowX: 'hidden',
+  transition: 'width 0.3s ease-in-out',
 }));
 
-const MainContent = styled(Box)(({ isSidebarVisible }) => ({
+const MainContent = styled(Box)(({ open, isMobile }) => ({
   flexGrow: 1,
-  width: "100%",
-  marginLeft: isSidebarVisible ? 0 : 0, // Adjust if needed
-  transition: "width 0.3s ease-in-out, marginLeft 0.3s ease-in-out"
+  width: '100%',
+  flexBasis: open && !isMobile ? 'calc(100% - 240px)' : '100%',
+  transition: 'flex-basis 0.3s ease-in-out',
 }));
 
 const Layout = () => {
@@ -36,14 +47,10 @@ const Layout = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
 
-  // Define an array of routes where the sidebar should NOT be visible
-  const routesWithoutSidebar = ["/login", "/signup", "/dashboard--"]; // Add your specific routes
-
-  // Determine if the sidebar should be visible based on the current route and screen size
-  const shouldShowSidebar =
-    !isMobile && !routesWithoutSidebar.includes(location.pathname);
+  const routesWithoutSidebar = ["/login", "/signup", "/dashboard--"];
+  const shouldShowSidebarBase = !routesWithoutSidebar.includes(location.pathname);
   const [sidebarOpen, setSidebarOpen] = React.useState(
-    !isMobile && shouldShowSidebar
+    !isMobile && shouldShowSidebarBase
   );
 
   const handleSidebarToggle = () => {
@@ -58,29 +65,29 @@ const Layout = () => {
 
   React.useEffect(
     () => {
-      setSidebarOpen(!isMobile && shouldShowSidebar);
+      setSidebarOpen(!isMobile && shouldShowSidebarBase);
     },
-    [isMobile, location.pathname, shouldShowSidebar]
+    [isMobile, location.pathname, shouldShowSidebarBase]
   );
 
   return (
     <LayoutRoot>
       <CssBaseline />
-       {/* <Header
-        onSidebarToggle={handleSidebarToggle}
-        isSidebarVisible={shouldShowSidebar}
-      />{" "}
-      {/* Pass visibility to Header if needed */}
+      <HeaderWrapper open={sidebarOpen} isMobile={isMobile} >
+  <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={shouldShowSidebarBase} />
+</HeaderWrapper>
       <LayoutContent>
-        {shouldShowSidebar &&
-          <SidebarWrapper isSidebarVisible={shouldShowSidebar}>
+        {shouldShowSidebarBase && (
+          <SidebarContainer open={sidebarOpen} isMobile={isMobile}>
             <Sidebar
               open={sidebarOpen}
               onClose={handleSidebarClose}
-              variant="persistent"
+              variant={isMobile ? 'temporary' : 'persistent'}
+              isMobile={isMobile}
             />
-          </SidebarWrapper>}
-        <MainContent isSidebarVisible={shouldShowSidebar}>
+          </SidebarContainer>
+        )}
+        <MainContent open={sidebarOpen} isMobile={isMobile}>
           <Outlet />
         </MainContent>
       </LayoutContent>

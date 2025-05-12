@@ -27,27 +27,7 @@ import {
 function JobSeekerDashboard() {
   return (
     <Box >
-      {/* Header */}
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Swipscout
-          </Typography>
-          <IconButton color="inherit">
-            <Home />
-          </IconButton>
-          <IconButton color="inherit">
-            <Work />
-          </IconButton>
-          <IconButton color="inherit">
-            <Person />
-          </IconButton>
-          <IconButton color="inherit">
-            <ExitToApp />
-          </IconButton>
-          <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
-        </Toolbar>
-      </AppBar>
+
 
       {/* Dashboard Content */}
       <Container sx={{ marginTop: 4 }} >
