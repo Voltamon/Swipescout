@@ -72,7 +72,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Avatar src={user?.photoUrl} sx={{ width: 40, height: 40, mr: open ? 2 : 0 }}>
+          <Avatar src={user?.photoUrl} sx={{ width: 50, height: 50, mr: open ? 2 : 0 }}>
             {user?.name?.charAt(0)}
           </Avatar>
           {open && (

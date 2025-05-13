@@ -149,20 +149,7 @@ function JobSeekerDashboard() {
         </Card>
       </Container>
 
-      {/* Footer */}
-      <Box
-        sx={{
-          backgroundColor: "#333",
-          color: "white",
-          padding: 4,
-          marginTop: 4,
-          textAlign: "center"
-        }}
-      >
-        <Typography variant="body2">
-          © 2023 Swipscout. All rights reserved.
-        </Typography>
-      </Box>
+
     </Box>
   );
 }

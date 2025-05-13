@@ -75,6 +75,7 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/FAQs" element={<FAQs />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          <Route path="/register-form" element={<RegisterForm />} />
 
       {/* Private Routes */}     
 
@@ -98,8 +99,7 @@ function App() {
           {/* Employer Routes */}
           <Route path="/employer/dashboard" element={<EmployerDashboard_ />} />
           <Route path="/company-videos" element={<CompanyVideos />} />
-          <Route path="/register-form" element={<RegisterForm />} />
-          <Route path="/login-form" element={<LoginForm />} />
+          {/* <Route path="/login-form" element={<LoginForm />} /> */}
           <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
           <Route path="/job-search" element={<JobSearchPage />} />
           <Route path="/employer-dashboard" element={<EmployerDashboard />} />

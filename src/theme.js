@@ -57,6 +57,24 @@ const theme2 = createTheme({
     secondary: {
       main: '#dc004e',
     },
+    footer: {
+      main: '#fffff',
+    },
+  },
+  components: {
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          '&.Mui-active': {
+            backgroundColor: 'rgb(201, 226, 250)', // Or any color you prefer, or 'transparent'
+          },
+          '&.Mui-focusVisible': {
+            outline: '2px solid #1976d2', // Example: keep a blue focus outline
+            backgroundColor: 'transparent', // Remove background on focus
+          },
+        },
+      },
+    },
   },
 });
 
