@@ -5,6 +5,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import MobileNavigation from "./MobileNavigation";
+import Footer from "./Footer";
 
 const LayoutRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -24,12 +25,23 @@ const HeaderWrapper = styled(Box)(({ open, isMobile }) => ({
   top: 0,
   right: 0,
   marginBottom: 8,
-  left: open && !isMobile ? 200 : 72,
-  width: open && !isMobile ? "calc(100% - 200px)" : "calc(100% - 72px)"
+  left: open && !isMobile ? 200 : !isMobile ? 72 : 0,
+  width: open && !isMobile ? "calc(100% - 200px)" : !isMobile ? "calc(100% - 72px)" : "100%",
+}));
+
+
+const FooterWrapper = styled(Box)(({ open, isMobile }) => ({
+  height: 44,
+  position: "relative",
+  top: 10,
+  right: 0,
+  left: open && !isMobile ? 200 : !isMobile ? 72 : 0,
+  marginBottom: 30 ,
+  width: open && !isMobile ? "calc(100% - 200px)" : !isMobile ? "calc(100% - 72px)" : "100%",
 }));
 
 const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
-  width: open ? (isMobile ? 'auto' : 200) : 72,
+  width: open ? (isMobile ? 0 : 200) : (isMobile ? 0 : 72), 
   flexShrink: 0,
   overflowX: 'hidden',
   transition: 'width 0.3s ease-in-out',
@@ -38,7 +50,7 @@ const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
 const MainContent = styled(Box)(({ open, isMobile }) => ({
   flexGrow: 1,
   width: '100%',
-  flexBasis: open && !isMobile ? 'calc(100% - 200px)' : 'calc(100% - 72px)',
+  flexBasis: open && !isMobile ? 'calc(100% - 200px)' : !isMobile ? 'calc(100% - 72px)' : '100%' , 
   transition: 'flex-basis 0.3s ease-in-out',
 }));
 
@@ -47,7 +59,7 @@ const Layout = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
 
-  const routesWithoutSidebar = ["/login", "/signup", "/dashboard--"];
+  const routesWithoutSidebar = ["/login","/login-form", "/signup", "/dashboard--"];
   const shouldShowSidebarBase = !routesWithoutSidebar.includes(location.pathname);
   const [sidebarOpen, setSidebarOpen] = React.useState(
     !isMobile && shouldShowSidebarBase
@@ -90,7 +102,10 @@ const Layout = () => {
         <MainContent open={sidebarOpen} isMobile={isMobile}>
           <Outlet />
         </MainContent>
-      </LayoutContent>
+       
+      </LayoutContent> 
+      <FooterWrapper open={sidebarOpen} isMobile={isMobile} >
+      {!isMobile && shouldShowSidebarBase  && <Footer></Footer>}</FooterWrapper>
       {isMobile && <MobileNavigation />}
     </LayoutRoot>
   );

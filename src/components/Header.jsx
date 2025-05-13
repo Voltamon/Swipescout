@@ -21,8 +21,8 @@ import {
 } from "@mui/icons-material";
 
  {/* //Header */}
-const Header = ({ onSidebarToggle }) => {
-  return (<>
+const Header = ({ onSidebarToggle , isSidebarVisible }) => {
+  return (<> {isSidebarVisible && ( 
 <AppBar position="static" 
       
       color="default"
@@ -59,7 +59,7 @@ const Header = ({ onSidebarToggle }) => {
                 </IconButton>
                 <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
               </Toolbar>
-            </AppBar> 
+            </AppBar> )}
 </>
 
 

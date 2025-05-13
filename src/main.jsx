@@ -6,9 +6,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './context/AuthContext';
 import App from './App';
 import './index.css';
+import theme2 from './theme.js'; // Assuming you have a theme.js file
 
 // Create theme (keep your existing theme config)
-const theme = createTheme({ /* ... */ });
+const theme = createTheme(theme2);
 
 // Get root element
 const container = document.getElementById('root');
