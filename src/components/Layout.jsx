@@ -18,14 +18,14 @@ const LayoutContent = styled(Box)(({ theme }) => ({
   width: '100%',
 }));
 
-const HeaderWrapper = styled(Box)(({ open, isMobile }) =>({
+const HeaderWrapper = styled(Box)(({ open, isMobile }) => ({
   height: 44,
-  position: 'relative',  
+  position: "relative",
   top: 0,
   right: 0,
-marginBottom: 8,
-  left : open && !isMobile ? 200 :72 ,
-  width: open && !isMobile ? 'calc(100% - 240px)' : '100%',
+  marginBottom: 8,
+  left: open && !isMobile ? 200 : 72,
+  width: open && !isMobile ? "calc(100% - 200px)" : "calc(100% - 72px)"
 }));
 
 const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
@@ -38,7 +38,7 @@ const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
 const MainContent = styled(Box)(({ open, isMobile }) => ({
   flexGrow: 1,
   width: '100%',
-  flexBasis: open && !isMobile ? 'calc(100% - 240px)' : '100%',
+  flexBasis: open && !isMobile ? 'calc(100% - 200px)' : 'calc(100% - 72px)',
   transition: 'flex-basis 0.3s ease-in-out',
 }));
 
