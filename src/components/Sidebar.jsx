@@ -52,22 +52,22 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
 
   const isActive = (path) => location.pathname.startsWith(path);
 
-  return (
+  return (<>  {(open || !isMobile) && (
     <Drawer
-    variant="permanent" // or "persistent"
-    open={open}
-    sx={{
-      width: open ? expandedWidth : collapsedWidth,
-      flexShrink: 0,
-      '& .MuiDrawer-paper': {
+      variant="permanent" // or "persistent"
+      open={open}
+      sx={{
         width: open ? expandedWidth : collapsedWidth,
-        transition: 'width 0.3s ease-in-out',
-        overflowX: 'hidden',
-        boxSizing: 'border-box',
-        backgroundColor: theme.palette.background.paper,
-      },
-    }}
-  >
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: open ? expandedWidth : collapsedWidth,
+          transition: 'width 0.3s ease-in-out',
+          overflowX: 'hidden',
+          boxSizing: 'border-box',
+          backgroundColor: theme.palette.background.paper,
+        },
+      }}
+    >
   
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
@@ -89,42 +89,42 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
         <List>
           {menuItems.map((item) => (
             <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
-<ListItem
-  button
-  key={item.text}
-  onClick={() => {
-    navigate(item.path);
-    if (variant === 'temporary') onClose();
-  }}
-  sx={{
-    bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
-    justifyContent: open ? 'initial' : 'center',
-    px: open ? 2 : 1,
-  }}
->
-  {(open || !isMobile) && (
-    <ListItemIcon
-      sx={{
-        color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
-        minWidth: open ? 40 : 'auto',
-        justifyContent: 'center',
-      }}
-    >
-      {item.icon}
-    </ListItemIcon>
-  )}
+              <ListItem
+                button
+                key={item.text}
+                onClick={() => {
+                  navigate(item.path);
+                  if (variant === 'temporary') onClose();
+                }}
+                sx={{
+                  bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
+                  justifyContent: open ? 'initial' : 'center',
+                  px: open ? 2 : 1,
+                }}
+              >
+                {(open || !isMobile) && (
+                  <ListItemIcon
+                    sx={{
+                      color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
+                      minWidth: open ? 40 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                )}
 
-  {open && !isMobile && (
-    <ListItemText
-      primary={item.text}
-      sx={{
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      }}
-    />
-  )}
-</ListItem>
+                {open && !isMobile && (
+                  <ListItemText
+                    primary={item.text}
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  />
+                )}
+              </ListItem>
 
             </Tooltip>
           ))}
@@ -135,42 +135,42 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
         <List>
           {secondaryItems.map((item) => (
             <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
-<ListItem
-  button
-  key={item.text}
-  onClick={() => {
-    navigate(item.path);
-    if (variant === 'temporary') onClose();
-  }}
-  sx={{
-    bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
-    justifyContent: open ? 'initial' : 'center',
-    px: open ? 2 : 1,
-  }}
->
-  {(open || !isMobile) && (
-    <ListItemIcon
-      sx={{
-        color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
-        minWidth: open ? 40 : 'auto',
-        justifyContent: 'center',
-      }}
-    >
-      {item.icon}
-    </ListItemIcon>
-  )}
+              <ListItem
+                button
+                key={item.text}
+                onClick={() => {
+                  navigate(item.path);
+                  if (variant === 'temporary') onClose();
+                }}
+                sx={{
+                  bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
+                  justifyContent: open ? 'initial' : 'center',
+                  px: open ? 2 : 1,
+                }}
+              >
+                {(open || !isMobile) && (
+                  <ListItemIcon
+                    sx={{
+                      color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
+                      minWidth: open ? 40 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                )}
 
-  {open && !isMobile && (
-    <ListItemText
-      primary={item.text}
-      sx={{
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      }}
-    />
-  )}
-</ListItem>
+                {open && !isMobile && (
+                  <ListItemText
+                    primary={item.text}
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  />
+                )}
+              </ListItem>
 
             </Tooltip>
           ))}
@@ -193,7 +193,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
           </Tooltip>
         </List>
       </Box>
-    </Drawer>
+    </Drawer> )} </>
   );
 };
 
