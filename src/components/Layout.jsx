@@ -59,7 +59,7 @@ const Layout = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
 
-  const routesWithoutSidebar = ["/login","/login-form", "/signup", "/video-feed"];
+  const routesWithoutSidebar = ["/login","/login-form", "/signup", "/video-feed" ,"/Employer-explore-sidebar"];
   const shouldShowSidebarBase = !routesWithoutSidebar.includes(location.pathname);
   const [sidebarOpen, setSidebarOpen] = React.useState(
     !isMobile && shouldShowSidebarBase
