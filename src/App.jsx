@@ -122,6 +122,8 @@ function App() {
           <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
           <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
           <Route path="/Settings-page" element={<SettingsPage />} />
+          <Route path="/MyApplications-page" element={<MyApplications />} />
+          <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
         </Route>
     </Routes>
   );
