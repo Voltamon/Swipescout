@@ -75,7 +75,7 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/FAQs" element={<FAQs />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-          <Route path="/register-form" element={<RegisterForm />} />
+      <Route path="/register-form" element={<RegisterForm />} />
 
       {/* Private Routes */}     
 
