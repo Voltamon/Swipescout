@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -28,7 +29,13 @@ import {
   AlertCircle as AlertCircleIcon,
 } from "lucide-react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { app } from "../../firebase-config.js";
 import { useAuth } from "../../hooks/useAuth.jsx";
+
+const API_BASE_URL = "http://localhost:5000";
+
+
 
 // Styled components
 const RegisterContainer = styled(Box)(({ theme }) => ({
@@ -80,6 +87,14 @@ const InputField = styled(TextField)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'light' ? '#fff' : theme.palette.grey[900],
   },
 }));
+
+// LinkedIn configuration
+const LINKEDIN_CLIENT_ID = '78aceunh672c3c';
+const LINKEDIN_REDIRECT_URI = encodeURIComponent('http://localhost:5173/dashboard');
+const LINKEDIN_SCOPE = encodeURIComponent('openid profile email');
+const LINKEDIN_STATE = 'random_state_string'; // Should be random and validated on callback
+
+const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${LINKEDIN_REDIRECT_URI}&scope=${LINKEDIN_SCOPE}&state=${LINKEDIN_STATE}`;
 
 const RegisterButton = styled(Button)(({ theme }) => ({
   width: '100%',
@@ -137,13 +152,8 @@ const LoginLink = styled(Typography)(({ theme }) => ({
 }));
 
 const RegisterForm = () => {
-  const {
-    signupWithEmail,
-    authenticateWithGoogle,
-    authenticateWithLinkedIn,
-    loading: authLoading,
-    error: authError,
-  } = useAuth();
+
+  const { loginByEmailAndPassword } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -162,6 +172,7 @@ const RegisterForm = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentProvider, setCurrentProvider] = useState(null);
   const navigate = useNavigate();
+  const auth = getAuth(app);
 
   // Menu handlers
   const handleMenuOpen = (event, provider) => {
@@ -211,20 +222,31 @@ const RegisterForm = () => {
       return;
     }
 
-    const result = await signupWithEmail(
-      formData.email,
-      formData.password,
-      formData.fullName,
-      formData.role
-    );
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          displayName: formData.fullName,
+          role: formData.role,
+        }),
+      });
 
-    if (result.error) {
-      setError(result.message);
-    } else {
-      navigate("/dashboard");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to sign up");
+      }
+
+      navigate("/LoginForm");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading({ normal: false, google: false, linkedin: false });
     }
-
-    setLoading({ normal: false, google: false, linkedin: false });
   };
 
   const handleGoogleSignUp = async (role) => {
@@ -233,31 +255,91 @@ const RegisterForm = () => {
     setLoading({ normal: false, google: true, linkedin: false });
     setError("");
 
-    const result = await authenticateWithGoogle(role);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
 
-    if (result.error) {
-      setError(result.message);
-    } else {
-      navigate("/dashboard");
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup/google`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: role,
+          idToken: idToken,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Google sign-up failed");
+      }
+      navigate("/LoginForm");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading({ normal: false, google: false, linkedin: false });
     }
-
-    setLoading({ normal: false, google: false, linkedin: false });
   };
 
   const handleLinkedInSignUp = (role) => {
     if (!role) return;
     
-    setLoading({ normal: false, google: false, linkedin: true });
-    setError("");
+    // Store the selected role in session storage to use after LinkedIn redirect
+    sessionStorage.setItem('linkedin_signup_role', role);
     
-    authenticateWithLinkedIn(role);
+    // Redirect to LinkedIn auth page in the same window (not popup)
+    window.location.href = linkedInAuthUrl;
   };
 
   useEffect(() => {
-    if (authError) {
-      setError(authError);
+    // Handle LinkedIn callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    const error = urlParams.get('error');
+
+    if (error) {
+      setError(`LinkedIn authentication failed: ${error}`);
+      return;
     }
-  }, [authError]);
+
+    if (code && state === LINKEDIN_STATE) {
+      const role = sessionStorage.getItem('linkedin_signup_role');
+      sessionStorage.removeItem('linkedin_signup_role');
+      
+      setLoading({ normal: false, google: false, linkedin: true });
+      
+      // Send the code to your backend to exchange for access token
+      fetch(`${API_BASE_URL}/api/auth/signup/linkedin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          redirectUri: 'http://localhost:5173/linkedin-callback',
+          role,
+        }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => { throw new Error(err.message); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        navigate("/LoginForm");
+      })
+      .catch(err => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading({ normal: false, google: false, linkedin: false });
+      });
+    }
+  }, [navigate]);
 
   return (
     <RegisterContainer>
@@ -350,7 +432,7 @@ const RegisterForm = () => {
             </Button>
           </Stack>
 
-          <RegisterButton type="submit" disabled={loading.normal || authLoading}>
+          <RegisterButton type="submit" disabled={loading.normal}>
             {loading.normal ? (
               <>
                 <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -371,7 +453,7 @@ const RegisterForm = () => {
           <Box>
             <GoogleSignUpButton
               onClick={(e) => handleMenuOpen(e, 'google')}
-              disabled={loading.google || authLoading}
+              disabled={loading.google}
               startIcon={<MailIcon />}
             >
               {loading.google ? (
@@ -386,7 +468,7 @@ const RegisterForm = () => {
           <Box>
             <LinkedInSignUpButton
               onClick={(e) => handleMenuOpen(e, 'linkedin')}
-              disabled={loading.linkedin || authLoading}
+              disabled={loading.linkedin}
               startIcon={<LinkedinIcon />}
             >
               {loading.linkedin ? (

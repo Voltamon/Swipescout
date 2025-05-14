@@ -30,6 +30,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { app } from "../firebase-config.js";
+
 import { useAuth } from "../hooks/useAuth.jsx";
 
 const LoginContainer = styled(Box)(({ theme }) => ({
@@ -133,10 +134,11 @@ const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
 }));
 
 const LinkedInSignInButton = styled(SocialButton)(({ theme }) => ({
-  backgroundColor: '#0077b5', // LinkedIn blue
+  backgroundColor: 'rgb(255, 255, 255)', // LinkedIn blue
   color: 'white',
+  outline: '2px solid #1976d2',
   '&:hover': {
-    backgroundColor: '#0056b3',
+    backgroundColor: 'rgb(183, 215, 248)',
   },
 }));
 
@@ -147,8 +149,25 @@ const SignupLink = styled(Typography)(({ theme }) => ({
   cursor: 'pointer', // Added cursor for better UX with navigate
 }));
 
+
+
+// LinkedIn configuration
+const LINKEDIN_CLIENT_ID = '78aceunh672c3c';
+const LINKEDIN_REDIRECT_URI = encodeURIComponent('http://localhost:5173/dashboard');
+const LINKEDIN_SCOPE = encodeURIComponent('openid profile email');
+const LINKEDIN_STATE = 'random_state_string';
+
+const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${LINKEDIN_REDIRECT_URI}&scope=${LINKEDIN_SCOPE}&state=${LINKEDIN_STATE}`;
+
+const API_BASE_URL = "http://localhost:5000";
+
+
+
+
 const LoginPage = () => {
-  const { loginByEmailAndPassword } = useAuth();
+  const { loginByEmailAndPassword ,
+    authenticateWithGoogle,
+    authenticateWithLinkedIn,  } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -171,127 +190,208 @@ const LoginPage = () => {
     }));
   };
 
+  const handleGoogleSignIn = async () => {
+    const result = await authenticateWithGoogle();
+  
+    if (result.error) {
+      setError(result.message || "Google sign-in failed");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+  
+  const handleLinkedInLogin = async () => {
+    const result = await authenticateWithLinkedIn();
+  
+    if (result.error) {
+      setError(result.message || "LinkedIn login failed");
+    } else if (!result.pending) {
+      navigate("/dashboard");
+    }
+  };
+  
   const handleEmailSignIn = async e => {
     e.preventDefault();
     setLoading({ ...loading, email: true });
     setError(null);
-
+  
     if (!formData.email || !formData.password) {
       setError("Please fill in all fields");
       setLoading({ ...loading, email: false });
       return;
     }
-
+  
     const result = await loginByEmailAndPassword(formData.email, formData.password);
-
+  
     if (result.error) {
       setError(result.message || "Login failed. Please try again.");
     } else {
       navigate("/dashboard");
-      console.log("Login successful:", result);
     }
-
+  
     setLoading({ ...loading, email: false });
   };
 
-  const handleGoogleSignIn = async () => {
-    setLoading({ ...loading, google: true });
-    setError(null);
+  // const handleEmailSignIn = async e => {
+  //   e.preventDefault();
+  //   setLoading({ ...loading, email: true });
+  //   setError(null);
 
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
-      console.log("Google id token:", idToken);
+  //   if (!formData.email || !formData.password) {
+  //     setError("Please fill in all fields");
+  //     setLoading({ ...loading, email: false });
+  //     return;
+  //   }
 
-      const response = await fetch("http://localhost:5000/api/auth/signin/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      }, console.log("Google sign-in success:", result));
+  //   const result = await loginByEmailAndPassword(formData.email, formData.password);
 
-      if (!response.ok) throw new Error(await response.text());
+  //   if (result.error) {
+  //     setError(result.message || "Login failed. Please try again.");
+  //   } else {
+  //     navigate("/dashboard");
+  //     console.log("Login successful:", result);
+  //   }
 
-      const data = await response.json();
-      console.log("Google sign-in success:", data);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading({ ...loading, google: false });
-    }
-  };
+  //   setLoading({ ...loading, email: false });
+  // };
 
-  const handleLinkedInSuccess = async (response) => {
-    setLoading({ ...loading, linkedin: true });
-    setError(null);
-    console.log("LinkedIn response:", response);
+  // const handleGoogleSignIn = async () => {
+  //   const result = await handleGoogleSignIn();
+  
+  //   if (result.error) {
+  //     setError(result.message || "Google sign-in failed");
+  //   } else {
+  //     navigate("/dashboard");
+  //     console.log("Google sign-in successful:", result.user);
+  //   }
+  // };
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/signin/linkedin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_token: response.id_token }),
-      });
+  // const handleLinkedInSuccess = async (response) => {
+  //   setLoading({ ...loading, linkedin: true });
+  //   setError(null);
+  //   console.log("LinkedIn response:", response);
 
-      if (!res.ok) throw new Error(await res.text());
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/auth/signin/linkedin", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ id_token: response.id_token }),
+  //     });
 
-      const data = await res.json();
-      console.log("LinkedIn sign-in success:", data);
+  //     if (!res.ok) throw new Error(await res.text());
 
-      if (window.opener) {
-        window.opener.postMessage(
-          {
-            type: "LINKEDIN_AUTH_SUCCESS",
-            payload: data
+  //     const data = await res.json();
+  //     console.log("LinkedIn sign-in success:", data);
+
+  //     if (window.opener) {
+  //       window.opener.postMessage(
+  //         {
+  //           type: "LINKEDIN_AUTH_SUCCESS",
+  //           payload: data
+  //         },
+  //         window.location.origin
+  //       );
+  //       window.close();
+  //     } else {
+  //       navigate('/dashboard');
+  //     }
+
+  //   } catch (err) {
+  //     setError(err.message);
+  //     if (window.opener) {
+  //       window.opener.postMessage(
+  //         { type: "LINKEDIN_AUTH_ERROR", error: err.message },
+  //         window.location.origin
+  //       );
+  //       window.close();
+  //     }
+  //   } finally {
+  //     setLoading({ ...loading, linkedin: false });
+  //   }
+  // };
+
+  // const handleLinkedInFailure = (error) => {
+  //   const errorMessage = error.errorMessage || "LinkedIn sign-in failed";
+  //   setError(errorMessage);
+
+  //   if (window.opener) {
+  //     window.opener.postMessage(
+  //       {
+  //         type: "LINKEDIN_AUTH_ERROR",
+  //         error: errorMessage
+  //       },
+  //       window.location.origin
+  //     );
+  //     window.close();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const handleAuthSuccess = (event) => {
+  //     if (event.origin !== window.location.origin) return;
+  //     if (event.data.type === "LINKEDIN_AUTH_SUCCESS") {
+  //       navigate('/dashboard');
+  //     }
+  //   };
+  //   window.addEventListener('message', handleAuthSuccess);
+  //   return () => window.removeEventListener('message', handleAuthSuccess);
+  // }, [navigate]);
+
+    // Handle LinkedIn redirect login
+    // const handleLinkedInLogin = async () => {
+    //   const result = await handleLinkedInLogin();
+    
+    //   if (result.error) {
+    //     setError(result.message || "LinkedIn login failed");
+    //   } else {
+    //     navigate("/dashboard");
+    //     console.log("LinkedIn login successful:", result.user);
+    //   }
+    // };
+    // Handle LinkedIn callback
+    useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+      const error = urlParams.get('error');
+  
+      if (error) {
+        setError(`LinkedIn authentication failed: ${error}`);
+        return;
+      }
+  
+      if (code && state === LINKEDIN_STATE) {
+        setLoading({ ...loading, linkedin: true });
+        
+        fetch(`${API_BASE_URL}/api/auth/signin/linkedin`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          window.location.origin
-        );
-        window.close();
-      } else {
-        navigate('/dashboard');
+          body: JSON.stringify({
+            code,
+            redirectUri: 'http://localhost:5173/dashboard',
+          }),
+        })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.message); });
+          }
+          return response.json();
+        })
+        .then(data => {
+          const redirectPath = sessionStorage.getItem('linkedin_login_redirect') || '/dashboard';
+          sessionStorage.removeItem('linkedin_login_redirect');
+          navigate(redirectPath);
+        })
+        .catch(err => {
+          setError(err.message);
+        })
+        .finally(() => {
+          setLoading({ ...loading, linkedin: false });
+        });
       }
-
-    } catch (err) {
-      setError(err.message);
-      if (window.opener) {
-        window.opener.postMessage(
-          { type: "LINKEDIN_AUTH_ERROR", error: err.message },
-          window.location.origin
-        );
-        window.close();
-      }
-    } finally {
-      setLoading({ ...loading, linkedin: false });
-    }
-  };
-
-  const handleLinkedInFailure = (error) => {
-    const errorMessage = error.errorMessage || "LinkedIn sign-in failed";
-    setError(errorMessage);
-
-    if (window.opener) {
-      window.opener.postMessage(
-        {
-          type: "LINKEDIN_AUTH_ERROR",
-          error: errorMessage
-        },
-        window.location.origin
-      );
-      window.close();
-    }
-  };
-
-  useEffect(() => {
-    const handleAuthSuccess = (event) => {
-      if (event.origin !== window.location.origin) return;
-      if (event.data.type === "LINKEDIN_AUTH_SUCCESS") {
-        navigate('/dashboard');
-      }
-    };
-    window.addEventListener('message', handleAuthSuccess);
-    return () => window.removeEventListener('message', handleAuthSuccess);
-  }, [navigate]);
+    }, [navigate]);
 
   const navigateToRegister = () => {
     navigate("/register-form");
@@ -351,24 +451,21 @@ const LoginPage = () => {
           >
             {loading.google ? <CircularProgress size={24} color="inherit" /> : "Google"}
           </GoogleSignInButton>
-          <LinkedIn
-            clientId="78aceunh672c3c"
-            onSuccess={handleLinkedInSuccess}
-            onError={handleLinkedInFailure}
-            scope="openid profile email"
-            redirectUri="http://localhost:5173/dashboard"
+          <LinkedInSignInButton
+            variant="outlined"
+            onClick={handleLinkedInLogin}
+            disabled={loading.linkedin}
+            startIcon={<LinkedInIcon />}
+            sx={{
+              flex: 1,
+              py: 1.5,
+              borderColor: "#0077B5",
+              color: "#0077B5",
+              "&:hover": { borderColor: "#006097" },
+            }}
           >
-            {({ linkedInLogin }) => (
-              <LinkedInSignInButton
-                variant="contained"
-                onClick={linkedInLogin}
-                disabled={loading.linkedin}
-                startIcon={<LinkedInIcon />}
-              >
-                {loading.linkedin ? <CircularProgress size={24} color="inherit" /> : "LinkedIn"}
-              </LinkedInSignInButton>
-            )}
-          </LinkedIn>
+            {loading.linkedin ? <CircularProgress size={24} /> : "LinkedIn"}
+          </LinkedInSignInButton>
         </Stack>
 
         <SignupLink onClick={navigateToRegister}>
