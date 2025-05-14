@@ -38,6 +38,27 @@ const Navbar = () => {
 
       </nav>
       <hr />
+      <div>
+      <h3>OthPages: </h3>
+      <nav className="navbar">
+        <Link to="/">Landing Page Noura</Link>
+        <Link to="/view-login">Temp Login Page</Link>
+        <Link to="/login">Login Page</Link>
+        <Link to="/about">About Page</Link>
+        <Link to="/FAQs">FAQs Page</Link>
+        <Link to="/unauthorized">Unauthorized Page</Link>
+        <Link to="/feed">Video Feed (New)</Link>
+        <Link to="/chat">Chat</Link>
+        <Link to="/settings">Settings (New)</Link>
+        <Link to="/job-seeker/dashboard">Job Seeker Dashboard (New)</Link>
+        <Link to="/job-videos">Job Videos</Link>
+        <Link to="/employer/dashboard">Employer Dashboard (New)</Link>
+        <Link to="/company-videos">Company Videos</Link>
+        <Link to="/MyApplications-page">My Applications</Link>
+        <Link to="/PagesNavigation">Landing Page (Old)</Link>
+      </nav>
+      <hr />
+    </div>
     </div>;
 };
 

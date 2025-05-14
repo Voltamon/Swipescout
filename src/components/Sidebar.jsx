@@ -38,11 +38,16 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
-    { text: 'Find Candidates', icon: <SearchIcon />, path: '/candidates' },
-    { text: 'Job Postings', icon: <JobsIcon />, path: '/jobs' },
+    { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
+    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
+    { text: 'Detailed Search', icon: <SearchIcon />, path: '/candidate-search' },
+    { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
+    { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
+    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
     { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
-    { text: 'Messages', icon: <MessagesIcon />, path: '/messages' },
-    { text: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' },
+    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
+    { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
   ];
 
   const secondaryItems = [
