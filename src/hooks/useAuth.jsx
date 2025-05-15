@@ -13,7 +13,7 @@ export const useAuth = () => {
   const [error, setError] = useState(null);
 
   // Common function to handle successful authentication
-  const handleAuthSuccess = async (token,origin) => {
+  const handleAuthSuccess = async (token,origin,role=null) => {
     try {
       let idToken =token;
       let user;
@@ -26,7 +26,7 @@ export const useAuth = () => {
       localStorage.setItem("accessToken", idToken);
       setUser(user);
       
-      return { success: true, user };
+      return { success: true, user ,role };
     } catch (error) {
       console.error("Authentication processing failed:", error);
       return { 
@@ -145,7 +145,7 @@ export const useAuth = () => {
       const data = await response.json();
       
       // 5. Process successful authentication
-      return await handleAuthSuccess(idToken,"google");
+      return await handleAuthSuccess(idToken,"google",role);
       
     } catch (error) {
       console.error("Google authentication error:", error);

@@ -190,13 +190,26 @@ const LoginPage = () => {
     }));
   };
 
+  const navigateAsRole = (role) => {
+    if (role === "employer") {
+      navigate("/dashboard");
+    }
+    else if (role === "employer") {
+      navigate("/employer-dashboard");
+    }
+    else (role === "admin") {
+      navigate("/dashboard-jobseeker");
+    }
+  
+  };
+
   const handleGoogleSignIn = async () => {
     const result = await authenticateWithGoogle();
   
     if (result.error) {
       setError(result.message || "Google sign-in failed");
     } else {
-      navigate("/dashboard");
+      navigateAsRole(result.role);
     }
   };
   
