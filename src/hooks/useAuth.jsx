@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase-config.js";
+import { Navigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
@@ -9,6 +10,7 @@ const auth = getAuth(app);
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,11 +26,11 @@ export const useAuth = () => {
       }
    
       localStorage.setItem("accessToken", idToken);
+      localStorage.setItem("role", role);
       setUser(user);
-      
+      setRole(role);
       return { success: true, user ,role };
     } catch (error) {
-      console.error("Authentication processing failed:", error);
       return { 
         error: true, 
         message: error.message || "Authentication processing failed" 
@@ -59,6 +61,7 @@ export const useAuth = () => {
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem("accessToken");
+      const role = localStorage.getItem("role");
       if (!token) {
         setLoading(false);
         return;
@@ -66,12 +69,15 @@ export const useAuth = () => {
 
       const data = await verifyToken(token);
       setUser(data.user);
+      setRole(role);
       setError(null);
     } catch (err) {
       console.error("Auth check failed:", err);
       setError(err.message);
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("role");
       setUser(null);
+      Navigate("/login");
     } finally {
       setLoading(false);
     }
@@ -101,7 +107,7 @@ export const useAuth = () => {
         };
       }
 
-      return await handleAuthSuccess(data.token);
+      return await handleAuthSuccess(data.token,"",response.role);
     } catch (error) {
       console.error("Login error:", error);
       return {
@@ -135,7 +141,7 @@ export const useAuth = () => {
         body: JSON.stringify(role ? { idToken, role } : {idToken})
       });
   
-      console.log("Google Auth Response:", response);
+      console.log("Google Auth Response:", response.ok);
       // 4. Handle response
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -144,8 +150,10 @@ export const useAuth = () => {
   
       const data = await response.json();
       
+      console.log("Google Auth Data:", data);
+      console.log("Google Auth Role:", response.role);
       // 5. Process successful authentication
-      return await handleAuthSuccess(idToken,"google",role);
+      return await handleAuthSuccess(idToken,"google", data.role);
       
     } catch (error) {
       console.error("Google authentication error:", error);
@@ -233,7 +241,7 @@ export const useAuth = () => {
  
          // If the backend returns a token after signup, process it
     if (response.token) {
-      return await handleAuthSuccess(response.token);
+      return await handleAuthSuccess(response.token,"",role);
     }
       // return { success: true };
     } catch (error) {
@@ -249,6 +257,7 @@ export const useAuth = () => {
     await fetch(`${apiUrl}/api/auth/logout`, { method: "POST" });
     localStorage.removeItem("accessToken");
     setUser(null);
+
   };
 
   return {

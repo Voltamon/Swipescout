@@ -36,8 +36,8 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  const menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
+  const employer_menuItems = [
+    { text: 'Dashboard', icon: <HomeIcon />, path: '/employer-dashboard' },
     { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
     { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
@@ -45,14 +45,59 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
     { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
-    { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
+    // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
   ];
 
+
+    const jobseeker_menuItems = [
+    { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
+    { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
+    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
+    { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
+    { text: 'Detailed Search', icon: <SearchIcon />, path: '/job-search' },
+    { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
+    { text: 'Job Details', icon: <SearchIcon />, path: '/job/1' },
+    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
+    { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
+    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
+    { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
+  ];
+
+const admin_menuItems = [
+    { text: 'Dashboard', icon: <HomeIcon />, path: '/admin-dashboard' },
+    { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
+    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
+
+  ];
+
+let menuItems = [];
+
+if(user?.role === 'employer') {
+  menuItems = employer_menuItems;
+} else if(user?.role === 'job_seeker') {
+  menuItems = jobseeker_menuItems;
+
+} else  if(user?.role === 'admin')  {
+  menuItems = admin_menuItems;
+}
+else {
+  // navigate('/login');
+}
+
+const roleGradients = {
+  employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
+  'job_seeker': 'linear-gradient(90deg,rgba(200, 221, 247, 0.86) 50%,rgb(255, 255, 255) 100%)',
+  admin: 'linear-gradient(135deg, #dd4f6b 0%, #b73a56 100%)',
+  default: 'linear-gradient(135deg, #6b4fdd 0%, #563ab7 100%)'
+};
+
   const secondaryItems = [
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-    { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
+    // { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
   ];
 
   const isActive = (path) => location.pathname.startsWith(path);
@@ -69,7 +114,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
           transition: 'width 0.3s ease-in-out',
           overflowX: 'hidden',
           boxSizing: 'border-box',
-          backgroundColor: theme.palette.background.paper,
+          background: `${roleGradients[user?.role || 'default']} !important`
         },
       }}
     >
