@@ -191,16 +191,15 @@ const LoginPage = () => {
   };
 
   const navigateAsRole = (role) => {
-    if (role === "employer") {
+    if (role === "job_seeker") {
       navigate("/dashboard");
     }
     else if (role === "employer") {
       navigate("/employer-dashboard");
     }
-    else (role === "admin") {
-      navigate("/dashboard-jobseeker");
+    else if (role === "admin") {
+      navigate("/admin-dashboard");
     }
-  
   };
 
   const handleGoogleSignIn = async () => {
@@ -209,6 +208,7 @@ const LoginPage = () => {
     if (result.error) {
       setError(result.message || "Google sign-in failed");
     } else {
+      console.log("Google sign-in successful:", result.role);
       navigateAsRole(result.role);
     }
   };
@@ -239,7 +239,7 @@ const LoginPage = () => {
     if (result.error) {
       setError(result.message || "Login failed. Please try again.");
     } else {
-      navigate("/dashboard");
+      navigateAsRole(result.role);
     }
   
     setLoading({ ...loading, email: false });

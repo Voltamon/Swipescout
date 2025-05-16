@@ -6,17 +6,21 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import MobileNavigation from "./MobileNavigation";
 import Footer from "./Footer";
+import { blue } from "@mui/material/colors";
+import { useAuth } from '../hooks/useAuth';
+
 
 const LayoutRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   minHeight: '100vh',
+  
 }));
 
 const LayoutContent = styled(Box)(({ theme }) => ({
   display: 'flex',
   flex: '1 1 auto',
-  width: '100%',
+  width: '100%',backgroundColor: "#efeeff",
 }));
 
 const HeaderWrapper = styled(Box)(({ open, isMobile }) => ({
@@ -75,6 +79,15 @@ const Layout = () => {
     }
   };
 
+  const { user, logout } = useAuth();
+  
+const roleGradients = {
+  employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
+  'job-seeker': 'linear-gradient(135deg, #6bdd4f 0%, #3ab756 100%)',
+  admin: 'linear-gradient(135deg, #dd4f6b 0%, #b73a56 100%)',
+  default: 'linear-gradient(135deg, #6b4fdd 0%, #563ab7 100%)'
+};
+
   React.useEffect(
     () => {
       setSidebarOpen(!isMobile && shouldShowSidebarBase);
@@ -85,27 +98,37 @@ const Layout = () => {
   return (
     <LayoutRoot>
       <CssBaseline />
-      <HeaderWrapper open={sidebarOpen} isMobile={isMobile} >
+      {!isMobile && shouldShowSidebarBase  && <HeaderWrapper open={sidebarOpen} isMobile={isMobile} 
+      >
   <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={shouldShowSidebarBase} />
-</HeaderWrapper>
-      <LayoutContent>
+</HeaderWrapper>}
+      <LayoutContent
+      >
         {shouldShowSidebarBase && (
-          <SidebarContainer open={sidebarOpen} isMobile={isMobile}>
+          <SidebarContainer open={sidebarOpen} isMobile={isMobile} >
             <Sidebar
               open={sidebarOpen}
               onClose={handleSidebarClose}
               variant={isMobile ? 'temporary' : 'persistent'}
               isMobile={isMobile}
+            
+              
             />
           </SidebarContainer>
         )}
-        <MainContent open={sidebarOpen} isMobile={isMobile}>
+        <MainContent open={sidebarOpen} isMobile={isMobile}
+         sx={{
+          
+          borderRadius: '8px 0 0 0',
+          boxShadow: '0 0 20px rgba(0,0,0,0.1)'
+        }}
+        >
           <Outlet />
         </MainContent>
        
       </LayoutContent> 
-      <FooterWrapper open={sidebarOpen} isMobile={isMobile} >
-      {!isMobile && shouldShowSidebarBase  && <Footer></Footer>}</FooterWrapper>
+      {!isMobile && shouldShowSidebarBase  &&<FooterWrapper open={sidebarOpen} isMobile={isMobile} >
+       <Footer ></Footer></FooterWrapper>}
       {isMobile && <MobileNavigation />}
     </LayoutRoot>
   );
