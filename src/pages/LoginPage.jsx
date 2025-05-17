@@ -214,14 +214,21 @@ const LoginPage = () => {
   };
   
   const handleLinkedInLogin = async () => {
-    const result = await authenticateWithLinkedIn();
+
+      if (!role) return;
+      
+      setLoading({ normal: false, google: false, linkedin: true });
+      setError("");
+      
+      const result = await authenticateWithLinkedIn();
+      if (result.error) {
+        setError(result.message);
+      } else {
+        navigateAsRole(result.role);
+      }
   
-    if (result.error) {
-      setError(result.message || "LinkedIn login failed");
-    } else if (!result.pending) {
-      navigate("/dashboard");
-    }
-  };
+      setLoading({ normal: false, google: false, linkedin: false });
+    };
   
   const handleEmailSignIn = async e => {
     e.preventDefault();

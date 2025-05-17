@@ -195,6 +195,18 @@ const RegisterForm = () => {
     }));
   };
 
+  const navigateAsRole = (role) => {
+    if (role === "job_seeker") {
+      navigate("/dashboard");
+    }
+    else if (role === "employer") {
+      navigate("/employer-dashboard");
+    }
+    else if (role === "admin") {
+      navigate("/admin-dashboard");
+    }
+  };
+
   const handleNormalSignup = async (e) => {
     e.preventDefault();
     setLoading({ normal: true, google: false, linkedin: false });
@@ -221,7 +233,7 @@ const RegisterForm = () => {
     if (result.error) {
       setError(result.message);
     } else {
-      navigate("/dashboard");
+      navigateAsRole(result.role);
     }
 
     setLoading({ normal: false, google: false, linkedin: false });
@@ -238,19 +250,26 @@ const RegisterForm = () => {
     if (result.error) {
       setError(result.message);
     } else {
-      navigate("/dashboard");
+      navigateAsRole(result.role);
     }
 
     setLoading({ normal: false, google: false, linkedin: false });
   };
 
-  const handleLinkedInSignUp = (role) => {
+  const handleLinkedInSignUp = async (role) => {
     if (!role) return;
     
     setLoading({ normal: false, google: false, linkedin: true });
     setError("");
     
-    authenticateWithLinkedIn(role);
+    const result = await authenticateWithLinkedIn(role);
+    if (result.error) {
+      setError(result.message);
+    } else {
+      navigateAsRole(result.role);
+    }
+
+    setLoading({ normal: false, google: false, linkedin: false });
   };
 
   useEffect(() => {
