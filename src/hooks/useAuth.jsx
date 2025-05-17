@@ -29,6 +29,8 @@ export const useAuth = () => {
       localStorage.setItem("role", role);
       setUser(user);
       setRole(role);
+      console.log("User authenticated successfully:", user);
+      console.log("Role set successfully:", role);
       return { success: true, user ,role };
     } catch (error) {
       return { 
@@ -106,8 +108,10 @@ export const useAuth = () => {
           status: response.status
         };
       }
+      console.log("response ok:", data.role);
 
-      return await handleAuthSuccess(data.token,"",response.role);
+      
+      return await handleAuthSuccess(data.token,"",data.role);
     } catch (error) {
       console.error("Login error:", error);
       return {
@@ -167,50 +171,84 @@ export const useAuth = () => {
   };
 
   // LinkedIn Authentication (for both login and signup)
-  const authenticateWithLinkedIn = async (role = null) => {
-    try {
-      if (role) {
-        // For signup, store role and redirect
-        sessionStorage.setItem('linkedin_signup_role', role);
-        window.location.href = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
-        return { pending: true };
-      } else {
-        // For login, use popup
-        const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+  // const authenticateWithLinkedIn = async (role = null) => {
+  //   try {
+     
+  //       const endpoint = role 
+  //       ? `${apiUrl}/api/auth/signup/linkedin` 
+  //       : `${apiUrl}/api/auth/signin/linkedin`;
+  
+  //     // 3. Send to backend
+  //     // const response = await fetch(endpoint, {
+  //     //   method: "POST",
+  //     //   headers: { 
+  //     //     "Content-Type": "application/json",
+  //     //     "Authorization": `Bearer ${idToken}` // Recommended way to send tokens
+  //     //   },
+  //     //   body: JSON.stringify(role ? { idToken, role } : {idToken})
+  //     // });
+
+  //       // {
+  //       // // For signup, store role and redirect
+  //       // sessionStorage.setItem('linkedin_signup_role', role);
+  //       // window.location.href = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+  //       // return { pending: true };
+  //       // } else
         
-        const popup = window.open(linkedInAuthUrl, '_blank', 'width=500,height=600');
-        if (!popup) {
-          throw new Error("Popup window failed to open. Please allow popups for this site.");
-        }
-
-        const result = await new Promise((resolve, reject) => {
-          const messageListener = (event) => {
-            if (event.origin === window.location.origin) {
-              if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
-                window.removeEventListener('message', messageListener);
-                resolve(event.data.payload);
-              } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
-                window.removeEventListener('message', messageListener);
-                reject(new Error(event.data.error || "LinkedIn authentication failed"));
-              }
-            }
-          };
+  //       // For login, use popup
+  //       window.location.href =`https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+        
+  //       const result = await new Promise((resolve, reject) => {
+  //         const messageListener = (event) => {
+  //           if (event.origin === window.location.origin) {
+  //             if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
+  //               window.removeEventListener('message', messageListener);
+  //               resolve(event.data.payload);
+  //             } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
+  //               window.removeEventListener('message', messageListener);
+  //               reject(new Error(event.data.error || "LinkedIn authentication failed"));
+  //             }
+  //           }
+  //         };
           
-          window.addEventListener('message', messageListener);
+  //         window.addEventListener('message', messageListener);
 
-          const timeoutId = setTimeout(() => {
-            window.removeEventListener('message', messageListener);
-            reject(new Error("LinkedIn authentication timed out."));
-          }, 120000);
+  //         const timeoutId = setTimeout(() => {
+  //           window.removeEventListener('message', messageListener);
+  //           reject(new Error("LinkedIn authentication timed out."));
+  //         }, 120000);
 
-          return () => {
-            window.removeEventListener('message', messageListener);
-            clearTimeout(timeoutId);
-          };
-        });
+  //         return () => {
+  //           window.removeEventListener('message', messageListener);
+  //           clearTimeout(timeoutId);
+  //         };
+  //       });
 
-        return await handleAuthSuccess(result.token);
+  //       return await handleAuthSuccess(result.token,role);
+      
+  //   } catch (error) {
+  //     console.error("LinkedIn authentication error:", error);
+  //     return { 
+  //       error: true, 
+  //       message: error.message || "LinkedIn authentication failed" 
+  //     };
+  //   }
+  // };
+  const authenticateWithLinkedIn = async (role) => {
+    try {
+      if (!role) {
+        throw new Error("Role is required for LinkedIn authentication");
       }
+  
+      // Store role in session storage (more secure than localStorage for temp data)
+      sessionStorage.setItem('linkedin_auth_role', role);
+  
+      // Redirect to LinkedIn OAuth in the same window
+      const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/linkedin-callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+      
+      window.location.href = linkedInAuthUrl;
+      
+      // No return here as we're redirecting
     } catch (error) {
       console.error("LinkedIn authentication error:", error);
       return { 
@@ -219,6 +257,83 @@ export const useAuth = () => {
       };
     }
   };
+  
+  // This should be called on your callback page (/linkedin-callback)
+  const handleLinkedInCallback = async () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const error = params.get('error');
+      const role = sessionStorage.getItem('linkedin_auth_role');
+      
+      if (error) {
+        throw new Error(error);
+      }
+  
+      if (!code) {
+        throw new Error("Authorization code not found");
+      }
+  
+      // Exchange code for LinkedIn token via your backend
+      const tokenResponse = await fetch(`${apiUrl}/api/auth/linkedin/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ code })
+      });
+  
+      if (!tokenResponse.ok) {
+        throw new Error('Failed to exchange code for token');
+      }
+  
+      const { idToken } = await tokenResponse.json();
+  
+      // Authenticate with your backend (now including role for both sign-in and sign-up)
+      const authEndpoint = `${apiUrl}/api/auth/linkedin`;
+      const authResponse = await fetch(authEndpoint, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          idToken,
+          role 
+        })
+      });
+  
+      if (!authResponse.ok) {
+        throw new Error(await authResponse.text());
+      }
+  
+      const { customToken, user } = await authResponse.json();
+      
+      // Sign in with Firebase custom token
+      const userCredential = await signInWithCustomToken(auth, customToken);
+      const idToken = await userCredential.user.getIdToken();
+  
+      // Store tokens and user info
+      localStorage.setItem("accessToken", idToken);
+      localStorage.setItem("role", role);
+  
+      // Clean up session storage
+      sessionStorage.removeItem('linkedin_auth_role');
+  
+      // Redirect based on role
+      // const redirectPath = getRoleRedirectPath(role);
+      // window.location.href = redirectPath;
+      return await handleAuthSuccess(idToken,"",role);
+
+    } catch (error) {
+      console.error("LinkedIn callback error:", error);
+      // Redirect to error page or back to login
+      window.location.href = '/login?error=' + encodeURIComponent(error.message);
+    }
+  };
+  
+
+  
+
 
   // Email/Password Signup
   const signupWithEmail = async (email, password, displayName, role) => {
