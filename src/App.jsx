@@ -50,6 +50,8 @@ import JobSeekerDashboard_ from './pages/JobSeekerDashboard_';
 import EmployerDashboard_ from './pages/EmployerDashboard_';
 import LoginPage from "./pages/LoginPage";
 import UnauthorizedPage from "./pages/Unauthorized";
+import LinkedInCallback from "./pages/LinkedInCallback";
+import AuthPage from "./pages/auth_page";
 
 // Components
 import Layout from './components/Layout';
@@ -76,6 +78,8 @@ function App() {
       <Route path="/FAQs" element={<FAQs />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/register-form" element={<RegisterForm />} />
+      <Route path="/authpage" element={<AuthPage />} />
+        <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
 
       {/* Private Routes */}     
 
