@@ -282,7 +282,7 @@ const AuthPage = () => {
               onSuccess={handleLinkedInSuccess}
               onError={handleLinkedInFailure}
               scope="openid profile email"
-              redirectUri="http://localhost:5173/dashboard"
+              redirectUri="http://localhost:5173/auth/linkedin/callback"
             >
               {({ linkedInLogin }) =>
                 <Button

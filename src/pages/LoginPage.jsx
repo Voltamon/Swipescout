@@ -213,22 +213,105 @@ const LoginPage = () => {
     }
   };
   
-  const handleLinkedInLogin = async () => {
+// const authenticateWithLinkedIn = async (role = null) => {
+//   try {
+//     console.log("[LinkedIn Auth] Starting authentication...");
+    
+//     // 1. Open LinkedIn OAuth window
+//     const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+    
+//     console.log("[LinkedIn Auth] Opening window with URL:", linkedinAuthUrl);
+    
+//     const linkedinAuthWindow = window.open(
+//       linkedinAuthUrl,
+//       '_blank',
+//       'width=600,height=600'
+//     );
 
-      if (!role) return;
-      
-      setLoading({ normal: false, google: false, linkedin: true });
-      setError("");
-      
-      const result = await authenticateWithLinkedIn();
-      if (result.error) {
-        setError(result.message);
-      } else {
-        navigateAsRole(result.role);
-      }
-  
-      setLoading({ normal: false, google: false, linkedin: false });
-    };
+//     if (!linkedinAuthWindow) {
+//       throw new Error("Popup window was blocked. Please allow popups for this site.");
+//     }
+
+//     // 2. Listen for the callback with the authorization code
+//     console.log("[LinkedIn Auth] Setting up message listener...");
+    
+//     const result = await new Promise((resolve, reject) => {
+//       const messageListener = (event) => {
+//         console.log("[LinkedIn Auth] Received message:", event);
+        
+//         if (event.origin === window.location.origin) {
+//           if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
+//             console.log("[LinkedIn Auth] Received success message");
+//             window.removeEventListener('message', messageListener);
+//             resolve(event.data.payload);
+//           } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
+//             console.log("[LinkedIn Auth] Received error message");
+//             window.removeEventListener('message', messageListener);
+//             reject(new Error(event.data.error || "LinkedIn authentication failed"));
+//           }
+//         }
+//       };
+
+//       window.addEventListener('message', messageListener);
+
+//       const timeoutId = setTimeout(() => {
+//         console.log("[LinkedIn Auth] Timeout reached");
+//         window.removeEventListener('message', messageListener);
+//         reject(new Error("LinkedIn authentication timed out."));
+//       }, 120000);
+
+//       // Cleanup function
+//       return () => {
+//         window.removeEventListener('message', messageListener);
+//         clearTimeout(timeoutId);
+//       };
+//     });
+
+//     console.log("[LinkedIn Auth] Received result from popup:", result);
+
+//     // 3. Now send to backend
+//     const endpoint = role 
+//       ? `${apiUrl}/api/auth/signup/linkedin` 
+//       : `${apiUrl}/api/auth/signin/linkedin`;
+
+//     console.log("[LinkedIn Auth] Sending to backend endpoint:", endpoint);
+    
+//     const response = await fetch(endpoint, {
+//       method: "POST",
+//       headers: { 
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ 
+//         id_token: result.id_token,
+//         ...(role ? { role } : {}) 
+//       })
+//     });
+
+//     console.log("[LinkedIn Auth] Backend response status:", response.status);
+    
+//     if (!response.ok) {
+//       const errorData = await response.json().catch(() => ({}));
+//       console.error("[LinkedIn Auth] Backend error:", errorData);
+//       throw new Error(errorData.error || "Authentication failed");
+//     }
+
+//     const responseData = await response.json();
+//     console.log("[LinkedIn Auth] Backend response data:", responseData);
+    
+//     return {
+//       token: responseData.customToken,
+//       role: responseData.user.role,
+//       user: responseData.user
+//     };
+
+//   } catch (error) {
+//     console.error("[LinkedIn Auth] Full error:", error);
+//     return { 
+//       error: true, 
+//       message: error.message || "LinkedIn authentication failed" 
+//     };
+//   }
+// };
   
   const handleEmailSignIn = async e => {
     e.preventDefault();
@@ -358,16 +441,16 @@ const LoginPage = () => {
   // }, [navigate]);
 
     // Handle LinkedIn redirect login
-    // const handleLinkedInLogin = async () => {
-    //   const result = await handleLinkedInLogin();
+    const handleLinkedInLogin = async () => {
+      const result = await authenticateWithLinkedIn();
     
-    //   if (result.error) {
-    //     setError(result.message || "LinkedIn login failed");
-    //   } else {
-    //     navigate("/dashboard");
-    //     console.log("LinkedIn login successful:", result.user);
-    //   }
-    // };
+      if (result.error) {
+        setError(result.message || "LinkedIn login failed");
+      } else {
+        // navigate("/dashboard");
+        console.log("LinkedIn login successful:", result);
+      }
+    };
   // Handle LinkedIn callback
   
 
@@ -552,6 +635,7 @@ const LoginPage = () => {
           <LinkedInSignInButton
             variant="outlined"
             onClick={handleLinkedInLogin}
+            
             disabled={loading.linkedin}
             startIcon={<LinkedInIcon />}
             sx={{
@@ -564,32 +648,7 @@ const LoginPage = () => {
           >
             {loading.linkedin ? <CircularProgress size={24} /> : "LinkedIn"}
           </LinkedInSignInButton>
-                      <LinkedIn
-                        clientId="78aceunh672c3c" // Replace with your actual LinkedIn Client ID
-                        onSuccess={handleLinkedInSuccess}
-                        onError={handleLinkedInFailure}
-                        scope="openid profile email"
-                        redirectUri="http://localhost:5173/dashboard"
-                      >
-                        {({ linkedInLogin }) =>
-                          <Button
-                            variant="outlined"
-                            onClick={linkedInLogin}
-                            disabled={loading.linkedin}
-                            startIcon={<LinkedInIcon />}
-                            sx={{
-                              flex: 1,
-                              py: 1.5,
-                              borderColor: "#0077B5",
-                              color: "#0077B5",
-                              "&:hover": { borderColor: "#006097" }
-                            }}
-                          >
-                            {loading.linkedin
-                              ? <CircularProgress size={24} />
-                              : "LinkedIn"}
-                          </Button>}
-                      </LinkedIn>
+
         </Stack>
 
         <SignupLink onClick={navigateToRegister}>
