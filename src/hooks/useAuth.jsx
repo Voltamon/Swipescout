@@ -259,77 +259,77 @@ export const useAuth = () => {
   };
   
   // This should be called on your callback page (/linkedin-callback)
-  const handleLinkedInCallback = async () => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get('code');
-      const error = params.get('error');
-      const role = sessionStorage.getItem('linkedin_auth_role');
+  // const handleLinkedInCallback = async () => {
+  //   try {
+  //     const params = new URLSearchParams(window.location.search);
+  //     const code = params.get('code');
+  //     const error = params.get('error');
+  //     const role = sessionStorage.getItem('linkedin_auth_role');
       
-      if (error) {
-        throw new Error(error);
-      }
+  //     if (error) {
+  //       throw new Error(error);
+  //     }
   
-      if (!code) {
-        throw new Error("Authorization code not found");
-      }
+  //     if (!code) {
+  //       throw new Error("Authorization code not found");
+  //     }
   
-      // Exchange code for LinkedIn token via your backend
-      const tokenResponse = await fetch(`${apiUrl}/api/auth/linkedin/token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ code })
-      });
+  //     // Exchange code for LinkedIn token via your backend
+  //     const tokenResponse = await fetch(`${apiUrl}/api/auth/linkedin/token`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({ code })
+  //     });
   
-      if (!tokenResponse.ok) {
-        throw new Error('Failed to exchange code for token');
-      }
+  //     if (!tokenResponse.ok) {
+  //       throw new Error('Failed to exchange code for token');
+  //     }
   
-      const { idToken } = await tokenResponse.json();
+  //     // const { idToken } = await tokenResponse.json();
   
-      // Authenticate with your backend (now including role for both sign-in and sign-up)
-      const authEndpoint = `${apiUrl}/api/auth/linkedin`;
-      const authResponse = await fetch(authEndpoint, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          idToken,
-          role 
-        })
-      });
+  //     // Authenticate with your backend (now including role for both sign-in and sign-up)
+  //     const authEndpoint = `${apiUrl}/api/auth/linkedin`;
+  //     const authResponse = await fetch(authEndpoint, {
+  //       method: "POST",
+  //       headers: { 
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ 
+  //         idToken,
+  //         role 
+  //       })
+  //     });
   
-      if (!authResponse.ok) {
-        throw new Error(await authResponse.text());
-      }
+  //     if (!authResponse.ok) {
+  //       throw new Error(await authResponse.text());
+  //     }
   
-      const { customToken, user } = await authResponse.json();
+  //     const { customToken, user } = await authResponse.json();
       
-      // Sign in with Firebase custom token
-      const userCredential = await signInWithCustomToken(auth, customToken);
-      const idToken = await userCredential.user.getIdToken();
+  //     // Sign in with Firebase custom token
+  //     const userCredential = await signInWithCustomToken(auth, customToken);
+  //     const idToken = await userCredential.user.getIdToken();
   
-      // Store tokens and user info
-      localStorage.setItem("accessToken", idToken);
-      localStorage.setItem("role", role);
+  //     // Store tokens and user info
+  //     localStorage.setItem("accessToken", idToken);
+  //     localStorage.setItem("role", role);
   
-      // Clean up session storage
-      sessionStorage.removeItem('linkedin_auth_role');
+  //     // Clean up session storage
+  //     sessionStorage.removeItem('linkedin_auth_role');
   
-      // Redirect based on role
-      // const redirectPath = getRoleRedirectPath(role);
-      // window.location.href = redirectPath;
-      return await handleAuthSuccess(idToken,"",role);
+  //     // Redirect based on role
+  //     // const redirectPath = getRoleRedirectPath(role);
+  //     // window.location.href = redirectPath;
+  //     return await handleAuthSuccess(idToken,"",role);
 
-    } catch (error) {
-      console.error("LinkedIn callback error:", error);
-      // Redirect to error page or back to login
-      window.location.href = '/login?error=' + encodeURIComponent(error.message);
-    }
-  };
+  //   } catch (error) {
+  //     console.error("LinkedIn callback error:", error);
+  //     // Redirect to error page or back to login
+  //     window.location.href = '/login?error=' + encodeURIComponent(error.message);
+  //   }
+  // };
   
 
   
