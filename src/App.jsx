@@ -79,7 +79,7 @@ function App() {
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/register-form" element={<RegisterForm />} />
       <Route path="/authpage" element={<AuthPage />} />
-        <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
+      <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
 
       {/* Private Routes */}     
 

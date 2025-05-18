@@ -24,6 +24,8 @@ import {
   LinkedIn as LinkedInIcon,
 } from "@mui/icons-material";
 import { LinkedIn } from "react-linkedin-login-oauth2";
+ import {  AlertCircle as AlertCircleIcon,
+} from "lucide-react";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -163,8 +165,8 @@ const API_BASE_URL = "http://localhost:5000";
 
 
 
-
 const LoginPage = () => {
+
   const { loginByEmailAndPassword ,
     authenticateWithGoogle,
     authenticateWithLinkedIn,  } = useAuth();
@@ -178,7 +180,7 @@ const LoginPage = () => {
     google: false,
     linkedin: false,
   });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const auth = getAuth(app);
   const navigate = useNavigate();
 
@@ -323,10 +325,10 @@ const LoginPage = () => {
       setLoading({ ...loading, email: false });
       return;
     }
-  
+  console.log("Form data:", formData);
     const result = await loginByEmailAndPassword(formData.email, formData.password);
   
-    if (result.error) {
+    if (result.error ) {
       setError(result.message || "Login failed. Please try again.");
     } else {
       navigateAsRole(result.role);
@@ -442,14 +444,24 @@ const LoginPage = () => {
 
     // Handle LinkedIn redirect login
     const handleLinkedInLogin = async () => {
+      
+      setLoading({ ...loading, linkedin: true });
+
+      setError("Please fill in all fields");
+      
       const result = await authenticateWithLinkedIn();
     
       if (result.error) {
-        setError(result.message || "LinkedIn login failed");
+        setError( "LinkedIn login failed");
+        console.error("LinkedIn login errorrrrrfdgdsfr:", result.message);
+         setLoading({ ...loading, linkedin: false });
       } else {
-        // navigate("/dashboard");
+        console.log("LinkedIn login successful:", result);
+        navigateAsRole(result.role);
         console.log("LinkedIn login successful:", result);
       }
+                setLoading({ ...loading, linkedin: false });
+  
     };
   // Handle LinkedIn callback
   
@@ -650,6 +662,12 @@ const LoginPage = () => {
           </LinkedInSignInButton>
 
         </Stack>
+                {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            <AlertCircleIcon className="mr-2 h-4 w-4" />
+            {error}
+          </Alert>
+        )}
 
         <SignupLink onClick={navigateToRegister}>
           Don't have an account? Sign Up
