@@ -31,7 +31,7 @@ const ProtectedRoute = ({  role, children }: ProtectedRouteProps) => {
 
   const { user, loading, error } = useAuth();
 
-    console.log('user', user);
+  console.log('user from protected route', user);
   console.log('role', role);
   console.log('loading', loading);
   if (loading) return <div>Loading...</div>;

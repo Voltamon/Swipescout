@@ -27,8 +27,9 @@ import {
   Loader2 as LoaderIcon,
   AlertCircle as AlertCircleIcon,
 } from "lucide-react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { CookieSharp, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "../../hooks/useAuth.jsx";
+
 
 // Styled components
 const RegisterContainer = styled(Box)(({ theme }) => ({
@@ -143,6 +144,8 @@ const RegisterForm = () => {
     authenticateWithLinkedIn,
     loading: authLoading,
     error: authError,
+    user,
+    logout,
   } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -222,16 +225,17 @@ const RegisterForm = () => {
       setLoading({ normal: false, google: false, linkedin: false });
       return;
     }
-
+console.log("formData:",formData);
     const result = await signupWithEmail(
       formData.email,
-      formData.password,
+      formData.password, 
       formData.fullName,
       formData.role
     );
-
+console.log("result:",result);
     if (result.error) {
       setError(result.message);
+      setLoading({ normal: false, google: false, linkedin: false });
     } else {
       navigateAsRole(result.role);
     }
@@ -266,6 +270,7 @@ const RegisterForm = () => {
     if (result.error) {
       setError(result.message);
     } else {
+      console.log("rsultttt:",result.role);
       navigateAsRole(result.role);
     }
 

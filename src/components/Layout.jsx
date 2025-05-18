@@ -80,6 +80,8 @@ const Layout = () => {
   };
 
   const { user, logout } = useAuth();
+
+  console.log("user from layout", user);
   
 const roleGradients = {
   employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
