@@ -17,6 +17,9 @@ export const useAuth = () => {
   // Common function to handle successful authentication
   const handleAuthSuccess = async (token, origin, role = null) => {
     try {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+
       let idToken = token;
       let user;
       if (origin == "linkedin" || origin == "EmailPass") {
@@ -117,6 +120,9 @@ export const useAuth = () => {
 
   // Email/Password Login
   const loginByEmailAndPassword = async (email, password) => {
+              localStorage.removeItem("accessToken");
+    setUser(null);
+
     try {
       console.log("Logging in with email and password:", email);
       const response = await fetch(`${apiUrl}/api/auth/signin`, {
@@ -153,7 +159,11 @@ export const useAuth = () => {
 
   // Google Authentication (for both login and signup)
   const authenticateWithGoogle = async (role = null) => {
+         localStorage.removeItem("accessToken");
+    setUser(null);
     try {
+           
+
       // 1. Authenticate with Firebase Google Auth
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
@@ -201,8 +211,11 @@ export const useAuth = () => {
   };
 
   // LinkedIn Authentication (for both login and signup)
-  const authenticateWithLinkedIn = async (role = null) => {
+  const authenticateWithLinkedIn = async (role = null) => { 
+        localStorage.removeItem("accessToken");
+    setUser(null);
     try {
+     
       console.log("[LinkedIn Auth] Starting authentication...");
 
       // 1. Open LinkedIn OAuth window
@@ -283,7 +296,7 @@ export const useAuth = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("[LinkedIn Auth] Backend error:", errorData);
+        console.error("LinkedIn Auth error:", errorData);
         // throw new Error(errorData.error || "Authentication failed");
         return {
           error: true,

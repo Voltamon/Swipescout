@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -34,6 +34,7 @@ import {
 import { app } from "../firebase-config.js";
 
 import { useAuth } from "../hooks/useAuth.jsx";
+
 
 const LoginContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -181,6 +182,14 @@ const LoginPage = () => {
     linkedin: false,
   });
   const [error, setError] = useState("");
+  const isMounted = useRef(false);
+
+useEffect(() => {
+  isMounted.current = true;
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
   const auth = getAuth(app);
   const navigate = useNavigate();
 
@@ -442,17 +451,23 @@ const LoginPage = () => {
   //   return () => window.removeEventListener('message', handleAuthSuccess);
   // }, [navigate]);
 
+
     // Handle LinkedIn redirect login
     const handleLinkedInLogin = async () => {
       
       setLoading({ ...loading, linkedin: true });
 
-      setError("Please fill in all fields");
       
       const result = await authenticateWithLinkedIn();
     
+
       if (result.error) {
-        setError( "LinkedIn login failed");
+        setError(result.message);
+if (isMounted.current) {
+  console.log("Setting error state to:", result.message);
+  setError(result.message || "error");
+}
+
         console.error("LinkedIn login errorrrrrfdgdsfr:", result.message);
          setLoading({ ...loading, linkedin: false });
       } else {
@@ -662,12 +677,13 @@ const LoginPage = () => {
           </LinkedInSignInButton>
 
         </Stack>
-                {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
-            <AlertCircleIcon className="mr-2 h-4 w-4" />
-            {error}
-          </Alert>
-        )}
+{error && (console.log("Rendering error:", error), (
+  <Alert severity="error" sx={{ mt: 2 }}>
+    <AlertCircleIcon className="mr-2 h-4 w-4" />
+    {error}
+  </Alert>
+))}
+
 
         <SignupLink onClick={navigateToRegister}>
           Don't have an account? Sign Up
