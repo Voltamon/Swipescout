@@ -85,16 +85,47 @@ if(user?.role === 'employer') {
   menuItems = admin_menuItems;
 }
 else {
-  // navigate('/login');
+   navigate('/login');
 }
 
-const roleGradients = {
-  employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
-  'job_seeker': 'linear-gradient(90deg,rgba(200, 221, 247, 0.86) 50%,rgb(255, 255, 255) 100%)',
-  admin: 'linear-gradient(135deg, #dd4f6b 0%, #b73a56 100%)',
-  default: 'linear-gradient(135deg, #6b4fdd 0%, #563ab7 100%)'
-};
-
+// const roleGradients = {
+//   employer: 'linear-gradient(135deg, #4a6bff 0%, #6a8bff 100%)',
+//   'job_seeker': 'linear-gradient(90deg,rgba(200, 221, 247, 0.86) 50%,rgb(255, 255, 255) 100%)',
+//   admin: 'linear-gradient(135deg, #dd4f6b 0%, #b73a56 100%)',
+//   default: 'linear-gradient(135deg, #6b4fdd 0%, #563ab7 100%)'
+// };
+const roleStyles = {
+  employer: {
+    background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
+    '& .MuiListItem-root': {
+      color: 'rgb(39, 56, 83)', // Base text color
+      '&.Mui-selected': {
+        color: '#ffffff', // Brighter when selected
+      },
+    },
+    // ... other employer styles
+  },
+  job_seeker: {
+    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.7) 0%, rgba(102, 187, 106, 0.5) 100%)',
+    '& .MuiListItem-root': {
+      color: '#e0f7fa', // Light cyan
+      '&.Mui-selected': {
+        color: '#ffffff',
+      },
+    },
+    // ... other job seeker styles
+  },
+  admin: {
+    background: 'linear-gradient(135deg, rgba(211, 47, 47, 0.7) 0%, rgba(244, 67, 54, 0.5) 100%)',
+    '& .MuiListItem-root': {
+      color: '#ffebee', // Light red
+      '&.Mui-selected': {
+        color: '#ffffff',
+      },
+    },
+    // ... other admin styles
+  }
+}
   const secondaryItems = [
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
     // { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
@@ -114,339 +145,166 @@ const roleGradients = {
           transition: 'width 0.3s ease-in-out',
           overflowX: 'hidden',
           boxSizing: 'border-box',
-          background: `${roleGradients[user?.role || 'default']} !important`
+          ...(roleStyles[user?.role || 'default'] || {})
         },
       }}
     >
   
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
-        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Avatar src={user?.photoUrl} sx={{ width: 50, height: 50, mr: open ? 2 : 0 }}>
-            {user?.name?.charAt(0)}
-          </Avatar>
-          {open && (
-            <Box>
-              <Typography variant="subtitle1">{user?.name}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                {user?.company || 'Employer'}
-              </Typography>
-            </Box>
-          )}
-        </Box>
+<Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
+  <Avatar src={user?.photoUrl} sx={{ 
+    width: 50, 
+    height: 50, 
+    mr: open ? 2 : 0,
+    border: '2px solid',
+    borderColor: 'primary.main'
+  }}>
+    {user?.name?.charAt(0)}
+  </Avatar>
+  {open && (
+    <Box>
+      <Typography variant="subtitle1" sx={{ color: 'textw.primary !important' }}>
+        {user?.name}
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
+        {user?.company || user?.role?.replace('_', ' ') || 'User'}
+      </Typography>
+    </Box>
+  )}
+</Box>
         <Divider />
 
-        <List>
-          {menuItems.map((item) => (
-            <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
-              <ListItem
-                button
-                key={item.text}
-                onClick={() => {
-                  navigate(item.path);
-                  if (variant === 'temporary') onClose();
-                }}
-                sx={{
-                  bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
-                  justifyContent: open ? 'initial' : 'center',
-                  px: open ? 2 : 1,
-                }}
-              >
-                {(open || !isMobile) && (
-                  <ListItemIcon
-                    sx={{
-                      color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
-                      minWidth: open ? 40 : 'auto',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                )}
+<Divider />
 
-                {open && !isMobile && (
-                  <ListItemText
-                    primary={item.text}
-                    sx={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  />
-                )}
-              </ListItem>
+<List>
+  {menuItems.map((item) => (
+    <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
+      <ListItem
+        button
+        key={item.text}
+        onClick={() => {
+          navigate(item.path);
+          if (variant === 'temporary') onClose();
+        }}
+        sx={{
+          // Layout
+          justifyContent: open ? 'initial' : 'center',
+          px: open ? 2 : 1,
+          my: 0.5,
+          borderRadius: '8px',
+          
+          // Background Colors
+          bgcolor: isActive(item.path) 
+            ? 'rgba(0, 0, 0, 0.1)'  // Slightly darker when active
+            : 'transparent',
+          
+          // Text Colors
+          color: isActive(item.path) 
+            ? 'black'  // Darker text for active items
+            : 'rgba(0, 0, 0, 0.7)',  // Semi-transparent black for inactive
+          
+          // Hover Effects
+          '&:hover': {
+            bgcolor: 'rgba(0, 0, 0, 0.05)',
+            color: 'black',
+          },
+          
+          // Animation
+          transition: 'all 0.2s ease-in-out',
+        }}
+      >
+        {(open || !isMobile) && (
+          <ListItemIcon
+            sx={{
+              // Icon Colors
+              color: isActive(item.path) 
+                ? 'black' 
+                : 'rgba(0, 0, 0, 0.7)',
+              minWidth: open ? 40 : 'auto',
+              justifyContent: 'center',
+            }}
+          >
+            {item.icon}
+          </ListItemIcon>
+        )}
 
-            </Tooltip>
-          ))}
-        </List>
+        {open && !isMobile && (
+          <ListItemText
+            primary={item.text}
+            primaryTypographyProps={{
+              fontWeight: isActive(item.path) ? 600 : 500,
+            }}
+            sx={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          />
+        )}
+      </ListItem>
+    </Tooltip>
+  ))}
+</List>
 
-        <Divider />
+<Divider />
 
-        <List>
-          {secondaryItems.map((item) => (
-            <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
-              <ListItem
-                button
-                key={item.text}
-                onClick={() => {
-                  navigate(item.path);
-                  if (variant === 'temporary') onClose();
-                }}
-                sx={{
-                  bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
-                  justifyContent: open ? 'initial' : 'center',
-                  px: open ? 2 : 1,
-                }}
-              >
-                {(open || !isMobile) && (
-                  <ListItemIcon
-                    sx={{
-                      color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
-                      minWidth: open ? 40 : 'auto',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                )}
-
-                {open && !isMobile && (
-                  <ListItemText
-                    primary={item.text}
-                    sx={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  />
-                )}
-              </ListItem>
-
-            </Tooltip>
-          ))}
-          <Tooltip title={!open ? 'Logout' : ''} placement="right">
-            <ListItem
-              button
-              onClick={logout}
-              sx={{ justifyContent: open ? 'initial' : 'center', px: 2 }}
-            >
-              <ListItemIcon sx={{ minWidth: 0, mr: open ? 2 : 'auto', justifyContent: 'center' }}>
-                <LogoutIcon color="error" />
-              </ListItemIcon>
-              {open && (
-                <ListItemText
-                  primary="Logout"
-                  primaryTypographyProps={{ color: 'error' }}
-                />
-              )}
-            </ListItem>
-          </Tooltip>
-        </List>
+<List>
+  {secondaryItems.map((item) => (
+    <ListItem
+      button
+      key={item.text}
+      onClick={() => {
+        navigate(item.path);
+        if (variant === 'temporary') onClose();
+      }}
+      sx={{
+        // Same styling as main menu items
+        justifyContent: open ? 'initial' : 'center',
+        px: open ? 2 : 1,
+        my: 0.5,
+        borderRadius: '8px',
+        bgcolor: isActive(item.path) 
+          ? 'rgba(0, 0, 0, 0.1)'
+          : 'transparent',
+        color: isActive(item.path) 
+          ? 'black'
+          : 'rgba(0, 0, 0, 0.7)',
+        '&:hover': {
+          bgcolor: 'rgba(0, 0, 0, 0.05)',
+          color: 'black',
+        },
+        transition: 'all 0.2s ease-in-out',
+      }}
+    >
+      {(open || !isMobile) && (
+        <ListItemIcon
+          sx={{
+            color: isActive(item.path) 
+              ? 'black'
+              : 'rgba(0, 0, 0, 0.7)',
+            minWidth: open ? 40 : 'auto',
+            justifyContent: 'center',
+          }}
+        >
+          {item.icon}
+        </ListItemIcon>
+      )}
+      
+      {open && !isMobile && (
+        <ListItemText
+          primary={item.text}
+          primaryTypographyProps={{
+            fontWeight: isActive(item.path) ? 600 : 500,
+          }}
+        />
+      )}
+    </ListItem>
+  ))}
+</List>
       </Box>
     </Drawer> )} </>
   );
 };
 
 export default Sidebar;
-
-// // Sidebar.jsx
-// import React from "react";
-// import {
-//   Drawer,
-//   List,
-//   ListItemButton,
-//   ListItemIcon,
-//   ListItemText,
-//   Tooltip,
-//   Box
-// } from "@mui/material";
-// import {
-//   Home,
-//   Work,
-//   Person,
-//   Settings
-// } from "@mui/icons-material";
-
-// const drawerWidthExpanded = 200;
-// const drawerWidthCollapsed = 72;
-
-// const Sidebar = ({ open = true, variant = "persistent", onClose, userRole = "employer" }) => {
-//   const showText = open;
-
-//   const employerLinks = [
-//     { label: "Dashboard", icon: <Home />, path: "/dashboard" },
-//     { label: "Post Job", icon: <Work />, path: "/post-job" },
-//     { label: "Profile", icon: <Person />, path: "/employer-profile" },
-//     { label: "Settings", icon: <Settings />, path: "/settings" },
-//   ];
-
-//   const jobSeekerLinks = [
-//     { label: "Home", icon: <Home />, path: "/home" },
-//     { label: "Jobs", icon: <Work />, path: "/jobs" },
-//     { label: "Profile", icon: <Person />, path: "/profile" },
-//     { label: "Settings", icon: <Settings />, path: "/settings" },
-//   ];
-
-//   const menuItems = userRole === "employer" ? employerLinks : jobSeekerLinks;
-
-//   return (
-//     <Drawer
-//       variant={variant}
-//       open={open}
-//       onClose={onClose}
-//       sx={{
-//         width: open ? drawerWidthExpanded : drawerWidthCollapsed,
-//         flexShrink: 0,
-//         whiteSpace: "nowrap",
-//         "& .MuiDrawer-paper": {
-//           width: open ? drawerWidthExpanded : drawerWidthCollapsed,
-//           transition: "width 0.3s ease-in-out",
-//           overflowX: "hidden",
-//           boxSizing: "border-box",
-//         },
-//       }}
-//     >
-//       <Box sx={{ mt: 8 }}> {/* Margin top for header space */}
-//         <List>
-//           {menuItems.map(({ label, icon, path }) => (
-//             <Tooltip title={!showText ? label : ""} placement="right" key={label}>
-//               <ListItemButton href={path} sx={{ px: 2 }}>
-//                 <ListItemIcon sx={{ minWidth: 0, mr: showText ? 2 : "auto", justifyContent: "center" }}>
-//                   {icon}
-//                 </ListItemIcon>
-//                 {showText && <ListItemText primary={label} />}
-//               </ListItemButton>
-//             </Tooltip>
-//           ))}
-//         </List>
-//       </Box>
-//     </Drawer>
-//   );
-// };
-
-// export default Sidebar;
-
-
-
-// import React from 'react';
-// import { 
-//   Drawer, 
-//   List, 
-//   ListItem, 
-//   ListItemIcon, 
-//   ListItemText, 
-//   Divider, 
-//   Toolbar, 
-//   useTheme,
-//   Box,
-//   Avatar,
-//   Typography
-// } from '@mui/material';
-// import {
-//   Home as HomeIcon,
-//   PersonSearch as SearchIcon,
-//   Business as JobsIcon,
-//   Message as MessagesIcon,
-//   People as CandidatesIcon,
-//   Assessment as AnalyticsIcon,
-//   Settings as SettingsIcon,
-//   Help as HelpIcon,
-//   Logout as LogoutIcon
-// } from '@mui/icons-material';
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import { useAuth } from '../hooks/useAuth';
-
-// const drawerWidth = 240;
-
-// const Sidebar = ({ open, onClose, variant }) => {
-//   const theme = useTheme();
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const { user, logout } = useAuth();
-
-//   const menuItems = [
-//     { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
-//     { text: 'Find Candidates', icon: <SearchIcon />, path: '/candidates' },
-//     { text: 'Job Postings', icon: <JobsIcon />, path: '/jobs' },
-//     { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
-//     { text: 'Messages', icon: <MessagesIcon />, path: '/messages' },
-//     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' },
-//   ];
-
-//   const secondaryItems = [
-//     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-//     { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
-//   ];
-
-//   const isActive = (path) => location.pathname.startsWith(path);
-
-//   return (
-//     <Drawer
-//       sx={{
-//         width: drawerWidth,
-//         flexShrink: 0,
-//         '& .MuiDrawer-paper': {
-//           width: drawerWidth,
-//           backgroundColor: theme.palette.background.paper,
-//         },
-//       }}
-//       variant={variant}
-//       anchor="left"
-//       open={open}
-//       onClose={onClose}
-//     >
-//       <Toolbar />
-//       <Box sx={{ overflow: 'auto' }}>
-//         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-//           <Avatar src={user?.photoUrl} sx={{ width: 56, height: 56, mr: 2 }}>
-//             {user?.name?.charAt(0)}
-//           </Avatar>
-//           <Box>
-//             <Typography variant="subtitle1">{user?.name}</Typography>
-//             <Typography variant="body2" color="textSecondary">
-//               {user?.company || 'Employer'}
-//             </Typography>
-//           </Box>
-//         </Box>
-//         <Divider />
-
-//         <List>
-//           {menuItems.map((item) => (
-//             <ListItem 
-//               button 
-//               key={item.text}
-//               onClick={() => {
-//                 navigate(item.path);
-//                 if (variant === 'temporary') onClose();
-//               }}
-//               sx={{
-//                 bgcolor: isActive(item.path) ? theme.palette.action.selected : 'transparent',
-//               }}
-//             >
-//               <ListItemIcon sx={{ color: isActive(item.path) ? theme.palette.primary.main : 'inherit' }}>
-//                 {item.icon}
-//               </ListItemIcon>
-//               <ListItemText primary={item.text} />
-//             </ListItem>
-//           ))}
-//         </List>
-//         <Divider />
-
-//         <List>
-//           {secondaryItems.map((item) => (
-//             <ListItem button key={item.text} onClick={() => navigate(item.path)}>
-//               <ListItemIcon>{item.icon}</ListItemIcon>
-//               <ListItemText primary={item.text} />
-//             </ListItem>
-//           ))}
-//           <ListItem button onClick={logout}>
-//             <ListItemIcon><LogoutIcon color="error" /></ListItemIcon>
-//             <ListItemText primary="Logout" primaryTypographyProps={{ color: 'error' }} />
-//           </ListItem>
-//         </List>
-//       </Box>
-//     </Drawer>
-//   ); 
-// };
-
-// export default Sidebar;

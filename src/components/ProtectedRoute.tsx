@@ -21,30 +21,19 @@ interface ProtectedRouteProps {
 
    
 
-const ProtectedRoute = ({  role, children }: ProtectedRouteProps) => {
-  const location = useLocation(); 
- 
 
-  // useEffect(() => {
-  //   checkAuth(); // Optional if not already triggered in the hook
-  // }, []);
+const ProtectedRoute = ({ user, loading, children }) => {
+  const location = useLocation();
 
-  const { user, loading, error } = useAuth();
-
-  console.log('user from protected route', user);
-  console.log('role', role);
-  console.log('loading', loading);
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div>Loading...</div>; // Or a proper loading spinner
+  }
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Redirect to login but save the current location to return to after login
+    return <Navigate to="/login" state={{ from: location }} />;
   }
 
-  if (role && !role.includes(user.role || '')) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-  console.log('user', user);
-  
   return      <> {children || (
     <Layout>
       <Outlet />

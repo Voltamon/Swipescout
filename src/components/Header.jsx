@@ -28,6 +28,9 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
       color="default"
       elevation={1}
       sx={{
+       
+        background: 'rgba(182, 202, 233, 0.34)',
+
         height: 56,
         justifyContent: "center",
         px: 2, // padding left and right
@@ -67,59 +70,7 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
   );
 };
 
-// const Header = ({ onSidebarToggle }) => {
-//   return (
-//     <AppBar position="static" color="default" elevation={1} padding={0}>
-//             {/* Header */}
-//             <AppBar position="static">
-//               <Toolbar>
-//                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
-//                   Swipscout
-//                 </Typography>
-//                 <IconButton color="inherit">
-//                   <Home />
-//                 </IconButton>
-//                 <IconButton color="inherit">
-//                   <Work />
-//                 </IconButton>
-//                 <IconButton color="inherit">
-//                   <Person />
-//                 </IconButton>
-//                 <IconButton color="inherit">
-//                   <ExitToApp />
-//                 </IconButton>
-//                 <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
-//               </Toolbar>
-//             </AppBar>
-//       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-//         {/* Left side: Menu Icon and Logo */}
-//         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-//           <IconButton edge="start" color="inherit" onClick={onSidebarToggle}>
-//             <MenuIcon />
-//           </IconButton>
-//           <Typography variant="h6" component="div">
-//             Swipscout
-//           </Typography>
-//         </Box>
 
-//         {/* Right side: Navigation */}
-//         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-//           <Button color="inherit" href="/">
-//             Home
-//           </Button>
-//           <Button color="inherit" href="/about">
-//             About
-//           </Button>
-//           <Button color="inherit" href="/contact">
-//             Contact
-//           </Button>
-//           <Button variant="contained" color="primary" href="/signin">
-//             Sign In
-//           </Button>
-//         </Box>
-//       </Toolbar>
-//     </AppBar>
-//   );
-// };
+
 
 export default Header;

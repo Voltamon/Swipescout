@@ -52,13 +52,15 @@ import LoginPage from "./pages/LoginPage";
 import UnauthorizedPage from "./pages/Unauthorized";
 import LinkedInCallback from "./pages/LinkedInCallback";
 import AuthPage from "./pages/auth_page";
-
+import { AnimatePresence, motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 // Components
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -69,7 +71,9 @@ function App() {
   }
 
   return (
-    <Routes>
+    <AnimatePresence mode="wait">
+
+    <Routes  location={location} key={location.pathname}>
       {/* Public Routes */}
       <Route path="/" element={<LandingPageNoura />} />
       <Route path="/view-login" element={<TempLoginPage />} />
@@ -130,6 +134,8 @@ function App() {
           <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
         </Route>
     </Routes>
+    </AnimatePresence>
+
   );
 }
 
