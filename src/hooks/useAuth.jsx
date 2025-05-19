@@ -15,90 +15,161 @@ export const useAuth = () => {
   const [error, setError] = useState(null);
 
   // Common function to handle successful authentication
-  const handleAuthSuccess = async (token, origin, role = null) => {
-    try {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
+const handleAuthSuccess = async (token, origin, role = null) => {
+  try {
+    // Clear old auth data
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
 
-      let idToken = token;
-      let user;
-      if (origin == "linkedin" || origin == "EmailPass") {
-        console.log("Token received:::::::::::", token);
-        const userCredential = await signInWithCustomToken(auth, token);
-        user = userCredential.user;
-        user.role = role;
-        idToken = await user.getIdToken();
-      }
+    let idToken = token;
+    let user;
 
-      localStorage.setItem("accessToken", idToken);
-      localStorage.setItem("user", user);
-      setUser(user);
-      setRole(role);
-      console.log("User authenticated successfully:", user);
-      console.log("Role set successfully:", role);
-      console.log("userrrr:", user);
-      return { success: true, user, role };
-    } catch (error) {
-      return {
-        error: true,
-        message: error.message || "Authentication processing failed"
+    if (origin === "linkedin" || origin === "EmailPass") {
+      const userCredential = await signInWithCustomToken(auth, token);
+      user = {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        displayName: userCredential.user.displayName,
+        role: role
       };
+      idToken = await userCredential.user.getIdToken();
     }
-  };
 
+    // Store auth data
+    localStorage.setItem("accessToken", idToken);
+    localStorage.setItem("user", JSON.stringify(user));
+    
+    // Update state
+    setUser(user);
+    setRole(role);
+    
+    return { success: true, user, role };
+  } catch (error) {
+    return {
+      error: true,
+      message: error.message || "Authentication failed"
+    };
+  }
+};
 
 
 
   // Common function to verify token
-  const verifyToken = async (token) => {
-    try {
-      const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
+const verifyToken = async (token) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // Add this if your backend expects it
+      },
+      body: JSON.stringify({ token })
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (err) {
-      console.error("Token verification failed:", err);
-      throw err;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
-  };
 
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      const role = localStorage.getItem("role");
-      if (!token) {
-        setLoading(false);
-        return;
+        if (response.status === 401) {
+      // Token expired, try to refresh
+      const newToken = await refreshToken();
+      if (newToken) {
+        return verifyToken(newToken); // Retry with new token
       }
+      throw new Error("Session expired");
+    }
+    
+    // First check content-type
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(`Expected JSON but got: ${contentType}, body: ${text.slice(0, 100)}`);
+    }
 
-      const data = await verifyToken(token);
-      setUser(data.user);
-      setRole(role);
-      setError(null);
-    } catch (err) {
-      console.error("Auth check failed:", err);
-      setError(err.message);
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("role");
-      setUser(null);
-      Navigate("/login");
-    } finally {
+    return await response.json();
+  } catch (err) {
+    console.error("Token verification failed:", err);
+    throw err; // Re-throw to let checkAuth handle it
+  }
+};
+
+const checkAuth = async () => {
+  try {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
       setLoading(false);
+      return false;
+    }
+
+    const data = await verifyToken(token);
+    
+    // Safely parse stored user
+    let currentUser = null;
+    try {
+      const storedUser = localStorage.getItem("user");
+      console.log("Stored user:", storedUser);
+      currentUser = storedUser ? JSON.parse(storedUser) : null;
+    } catch (e) {
+      console.error("Failed to parse user:", e);
+    }
+
+    // Use verified data if available
+    if (!currentUser && data.user) {
+      currentUser = data.user;
+      localStorage.setItem("user", JSON.stringify(currentUser));
+    }
+
+    // Validate we have a user
+    if (!currentUser) {
+      throw new Error("No valid user data");
+    }
+
+    // Update state
+    setUser(currentUser);
+    setRole(data.role || currentUser.role || localStorage.getItem("role"));
+    setError(null);
+    return true;
+  } catch (err) {
+    console.error("Auth check failed:", err);
+    setError(err.message);
+    logout();
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
+useEffect(() => {
+  let intervalId;
+
+  const initializeAndSetupRefresh = async () => {
+    // 1. Run initial auth check
+    const isAuthenticated = await checkAuth();
+    
+    // 2. Only setup refresh if authenticated
+    if (isAuthenticated) {
+      intervalId = setInterval(async () => {
+        try {
+          const newToken = await refreshToken();
+          if (!newToken) {
+            clearInterval(intervalId);
+            await logout();
+          }
+        } catch (error) {
+          clearInterval(intervalId);
+          await logout();
+        }
+      }, 5 * 60 * 1000); // 5 minutes
     }
   };
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  initializeAndSetupRefresh();
 
-
+  // Cleanup on unmount
+  return () => {
+    if (intervalId) clearInterval(intervalId);
+  };
+}, []); // Empty dependency array - runs only once on mount
   const loginByEmailAndPassword2 = async (email, password) => {
     try {
       console.log("Logging in with email and password:", email, password);
@@ -465,13 +536,33 @@ export const useAuth = () => {
     }
   };
 
-  const logout = async () => {
+const refreshToken = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) return null;
+
+    const newToken = await user.getIdToken(true);
+    await verifyToken(newToken); // Verify with backend
+    
+    localStorage.setItem("accessToken", newToken);
+    return newToken;
+  } catch (error) {
+    console.error("Refresh failed:", error);
+    return null;
+  }
+};
+const logout = async () => {
+  try {
+    await auth.signOut();
     await fetch(`${apiUrl}/api/auth/logout`, { method: "POST" });
+  } finally {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setUser(null);
-
-  };
-
+    setRole(null);
+  }
+};
   return {
     user,
     loading,

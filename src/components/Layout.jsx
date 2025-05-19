@@ -37,7 +37,7 @@ const HeaderWrapper = styled(Box)(({ open, isMobile }) => ({
 const FooterWrapper = styled(Box)(({ open, isMobile }) => ({
   height: 44,
   position: "relative",
-  top: 10,
+  top: 0,
   right: 0,
   left: open && !isMobile ? 200 : !isMobile ? 72 : 0,
   marginBottom: 30 ,
@@ -56,6 +56,7 @@ const MainContent = styled(Box)(({ open, isMobile }) => ({
   width: '100%',
   flexBasis: open && !isMobile ? 'calc(100% - 200px)' : !isMobile ? 'calc(100% - 72px)' : '100%' , 
   transition: 'flex-basis 0.3s ease-in-out',
+  
 }));
 
 const Layout = () => {

@@ -23,7 +23,19 @@ export default function CandidateSearchPage() {
   const theme = useTheme()
 
   return (
-    <Box sx={{ flexGrow: 1,background:'#ffffff' }}>
+    <Box sx={{
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    backgroundopacity: 0.9,
+    padding: theme.spacing(2),
+    height: '100vh',
+    mt: 2,
+    mb: 0,
+    pl: 10,
+    paddingBottom: 4,
+  }}>
       {/* Navigation Bar */}
 
 
@@ -132,7 +144,7 @@ export default function CandidateSearchPage() {
           Candidate Listings
         </Typography>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={3}  sx={{  mb: 30 ,height: "100%" }}>
           {/* Candidate Card 1 */}
           <Grid item xs={12} md={4}>
             <Card sx={{ height: "100%" }}>
@@ -341,46 +353,9 @@ export default function CandidateSearchPage() {
           </Grid>
         </Grid>
       </Container>
+      <br></br>
     </Box>
   )
 }
 
-      // <AppBar
-      //   position="static"
-      //   color="default"
-      //   elevation={0}
-      //   sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
-      // >
-      //   <Container maxWidth="lg">
-      //     <Toolbar sx={{ justifyContent: "space-between" }}>
-      //       <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
-      //         <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
-      //           Swip
-      //         </Box>
-      //         <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
-      //           scout
-      //         </Box>
-      //       </Typography>
-
-      //       <Box sx={{ display: "flex", gap: 3 }}>
-      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
-      //           Home
-      //         </Button>
-      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
-      //           Jobs
-      //         </Button>
-      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
-      //           Candidates
-      //         </Button>
-      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
-      //           Profile
-      //         </Button>
-      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
-      //           Logout
-      //         </Button>
-      //       </Box>
-
-      //       <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
-      //     </Toolbar>
-      //   </Container>
-      // </AppBar>
+   

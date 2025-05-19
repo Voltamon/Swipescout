@@ -38,7 +38,14 @@ import { styled } from '@mui/system';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
-  shadows: Array(25).fill('none') // Ensures all shadow levels exist
+  shadows: Array(25).fill('none'), // Ensures all shadow levels exist
+  typography: {
+    allVariants: {
+      color: '#e0e6f0',
+      textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
+      letterSpacing: '0.5px',
+    },
+  },
 });
 
 
@@ -136,16 +143,30 @@ const EmployerExplore = () => {
     candidate.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
     candidate.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
   );
-
+//linear-gradient(to right, #1a032a, #003366)
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    backgroundopacity: 0.9,
+    padding: theme.spacing(2),
+    height: '100vh',
+    mt: 2,
+    mb: 0,
+    pl: 10,
+    paddingBottom: 4,
+  }}
+   
+    >
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Discover Talent
         </Typography>
         <Typography color="text.secondary">
           Find candidates that match your job requirements
-        </Typography>
+        </Typography> 
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
