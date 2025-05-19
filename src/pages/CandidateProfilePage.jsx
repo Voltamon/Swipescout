@@ -67,41 +67,7 @@ export default function CandidateProfilePage() {
   return (
     <Box sx={{ flexGrow: 1, background: "#ffffff" }}>
       {/* Navigation Bar */}
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
-      >
-        <Container maxWidth="lg">
-          <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
-              <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
-                Swip
-              </Box>
-              <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
-                scout
-              </Box>
-            </Typography>
 
-            {isMobile ? (
-              <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-                <MenuIcon />
-              </IconButton>
-            ) : (
-              <Box sx={{ display: "flex", gap: 3 }}>
-                {navLinks.map((link) => (
-                  <Button key={link.text} color="inherit" sx={{ fontWeight: 500 }} href={link.href}>
-                    {link.text}
-                  </Button>
-                ))}
-              </Box>
-            )}
-
-            <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
-          </Toolbar>
-        </Container>
-      </AppBar>
 
       {/* Mobile Navigation Drawer */}
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -109,7 +75,7 @@ export default function CandidateProfilePage() {
       </Drawer>
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
+      <Container maxWidth="lg" sx={{ mt: 3, mb: 8 }}>
         {/* Candidate Profile Header */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 5, flexDirection: { xs: "column", sm: "row" } }}>
           <Avatar
@@ -296,3 +262,38 @@ export default function CandidateProfilePage() {
   )
 }
 
+      // <AppBar
+      //   position="static"
+      //   color="default"
+      //   elevation={0}
+      //   sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
+      // >
+      //   <Container maxWidth="lg">
+      //     <Toolbar sx={{ justifyContent: "space-between" }}>
+      //       <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
+      //         <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
+      //           Swip
+      //         </Box>
+      //         <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
+      //           scout
+      //         </Box>
+      //       </Typography>
+
+      //       {isMobile ? (
+      //         <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+      //           <MenuIcon />
+      //         </IconButton>
+      //       ) : (
+      //         <Box sx={{ display: "flex", gap: 3 }}>
+      //           {navLinks.map((link) => (
+      //             <Button key={link.text} color="inherit" sx={{ fontWeight: 500 }} href={link.href}>
+      //               {link.text}
+      //             </Button>
+      //           ))}
+      //         </Box>
+      //       )}
+
+      //       <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
+      //     </Toolbar>
+      //   </Container>
+      // </AppBar>

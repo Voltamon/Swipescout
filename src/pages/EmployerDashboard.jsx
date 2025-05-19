@@ -65,53 +65,7 @@ export default function EmployerDashboard() {
 
   return (
     <Box sx={{ flexGrow: 1, background: '#ffffff', height: '100%' }}>
-      {/* Navigation Bar */}
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
-      >
-        <Container maxWidth="lg">
-          <Toolbar sx={{ justifyContent: "space-between" }}>
-            {/* Logo */}
-            <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
-              <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
-                Swip
-              </Box>
-              <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
-                scout
-              </Box>
-            </Typography>
 
-            {/* Desktop Navigation */}
-            {!isMobile && (
-              <Box sx={{ display: "flex", gap: 3 }}>
-                {navItems.map((item) => (
-                  <Button key={item} color="inherit" sx={{ fontWeight: 500 }}>
-                    {item}
-                  </Button>
-                ))}
-              </Box>
-            )}
-
-            {/* Mobile Hamburger Icon - Centered */}
-            {isMobile && (
-              <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                <IconButton 
-                  color="inherit" 
-                  aria-label="menu"
-                  onClick={toggleDrawer(true)}
-                >
-                  <MenuIcon />
-                </IconButton>
-              </Box>
-            )}
-
-            <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
-          </Toolbar>
-        </Container>
-      </AppBar>
 
       {/* Mobile Navigation Drawer */}
       <Drawer
@@ -145,7 +99,7 @@ export default function EmployerDashboard() {
       </Drawer>
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
+      <Container maxWidth="lg" sx={{ mt: 3, mb: 8 }}>
         {/* Welcome Message and Connect Button */}
         <Box sx={{ 
           display: "flex", 
@@ -161,7 +115,8 @@ export default function EmployerDashboard() {
             sx={{ 
               fontWeight: "bold", 
               color: "#333",
-              fontSize: isMobile ? '1.75rem' : '2.125rem'
+              fontSize: isMobile ? '1.75rem' : '2.125rem',
+              mt:2,
             }}
           >
             Welcome back, John Doe!
@@ -471,3 +426,52 @@ export default function EmployerDashboard() {
     </Box>
   )
 }
+
+
+      {/* Navigation Bar */}
+      // <AppBar
+      //   position="static"
+      //   color="default"
+      //   elevation={0}
+      //   sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
+      // >
+      //   <Container maxWidth="lg">
+      //     <Toolbar sx={{ justifyContent: "space-between" }}>
+      //       {/* Logo */}
+      //       <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
+      //         <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
+      //           Swip
+      //         </Box>
+      //         <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
+      //           scout
+      //         </Box>
+      //       </Typography>
+
+      //       {/* Desktop Navigation */}
+      //       {!isMobile && (
+      //         <Box sx={{ display: "flex", gap: 3 }}>
+      //           {navItems.map((item) => (
+      //             <Button key={item} color="inherit" sx={{ fontWeight: 500 }}>
+      //               {item}
+      //             </Button>
+      //           ))}
+      //         </Box>
+      //       )}
+
+      //       {/* Mobile Hamburger Icon - Centered */}
+      //       {isMobile && (
+      //         <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+      //           <IconButton 
+      //             color="inherit" 
+      //             aria-label="menu"
+      //             onClick={toggleDrawer(true)}
+      //           >
+      //             <MenuIcon />
+      //           </IconButton>
+      //         </Box>
+      //       )}
+
+      //       <Avatar sx={{ bgcolor: "#3366ff" }}>JD</Avatar>
+      //     </Toolbar>
+      //   </Container>
+      // </AppBar>

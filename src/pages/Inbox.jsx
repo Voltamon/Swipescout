@@ -183,7 +183,7 @@ const navigate = useNavigate();
       </AppBar>
 
       {/* Content */}
-      <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", mt: 10 }}>
+      <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", mt: 5 }}>
         {/* Tabs */}
         <Box sx={{ bgcolor: "white", position: "sticky", top: 99, zIndex: 90 }}>
           <Tabs
