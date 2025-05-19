@@ -233,15 +233,15 @@ const Settings = () => {
                 <CircularProgress />
             </Box>
         );
-    }
+    }   
 
     return (
-        <SettingsContainer maxWidth="lg">
+        <SettingsContainer maxWidth="lg" sx={{ mt: 4 }}>
             <Typography variant="h4" gutterBottom>
                 Settings
             </Typography>
 
-            <Grid container spacing={3} sx={{ mt: 1 }}>
+            <Grid container spacing={3} sx={{ mt: 1 , mb: 3 }}>
                 <Grid item xs={12} md={3}>
                     <SettingsPaper elevation={2}>
                         <SettingsSidebar>

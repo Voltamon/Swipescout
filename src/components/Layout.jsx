@@ -24,11 +24,11 @@ const LayoutContent = styled(Box)(({ theme }) => ({
 }));
 
 const HeaderWrapper = styled(Box)(({ open, isMobile }) => ({
-  height: 44,
+  height: 11,
   position: "relative",
   top: 0,
   right: 0,
-  marginBottom: 8,
+  marginBottom: 28,
   left: open && !isMobile ? 200 : !isMobile ? 72 : 0,
   width: open && !isMobile ? "calc(100% - 200px)" : !isMobile ? "calc(100% - 72px)" : "100%",
 }));

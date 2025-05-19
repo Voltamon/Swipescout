@@ -23,13 +23,21 @@ const appliedJobs = [
 ];
 
 const MyApplications = () => {
-  return (
-    <div>
+  return <div>
       <header2 />
-      <h2 style={{ textAlign: "center", margin: "20px 0" }}>My Applications</h2>
+      <h2 style={{ textAlign: "center", margin: "20px 0" }}>
+        My Applications
+      </h2>
       <div className="job-listings">
         {appliedJobs.map((job, index) =>
-          <div key={index} className="job-card">
+          <div
+            key={index}
+            className="job-card"
+            style={{ margin: "20px" }}
+            sx={{
+              ml: 20
+            }}
+          >
             <h3>
               {job.title}
             </h3>
@@ -45,8 +53,7 @@ const MyApplications = () => {
           </div>
         )}
       </div>
-    </div>
-  );
+    </div>;
 };
 
 export default MyApplications;

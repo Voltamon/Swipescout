@@ -25,49 +25,9 @@ export default function JobSearchPage() {
 
   return (
     <Box sx={{ flexGrow: 1, background:'#ffffff' }}>
-      {/* Navigation Bar */}
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
-      >
-        <Container maxWidth="lg">
-          <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
-              <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
-                Swip
-              </Box>
-              <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
-                scout
-              </Box>
-            </Typography>
-
-            <Box sx={{ display: "flex", gap: 3 }}>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Home
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Jobs
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Applications
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Profile
-              </Button>
-              <Button color="inherit" sx={{ fontWeight: 500 }}>
-                Logout
-              </Button>
-            </Box>
-
-            <Avatar sx={{ bgcolor: "#3366ff" }}>JS</Avatar>
-          </Toolbar>
-        </Container>
-      </AppBar>
 
       {/* Main Content */}
-      <Container maxWidth="lg" sx={{ mt: 5, mb: 8 }}>
+      <Container maxWidth="lg" sx={{ mt: 0, mb: 8 }}>
         {/* Job Search Section */}
         <Card sx={{ mb: 5, p: 3 }}>
           <CardContent>
@@ -571,3 +531,43 @@ export default function JobSearchPage() {
   )
 }
 
+      {/* Navigation Bar */}
+      // <AppBar
+      //   position="static"
+      //   color="default"
+      //   elevation={0}
+      //   sx={{ backgroundColor: "white", borderBottom: "1px solid #eaeaea" }}
+      // >
+      //   <Container maxWidth="lg">
+      //     <Toolbar sx={{ justifyContent: "space-between" }}>
+      //       <Typography variant="h5" component="div" sx={{ display: "flex", alignItems: "center" }}>
+      //         <Box component="span" sx={{ color: "#3366ff", fontWeight: "bold" }}>
+      //           Swip
+      //         </Box>
+      //         <Box component="span" sx={{ color: "#ffc107", fontWeight: "bold" }}>
+      //           scout
+      //         </Box>
+      //       </Typography>
+
+      //       <Box sx={{ display: "flex", gap: 3 }}>
+      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
+      //           Home
+      //         </Button>
+      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
+      //           Jobs
+      //         </Button>
+      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
+      //           Applications
+      //         </Button>
+      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
+      //           Profile
+      //         </Button>
+      //         <Button color="inherit" sx={{ fontWeight: 500 }}>
+      //           Logout
+      //         </Button>
+      //       </Box>
+
+      //       <Avatar sx={{ bgcolor: "#3366ff" }}>JS</Avatar>
+      //     </Toolbar>
+      //   </Container>
+      // </AppBar>
