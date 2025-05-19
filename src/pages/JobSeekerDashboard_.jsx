@@ -201,7 +201,7 @@ const JobSeekerDashboard = () => {
     }
 
     return (
-        <DashboardContainer maxWidth="lg">
+        <DashboardContainer maxWidth="lg" sx={{ mt: 4 }}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h4">Dashboard</Typography>
 
