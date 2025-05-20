@@ -46,6 +46,7 @@ const AuthPage = () => {
   const [error, setError] = useState(null);
   const auth = getAuth(app);
   const navigate = useNavigate();
+  const apiUrl  = import.meta.env.VITE_API_BASE_URL;
 
   // Email/Password Sign-In
   const handleEmailSignIn = async e => {
@@ -61,7 +62,7 @@ const AuthPage = () => {
       );
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/auth/signin", {
+      const response = await fetch(`${apiUrl}/api/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -91,7 +92,7 @@ const AuthPage = () => {
       console.log("Google id token:", idToken);
 
       const response = await fetch(
-        "http://localhost:5000/auth/signin/google",
+        `${apiUrl}/api/auth/signin/google`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -120,7 +121,7 @@ const AuthPage = () => {
 
     try {
       // 1. Send token to your backend
-      const res = await fetch("http://localhost:5000/auth/signin/linkedin", {
+      const res = await fetch(`${apiUrl}/api/auth/signin/linkedin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_token: response.id_token })
@@ -278,11 +279,11 @@ const AuthPage = () => {
 
             {/* LinkedIn Button */}
             <LinkedIn
-              clientId="78aceunh672c3c" // Replace with your actual LinkedIn Client ID
+              clientId="78aceu--nh672c3c" // Replace with your actual LinkedIn Client ID
               onSuccess={handleLinkedInSuccess}
               onError={handleLinkedInFailure}
               scope="openid profile email"
-              redirectUri="http://localhost:5173/auth/linkedin/callback"
+              redirectUri=`${apiUrl}/auth/linkedin/callback`
             >
               {({ linkedInLogin }) =>
                 <Button
