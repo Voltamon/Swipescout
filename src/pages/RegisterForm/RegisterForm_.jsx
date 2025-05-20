@@ -33,7 +33,8 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../../firebase-config.js";
 import { useAuth } from "../../hooks/useAuth.jsx";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+;
 
 
 
@@ -89,8 +90,8 @@ const InputField = styled(TextField)(({ theme }) => ({
 }));
 
 // LinkedIn configuration
-const LINKEDIN_CLIENT_ID = '78aceunh672c3c';
-const LINKEDIN_REDIRECT_URI = encodeURIComponent('http://localhost:5173/dashboard');
+const LINKEDIN_CLIENT_ID = '{import.meta.env.VITE_LINKEDIN_CLIENT_ID}';
+const LINKEDIN_REDIRECT_URI = encodeURIComponent(`${API_BASE_URL}/dashboard`);
 const LINKEDIN_SCOPE = encodeURIComponent('openid profile email');
 const LINKEDIN_STATE = 'random_state_string'; // Should be random and validated on callback
 
@@ -319,7 +320,7 @@ const RegisterForm = () => {
         },
         body: JSON.stringify({
           code,
-          redirectUri: 'http://localhost:5173/linkedin-callback',
+          redirectUri: `${API_BASE_URL}/api/linkedin-callback',
           role,
         }),
       })

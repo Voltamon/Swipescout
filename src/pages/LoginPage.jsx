@@ -155,14 +155,16 @@ const SignupLink = styled(Typography)(({ theme }) => ({
 
 
 // LinkedIn configuration
-const LINKEDIN_CLIENT_ID = '78aceunh672c3c';
-const LINKEDIN_REDIRECT_URI = encodeURIComponent('http://localhost:5173/dashboard');
+const LINKEDIN_CLIENT_ID = '{import.meta.env.VITE_LINKEDIN_CLIENT_ID}';
+const LINKEDIN_REDIRECT_URI = encodeURIComponent('{import.meta.env.VITE_LINKEDIN_REDIRECT_URI}');
 const LINKEDIN_SCOPE = encodeURIComponent('openid profile email');
 const LINKEDIN_STATE = 'random_state_string';
 
 const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${LINKEDIN_REDIRECT_URI}&scope=${LINKEDIN_SCOPE}&state=${LINKEDIN_STATE}`;
 
-const API_BASE_URL = "http://localhost:5000";
+const apiUrl  = import.meta.env.VITE_API_BASE_URL;
+
+const API_BASE_URL = `${apiUrl}`;
 
 
 
@@ -184,6 +186,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const isMounted = useRef(false);
   const navigate = useNavigate();
+  const apiUrl  = import.meta.env.VITE_API_BASE_URL;
 
 
 
@@ -247,105 +250,7 @@ const LoginPage = () => {
     }
   };
   
-// const authenticateWithLinkedIn = async (role = null) => {
-//   try {
-//     console.log("[LinkedIn Auth] Starting authentication...");
-    
-//     // 1. Open LinkedIn OAuth window
-//     const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
-    
-//     console.log("[LinkedIn Auth] Opening window with URL:", linkedinAuthUrl);
-    
-//     const linkedinAuthWindow = window.open(
-//       linkedinAuthUrl,
-//       '_blank',
-//       'width=600,height=600'
-//     );
 
-//     if (!linkedinAuthWindow) {
-//       throw new Error("Popup window was blocked. Please allow popups for this site.");
-//     }
-
-//     // 2. Listen for the callback with the authorization code
-//     console.log("[LinkedIn Auth] Setting up message listener...");
-    
-//     const result = await new Promise((resolve, reject) => {
-//       const messageListener = (event) => {
-//         console.log("[LinkedIn Auth] Received message:", event);
-        
-//         if (event.origin === window.location.origin) {
-//           if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
-//             console.log("[LinkedIn Auth] Received success message");
-//             window.removeEventListener('message', messageListener);
-//             resolve(event.data.payload);
-//           } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
-//             console.log("[LinkedIn Auth] Received error message");
-//             window.removeEventListener('message', messageListener);
-//             reject(new Error(event.data.error || "LinkedIn authentication failed"));
-//           }
-//         }
-//       };
-
-//       window.addEventListener('message', messageListener);
-
-//       const timeoutId = setTimeout(() => {
-//         console.log("[LinkedIn Auth] Timeout reached");
-//         window.removeEventListener('message', messageListener);
-//         reject(new Error("LinkedIn authentication timed out."));
-//       }, 120000);
-
-//       // Cleanup function
-//       return () => {
-//         window.removeEventListener('message', messageListener);
-//         clearTimeout(timeoutId);
-//       };
-//     });
-
-//     console.log("[LinkedIn Auth] Received result from popup:", result);
-
-//     // 3. Now send to backend
-//     const endpoint = role 
-//       ? `${apiUrl}/api/auth/signup/linkedin` 
-//       : `${apiUrl}/api/auth/signin/linkedin`;
-
-//     console.log("[LinkedIn Auth] Sending to backend endpoint:", endpoint);
-    
-//     const response = await fetch(endpoint, {
-//       method: "POST",
-//       headers: { 
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ 
-//         id_token: result.id_token,
-//         ...(role ? { role } : {}) 
-//       })
-//     });
-
-//     console.log("[LinkedIn Auth] Backend response status:", response.status);
-    
-//     if (!response.ok) {
-//       const errorData = await response.json().catch(() => ({}));
-//       console.error("[LinkedIn Auth] Backend error:", errorData);
-//       throw new Error(errorData.error || "Authentication failed");
-//     }
-
-//     const responseData = await response.json();
-//     console.log("[LinkedIn Auth] Backend response data:", responseData);
-    
-//     return {
-//       token: responseData.customToken,
-//       role: responseData.user.role,
-//       user: responseData.user
-//     };
-
-//   } catch (error) {
-//     console.error("[LinkedIn Auth] Full error:", error);
-//     return { 
-//       error: true, 
-//       message: error.message || "LinkedIn authentication failed" 
-//     };
-//   }
-// };
   
   const handleEmailSignIn = async e => {
     e.preventDefault();
@@ -369,110 +274,7 @@ const LoginPage = () => {
     setLoading({ ...loading, email: false });
   };
 
- 
-  //   e.preventDefault();
-  //   setLoading({ ...loading, email: true });
-  //   setError(null);
 
-  //   if (!formData.email || !formData.password) {
-  //     setError("Please fill in all fields");
-  //     setLoading({ ...loading, email: false });
-  //     return;
-  //   }
-
-  //   const result = await loginByEmailAndPassword(formData.email, formData.password);
-
-  //   if (result.error) {
-  //     setError(result.message || "Login failed. Please try again.");
-  //   } else {
-  //     navigate("/dashboard");
-  //     console.log("Login successful:", result);
-  //   }
-
-  //   setLoading({ ...loading, email: false });
-  // };
-
-  // const handleGoogleSignIn = async () => {
-  //   const result = await handleGoogleSignIn();
-  
-  //   if (result.error) {
-  //     setError(result.message || "Google sign-in failed");
-  //   } else {
-  //     navigate("/dashboard");
-  //     console.log("Google sign-in successful:", result.user);
-  //   }
-  // };
-
-  // const handleLinkedInSuccess = async (response) => {
-  //   setLoading({ ...loading, linkedin: true });
-  //   setError(null);
-  //   console.log("LinkedIn response:", response);
-
-  //   try {
-  //     const res = await fetch("http://localhost:5000/api/auth/signin/linkedin", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ id_token: response.id_token }),
-  //     });
-
-  //     if (!res.ok) throw new Error(await res.text());
-
-  //     const data = await res.json();
-  //     console.log("LinkedIn sign-in success:", data);
-
-  //     if (window.opener) {
-  //       window.opener.postMessage(
-  //         {
-  //           type: "LINKEDIN_AUTH_SUCCESS",
-  //           payload: data
-  //         },
-  //         window.location.origin
-  //       );
-  //       window.close();
-  //     } else {
-  //       navigate('/dashboard');
-  //     }
-
-  //   } catch (err) {
-  //     setError(err.message);
-  //     if (window.opener) {
-  //       window.opener.postMessage(
-  //         { type: "LINKEDIN_AUTH_ERROR", error: err.message },
-  //         window.location.origin
-  //       );
-  //       window.close();
-  //     }
-  //   } finally {
-  //     setLoading({ ...loading, linkedin: false });
-  //   }
-  // };
-
-  // const handleLinkedInFailure = (error) => {
-  //   const errorMessage = error.errorMessage || "LinkedIn sign-in failed";
-  //   setError(errorMessage);
-
-  //   if (window.opener) {
-  //     window.opener.postMessage(
-  //       {
-  //         type: "LINKEDIN_AUTH_ERROR",
-  //         error: errorMessage
-  //       },
-  //       window.location.origin
-  //     );
-  //     window.close();
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const handleAuthSuccess = (event) => {
-  //     if (event.origin !== window.location.origin) return;
-  //     if (event.data.type === "LINKEDIN_AUTH_SUCCESS") {
-  //       navigate('/dashboard');
-  //     }
-  //   };
-  //   window.addEventListener('message', handleAuthSuccess);
-  //   return () => window.removeEventListener('message', handleAuthSuccess);
-  // }, [navigate]);
 
 // In your login page component
 
@@ -514,7 +316,7 @@ if (isMounted.current) {
   
       try {
         // 1. Send token to your backend
-        const res = await fetch("http://localhost:5000/auth/signin/linkedin", {
+        const res = await fetch("`${apiUrl}/api/auth/signin/linkedin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id_token: response.id_token })
