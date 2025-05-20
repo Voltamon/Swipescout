@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -52,10 +52,18 @@ const EmployerExplorePage = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        height: "100vh",
-        bgcolor: theme.palette.background.default
-      }}
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    backgroundopacity: 0.9,
+    padding: theme.spacing(2),
+    height: '100vh',
+    mt: 0,
+    mb: 0,
+    pl: 10,
+    paddingBottom: 4,
+  }}
     >
       {/* Left Sidebar */}
       <Drawer
@@ -75,6 +83,14 @@ const EmployerExplorePage = () => {
       >
         <Box
           sx={{
+            background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
+    '& .MuiListItem-root': {
+      color: 'rgb(39, 56, 83)', // Base text color
+      '&.Mui-selected': {
+        color: '#ffffff', // Brighter when selected
+      },
+    },
+    height: '100vh',
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -103,7 +119,14 @@ const EmployerExplorePage = () => {
                 key={item.value}
                 component="div"
                 selected={activeTab === item.value}
-                onClick={() => setActiveTab(item.value)}
+                onClick={() => {
+                  if (item.value === "home") navigate("/employer-dashboard");
+                  else if (item.value === "search") navigate("/Employer-explore");
+                  else if (item.value === "candidates") navigate("/candidate-search");
+                  else if (item.value === "saved") navigate("#");
+                  else if (item.value === "video-resumes") navigate("#");
+                
+                 setActiveTab(item.value) }}
                 sx={{
                   justifyContent: "center",
                   py: 2,
@@ -126,16 +149,22 @@ const EmployerExplorePage = () => {
                 </ListItemIcon>
               </ListItem>
             )}
-          </List>
-        </Box>
-
-        <Box
-          sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" }}
+          </List>  <Box
+          sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" ,
+    '& .MuiListItem-root': {
+      color: 'rgb(39, 56, 83)', // Base text color
+      '&.Mui-selected': {
+        color: '#ffffff', // Brighter when selected
+      },
+    },}}
         >
           <IconButton sx={{ color: theme.palette.text.primary }}>
-            <Settings />
+            <Settings  />
           </IconButton>
         </Box>
+        </Box>
+
+      
       </Drawer>
 
       {/* Main Content Area - Video Grid */}
@@ -147,7 +176,6 @@ const EmployerExplorePage = () => {
           gap: 2,
           p: 2,
           overflowY: "auto",
-          bgcolor: theme.palette.background.default
         }}
       >
         {videoResumes.map(video =>

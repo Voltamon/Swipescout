@@ -1,15 +1,18 @@
+// import React from "react";
+// import { HashRouter as Router, Routes, Route } from "react-router-dom";
+// import { Navigate } from 'react-router-dom';
+// import { Box, CircularProgress } from '@mui/material';
+// import { useAuth } from './hooks/useAuth';
+
 import React from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import PrivateRoute from "./pages/PrivateRoute";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Box, CircularProgress } from '@mui/material';
+import { useAuth } from './hooks/useAuth';
 
-
+// Pages
 import ExploreJobs from "./pages/ExploreJobs";
 import MyApplications from "./pages/MyApplications";
-import "./App.css";
-
 import SignupPage from "./pages/SignupPage";
-
-
 import TempLoginPage from "./pages/TempLoginPage";
 import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
 import LoginForm from "./pages/LoginForm/LoginForm.jsx";
@@ -19,16 +22,16 @@ import DashboardJobSeeker from './pages/DashboardJobSeeker.jsx'
 import JobSearchPage from "./pages/JobSearchPage";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import CandidateSearchPage from "./pages/CandidateSearchPage";
-import CandidateProfilePage from "./pages/CandidateProfilePage.jsx";
-import JobPostingForm from "./pages/JobPostingForm.jsx";
-import VideoResumeUpload from './pages/VideoResumeUpload.jsx';
+import CandidateProfilePage from "./pages/CandidateProfilePage";
+import JobPostingForm from "./pages/JobPostingForm";
+import VideoResumeUpload from './pages/VideoResumeUpload';
 import Profile from "./pages/Profile";
 import Inbox from './pages/Inbox.jsx';
 import LandingPage_ from "./pages/LandingPage_/LandingPage_.jsx";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import JobDetailsPage from "./pages/JobDetailsPage";
 import PostJobPage from "./pages/PostJobPage";
-import AuthPage from "./pages/authPage";
+
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
 import VideoFeed from "./pages/VideoFeed";
@@ -36,75 +39,104 @@ import EmployerExplore from "./pages/EmployerExplore";
 import JobSeekerExplore from "./pages/JobSeekerExplore";
 import SettingsPage from "./pages/SettingsPage";
 import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
-import About from "./pages/About/About.jsx";
-import FAQs from "./pages/FAQ/FAQs.jsx";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#5D9BCF',
-    },
-    secondary: {
-      main: '#003366',
-    },
-  },
-  typography: {
-    fontFamily: '"Poppins", sans-serif',
-  },
-});
-
-
-    
+import About from "./pages/About/About";
+import FAQs from "./pages/FAQ/FAQs";
+import VideoFeed_ from './pages/VideoFeed_';
+import Chat from './pages/Chat';
+import Profile_ from './pages/Profile_';
+import JobVideos from './pages/JobVideos';
+import CompanyVideos from './pages/CompanyVideos';
+import Settings from './pages/Settings';
+import JobSeekerDashboard_ from './pages/JobSeekerDashboard_';
+import EmployerDashboard_ from './pages/EmployerDashboard_';
+import LoginPage from "./pages/LoginPage";
+import UnauthorizedPage from "./pages/Unauthorized";
+import LinkedInCallback from "./pages/LinkedInCallback";
+import AuthPage from "./pages/auth_page";
+import { AnimatePresence, motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
+// Components
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/view-login" element={<TempLoginPage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/FAQs" element={<FAQs />} />
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-        {/* Private Routes */}
-        <Route
-          path="*"
-          element={
-            <PrivateRoute>
-              <Routes>
-              <Route path="/register-form" element={<RegisterForm />} />
-              <Route path="/login-form" element={<LoginForm />} />
-                <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
-                <Route path="/job-search" element={<JobSearchPage />} />
-                <Route path="/employer-dashboard" element={<EmployerDashboard />} />
-                <Route path="/candidate-search" element={<CandidateSearchPage />} />
-                <Route path="/candidate-profile" element={<CandidateProfilePage />} />
-                <Route path="/job-posting" element={<JobPostingForm />} />
-                <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/inbox" element={<Inbox />} />
-                <Route path="/PagesNavigation" element={<LandingPage_ />} />
-                <Route path="/dashboard" element={<JobSeekerDashboard />} />
-                <Route path="/search" element={<JobSearchPage />} />
-                <Route path="/job/:id" element={<JobDetailsPage />} />
-                <Route path="/post-job" element={<PostJobPage />} />
-                <Route path="/auth-page" element={<AuthPage />} />
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/feed-page" element={<FeedPage />} />
-                <Route path="/video-feed" element={<VideoFeed />} />
-                <Route path="/Employer-explore" element={<EmployerExplore />} />
-                <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
-                <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
-                <Route path="/Settings-page" element={<SettingsPage />} />
-              </Routes>
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </Router>
-    </ThemeProvider>
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+
+    <Routes  location={location} key={location.pathname}>
+      {/* Public Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/view-login" element={<TempLoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/FAQs" element={<FAQs />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="/register-form" element={<RegisterForm />} />
+      <Route path="/authpage" element={<AuthPage />} />
+      <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
+
+      {/* Private Routes */}     
+
+      <Route element={<ProtectedRoute user={user} loading={loading} />}>
+         
+      
+          <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} />
+          
+          {/* Common Routes */}
+          <Route path="/feed" element={<VideoFeed_ />} />
+         <Route path="/chat" element={<Chat />} />
+         <Route path="/settings" element={<Settings />} />
+          <Route path="/chat/:conversationId" element={<Chat />} />
+          <Route path="/profile" element={<Profile_ />} />
+          <Route path="/profile/:userId" element={<Profile_ />} />
+          
+          {/* Job Seeker Routes */}
+          <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} />
+          <Route path="/job-videos" element={<JobVideos />} />
+          
+          {/* Employer Routes */}
+          <Route path="/employer/dashboard" element={<EmployerDashboard_ />} />
+          <Route path="/company-videos" element={<CompanyVideos />} />
+          {/* <Route path="/login-form" element={<LoginForm />} /> */}
+          <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
+          <Route path="/job-search" element={<JobSearchPage />} />
+          <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+          <Route path="/candidate-search" element={<CandidateSearchPage />} />
+          <Route path="/candidate-profile" element={<CandidateProfilePage />} />
+          <Route path="/job-posting" element={<JobPostingForm />} />
+          <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/inbox" element={<Inbox />} />
+          <Route path="/PagesNavigation" element={<LandingPage_ />} />
+          <Route path="/dashboard" element={<JobSeekerDashboard />} />
+          <Route path="/search" element={<JobSearchPage />} />
+          <Route path="/job/:id" element={<JobDetailsPage />} />
+          <Route path="/post-job" element={<PostJobPage />} />
+ 
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/feed-page" element={<FeedPage />} />
+          <Route path="/video-feed" element={<VideoFeed />} />
+          <Route path="/Employer-explore" element={<EmployerExplore />} />
+          <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
+          <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
+          <Route path="/Settings-page" element={<SettingsPage />} />
+          <Route path="/MyApplications-page" element={<MyApplications />} />
+          <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
+        </Route>
+    </Routes>
+    </AnimatePresence>
+
   );
 }
 
