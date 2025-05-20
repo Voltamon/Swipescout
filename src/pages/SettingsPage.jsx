@@ -111,7 +111,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <SettingsContainer maxWidth="md">
+    <SettingsContainer maxWidth="md" sx={{mt: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <IconButton href="/" sx={{ mr: 2 }}>
           <ArrowBack />

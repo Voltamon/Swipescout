@@ -17,28 +17,8 @@ import { Home, Work, Person, ExitToApp } from "@mui/icons-material";
 function JobDetailsPage() {
   return (
     <Box>
-      {/* Header */}
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Swipscout
-          </Typography>
-          <IconButton color="inherit">
-            <Home />
-          </IconButton>
-          <IconButton color="inherit">
-            <Work />
-          </IconButton>
-          <IconButton color="inherit">
-            <Person />
-          </IconButton>
-          <IconButton color="inherit">
-            <ExitToApp />
-          </IconButton>
-          <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
-        </Toolbar>
-      </AppBar>
 
+<br></br>
       {/* Job Details */}
       <Container sx={{ marginTop: 4 }}>
         <Typography variant="h4" gutterBottom>
@@ -90,22 +70,45 @@ function JobDetailsPage() {
         </Card>
       </Container>
 
-      {/* Footer */}
-      <Box
-        sx={{
-          backgroundColor: "#333",
-          color: "white",
-          padding: 4,
-          marginTop: 4,
-          textAlign: "center"
-        }}
-      >
-        <Typography variant="body2">
-          © 2023 Swipscout. All rights reserved.
-        </Typography>
-      </Box>
+
     </Box>
   );
 }
 
 export default JobDetailsPage;
+
+      {/* Header */}
+      // <AppBar position="static">
+      //   <Toolbar>
+      //     <Typography variant="h6" sx={{ flexGrow: 1 }}>
+      //       Swipscout
+      //     </Typography>
+      //     <IconButton color="inherit">
+      //       <Home />
+      //     </IconButton>
+      //     <IconButton color="inherit">
+      //       <Work />
+      //     </IconButton>
+      //     <IconButton color="inherit">
+      //       <Person />
+      //     </IconButton>
+      //     <IconButton color="inherit">
+      //       <ExitToApp />
+      //     </IconButton>
+      //     <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
+      //   </Toolbar>
+// </AppBar>
+            {/* Footer */}
+          //   <Box
+          //   sx={{
+          //     backgroundColor: "#333",
+          //     color: "white",
+          //     padding: 4,
+          //     marginTop: 4,
+          //     textAlign: "center"
+          //   }}
+          // >
+          //   <Typography variant="body2">
+          //     © 2023 Swipscout. All rights reserved.
+          //   </Typography>
+          // </Box>

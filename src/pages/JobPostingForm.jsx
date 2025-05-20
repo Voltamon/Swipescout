@@ -102,35 +102,7 @@ const JobPostingForm = () => {
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: "#f5f5f5", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
-      <AppBar position="static" color="default" elevation={1} sx={{ bgcolor: "white" }}>
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center" }}>
-            <Box component="span" sx={{ color: "#2563eb", fontWeight: "bold" }}>
-              Swip
-            </Box>
-            <Box component="span" sx={{ color: "#f59e0b", fontWeight: "bold" }}>
-              scout
-            </Box>
-          </Typography>
 
-          {isMobile ? (
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-          ) : (
-            <Box sx={{ display: "flex", gap: 3 }}>
-              {navLinks.map((link) => (
-                <Link key={link.text} href={link.href} underline="none" color="inherit">
-                  {link.text}
-                </Link>
-              ))}
-            </Box>
-          )}
-
-          <Avatar sx={{ bgcolor: "#2563eb" }}>JD</Avatar>
-        </Toolbar>
-      </AppBar>
 
       {/* Mobile Navigation Drawer */}
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -354,3 +326,32 @@ const JobPostingForm = () => {
 
 export default JobPostingForm
 
+      {/* Header */}
+      // <AppBar position="static" color="default" elevation={1} sx={{ bgcolor: "white" }}>
+      //   <Toolbar sx={{ justifyContent: "space-between" }}>
+      //     <Typography variant="h6" component="div" sx={{ display: "flex", alignItems: "center" }}>
+      //       <Box component="span" sx={{ color: "#2563eb", fontWeight: "bold" }}>
+      //         Swip
+      //       </Box>
+      //       <Box component="span" sx={{ color: "#f59e0b", fontWeight: "bold" }}>
+      //         scout
+      //       </Box>
+      //     </Typography>
+
+      //     {isMobile ? (
+      //       <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+      //         <MenuIcon />
+      //       </IconButton>
+      //     ) : (
+      //       <Box sx={{ display: "flex", gap: 3 }}>
+      //         {navLinks.map((link) => (
+      //           <Link key={link.text} href={link.href} underline="none" color="inherit">
+      //             {link.text}
+      //           </Link>
+      //         ))}
+      //       </Box>
+      //     )}
+
+      //     <Avatar sx={{ bgcolor: "#2563eb" }}>JD</Avatar>
+      //   </Toolbar>
+      // </AppBar>
