@@ -2,12 +2,11 @@ import React from "react";
 import { Box, Typography, Button, useMediaQuery, useTheme } from "@mui/material";
 import phoneImage from "../../assets/phone.png";
 
-
 const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  return (
+  return ( 
     <Box
       sx={{
         display: 'flex',
@@ -23,14 +22,13 @@ const HeroSection = () => {
         textAlign: { xs: 'center', md: 'left' }
       }}
     >
-      {/* Text Content */}
       <Box
         sx={{
           maxWidth: { xs: '100%', md: '50%' },
           mb: { xs: 4, md: 0 },
           pr: { xs: 0, md: 4 }
         }}
-      >
+      > 
         <Typography
           variant={isMobile ? "h4" : "h3"}
           align="center"
@@ -50,7 +48,8 @@ const HeroSection = () => {
           sx={{
             fontWeight: 'bold',
             mb: 3,
-            color: '#5D9BCF'
+            color: '#5D9BCF',
+            textAlign: "center",
           }}
         >
           Introducing Smart Video Recruitment
@@ -59,9 +58,10 @@ const HeroSection = () => {
         <Typography
           variant="body1"
           sx={{
-            fontSize: { xs: '1rem', md: '1.125rem' },
+            fontSize: { xs: '1rem', md: '1.1rem' },
             mb: 4,
-            lineHeight: 1.6
+            lineHeight: 1.6,
+            color: '#5D9BCF'
           }}
         >
           SwipeScout replaces boring resumes with 15–45 second video pitches
@@ -79,42 +79,12 @@ const HeroSection = () => {
             mt: 3
           }}
         >
-          {/* <Button
-            variant="contained"
-            sx={{
-              bgcolor: '#5D9BCF',
-              color: 'white',
-              px: 3,
-              py: 1.5,
-              borderRadius: '6px',
-              '&:hover': {
-                bgcolor: '#4a8abf'
-              }
-            }}
-          >
-            Primary Action
-          </Button>
+
           
-          <Button
-            variant="outlined"
-            sx={{
-              border: '2px solid #5D9BCF',
-              color: '#5D9BCF',
-              px: 2.5,
-              py: 1.25,
-              borderRadius: '6px',
-              '&:hover': {
-                bgcolor: 'rgba(93, 155, 207, 0.1)',
-                border: '2px solid #5D9BCF'
-              }
-            }}
-          >
-            Secondary Action
-          </Button> */}
+    
         </Box>
       </Box>
       
-      {/* Image */}
       <Box
         sx={{
           display: 'flex',

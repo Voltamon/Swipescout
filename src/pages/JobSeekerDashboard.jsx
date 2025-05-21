@@ -23,8 +23,31 @@ import {
   Person,
   ExitToApp
 } from "@mui/icons-material";
+import { useAuth } from "../hooks/useAuth.jsx";
+import { useNavigate } from 'react-router-dom';
+
+import { useEffect } from "react";
+
 
 function JobSeekerDashboard() {
+
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  if (loading || !user) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
+  
   return (
     <Box >
 

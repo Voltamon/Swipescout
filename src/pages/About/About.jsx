@@ -25,33 +25,33 @@ import {
   Phone
 } from "@mui/icons-material";
 
-const AboutUs = () => {
+const AboutUs = () => { 
 //   const theme = useTheme();
 //   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const teamMembers = [
     {
-      name: "Alex Chen",
+      name: "Team Member",
       role: "CEO & Founder",
       bio:
         "10+ years in HR tech. Passionate about connecting talent with opportunity.",
       avatar: "/images/team/alex.jpg"
     },
     {
-      name: "Samira Khan",
+      name: "Team Member",
       role: "CTO",
       bio: "Tech visionary with expertise in AI-driven recruitment solutions.",
       avatar: "/images/team/samira.jpg"
     },
     {
-      name: "Jamie Wilson",
+      name: "Team Member",
       role: "Head of Design",
       bio:
         "Creates intuitive user experiences that make job hunting enjoyable.",
       avatar: "/images/team/jamie.jpg"
     },
     {
-      name: "Miguel Rodriguez",
+      name: "Team Member",
       role: "Growth Manager",
       bio: "Builds partnerships that help SwipeScout reach more candidates.",
       avatar: "/images/team/miguel.jpg"
@@ -127,73 +127,129 @@ const AboutUs = () => {
           </Grid>
         </Grid>
 
-        {/* Stats Section */}
-        <Box sx={{ bgcolor: "rgb(75, 117, 151)", p: 4, borderRadius: 2, mb: 8 }}>
-          <Grid container spacing={4} justifyContent="center">
-            {stats.map((stat, index) => <Grid item xs={6} sm={3} key={index}>
-                <Card sx={{ height: "100%", textAlign: "center", boxShadow: "none", bgcolor: "#92c3eb", color: "#000" }}>
-                  <CardContent>
-                    <Box sx={{ color: "white", mb: 2 }}>
-                      {stat.icon}
-                    </Box>
-                    <Typography variant="h4" component="div" gutterBottom>
-                      {stat.value}
-                    </Typography>
-                    <Typography variant="body2">
-                      {stat.label}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>)}
-          </Grid>
-        </Box>
+     {/* Stats Section */}
+<Box sx={{ 
+  bgcolor: "rgb(75, 117, 151)", 
+  p: 4, 
+  borderRadius: 2, 
+  mb: 8,
+  width: '100%' // Ensure container takes full width
+}}>
+  <Grid container spacing={4} justifyContent="space-between">
+    {stats.map((stat, index) => (
+      <Grid item xs={12} sm={6} md={3} key={index} sx={{
+        display: 'flex',
+        flex: 1, // Make items grow equally
+        minWidth: { xs: '100%', sm: 'calc(50% - 32px)', md: 'calc(25% - 32px)' } // Account for spacing
+      }}>
+        <Card sx={{ 
+          flex: 1, // Take all available space
+          display: 'flex',
+          flexDirection: 'column',
+          textAlign: "center", 
+          boxShadow: "none", 
+          bgcolor: "#92c3eb", 
+          color: "#000",
+          height: '100%' // Ensure full height
+        }}>
+          <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ color: "white", mb: 2 }}>
+              {stat.icon}
+            </Box>
+            <Typography variant="h4" component="div" gutterBottom>
+              {stat.value}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 'auto' }}>
+              {stat.label}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    ))}
+  </Grid>
+</Box>
 
         {/* Team Section */}
-        <Box mb={8}>
-          <Typography variant="h4" align="center" gutterBottom sx={{ color: "#5D9BCF" }}>
-            Meet Our Team
-          </Typography>
-          <Typography variant="body1" align="center" maxWidth="md" mx="auto" mb={4} sx={{ color: "#B0C4DE" }}>
-            Passionate professionals dedicated to transforming the recruitment experience
-          </Typography>
-          <Grid container spacing={4}>
-            {teamMembers.map((member, index) =>
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    bgcolor: "rgb(154, 196, 230)",
-                    color: "#000"
-                  }}
-                >
-                  <Box
-                    sx={{ pt: 4, display: "flex", justifyContent: "center" }}
-                  >
-                    <Avatar
-                      alt={member.name}
-                      src={member.avatar}
-                      sx={{ width: 120, height: 120 }}
-                    />
-                  </Box>
-                  <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
-                    <Typography variant="h6" component="div">
-                      {member.name}
-                    </Typography>
-                    <Typography variant="body2" color="#003366" mb={2}>
-                      {member.role}
-                    </Typography>
-                    <Typography variant="body2">
-                      {member.bio}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            )}
-          </Grid>
-        </Box>
-
+ <Box mb={8} sx={{ width: '100%', px: { xs: 2, sm: 3 } }}>
+  <Typography variant="h4" align="center" gutterBottom sx={{ color: "#5D9BCF", mb: 3 }}>
+    Meet Our Team
+  </Typography>
+  <Typography variant="body1" align="center" maxWidth="md" mx="auto" mb={6} sx={{ color: "#B0C4DE" }}>
+    Passionate professionals dedicated to transforming the recruitment experience
+  </Typography>
+  
+  <Grid container spacing={4} justifyContent="center" sx={{ margin: '0 auto', maxWidth: '1200px' }}>
+    {teamMembers.map((member, index) => (
+      <Grid 
+        item 
+        xs={12} 
+        sm={6} 
+        md={3} 
+        key={index}
+        sx={{
+          display: 'flex',
+          width: { xs: '100%', sm: 'calc(50% - 32px)', md: 'calc(25% - 32px)' }, // Fixed width calculation
+          minWidth: { xs: '100%', sm: 'calc(50% - 32px)', md: 'calc(25% - 32px)' } // Ensures no growing beyond allocated space
+        }}
+      >
+        <Card
+          sx={{
+            width: '100%', // Takes full width of Grid item
+            display: "flex",
+            flexDirection: "column",
+            bgcolor: "rgb(154, 196, 230)",
+            color: "#000",
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+            }
+          }}
+        >
+          <Box
+            sx={{ 
+              pt: 4, 
+              display: "flex", 
+              justifyContent: "center",
+              flexShrink: 0 
+            }}
+          >
+            <Avatar
+              alt={member.name}
+              src={member.avatar}
+              sx={{ 
+                width: 120, 
+                height: 120,
+                border: '3px solid white',
+                boxShadow: '0 3px 5px rgba(0,0,0,0.2)'
+              }}
+            />
+          </Box>
+          <CardContent 
+            sx={{ 
+              flex: '1 0 auto', // Allows content to grow but not shrink
+              display: 'flex',
+              flexDirection: 'column',
+              textAlign: "center",
+              px: 3,
+              pb: 3
+            }}
+          >
+            <Typography variant="h6" component="div" sx={{ fontWeight: 600, mb: 1 }}>
+              {member.name}
+            </Typography>
+            <Typography variant="subtitle2" color="#003366" sx={{ fontWeight: 500, mb: 2 }}>
+              {member.role}
+            </Typography>
+            <Typography variant="body2" sx={{ flexGrow: 1 }}>
+              {member.bio}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+    ))}
+  </Grid>
+</Box>
         {/* Contact Section */}
         <Box sx={{ bgcolor: "#003366", p: 4, borderRadius: 2 }}>
           <Typography variant="h4" align="center" gutterBottom sx={{ color: "#5D9BCF" }}>
@@ -203,7 +259,7 @@ const AboutUs = () => {
             <Grid item xs={12} md={4}>
               <Box display="flex" alignItems="center" mb={2}>
                 <LocationOn sx={{ color: "#5D9BCF", mr: 2 }} />
-                <Typography sx={{ color: "#5D9BCF" }}>Location</Typography>
+                <Typography sx={{ color: "#5D9BCF" }}>Doha Qatar</Typography>
               </Box>
             </Grid>
             <Grid item xs={12} md={4}>

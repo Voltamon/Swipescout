@@ -1,5 +1,4 @@
 
-import "./LandingPage.css";
 import React from "react";
 import { 
   Box, 
@@ -23,20 +22,34 @@ import Footer2 from "../../components/Footer2/Footer2";
 
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: '100%',
-  backgroundColor:'rgb(216, 230, 242)',
+  width: '300PX',
+  display: 'flex',
+  flexDirection: 'row',
+  backgroundColor: 'rgb(216, 230, 242)',
   borderRadius: '16px',
   boxShadow: '0 4px 20px rgba(93, 155, 207, 0.15)',
-  transition: 'all 0.3s ease',
+  transition: 'all 0.3s ease-in-out',
+  minHeight: '320px', // Ensures consistent height
+  
+  // Hover effects
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 8px 25px rgba(93, 155, 207, 0.2)'
+    transform: 'translateY(-8px)',
+    boxShadow: '0 12px 28px rgba(93, 155, 207, 0.25)',
+    backgroundColor: 'rgba(216, 230, 242, 0.95)'
   },
+
+  // Card content styling
   '& .MuiCardContent-root': {
     padding: theme.spacing(3),
+    flexGrow: 1, // Makes content fill available space
+    display: 'flex',
+    flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(2)
     }
   },
+
+  // Icon styling with hover effect
   '& .feature-icon': {
     backgroundColor: theme.palette.primary.main,
     color: 'white',
@@ -46,7 +59,11 @@ const StyledFeatureCard = styled(Card)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'rotate(15deg) scale(1.1)'
+    }
   }
 }));
 
@@ -70,7 +87,7 @@ const LandingPage = () => {
   ];
 
   return (<>
-  <Helmet>
+  <Helmet>  
         <title>SwipeScout | Modern Job Matching Platform with Video Resumes</title>
         <meta name="description" content="SwipeScout revolutionizes job searching with video resumes and swipe-based matching. Connect with employers or candidates in a modern, engaging way." />
         <meta name="keywords" content="job search, video resumes, recruitment, hiring platform, career matching" />
@@ -85,7 +102,7 @@ const LandingPage = () => {
       minHeight: "100vh",
       color: "#5D9BCF",
       overflowX: "hidden"
-    }}>
+    }}> 
       <Header3 />
       <HeroSection />
       
@@ -129,34 +146,61 @@ const LandingPage = () => {
               </Box>
             </Grid>
           )}
-          
-          <Grid item xs={12} md={7} lg={6}>
-            <Box sx={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              gap: 4,
-              maxWidth: 600,
-              mx: "auto",
-              px: { xs: 2, sm: 0 } // Consistent padding
-            }}>
-              <Feature
-                title="Video Resumes"
-                description="🔔 Showcase Personality in Seconds
-                SwipeScout lets job seekers express themselves with short 15–45 second video pitches—making it easier for companies to connect with confident, creative talent."
-                titleColor="#5D9BCF" // Explicit color setting
-                textColor="#E1E8F2" // Lighter color for better readability
-              />
-              
-              <Feature
-                title="Swipe Feature"
-                description="🔔 Fast, Fun, and Intentional Matching
-                Swipe through jobs or candidates just like you would on social apps. Tap in for full profiles, then connect if there's mutual interest—no ghosting, no clutter."
-                sx={isLargeScreen ? { ml: 7.5 } : {}}
-                titleColor="#5D9BCF" // Consistent color
-                textColor="#E1E8F2"
-              />
-            </Box>
-          </Grid>
+    <Grid item xs={12} md={7} lg={6}>
+  <Box sx={{ 
+    display: "flex", 
+    flexDirection: "column", 
+    gap: 4,
+    maxWidth: 600,
+    mx: "auto",
+    px: { xs: 2, sm: 0 }
+  }}>
+    <Box sx={{
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        transform: 'translateY(-5px)',
+        '& .feature-title': {
+          color: '#4299E1' // Slightly brighter blue on hover
+        },
+        '& .feature-description': {
+          opacity: 0.95
+        }
+      }
+    }}>
+      <Feature
+        title="Video Resumes"
+        description="🔔 Showcase Personality in Seconds
+        SwipeScout lets job seekers express themselves with short 15–45 second video pitches—making it easier for companies to connect with confident, creative talent."
+        titleColor="#5D9BCF"
+        textColor="#E1E8F2"
+        className="feature-item" // Added for targeting
+      />
+    </Box>
+    
+    <Box sx={{
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        transform: 'translateY(-5px)',
+        '& .feature-title': {
+          color: '#4299E1'
+        },
+        '& .feature-description': {
+          opacity: 0.95
+        }
+      },
+      ...(isLargeScreen ? { ml: 7.5 } : {})
+    }}>
+      <Feature
+        title="Swipe Feature"
+        description="🔔 Fast, Fun, and Intentional Matching
+        Swipe through jobs or candidates just like you would on social apps. Tap in for full profiles, then connect if there's mutual interest—no ghosting, no clutter."
+        titleColor="#5D9BCF"
+        textColor="#E1E8F2"
+        className="feature-item"
+      />
+    </Box>
+  </Box>
+</Grid>
         </Grid>
       </Container>
       

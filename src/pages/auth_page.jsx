@@ -283,9 +283,9 @@ const AuthPage = () => {
               onSuccess={handleLinkedInSuccess}
               onError={handleLinkedInFailure}
               scope="openid profile email"
-              redirectUri=`${apiUrl}/auth/linkedin/callback`
+              redirectUri={`${apiUrl}/auth/linkedin/callback`}
             >
-              {({ linkedInLogin }) =>
+              {({ linkedInLogin }) => 
                 <Button
                   variant="outlined"
                   onClick={linkedInLogin}

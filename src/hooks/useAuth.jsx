@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
-
+ 
 const auth = getAuth(app);
 
 export const useAuth = () => {
@@ -15,13 +15,13 @@ export const useAuth = () => {
   const [error, setError] = useState(null);
 
   // Common function to handle successful authentication
-  const handleAuthSuccess = async (token, origin, role = null) => {
+  const handleAuthSuccess = async (token, origin, role = null, userP=null) => {
     try {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
+      // localStorage.removeItem("accessToken");
+      // localStorage.removeItem("user");
 
-      let idToken = token;
-      let user;
+      let idToken = token; 
+      let user=userP;
       if (origin == "linkedin" || origin == "EmailPass") {
         console.log("Token received:::::::::::", token);
         const userCredential = await signInWithCustomToken(auth, token);
@@ -88,6 +88,7 @@ export const useAuth = () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("role");
       setUser(null);
+      // alert(err);
       Navigate("/login");
     } finally {
       setLoading(false);
@@ -99,25 +100,7 @@ export const useAuth = () => {
   }, []);
 
 
-  const loginByEmailAndPassword2 = async (email, password) => {
-    try {
-      console.log("Logging in with email and password:", email, password);
-      const response = await fetch(`${apiUrl}/api/auth/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      console.log("Token verification response:", JSON.stringify({ email, password }));
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (err) {
-      console.error("Token verification failed:", err);
-      throw err;
-    }
-  }
-
+ 
   // Email/Password Login
   const loginByEmailAndPassword = async (email, password) => {
               localStorage.removeItem("accessToken");
@@ -211,7 +194,7 @@ export const useAuth = () => {
   };
 
   // LinkedIn Authentication (for both login and signup)
-  const authenticateWithLinkedIn = async (role = null) => { 
+  const authenticateWithLinkedIn22 = async (role = null) => { 
         localStorage.removeItem("accessToken");
     setUser(null);
     try {
@@ -320,6 +303,103 @@ export const useAuth = () => {
     }
   };
   
+  const authenticateWithLinkedIn = async (role = null) => {
+  try {
+    // 1. Open LinkedIn OAuth window
+    const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+
+    const linkedinAuthWindow = window.open(
+      linkedinAuthUrl,
+      '_blank',
+      'width=600,height=600'
+    );
+
+    // 2. Wait for callback with authorization code
+    const result = await new Promise((resolve, reject) => {
+      const messageListener = (event) => {
+        if (event.origin === window.location.origin) {
+          if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
+            resolve(event.data.payload);
+          } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
+            reject(new Error(event.data.errorDescription || "LinkedIn authentication failed"));
+          }
+        }
+      };
+
+      window.addEventListener('message', messageListener);
+    });
+
+    // 3. Send code to your backend (not id_token)
+    const response = await fetch(`${apiUrl}/api/auth/linkedin/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code: result.code,  // Send the code, not id_token
+        redirect_uri: window.location.origin + '/auth/linkedin/callback',
+        ...(role ? { role } : {})
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Authentication failed");
+    }
+
+    const responseData = await response.json();
+
+
+    const endpoint = role
+        ? `${apiUrl}/api/auth/signup/linkedin`
+        : `${apiUrl}/api/auth/signin/linkedin`;
+
+      console.log("[LinkedIn Auth] Sending to backend endpoint:", endpoint);
+
+      let loginresponse;
+
+      loginresponse = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: result.id_token,
+          ...(role ? { role } : {})
+        })
+      });
+
+
+
+      console.log("[LinkedIn Auth] Backend response status:", loginresponse.status);
+
+      if (!loginresponse.ok) {
+        const errorData = await loginresponse.json().catch(() => ({}));
+        console.error("LinkedIn Auth error:", errorData);
+        // throw new Error(errorData.error || "Authentication failed");
+        return {
+          error: true,
+          message: errorData.error || "login dublicate or error"
+        };
+      }
+
+      const loginresponseData = await loginresponse.json();
+      console.log("[LinkedIn Auth] Backend response data:", loginresponseData);
+
+
+
+
+
+    return await handleAuthSuccess(loginresponseData.token, "linkedin", loginresponseData.role);
+
+  } catch (error) {
+    console.error("LinkedIn auth error:", error);
+    return {
+      error: true,
+      message: error.message || "LinkedIn authentication failed"
+    };
+  }
+};
   //   try {
   //     if (!role) {
   //       throw new Error("Role is required for LinkedIn authentication");

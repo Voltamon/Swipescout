@@ -2,23 +2,22 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-// export default defineConfig({
-//   plugins: [react()],
-//   resolve: {
-//     alias: {
-//       '@': path.resolve(__dirname, './src'),
-//     },
-//   },
-// })
-
 export default defineConfig({
   build: {
-    sourcemap: true, // or 'hidden' if you don't need sourcemaps
+    sourcemap: true,
   },
   plugins: [react()],
   resolve: {
     alias: {
-        '@': path.resolve(__dirname, 'src'), // Define the '@' alias
+      '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: { // Add this new server configuration
+    historyApiFallback: {
+      disableDotRule: true,
+      rewrites: [
+        { from: /\/dashboard/, to: '/index.html' }
+      ]
+    }
+  }
 })
