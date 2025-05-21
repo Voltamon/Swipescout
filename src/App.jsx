@@ -34,6 +34,8 @@ import PostJobPage from "./pages/PostJobPage";
 
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
+import EmployerExplorePublic from "./pages/EmployerExplorePublic";
+import JobSeekerExplorePublic from "./pages/JobSeekerExplorePublic";
 import EmployerExplore from "./pages/EmployerExplore";
 import JobSeekerExplore from "./pages/JobSeekerExplore";
 import SettingsPage from "./pages/SettingsPage";
@@ -62,6 +64,8 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { LinearProgress } from '@mui/material';
 import { Suspense } from 'react';
+import CheckExplorePage from "./pages/CheckExplorePage";
+import ExploreLayout from "./components/ExploreLayout";
 
 
 function App() {
@@ -91,6 +95,11 @@ function App() {
       <Route path="/register-form" element={<RegisterForm />} />
       <Route path="/authpage" element={<AuthPage />} />
       <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
+      <Route path="/check-it" element={<CheckExplorePage />} />
+      <Route path="/explore-layout" element={<ExploreLayout />}>
+        <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
+        <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
+      </Route>
 
       {/* Private Routes */}     
 

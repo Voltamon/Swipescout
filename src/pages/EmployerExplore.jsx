@@ -98,7 +98,7 @@ const VideoPlayer = styled('video')({
     objectFit: 'cover',
   });
 
-const EmployerExplore = () => {
+const EmployerExplorePublic = () => {
   const [candidates, setCandidates] = useState(mockCandidateVideos);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -401,4 +401,4 @@ const EmployerExplore = () => {
   );
 };
 
-export default EmployerExplore;
+export default EmployerExplorePublic;
