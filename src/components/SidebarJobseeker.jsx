@@ -30,7 +30,7 @@ import { useAuth } from '../hooks/useAuth';
 const expandedWidth = 200;
 const collapsedWidth = 72;
 
-const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
+const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,7 +76,7 @@ const admin_menuItems = [
 
 
 
-const menuItems = employer_menuItems;
+const menuItems = jobseeker_menuItems;
 // React.useMemo(() => {
 //   if (user?.role === 'employer') return employer_menuItems;
 //   if (user?.role === 'job_seeker') return jobseeker_menuItems;
@@ -303,4 +303,4 @@ const roleStyles = {
   );
 };
 
-export default React.memo(Sidebar);
+export default React.memo(SidebarJobseeker);

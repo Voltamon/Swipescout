@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,createContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { Navigate } from "react-router-dom";
+
+export const AuthContext = createContext();
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
@@ -17,9 +19,10 @@ export const useAuth = () => {
   // Common function to handle successful authentication
   const handleAuthSuccess = async (token, origin, role = null, userP=null) => {
     try {
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("user");
-
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+console.log("=---------------------");
       let idToken = token; 
       let user=userP;
       if (origin == "linkedin" || origin == "EmailPass") {
@@ -32,6 +35,7 @@ export const useAuth = () => {
 
       localStorage.setItem("accessToken", idToken);
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", JSON.stringify(role));
       setUser(user);
       setRole(role);
       console.log("User authenticated successfully:", user);
@@ -72,7 +76,7 @@ export const useAuth = () => {
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      // const userString = localStorage.getItem("user");
+      // const user = localStorage.getItem("user");
       const role = localStorage.getItem("role");
       if (!token) {
         setLoading(false);
@@ -86,8 +90,9 @@ export const useAuth = () => {
     } catch (err) {
       console.error("Auth check failed:", err);
       setError(err.message);
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("role");
+      // localStorage.removeItem("accessToken");
+      // localStorage.removeItem("user");
+      // localStorage.removeItem("role");
       setUser(null);
       // alert(err);
       // Navigate("/login");

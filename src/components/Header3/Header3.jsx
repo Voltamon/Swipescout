@@ -38,7 +38,7 @@ const Header3 = () => {
           Check it
         </Link>
                 <Link className="nav-link" to="/login">
-          Sign in
+          Login in
         </Link>
         <Box sx={{
         px: 1,

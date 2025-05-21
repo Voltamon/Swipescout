@@ -178,7 +178,6 @@ const navigate = useNavigate();
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'top right',
         padding: theme.spacing(2),
-        minHeight: '100vh',
         mt: 2,
        minHeight: "100vh" }}>
       {/* Top Navigation */}
