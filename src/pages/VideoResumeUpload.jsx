@@ -103,7 +103,7 @@ const navigate = useNavigate();
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'top right',
     padding: theme.spacing(2),
-    height: '100vh',
+    
     mt: 2,
     mb: 0,
     paddingBottom: 4,

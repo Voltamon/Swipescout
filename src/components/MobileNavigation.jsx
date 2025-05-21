@@ -29,7 +29,7 @@ const MobileNavigation = () => {
     setValue(newValue);
     switch (newValue) {
       case 0:
-        navigate('/home');
+        navigate('#');
         break;
       case 1:
         navigate('/search');
@@ -41,10 +41,10 @@ const MobileNavigation = () => {
         navigate('/notifications');
         break;
       case 4:
-        navigate('/profile');
+        navigate('#');
         break;
       default:
-        navigate('/home');
+        navigate('#');
     }
   };
  

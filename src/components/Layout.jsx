@@ -1,9 +1,14 @@
-import React from "react";
-import { Box, useMediaQuery, useTheme, CssBaseline } from "@mui/material";
+import React,{ useContext } from "react";
+
+
+import { Box, useMediaQuery, useTheme, CssBaseline, IconButton  } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import SidebarJobseeker from "./SidebarJobseeker";
+import SidebarAdmin from "./SidebarAdmin";
 import MobileNavigation from "./MobileNavigation";
 import Footer from "./Footer";
 import { blue } from "@mui/material/colors";
@@ -61,7 +66,7 @@ const MainContent = styled(Box)(({ open, isMobile }) => ({
   
 }));
 
-const Layout = () => {
+const Layout = ({role}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
@@ -82,9 +87,24 @@ const Layout = () => {
     }
   };
 
+  const MobileMenuButton = styled(IconButton)(({ theme }) => ({
+  position: 'fixed',
+  top: theme.spacing(2),
+  left: theme.spacing(2),
+  zIndex: theme.zIndex.drawer + 1, // Ensure it's above the sidebar
+  display: 'none', // Hidden by default
+  [theme.breakpoints.down('md')]: {
+    display: 'block', // Only show on mobile
+  },
+}));
+
   const { user, logout } = useAuth();
 
-  console.log("user from layout", user);
+  let roleVar =  JSON.parse(localStorage.getItem("role"));
+      // const role = localStorage.getItem("role");
+ console.log("rollllll",roleVar);
+ if(user && user.role)roleVar=user.role;  
+  // console.log("user from layout", user);
   
 const roleGradients = {
   employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
@@ -103,6 +123,15 @@ const roleGradients = {
   return (
     <LayoutRoot>
       <CssBaseline />
+      {isMobile && shouldShowSidebarBase && (
+        <MobileMenuButton
+          edge="start"
+          color="inherit"
+          onClick={handleSidebarToggle}
+        >
+          <MenuIcon />
+        </MobileMenuButton>
+      )}
       {!isMobile && shouldShowSidebarBase  && <HeaderWrapper open={sidebarOpen} isMobile={isMobile} 
       >
   <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={shouldShowSidebarBase} />
@@ -111,14 +140,29 @@ const roleGradients = {
       >
         {shouldShowSidebarBase && (
           <SidebarContainer open={sidebarOpen} isMobile={isMobile} >
-            <Sidebar
-              open={sidebarOpen}
-              onClose={handleSidebarClose}
-              variant={isMobile ? 'temporary' : 'persistent'}
-              isMobile={isMobile}
-            
-              
-            />
+           
+            {roleVar === 'employer' ? (
+    <Sidebar
+      open={sidebarOpen}
+      onClose={handleSidebarClose}
+      variant={isMobile ? 'temporary' : 'persistent'}
+      isMobile={isMobile}
+    />
+  ) : roleVar === 'job_seeker' ? (
+    <SidebarJobseeker
+      open={sidebarOpen}
+      onClose={handleSidebarClose}
+      variant={isMobile ? 'temporary' : 'persistent'}
+      isMobile={isMobile}
+    />
+  ) : roleVar === 'admin' ? (
+    <SidebarAdmin
+      open={sidebarOpen}
+      onClose={handleSidebarClose}
+      variant={isMobile ? 'temporary' : 'persistent'}
+      isMobile={isMobile}
+    />
+  ) : null}
           </SidebarContainer>
         )}
         <MainContent open={sidebarOpen} isMobile={isMobile}

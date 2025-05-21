@@ -6,7 +6,7 @@
 
 import React from "react";
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress  } from '@mui/material';
 import { useAuth } from './hooks/useAuth';
 
 // Pages
@@ -66,6 +66,8 @@ import { LinearProgress } from '@mui/material';
 import { Suspense } from 'react';
 import CheckExplorePage from "./pages/CheckExplorePage";
 import ExploreLayout from "./components/ExploreLayout";
+import EmployerProfile from "./pages/EmployerProfile";
+import NotificationsPage from "./pages/NotificationsPage";
 
 
 function App() {
@@ -144,10 +146,15 @@ function App() {
           <Route path="/video-feed" element={<VideoFeed />} />
           <Route path="/jobseeker-video-feed" element={<JobseekerVideoFeed />} />
           <Route path="/Employer-explore" element={<EmployerExplore />} />
+          <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
           <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
           <Route path="/jobseeker-explore-sidebar" element={<JobseekerExploreSidebar />} />
           <Route path="/Settings-page" element={<SettingsPage />} />
           <Route path="/MyApplications-page" element={<MyApplications />} />
+         <Route path="/notifications" element={<NotificationsPage />} />
+
+          <Route path="/employer-profile" element={<EmployerProfile />} />
+ 
           <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
         </Route>
     </Routes>
