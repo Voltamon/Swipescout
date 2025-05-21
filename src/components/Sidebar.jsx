@@ -85,7 +85,7 @@ if(user?.role === 'employer') {
   menuItems = admin_menuItems;
 }
 else {
-   navigate('/login');
+  //  navigate('/login');
 }
 
 // const roleGradients = {

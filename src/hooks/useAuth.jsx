@@ -90,7 +90,7 @@ export const useAuth = () => {
       localStorage.removeItem("role");
       setUser(null);
       // alert(err);
-      Navigate("/login");
+      // Navigate("/login");
     } finally {
       setLoading(false);
     }

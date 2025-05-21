@@ -57,7 +57,7 @@ api.interceptors.response.use(
         // إذا فشل تحديث التوكن، قم بتسجيل الخروج
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        // window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }
