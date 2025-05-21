@@ -1,6 +1,13 @@
 import React from "react";
+import {
+  Box,
+  useTheme,
+  Typography,
+  Stack,
+  Paper,
+} from "@mui/material";
 import Header2 from "../components/Header2";
-import JobCard from "../components/JobCard";
+import JobCard from "../components/JobCard"; // Optional if you plan to use it later
 
 const appliedJobs = [
   {
@@ -9,7 +16,7 @@ const appliedJobs = [
     location: "Remote",
     salary: "120K-$150K",
     posted: "2 days ago",
-    status: "Applied"
+    status: "Applied",
   },
   {
     company: "Microsoft",
@@ -17,43 +24,60 @@ const appliedJobs = [
     location: "Seattle, WA",
     salary: "$110K-$130K",
     posted: "1 day ago",
-    status: "Under Review"
-  }
-  // Add more applied jobs as needed
+    status: "Under Review",
+  },
 ];
 
 const MyApplications = () => {
-  return <div>
-      <header2 />
-      <h2 style={{ textAlign: "center", margin: "20px 0" }}>
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'top right',
+        padding: theme.spacing(2),
+        minHeight: '100vh',
+        mt: 2,
+      }}
+    >
+
+      <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2 }}>
         My Applications
-      </h2>
-      <div className="job-listings">
-        {appliedJobs.map((job, index) =>
-          <div
+      </Typography>
+
+      <Stack spacing={3} alignItems="center">
+        {appliedJobs.map((job, index) => (
+          <Paper
             key={index}
-            className="job-card"
-            style={{ margin: "20px" }}
+            elevation={3}
             sx={{
-              ml: 20
+              width: "100%",
+              maxWidth: 600,
+              padding: 3,
+              backgroundColor: "rgba(255,255,255,0.8)",
+              borderRadius: 2,
             }}
           >
-            <h3>
-              {job.title}
-            </h3>
-            <p>
-              {job.company} - {job.location}
-            </p>
-            <p>
+            <Typography variant="h6">{job.title}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {job.company} – {job.location}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
               {job.salary} • Posted {job.posted}
-            </p>
-            <p>
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1 }}>
               <strong>Status:</strong> {job.status}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>;
+            </Typography>
+          </Paper>
+        ))}
+      </Stack>
+    </Box>
+  );
 };
 
 export default MyApplications;

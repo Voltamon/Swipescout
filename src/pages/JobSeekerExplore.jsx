@@ -16,7 +16,8 @@ import {
   InputAdornment,
   Tabs,
   Tab,
-  Paper
+  Paper,
+  useTheme
 } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import {
@@ -144,8 +145,21 @@ const JobSeekerExplore = () => {
     video.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+    const theme = useTheme(); // Get current theme
+
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3,
+      
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+    height: '100vh',
+    mt: 2,
+    mb: 0,
+    paddingBottom: 4,
+     }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Explore Jobs

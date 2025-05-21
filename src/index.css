@@ -6,6 +6,12 @@
 /* ---break---
  */
 
+ html, body, #root { /* Or whatever your root div id is */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body{
   background:none;
   margin: 0;
