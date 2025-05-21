@@ -1,10 +1,10 @@
-// LinkedInCallback.jsx
+// Linkedincallback.jsx
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
-export default function LinkedInCallback() {
+export default function Linkedincallback() {
   const location = useLocation();
 
   useEffect(() => {

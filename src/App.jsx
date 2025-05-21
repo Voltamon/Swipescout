@@ -55,7 +55,7 @@ import JobSeekerDashboard_ from './pages/JobSeekerDashboard_';
 import EmployerDashboard_ from './pages/EmployerDashboard_';
 import LoginPage from "./pages/LoginPage";
 import UnauthorizedPage from "./pages/Unauthorized";
-import LinkedInCallback from "./pages/LinkedInCallback";
+import Linkedincallback from "./pages/Linkedincallback";
 import AuthPage from "./pages/auth_page";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
@@ -94,7 +94,7 @@ function App() {
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/register-form" element={<RegisterForm />} />
       <Route path="/authpage" element={<AuthPage />} />
-      <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
+      <Route path="/auth/linkedin/callback" element={<Linkedincallback />} />
       <Route path="/check-it" element={<CheckExplorePage />} />
       <Route path="/explore-layout" element={<ExploreLayout />}>
         <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
