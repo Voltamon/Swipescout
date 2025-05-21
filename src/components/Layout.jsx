@@ -12,6 +12,7 @@ import { useAuth } from '../hooks/useAuth';
 
 const LayoutRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
+  flexFlow:2,
   flexDirection: 'column',
   minHeight: '100vh',
   
@@ -54,6 +55,7 @@ const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
 const MainContent = styled(Box)(({ open, isMobile }) => ({
   flexGrow: 1,
   width: '100%',
+   flexDirection: 'column', 
   flexBasis: open && !isMobile ? 'calc(100% - 200px)' : !isMobile ? 'calc(100% - 72px)' : '100%' , 
   transition: 'flex-basis 0.3s ease-in-out',
   
@@ -64,7 +66,7 @@ const Layout = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
 
-  const routesWithoutSidebar = ["/login","/login-form", "/signup", "/video-feed" ,"/Employer-explore-sidebar"];
+  const routesWithoutSidebar = ["/login","/login-form", "/signup", "/video-feed" ,"/Employer-explore-sidebar","/jobseeker-explore-sidebar", "/jobseeker-video-feed"] ;
   const shouldShowSidebarBase = !routesWithoutSidebar.includes(location.pathname);
   const [sidebarOpen, setSidebarOpen] = React.useState(
     !isMobile && shouldShowSidebarBase

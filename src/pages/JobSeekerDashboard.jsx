@@ -14,7 +14,7 @@ import {
   IconButton,
   Box,
   Container,
-  Grid
+  Grid,useTheme
 } from "@mui/material";
 import {
   Notifications,
@@ -33,23 +33,35 @@ function JobSeekerDashboard() {
 
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme()
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login', { replace: true });
-    }
-  }, [user, loading, navigate]);
+  // useEffect(() => {
+  //   if (!loading && !user) {
+  //     navigate('/login', { replace: true });
+  //   }
+  // }, [user, loading, navigate]);
 
-  if (loading || !user) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
-        <CircularProgress size={60} />
-      </Box>
-    );
-  }
+  // // if (loading && !user) {
+  // //   return (
+  // //     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
+  // //       <CircularProgress size={60} />
+  // //     </Box>
+  // //   );
+  // }
   
   return (
-    <Box >
+    <Box  sx={{
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+
+    mt: 2,
+    mb: 0,
+    paddingBottom: 4,
+  }}
+>
 
 
       {/* Dashboard Content */}

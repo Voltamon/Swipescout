@@ -24,7 +24,16 @@ export default function JobSearchPage() {
   const theme = useTheme()
 
   return (
-    <Box sx={{ flexGrow: 1, background:'#ffffff' }}>
+    <Box sx={{ flexGrow: 1, 
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+    mt: 2,
+    mb: 0,
+    paddingBottom: 4,
+ }}>
 
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ mt: 0, mb: 8 }}>

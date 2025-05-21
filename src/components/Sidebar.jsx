@@ -53,8 +53,8 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
 
     const jobseeker_menuItems = [
     { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
-    { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
+    { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
     { text: 'Detailed Search', icon: <SearchIcon />, path: '/job-search' },
@@ -106,24 +106,24 @@ const roleStyles = {
     // ... other employer styles
   },
   job_seeker: {
-    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.7) 0%, rgba(102, 187, 106, 0.5) 100%)',
+   background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2_j.png')`,
     '& .MuiListItem-root': {
-      color: '#e0f7fa', // Light cyan
+      color: 'rgb(39, 56, 83)', // Base text color
       '&.Mui-selected': {
-        color: '#ffffff',
+        color: '#ffffff', // Brighter when selected
       },
-    },
     // ... other job seeker styles
+    }
   },
   admin: {
-    background: 'linear-gradient(135deg, rgba(211, 47, 47, 0.7) 0%, rgba(244, 67, 54, 0.5) 100%)',
+   background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2_a.png')`,
     '& .MuiListItem-root': {
-      color: '#ffebee', // Light red
+      color: 'rgb(39, 56, 83)', // Base text color
       '&.Mui-selected': {
-        color: '#ffffff',
+        color: '#ffffff', // Brighter when selected
       },
-    },
     // ... other admin styles
+    }
   }
 }
   const secondaryItems = [

@@ -10,13 +10,28 @@ import {
   IconButton,
   Box,
   Container,
-  Grid
+  Grid ,
+  useTheme
 } from "@mui/material";
 import { Home, Work, Person, ExitToApp } from "@mui/icons-material";
 
+
 function JobDetailsPage() {
+    
+  const theme = useTheme()
+
   return (
-    <Box>
+    <Box sx={{ 
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+    height: '100vh',
+    mt: 2,
+    mb: 0,
+    paddingBottom: 4,
+}} >
 
 <br></br>
       {/* Job Details */}

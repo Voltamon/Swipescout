@@ -16,6 +16,7 @@ import {
     Button,
     Chip,
     CircularProgress,
+    useTheme,
     TextField,
     InputAdornment,
     Avatar
@@ -253,15 +254,27 @@ const CompanyVideos = () => {
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       video.company.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+    const theme = useTheme(); // Get current theme
+  
 
   return (
-    <CompanyVideosContainer>
+    <CompanyVideosContainer sx={{  background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+    
+    mt: 2,
+    paddingBottom: 4,
+}}>
       <Box
         sx={{
           display: "flex",
           mb: 3,
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          
+   
         }}
       >
         <Typography variant="h4">Company Videos</Typography>

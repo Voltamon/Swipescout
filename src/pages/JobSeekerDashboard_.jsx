@@ -17,7 +17,8 @@ import {
     Chip,
     CircularProgress,
     IconButton,
-    LinearProgress
+    LinearProgress,
+    useTheme
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
@@ -199,9 +200,21 @@ const JobSeekerDashboard = () => {
             </Box>
         );
     }
+  const theme = useTheme();
+
 
     return (
-        <DashboardContainer maxWidth="lg" sx={{ mt: 4 }}>
+        <DashboardContainer maxWidth="lg" sx={{ mt: 4 ,
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+    
+    
+    mb: 0,
+    paddingBottom: 4,
+}}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h4">Dashboard</Typography>
 

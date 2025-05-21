@@ -34,14 +34,16 @@ import PostJobPage from "./pages/PostJobPage";
 
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
-import VideoFeed from "./pages/VideoFeed";
 import EmployerExplore from "./pages/EmployerExplore";
 import JobSeekerExplore from "./pages/JobSeekerExplore";
 import SettingsPage from "./pages/SettingsPage";
 import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
+import JobseekerExploreSidebar from "./pages/JobseekerExploreSidebar";
 import About from "./pages/About/About";
 import FAQs from "./pages/FAQ/FAQs";
 import VideoFeed_ from './pages/VideoFeed_';
+import VideoFeed from "./pages/VideoFeed";
+import JobseekerVideoFeed from './pages/JobseekerVideoFeed';
 import Chat from './pages/Chat';
 import Profile_ from './pages/Profile_';
 import JobVideos from './pages/JobVideos';
@@ -131,9 +133,10 @@ function App() {
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/feed-page" element={<FeedPage />} />
           <Route path="/video-feed" element={<VideoFeed />} />
+          <Route path="/jobseeker-video-feed" element={<JobseekerVideoFeed />} />
           <Route path="/Employer-explore" element={<EmployerExplore />} />
           <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
-          <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
+          <Route path="/jobseeker-explore-sidebar" element={<JobseekerExploreSidebar />} />
           <Route path="/Settings-page" element={<SettingsPage />} />
           <Route path="/MyApplications-page" element={<MyApplications />} />
           <Route path="/CompanyVideos-page" element={<CompanyVideos />} />

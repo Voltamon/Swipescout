@@ -17,7 +17,8 @@ import {
     Chip,
     CircularProgress,
     TextField,
-    InputAdornment
+    InputAdornment,
+    useTheme
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -159,10 +160,21 @@ const JobVideos = () => {
         video.job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         video.job.company.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  const theme = useTheme()
 
     return (
-        <JobVideosContainer><br></br>
-            <Box sx={{ display: 'flex', mb: 3, justifyContent: 'space-between', alignItems: 'center' }}>
+        <JobVideosContainer sx={{
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'auto',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: theme.spacing(2),
+    
+    mt: 2,
+    }}><br></br>
+            <Box sx={{ display: 'flex', mb: 3, justifyContent: 'space-between', alignItems: 'center' ,
+    paddingBottom: 4,
+}}>
                 <Typography variant="h4">Job Videos</Typography>
 
                 <Box sx={{ display: 'flex', gap: 2 }}>

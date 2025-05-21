@@ -21,6 +21,7 @@ import {
   BottomNavigationAction,
   Chip,
   styled,
+  useTheme
 } from "@mui/material"
 import { ArrowBack, Settings, Send, Videocam, Message, Person } from "@mui/icons-material"
 import { useNavigate } from "react-router-dom";
@@ -165,13 +166,26 @@ export default function Inbox() {
     }
   }
 const navigate = useNavigate();
+
+  const theme = useTheme();
+
   return (
-    <Box sx={{ pb: 7, bgcolor: "#F9FAFB", minHeight: "100vh" }}>
+    <Box sx={{ pb: 7, 
+        display: "flex",
+        flexDirection: "column",
+        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'top right',
+        padding: theme.spacing(2),
+        minHeight: '100vh',
+        mt: 2,
+       minHeight: "100vh" }}>
       {/* Top Navigation */}
-      <AppBar position="fixed" color="default" elevation={1} sx={{ bgcolor: "white" }}>
+      <AppBar position="relative" color="default" elevation={1} sx={{ bgcolor: "rgba(178, 229, 255, 0.5)" }}>
         <Toolbar>
           <IconButton edge="start" color="inherit" aria-label="back">
-            <ArrowBack />
+            
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "center", fontWeight: 600 }}>
             Inbox

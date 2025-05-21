@@ -191,23 +191,23 @@ const LoginPage = () => {
 
 const location = useLocation();
 
- const navigateAsRole = (role, fallbackPath, replace = true) => {
-    // Validate role exists
-    if (!role) {
-      console.warn('No role provided, redirecting to fallback/default');
-      return navigate(fallbackPath || '/', { replace });
-    }
+//  const navigateAsRole = (role, fallbackPath, replace = true) => {
+//     // Validate role exists
+//     if (!role) {
+//       console.warn('No role provided, redirecting to fallback/default');
+//       return navigate(fallbackPath || '/', { replace });
+//     }
 
-    const targetPath = fallbackPath || getDefaultRoute(role);
+//     const targetPath = fallbackPath || getDefaultRoute(role);
 
-    // Validate the path exists (optional)
-    if (!targetPath) {
-      console.error('Invalid navigation target:', { role, fallbackPath });
-      return navigate('/', { replace });
-    }
+//     // Validate the path exists (optional)
+//     if (!targetPath) {
+//       console.error('Invalid navigation target:', { role, fallbackPath });
+//       return navigate('/', { replace });
+//     }
 
-    navigate(targetPath, { replace });
-  };
+//     navigate(targetPath, { replace });
+//   };
 
     const getDefaultRoute = (role) => {
     switch (role) {
@@ -248,17 +248,17 @@ useEffect(() => {
     }));
   };
 
-  // const navigateAsRole = (role) => {
-  //   if (role === "job_seeker") {
-  //     navigate("/dashboard", { replace: true });
-  //   }
-  //   else if (role === "employer") {
-  //     navigate("/employer-dashboard", { replace: true });
-  //   }
-  //   else if (role === "admin") {
-  //     navigate("/admin-dashboard", { replace: true });
-  //   }
-  // };
+  const navigateAsRole = (role) => {
+    if (role === "job_seeker") {
+      navigate("/dashboard", { replace: true });
+    }
+    else if (role === "employer") {
+      navigate("/employer-dashboard", { replace: true });
+    }
+    else if (role === "admin") {
+      navigate("/admin-dashboard", { replace: true });
+    }
+  };
 
 
   const handleGoogleSignIn = async () => {
@@ -291,7 +291,7 @@ useEffect(() => {
       setError(result.message || "Login failed. Please try again.");
     } else {
       console.log("routttte:",getDefaultRoute(result.role));
-      navigateAsRole(result.role, getDefaultRoute(result.role),true);
+      navigateAsRole(result.role);//, getDefaultRoute(result.role),true
     }
 
     setLoading({ ...loading, email: false });
