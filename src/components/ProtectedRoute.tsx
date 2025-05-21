@@ -31,7 +31,7 @@ const ProtectedRoute = ({ user, loading, children }) => {
 
   if (!user) {
     // Redirect to login but save the current location to return to after login
-    return <Navigate to="/login" state={{ from: location }} />;
+    // return <Navigate to="/login" state={{ from: location }} />;
   }
 
   return      <> {children || (
