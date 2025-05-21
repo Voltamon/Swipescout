@@ -10,6 +10,7 @@ import {
   FaTimes
 } from "react-icons/fa";
 import "./Header3.css";
+import { Box } from "@mui/material";
 
 const Header3 = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -33,6 +34,27 @@ const Header3 = () => {
         <Link className="nav-link" to="/FAQs">
           FAQs
         </Link>
+         <Link className="nav-link" to="/login">
+          Check it
+        </Link>
+                <Link className="nav-link" to="/login">
+          Sign in
+        </Link>
+        <Box sx={{
+        px: 1,
+        py: 0,
+        
+        borderRadius: 1,
+        backgroundColor: 'rgba(93, 155, 207, 0.1)',
+        transition: 'background-color 0.3s ease',
+        '&:hover': {
+          backgroundColor: 'rgba(93, 155, 207, 0.2)'
+        }
+      }}>
+        <Link className="nav-link" to="/register-form" >
+          Sign up
+        </Link>
+        </Box>
       </nav>
 
       <div className="social-icons">

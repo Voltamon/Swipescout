@@ -112,7 +112,7 @@ const theme2 = createTheme({
   typography: {
     allVariants: {
       color: '#2a3e50', // Darker text for better readability
-      fontWeight: 'bold',
+      fontWeight: 'normal', // Inherit font weight
       textShadow: 'none', // Removed for cleaner text
       letterSpacing: '0.3px', // Slightly tighter
     },

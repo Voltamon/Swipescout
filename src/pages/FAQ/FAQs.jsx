@@ -17,7 +17,7 @@ import {
   useTheme,
   useMediaQuery
 } from "@mui/material";
-import {
+import { 
   ExpandMore as ExpandMoreIcon,
   Search as SearchIcon,
   Category as CategoryIcon,

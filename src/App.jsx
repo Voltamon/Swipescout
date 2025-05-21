@@ -58,6 +58,9 @@ import { useLocation } from "react-router-dom";
 // Components
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import { LinearProgress } from '@mui/material';
+import { Suspense } from 'react';
+
 
 function App() {
   const { user, loading } = useAuth();
@@ -70,11 +73,12 @@ function App() {
       </Box>
     );
   }
-
+  
   return (
     <AnimatePresence mode="wait">
+            <Suspense fallback={<LinearProgress />}>
 
-    <Routes  location={location} key={location.pathname}>
+      <Routes location={location} key={location.pathname}>
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/view-login" element={<TempLoginPage />} />
@@ -135,6 +139,7 @@ function App() {
           <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
         </Route>
     </Routes>
+    </Suspense>
     </AnimatePresence>
 
   );

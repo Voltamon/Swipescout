@@ -1,5 +1,5 @@
-import React, { useState, useEffect,useRef ,useLocation } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -24,7 +24,8 @@ import {
   LinkedIn as LinkedInIcon,
 } from "@mui/icons-material";
 import { LinkedIn } from "react-linkedin-login-oauth2";
- import {  AlertCircle as AlertCircleIcon,
+import {
+  AlertCircle as AlertCircleIcon,
 } from "lucide-react";
 import {
   getAuth,
@@ -128,11 +129,11 @@ const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
     backgroundColor: 'rgb(235, 216, 164) !important', // Keep the hover color or use another light red
   },
   '&.Mui-focusVisible': {
-      outline: '2px solid #1976d2',
-      backgroundColor: 'rgb(235, 216, 164) !important',
+    outline: '2px solid #1976d2',
+    backgroundColor: 'rgb(235, 216, 164) !important',
   },
- '&:visited': {
-            color: 'rgb(235, 230, 164) !important', /* Visited color for this specific link */
+  '&:visited': {
+    color: 'rgb(235, 230, 164) !important', /* Visited color for this specific link */
   },
 }));
 
@@ -162,17 +163,17 @@ const LINKEDIN_STATE = 'random_state_string';
 
 const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${LINKEDIN_REDIRECT_URI}&scope=${LINKEDIN_SCOPE}&state=${LINKEDIN_STATE}`;
 
-const apiUrl  = import.meta.env.VITE_API_BASE_URL;
-
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const API_BASE_URL = `${apiUrl}`;
 
 
 
 const LoginPage = () => {
 
-  const { loginByEmailAndPassword ,
+  const { loginByEmailAndPassword,
     authenticateWithGoogle,
-    authenticateWithLinkedIn, user,role  } = useAuth();
+    authenticateWithLinkedIn, user, role} = useAuth();
+
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -186,33 +187,54 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const isMounted = useRef(false);
   const navigate = useNavigate();
-  const apiUrl  = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+const location = useLocation();
 
+ const navigateAsRole = (role, fallbackPath, replace = true) => {
+    // Validate role exists
+    if (!role) {
+      console.warn('No role provided, redirecting to fallback/default');
+      return navigate(fallbackPath || '/', { replace });
+    }
+
+    const targetPath = fallbackPath || getDefaultRoute(role);
+
+    // Validate the path exists (optional)
+    if (!targetPath) {
+      console.error('Invalid navigation target:', { role, fallbackPath });
+      return navigate('/', { replace });
+    }
+
+    navigate(targetPath, { replace });
+  };
 
     const getDefaultRoute = (role) => {
-    switch(role) {
+    switch (role) {
       case 'job_seeker': return '/dashboard';
       case 'employer': return '/employer-dashboard';
       case 'admin': return '/admin-dashboard';
       default: return '/';
     }
   };
-  const from = location.state?.from?.pathname || getDefaultRoute(role);
+const from = location.state?.from?.pathname || getDefaultRoute(role);
+useEffect(() => {
+  if (user && role) {
+    const shouldReplace = location.state?.from?.pathname === '/login';
+    navigateAsRole(role, from, shouldReplace);
+  }
+}, [user, role, navigate, from, location.state]);
 
-      const navigateAsRole = (role, fallbackPath, replace = true) => {
-    const targetPath = fallbackPath || getDefaultRoute(role);
-    navigate(targetPath, { replace });
-  };
 
-  // Handle post-login navigation
-  useEffect(() => {
-    if (user && role) {
-      // Only replace history if coming from auth redirect
-      const shouldReplace = location.state?.from?.pathname === '/login';
-      navigateAsRole(role, from, shouldReplace);
-    }
-  }, [user, role, navigate, from, location.state]);
+
+   // Handle post-login navigation
+  // useEffect(() => {
+  //   if (user && role) {
+  //     // Only replace history if coming from auth redirect
+  //     const shouldReplace = location.state?.from?.pathname === '/login';
+  //     navigateAsRole(role, from, shouldReplace);
+  //   }
+  // }, [user, role, navigate, from, location.state]);
 
 
 
@@ -241,192 +263,128 @@ const LoginPage = () => {
 
   const handleGoogleSignIn = async () => {
     const result = await authenticateWithGoogle();
-  
+
     if (result.error) {
       setError(result.message || "Google sign-in failed");
     } else {
       console.log("Google sign-in successful:", result.role);
-      navigateAsRole(result.role);
+      navigateAsRole(result.role, getDefaultRoute(result.role),true);
     }
   };
-  
 
-  
+
+
   const handleEmailSignIn = async e => {
     e.preventDefault();
     setLoading({ ...loading, email: true });
     setError(null);
-  
+
     if (!formData.email || !formData.password) {
       setError("Please fill in all fields");
       setLoading({ ...loading, email: false });
       return;
     }
-  console.log("Form data:", formData);
+    console.log("Form data:", formData);
     const result = await loginByEmailAndPassword(formData.email, formData.password);
-  
-    if (result.error ) {
+
+    if (result.error) {
       setError(result.message || "Login failed. Please try again.");
     } else {
-      navigateAsRole(result.role);
+      console.log("routttte:",getDefaultRoute(result.role));
+      navigateAsRole(result.role, getDefaultRoute(result.role),true);
     }
-  
+
     setLoading({ ...loading, email: false });
   };
 
 
 
-// In your login page component
+  // In your login page component
 
 
-    // Handle LinkedIn redirect login
-    const handleLinkedInLogin = async () => {
-      
-      setLoading({ ...loading, linkedin: true });
+  // Handle LinkedIn redirect login
+  const handleLinkedInLogin = async () => {
 
-      
-      const result = await authenticateWithLinkedIn();
-    
+    setLoading({ ...loading, linkedin: true });
 
-      if (result.error) {
-        setError(result.message);
-if (isMounted.current) {
-  console.log("Setting error state to:", result.message);
-  setError(result.message || "error");
-}
 
-        console.error("LinkedIn login errorrrrrfdgdsfr:", result.message);
-         setLoading({ ...loading, linkedin: false });
-      } else {
-        console.log("LinkedIn login successful:", result);
-        navigateAsRole(result.role);
-        console.log("LinkedIn login successful:", result);
+    const result = await authenticateWithLinkedIn();
+
+
+    if (result.error) {
+      setError(result.message);
+      if (isMounted.current) {
+        console.log("Setting error state to:", result.message);
+        setError(result.message || "error");
       }
-                setLoading({ ...loading, linkedin: false });
-  
-    };
+
+      console.error("LinkedIn login errorrrrrfdgdsfr:", result.message);
+      setLoading({ ...loading, linkedin: false });
+    } else {
+      console.log("LinkedIn login successful:", result);
+      navigateAsRole(result.role, getDefaultRoute(result.role),true);
+      console.log("LinkedIn login successful:", result);
+    }
+    setLoading({ ...loading, linkedin: false });
+
+  };
   // Handle LinkedIn callback
-  
 
-    // LinkedIn Sign-In
-    const handleLinkedInSuccess = async response => {
-      setLoading({ ...loading, linkedin: true });
-      setError(null);
-      console.log("LinkedIn response:", response);
-  
-      try {
-        // 1. Send token to your backend
-        const res = await fetch("`${apiUrl}/api/auth/signin/linkedin", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id_token: response.id_token })
-        });
-  
-        if (!res.ok) throw new Error(await res.text());
-  
-        const data = await res.json();
-        console.log("LinkedIn sign-in success:", data);
-  
-        // 2. Handle popup closure and parent window redirect
-        if (window.opener) {
-          // If this is in a popup
-          window.opener.postMessage(
-            {
-              type: "LINKEDIN_AUTH_SUCCESS",
-              payload: data
-            },
-            window.location.origin
-          );
-          window.close();
-        } else {
-          // If this is in the main window
-          navigate("/dashboard");
-        }
-      } catch (err) {
-        setError(err.message);
-        if (window.opener) {
-          window.opener.postMessage(
-            { type: "LINKEDIN_AUTH_ERROR", error: err.message },
-            window.location.origin
-          );
-          window.close();
-        }
-      } finally {
-        setLoading({ ...loading, linkedin: false });
-      }
-    };
-  
-    const handleLinkedInFailure = error => {
-      // Set local error state
-      const errorMessage = error.errorMessage || "LinkedIn sign-in failed";
-      setError(errorMessage);
-  
-      // If this is a popup, communicate with parent window
-      if (window.opener) {
-        window.opener.postMessage(
-          {
-            type: "LINKEDIN_AUTH_ERROR",
-            error: errorMessage
-          },
-          window.location.origin
-        );
-        window.close();
-      }
-    };
-  
-    useEffect(() => {
-      const handleAuthSuccess = event => {
-        if (event.origin !== window.location.origin) return;
-        if (event.data.type === "LINKEDIN_AUTH_SUCCESS") {
-          navigate("/dashboard");
-        }
-      };
-      window.addEventListener("message", handleAuthSuccess);
-      return () => window.removeEventListener("message", handleAuthSuccess);
-    }, []);
-    // useEffect(() => {
-    //   const urlParams = new URLSearchParams(window.location.search);
-    //   const code = urlParams.get('code');
-    //   const state = urlParams.get('state');
-    //   const error = urlParams.get('error');
-  
-    //   if (error) {
-    //     setError(`LinkedIn authentication failed: ${error}`);
-    //     return;
-    //   }
-  
-    //   if (code && state === LINKEDIN_STATE) {
-    //     setLoading({ ...loading, linkedin: true });
-        
-    //     fetch(`${API_BASE_URL}/api/auth/signin/linkedin`, {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         code,
-    //         redirectUri: 'http://localhost:5173/dashboard',
-    //       }),
-    //     })
-    //     .then(response => {
-    //       if (!response.ok) {
-    //         return response.json().then(err => { throw new Error(err.message); });
-    //       }
-    //       return response.json();
-    //     })
-    //     .then(data => {
-    //       const redirectPath = sessionStorage.getItem('linkedin_login_redirect') || '/dashboard';
-    //       sessionStorage.removeItem('linkedin_login_redirect');
-    //       navigate(redirectPath);
-    //     })
-    //     .catch(err => {
-    //       setError(err.message);
-    //     })
-    //     .finally(() => {
-    //       setLoading({ ...loading, linkedin: false });
-    //     });
-    //   }
-    // }, [navigate]);
+
+
+  // useEffect(() => {
+  //   const handleAuthSuccess = event => {
+  //     if (event.origin !== window.location.origin) return;
+  //     if (event.data.type === "LINKEDIN_AUTH_SUCCESS") {
+  //       navigate("/dashboard");
+  //     }
+  //   };
+  //   window.addEventListener("message", handleAuthSuccess);
+  //   return () => window.removeEventListener("message", handleAuthSuccess);
+  // }, []);
+
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const code = urlParams.get('code');
+  //   const state = urlParams.get('state');
+  //   const error = urlParams.get('error');
+
+  //   if (error) {
+  //     setError(`LinkedIn authentication failed: ${error}`);
+  //     return;
+  //   }
+
+  //   if (code && state === LINKEDIN_STATE) {
+  //     setLoading({ ...loading, linkedin: true });
+
+  //     fetch(`${API_BASE_URL}/api/auth/signin/linkedin`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         code,
+  //         redirectUri: 'http://localhost:5173/dashboard',
+  //       }),
+  //     })
+  //     .then(response => {
+  //       if (!response.ok) {
+  //         return response.json().then(err => { throw new Error(err.message); });
+  //       }
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       const redirectPath = sessionStorage.getItem('linkedin_login_redirect') || '/dashboard';
+  //       sessionStorage.removeItem('linkedin_login_redirect');
+  //       navigate(redirectPath);
+  //     })
+  //     .catch(err => {
+  //       setError(err.message);
+  //     })
+  //     .finally(() => {
+  //       setLoading({ ...loading, linkedin: false });
+  //     });
+  //   }
+  // }, [navigate]);
 
   const navigateToRegister = () => {
     navigate("/register-form");
@@ -489,7 +447,7 @@ if (isMounted.current) {
           <LinkedInSignInButton
             variant="outlined"
             onClick={handleLinkedInLogin}
-            
+
             disabled={loading.linkedin}
             startIcon={<LinkedInIcon />}
             sx={{
@@ -504,13 +462,12 @@ if (isMounted.current) {
           </LinkedInSignInButton>
 
         </Stack>
-{error && (console.log("Rendering error:", error), (
+    {error && (
   <Alert severity="error" sx={{ mt: 2 }}>
     <AlertCircleIcon className="mr-2 h-4 w-4" />
     {error}
   </Alert>
-))}
-
+)}
 
         <SignupLink onClick={navigateToRegister}>
           Don't have an account? Sign Up
