@@ -11,12 +11,15 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: `linear-gradient(135deg, rgba(178, 209, 224, 1) 30%, rgba(69, 117, 221, 1) 90%)`,
+       backgroundImage: 'linear-gradient(135deg, #0077b6 0%, #00b4d8 50%,rgb(147, 206, 240) 100%)',
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: 'cover',
   boxShadow: 'none',
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
 const StyledTabs = styled(Tabs)({
+  color: "#ffff",
   '& .MuiTabs-indicator': {
     height: 4,
     borderRadius: '2px 2px 0 0',
@@ -24,19 +27,19 @@ const StyledTabs = styled(Tabs)({
 });
 
 const StyledTab = styled(Tab)(({ theme }) => ({
+
   textTransform: 'none',
   fontWeight: theme.typography.fontWeightMedium,
   fontSize: theme.typography.pxToRem(16),
   marginRight: theme.spacing(4),
   color: theme.palette.common.white,
-  backgroundColor: `linear-gradient(135deg, rgba(178, 209, 224, 1) 30%, rgba(69, 117, 221, 1) 90%)`,
   opacity: 0.7,
   transition: 'opacity 0.3s ease',
   '&:hover': {
     opacity: 1,
   },
   '&.Mui-selected': {
-    color: theme.palette.common.white,
+    color: "rgb(151, 200, 233)",
     opacity: 1,
     fontWeight: theme.typography.fontWeightBold,
   },
@@ -63,6 +66,7 @@ const CheckExplorePage = () => {
         <Box sx={{ 
           width: '100%',
           display: 'flex',
+          backgroundColor :"#dfdsa",
           justifyContent: 'center',
           alignItems: 'center'
         }}>
