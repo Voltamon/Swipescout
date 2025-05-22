@@ -1,9 +1,17 @@
-import { useState, useEffect,createContext } from "react";
+import { useState, useEffect,createContext,useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { Navigate } from "react-router-dom";
 
 export const AuthContext = createContext();
+
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthProvider');
+  }
+  return context;
+};
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
@@ -186,7 +194,7 @@ console.log("=---------------------");
       console.log("Google Auth Data:", data);
       console.log("Google Auth Role:", data.role);
       // 5. Process successful authentication
-      return await handleAuthSuccess(idToken, "google", data.role);
+      return await handleAuthSuccess(idToken, "google", data.role,data.user);
 
     } catch (error) {
       console.error("Google authentication error:", error);
@@ -565,7 +573,10 @@ console.log("=---------------------");
   const logout = async () => {
     await fetch(`${apiUrl}/api/auth/logout`, { method: "POST" });
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setUser(null);
+    Navigate("/login")
 
   };
 

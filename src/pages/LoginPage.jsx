@@ -34,7 +34,9 @@ import {
 } from "firebase/auth";
 import { app } from "../firebase-config.js";
 
-import { useAuth } from "../hooks/useAuth.jsx";
+import { useAuthContext } from "../hooks/useAuth";
+
+
 
 
 const LoginContainer = styled(Box)(({ theme }) => ({
@@ -169,10 +171,14 @@ const API_BASE_URL = `${apiUrl}`;
 
 
 const LoginPage = () => {
-
-  const { loginByEmailAndPassword,
+const { loginByEmailAndPassword,
     authenticateWithGoogle,
-    authenticateWithLinkedIn, user, role} = useAuth();
+    authenticateWithLinkedIn,user, logout, role } = useAuthContext();
+
+if(role){
+  navigateAsRole(role);
+}
+ 
 
   const [formData, setFormData] = useState({
     email: "",
@@ -268,7 +274,9 @@ useEffect(() => {
       setError(result.message || "Google sign-in failed");
     } else {
       console.log("Google sign-in successful:", result.role);
-      navigateAsRole(result.role, getDefaultRoute(result.role),true);
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+      navigateAsRole(result.role);
     }
   };
 

@@ -23,7 +23,11 @@ import {
   Person,
   ExitToApp
 } from "@mui/icons-material";
-import { useAuth } from "../hooks/useAuth.jsx";
+import { useAuth ,AuthContext} from "../hooks/useAuth";
+import { useContext } from "react";
+
+
+
 import { useNavigate } from 'react-router-dom';
 
 import { useEffect } from "react";
@@ -48,7 +52,10 @@ function JobSeekerDashboard() {
   // //     </Box>
   // //   );
   // }
-  
+   const useAuthContext = () => {
+  return useContext(AuthContext);
+};
+
   return (
     <Box  sx={{
     background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
