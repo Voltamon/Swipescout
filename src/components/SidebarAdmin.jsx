@@ -25,7 +25,8 @@ import {
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
+import { useAuthContext } from "../hooks/useAuth";
 
 const expandedWidth = 200;
 const collapsedWidth = 72;
@@ -34,7 +35,7 @@ const SidebarAdmin = ({ open = true, onClose, variant ,isMobile}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthContext();
 
   const employer_menuItems = [
     { text: 'Dashboard', icon: <HomeIcon />, path: '/employer-dashboard' },
@@ -123,6 +124,7 @@ const roleStyles = {
   }
 }
   const secondaryItems = [
+      { text: 'Logout', icon: <LogoutIcon />, path: '#' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
     // { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
   ];
@@ -250,7 +252,8 @@ const roleStyles = {
     <ListItem
       button
       key={item.text}
-      onClick={() => {
+      onClick={() => {if(item.text==="Logout")
+        logout(); else
         navigate(item.path);
         if (variant === 'temporary') onClose();
       }}

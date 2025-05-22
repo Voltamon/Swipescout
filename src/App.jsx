@@ -7,7 +7,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CircularProgress  } from '@mui/material';
-import { useAuth } from './hooks/useAuth';
+
 
 // Pages
 import ExploreJobs from "./pages/ExploreJobs";
@@ -68,10 +68,14 @@ import CheckExplorePage from "./pages/CheckExplorePage";
 import ExploreLayout from "./components/ExploreLayout";
 import EmployerProfile from "./pages/EmployerProfile";
 import NotificationsPage from "./pages/NotificationsPage";
+import { useAuthContext} from "./hooks/useAuth";
+
+
+
 
 
 function App() {
-  const { user, loading } = useAuth();
+  const { user,role,loading  } = useAuthContext();
   const location = useLocation();
 
   if (loading) {
@@ -103,7 +107,7 @@ function App() {
 
           {/* Private Routes */}
 
-          <Route element={<ProtectedRoute loading={loading} />}>
+          <Route element={<ProtectedRoute  />}>
             {/*  <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} /> */}
 
             {/* Common Routes */}

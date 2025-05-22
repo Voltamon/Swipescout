@@ -20,8 +20,17 @@ import {
   ExitToApp
 } from "@mui/icons-material";
 
+import { useAuth ,AuthContext} from "../hooks/useAuth";
+import { useContext } from "react";
+
+export const useAuthContext = () => {
+  return useContext(AuthContext);
+};
+  
+
  {/* //Header */}
 const Header = ({ onSidebarToggle , isSidebarVisible }) => {
+  const { user, logout } = useAuthContext();
   return (<> {isSidebarVisible && ( 
 <AppBar position="static" 
       
@@ -58,7 +67,7 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
                   <Person />
                 </IconButton>
                 <IconButton color="inherit">
-                  <ExitToApp />
+                  <ExitToApp onClick={logout}/>
                 </IconButton>
                 <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
               </Toolbar>
