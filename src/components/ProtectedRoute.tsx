@@ -30,10 +30,10 @@ const ProtectedRoute = ({ user, loading, children }) => {
   }
        user =  JSON.parse(localStorage.getItem("user"));
       const role =  JSON.parse(localStorage.getItem("role"));
-  if (!user) {
-    // Redirect to login but save the current location to return to after login
-    return <Navigate to="/login" state={{ from: location }} />;
-  }
+  // if (!user) {
+  //   // Redirect to login but save the current location to return to after login
+  //   return <Navigate to="/login" state={{ from: location }} />;
+  // }
 
   return      <> {children || (
     <Layout role={user.role}>
