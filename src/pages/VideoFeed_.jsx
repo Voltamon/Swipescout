@@ -100,7 +100,260 @@ const VideoFeed = () => {
       try {
         setLoading(true);
         const response = await getRecommendedJobs();
-        setJobs(response.data.recommendations);
+        const jobVideos=`[
+  {
+    "video_url": "https://f003.backblazeb2.com/file/appStorageBucket/employers/corporate+video+for+IT+company+_+corporate+video+for+Perfectial.mp4",
+    "title": "vied1",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  },
+  {
+    "video_url": "",
+    "title": "",
+    "location": "",
+    "employment_type": "",
+    "salary_min": null,
+    "salary_max": null,
+    "skills": [],
+    "company": {
+      "name": "",
+      "logo_url": ""
+    }
+  }
+]
+`;
+        
+        // setJobs(response.data.recommendations);
+        setJobs(jobVideos);
+
       } catch (error) {
         console.error("Error fetching jobs:", error);
       } finally {

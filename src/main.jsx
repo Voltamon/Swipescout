@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'; // Updated import
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from "./pages/AuthProvider";
 import App from './App';
 import './index.css';
 import theme2 from './theme.js'; // Assuming you have a theme.js file

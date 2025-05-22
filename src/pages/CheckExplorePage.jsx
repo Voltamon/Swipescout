@@ -11,7 +11,7 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-       backgroundImage: 'linear-gradient(135deg, #0077b6 0%, #00b4d8 50%,rgb(147, 206, 240) 100%)',
+       backgroundImage: 'linear-gradient(135deg, #1a3ecc 0%, #2a60db 50%, #5a96ec 100%)',
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
   boxShadow: 'none',
