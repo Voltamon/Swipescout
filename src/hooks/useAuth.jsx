@@ -33,7 +33,7 @@ console.log("=---------------------");
         idToken = await user.getIdToken();
       }
 
-      localStorage.setItem("accessToken", idToken);
+      localStorage.setItem("accessToken", JSON.stringify(idToken));
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", JSON.stringify(role));
       setUser(user);
@@ -75,9 +75,9 @@ console.log("=---------------------");
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = JSON.parse(localStorage.getItem("accessToken"));
       // const user = localStorage.getItem("user");
-      const role = localStorage.getItem("role");
+      const role = JSON.parse(localStorage.getItem("role"));
       if (!token) {
         setLoading(false);
         return;
