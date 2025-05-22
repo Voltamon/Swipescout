@@ -287,7 +287,7 @@ const roleStyles = {
         </ListItemIcon>
       )}
       
-      { (open || !isMobile)&&(
+      { (open )&&(
         <ListItemText
           primary={item.text}
           primaryTypographyProps={{

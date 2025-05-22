@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -7,9 +7,10 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  Typography,
   Avatar,
-  useTheme
+  Typography,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import {
   Home,
@@ -18,15 +19,23 @@ import {
   Bookmark,
   Settings,
   VideoLibrary,
+  Menu,
   PlayArrow
 } from "@mui/icons-material";
 
-const JobseekerExplorePage = () => {
+const EmployerExplorePublic = () => {
   const [activeTab, setActiveTab] = useState("candidates");
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const theme = useTheme(); // Get current theme
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const isDarkMode = theme.palette.mode === "dark";
+  const drawerWidthDesktop = 80;
+  const drawerWidthMobile = 60;
+
+  const toggleDrawer = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   const videoResumes = [
     {
@@ -49,30 +58,83 @@ const JobseekerExplorePage = () => {
     }
   ];
 
+  const drawerContent = <Box sx={{ background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`, height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", pt: 2, "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } } }}>
+      <Avatar src="/employer-logo.png" sx={{ width: isMobile ? 36 : 48, height: isMobile ? 36 : 48, mb: 3, border: `2px solid ${theme.palette.text.primary}` }} />
+
+      <List sx={{ width: "100%" }}>
+        {[{ icon: <Home fontSize={isMobile ? "small" : "medium"} />, value: "home" }, { icon: <Search fontSize={isMobile ? "small" : "medium"} />, value: "search" }, { icon: <Group fontSize={isMobile ? "small" : "medium"} />, value: "candidates" }, { icon: <Bookmark fontSize={isMobile ? "small" : "medium"} />, value: "saved" }, { icon: <VideoLibrary fontSize={isMobile ? "small" : "medium"} />, value: "video-resumes" }].map(
+          item =>
+            <ListItem
+              key={item.value}
+              component="div"
+              selected={activeTab === item.value}
+              onClick={() => {
+                setActiveTab(item.value);
+                if (isMobile) setMobileOpen(false); // close drawer on mobile
+                // You can replace navigate("#") with actual routes
+                if (item.value === "home") navigate("/");
+              }}
+              sx={{
+                justifyContent: "center",
+                py: 2,
+                cursor: "pointer",
+                "&.Mui-selected": {
+                  borderLeft: `3px solid ${theme.palette.primary.main}`
+                }
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: "auto",
+                  color:
+                    activeTab === item.value
+                      ? theme.palette.primary.main
+                      : theme.palette.text.primary
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+            </ListItem>
+        )}
+      </List>
+
+      <Box sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" }}>
+        <IconButton sx={{ color: theme.palette.text.white, p: isMobile ? 0.5 : 1 }}>
+          <Settings fontSize={isMobile ? "small" : "medium"} />
+        </IconButton>
+      </Box>
+    </Box>;
+
   return (
-    <Box
-      sx={{
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    backgroundopacity: 0.9,
-    padding: theme.spacing(2),
-    height: '100vh',
-    mt: 0,
-    mb: 0,
-    pl: 10,
-    paddingBottom: 4,
-  }}
-    >
-      {/* Left Sidebar */}
+    <Box sx={{ display: "flex" }}>
+      {/* Mobile Menu Icon */}
+      {isMobile &&
+        <IconButton
+          color="#ffffff"
+          aria-label="open drawer"
+          onClick={toggleDrawer}
+          sx={{
+            position: "fixed",
+            top: 16,
+            left: 16,
+            zIndex: theme.zIndex.drawer + 1,
+            color: "#ffffff",
+          }}
+        >
+          <Menu />
+        </IconButton>}
+
+      {/* Responsive Drawer */}
       <Drawer
-        variant="permanent"
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? mobileOpen : true}
+        onClose={toggleDrawer}
+        ModalProps={{ keepMounted: true }}
         sx={{
-          width: 80,
+          width: isMobile ? drawerWidthMobile : drawerWidthDesktop,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: 80,
+            width: isMobile ? drawerWidthMobile : drawerWidthDesktop,
             boxSizing: "border-box",
             borderRight: "none",
             bgcolor: theme.palette.background.paper,
@@ -81,112 +143,41 @@ const JobseekerExplorePage = () => {
           }
         }}
       >
-        <Box
-          sx={{
-            background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
-    '& .MuiListItem-root': {
-      color: 'rgb(39, 56, 83)', // Base text color
-      '&.Mui-selected': {
-        color: '#ffffff', // Brighter when selected
-      },
-    },
-    height: '100vh',
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            pt: 2
-          }}
-        >
-          <Avatar
-            src="/employer-logo.png"
-            sx={{
-              width: 48,
-              height: 48,
-              mb: 3,
-              border: `2px solid ${theme.palette.text.primary}`
-            }}
-          />
-
-          <List sx={{ width: "100%" }}>
-            {[
-              { icon: <Home />, value: "home" },
-              { icon: <Search />, value: "search" },
-              { icon: <Group />, value: "candidates" },
-              { icon: <Bookmark />, value: "saved" },
-              { icon: <VideoLibrary />, value: "video-resumes" }
-            ].map(item =>
-              <ListItem
-                key={item.value}
-                component="div"
-                selected={activeTab === item.value}
-                onClick={() => {
-                  if (item.value === "home") navigate("/");
-                  else if (item.value === "search") navigate("#");
-                  else if (item.value === "candidates") navigate("#");
-                  else if (item.value === "saved") navigate("#");
-                  else if (item.value === "video-resumes") navigate("#");
-                
-                 setActiveTab(item.value) }}
-                sx={{
-                  justifyContent: "center",
-                  py: 2,
-                  cursor: "pointer",
-                  "&.Mui-selected": {
-                    borderLeft: `3px solid ${theme.palette.primary.main}`
-                  }
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: "auto",
-                    color:
-                      activeTab === item.value
-                        ? theme.palette.primary.main
-                        : theme.palette.text.primary
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-              </ListItem>
-            )}
-          </List>  <Box
-          sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" ,
-    '& .MuiListItem-root': {
-      color: 'rgb(39, 56, 83)', // Base text color
-      '&.Mui-selected': {
-        color: '#ffffff', // Brighter when selected
-      },
-    },}}
-        >
-          <IconButton sx={{ color: theme.palette.text.primary }}>
-            <Settings  />
-          </IconButton>
-        </Box>
-        </Box>
-
-      
+        {drawerContent}
       </Drawer>
 
-      {/* Main Content Area - Video Grid */}
+      {/* Main Content */}
       <Box
+        component="main"
         sx={{
           flexGrow: 1,
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: 2,
           p: 2,
-          overflowY: "auto",
+          mt: 0,
+          height: "100vh",
+          background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+          backgroundSize: "auto",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "top right",
+          overflowY: "auto"
         }}
       >
-        {videoResumes.map(video =>
-          <VideoThumbnail
-            key={video.id}
-            title={video.title}
-            experience={video.experience}
-            thumbnail={video.thumbnail}
-            onClick={() => navigate(`/feed/${video.id}`)}
-          />
-        )}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gap: 2
+          }}
+        >
+          {videoResumes.map(video =>
+            <VideoThumbnail
+              key={video.id}
+              title={video.title}
+              experience={video.experience}
+              thumbnail={video.thumbnail}
+              onClick={() => navigate(`/feed/${video.id}`)}
+            />
+          )}
+        </Box>
       </Box>
     </Box>
   );
@@ -267,4 +258,6 @@ const VideoThumbnail = ({ title, experience, thumbnail, onClick }) => {
   );
 };
 
-export default JobseekerExplorePage;
+export default EmployerExplorePublic;
+
+
