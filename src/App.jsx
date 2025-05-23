@@ -69,7 +69,14 @@ import ExploreLayout from "./components/ExploreLayout";
 import EmployerProfile from "./pages/EmployerProfile";
 import NotificationsPage from "./pages/NotificationsPage";
 import { useAuthContext} from "./hooks/useAuth";
+import { Cloudinary } from '@cloudinary/url-gen';
 
+// Initialize once (put this in a separate config file)
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: 'djfvfxrsh' // Replace with yours
+  }
+});
 
 
 
@@ -104,6 +111,8 @@ function App() {
             <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
             <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
           </Route>
+          <Route path="/video-feed/:vid?" element={<VideoFeed />} /> 
+          <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
 
           {/* Private Routes */}
 
@@ -143,8 +152,7 @@ function App() {
 
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/feed-page" element={<FeedPage />} />
-            <Route path="/video-feed" element={<VideoFeed />} />
-            <Route path="/jobseeker-video-feed" element={<JobseekerVideoFeed />} />
+
             <Route path="/Employer-explore" element={<EmployerExplore />} />
             <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
             <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />

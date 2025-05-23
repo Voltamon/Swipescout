@@ -10,7 +10,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Button
+  Button,
 } from '@mui/material';
 import {
   FavoriteBorder,
@@ -23,43 +23,29 @@ import {
   ArrowDownward,
   Close,
   PlayArrow,
-  Pause
 } from '@mui/icons-material';
 import { styled } from '@mui/system';
+import { useNavigate, useParams } from 'react-router-dom';
 
-// Mock data - in a real app, this would come from your backend/API
-const mockJobVideos = [
+// --- Mock Data for Company Videos ---
+const mockCompanyVideos = [
   {
     id: '1',
-    company: 'TechCorp',
-    jobTitle: 'Frontend Developer',
-    videoUrl: 'public/videos/vid1.mp4',
-    logoUrl: 'src/public/logo.jpg',
-    tags: ['React', 'JavaScript', 'Remote'],
-    description: 'Join our team to build amazing user experiences with React and modern frontend technologies.',
-    location: 'San Francisco, CA',
-    salary: '$90,000 - $120,000',
-    posted: '2 days ago',
-    saved: false,
-    liked: false
-  },
-  {
-    id: '2',
-    company: 'DataSystems',
-    jobTitle: 'Data Scientist',
-    videoUrl: 'public/videos/vid2.mp4',
-    logoUrl: '',
-    tags: ['Python', 'Machine Learning', 'AI'],
-    description: 'Work with cutting-edge AI technologies and large datasets to solve real-world problems.',
-    location: 'Remote',
-    salary: '$110,000 - $150,000',
-    posted: '1 week ago',
-    saved: false,
-    liked: false
-  },
-  // Add more mock data as needed
+    companyName: 'Corporate Solutions Inc.',
+    videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935032/Employer/grfwutcixeecejrsqu7o.mp4',
+    logoUrl: 'https://via.placeholder.com/48/5DADE2/FFFFFF?text=CSI',
+    description: 'Discover the vibrant culture and innovative projects at Corporate Solutions Inc. We are always looking for passionate individuals to join our growing team.',
+    industry: 'Consulting',
+    foundedYear: 2005,
+    employeeCount: '500-1000',
+    benefits: ['Health Insurance', '401k', 'Paid Time Off', 'Flexible Hours'],
+    tagline: 'Innovate. Grow. Succeed.',
+    liked: false,
+    saved: false // Added saved property to match component logic
+  }
 ];
 
+// Styled components (unchanged - keep these as they are)
 const VideoContainer = styled('div')({
   position: 'relative',
   width: '100%',
@@ -68,7 +54,7 @@ const VideoContainer = styled('div')({
   backgroundColor: '#000',
 });
 
-const VideoPlayer = styled('video')({
+const StyledVideo = styled('video')({
   width: '100%',
   height: '100%',
   objectFit: 'cover',
@@ -117,7 +103,7 @@ const ConnectButton = styled(Button)({
   },
 });
 
-const JobDetailDialog = styled(Dialog)({
+const CompanyDetailDialog = styled(Dialog)({ // Renamed from JobDetailDialog
   '& .MuiDialog-paper': {
     borderRadius: '16px',
     maxWidth: '600px',
@@ -125,20 +111,44 @@ const JobDetailDialog = styled(Dialog)({
   },
 });
 
+
 const VideoFeed = () => {
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [videos, setVideos] = useState(mockJobVideos);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const { vid } = useParams();
+  const navigate = useNavigate();
+
+  const [videos, setVideos] = useState(mockCompanyVideos);
+
+  const initialIndex = vid ? videos.findIndex(video => video.id === vid) : 0;
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(
+    initialIndex >= 0 ? initialIndex : 0
+  );
+
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const videoRef = useRef(null);
 
   const currentVideo = videos[currentVideoIndex];
 
+  const tryPlayVideo = () => {
+    if (videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setIsPlaying(true);
+        }).catch(error => {
+          console.warn('Autoplay prevented:', error);
+          setIsPlaying(false);
+        });
+      }
+    }
+  };
+
   const handleSwipeUp = () => {
     if (currentVideoIndex < videos.length - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
       setIsLoading(true);
+      setIsPlaying(false);
     }
   };
 
@@ -146,6 +156,7 @@ const VideoFeed = () => {
     if (currentVideoIndex > 0) {
       setCurrentVideoIndex(currentVideoIndex - 1);
       setIsLoading(true);
+      setIsPlaying(false);
     }
   };
 
@@ -153,41 +164,63 @@ const VideoFeed = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        tryPlayVideo();
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
   const toggleLike = () => {
     const updatedVideos = [...videos];
-    updatedVideos[currentVideoIndex].liked = !updatedVideos[currentVideoIndex].liked;
-    setVideos(updatedVideos);
+    // Ensure 'liked' property exists on the current video object
+    if (updatedVideos[currentVideoIndex]) {
+      updatedVideos[currentVideoIndex].liked = !updatedVideos[currentVideoIndex].liked;
+      setVideos(updatedVideos);
+    }
   };
 
   const toggleSave = () => {
     const updatedVideos = [...videos];
-    updatedVideos[currentVideoIndex].saved = !updatedVideos[currentVideoIndex].saved;
-    setVideos(updatedVideos);
-  };
-
-  const handleVideoLoaded = () => {
-    setIsLoading(false);
-    if (videoRef.current) {
-      videoRef.current.play();
+    // Ensure 'saved' property exists on the current video object
+    if (updatedVideos[currentVideoIndex]) {
+        // Add 'saved' property if it doesn't exist, default to false
+        updatedVideos[currentVideoIndex].saved = !updatedVideos[currentVideoIndex].saved;
+        setVideos(updatedVideos);
     }
   };
 
+
+  const handleVideoLoaded = () => {
+    setIsLoading(false);
+    tryPlayVideo();
+  };
+
+  const handleVideoError = (e) => {
+    console.error('Video loading failed:', e);
+    setIsLoading(false);
+    setIsPlaying(false);
+  };
+
   const handleOpenDialog = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
+    if (videoRef.current) {
+      tryPlayVideo();
+    }
     setOpenDialog(false);
   };
 
-  // Handle keyboard navigation
+  const handleCloseFeed = () => {
+    navigate(-1);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowUp') {
@@ -195,6 +228,7 @@ const VideoFeed = () => {
       } else if (e.key === 'ArrowDown') {
         handleSwipeDown();
       } else if (e.key === ' ') {
+        e.preventDefault();
         togglePlay();
       }
     };
@@ -203,11 +237,18 @@ const VideoFeed = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentVideoIndex]);
+  }, [currentVideoIndex, isPlaying]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      setIsLoading(true);
+      videoRef.current.muted = true;
+      videoRef.current.load();
+    }
+  }, [currentVideoIndex, currentVideo.videoUrl]);
 
   return (
     <Box sx={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
-      {/* Video Feed */}
       <VideoContainer
         onClick={togglePlay}
         onTouchStart={(e) => {
@@ -237,17 +278,19 @@ const VideoFeed = () => {
             <CircularProgress color="primary" />
           </Box>
         )}
-        
-        <VideoPlayer
+
+        <StyledVideo
           ref={videoRef}
           src={currentVideo.videoUrl}
           loop
           playsInline
+          muted={true}
           onLoadedData={handleVideoLoaded}
-          onEnded={() => setIsPlaying(false)}
+          onError={handleVideoError}
+          crossOrigin="anonymous"
         />
-        
-        {!isPlaying && (
+
+        {!isPlaying && !isLoading && (
           <IconButton
             sx={{
               position: 'absolute',
@@ -265,19 +308,36 @@ const VideoFeed = () => {
             <PlayArrow fontSize="large" />
           </IconButton>
         )}
-        
+
+        <IconButton
+          sx={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+            color: '#fff',
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            '&:hover': {
+              backgroundColor: 'rgba(0,0,0,0.5)',
+            },
+            zIndex: 3,
+          }}
+          onClick={handleCloseFeed}
+        >
+          <Close />
+        </IconButton>
+
+        {/* Overlay Content (Bottom Left) - Corrected for Company Data */}
         <OverlayContent>
-          <Typography variant="h5" fontWeight="bold">
-            {currentVideo.jobTitle}
+          <Typography variant="h5" fontWeight="bold" sx={{ color: "#fff", }}>
+            {currentVideo.companyName}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            {currentVideo.company}
+          <Typography variant="subtitle1" sx={{ mb: 1, color: "rgba(216, 220, 223, 0.5)", }}>
+            {currentVideo.tagline}
           </Typography>
           <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-            {currentVideo.tags.map((tag, index) => (
+            {currentVideo.industry && (
               <Chip
-                key={index}
-                label={tag}
+                label={currentVideo.industry}
                 size="small"
                 sx={{
                   backgroundColor: 'rgba(255,255,255,0.2)',
@@ -285,15 +345,54 @@ const VideoFeed = () => {
                   backdropFilter: 'blur(10px)',
                 }}
               />
-            ))}
+            )}
+            {currentVideo.foundedYear && (
+              <Chip
+                label={`Founded: ${currentVideo.foundedYear}`}
+                size="small"
+                sx={{
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: '#fff',
+                  backdropFilter: 'blur(10px)',
+                }}
+              />
+            )}
           </Stack>
-          <Typography variant="body2" sx={{ mb: 2 }}>
+          <Typography variant="body2" sx={{ mb: 2, color: "rgba(238, 238, 238, 0.5)", }}>
             {currentVideo.description}
           </Typography>
         </OverlayContent>
-        
+
         <RightActionBar>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <IconButton
+            sx={{
+              color: '#fff',
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.5)',
+              },
+            }}
+            onClick={handleSwipeUp}
+            disabled={currentVideoIndex >= videos.length - 1}
+          >
+            <ArrowUpward />
+          </IconButton>
+
+          <IconButton
+            sx={{
+              color: '#fff',
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.5)',
+              },
+            }}
+            onClick={handleSwipeDown}
+            disabled={currentVideoIndex <= 0}
+          >
+            <ArrowDownward />
+          </IconButton>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
             <Avatar src={currentVideo.logoUrl} sx={{ width: 48, height: 48, mb: 1 }} />
             <ActionButton onClick={toggleLike}>
               {currentVideo.liked ? (
@@ -303,7 +402,7 @@ const VideoFeed = () => {
               )}
             </ActionButton>
           </Box>
-          
+
           <ActionButton onClick={toggleSave}>
             {currentVideo.saved ? (
               <Bookmark sx={{ color: '#ffc107' }} />
@@ -311,16 +410,16 @@ const VideoFeed = () => {
               <BookmarkBorder />
             )}
           </ActionButton>
-          
+
           <ActionButton>
             <Share />
           </ActionButton>
-          
-          <ActionButton>
+
+          <ActionButton onClick={handleOpenDialog}>
             <MoreVert />
           </ActionButton>
         </RightActionBar>
-        
+
         <ConnectButton
           variant="contained"
           size="large"
@@ -329,53 +428,11 @@ const VideoFeed = () => {
           Connect
         </ConnectButton>
       </VideoContainer>
-      
-      {/* Navigation hints */}
-      <Box
-        sx={{
-          position: 'absolute',
-          right: '16px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          zIndex: 2,
-        }}
-      >
-        <IconButton
-          sx={{
-            color: '#fff',
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            '&:hover': {
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            },
-          }}
-          onClick={handleSwipeUp}
-          disabled={currentVideoIndex >= videos.length - 1}
-        >
-          <ArrowUpward />
-        </IconButton>
-        
-        <IconButton
-          sx={{
-            color: '#fff',
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            '&:hover': {
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            },
-          }}
-          onClick={handleSwipeDown}
-          disabled={currentVideoIndex <= 0}
-        >
-          <ArrowDownward />
-        </IconButton>
-      </Box>
-      
-      {/* Job Details Dialog */}
-      <JobDetailDialog open={openDialog} onClose={handleCloseDialog}>
+
+      {/* Company Details Dialog - Corrected for Company Data */}
+      <CompanyDetailDialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Job Details</Typography>
+          <Typography variant="h6">Company Details</Typography>
           <IconButton onClick={handleCloseDialog}>
             <Close />
           </IconButton>
@@ -385,55 +442,58 @@ const VideoFeed = () => {
             <Avatar src={currentVideo.logoUrl} sx={{ width: 64, height: 64, mr: 2 }} />
             <Box>
               <Typography variant="h5" fontWeight="bold">
-                {currentVideo.jobTitle}
+                {currentVideo.companyName}
               </Typography>
-              <Typography variant="subtitle1">{currentVideo.company}</Typography>
+              <Typography variant="subtitle1">{currentVideo.tagline}</Typography>
             </Box>
           </Box>
-          
+
           <Box sx={{ mb: 3 }}>
             <Typography variant="body1" paragraph>
-              {currentVideo.description}
+              **About Us:** {currentVideo.description}
             </Typography>
           </Box>
-          
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-            {currentVideo.tags.map((tag, index) => (
-              <Chip key={index} label={tag} color="primary" variant="outlined" />
-            ))}
-          </Box>
-          
-          <Box sx={{ mb: 3 }}>
+
+          <Stack direction="column" spacing={1} sx={{ mb: 3 }}>
             <Typography variant="subtitle2" color="text.secondary">
-              Location
+              Industry
             </Typography>
-            <Typography variant="body1">{currentVideo.location}</Typography>
-          </Box>
-          
-          <Box sx={{ mb: 3 }}>
+            <Typography variant="body1">{currentVideo.industry}</Typography>
+
             <Typography variant="subtitle2" color="text.secondary">
-              Salary Range
+              Founded
             </Typography>
-            <Typography variant="body1">{currentVideo.salary}</Typography>
-          </Box>
-          
-          <Box sx={{ mb: 3 }}>
+            <Typography variant="body1">{currentVideo.foundedYear}</Typography>
+
             <Typography variant="subtitle2" color="text.secondary">
-              Posted
+              Employees
             </Typography>
-            <Typography variant="body1">{currentVideo.posted}</Typography>
-          </Box>
-          
+            <Typography variant="body1">{currentVideo.employeeCount}</Typography>
+
+            {currentVideo.benefits && currentVideo.benefits.length > 0 && (
+              <>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Benefits
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {currentVideo.benefits.map((benefit, index) => (
+                    <Chip key={index} label={benefit} color="primary" variant="outlined" />
+                  ))}
+                </Box>
+              </>
+            )}
+          </Stack>
+
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
             <Button variant="outlined" onClick={handleCloseDialog}>
               Close
             </Button>
             <Button variant="contained" color="primary">
-              Apply Now
+              Visit Website
             </Button>
           </Box>
         </DialogContent>
-      </JobDetailDialog>
+      </CompanyDetailDialog>
     </Box>
   );
 };
