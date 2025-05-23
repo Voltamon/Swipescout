@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -23,6 +23,121 @@ import {
   PlayArrow
 } from "@mui/icons-material";
 
+// --- Mock Data for Video Resumes (using Cloudinary URLs from previous example) ---
+
+ const mockVideoResumes = [
+    {
+    id: '1', 
+    title: "Corporate Solutions Inc. - Company Overview", 
+    experience: "Leading Consulting Firm since 2005", 
+    videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935032/Employer/grfwutcixeecejrsqu7o.mp4'
+  }
+];
+ 
+
+// --- Playable Video Preview Component ---
+const PlayableVideoPreview = ({ title, experience, videoUrl, onClick }) => {
+  const theme = useTheme();
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false); // Initially paused
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(e => console.error("Video autoplay on hover failed:", e));
+      setIsPlaying(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+      videoRef.current.currentTime = 0; // Reset video to start
+    }
+  };
+
+  return (
+    <Box
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      sx={{
+        position: "relative",
+        borderRadius: 2,
+        overflow: "hidden",
+        aspectRatio: "9/16", // Standard vertical video aspect ratio
+        bgcolor: theme.palette.action.hover,
+        cursor: "pointer",
+        transition: "transform 0.2s",
+        "&:hover": {
+          transform: "scale(1.02)",
+        }
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        loop // Loop the video preview
+        muted // Mute by default for autoplay on hover
+        playsInline // Important for mobile browsers
+        preload="metadata" // Load enough data to get duration/dimensions
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          opacity: 0.9,
+          display: 'block' // Remove extra space below video
+        }}
+      />
+
+      {/* Play Icon - Visible when not playing on hover */}
+      {!isPlaying && (
+        <Box
+          className="play-icon-overlay"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            color: "#fff",
+            bgcolor: "rgba(255, 64, 129, 0.7)", // Pinkish red
+            borderRadius: "50%",
+            p: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: 1, // Always visible when paused
+            transition: "opacity 0.3s",
+          }}
+        >
+          <PlayArrow fontSize="large" />
+        </Box>
+      )}
+
+
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          p: 2,
+          background: "linear-gradient(transparent, rgba(0,0,0,0.8))",
+          color: '#fff' // Ensure text is white
+        }}
+      >
+        <Typography variant="subtitle2" color="inherit" fontWeight="bold">
+          {title}
+        </Typography>
+        <Typography variant="caption" color="rgba(255,255,255,0.8)">
+          {experience} 
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+// --- EmployerExplorePublic Component ---
 const EmployerExplorePublic = () => {
   const [activeTab, setActiveTab] = useState("candidates");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -37,65 +152,56 @@ const EmployerExplorePublic = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const videoResumes = [
-    {
-      id: 1,
-      title: "Frontend Developer",
-      experience: "3 years",
-      thumbnail: "/placeholder1.jpg"
-    },
-    {
-      id: 2,
-      title: "UX Designer",
-      experience: "2 years",
-      thumbnail: "/placeholder2.jpg"
-    },
-    {
-      id: 3,
-      title: "Backend Engineer",
-      experience: "5 years",
-      thumbnail: "/placeholder3.jpg"
-    }
-  ];
-
-  const drawerContent = <Box sx={{ background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`, height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", pt: 2, "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } } }}>
+  const drawerContent = (
+    <Box
+      sx={{
+        background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        pt: 2,
+        "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } }
+      }}
+    >
       <Avatar src="/employer-logo.png" sx={{ width: isMobile ? 36 : 48, height: isMobile ? 36 : 48, mb: 3, border: `2px solid ${theme.palette.text.primary}` }} />
 
       <List sx={{ width: "100%" }}>
-        {[{ icon: <Home fontSize={isMobile ? "small" : "medium"} />, value: "home" }, { icon: <Search fontSize={isMobile ? "small" : "medium"} />, value: "search" }, { icon: <Group fontSize={isMobile ? "small" : "medium"} />, value: "candidates" }, { icon: <Bookmark fontSize={isMobile ? "small" : "medium"} />, value: "saved" }, { icon: <VideoLibrary fontSize={isMobile ? "small" : "medium"} />, value: "video-resumes" }].map(
-          item =>
-            <ListItem
-              key={item.value}
-              component="div"
-              selected={activeTab === item.value}
-              onClick={() => {
-                setActiveTab(item.value);
-                if (isMobile) setMobileOpen(false); // close drawer on mobile
-                // You can replace navigate("#") with actual routes
-                if (item.value === "home") navigate("/");
-              }}
+        {[
+          { icon: <Home fontSize={isMobile ? "small" : "medium"} />, value: "home" },
+          { icon: <Search fontSize={isMobile ? "small" : "medium"} />, value: "search" },
+          { icon: <Group fontSize={isMobile ? "small" : "medium"} />, value: "candidates" },
+          { icon: <Bookmark fontSize={isMobile ? "small" : "medium"} />, value: "saved" },
+          { icon: <VideoLibrary fontSize={isMobile ? "small" : "medium"} />, value: "video-resumes" }
+        ].map(item => (
+          <ListItem
+            key={item.value}
+            component="div"
+            selected={activeTab === item.value}
+            onClick={() => {
+              setActiveTab(item.value);
+              if (isMobile) setMobileOpen(false);
+              if (item.value === "home") navigate("/");
+            }}
+            sx={{
+              justifyContent: "center",
+              py: 2,
+              cursor: "pointer",
+              "&.Mui-selected": {
+                borderLeft: `3px solid ${theme.palette.primary.main}`
+              }
+            }}
+          >
+            <ListItemIcon
               sx={{
-                justifyContent: "center",
-                py: 2,
-                cursor: "pointer",
-                "&.Mui-selected": {
-                  borderLeft: `3px solid ${theme.palette.primary.main}`
-                }
+                minWidth: "auto",
+                color: activeTab === item.value ? theme.palette.primary.main : theme.palette.text.primary
               }}
             >
-              <ListItemIcon
-                sx={{
-                  minWidth: "auto",
-                  color:
-                    activeTab === item.value
-                      ? theme.palette.primary.main
-                      : theme.palette.text.primary
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-            </ListItem>
-        )}
+              {item.icon}
+            </ListItemIcon>
+          </ListItem>
+        ))}
       </List>
 
       <Box sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" }}>
@@ -103,12 +209,13 @@ const EmployerExplorePublic = () => {
           <Settings fontSize={isMobile ? "small" : "medium"} />
         </IconButton>
       </Box>
-    </Box>;
+    </Box>
+  );
 
   return (
     <Box sx={{ display: "flex" }}>
       {/* Mobile Menu Icon */}
-      {isMobile &&
+      {isMobile && (
         <IconButton
           color="#ffffff"
           aria-label="open drawer"
@@ -122,7 +229,8 @@ const EmployerExplorePublic = () => {
           }}
         >
           <Menu />
-        </IconButton>}
+        </IconButton>
+      )}
 
       {/* Responsive Drawer */}
       <Drawer
@@ -168,96 +276,20 @@ const EmployerExplorePublic = () => {
             gap: 2
           }}
         >
-          {videoResumes.map(video =>
-            <VideoThumbnail
+          {mockVideoResumes.map(video => (
+            <PlayableVideoPreview
               key={video.id}
               title={video.title}
               experience={video.experience}
-              thumbnail={video.thumbnail}
-              onClick={() => navigate(`/feed/${video.id}`)}
+              videoUrl={video.videoUrl} // Pass the video URL
+              onClick={() => navigate(`/video-feed/${video.id}`)} // Navigate to feed on click
             />
-          )}
+          ))}
         </Box>
       </Box>
     </Box>
   );
 };
 
-const VideoThumbnail = ({ title, experience, thumbnail, onClick }) => {
-  const theme = useTheme();
-
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        position: "relative",
-        borderRadius: 2,
-        overflow: "hidden",
-        aspectRatio: "9/16",
-        bgcolor: theme.palette.action.hover,
-        cursor: "pointer",
-        transition: "transform 0.2s",
-        "&:hover": {
-          transform: "scale(1.02)",
-          "& .play-icon": {
-            opacity: 1
-          }
-        }
-      }}
-    >
-      <Box
-        component="img"
-        src={thumbnail}
-        sx={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          opacity: 0.9
-        }}
-      />
-
-      <Box
-        className="play-icon"
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          opacity: 0,
-          transition: "opacity 0.3s",
-          color: "#fff",
-          bgcolor: "rgba(255, 64, 129, 0.7)",
-          borderRadius: "50%",
-          p: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <PlayArrow fontSize="large" />
-      </Box>
-
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          p: 2,
-          background: "linear-gradient(transparent, rgba(0,0,0,0.8))"
-        }}
-      >
-        <Typography variant="subtitle2" color="#fff" fontWeight="bold">
-          {title}
-        </Typography>
-        <Typography variant="caption" color="rgba(255,255,255,0.8)">
-          {experience} experience
-        </Typography>
-      </Box>
-    </Box>
-  );
-};
-
 export default EmployerExplorePublic;
-
 

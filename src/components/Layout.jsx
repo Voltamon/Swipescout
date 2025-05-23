@@ -1,6 +1,4 @@
 import React,{ useContext } from "react";
-
-
 import { Box, useMediaQuery, useTheme, CssBaseline, IconButton  } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
@@ -20,7 +18,7 @@ const LayoutRoot = styled(Box)(({ theme }) => ({
   flexFlow:2,
   flexDirection: 'column',
   minHeight: '100vh',
-  
+
 }));
 
 const LayoutContent = styled(Box)(({ theme }) => ({
@@ -51,7 +49,7 @@ const FooterWrapper = styled(Box)(({ open, isMobile }) => ({
 }));
 
 const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
-  width: open ? (isMobile ? 0 : 200) : (isMobile ? 0 : 72), 
+  width: open ? (isMobile ? 0 : 200) : (isMobile ? 0 : 72),
   flexShrink: 0,
   overflowX: 'hidden',
   transition: 'width 0.3s ease-in-out',
@@ -60,10 +58,10 @@ const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
 const MainContent = styled(Box)(({ open, isMobile }) => ({
   flexGrow: 1,
   width: '100%',
-   flexDirection: 'column', 
-  flexBasis: open && !isMobile ? 'calc(100% - 200px)' : !isMobile ? 'calc(100% - 72px)' : '100%' , 
+    flexDirection: 'column',
+  flexBasis: open && !isMobile ? 'calc(100% - 200px)' : !isMobile ? 'calc(100% - 72px)' : '100%' ,
   transition: 'flex-basis 0.3s ease-in-out',
-  
+
 }));
 
 const Layout = ({role}) => {
@@ -71,10 +69,26 @@ const Layout = ({role}) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
 
-  const routesWithoutSidebar = ["/login","/login-form", "/signup", "/video-feed" ,"/Employer-explore-sidebar","/jobseeker-explore-sidebar", "/jobseeker-video-feed"] ;
-  const shouldShowSidebarBase = !routesWithoutSidebar.includes(location.pathname);
+  // Define patterns for routes that should NOT show the sidebar/header
+  const routesWithoutSidebarPatterns = [
+    /^\/login(\/.*)?$/,           // /login or /login-form (if login-form is considered a subpath of login)
+    /^\/signup(\/.*)?$/,
+    /^\/video-feed(\/.*)?$/,
+    /^\/Employer-explore-sidebar(\/.*)?$/,
+    /^\/jobseeker-explore-sidebar(\/.*)?$/,
+    /^\/jobseeker-video-feed(\/.*)?$/, // This will match /jobseeker-video-feed, /jobseeker-video-feed/1, /jobseeker-video-feed/abc etc.
+  ];
+
+  // Function to check if the current path matches any of the patterns
+  const checkShouldHideSidebar = (pathname) => {
+    return routesWithoutSidebarPatterns.some(pattern => pattern.test(pathname));
+  };
+
+  const shouldHideSidebar = checkShouldHideSidebar(location.pathname);
+
+
   const [sidebarOpen, setSidebarOpen] = React.useState(
-    !isMobile && shouldShowSidebarBase
+    !isMobile && !shouldHideSidebar // Use !shouldHideSidebar here
   );
 
   const handleSidebarToggle = () => {
@@ -91,21 +105,18 @@ const Layout = ({role}) => {
   position: 'fixed',
   top: theme.spacing(2),
   left: theme.spacing(2),
-  zIndex: theme.zIndex.drawer + 1, // Ensure it's above the sidebar
-  display: 'none', // Hidden by default
+  zIndex: theme.zIndex.drawer + 1,
+  display: 'none',
   [theme.breakpoints.down('md')]: {
-    display: 'block', // Only show on mobile
+    display: 'block',
   },
 }));
 
   const { user, logout } = useAuth();
 
   let roleVar =  JSON.parse(localStorage.getItem("role"));
-      // const role = localStorage.getItem("role");
- console.log("rollllll",roleVar);
- if(user && user.role)roleVar=user.role;  
-  // console.log("user from layout", user);
-  
+  if(user && user.role)roleVar=user.role;
+
 const roleGradients = {
   employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
   'job-seeker': 'linear-gradient(135deg, #6bdd4f 0%, #3ab756 100%)',
@@ -115,15 +126,17 @@ const roleGradients = {
 
   React.useEffect(
     () => {
-      setSidebarOpen(!isMobile && shouldShowSidebarBase);
+      // Update sidebarOpen based on mobile status and whether sidebar should be hidden
+      setSidebarOpen(!isMobile && !shouldHideSidebar);
     },
-    [isMobile, location.pathname, shouldShowSidebarBase]
+    [isMobile, location.pathname, shouldHideSidebar] // Include shouldHideSidebar in dependencies
   );
 
   return (
     <LayoutRoot>
       <CssBaseline />
-      {isMobile && shouldShowSidebarBase && (
+      {/* Conditionally render MobileMenuButton based on shouldHideSidebar */}
+      {isMobile && !shouldHideSidebar && (
         <MobileMenuButton
           edge="start"
           color="inherit"
@@ -132,53 +145,59 @@ const roleGradients = {
           <MenuIcon />
         </MobileMenuButton>
       )}
-      {!isMobile && shouldShowSidebarBase  && <HeaderWrapper open={sidebarOpen} isMobile={isMobile} 
-      >
-  <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={shouldShowSidebarBase} />
-</HeaderWrapper>}
-      <LayoutContent
-      >
-        {shouldShowSidebarBase && (
+      {/* Conditionally render Header based on shouldHideSidebar */}
+      {!isMobile && !shouldHideSidebar  && (
+        <HeaderWrapper open={sidebarOpen} isMobile={isMobile}>
+          <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={!shouldHideSidebar} />
+        </HeaderWrapper>
+      )}
+      <LayoutContent>
+        {/* Conditionally render SidebarContainer based on shouldHideSidebar */}
+        {!shouldHideSidebar && (
           <SidebarContainer open={sidebarOpen} isMobile={isMobile} >
-           
+
             {roleVar === 'employer' ? (
-    <Sidebar
-      open={sidebarOpen}
-      onClose={handleSidebarClose}
-      variant={isMobile ? 'temporary' : 'persistent'}
-      isMobile={isMobile}
-    />
-  ) : roleVar === 'job_seeker' ? (
-    <SidebarJobseeker
-      open={sidebarOpen}
-      onClose={handleSidebarClose}
-      variant={isMobile ? 'temporary' : 'persistent'}
-      isMobile={isMobile}
-    />
-  ) : roleVar === 'admin' ? (
-    <SidebarAdmin
-      open={sidebarOpen}
-      onClose={handleSidebarClose}
-      variant={isMobile ? 'temporary' : 'persistent'}
-      isMobile={isMobile}
-    />
-  ) : null}
+              <Sidebar
+                open={sidebarOpen}
+                onClose={handleSidebarClose}
+                variant={isMobile ? 'temporary' : 'persistent'}
+                isMobile={isMobile}
+              />
+            ) : roleVar === 'job_seeker' ? (
+              <SidebarJobseeker
+                open={sidebarOpen}
+                onClose={handleSidebarClose}
+                variant={isMobile ? 'temporary' : 'persistent'}
+                isMobile={isMobile}
+              />
+            ) : roleVar === 'admin' ? (
+              <SidebarAdmin
+                open={sidebarOpen}
+                onClose={handleSidebarClose}
+                variant={isMobile ? 'temporary' : 'persistent'}
+                isMobile={isMobile}
+              />
+            ) : null}
           </SidebarContainer>
         )}
         <MainContent open={sidebarOpen} isMobile={isMobile}
-         sx={{
-          
-          borderRadius: '8px 0 0 0',
-          boxShadow: '0 0 20px rgba(0,0,0,0.1)'
-        }}
+          sx={{
+            borderRadius: '8px 0 0 0',
+            boxShadow: '0 0 20px rgba(0,0,0,0.1)'
+          }}
         >
           <Outlet />
         </MainContent>
-       
-      </LayoutContent> 
-      {!isMobile && shouldShowSidebarBase  &&<FooterWrapper open={sidebarOpen} isMobile={isMobile} >
-       <Footer ></Footer></FooterWrapper>}
-      {isMobile && <MobileNavigation />}
+
+      </LayoutContent>
+      {/* Conditionally render Footer based on shouldHideSidebar */}
+      {!isMobile && !shouldHideSidebar && (
+        <FooterWrapper open={sidebarOpen} isMobile={isMobile} >
+          <Footer ></Footer>
+        </FooterWrapper>
+      )}
+      {/* MobileNavigation is typically part of the main content or explicitly handled */}
+      {isMobile && !shouldHideSidebar && <MobileNavigation />} {/* Assuming MobileNavigation is only shown when sidebar is enabled on mobile */}
     </LayoutRoot>
   );
 };

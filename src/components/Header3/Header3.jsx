@@ -34,7 +34,7 @@ const Header3 = () => {
         <Link className="nav-link" to="/FAQs">
           FAQs
         </Link>
-         <Link className="nav-link" to="/explore-layout/Employer-explore-public">
+         <Link className="nav-link" to="/explore-layout/Job-seeker-explore-public">
           Check it
         </Link>
                 <Link className="nav-link" to="/login">

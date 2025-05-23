@@ -11,7 +11,7 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-       backgroundImage: 'linear-gradient(135deg, #1a3ecc 0%, #2a60db 50%, #5a96ec 100%)',
+       background: 'rgba(182, 202, 233, 0.34)',
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
   boxShadow: 'none',
@@ -32,14 +32,14 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   fontWeight: theme.typography.fontWeightMedium,
   fontSize: theme.typography.pxToRem(16),
   marginRight: theme.spacing(4),
-  color: theme.palette.common.white,
+  color: "rgb(151, 200, 233)",
   opacity: 0.7,
   transition: 'opacity 0.3s ease',
   '&:hover': {
     opacity: 1,
   },
   '&.Mui-selected': {
-    color: "rgb(151, 200, 233)",
+    color: "rgb(78, 77, 77)",
     opacity: 1,
     fontWeight: theme.typography.fontWeightBold,
   },
