@@ -5,13 +5,14 @@ import {
  
   Avatar,
 
-
+Link,
   IconButton,
   Typography,
   Box,
   Button
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useNavigate } from 'react-router-dom';
 import {
   Notifications,
   Home,
@@ -30,6 +31,7 @@ export const useAuthContext = () => {
 
  {/* //Header */}
 const Header = ({ onSidebarToggle , isSidebarVisible }) => {
+  const Navigate=useNavigate();
   const { user, logout } = useAuthContext();
   return (<> {isSidebarVisible && ( 
 <AppBar position="static" 
@@ -69,7 +71,14 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
                 <IconButton color="inherit">
                   <ExitToApp onClick={logout}/>
                 </IconButton>
-                <Avatar sx={{ marginLeft: 2 }}>A</Avatar>
+                    <IconButton
+      onClick={()=>Navigate("/candidate-profile")} // Correctly call the navigate function
+      aria-label="view candidate profile" // Crucial for accessibility
+      // sx={{ marginLeft: 2 }} // You can apply spacing here if needed,
+                               // or use typical flexbox spacing in a Toolbar
+    >
+                 <Avatar sx={{ marginLeft: 2 }} >A</Avatar>
+                 </IconButton>
               </Toolbar>
             </AppBar> )}
 </>

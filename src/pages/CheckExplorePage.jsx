@@ -5,10 +5,14 @@ import {
   Tabs, 
   Tab, 
   Box, 
+  IconButton,
   styled,
-  useTheme 
+  useTheme  
 } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import { Link, useLocation } from 'react-router-dom';
+import { useNavigate   } from 'react-router-dom';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
        background: 'rgba(182, 202, 233, 0.34)',
@@ -48,6 +52,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 const CheckExplorePage = () => {
   const theme = useTheme();
   const location = useLocation();
+  const navigate=useNavigate();
   
   // Define all possible tab routes
   const tabRoutes = [
@@ -62,7 +67,19 @@ const CheckExplorePage = () => {
 
   return (
     <StyledAppBar position="static" sx={{m:0,p:0}}>
-      <Toolbar>
+
+      <Toolbar>      <IconButton
+                  sx={{
+                    display: 'inline',
+                  mb:2,
+                    color: '#999',
+                    width: '24px',
+                    height: '24px',
+                  }}
+                  onClick={()=>navigate('/')}
+                >
+                  <ArrowBackIcon  fontSize="large" />
+                </IconButton>
         <Box sx={{ 
           width: '100%',
           display: 'flex',

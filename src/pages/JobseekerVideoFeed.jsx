@@ -391,7 +391,7 @@ const JobseekerVideoFeed = () => {
   useEffect(() => {
     if (videoRef.current) {
       setIsLoading(true);
-      videoRef.current.muted = true; // Ensure video is muted for initial autoplay attempt
+      videoRef.current.muted = false; // Ensure video is muted for initial autoplay attempt
       videoRef.current.load(); // Load the new video source
 
       // After loading, the onLoadedData handler will attempt to play.
@@ -437,7 +437,7 @@ const JobseekerVideoFeed = () => {
           src={currentVideo.videoUrl}
           loop
           playsInline
-          muted={true} // Explicitly set muted to true here
+          muted={false} // Explicitly set muted to true here
           onLoadedData={handleVideoLoaded}
           onError={handleVideoError}
           crossOrigin="anonymous"

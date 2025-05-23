@@ -242,7 +242,7 @@ const VideoFeed = () => {
   useEffect(() => {
     if (videoRef.current) {
       setIsLoading(true);
-      videoRef.current.muted = true;
+      videoRef.current.muted = false;
       videoRef.current.load();
     }
   }, [currentVideoIndex, currentVideo.videoUrl]);
@@ -284,7 +284,7 @@ const VideoFeed = () => {
           src={currentVideo.videoUrl}
           loop
           playsInline
-          muted={true}
+          muted={false}
           onLoadedData={handleVideoLoaded}
           onError={handleVideoError}
           crossOrigin="anonymous"
