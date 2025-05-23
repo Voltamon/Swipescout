@@ -141,7 +141,7 @@ const PlayableVideoPreview = ({ title, experience, videoUrl, onClick }) => {
      <video
         ref={videoRef}
         loop // Loop the video preview
-        muted // Mute by default for autoplay on hover
+        //muted // Mute by default for autoplay on hover
         playsInline // Important for mobile browsers
         preload="metadata" // Load enough data to get duration/dimensions
         style={{
@@ -282,7 +282,7 @@ const JobseekerExplorePage = () => {
   return (
     <Box sx={{ display: "flex" }}>
       {/* Mobile Menu Icon */}
-      {isMobile && (
+      {/*{isMobile && (
         <IconButton
           color="#ffffff"
           aria-label="open drawer"
@@ -299,7 +299,7 @@ const JobseekerExplorePage = () => {
         </IconButton>
       )}
 
-      {/* Responsive Drawer */}
+       Responsive Drawer 
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : true}
@@ -319,7 +319,7 @@ const JobseekerExplorePage = () => {
         }}
       >
         {drawerContent}
-      </Drawer>
+      </Drawer>*/}
 
       {/* Main Content */}
       <Box
@@ -328,6 +328,7 @@ const JobseekerExplorePage = () => {
           flexGrow: 1,
           p: 2,
           mt: 0,
+          pl:5,
           height: "100vh",
           background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
           backgroundSize: "auto",

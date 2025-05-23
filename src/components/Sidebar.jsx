@@ -11,7 +11,8 @@ import {
   Box,
   Avatar,
   Typography,
-  Tooltip
+  Tooltip,
+  IconButton
 } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -24,6 +25,7 @@ import {
   Help as HelpIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from "../hooks/useAuth";
 
@@ -35,15 +37,16 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthContext();
+  
 
   const employer_menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon />, path: '/employer-dashboard' },
-    { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
+    // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
+    // { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <SearchIcon />, path: '/candidate-search' },
     { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
-    { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
+    // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
@@ -150,7 +153,14 @@ const roleStyles = {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
 <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-  <Avatar src={user?.photoUrl} sx={{ 
+  <IconButton
+      onClick={()=>navigate("/candidate-profile")} // Correctly call the navigate function
+      aria-label="view candidate profile" // Crucial for accessibility
+      // sx={{ marginLeft: 2 }} // You can apply spacing here if needed,
+                               // or use typical flexbox spacing in a Toolbar
+    >
+                
+                 <Avatar src={user?.photoUrl} sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,
@@ -158,7 +168,7 @@ const roleStyles = {
     borderColor: 'primary.main'
   }}>
     {user?.name?.charAt(0)}
-  </Avatar>
+  </Avatar> </IconButton> 
   {open && (
     <Box>
       <Typography variant="subtitle1" sx={{ color: 'textw.primary !important' }}>

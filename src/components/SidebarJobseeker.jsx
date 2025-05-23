@@ -56,8 +56,8 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
 
     const jobseeker_menuItems = [
     { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
-    { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
-    { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
+    // { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
+    // { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
     { text: 'Detailed Search', icon: <SearchIcon />, path: '/job-search' },
