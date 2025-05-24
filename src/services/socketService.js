@@ -1,43 +1,52 @@
-// import dotenv from "dotenv";
+// src/services/socketService.js
+import { io } from 'socket.io-client';
 
-
-import io from 'socket.io-client';
-
-let socketInstance = null;
+let socket = null;
 
 export const initializeSocket = (userId) => {
-  if (!socketInstance) {
-    socketInstance = io(import.meta.env.REACT_APP_SOCKET_URL, {
-      query: { userId },
-      transports: ['websocket'],
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
+    if (!socket) {
+        const backendUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+        
+        socket = io(backendUrl, {
+            auth: {
+                token: localStorage.getItem('accessToken'),
+                userId: userId,
+            },
+            transports: ['websocket', 'polling'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+        });
 
-    socketInstance.on('connect', () => {
-      console.log('Connected to socket server');
-    });
+        socket.on('connect', () => {
+            console.log('Socket connected:', socket.id);
+            if (userId) {
+                socket.emit('register', userId);
+            }
+        });
 
-    socketInstance.on('disconnect', () => {
-      console.log('Disconnected from socket server');
-    });
+        socket.on('connect_error', (error) => {
+            console.error('Socket connection error:', error.message);
+        });
 
-    socketInstance.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-    });
-  }
-  
-  return socketInstance;
-};
+        socket.on('disconnect', (reason) => {
+            console.log('Socket disconnected:', reason);
+        });
 
-export const disconnectSocket = (socket) => {
-  if (socket) {
-    socket.disconnect();
-    socketInstance = null;
-    console.log('Socket disconnected');
-  }
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+        });
+    }
+    return socket;
 };
 
 export const getSocket = () => {
-  return socketInstance;
+    return socket;
+};
+
+export const disconnectSocket = () => {
+    if (socket) {
+        socket.disconnect();
+        socket = null;
+    }
 };
