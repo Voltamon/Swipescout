@@ -17,7 +17,7 @@ import {
   Notifications,
   Home,
   Work,
-  Person,
+  Person,Chat,
   ExitToApp
 } from "@mui/icons-material";
 
@@ -59,14 +59,15 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                   Swipscout
                 </Typography>
-                <IconButton color="inherit">
+                <IconButton color="inherit" onClick={()=>Navigate("/")}>
                   <Home />
                 </IconButton>
-                <IconButton color="inherit">
-                  <Work />
+                <IconButton color="inherit" onClick={()=>Navigate("/chat")}>
+                  <Chat />
                 </IconButton>
-                <IconButton color="inherit">
+                <IconButton color="inherit" onClick={()=>Navigate("/candidate-profile")}>
                   <Person />
+                  
                 </IconButton>
                 <IconButton color="inherit">
                   <ExitToApp onClick={logout}/>

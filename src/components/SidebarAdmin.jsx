@@ -68,6 +68,8 @@ const SidebarAdmin = ({ open = true, onClose, variant ,isMobile}) => {
   ];
 
 const admin_menuItems = [
+            { text: 'Home Page', icon: <HomeIcon />, path: '/' },
+ 
     { text: 'Dashboard', icon: <HomeIcon />, path: '/admin-dashboard' },
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
     // { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },

@@ -26,6 +26,8 @@ import {
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from "../hooks/useAuth";
 
@@ -40,11 +42,14 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   
 
   const employer_menuItems = [
+          // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
+
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
+    
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
     // { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
-    { text: 'Detailed Search', icon: <SearchIcon />, path: '/candidate-search' },
+    { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },
     { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
     // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
@@ -172,10 +177,10 @@ const roleStyles = {
   {open && (
     <Box>
       <Typography variant="subtitle1" sx={{ color: 'textw.primary !important' }}>
-        {user?.name}
+        {user?.name ||user?.displayName}
       </Typography>
       <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
-        {user?.company || user?.role?.replace('_', ' ') || 'User'}
+        {user?.role || user?.role?.replace('_', ' ') || 'User'} {console.log("userrrrrrrrrrrr:",user)}
       </Typography>
     </Box>
   )}

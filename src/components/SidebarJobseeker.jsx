@@ -24,6 +24,8 @@ import {
   Help as HelpIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from "../hooks/useAuth";
 
@@ -40,7 +42,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
   const { user, logout } = useAuthContext();
 
   const employer_menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon />, path: '/employer-dashboard' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
     { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
@@ -55,12 +57,14 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
 
 
     const jobseeker_menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
+          // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
+
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
     // { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
-    { text: 'Detailed Search', icon: <SearchIcon />, path: '/job-search' },
+    { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/job-search' },
     { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
     { text: 'Job Details', icon: <SearchIcon />, path: '/job/1' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
@@ -95,7 +99,7 @@ const menuItems = jobseeker_menuItems;
 // };
 const roleStyles = {
   employer: {
-    background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
+    background: `linear-gradient(115deg,rgba(156, 253, 237, 0.73) 10%,rgba(107, 218, 181, 0.73) 60%), url('/backgrounds/bkg2.png')`,
     '& .MuiListItem-root': {
       color: 'rgb(39, 56, 83)', // Base text color
       '&.Mui-selected': {
@@ -131,7 +135,7 @@ const roleStyles = {
     // { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
   ];
 
-  const isActive = (path) => location.pathname.startsWith(path);
+  const isActive = (path) => location.pathname.startsWith(path) ;
 
   return (<>  {(open || !isMobile) && (
     <Drawer
@@ -153,7 +157,7 @@ const roleStyles = {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
 <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-  <Avatar src={user?.photoUrl} sx={{ 
+  <Avatar src={user?.photoUrl ||user?.photo_url } sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,
@@ -165,10 +169,10 @@ const roleStyles = {
   {open && (
     <Box>
       <Typography variant="subtitle1" sx={{ color: 'textw.primary !important' }}>
-        {user?.name}
+        {user?.display_name ||user?.name}
       </Typography>
       <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
-        {user?.company || user?.role?.replace('_', ' ') || 'User'}
+        {user?.role || user?.role?.replace('_', ' ') || 'User'}{console.log("userrrrrrrrrrrr:",user)}
       </Typography>
     </Box>
   )}
