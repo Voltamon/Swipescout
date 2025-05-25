@@ -149,22 +149,25 @@ const LoginPage = () => {
     authenticateWithGoogle,
     authenticateWithLinkedIn,
   } = useAuth();
-  
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
-  });
-  
-  const [showPassword, setShowPassword] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState({
     email: false,
     google: false,
     linkedin: false,
   });
-  
+   const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  }); 
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+
+  if(authLoading){
+    return (<CircularProgress/>)
+  }
+
+  
 
   // Handle navigation after successful authentication
   useEffect(() => {
