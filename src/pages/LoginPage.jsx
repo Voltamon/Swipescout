@@ -167,8 +167,6 @@ const LoginPage = () => {
     return (<CircularProgress/>)
   }
 
-  
-alert(role);
   // Handle navigation after successful authentication
   useEffect(() => {
     console.log("logggg:",user);
