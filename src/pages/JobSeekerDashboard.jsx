@@ -52,9 +52,6 @@ function JobSeekerDashboard() {
   // //     </Box>
   // //   );
   // }
-   const useAuthContext = () => {
-  return useContext(AuthContext);
-};
 
   return (
     <Box  sx={{

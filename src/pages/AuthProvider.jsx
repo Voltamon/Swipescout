@@ -1,7 +1,10 @@
-import { AuthContext } from "../hooks/useAuth"; 
-import { useAuth } from "../hooks/useAuth";
+import { AuthContext, useAuth } from "../hooks/useAuth"; 
+
 
 export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
   const auth = useAuth();
 
   return (

@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthContext } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 const expandedWidth = 200;
 const collapsedWidth = 72;
@@ -36,7 +36,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuthContext();
+  const { user, logout } = useAuth();
   
 
   const employer_menuItems = [
