@@ -21,18 +21,14 @@ import {
   ExitToApp
 } from "@mui/icons-material";
 
-import { useAuth ,AuthContext} from "../hooks/useAuth";
-import { useContext } from "react";
+import { useAuth } from "../hooks/useAuth";
 
-export const useAuthContext = () => {
-  return useContext(AuthContext);
-};
-  
+
 
  {/* //Header */}
 const Header = ({ onSidebarToggle , isSidebarVisible }) => {
   const Navigate=useNavigate();
-  const { user, logout } = useAuthContext();
+  const { user, logout } = useAuth();
   return (<> {isSidebarVisible && ( 
 <AppBar position="static" 
       

@@ -68,7 +68,7 @@ import CheckExplorePage from "./pages/CheckExplorePage";
 import ExploreLayout from "./components/ExploreLayout";
 import EmployerProfile from "./pages/EmployerProfile";
 import NotificationsPage from "./pages/NotificationsPage";
-import { useAuthContext} from "./hooks/useAuth";
+import { useAuth} from "./hooks/useAuth";
 import { Cloudinary } from '@cloudinary/url-gen';
 
 // Initialize once (put this in a separate config file)
@@ -82,7 +82,7 @@ const cld = new Cloudinary({
 
 
 function App() {
-  const { user,role,loading  } = useAuthContext();
+  const { user,role,loading  } = useAuth();
   const location = useLocation();
 
   if (loading) {
