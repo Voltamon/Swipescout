@@ -142,17 +142,23 @@ const roleStyles = {
     <Drawer
       variant="permanent" // or "persistent"
       open={open}
-      sx={{
-        width: open ? expandedWidth : collapsedWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: open ? expandedWidth : collapsedWidth,
-          transition: 'width 0.3s ease-in-out',
-          overflowX: 'hidden',
-          boxSizing: 'border-box',
-          ...(roleStyles[user?.role || 'default'] || {})
-        },
-      }}
+     sx={{
+    width: open ? expandedWidth : collapsedWidth,
+    flexShrink: 0,
+    '& .MuiDrawer-paper': {
+      width: open ? expandedWidth : collapsedWidth,
+      transition: 'width 0.3s ease-in-out',
+      overflowX: 'hidden',              
+      overflowY: 'auto',               
+      boxSizing: 'border-box',
+      scrollbarWidth: 'none',           // Firefox
+      '&::-webkit-scrollbar': {
+        width: 0,                       // Chrome, Safari
+        height: 0,                      // Prevents horizontal scrollbar too
+      },
+      ...(roleStyles[user?.role || 'default'] || {}),
+    },
+  }}
     >
   
       <Toolbar />
@@ -172,7 +178,7 @@ const roleStyles = {
     border: '2px solid',
     borderColor: 'primary.main'
   }}>
-    {user?.name?.charAt(0)}
+    {user?.name?.charAt(0)||user?.displayName.charAt(0)}
   </Avatar> </IconButton> 
   {open && (
     <Box>
