@@ -1,40 +1,41 @@
-import { useState, useEffect,createContext,useContext } from "react";
+import { createContext, useState, useEffect, useMemo, useCallback ,useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase-config.js";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
-};
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
- 
-const auth = getAuth(app);
-
-export const useAuth = () => {
-  const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
+export const AuthProvider = ({ children }) => {
+  // Initialize state from localStorage if available
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  
+  const [role, setRole] = useState(() => {
+    const storedRole = localStorage.getItem("role");
+    return storedRole ? JSON.parse(storedRole) : null;
+  });
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  
+  const auth = getAuth(app);
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
 
-  // Common function to handle successful authentication
-  const handleAuthSuccess = async (token, origin, role = null, userP=null) => {
+  // Handle successful authentication
+  const handleAuthSuccess = useCallback(async (token, origin, role = null, userP = null) => {
     try {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       localStorage.removeItem("role");
-console.log("=---------------------");
-      let idToken = token; 
-      let user=userP;
-      if (origin == "linkedin" || origin == "EmailPass") {
-        console.log("Token received:::::::::::", token);
+
+      let idToken = token;
+      let user = userP;
+      
+      if (origin === "linkedin" || origin === "EmailPass") {
         const userCredential = await signInWithCustomToken(auth, token);
         user = userCredential.user;
         user.role = role;
@@ -46,9 +47,7 @@ console.log("=---------------------");
       localStorage.setItem("role", JSON.stringify(role));
       setUser(user);
       setRole(role);
-      console.log("User authenticated successfully:", user);
-      console.log("Role set successfully:", role);
-      console.log("userrrr:", JSON.stringify(user));
+      
       return { success: true, user, role };
     } catch (error) {
       return {
@@ -56,13 +55,10 @@ console.log("=---------------------");
         message: error.message || "Authentication processing failed"
       };
     }
-  };
+  }, [auth]);
 
-
-
-
-  // Common function to verify token
-  const verifyToken = async (token) => {
+  // Verify token with backend
+  const verifyToken = useCallback(async (token) => {
     try {
       const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
         method: 'POST',
@@ -79,58 +75,76 @@ console.log("=---------------------");
       console.error("Token verification failed:", err);
       throw err;
     }
-  };
+  }, [apiUrl]);
 
-  const checkAuth = async () => {
+  // Refresh token if needed
+  const refreshTokenIfNeeded = useCallback(async (token) => {
     try {
-      const token = JSON.parse(localStorage.getItem("accessToken"));
-      // const user = localStorage.getItem("user");
-      const role = JSON.parse(localStorage.getItem("role"));
+      const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+
+      if (!response.ok) {
+        const refreshResponse = await fetch(`${apiUrl}/api/auth/refresh-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+
+        if (!refreshResponse.ok) throw new Error('Token refresh failed');
+        const newToken = await refreshResponse.json();
+        localStorage.setItem("accessToken", JSON.stringify(newToken.token));
+        return newToken.token;
+      }
+
+      return token;
+    } catch (error) {
+      console.error("Token refresh error:", error);
+      throw error;
+    }
+  }, [apiUrl]);
+
+  // Check authentication status
+  const checkAuth = useCallback(async () => {
+    try {
+      setLoading(true);
+      let token = JSON.parse(localStorage.getItem("accessToken"));
+      const storedRole = JSON.parse(localStorage.getItem("role"));
+      
       if (!token) {
         setLoading(false);
         return;
       }
 
+      token = await refreshTokenIfNeeded(token);
       const data = await verifyToken(token);
+      
       setUser(data.user);
-      setRole(role);
+      setRole(storedRole);
       setError(null);
     } catch (err) {
       console.error("Auth check failed:", err);
       setError(err.message);
-      // localStorage.removeItem("accessToken");
-      // localStorage.removeItem("user");
-      // localStorage.removeItem("role");
       setUser(null);
-      // alert(err);
-      // Navigate("/login");
     } finally {
       setLoading(false);
     }
-  };
+  }, [refreshTokenIfNeeded, verifyToken]);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-
- 
   // Email/Password Login
-  const loginByEmailAndPassword = async (email, password) => {
-              localStorage.removeItem("accessToken");
+  const loginByEmailAndPassword = useCallback(async (email, password) => {
+    localStorage.removeItem("accessToken");
     setUser(null);
 
     try {
-      console.log("Logging in with email and password:", email);
       const response = await fetch(`${apiUrl}/api/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
 
-
-
-      console.log("Login response:", response.ok);
       const text = await response.text();
       const data = text ? JSON.parse(text) : {};
 
@@ -141,9 +155,7 @@ console.log("=---------------------");
           status: response.status
         };
       }
-      console.log("response ok:", data.role);
 
-      console.log("Login successful:", data);
       return await handleAuthSuccess(data.token, "EmailPass", data.role);
     } catch (error) {
       console.error("Login error:", error);
@@ -152,73 +164,55 @@ console.log("=---------------------");
         message: error.message || "Login failed"
       };
     }
-  };
+  }, [apiUrl, handleAuthSuccess]);
 
-  // Google Authentication (for both login and signup)
-  const authenticateWithGoogle = async (role = null) => {
-         localStorage.removeItem("accessToken");
+  // Google Authentication
+  const authenticateWithGoogle = useCallback(async (role = null) => {
+    localStorage.removeItem("accessToken");
     setUser(null);
+    
     try {
-           
-
-      // 1. Authenticate with Firebase Google Auth
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
 
-      // 2. Determine endpoint based on role (signup vs signin)
       const endpoint = role
         ? `${apiUrl}/api/auth/signup/google`
         : `${apiUrl}/api/auth/signin/google`;
 
-      console.log("Google ID Token:", JSON.stringify(role ? { idToken, role } : { idToken }));
-      // 3. Send to backend
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${idToken}` // Recommended way to send tokens
+          "Authorization": `Bearer ${idToken}`
         },
         body: JSON.stringify(role ? { idToken, role } : { idToken })
       });
 
-      console.log("Google Auth Response:", response.ok);
-      // 4. Handle response
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Authentication failed");
       }
 
       const data = await response.json();
-
-      console.log("Google Auth Data:", data);
-      console.log("Google Auth Role:", data.role);
-      // 5. Process successful authentication
-      return await handleAuthSuccess(idToken, "google", data.role,data.user);
-
+      return await handleAuthSuccess(idToken, "google", data.role, data.user);
     } catch (error) {
       console.error("Google authentication error:", error);
-      // Consider signing out from Firebase if the backend auth failed
       await auth.signOut();
       return {
         error: true,
         message: error.message || "Google authentication failed"
       };
     }
-  };
+  }, [apiUrl, auth, handleAuthSuccess]);
 
-  // LinkedIn Authentication (for both login and signup)
-  const authenticateWithLinkedIn22 = async (role = null) => { 
-        localStorage.removeItem("accessToken");
+  // LinkedIn Authentication
+  const authenticateWithLinkedIn = useCallback(async (role = null) => {
+    localStorage.removeItem("accessToken");
     setUser(null);
+    
     try {
-     
-      console.log("[LinkedIn Auth] Starting authentication...");
-
-      // 1. Open LinkedIn OAuth window
       const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
-
-      console.log("[LinkedIn Auth] Opening window with URL:", linkedinAuthUrl);
 
       const linkedinAuthWindow = window.open(
         linkedinAuthUrl,
@@ -230,20 +224,13 @@ console.log("=---------------------");
         throw new Error("Popup window was blocked. Please allow popups for this site.");
       }
 
-      // 2. Listen for the callback with the authorization code
-      console.log("[LinkedIn Auth] Setting up message listener...");
-
       const result = await new Promise((resolve, reject) => {
         const messageListener = (event) => {
-          console.log("[LinkedIn Auth] Received message:", event);
-
           if (event.origin === window.location.origin) {
             if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
-              console.log("[LinkedIn Auth] Received success message");
               window.removeEventListener('message', messageListener);
               resolve(event.data.payload);
             } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
-              console.log("[LinkedIn Auth] Received error message");
               window.removeEventListener('message', messageListener);
               reject(new Error(event.data.error || "LinkedIn authentication failed"));
             }
@@ -253,314 +240,75 @@ console.log("=---------------------");
         window.addEventListener('message', messageListener);
 
         const timeoutId = setTimeout(() => {
-          console.log("[LinkedIn Auth] Timeout reached");
           window.removeEventListener('message', messageListener);
           reject(new Error("LinkedIn authentication timed out."));
         }, 120000);
 
-        // Cleanup function
         return () => {
           window.removeEventListener('message', messageListener);
           clearTimeout(timeoutId);
         };
       });
 
-      console.log("[LinkedIn Auth] Received result from popup:", result);
-
-      // 3. Now send to backend
       const endpoint = role
         ? `${apiUrl}/api/auth/signup/linkedin`
         : `${apiUrl}/api/auth/signin/linkedin`;
 
-      console.log("[LinkedIn Auth] Sending to backend endpoint:", endpoint);
-
-      let response;
-
-      response = await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token: result.id_token,
           ...(role ? { role } : {})
         })
       });
 
-
-
-      console.log("[LinkedIn Auth] Backend response status:", response.status);
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("LinkedIn Auth error:", errorData);
-        // throw new Error(errorData.error || "Authentication failed");
         return {
           error: true,
-          message: errorData.error || "login dublicate or error"
+          message: errorData.error || "login duplicate or error"
         };
       }
 
       const responseData = await response.json();
-      console.log("[LinkedIn Auth] Backend response data:", responseData);
-
-
-
       return await handleAuthSuccess(responseData.token, "linkedin", responseData.role);
-
     } catch (error) {
-      console.error("[LinkedIn Auth] Full error:", error);
+      console.error("LinkedIn authentication error:", error);
       return {
         error: true,
         message: error.message || "LinkedIn authentication failed"
       };
     }
-  };
-  
-  const authenticateWithLinkedIn2 = async (role = null) => {
-  try {
-    // 1. Open LinkedIn OAuth window
-    const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+  }, [apiUrl, LINKEDIN_CLIENT_ID, handleAuthSuccess]);
 
-    const linkedinAuthWindow = window.open(
-      linkedinAuthUrl,
-      '_blank',
-      'width=600,height=600'
-    );
-
-    // 2. Wait for callback with authorization code
-    const result = await new Promise((resolve, reject) => {
-      const messageListener = (event) => {
-        if (event.origin === window.location.origin) {
-          if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
-            resolve(event.data.payload);
-          } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
-            reject(new Error(event.data.errorDescription || "LinkedIn authentication failed"));
-          }
-        }
-      };
-
-      window.addEventListener('message', messageListener);
-    });
-
-    // 3. Send code to your backend (not id_token)
-    const response = await fetch(`${apiUrl}/api/auth/linkedin/token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        code: result.code,  // Send the code, not id_token
-        redirect_uri: window.location.origin + '/auth/linkedin/callback',
-        ...(role ? { role } : {})
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Authentication failed");
-    }
-
-    const responseData = await response.json();
-
-
-    const endpoint = role
-        ? `${apiUrl}/api/auth/signup/linkedin`
-        : `${apiUrl}/api/auth/signin/linkedin`;
-
-      console.log("[LinkedIn Auth] Sending to backend endpoint:", endpoint);
-
-      let loginresponse;
-
-      loginresponse = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: result.id_token,
-          ...(role ? { role } : {})
-        })
-      });
-
-
-
-      console.log("[LinkedIn Auth] Backend response status:", loginresponse.status);
-
-      if (!loginresponse.ok) {
-        const errorData = await loginresponse.json().catch(() => ({}));
-        console.error("LinkedIn Auth error:", errorData);
-        // throw new Error(errorData.error || "Authentication failed");
-        return {
-          error: true,
-          message: errorData.error || "login dublicate or error"
-        };
-      }
-
-      const loginresponseData = await loginresponse.json();
-      console.log("[LinkedIn Auth] Backend response data:", loginresponseData);
-
-
-
-
-
-    return await handleAuthSuccess(loginresponseData.token, "linkedin", loginresponseData.role);
-
-  } catch (error) {
-    console.error("LinkedIn auth error:", error);
-    return {
-      error: true,
-      message: error.message || "LinkedIn authentication failed"
-    };
-  }
-};
-
-  const authenticateWithLinkedIn = async (role = null) => { 
-        localStorage.removeItem("accessToken");
-    setUser(null);
-    try {
-     
-      console.log("[LinkedIn Auth] Starting authentication...");
-
-      // 1. Open LinkedIn OAuth window
-      const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
-
-      console.log("[LinkedIn Auth] Opening window with URL:", linkedinAuthUrl);
-
-      const linkedinAuthWindow = window.open(
-        linkedinAuthUrl,
-        '_blank',
-        'width=600,height=600'
-      );
-
-      if (!linkedinAuthWindow) {
-        throw new Error("Popup window was blocked. Please allow popups for this site.");
-      }
-
-      // 2. Listen for the callback with the authorization code
-      console.log("[LinkedIn Auth] Setting up message listener...");
-
-      const result = await new Promise((resolve, reject) => {
-        const messageListener = (event) => {
-          console.log("[LinkedIn Auth] Received message:", event);
-
-          if (event.origin === window.location.origin) {
-            if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
-              console.log("[LinkedIn Auth] Received success message");
-              window.removeEventListener('message', messageListener);
-              resolve(event.data.payload);
-            } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
-              console.log("[LinkedIn Auth] Received error message");
-              window.removeEventListener('message', messageListener);
-              reject(new Error(event.data.error || "LinkedIn authentication failed"));
-            }
-          }
-        };
-
-        window.addEventListener('message', messageListener);
-
-        const timeoutId = setTimeout(() => {
-          console.log("[LinkedIn Auth] Timeout reached");
-          window.removeEventListener('message', messageListener);
-          reject(new Error("LinkedIn authentication timed out."));
-        }, 120000);
-
-        // Cleanup function
-        return () => {
-          window.removeEventListener('message', messageListener);
-          clearTimeout(timeoutId);
-        };
-      });
-
-      console.log("[LinkedIn Auth] Received result from popup:", result);
-
-      // 3. Now send to backend
-      const endpoint = role
-        ? `${apiUrl}/api/auth/signup/linkedin`
-        : `${apiUrl}/api/auth/signin/linkedin`;
-
-      console.log("[LinkedIn Auth] Sending to backend endpoint:", endpoint);
-
-      let response;
-
-      response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: result.id_token,
-          ...(role ? { role } : {})
-        })
-      });
-
-
-
-      console.log("[LinkedIn Auth] Backend response status:", response.status);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("LinkedIn Auth error:", errorData);
-        // throw new Error(errorData.error || "Authentication failed");
-        return {
-          error: true,
-          message: errorData.error || "login dublicate or error"
-        };
-      }
-
-      const responseData = await response.json();
-      console.log("[LinkedIn Auth] Backend response data:", responseData);
-
-
-
-      return await handleAuthSuccess(responseData.token, "linkedin", responseData.role);
-
-    } catch (error) {
-      console.error("[LinkedIn Auth] Full error:", error);
-      return {
-        error: true,
-        message: error.message || "LinkedIn authentication failed"
-      };
-    }
-  };
-
-
-
-   const signupWithEmail = async (email, password, displayName, role) => {
+  // Email Signup
+  const signupWithEmail = useCallback(async (email, password, displayName, role) => {
     try {
       const response = await fetch(`${apiUrl}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          displayName,
-          role
-        }),
+        body: JSON.stringify({ email, password, displayName, role })
       });
-      console.log("Signup response:", response.ok);
+
       const text = await response.text();
       const data = text ? JSON.parse(text) : {};
-      console.log("Signup data:", data);
 
       if (!response.ok) {
         return {
           error: true,
           message: data.message || "Signup failed"
-        }
+        };
       }
 
-      // If the backend returns a token after signup, process it
       if (data.token) {
         return await handleAuthSuccess(data.token, "EmailPass", role);
-      }
-      else {
+      } else {
         return {
           error: true,
           message: "error in authentication",
-        }
+        };
       }
-      // return { success: true };
     } catch (error) {
       console.error("Signup error:", error);
       return {
@@ -568,31 +316,68 @@ console.log("=---------------------");
         message: error.message || "Signup failed"
       };
     }
-  };
+  }, [apiUrl, handleAuthSuccess]);
 
-  const logout = async () => {
-    await fetch(`${apiUrl}/api/auth/logout`, { method: "POST" });
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
-    setUser(null);
-    Navigate("/login")
+  // Logout
+  const logout = useCallback(async () => {
+    try {
+      await fetch(`${apiUrl}/api/auth/logout`, { method: "POST" });
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      setUser(null);
+      setRole(null);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  }, [apiUrl, navigate]);
 
-  };
+  // Initial auth check
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
-  return {
+  // Memoize context value
+  const contextValue = useMemo(() => ({
     user,
+    role,
     loading,
     error,
-    // Login methods
     loginByEmailAndPassword,
     authenticateWithGoogle,
     authenticateWithLinkedIn,
-    // Signup methods
     signupWithEmail,
-    // Common methods
     logout,
     refreshAuth: checkAuth,
+    checkAuth,
     handleAuthSuccess
-  };
+  }), [
+    user,
+    role,
+    loading,
+    error,
+    loginByEmailAndPassword,
+    authenticateWithGoogle,
+    authenticateWithLinkedIn,
+    signupWithEmail,
+    logout,
+    checkAuth,
+    handleAuthSuccess
+  ]);
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// Create a separate hook for consuming the context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

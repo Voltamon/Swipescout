@@ -3,7 +3,7 @@ import { ReactNode, useEffect  } from 'react';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import Layout from '../components/Layout';
 
-import { useAuthContext } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 
 
@@ -26,7 +26,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({   children }) => {
   const location = useLocation();
-  const { user, logout ,loading} = useAuthContext();
+  const { user, logout ,loading} = useAuth();
   if (loading) {
     return <div>Loading...</div>; // Or a proper loading spinner
   }
