@@ -41,14 +41,13 @@ export const AuthProvider = ({ children }) => {
         user.role = role;
         idToken = await user.getIdToken();
       }
-
       localStorage.setItem("accessToken", JSON.stringify(idToken));
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", JSON.stringify(role));
-      setUser(user);
+      setUser(JSON.stringify(user));
       setRole(role);
       
-      return { success: true, user, role };
+      return { success: true, user:(JSON.stringify(user)), role };
     } catch (error) {
       return {
         error: true,
@@ -86,6 +85,8 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ token })
       });
 
+            // alert(token)
+
       if (!response.ok) {
         const refreshResponse = await fetch(`${apiUrl}/api/auth/refresh-token`, {
           method: 'POST',
@@ -93,10 +94,15 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ token })
         });
 
-        if (!refreshResponse.ok) throw new Error('Token refresh failed');
-        const newToken = await refreshResponse.json();
-        localStorage.setItem("accessToken", JSON.stringify(newToken.token));
-        return newToken.token;
+          
+        
+        if (!refreshResponse.ok) throw new Error('Token refresh failed'); 
+        const userCredential = await signInWithCustomToken(auth, token);
+        const userNew = userCredential.user;
+        const newToken = await userNew.getIdToken();
+        // const newToken = await refreshResponse.json();
+        localStorage.setItem("accessToken", JSON.stringify(newToken));
+        return newToken;
       }
 
       return token;
@@ -111,17 +117,19 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       let token = JSON.parse(localStorage.getItem("accessToken"));
+      const user = JSON.parse(localStorage.getItem("user"));
       const storedRole = JSON.parse(localStorage.getItem("role"));
-      
+
       if (!token) {
         setLoading(false);
         return;
       }
 
+
       token = await refreshTokenIfNeeded(token);
       const data = await verifyToken(token);
       
-      setUser(data.user);
+      setUser(user);
       setRole(storedRole);
       setError(null);
     } catch (err) {
@@ -155,7 +163,6 @@ export const AuthProvider = ({ children }) => {
           status: response.status
         };
       }
-
       return await handleAuthSuccess(data.token, "EmailPass", data.role);
     } catch (error) {
       console.error("Login error:", error);
