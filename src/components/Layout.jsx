@@ -182,6 +182,7 @@ const roleGradients = {
         )}
         <MainContent open={sidebarOpen} isMobile={isMobile}
           sx={{
+            background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
             borderRadius: '8px 0 0 0',
             boxShadow: '0 0 20px rgba(0,0,0,0.1)'
           }}
