@@ -259,7 +259,7 @@ const RegisterForm = () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
+      const idToken = await result.user.getIdToken(true);
 
       const response = await fetch(`${API_BASE_URL}/api/auth/signup/google`, {
         method: "POST",

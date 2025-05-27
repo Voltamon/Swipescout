@@ -56,7 +56,7 @@ const AuthPage = () => {
         email,
         password
       );
-      const idToken = await userCredential.user.getIdToken();
+      const idToken = await userCredential.user.getIdToken(true);
 
       const response = await fetch(`${apiUrl}/api/auth/signin`, {
         method: "POST",
@@ -84,7 +84,7 @@ const AuthPage = () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
+      const idToken = await result.user.getIdToken(true);
 
       const response = await fetch(`${apiUrl}/api//auth/signin/google`, {
         method: "POST",
