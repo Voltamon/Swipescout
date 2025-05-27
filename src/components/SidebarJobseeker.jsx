@@ -28,7 +28,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../hooks/useAuth";
-
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 
 
 
@@ -44,7 +44,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
   const employer_menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Explore', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <SearchIcon />, path: '/candidate-search' },
     { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
@@ -61,7 +61,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
 
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
-    // { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
+    { text: 'Employers Jobs Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/job-search' },
@@ -155,7 +155,7 @@ const roleStyles = {
         width: 0,                       // Chrome, Safari
         height: 0,                      // Prevents horizontal scrollbar too
       },
-      ...(roleStyles[user?.role || 'default'] || {}),
+      ...(roleStyles['job_seeker'] || {}),
     },
   }}
     >
@@ -178,7 +178,7 @@ const roleStyles = {
         {user?.display_name ||user?.name}
       </Typography>
       <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
-        {user?.role || user?.role?.replace('_', ' ') || 'User'}{console.log("userrrrrrrrrrrr:",user)}
+        {user?.role || user?.role?.replace('_', ' ') || 'Jobseeker'}{console.log("userrrrrrrrrrrr:",user)}
       </Typography>
     </Box>
   )}
