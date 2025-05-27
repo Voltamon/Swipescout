@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import {
   Drawer,
   List,
@@ -28,8 +28,9 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import { useAuth } from "../hooks/useAuth";
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 
 const expandedWidth = 200;
 const collapsedWidth = 72;
@@ -38,7 +39,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, role , logout } = useAuth();
   
 
   const employer_menuItems = [
@@ -47,7 +48,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    // { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
+    { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },
     { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
@@ -138,6 +139,14 @@ const roleStyles = {
 
   const isActive = (path) => location.pathname.startsWith(path);
 
+    // const {  refreshAuthToken } = useAuth();
+
+  // Optional: Refresh token when this route is accessed
+  // useEffect(() => {
+  //   refreshAuthToken(); // Optional: only if you want it to refresh every time user visits a protected page
+  // }, [refreshAuthToken]);
+
+
   return (<>  {(open || !isMobile) && (
     <Drawer
       variant="permanent" // or "persistent"
@@ -156,7 +165,7 @@ const roleStyles = {
         width: 0,                       // Chrome, Safari
         height: 0,                      // Prevents horizontal scrollbar too
       },
-      ...(roleStyles[user?.role || 'default'] || {}),
+      ...(roleStyles['employer' ] || {}),
     },
   }}
     >
@@ -186,7 +195,7 @@ const roleStyles = {
         {user?.name ||user?.displayName}
       </Typography>
       <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
-        {user?.role || user?.role?.replace('_', ' ') || 'User'} {console.log("userrrrrrrrrrrr:",user)}
+        {user?.role || user?.role?.replace('_', ' ') || 'Employer'} {console.log("userrrrrrrrrrrr:",user)}
       </Typography>
     </Box>
   )}

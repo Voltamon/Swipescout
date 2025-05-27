@@ -74,8 +74,8 @@ const Layout = ({role}) => {
     /^\/login(\/.*)?$/,           // /login or /login-form (if login-form is considered a subpath of login)
     /^\/signup(\/.*)?$/,
     /^\/video-feed(\/.*)?$/,
-    /^\/Employer-explore-sidebar(\/.*)?$/,
-    /^\/jobseeker-explore-sidebar(\/.*)?$/,
+    // /^\/Employer-explore-sidebar(\/.*)?$/,
+    // /^\/jobseeker-explore-sidebar(\/.*)?$/,
     /^\/jobseeker-video-feed(\/.*)?$/, // This will match /jobseeker-video-feed, /jobseeker-video-feed/1, /jobseeker-video-feed/abc etc.
   ];
 
@@ -183,7 +183,7 @@ const roleGradients = {
         <MainContent open={sidebarOpen} isMobile={isMobile}
           sx={{
             background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
-            borderRadius: '8px 0 0 0',
+            borderRadius: '8px 0 0 0', mt: isMobile ? -2 : 2 ,
             boxShadow: '0 0 20px rgba(0,0,0,0.1)'
           }}
         >

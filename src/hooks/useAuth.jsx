@@ -78,6 +78,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, [apiUrl]);
 
+  const refreshAuthToken = useCallback(async () => {
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser) throw new Error("No authenticated user");
+
+    const newToken = await currentUser.getIdToken(true); // Force token refresh
+
+    // Store the refreshed token
+    localStorage.setItem("accessToken", JSON.stringify(newToken));
+
+    // Optionally update the user state if needed
+    setUser(currentUser);
+    setRole(localStorage.getItem("role"));
+    return newToken;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return null;
+  }
+}, []);
+
+
   // Refresh token if needed
   const refreshTokenIfNeeded = useCallback(async (token) => {
     try {
@@ -342,9 +363,20 @@ export const AuthProvider = ({ children }) => {
   }, [apiUrl, navigate]);
 
   // Initial auth check
+  // useEffect(() => {
+  //   checkAuth();
+  // }, [checkAuth]);
+
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  const interval = setInterval(() => {
+    refreshAuthToken(); // Refresh every 30 minutes
+  }, 30 * 60 * 1000);
+    
+  checkAuth();
+
+  return () => clearInterval(interval);
+}, [refreshAuthToken,checkAuth]);
+
 
   // Memoize context value
   const contextValue = useMemo(() => ({
@@ -358,6 +390,7 @@ export const AuthProvider = ({ children }) => {
     signupWithEmail,
     logout,
     refreshAuth: checkAuth,
+    refreshAuthToken,
     checkAuth,
     handleAuthSuccess
   }), [
@@ -370,6 +403,7 @@ export const AuthProvider = ({ children }) => {
     authenticateWithLinkedIn,
     signupWithEmail,
     logout,
+    refreshAuthToken,
     checkAuth,
     handleAuthSuccess
   ]);
