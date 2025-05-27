@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useMemo, useCallback ,useContext } from "react";
-import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup ,browserLocalPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
 
@@ -39,12 +39,14 @@ export const AuthProvider = ({ children }) => {
         const userCredential = await signInWithCustomToken(auth, token);
         user = userCredential.user;
         user.role = role;
-        idToken = await user.getIdToken();
+        idToken = await user.getIdToken(true);
       }
+      await auth.setPersistence(browserLocalPersistence);
+
       localStorage.setItem("accessToken", JSON.stringify(idToken));
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", JSON.stringify(role));
-      setUser(JSON.stringify(user));
+      setUser(user);
       setRole(role);
       
       return { success: true, user:(JSON.stringify(user)), role };
@@ -98,7 +100,7 @@ export const AuthProvider = ({ children }) => {
         if (!refreshResponse.ok) throw new Error('Token refresh failed'); 
         const userCredential = await signInWithCustomToken(auth, token);
         const userNew = userCredential.user;
-        const newToken = await userNew.getIdToken();
+        const newToken = await userNew.getIdToken(true);
         // const newToken = await refreshResponse.json();
         localStorage.setItem("accessToken", JSON.stringify(newToken));
         return newToken;
@@ -125,8 +127,8 @@ export const AuthProvider = ({ children }) => {
       }
 
 
-      token = await refreshTokenIfNeeded(token);
-      const data = await verifyToken(token);
+      // token = await refreshTokenIfNeeded(token);
+       await verifyToken(token);
       
       setUser(user);
       setRole(storedRole);
@@ -138,7 +140,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [refreshTokenIfNeeded, verifyToken]);
+  }, [ verifyToken]);
 
   // Email/Password Login
   const loginByEmailAndPassword = useCallback(async (email, password) => {
@@ -180,7 +182,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
+      const idToken = await result.user.getIdToken(true);
 
       const endpoint = role
         ? `${apiUrl}/api/auth/signup/google`
