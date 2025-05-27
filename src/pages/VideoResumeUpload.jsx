@@ -96,61 +96,14 @@ export default function VideoResumeUpload() {
     console.log("File uploaded:", event.target.files[0])
   }
 const navigate = useNavigate();
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" ,
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    padding: theme.spacing(2),
-    
-    mt: 2,
-    mb: 0,
-    paddingBottom: 4,
-}}>
+  return <Box sx={{ background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`, backgroundSize: "cover", backgroundPosition: "top right" ,mt:2 ,height: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Header */}
-      <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: "1px solid #e0e0e0" }}>
-        <Toolbar variant="dense">
-          {" "}
-          {/* Using dense toolbar to reduce height */}
-          <IconButton edge="start" color="inherit" aria-label="close" size="small">
-            <CloseIcon fontSize="small" />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, textAlign: "center", fontWeight: "bold", fontSize: "1.1rem" }}
-          >
-            Create Video Resume
-          </Typography>
-          <Box sx={{ width: 28 }} /> {/* Reduced spacer */}
-        </Toolbar>
-      </AppBar>
 
       {/* Main Content */}
-      <Container maxWidth="sm" sx={{ flex: 1, py: 1.5, display: "flex", flexDirection: "column" }}>
+      <Container sx={{ flex: 1, py: 1.5, display: "flex", flexDirection: "column", mt:2 }}>
         {/* Stepper */}
         <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 2 }}>
-          <MobileStepper
-            variant="dots"
-            steps={3}
-            position="static"
-            activeStep={activeStep}
-            sx={{
-              background: "transparent",
-              width: "auto",
-              "& .MuiMobileStepper-dot": {
-                margin: "0 3px",
-                width: 10,
-                height: 10,
-              },
-              "& .MuiMobileStepper-dotActive": {
-                backgroundColor: "#3366ff",
-              },
-            }}
-            nextButton={<Box />}
-            backButton={<Box />}
-          />
+          <MobileStepper variant="dots" steps={3} position="static" activeStep={activeStep} sx={{ background: "transparent", width: "auto", "& .MuiMobileStepper-dot": { margin: "0 3px", width: 10, height: 10 }, "& .MuiMobileStepper-dotActive": { backgroundColor: "#3366ff" } }} nextButton={<Box />} backButton={<Box />} />
         </Box>
 
         {/* Title and Description */}
@@ -184,45 +137,6 @@ const navigate = useNavigate();
         </Stack>
       </Container>
 
-      {/* Bottom Navigation */}
-      <Paper sx={{ position: "sticky", bottom: 0, left: 0, right: 0 }} elevation={3}>
-        <Box sx={{ display: "flex", justifyContent: "space-around", borderTop: "1px solid #e0e0e0" }}>
-          <NavButton className={activeNav === "feed" ? "active" : ""} onClick={() => {
-            setActiveNav("feed");
-            navigate("/video-feed");
-          }
-          }>
-            <RssFeedIcon fontSize="small" />
-            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
-              Feed
-            </Typography>
-          </NavButton>
-          <NavButton className={activeNav === "inbox" ? "active" : ""} onClick={() => {
-            setActiveNav("inbox");
-            navigate("/inbox");
-          }
-          }>
-            <InboxIcon fontSize="small" />
-            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
-              Inbox
-            </Typography>
-          </NavButton>
-          <NavButton className={activeNav === "profile" ? "active" : ""} onClick={() => {
-            setActiveNav("profile");
-            navigate("/profile");
-          }
-          }>
-            <PersonIcon fontSize="small" />
-            <Typography
-              variant="caption"
-              sx={{ fontSize: "0.7rem" }}
-              color={activeNav === "profile" ? "#3366ff" : "inherit"}
-            >
-              Profile
-            </Typography>
-          </NavButton>
-        </Box>
-      </Paper>
-    </Box>
-  )
+  
+    </Box>;
 }
