@@ -180,14 +180,14 @@ const roleStyles = {
                                // or use typical flexbox spacing in a Toolbar
     >
                 
-                 <Avatar src={user?.photoUrl} sx={{ 
+                 <Avatar src={user?.photo_url} sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,
     border: '2px solid',
     borderColor: 'primary.main'
   }}>
-    {user?.name?.charAt(0)||user?.displayName.charAt(0)}
+    {user?.name?.charAt(0)||user?.display_name.charAt(0)||'U'}
   </Avatar> </IconButton> 
   {open && (
     <Box>
