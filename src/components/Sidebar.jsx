@@ -187,7 +187,7 @@ const roleStyles = {
     border: '2px solid',
     borderColor: 'primary.main'
   }}>
-    {user?.name?.charAt(0)||user?.display_name.charAt(0)||'U'}
+    {user?.name?.charAt(0)||user?.display_name?.charAt(0)||'U'}
   </Avatar> </IconButton> 
   {open && (
     <Box>

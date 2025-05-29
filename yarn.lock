@@ -2651,7 +2651,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.4.0":
+"axios@npm:^1.9.0":
   version: 1.9.0
   resolution: "axios@npm:1.9.0"
   dependencies:
@@ -3226,6 +3226,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-picker-react@npm:^4.12.2":
+  version: 4.12.2
+  resolution: "emoji-picker-react@npm:4.12.2"
+  dependencies:
+    flairup: "npm:1.0.0"
+  peerDependencies:
+    react: ">=16"
+  checksum: 10c0/52f024672b0bc7eda90adc0ecf36695491e59471b354390ed744839119be4f22e075bc6d282192b98d71c3246159833da69f2123f4a71ccddc609f87f3189008
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -3775,6 +3786,13 @@ __metadata:
     "@firebase/storage-compat": "npm:0.3.21"
     "@firebase/util": "npm:1.12.0"
   checksum: 10c0/6892b3034238d60bfb4a98210e3a9e8633899eb0c33d0e55e4c7438e97a35395710f419db246a439ab69117b53f0dcdde9f106e72d8db8b3e71bc2a699938749
+  languageName: node
+  linkType: hard
+
+"flairup@npm:1.0.0":
+  version: 1.0.0
+  resolution: "flairup@npm:1.0.0"
+  checksum: 10c0/2d9fe1f1c890383be65ae0ec95d57b96f3ff42eecffaf493f8a39f09f4982e12109a865e79baca051e784919eecd72fa6cf620cfae8a4663b98deaa6d883d7ba
   languageName: node
   linkType: hard
 
@@ -6182,7 +6200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:^4.6.1":
+"socket.io-client@npm:^4.8.1":
   version: 4.8.1
   resolution: "socket.io-client@npm:4.8.1"
   dependencies:
@@ -6439,11 +6457,12 @@ __metadata:
     "@types/react": "npm:^18.2.0"
     "@types/react-dom": "npm:^18.2.0"
     "@vitejs/plugin-react": "npm:^4.4.1"
-    axios: "npm:^1.4.0"
+    axios: "npm:^1.9.0"
     chart.js: "npm:^4.3.0"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     date-fns: "npm:^2.30.0"
+    emoji-picker-react: "npm:^4.12.2"
     eslint: "npm:^9.21.0"
     eslint-plugin-react-hooks: "npm:^5.1.0"
     eslint-plugin-react-refresh: "npm:^0.4.19"
@@ -6464,7 +6483,7 @@ __metadata:
     react-router-dom: "npm:^6.11.1"
     react-swipeable: "npm:^7.0.0"
     shadcn: "npm:^2.5.0"
-    socket.io-client: "npm:^4.6.1"
+    socket.io-client: "npm:^4.8.1"
     tailwind-merge: "npm:^3.3.0"
     tailwind-variants: "npm:^1.0.0"
     tw-animate-css: "npm:^1.2.9"
