@@ -1,7 +1,7 @@
 import axios from 'axios';
 import api from './api';
 
-/**
+/** 
  * Service for handling chat-related API requests
  * Provides methods for fetching conversations, messages, and sending messages
  */
@@ -11,7 +11,7 @@ import api from './api';
  * @returns {Promise} Promise object with conversations data
  */
 export const getConversations = () => {
-  return api.get('/conversations');
+  return api.get('/chat/conversations');
 };
 
 /**
@@ -20,7 +20,7 @@ export const getConversations = () => {
  * @returns {Promise} Promise object with messages data
  */
 export const getMessages = (conversationId) => {
-  return api.get(`/conversations/${conversationId}/messages`);
+  return api.get(`/chat/conversations/${conversationId}`);
 };
 
 /**
@@ -30,7 +30,10 @@ export const getMessages = (conversationId) => {
  * @returns {Promise} Promise object with the sent message data
  */
 export const sendMessage = (conversationId, content) => {
-  return api.post(`/conversations/${conversationId}/messages`, { content });
+  return api.post(`/chat/`, {
+    conversationId,
+    content
+  });
 };
 
 /**
@@ -39,7 +42,7 @@ export const sendMessage = (conversationId, content) => {
  * @returns {Promise} Promise object with the updated message data
  */
 export const markAsRead = (messageId) => {
-  return api.put(`/messages/${messageId}/read`);
+  return api.put(`/chat/read/${messageId}`);
 };
 
 /**
@@ -49,7 +52,7 @@ export const markAsRead = (messageId) => {
  * @returns {Promise} Promise object with the new conversation data
  */
 export const startConversation = (receiverId, initialMessage) => {
-  return api.post('/conversations', { receiverId, initialMessage });
+  return api.post("/chat/start", { receiverId, initialMessage });
 };
 
 /**
@@ -58,7 +61,7 @@ export const startConversation = (receiverId, initialMessage) => {
  * @returns {Promise} Promise object with deletion confirmation
  */
 export const deleteMessage = (messageId) => {
-  return api.delete(`/messages/${messageId}`);
+  return api.delete(`/chat/message/${messageId}`);
 };
 
 /**
@@ -66,5 +69,5 @@ export const deleteMessage = (messageId) => {
  * @returns {Promise} Promise object with unread message count
  */
 export const getUnreadCount = () => {
-  return api.get('/messages/unread-count');
+  return api.get('/chat/unread/count');
 };
