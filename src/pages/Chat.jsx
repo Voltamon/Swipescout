@@ -3,7 +3,7 @@ import {
   Box, 
   Grid, 
   Paper, 
-  Typography, 
+  Typography,  
   List, 
   ListItem, 
   ListItemText, 
@@ -126,7 +126,7 @@ const Chat = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }; 
 
     fetchConversations();
   }, []);
@@ -276,7 +276,7 @@ const Chat = () => {
 
   // Filter conversations based on search query
   const filteredConversations = conversations.filter((conversation) => 
-    conversation.other_user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    conversation.other_user.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Format message timestamp
