@@ -1,70 +1,70 @@
 import axios from 'axios';
-import { getAuthHeader } from './authService';
+import api from './api';
 
-const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL;
+/**
+ * Service for handling chat-related API requests
+ * Provides methods for fetching conversations, messages, and sending messages
+ */
 
-export const getConversations = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/api/chat/conversations`, {
-      headers: getAuthHeader()
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching conversations:', error);
-    throw error;
-  }
+/**
+ * Get all conversations for the current user
+ * @returns {Promise} Promise object with conversations data
+ */
+export const getConversations = () => {
+  return api.get('/conversations');
 };
 
-export const getMessages = async (conversationId) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}api/chat/conversations/${conversationId}/messages`, {
-      headers: getAuthHeader()
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-    throw error;
-  }
-}; 
-
-export const sendMessage = async (conversationId, content) => {
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/api/chat/messages`,
-      { content },
-      { headers: getAuthHeader() }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error sending message:', error);
-    throw error;
-  }
+/**
+ * Get messages for a specific conversation
+ * @param {string} conversationId - ID of the conversation
+ * @returns {Promise} Promise object with messages data
+ */
+export const getMessages = (conversationId) => {
+  return api.get(`/conversations/${conversationId}/messages`);
 };
 
-export const markAsRead = async (messageId) => {
-  try {
-    const response = await axios.put(
-      `${API_BASE_URL}/api/chat//messages/${messageId}/read`,
-      {},
-      { headers: getAuthHeader() }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error marking message as read:', error);
-    throw error;
-  }
+/**
+ * Send a new message in a conversation
+ * @param {string} conversationId - ID of the conversation
+ * @param {string} content - Message content
+ * @returns {Promise} Promise object with the sent message data
+ */
+export const sendMessage = (conversationId, content) => {
+  return api.post(`/conversations/${conversationId}/messages`, { content });
 };
 
-export const startConversation = async (recipientId, content) => {
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/api/chat/conversations`,
-      { recipient_id: recipientId, content },
-      { headers: getAuthHeader() }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error starting conversation:', error);
-    throw error;
-  }
+/**
+ * Mark a message as read
+ * @param {string} messageId - ID of the message
+ * @returns {Promise} Promise object with the updated message data
+ */
+export const markAsRead = (messageId) => {
+  return api.put(`/messages/${messageId}/read`);
+};
+
+/**
+ * Start a new conversation with another user
+ * @param {string} receiverId - ID of the message recipient
+ * @param {string} initialMessage - First message content
+ * @returns {Promise} Promise object with the new conversation data
+ */
+export const startConversation = (receiverId, initialMessage) => {
+  return api.post('/conversations', { receiverId, initialMessage });
+};
+
+/**
+ * Delete a message
+ * @param {string} messageId - ID of the message to delete
+ * @returns {Promise} Promise object with deletion confirmation
+ */
+export const deleteMessage = (messageId) => {
+  return api.delete(`/messages/${messageId}`);
+};
+
+/**
+ * Get count of unread messages
+ * @returns {Promise} Promise object with unread message count
+ */
+export const getUnreadCount = () => {
+  return api.get('/messages/unread-count');
 };
