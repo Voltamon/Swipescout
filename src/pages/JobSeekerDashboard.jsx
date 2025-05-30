@@ -28,6 +28,7 @@ import { useContext } from "react";
 
 
 
+
 import { useNavigate } from 'react-router-dom';
 
 import { useEffect } from "react";
@@ -37,7 +38,7 @@ function JobSeekerDashboard() {
 
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const theme = useTheme()
+  const theme = useTheme();
 
   // useEffect(() => {
   //   if (!loading && !user) {

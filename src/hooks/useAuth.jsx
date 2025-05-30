@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useMemo, useCallback ,useContext } from "react";
-import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup ,browserLocalPersistence } from "firebase/auth";
+import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup ,browserLocalPersistence ,signOut } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
 
@@ -34,18 +34,20 @@ export const AuthProvider = ({ children }) => {
 
       let idToken = token;
       let user = userP;
+      let userFB;
       
       if (origin === "linkedin" || origin === "EmailPass") {
         const userCredential = await signInWithCustomToken(auth, token);
-        user = userCredential.user;
-        user.role = role;
-        idToken = await user.getIdToken(true);
+        userFB = userCredential.user;
+        userFB.role = role;
+        idToken = await userFB.getIdToken(true);
       }
       await auth.setPersistence(browserLocalPersistence);
 
       localStorage.setItem("accessToken", JSON.stringify(idToken));
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("role", JSON.stringify(role));
+      
       setUser(user);
       setRole(role);
       
@@ -78,68 +80,72 @@ export const AuthProvider = ({ children }) => {
     }
   }, [apiUrl]);
 
-  const refreshAuthToken = useCallback(async () => {
+const refreshAuthToken = useCallback(async () => {
   try {
     const currentUser = auth.currentUser;
-    if (!currentUser) throw new Error("No authenticated user");
+    if (!currentUser) {
+      // If no current user but we have stored data, try to re-authenticate
+      const storedToken = JSON.parse(localStorage.getItem("accessToken"));
+      if (storedToken) {
+        await checkAuth();
+      }
+      return;
+    }
 
-    const newToken = await currentUser.getIdToken(true); // Force token refresh
-
-    // Store the refreshed token
+    const newToken = await currentUser.getIdToken(true);
     localStorage.setItem("accessToken", JSON.stringify(newToken));
-
-    // Optionally update the user state if needed
-    setUser(currentUser);
-    setRole(localStorage.getItem("role"));
+    
+    // Verify the new token
+    await verifyToken(newToken);
+    
     return newToken;
   } catch (error) {
     console.error("Error refreshing token:", error);
     return null;
   }
-}, []);
-
+}, [auth, verifyToken]);
 
   // Refresh token if needed
-  const refreshTokenIfNeeded = useCallback(async (token) => {
-    try {
-      const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
+  // const refreshTokenIfNeeded = useCallback(async (token) => {
+  //   try {
+  //     const response = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ token })
+  //     });
 
 
-      if (!response.ok) {
-        const refreshResponse = await fetch(`${apiUrl}/api/auth/refresh-token`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token })
-        });
+  //     if (!response.ok) {
+  //       const refreshResponse = await fetch(`${apiUrl}/api/auth/refresh-token`, {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({ token })
+  //       });
 
           
         
-        if (!refreshResponse.ok) throw new Error('Token refresh failed'); 
-        const userCredential = await signInWithCustomToken(auth, token);
-        const userNew = userCredential.user;
-        const newToken = await userNew.getIdToken(true);
-        // const newToken = await refreshResponse.json();
-        localStorage.setItem("accessToken", JSON.stringify(newToken));
-        return newToken;
-      }
+  //       if (!refreshResponse.ok) throw new Error('Token refresh failed'); 
+  //       const userCredential = await signInWithCustomToken(auth, token);
+  //       const userNew = userCredential.user;
+  //       const newToken = await userNew.getIdToken(true);
+  //       // const newToken = await refreshResponse.json();
+  //       localStorage.setItem("accessToken", JSON.stringify(newToken));
+  //       return newToken;
+  //     }
 
-      return token;
-    } catch (error) {
-      console.error("Token refresh error:", error);
-      throw error;
-    }
-  }, [apiUrl]);
+  //     return token;
+  //   } catch (error) {
+  //     console.error("Token refresh error:", error);
+  //     throw error;
+  //   }
+  // }, [apiUrl]);
 
   // Check authentication status
   const checkAuth = useCallback(async () => {
     try {
       setLoading(true);
       let token = JSON.parse(localStorage.getItem("accessToken"));
-      const user = JSON.parse(localStorage.getItem("user"));
+      const storedUser =JSON.parse(localStorage.getItem("user"));
       const storedRole = JSON.parse(localStorage.getItem("role"));
 
       if (!token) {
@@ -149,10 +155,17 @@ export const AuthProvider = ({ children }) => {
 
 
       // token = await refreshTokenIfNeeded(token);
-       await verifyToken(token);
+         try {
+      await verifyToken(token);
+    } catch (verifyError) {
+      console.log("Token verification failed, attempting refresh...");
+      token = await refreshAuthToken();
+      if (!token) throw verifyError;
+    }
       
-      setUser(user);
-      setRole(storedRole);
+      if (storedUser) {
+        setUser(user);
+      setRole(storedRole);}
       setError(null);
     } catch (err) {
       console.error("Auth check failed:", err);
@@ -161,7 +174,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [ verifyToken]);
+  }, [ verifyToken,refreshAuthToken,user]);
 
   // Email/Password Login
   const loginByEmailAndPassword = useCallback(async (email, password) => {
@@ -185,7 +198,7 @@ export const AuthProvider = ({ children }) => {
           status: response.status
         };
       }
-      return await handleAuthSuccess(data.token, "EmailPass", data.role);
+      return await handleAuthSuccess(data.token, "EmailPass", data.role ,data.user);
     } catch (error) {
       console.error("Login error:", error);
       return {
@@ -360,6 +373,14 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Logout error:", error);
     }
+    signOut(auth)
+  .then(() => {
+    console.log("User signed out successfully");
+    // Optionally redirect or update UI
+  })
+  .catch((error) => {
+    console.error("Sign-out error:", error);
+  });
   }, [apiUrl, navigate]);
 
   // Initial auth check
@@ -367,16 +388,30 @@ export const AuthProvider = ({ children }) => {
   //   checkAuth();
   // }, [checkAuth]);
 
-  useEffect(() => {
-  const interval = setInterval(() => {
-    refreshAuthToken(); // Refresh every 30 minutes
-  }, 30 * 60 * 1000);
-    
-  checkAuth();
+useEffect(() => {
+  let intervalId;
 
-  return () => clearInterval(interval);
-}, [refreshAuthToken,checkAuth]);
+  const initializeAuth = async () => {
+    try {
+      await checkAuth();
+      
+      // Set up the refresh interval only after successful auth
+      intervalId = setInterval(() => {
+        refreshAuthToken().catch(error => {
+          console.error('Token refresh failed:', error);
+        });
+      }, 30 * 60 * 1000); // 30 minutes
+    } catch (error) {
+      console.error('Initial auth check failed:', error);
+    }
+  };
 
+  initializeAuth();
+
+  return () => {
+    if (intervalId) clearInterval(intervalId);
+  };
+}, []);
 
   // Memoize context value
   const contextValue = useMemo(() => ({

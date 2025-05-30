@@ -23,12 +23,14 @@ import {
     Divider,
     useMediaQuery,
 } from "@mui/material"
-import { LocationOn, ArrowForward, People, ExpandMore, VideoCall, Menu as MenuIcon, Close } from "@mui/icons-material"
-import { useState } from "react"
+import { LocationOn, ArrowForward, People, ExpandMore, VideoCall, Menu as MenuIcon, Close } from "@mui/icons-material";
+import { useState } from "react";
+import { useAuth } from '../hooks/useAuth';
 
 export default function EmployerDashboard() {
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+    const { user } = useAuth();
 
     // Connect dropdown state
     const [anchorEl, setAnchorEl] = useState(null)

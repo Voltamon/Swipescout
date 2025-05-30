@@ -1,5 +1,5 @@
 import axios from 'axios';
-import api from './api';
+import api from './api.js';
 
 /** 
  * Service for handling chat-related API requests
@@ -20,8 +20,19 @@ export const getConversations = () => {
  * @returns {Promise} Promise object with messages data
  */
 export const getMessages = (conversationId) => {
-  return api.get(`/chat/conversations/${conversationId}`);
+  return api.get(`/chat/conversation/${conversationId}`);
 };
+
+/**
+ * Get all users from the database
+ * @returns {Promise} Promise object with all users data
+ */
+export const getAllUsers = () => {
+  return api.get('chat/users/all'); // Assuming your backend endpoint for all users is /api/users/all
+};
+
+
+
 
 /**
  * Send a new message in a conversation
@@ -30,7 +41,7 @@ export const getMessages = (conversationId) => {
  * @returns {Promise} Promise object with the sent message data
  */
 export const sendMessage = (conversationId, content) => {
-  return api.post(`/chat/`, {
+  return api.post(`/chat/send`, {
     conversationId,
     content
   });

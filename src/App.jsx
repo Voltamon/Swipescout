@@ -70,6 +70,7 @@ import EmployerProfile from "./pages/EmployerProfile";
 import NotificationsPage from "./pages/NotificationsPage";
 import { useAuth} from "./hooks/useAuth";
 import { Cloudinary } from '@cloudinary/url-gen';
+// import {SocketProvider} from './hooks/useAuth';
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -121,9 +122,13 @@ function App() {
 
             {/* Common Routes */}
             <Route path="/feed" element={<VideoFeed_ />} />
+                
+
             <Route path="/chat" element={<Chat />} />
-            <Route path="/settings" element={<Settings />} />
             <Route path="/chat/:conversationId" element={<Chat />} />
+                
+
+            <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile_ />} />
             <Route path="/profile/:userId" element={<Profile_ />} />
 
