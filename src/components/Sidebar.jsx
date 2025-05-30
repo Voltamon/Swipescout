@@ -195,7 +195,7 @@ const roleStyles = {
         {user?.name ||user?.displayName}
       </Typography>
       <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
-        {user?.role || user?.role?.replace('_', ' ') || 'Employer'} {console.log("userrrrrrrrrrrr:",user)}
+        {user?.role || user?.role?.replace('_', ' ') || 'Employer'} 
       </Typography>
     </Box>
   )}

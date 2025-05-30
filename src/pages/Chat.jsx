@@ -1,34 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Box, 
-  Grid, 
-  Paper, 
-  Typography,  
-  List, 
-  ListItem, 
-  ListItemText, 
-  ListItemAvatar, 
-  Avatar, 
-  TextField, 
-  IconButton, 
-  Badge, 
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  TextField,
+  IconButton,
+  Badge,
   Divider,
   CircularProgress,
   InputAdornment
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { 
-  Send as SendIcon, 
+import {
+  Send as SendIcon,
   Search as SearchIcon,
   MoreVert as MoreVertIcon,
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
-import { 
-  getConversations, 
-  getMessages, 
-  sendMessage, 
-  markAsRead 
+import {
+  getConversations,
+  getMessages,
+  sendMessage,
+  markAsRead
 } from '../services/chatService';
 import { useSocket } from '../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
@@ -101,90 +101,216 @@ const MessageInput = styled(Box)(({ theme }) => ({
 }));
 
 const Chat = () => {
-  const { user } = useAuth();
+ 
+  const { user, loading: authLoading  } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    conversations: true,
+    messages: false
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [showConversations, setShowConversations] = useState(true);
   const messagesEndRef = useRef(null);
   const socket = useSocket();
+  const [isConnected, setIsConnected] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
+  const typingTimeoutRef = useRef(null);
+
   
+
+
   const isMobile = window.innerWidth < 960;
+
+
+
+const handleTyping = (data) => {
+  console.log("typing:::", data);
+  if (
+    data.conversationId === activeConversation?.id &&
+    data.userId !== user.id
+  ) {
+    setOtherUserTyping(data.isTyping);
+  }
+};
+
+const handleChange = (e) => {
+  const value = e.target.value;
+  setNewMessage(value);
+
+  // Clear existing timeout
+  if (typingTimeoutRef.current) {
+    clearTimeout(typingTimeoutRef.current);
+  }
+
+  const trimmed = value.trim();
+
+  if (trimmed) {
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit('typing', {
+        conversationId: activeConversation?.id,
+        userId: String(user.id),
+        otherUserId: String(activeConversation.other_user.id),
+        isTyping: true,
+      });
+    }
+
+    // Set timeout to send "not typing" after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      socket.emit('typing', {
+        conversationId: activeConversation?.id,
+        userId: String(user.id),
+        otherUserId: String(activeConversation.other_user.id),
+        isTyping: false,
+      });
+    }, 1300);
+  } else if (isTyping) {
+    // Immediately stop typing if input is empty
+    setIsTyping(false);
+    socket.emit('typing', {
+      conversationId: activeConversation?.id,
+      userId: String(user.id),
+       otherUserId: String(activeConversation.other_user.id),
+      isTyping: false,
+    });
+  }
+};
+
 
   // Fetch conversations on component mount
   useEffect(() => {
+    
     const fetchConversations = async () => {
       try {
-        setLoading(true);
+        setLoading(prev => ({ ...prev, conversations: true }));
         const response = await getConversations();
-        setConversations(response.data.conversations);
+        setConversations(response.data.conversations || []);
       } catch (error) {
         console.error('Error fetching conversations:', error);
       } finally {
-        setLoading(false);
+        setLoading(prev => ({ ...prev, conversations: false }));
       }
-    }; 
+    };
 
     fetchConversations();
+    
+ 
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("userid::::", user.id);
+     socket.off('typing',handleTyping);
+    if (!user?.id) return;
+
+    socket.connect();
+
+    socket.on('connect', () => {
+      setIsConnected(true);
+      socket.emit('register', String(user.id));
+    });
+
+    socket.on('disconnect', () => {
+      setIsConnected(false);
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.disconnect();
+    };
+  }, [user?.id]);
+
 
   // Set up socket listeners for real-time messaging
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user?.id) return;
 
     // Register user with socket server
-    socket.emit('register', user.id);
+    // socket.emit('register', user.id);
 
+
+  // When a user comes online
+  socket.on('user_online', (userId) => {
+    setOnlineUsers(prev => new Set(prev).add(userId));
+  });
+
+  // When a user goes offline
+  socket.on('user_offline', (userId) => {
+    setOnlineUsers(prev => {
+      const updated = new Set(prev);
+      updated.delete(userId);
+      return updated;
+    });
+  });
+
+  
     // Listen for new messages
-    socket.on('new_message', (message) => {
+    const handleNewMessage = (message) => {
+      // Clean up previous listeners first
+      socket.off('new_message');
+      socket.off('message_read');
+
+      console.log("msg2222222:::", message);
       if (activeConversation && message.conversation_id === activeConversation.id) {
-        setMessages((prevMessages) => [...prevMessages, message]);
+        setMessages(prev => [...prev, message]);
         markAsRead(message.id);
         socket.emit('mark_as_read', { messageId: message.id, senderId: message.sender_id });
       }
-      
+
       // Update conversation list
-      setConversations((prevConversations) => {
-        const updatedConversations = [...prevConversations];
-        const conversationIndex = updatedConversations.findIndex(
-          (conv) => conv.id === message.conversation_id
-        );
-        
-        if (conversationIndex !== -1) {
-          const conversation = { ...updatedConversations[conversationIndex] };
-          conversation.last_message = message;
-          
+      setConversations(prev => {
+        const updated = [...prev];
+        const index = updated.findIndex(c => c.id === message.conversation_id);
+
+        if (index !== -1) {
+          const conversation = { ...updated[index], last_message: message };
+
           if (activeConversation?.id !== message.conversation_id) {
             conversation.unread_count = (conversation.unread_count || 0) + 1;
           }
-          
-          updatedConversations[conversationIndex] = conversation;
-          
-          // Move conversation to top
-          updatedConversations.splice(conversationIndex, 1);
-          updatedConversations.unshift(conversation);
+
+          // Move to top
+          updated.splice(index, 1);
+          updated.unshift(conversation);
         }
-        
-        return updatedConversations;
+
+        return updated;
       });
-    });
+    };
 
     // Listen for message read confirmations
-    socket.on('message_read', (messageId) => {
-      setMessages((prevMessages) => 
-        prevMessages.map((msg) => 
+    const handleMessageRead = (messageId) => {
+      setMessages(prev =>
+        prev.map(msg =>
           msg.id === messageId ? { ...msg, read: true } : msg
         )
       );
-    });
+    };
 
-    // Clean up listeners on unmount
+    socket.on('new_message', handleNewMessage);
+    socket.on('message_read', handleMessageRead);
+
     return () => {
-      socket.off('new_message');
-      socket.off('message_read');
+      socket.off('new_message', handleNewMessage);
+      socket.off('message_read', handleMessageRead);
+      socket.off('typing', handleTyping);
+       socket.off('user_online');
+    socket.off('user_offline');
+
     };
   }, [socket, user, activeConversation]);
 
@@ -192,114 +318,152 @@ const Chat = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       if (!activeConversation) return;
-      
+
       try {
-        setLoading(true);
+        setLoading(prev => ({ ...prev, messages: true }));
         const response = await getMessages(activeConversation.id);
-        setMessages(response.data.messages);
-        
-        // Update unread count in conversations list
-        setConversations((prevConversations) => 
-          prevConversations.map((conv) => 
-            conv.id === activeConversation.id 
-              ? { ...conv, unread_count: 0 } 
+        setMessages(response.data.messages || []);
+
+        // Update unread count
+        setConversations(prev =>
+          prev.map(conv =>
+            conv.id === activeConversation.id
+              ? { ...conv, unread_count: 0 }
               : conv
           )
         );
       } catch (error) {
         console.error('Error fetching messages:', error);
       } finally {
-        setLoading(false);
+        setLoading(prev => ({ ...prev, messages: false }));
       }
     };
 
     fetchMessages();
-    
+
     if (isMobile) {
       setShowConversations(false);
     }
   }, [activeConversation, isMobile]);
 
+  useEffect(() => {
+  socket.on('typing', handleTyping);
+  
+  return () => {
+    socket.off('typing', handleTyping); // Clean up
+  };
+}, [socket, activeConversation]);
+
+  useEffect(() => {
+  return () => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Send stop typing when component unmounts if user was typing
+    if (isTyping && activeConversation) {
+      socket.emit('typing', {
+        conversationId: activeConversation.id,
+        userId: String(user.id),
+        isTyping: false,
+      });
+    }
+  };
+}, [isTyping, activeConversation, socket, user?.id]);
+
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
-  // Handle sending a new message
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!newMessage.trim() || !activeConversation) return;
-    
+
     try {
       const response = await sendMessage(activeConversation.id, newMessage);
       const sentMessage = response.data.message;
-      
-      // Add message to the list
-      setMessages((prevMessages) => [...prevMessages, sentMessage]);
-      
-      // Update conversation in the list
-      setConversations((prevConversations) => {
-        const updatedConversations = [...prevConversations];
-        const conversationIndex = updatedConversations.findIndex(
-          (conv) => conv.id === activeConversation.id
-        );
-        
-        if (conversationIndex !== -1) {
-          const conversation = { ...updatedConversations[conversationIndex] };
-          conversation.last_message = sentMessage;
-          
-          updatedConversations[conversationIndex] = conversation;
-          
-          // Move conversation to top
-          updatedConversations.splice(conversationIndex, 1);
-          updatedConversations.unshift(conversation);
+
+       if (typingTimeoutRef.current) {
+    clearTimeout(typingTimeoutRef.current);
+  }
+
+  if (isTyping) {
+    setIsTyping(false);
+    socket.emit('typing', {
+      conversationId: activeConversation?.id,
+      userId: String(user.id),
+      isTyping: false,
+    });
+  }
+      setMessages(prev => [...prev, sentMessage]);
+
+      setConversations(prev => {
+        const updated = [...prev];
+        const index = updated.findIndex(c => c.id === activeConversation.id);
+
+        if (index !== -1) {
+          const conversation = { ...updated[index], last_message: sentMessage };
+          updated.splice(index, 1);
+          updated.unshift(conversation);
         }
-        
-        return updatedConversations;
+
+        return updated;
       });
-      
-      // Emit socket event
+
       if (socket) {
+        console.log("socket send messeg::", socket.id);
+        console.log("sent data:", {
+          receiverId: String(activeConversation.other_user.id),
+          message: sentMessage
+        });
         socket.emit('send_message', {
           receiverId: activeConversation.other_user.id,
           message: sentMessage
         });
       }
-      
-      // Clear input
+
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
 
-  // Filter conversations based on search query
-  const filteredConversations = conversations.filter((conversation) => 
-    conversation.other_user.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter(conversation =>
+    conversation.other_user.display_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Format message timestamp
   const formatMessageTime = (timestamp) => {
-    return formatDistanceToNow(new Date(timestamp), { 
+    return formatDistanceToNow(new Date(timestamp), {
       addSuffix: true,
       locale: enUS
     });
   };
 
-  // Handle back button on mobile
   const handleBackToConversations = () => {
     setShowConversations(true);
   };
+
+  if (authLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
 
   return (
     <ChatContainer>
       <Grid container sx={{ height: '100%' }}>
         {/* Conversations List */}
         <Grid item xs={12} md={4} sx={{ height: '100%' }}>
-          <ConversationList 
-            elevation={0} 
-            isMobile={isMobile} 
+          <ConversationList
+            elevation={0}
+            isMobile={isMobile}
             showConversations={showConversations}
           >
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
@@ -321,24 +485,24 @@ const Chat = () => {
                 size="small"
               />
             </Box>
-            
+
             <List sx={{ overflow: 'auto', flex: 1 }}>
-              {loading && conversations.length === 0 ? (
+              {loading.conversations && conversations.length === 0 ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                   <CircularProgress />
                 </Box>
               ) : filteredConversations.length === 0 ? (
                 <ListItem>
-                  <ListItemText 
-                    primary="No conversations found" 
-                    secondary={searchQuery ? "Try a different search term" : "Start a new conversation"} 
+                  <ListItemText
+                    primary="No conversations found"
+                    secondary={searchQuery ? "Try a different search term" : "Start a new conversation"}
                   />
                 </ListItem>
               ) : (
                 filteredConversations.map((conversation) => (
                   <React.Fragment key={conversation.id}>
-                    <ListItem 
-                      button 
+                    <ListItem
+                      button
                       selected={activeConversation?.id === conversation.id}
                       onClick={() => setActiveConversation(conversation)}
                     >
@@ -346,15 +510,20 @@ const Chat = () => {
                         <Badge
                           color="primary"
                           badgeContent={conversation.unread_count}
-                          invisible={conversation.unread_count === 0}
+                          invisible={!conversation.unread_count}
                         >
                           <Avatar src={conversation.other_user.photo_url}>
-                            {conversation.other_user.name.charAt(0)}
+                            {conversation.other_user.display_name?.charAt(0)}
                           </Avatar>
                         </Badge>
                       </ListItemAvatar>
+                      
                       <ListItemText
-                        primary={conversation.other_user.name}
+                        primary={<>{conversation.other_user.display_name}  {onlineUsers.has(conversation.other_user.id) && (
+        <span style={{ color: 'green', fontSize: '0.75rem', marginLeft: '5px' }}>
+          ● Online
+        </span>
+      )}</>}
                         secondary={
                           conversation.last_message ? (
                             <Typography
@@ -362,8 +531,8 @@ const Chat = () => {
                               variant="body2"
                               color="textSecondary"
                               noWrap
-                              sx={{ 
-                                display: 'inline-block', 
+                              sx={{
+                                display: 'inline-block',
                                 maxWidth: '180px',
                                 fontWeight: conversation.unread_count > 0 ? 'bold' : 'normal'
                               }}
@@ -379,49 +548,51 @@ const Chat = () => {
                         </Typography>
                       )}
                     </ListItem>
+                    
                     <Divider />
                   </React.Fragment>
                 ))
               )}
             </List>
+            
           </ConversationList>
         </Grid>
-        
+
         {/* Message Area */}
         <Grid item xs={12} md={8} sx={{ height: '100%' }}>
-          <MessageArea 
-            elevation={0} 
-            isMobile={isMobile} 
+          <MessageArea
+            elevation={0}
+            isMobile={isMobile}
             showConversations={showConversations}
           >
             {activeConversation ? (
               <>
                 {/* Conversation Header */}
-                <Box sx={{ 
-                  p: 2, 
-                  borderBottom: 1, 
+                <Box sx={{
+                  p: 2,
+                  borderBottom: 1,
                   borderColor: 'divider',
                   display: 'flex',
                   alignItems: 'center'
                 }}>
                   {isMobile && (
-                    <IconButton 
-                      edge="start" 
+                    <IconButton
+                      edge="start"
                       onClick={handleBackToConversations}
                       sx={{ mr: 1 }}
                     >
                       <ArrowBackIcon />
                     </IconButton>
                   )}
-                  <Avatar 
+                  <Avatar
                     src={activeConversation.other_user.photo_url}
                     sx={{ mr: 2 }}
                   >
-                    {activeConversation.other_user.name.charAt(0)}
+                    {activeConversation.other_user.display_name?.charAt(0)}
                   </Avatar>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="h6">
-                      {activeConversation.other_user.name}
+                      {activeConversation.other_user.display_name}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {activeConversation.other_user.role === 'employer' ? 'Employer' : 'Job Seeker'}
@@ -431,18 +602,18 @@ const Chat = () => {
                     <MoreVertIcon />
                   </IconButton>
                 </Box>
-                
+
                 {/* Messages */}
                 <MessageList>
-                  {loading ? (
+                  {loading.messages ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                       <CircularProgress />
                     </Box>
                   ) : messages.length === 0 ? (
-                    <Box sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column', 
-                      alignItems: 'center', 
+                    <Box sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
                       justifyContent: 'center',
                       height: '100%'
                     }}>
@@ -455,15 +626,16 @@ const Chat = () => {
                     </Box>
                   ) : (
                     messages.map((message) => {
-                      const isOwn = message.sender_id === user.id;
+if (!message.sender_id || !user?.id) return;
+                      const isOwn = message.sender_id === user?.id;
                       return (
                         <MessageItem key={message.id} isOwn={isOwn}>
                           {!isOwn && (
-                            <Avatar 
+                            <Avatar
                               src={activeConversation.other_user.photo_url}
                               sx={{ mr: 1, width: 36, height: 36 }}
                             >
-                              {activeConversation.other_user.name.charAt(0)}
+                              {activeConversation.other_user.display_name?.charAt(0)}
                             </Avatar>
                           )}
                           <Box>
@@ -486,21 +658,27 @@ const Chat = () => {
                     })
                   )}
                   <div ref={messagesEndRef} />
+                  
+              {otherUserTyping && (
+  <Typography variant="caption" color="textSecondary" sx={{color:"rgb(51, 159, 221)",pb:2}}>
+    {activeConversation.other_user.display_name} is typing...
+  </Typography>
+)}
                 </MessageList>
-                
+
                 {/* Message Input */}
                 <MessageInput component="form" onSubmit={handleSendMessage}>
                   <TextField
                     fullWidth
                     placeholder="Type a message..."
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={handleChange}
                     variant="outlined"
                     size="small"
                     autoComplete="off"
                   />
-                  <IconButton 
-                    color="primary" 
+                  <IconButton
+                    color="primary"
                     type="submit"
                     disabled={!newMessage.trim()}
                     sx={{ ml: 1 }}
@@ -510,10 +688,10 @@ const Chat = () => {
                 </MessageInput>
               </>
             ) : (
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
+              <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 justifyContent: 'center',
                 height: '100%',
                 p: 3
