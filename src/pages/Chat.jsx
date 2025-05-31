@@ -44,11 +44,14 @@ const ChatContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   [theme.breakpoints.down('md')]: {
     height: 'calc(100vh - 56px)',
+      display: 'flex',
+  flexDirection: 'column',
   },
 }));
 
 const ConversationList = styled(Paper)(({ theme, isMobile, showConversations }) => ({
   height: '100%',
+  width:'100%',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
@@ -62,6 +65,7 @@ const ConversationList = styled(Paper)(({ theme, isMobile, showConversations }) 
 
 const MessageArea = styled(Paper)(({ theme, isMobile, showConversations }) => ({
   height: '100%',
+  width:'100%',
   display: 'flex',
   flexDirection: 'column',
   [theme.breakpoints.down('md')]: {
@@ -77,8 +81,10 @@ const MessageList = styled(Box)(({ theme }) => ({
 
 const MessageItem = styled(Box)(({ theme, isOwn }) => ({
   display: 'flex',
+  overflow: 'auto',
   flexDirection: isOwn ? 'row-reverse' : 'row',
   marginBottom: theme.spacing(1),
+  width:'100%',
 }));
 
 const MessageBubble = styled(Box)(({ theme, isOwn }) => ({
@@ -88,6 +94,8 @@ const MessageBubble = styled(Box)(({ theme, isOwn }) => ({
   backgroundColor: isOwn ? theme.palette.primary.main : theme.palette.grey[200],
   color: isOwn ? theme.palette.primary.contrastText : theme.palette.text.primary,
   wordBreak: 'break-word',
+  display: 'inline-block', 
+  
 }));
 
 const MessageTime = styled(Typography)(({ theme, isOwn }) => ({
@@ -584,8 +592,8 @@ const handleChange = (e) => {
   };
  
   return (
-    <ChatContainer>
-      <Grid container sx={{ height: '100%' }}>
+    <ChatContainer sx={{  width: '100%' }}>
+      <Grid container  sx={{ height: '100%', width: '100%' }}>
         {/* Conversations List */}
         <Grid item xs={12} md={4} sx={{ height: '100%' }}>
           <ConversationList
@@ -719,11 +727,12 @@ const handleChange = (e) => {
         </Grid>
 
         {/* Message Area */}
-        <Grid item xs={12} md={8} sx={{ height: '100%' }}>
+        <Grid item xs={12} md={8} sx={{ height: '100%',flexGrow:2 }}>
           <MessageArea
             elevation={0}
             isMobile={isMobile}
             showConversations={showConversations}
+           
           >
             {activeConversation ? (
               <>
@@ -732,6 +741,7 @@ const handleChange = (e) => {
                   p: 2,
                   borderBottom: 1,
                   borderColor: 'divider',
+                  width:'80%',
                   display: 'flex',
                   alignItems: 'center'
                 }}>
@@ -750,7 +760,7 @@ const handleChange = (e) => {
                   >
                     {activeConversation.other_user.display_name?.charAt(0)}
                   </Avatar>
-                  <Box sx={{ flex: 1 }}>
+                  <Box sx={{ flex: 1 ,width:'100%',}}>
                     <Typography variant="h6">
                       {activeConversation.other_user.display_name}
                     </Typography>
@@ -766,7 +776,7 @@ const handleChange = (e) => {
                 {/* Messages */}
                 <MessageList>
                   {loading.messages ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 ,width:'100%', }}>
                       <CircularProgress />
                     </Box>
                   ) : messages.length === 0 ? (
@@ -775,7 +785,7 @@ const handleChange = (e) => {
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      height: '100%'
+                      height: '100%',width:'100%',
                     }}>
                       <Typography variant="body1" color="textSecondary">
                         No messages yet
@@ -789,7 +799,7 @@ const handleChange = (e) => {
 if (!message.sender_id || !user?.id) return;
                       const isOwn = message.sender_id === user?.id;
                       return (
-                        <MessageItem key={message.id} isOwn={isOwn}>
+                        <MessageItem key={message.id} isOwn={isOwn} sx={{width:'100%'}}>
                           {!isOwn && (
                             <Avatar
                               src={activeConversation.other_user.photo_url}
@@ -798,7 +808,7 @@ if (!message.sender_id || !user?.id) return;
                               {activeConversation.other_user.display_name?.charAt(0)}
                             </Avatar>
                           )}
-                          <Box>
+                          <Box >
                             <MessageBubble isOwn={isOwn}>
                               <Typography variant="body1">
                                 {message.content}
@@ -827,7 +837,7 @@ if (!message.sender_id || !user?.id) return;
                 </MessageList>
 
                 {/* Message Input */}
-                <MessageInput component="form" onSubmit={handleSendMessage}>
+                <MessageInput component="form" onSubmit={handleSendMessage} sx={{width:'100%'}}>
                   <TextField
                     fullWidth
                     placeholder="Type a message..."
@@ -853,7 +863,7 @@ if (!message.sender_id || !user?.id) return;
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100%',
+                height: '100%',width:'100%',
                 p: 3
               }}>
                 <Typography variant="h6" gutterBottom>
