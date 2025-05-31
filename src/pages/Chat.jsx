@@ -16,6 +16,7 @@ import {
   CircularProgress,
   InputAdornment
 } from '@mui/material';
+import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import {
   Send as SendIcon,
@@ -28,7 +29,9 @@ import {
   getConversations,
   getMessages,
   sendMessage,
-  markAsRead
+  markAsRead,
+  startConversation,
+  getAllUsers
 } from '../services/chatService';
 import { useSocket } from '../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
@@ -120,13 +123,26 @@ const Chat = () => {
   const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const typingTimeoutRef = useRef(null);
+  const [showAllUsers, setShowAllUsers] = useState(false);
+const [allUsers, setAllUsers] = useState([]);
+const [usersLoading, setUsersLoading] = useState(false);
 
   
 
 
   const isMobile = window.innerWidth < 960;
 
-
+  const fetchAllUsers = async () => {
+    try {
+      setUsersLoading(true);
+      const response = await getAllUsers();
+      setAllUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
 
 const handleTyping = (data) => {
   console.log("typing:::", data);
@@ -390,7 +406,7 @@ const handleChange = (e) => {
        if (typingTimeoutRef.current) {
     clearTimeout(typingTimeoutRef.current);
   }
-
+  setShowAllUsers(false);
   if (isTyping) {
     setIsTyping(false);
     socket.emit('typing', {
@@ -455,7 +471,118 @@ const handleChange = (e) => {
     );
   }
   
-
+  const renderUsersList = () => {
+    if (usersLoading) {
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+          <CircularProgress />
+        </Box>
+      );
+    }
+  
+    return (
+      <List sx={{ overflow: 'auto', flex: 1 }}>
+        {allUsers.length === 0 ? (
+          <ListItem>
+            <ListItemText primary="No users found" />
+          </ListItem>
+        ) : (
+          allUsers
+            .filter(u => u.id !== user?.id) // Exclude current user
+            .map((userItem) => {
+              // Check if there's an existing conversation
+              const existingConv = conversations.find(c => 
+                c.other_user.id === userItem.id
+              );
+  
+              return (
+                <React.Fragment key={userItem.id}>
+                  <ListItem
+                    button
+                    onClick={async () => {
+                      if (existingConv) {
+                        setActiveConversation(existingConv);
+                        setShowConversations(false);
+                      } else {
+                        try {
+                          const response = await startConversation(
+                            userItem.id, 
+                            `Hi ${userItem.display_name}, \nI'd like to connect with you!`
+                          );
+                          const newConv = response.data.conversation;
+                          setConversations(prev => [newConv, ...prev]);
+                          setActiveConversation(newConv);
+                          setShowConversations(false);
+                        } catch (error) {
+                          console.error('Error starting conversation:', error);
+                        }
+                      }
+                      if (isMobile) {
+                        setShowAllUsers(false);
+                      }
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Badge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+                        color="success"
+                        invisible={!onlineUsers.has(userItem.id)}
+                      >
+                        <Avatar src={userItem.photo_url}>
+                          {userItem.display_name?.charAt(0)}
+                        </Avatar>
+                      </Badge>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <>
+                          {userItem.display_name}
+                          {onlineUsers.has(userItem.id) && (
+                            <span style={{ color: 'green', fontSize: '0.75rem', marginLeft: '5px' }}>
+                              ● Online
+                            </span>
+                          )}
+                        </>
+                      }
+                      secondary={
+                        existingConv ? (
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            color="textSecondary"
+                            noWrap
+                            sx={{
+                              display: 'inline-block',
+                              maxWidth: '180px',
+                              fontStyle: existingConv.unread_count > 0 ? 'bold' : 'normal'
+                            }}
+                          >
+                            {existingConv.last_message
+                              ? existingConv.last_message.content
+                              : "Existing conversation"}
+                          </Typography>
+                        ) : (
+                          "Click to start conversation"
+                        )
+                      }
+                    />
+                    {existingConv && existingConv.last_message && (
+                      <Typography variant="caption" color="textSecondary">
+                        {formatMessageTime(existingConv.last_message.created_at)}
+                      </Typography>
+                    )}
+                  </ListItem>
+                  <Divider />
+                </React.Fragment>
+              );
+            })
+        )}
+      </List>
+    );
+  };
+ 
   return (
     <ChatContainer>
       <Grid container sx={{ height: '100%' }}>
@@ -484,8 +611,40 @@ const handleChange = (e) => {
                 }}
                 size="small"
               />
-            </Box>
 
+              <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Typography gutterBottom sx={{
+      fontWeight: 'bold',
+      background: 'rgba(178, 209, 224, 0.73)',
+      borderBottom: '2px solid #ccc',
+      borderColor: 'primary.main',
+      px:2,
+      pt:1,
+      display: 'inline-block',
+      color: 'primary.main',
+      pb: 0.5,
+    }}>
+      {showAllUsers ? 'All Users' : 'Conversations'}
+    </Typography>
+    <Button 
+      variant="outlined" 
+      size="small"
+      onClick={() => {
+        let newval=!showAllUsers;
+        setShowAllUsers(newval);
+        if (!showAllUsers && allUsers.length === 0) {
+          fetchAllUsers();
+        }
+      }}
+    >
+      {showAllUsers ? 'Conversations' : 'All Users'}
+    </Button>
+  </Box></Box>
+            </Box>
+                               
+{showAllUsers ? renderUsersList() : ( 
+  
             <List sx={{ overflow: 'auto', flex: 1 }}>
               {loading.conversations && conversations.length === 0 ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
@@ -554,8 +713,9 @@ const handleChange = (e) => {
                 ))
               )}
             </List>
-            
+            )}
           </ConversationList>
+        
         </Grid>
 
         {/* Message Area */}

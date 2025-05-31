@@ -179,8 +179,8 @@ const roleStyles = {
       // sx={{ marginLeft: 2 }} // You can apply spacing here if needed,
                                // or use typical flexbox spacing in a Toolbar
     >
-                
-                 <Avatar src={user?.photo_url} sx={{ 
+                {console.log("user:::",user?.photo_url)}
+                 <Avatar src={user?.photo_url || user?.photoUrl} sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,
@@ -192,7 +192,7 @@ const roleStyles = {
   {open && (
     <Box>
       <Typography variant="subtitle1" sx={{ color: 'textw.primary !important' }}>
-        {user?.name ||user?.displayName}
+        {user?.name ||user?.displayName||user?.display_name}
       </Typography>
       <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
         {user?.role || user?.role?.replace('_', ' ') || 'Employer'} 
