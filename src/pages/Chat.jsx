@@ -358,7 +358,7 @@ const handleChange = (e) => {
     fetchMessages();
 
     if (isMobile) {
-      setShowConversations(false);
+      setShowConversations(true);
     }
   }, [activeConversation, isMobile]);
 
@@ -406,7 +406,7 @@ const handleChange = (e) => {
        if (typingTimeoutRef.current) {
     clearTimeout(typingTimeoutRef.current);
   }
-  setShowAllUsers(false);
+  
   if (isTyping) {
     setIsTyping(false);
     socket.emit('typing', {
@@ -517,9 +517,9 @@ const handleChange = (e) => {
                           console.error('Error starting conversation:', error);
                         }
                       }
-                      if (isMobile) {
-                        setShowAllUsers(false);
-                      }
+                      // if (isMobile) {
+                      //   setShowAllUsers(false);
+                      // }
                     }}
                   >
                     <ListItemAvatar>
