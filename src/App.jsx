@@ -71,6 +71,9 @@ import NotificationsPage from "./pages/NotificationsPage";
 import { useAuth} from "./hooks/useAuth";
 import { Cloudinary } from '@cloudinary/url-gen';
 // import {SocketProvider} from './hooks/useAuth';
+import JobSeekersVideosPage from './pages/JobSeekersVideosPage';
+import JobSeekerProfile from './pages/JobSeekerProfile';
+
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -154,6 +157,8 @@ function App() {
             <Route path="/search" element={<JobSearchPage />} />
             <Route path="/job/:id" element={<JobDetailsPage />} />
             <Route path="/post-job" element={<PostJobPage />} />
+            <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
+            <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
 
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/feed-page" element={<FeedPage />} />
