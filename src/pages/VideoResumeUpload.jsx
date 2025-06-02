@@ -1,6 +1,4 @@
-"use client"
-
-import { useState } from "react"
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -8,135 +6,828 @@ import {
   Container,
   Paper,
   IconButton,
-  AppBar,
-  Toolbar,
-  MobileStepper,
-  useTheme,
-  styled,
+  TextField,
+  CircularProgress,
+  Slider,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
+  Snackbar,
+  Alert,
+  LinearProgress,
   Stack,
-  
-} from "@mui/material"
-import CloseIcon from "@mui/icons-material/Close"
-import VideocamIcon from "@mui/icons-material/Videocam"
-import RssFeedIcon from "@mui/icons-material/RssFeed"
-import InboxIcon from "@mui/icons-material/Inbox"
-import PersonIcon from "@mui/icons-material/Person"
+  Tooltip,
+  styled,
+  useTheme
+} from "@mui/material";
+import {
+  Videocam as VideocamIcon,
+  Close as CloseIcon,
+  CloudUpload as CloudUploadIcon,
+  PlayArrow as PlayArrowIcon,
+  Pause as PauseIcon,
+  Stop as StopIcon,
+  Mic as MicIcon,
+  MicOff as MicOffIcon,
+  AddCircle as AddCircleIcon,
+  Delete as DeleteIcon,
+  Save as SaveIcon,
+  Refresh as RefreshIcon,
+  CheckCircle as CheckCircleIcon,
+  ArrowBack as ArrowBackIcon
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-
-
-
+import { uploadVideo, saveVideoMetadata } from '../services/videoService';
+import { v4 as uuidv4 } from 'uuid';
 
 // Styled components
 const UploadBox = styled(Box)(({ theme }) => ({
-
   border: "2px dashed #f0f0f0",
   borderRadius: "8px",
-  padding: theme.spacing(4), // Reduced padding
+  padding: theme.spacing(4),
   backgroundColor: "#f9f9f9",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
   cursor: "pointer",
-  minHeight: "170px", // Reduced height
+  minHeight: "170px",
   textAlign: "center",
-  marginBottom: theme.spacing(2), // Reduced margin
+  marginBottom: theme.spacing(2),
   "&:hover": {
     borderColor: "#3366ff",
     backgroundColor: "#e9f7ff",
   },
-}))
+}));
 
-
-const SelectVideoButton = styled(Button)(({ theme }) => ({
+const VideoButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#3366ff",
-  color: "white",
-  padding: theme.spacing(1), // Reduced padding
+  color: "white", 
+  padding: theme.spacing(1),
   borderRadius: "8px",
   "&:hover": {
-    transform: "translateY(-5px)",
+    backgroundColor: "#2952cc",
   },
   width: "100%",
-  marginBottom: theme.spacing(1.5), // Reduced margin
-}))
+  marginBottom: theme.spacing(1.5),
+}));
 
-const RecordVideoButton = styled(Button)(({ theme }) => ({
+const SecondaryButton = styled(Button)(({ theme }) => ({
   backgroundColor: "white",
   color: "black",
-  padding: theme.spacing(1), // Reduced padding
+  padding: theme.spacing(1),
   borderRadius: "8px",
   border: "1px solid #e0e0e0",
   "&:hover": {
     backgroundColor: "#f5f5f5",
   },
   width: "100%",
-}))
+}));
 
-const NavButton = styled(Button)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  borderRadius: 0,
-  flex: 1,
-  padding: theme.spacing(0.75), // Reduced padding
-  color: "grey",
-  "&.active": {
-    color: "#3366ff",
-  },
-}))
+const VideoPreviewContainer = styled(Box)(({ theme }) => ({
+  width: '100%',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  position: 'relative',
+  marginBottom: theme.spacing(2),
+  backgroundColor: '#000',
+}));
 
+const VideoControls = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  padding: theme.spacing(1),
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
 
-export default function VideoResumeUpload() {
-  const theme = useTheme()
-  const [activeStep, setActiveStep] = useState(0)
-  const [activeNav, setActiveNav] = useState("profile")
+const RecordingIndicator = styled(Box)(({ theme, isRecording }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0.5, 1),
+  borderRadius: '4px',
+  backgroundColor: isRecording ? 'rgba(255, 0, 0, 0.7)' : 'transparent',
+  color: '#fff',
+}));
 
-  const handleFileUpload = (event) => {
-    // Handle file upload logic here
-    console.log("File uploaded:", event.target.files[0])
-  }
-const navigate = useNavigate();
-  return <Box sx={{ background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`, backgroundSize: "cover", backgroundPosition: "top right" ,mt:2 ,height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
+const HashtagInput = styled(TextField)(({ theme }) => ({
+  marginBottom: theme.spacing(1),
+}));
 
-      {/* Main Content */}
-      <Container sx={{ flex: 1, py: 1.5, display: "flex", flexDirection: "column", mt:2 }}>
-        {/* Stepper */}
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 2 }}>
-          <MobileStepper variant="dots" steps={3} position="static" activeStep={activeStep} sx={{ background: "transparent", width: "auto", "& .MuiMobileStepper-dot": { margin: "0 3px", width: 10, height: 10 }, "& .MuiMobileStepper-dotActive": { backgroundColor: "#3366ff" } }} nextButton={<Box />} backButton={<Box />} />
-        </Box>
+const HashtagChip = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.5),
+}));
 
-        {/* Title and Description */}
-        <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
-          Upload Your Video
-        </Typography>
-        <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
-          Show employers who you are in 45 seconds or less
-        </Typography>
-
-        {/* Upload Area */}
-        <UploadBox component="label" htmlFor="video-upload">
-          <input id="video-upload" type="file" accept="video/mp4" hidden onChange={handleFileUpload} />
-          <VideocamIcon sx={{ fontSize: 50, color: "#555", mb: 1.5 }} />
-          <Typography variant="body1" sx={{ fontWeight: "medium", mb: 0.5 }}>
-            Drag & drop video here
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            or click to browse files (MP4, max 45s)
-          </Typography>
-        </UploadBox>
-
-        {/* Action Buttons */}
-        <Stack spacing={1.5} sx={{ mt: "20px" }}>
-          <SelectVideoButton variant="contained" disableElevation size="small">
-            Select Video
-          </SelectVideoButton>
-          <RecordVideoButton variant="outlined" disableElevation size="small">
-            Record New Video
-          </RecordVideoButton>
-        </Stack>
-      </Container>
-
+const VideoResumeUpload = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
   
-    </Box>;
-}
+  // Refs
+  const videoRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const streamRef = useRef(null);
+  const fileInputRef = useRef(null);
+  
+  // State for video upload/recording
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoBlob, setVideoBlob] = useState(null);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [recordingStep, setRecordingStep] = useState(0);
+  
+  // State for video metadata
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoPosition, setVideoPosition] = useState('main');
+  const [videoType, setVideoType] = useState('intro');
+  const [hashtags, setHashtags] = useState([]);
+  const [newHashtag, setNewHashtag] = useState('');
+  
+  // UI state
+  const [showRecordDialog, setShowRecordDialog] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [recordingPermissionGranted, setRecordingPermissionGranted] = useState(false);
+  
+  // Timer for recording
+  const timerRef = useRef(null);
+  
+  // Clean up resources when component unmounts
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      if (videoUrl && videoUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(videoUrl);
+      }
+    };
+  }, [videoUrl]);
+
+  // Handle file selection with proper duration validation
+  const handleFileSelect = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('video/')) {
+      setSnackbar({
+        open: true,
+        message: 'Please select a valid video file',
+        severity: 'error'
+      });
+      return;
+    }
+    
+    try {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      
+      const duration = await new Promise((resolve, reject) => {
+        video.onloadedmetadata = () => {
+          URL.revokeObjectURL(video.src);
+          resolve(video.duration);
+        };
+        video.onerror = () => reject(new Error('Failed to load video metadata'));
+        video.src = URL.createObjectURL(file);
+      });
+      
+      if (duration < 15 || duration > 45) {
+        setSnackbar({
+          open: true,
+          message: 'Video must be between 15 and 45 seconds',
+          severity: 'error'
+        });
+        return;
+      }
+      
+      setVideoFile(file);
+      setVideoUrl(URL.createObjectURL(file));
+      setRecordingStep(1);
+    } catch (error) {
+      console.error('Error checking video:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error processing video file',
+        severity: 'error'
+      });
+    }
+  };
+
+  // Request media permissions with proper constraints
+  const requestMediaPermissions = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'user',
+          frameRate: { ideal: 30 }
+        }, 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true
+        }
+      });
+      
+      streamRef.current = stream;
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.muted = true;
+        videoRef.current.play().catch(console.error);
+      }
+      
+      setRecordingPermissionGranted(true);
+      return true;
+    } catch (error) {
+      console.error('Media access error:', error);
+      setSnackbar({
+        open: true,
+        message: 'Please enable camera and microphone access',
+        severity: 'error'
+      });
+      return false;
+    }
+  };
+
+  // Start recording with proper stream handling
+  const startRecording = async () => {
+    if (!recordingPermissionGranted && !(await requestMediaPermissions())) return;
+    
+    try {
+      const stream = streamRef.current;
+      const mediaRecorder = new MediaRecorder(stream, { 
+        mimeType: 'video/webm;codecs=vp9,opus',
+        videoBitsPerSecond: 2500000
+      });
+      
+      const chunks = [];
+      mediaRecorder.ondataavailable = (e) => e.data.size > 0 && chunks.push(e.data);
+      
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        setVideoBlob(blob);
+        setVideoUrl(URL.createObjectURL(blob));
+        setIsRecording(false);
+        setRecordingStep(1);
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(1000);
+      setIsRecording(true);
+      
+      let seconds = 0;
+      timerRef.current = setInterval(() => {
+        seconds++;
+        setRecordingTime(seconds);
+        if (seconds >= 45) stopRecording();
+      }, 1000);
+    } catch (error) {
+      console.error('Recording error:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error starting recording',
+        severity: 'error'
+      });
+    }
+  };
+
+  // Stop recording safely
+  const stopRecording = () => {
+    if (mediaRecorderRef.current?.state === 'recording') {
+      mediaRecorderRef.current.stop();
+      clearInterval(timerRef.current);
+      setRecordingTime(0);
+    }
+  };
+
+  // Toggle video playback
+  const togglePlayback = () => {
+    if (!videoRef.current) return;
+    isPlaying ? videoRef.current.pause() : videoRef.current.play();
+    setIsPlaying(!isPlaying);
+  };
+
+  // Handle video ended event
+  const handleVideoEnded = () => setIsPlaying(false);
+
+  // Hashtag management
+  const addHashtag = () => {
+    const tag = newHashtag.trim();
+    if (!tag) return;
+    
+    const formattedTag = tag.startsWith('#') ? tag : `#${tag}`;
+    if (!hashtags.includes(formattedTag)) {
+      setHashtags([...hashtags, formattedTag]);
+      setNewHashtag('');
+    }
+  };
+
+  const removeHashtag = (tag) => {
+    setHashtags(hashtags.filter(t => t !== tag));
+  };
+
+  const handleHashtagKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addHashtag();
+    }
+  };
+
+  // Upload video with retry logic
+  const uploadWithRetry = async (formData, progressCallback, retries = 3) => {
+    try {
+      return await uploadVideo(formData, progressCallback);
+    } catch (error) {
+      if (retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return uploadWithRetry(formData, progressCallback, retries - 1);
+      }
+      throw error;
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
+      setSnackbar({
+        open: true,
+        message: !videoFile && !videoBlob 
+          ? 'Please select or record a video' 
+          : 'Please enter a video title',
+        severity: 'error'
+      });
+      return;
+    }
+    
+    try {
+      setIsUploading(true);
+      
+      const formData = new FormData();
+      const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
+        type: 'video/webm',
+        lastModified: Date.now()
+      });
+      
+      formData.append('video', videoData);
+      formData.append('title', videoTitle);
+      formData.append('jobId', '');
+      formData.append('hashtags', hashtags.join(','));
+      formData.append('videoType', videoType);
+      formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
+      
+      const uploadResponse = await uploadWithRetry(formData, setUploadProgress);
+      
+      await saveVideoMetadata({
+        video_url: uploadResponse.data.videoUrl,
+        video_title: videoTitle,
+        video_position: videoPosition,
+        video_type: videoType,
+        hashtags,
+        video_duration: videoRef.current ? Math.round(videoRef.current.duration) : 30,
+        status: 'new'
+      });
+      
+      setSnackbar({
+        open: true,
+        message: 'Video uploaded successfully!',
+        severity: 'success'
+      });
+      
+      setTimeout(() => navigate('/profile'), 2000);
+    } catch (error) {
+      console.error('Upload error:', error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Upload failed. Please try again.',
+        severity: 'error'
+      });
+      setIsUploading(false);
+    }
+  };
+
+  // Reset form completely
+  const resetForm = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    if (videoUrl.startsWith('blob:')) URL.revokeObjectURL(videoUrl);
+    
+    setVideoFile(null);
+    setVideoBlob(null);
+    setVideoUrl('');
+    setIsRecording(false);
+    setRecordingTime(0);
+    setIsPlaying(false);
+    setUploadProgress(0);
+    setIsUploading(false);
+    setRecordingStep(0);
+    setVideoTitle('');
+    setVideoPosition('main');
+    setVideoType('intro');
+    setHashtags([]);
+    setNewHashtag('');
+    setShowRecordDialog(false);
+  };
+
+  // Format time as MM:SS
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Render different steps
+  const renderInitialStep = () => (
+    <>
+      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
+        Upload Your Video Resume
+      </Typography>
+      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
+        Show employers who you are in 15-45 seconds
+      </Typography>
+
+      <UploadBox component="label" htmlFor="video-upload">
+        <input 
+          id="video-upload" 
+          type="file" 
+          accept="video/*" 
+          hidden 
+          ref={fileInputRef}
+          onChange={handleFileSelect} 
+        />
+        <VideocamIcon sx={{ fontSize: 50, color: "#555", mb: 1.5 }} />
+        <Typography variant="body1" sx={{ fontWeight: "medium", mb: 0.5 }}>
+          Drag & drop video here
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          or click to browse files (15-45 seconds)
+        </Typography>
+      </UploadBox>
+
+      <Stack spacing={1.5} sx={{ mt: "20px" }}>
+        <VideoButton 
+          variant="contained" 
+          disableElevation 
+          startIcon={<CloudUploadIcon />}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Select Video
+        </VideoButton>
+        <SecondaryButton 
+          variant="outlined" 
+          disableElevation 
+          startIcon={<VideocamIcon />}
+          onClick={() => setShowRecordDialog(true)}
+        >
+          Record New Video
+        </SecondaryButton>
+      </Stack>
+    </>
+  );
+  
+  const renderPreviewStep = () => (
+    <>
+      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
+        Preview Your Video
+      </Typography>
+      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
+        Make sure your video looks and sounds good
+      </Typography>
+
+      <VideoPreviewContainer>
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          width="100%"
+          height="auto"
+          controls={false}
+          onEnded={handleVideoEnded}
+        />
+        <VideoControls>
+          <IconButton size="small" color="inherit" onClick={togglePlayback}>
+            {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+          </IconButton>
+          <Typography variant="caption" color="inherit">
+            {videoRef.current ? formatTime(Math.floor(videoRef.current.currentTime)) : '00:00'} / 
+            {videoRef.current ? formatTime(Math.floor(videoRef.current.duration)) : '00:00'}
+          </Typography>
+        </VideoControls>
+      </VideoPreviewContainer>
+
+      <Stack spacing={1.5} sx={{ mt: "20px" }}>
+        <VideoButton 
+          variant="contained" 
+          disableElevation 
+          startIcon={<CheckCircleIcon />}
+          onClick={() => setRecordingStep(2)}
+        >
+          Use This Video
+        </VideoButton>
+        <SecondaryButton 
+          variant="outlined" 
+          disableElevation 
+          startIcon={<RefreshIcon />}
+          onClick={resetForm}
+        >
+          Start Over
+        </SecondaryButton>
+      </Stack>
+    </>
+  );
+  
+  const renderMetadataStep = () => (
+    <>
+      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
+        Video Details
+      </Typography>
+      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
+        Add information about your video resume
+      </Typography>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Video Title"
+            variant="outlined"
+            value={videoTitle}
+            onChange={(e) => setVideoTitle(e.target.value)}
+            required
+            placeholder="e.g., My Professional Introduction"
+          />
+        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Video Position</InputLabel>
+            <Select
+              value={videoPosition}
+              onChange={(e) => setVideoPosition(e.target.value)}
+              label="Video Position"
+            >
+              <MenuItem value="main">Main</MenuItem>
+              <MenuItem value="intro">Intro</MenuItem>
+              <MenuItem value="outro">Outro</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Video Type</InputLabel>
+            <Select
+              value={videoType}
+              onChange={(e) => setVideoType(e.target.value)}
+              label="Video Type"
+            >
+              <MenuItem value="intro">Introduction</MenuItem>
+              <MenuItem value="skills">Skills Showcase</MenuItem>
+              <MenuItem value="experience">Work Experience</MenuItem>
+              <MenuItem value="portfolio">Portfolio</MenuItem>
+              <MenuItem value="personal">Personal Statement</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        
+        <Grid item xs={12}>
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Add Hashtags (skills, industries, etc.)
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
+              {hashtags.map((tag) => (
+                <HashtagChip
+                  key={tag}
+                  label={tag}
+                  onDelete={() => removeHashtag(tag)}
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+              <HashtagInput
+                fullWidth
+                variant="outlined"
+                size="small"
+                placeholder="Add a hashtag (e.g., #webdesign)"
+                value={newHashtag}
+                onChange={(e) => setNewHashtag(e.target.value)}
+                onKeyPress={handleHashtagKeyPress}
+              />
+              <IconButton 
+                color="primary" 
+                onClick={addHashtag}
+                disabled={!newHashtag.trim()}
+              >
+                <AddCircleIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+
+      {isUploading && (
+        <Box sx={{ width: '100%', mt: 2 }}>
+          <Typography variant="body2" align="center" gutterBottom>
+            Uploading video... {uploadProgress}%
+          </Typography>
+          <LinearProgress variant="determinate" value={uploadProgress} />
+        </Box>
+      )}
+
+      <Stack spacing={1.5} sx={{ mt: "20px" }}>
+        <VideoButton 
+          variant="contained" 
+          disableElevation 
+          startIcon={<SaveIcon />}
+          onClick={handleSubmit}
+          disabled={isUploading}
+        >
+          {isUploading ? 'Uploading...' : 'Save & Upload'}
+        </VideoButton>
+        <SecondaryButton 
+          variant="outlined" 
+          disableElevation 
+          startIcon={<ArrowBackIcon />}
+          onClick={() => setRecordingStep(1)}
+          disabled={isUploading}
+        >
+          Back to Preview
+        </SecondaryButton>
+      </Stack>
+    </>
+  );
+  
+  const renderRecordingDialog = () => (
+    <Dialog 
+      open={showRecordDialog} 
+      onClose={() => !isRecording && setShowRecordDialog(false)}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>
+        Record Video
+        {!isRecording && (
+          <IconButton
+            aria-label="close"
+            onClick={() => setShowRecordDialog(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
+      </DialogTitle>
+      <DialogContent>
+        <Box sx={{ 
+          position: 'relative',
+          backgroundColor: '#000',
+          borderRadius: 1,
+          overflow: 'hidden',
+          minHeight: '300px'
+        }}>
+          <video
+            ref={videoRef}
+            width="100%"
+            height="auto"
+            autoPlay
+            playsInline
+            muted
+            style={{
+              display: 'block',
+              transform: 'scaleX(-1)'
+            }}
+          />
+          
+          {isRecording && (
+            <Box sx={{ 
+              position: 'absolute', 
+              top: 10, 
+              right: 10,
+              backgroundColor: 'rgba(255, 0, 0, 0.7)',
+              color: 'white',
+              px: 1,
+              borderRadius: 1
+            }}>
+              <Typography variant="caption">
+                REC {formatTime(recordingTime)}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        
+        <Box sx={{ mt: 2, mb: 1 }}>
+          <Typography variant="body2" gutterBottom>
+            Recording time: 15-45 seconds
+          </Typography>
+          <Slider
+            value={recordingTime}
+            min={0}
+            max={45}
+            marks={[
+              { value: 0, label: '0s' },
+              { value: 15, label: '15s' },
+              { value: 45, label: '45s' },
+            ]}
+            disabled
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        {!recordingPermissionGranted ? (
+          <Button 
+            onClick={requestMediaPermissions}
+            color="primary"
+            variant="contained"
+            fullWidth
+            startIcon={<VideocamIcon />}
+          >
+            Allow Camera & Microphone
+          </Button>
+        ) : (
+          <>
+            {!isRecording ? (
+              <Button 
+                onClick={startRecording}
+                color="primary"
+                variant="contained"
+                startIcon={<VideocamIcon />}
+                fullWidth
+              >
+                Start Recording
+              </Button>
+            ) : (
+              <Button 
+                onClick={stopRecording}
+                color="error"
+                variant="contained"
+                startIcon={<StopIcon />}
+                fullWidth
+              >
+                Stop Recording ({45 - recordingTime}s left)
+              </Button>
+            )}
+          </>
+        )}
+      </DialogActions>
+    </Dialog>
+  );
+  
+  return (
+    <Box sx={{ 
+      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
+      backgroundSize: "cover",
+      backgroundPosition: "top right",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      py: 3
+    }}>
+      <Container maxWidth="sm">
+        <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+          {recordingStep === 0 && renderInitialStep()}
+          {recordingStep === 1 && renderPreviewStep()}
+          {recordingStep === 2 && renderMetadataStep()}
+        </Paper>
+      </Container>
+      
+      {renderRecordingDialog()}
+      
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+};
+
+export default VideoResumeUpload;
