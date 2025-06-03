@@ -73,6 +73,12 @@ import { Cloudinary } from '@cloudinary/url-gen';
 // import {SocketProvider} from './hooks/useAuth';
 import JobSeekersVideosPage from './pages/JobSeekersVideosPage';
 import JobSeekerProfile from './pages/JobSeekerProfile';
+// import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
+// import EmployerProfile2 from "./pages/EmployerProfile2";
+// import JobsListingPage from "./pages/JobsListingPage";
+// import PostJobPage_2 from "./pages/PostJobPage_2";
+
+   
 
 
 // Initialize once (put this in a separate config file)
@@ -115,30 +121,23 @@ function App() {
             <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
             <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
           </Route>
-          <Route path="/video-feed/:vid?" element={<VideoFeed />} /> 
+          <Route path="/video-feed/:vid?" element={<VideoFeed />} />
           <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
 
           {/* Private Routes */}
 
-          <Route element={<ProtectedRoute  />}>
+          <Route element={<ProtectedRoute />}>
             {/*  <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} /> */}
-
             {/* Common Routes */}
             <Route path="/feed" element={<VideoFeed_ />} />
-                
-
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:conversationId" element={<Chat />} />
-                
-
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile_ />} />
             <Route path="/profile/:userId" element={<Profile_ />} />
-
             {/* Job Seeker Routes */}
             <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} />
             <Route path="/job-videos" element={<JobVideos />} />
-
             {/* Employer Routes */}
             <Route path="/employer/dashboard" element={<EmployerDashboard_ />} />
             <Route path="/company-videos" element={<CompanyVideos />} />
@@ -157,12 +156,8 @@ function App() {
             <Route path="/search" element={<JobSearchPage />} />
             <Route path="/job/:id" element={<JobDetailsPage />} />
             <Route path="/post-job" element={<PostJobPage />} />
-            <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
-            <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
-
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/feed-page" element={<FeedPage />} />
-
             <Route path="/Employer-explore" element={<EmployerExplore />} />
             <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
             <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
@@ -170,10 +165,14 @@ function App() {
             <Route path="/Settings-page" element={<SettingsPage />} />
             <Route path="/MyApplications-page" element={<MyApplications />} />
             <Route path="/notifications" element={<NotificationsPage />} />
-
             <Route path="/employer-profile" element={<EmployerProfile />} />
-
             <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
+            <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
+            <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
+          {/* <Route path="/EditJobSeekerProfile" element={<EditJobSeekerProfile />} />
+            // <Route path="/EmployerProfile2" element={<EmployerProfile2 />} />
+            // <Route path="/JobsListingPage" element={<JobsListingPage />} />
+            // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
           </Route>
         </Routes>
       </Suspense>
