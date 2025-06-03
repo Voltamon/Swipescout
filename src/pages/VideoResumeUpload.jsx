@@ -46,6 +46,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { uploadVideo, saveVideoMetadata } from '../services/videoService';
 import { v4 as uuidv4 } from 'uuid';
+import { useVideoContext } from '../context/VideoContext';
+
 
 // Styled components (keep the same as before)
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -133,6 +135,8 @@ const VideoResumeUpload = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [uploadStatus, setUploadStatus] = useState(null);
+  const { addLocalVideo, updateVideoStatus } = useVideoContext();
+
   
   // Refs
   const videoRef = useRef(null);
@@ -189,89 +193,116 @@ const VideoResumeUpload = () => {
     };
   }, [videoUrl]);
 
-  useEffect(() => {
-    if (!uploadId) return;
+useEffect(() => {
+  if (!uploadId) return;
 
-    const interval = setInterval(async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${uploadId}`);
-        const data = await response.json();
-        
-        if (data.status === 'completed') {
-          clearInterval(interval);
-          setUploadStatus('completed');
-          setSnackbar({
-            open: true,
-            message: 'Video uploaded successfully!',
-            severity: 'success'
-          });
-          // Navigate to videos page after 2 seconds
-          setTimeout(() => {
-            navigate('/videos');
-          }, 2000);
-        } else if (data.status === 'failed') {
-          clearInterval(interval);
-          setUploadStatus('failed');
-          setSnackbar({
-            open: true,
-            message: data.error || 'Upload failed. You can try again later.',
-            severity: 'error'
-          });
-          setIsUploading(false);
-        }
-      } catch (error) {
-        console.error('Status check error:', error);
-      }
-    }, 3000); // Check every 3 seconds
-
-    return () => clearInterval(interval);
-  }, [uploadId, navigate, API_BASE_URL]);
-
-  const handleSubmit = async () => {
-    if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
-      setSnackbar({
-        open: true,
-        message: !videoFile && !videoBlob 
-          ? 'Please select or record a video' 
-          : 'Please enter a video title',
-        severity: 'error'
-      });
-      return;
-    }
-    
+  const interval = setInterval(async () => {
     try {
-      setIsUploading(true);
-      setUploadStatus('processing');
+      const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${uploadId}`);
+      const data = await response.json();
       
-      const formData = new FormData();
-      const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
-        type: 'video/webm'
-      });
-      
-      formData.append('video', videoData);
-      formData.append('title', videoTitle);
-      formData.append('jobId', jobId);
-      formData.append('hashtags', hashtags.join(','));
-      formData.append('videoType', videoType);
-      formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
+      if (data.status === 'completed') {
+        clearInterval(interval);
+        
+        // Update the video in context with final details
+        updateVideoStatus(uploadId, {
+          status: 'completed',
+          video_url: data.video_url,
+          isLocal: false,
+          ...data.video
+        });
 
-      const uploadResponse = await uploadVideo(formData, (progress) => {
-        setUploadProgress(Math.round(progress));
-      });
-
-      setUploadId(uploadResponse.uploadId);
-      
+        setSnackbar({
+          open: true,
+          message: 'Video processing completed!',
+          severity: 'success'
+        });
+      }
     } catch (error) {
-      console.error('Upload error:', error);
-      setIsUploading(false);
-      setUploadStatus('failed');
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'Upload failed. Please try again.',
-        severity: 'error'
-      });
+      console.error('Status check error:', error);
     }
-  };
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, [uploadId, updateVideoStatus]);
+
+
+const handleSubmit = async () => {
+  if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
+    setSnackbar({
+      open: true,
+      message: !videoFile && !videoBlob 
+        ? 'Please select or record a video' 
+        : 'Please enter a video title',
+      severity: 'error'
+    });
+    return;
+  }
+
+  try {
+    setIsUploading(true);
+    
+    // Create form data
+    const formData = new FormData();
+    const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
+      type: 'video/webm'
+    });
+
+    formData.append('video', videoData);
+    formData.append('title', videoTitle);
+    formData.append('jobId', jobId);
+    formData.append('hashtags', hashtags.join(','));
+    formData.append('videoType', videoType);
+    formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
+
+    // Add to local videos immediately
+    const tempId = uuidv4();
+    addLocalVideo({
+      id: tempId,
+      video_url: videoUrl,
+      video_title: videoTitle,
+      video_position: videoPosition,
+      video_type: videoType,
+      hashtags: hashtags.join(','),
+      job_id: jobId,
+      video_duration: videoRef.current?.duration || 0,
+      progress: 0
+    });
+
+    // Navigate after short delay
+    setTimeout(() => {
+      navigate('/videos');
+    }, 100);
+
+    // Upload in background
+    const uploadResponse = await uploadVideo(formData, (progress) => {
+      updateVideoStatus(tempId, { progress });
+    });
+
+    // Update with server ID and mark as processing
+    updateVideoStatus(tempId, {
+      id: uploadResponse.uploadId,
+      status: 'processing'
+    });
+
+    // Start checking processing status
+    setUploadId(uploadResponse.uploadId);
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    setSnackbar({
+      open: true,
+      message: 'Upload failed. You can retry from the videos page.',
+      severity: 'error'
+    });
+    updateVideoStatus(tempId, {
+      status: 'failed',
+      error: error.message
+    });
+  } finally {
+    setIsUploading(false);
+  }
+};
   // Handle file selection with proper duration validation
   const handleFileSelect = async (event) => {
     const file = event.target.files[0];

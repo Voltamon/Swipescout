@@ -77,7 +77,8 @@ import JobSeekerProfile from './pages/JobSeekerProfile';
 // import EmployerProfile2 from "./pages/EmployerProfile2";
 // import JobsListingPage from "./pages/JobsListingPage";
 // import PostJobPage_2 from "./pages/PostJobPage_2";
-
+import { VideoProvider } from './context/VideoContext';
+import VideosPage from './pages/VideosPage';
    
 
 
@@ -105,6 +106,8 @@ function App() {
   
   return <AnimatePresence mode="wait">
       <Suspense fallback={<LinearProgress />}>
+          <VideoProvider>
+
         <Routes location={location} key={location.pathname}>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
@@ -173,8 +176,12 @@ function App() {
             // <Route path="/EmployerProfile2" element={<EmployerProfile2 />} />
             // <Route path="/JobsListingPage" element={<JobsListingPage />} />
             // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
+            <Route path="/videos" element={<VideosPage />} />
+
           </Route>
         </Routes>
+            </VideoProvider>
+
       </Suspense>
     </AnimatePresence>;
 }
