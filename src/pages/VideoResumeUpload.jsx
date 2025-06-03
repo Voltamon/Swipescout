@@ -47,8 +47,7 @@ import { useNavigate } from "react-router-dom";
 import { uploadVideo, saveVideoMetadata } from '../services/videoService';
 import { v4 as uuidv4 } from 'uuid';
 
-
-// Styled components
+// Styled components (keep the same as before)
 const UploadBox = styled(Box)(({ theme }) => ({
   border: "2px dashed #f0f0f0",
   borderRadius: "8px",
@@ -133,8 +132,7 @@ const HashtagChip = styled(Chip)(({ theme }) => ({
 const VideoResumeUpload = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-    const [uploadStatus, setUploadStatus] = useState(null);
-  const [uploadQueue, setUploadQueue] = useState([]);
+  const [uploadStatus, setUploadStatus] = useState(null);
   
   // Refs
   const videoRef = useRef(null);
@@ -159,6 +157,7 @@ const VideoResumeUpload = () => {
   const [videoPosition, setVideoPosition] = useState('main');
   const [videoType, setVideoType] = useState('intro');
   const [hashtags, setHashtags] = useState([]);
+  const [jobId, setJobId] = useState([]);
   const [newHashtag, setNewHashtag] = useState('');
   
   // UI state
@@ -169,6 +168,8 @@ const VideoResumeUpload = () => {
   // Timer for recording
   const timerRef = useRef(null);
   const statusCheckIntervalRef = useRef(null);
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   // Clean up resources when component unmounts
   useEffect(() => {
@@ -188,12 +189,12 @@ const VideoResumeUpload = () => {
     };
   }, [videoUrl]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!uploadId) return;
 
     const interval = setInterval(async () => {
       try {
-        const response = await fetch(`/api/job-seekers/upload-status/${uploadId}`);
+        const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${uploadId}`);
         const data = await response.json();
         
         if (data.status === 'completed') {
@@ -204,21 +205,19 @@ const VideoResumeUpload = () => {
             message: 'Video uploaded successfully!',
             severity: 'success'
           });
-          // Update local video list
-          setUploadQueue(prev => prev.map(item => 
-            item.uploadId === uploadId ? {...item, status: 'completed'} : item
-          ));
+          // Navigate to videos page after 2 seconds
+          setTimeout(() => {
+            navigate('/videos');
+          }, 2000);
         } else if (data.status === 'failed') {
           clearInterval(interval);
           setUploadStatus('failed');
           setSnackbar({
             open: true,
-            message: data.error || 'Upload failed',
+            message: data.error || 'Upload failed. You can try again later.',
             severity: 'error'
           });
-          setUploadQueue(prev => prev.map(item => 
-            item.uploadId === uploadId ? {...item, status: 'failed'} : item
-          ));
+          setIsUploading(false);
         }
       } catch (error) {
         console.error('Status check error:', error);
@@ -226,7 +225,7 @@ const VideoResumeUpload = () => {
     }, 3000); // Check every 3 seconds
 
     return () => clearInterval(interval);
-  }, [uploadId]);
+  }, [uploadId, navigate, API_BASE_URL]);
 
   const handleSubmit = async () => {
     if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
@@ -251,33 +250,17 @@ const VideoResumeUpload = () => {
       
       formData.append('video', videoData);
       formData.append('title', videoTitle);
-      formData.append('jobId', '');
+      formData.append('jobId', jobId);
       formData.append('hashtags', hashtags.join(','));
       formData.append('videoType', videoType);
       formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
 
-      // Add to upload queue
-      const newUpload = {
-        id: uuidv4(),
-        title: videoTitle,
-        status: 'uploading',
-        uploadId: null,
-        date: new Date().toISOString()
-      };
-      setUploadQueue(prev => [...prev, newUpload]);
-
       const uploadResponse = await uploadVideo(formData, (progress) => {
         setUploadProgress(Math.round(progress));
-        setUploadQueue(prev => prev.map(item => 
-          item.id === newUpload.id ? {...item, progress} : item
-        ));
       });
 
       setUploadId(uploadResponse.uploadId);
-      setUploadQueue(prev => prev.map(item => 
-        item.id === newUpload.id ? {...item, uploadId: uploadResponse.uploadId} : item
-      ));
-
+      
     } catch (error) {
       console.error('Upload error:', error);
       setIsUploading(false);
@@ -287,12 +270,8 @@ const VideoResumeUpload = () => {
         message: error.response?.data?.message || 'Upload failed. Please try again.',
         severity: 'error'
       });
-      setUploadQueue(prev => prev.map(item => 
-        item.id === newUpload.id ? {...item, status: 'failed'} : item
-      ));
     }
   };
-  
   // Handle file selection with proper duration validation
   const handleFileSelect = async (event) => {
     const file = event.target.files[0];
@@ -511,7 +490,7 @@ const startRecording = async () => {
 // Fixed checkUploadStatus function
   const checkUploadStatus = async (id) => {
     try {
-      const response = await fetch(`/api/job-seekers/upload-status/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -565,6 +544,7 @@ const startRecording = async () => {
     setVideoTitle('');
     setVideoPosition('main');
     setVideoType('intro');
+    setJobId(null);
     setHashtags([]);
     setNewHashtag('');
     setShowRecordDialog(false);
@@ -990,7 +970,7 @@ const startRecording = async () => {
   );
 
   
-return (
+  return (
     <Box sx={{ 
       background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
       minHeight: "100vh",
@@ -1001,7 +981,6 @@ return (
           {recordingStep === 0 && renderInitialStep()}
           {recordingStep === 1 && renderPreviewStep()}
           {recordingStep === 2 && renderMetadataStep()}
-          {uploadQueue.length > 0 && renderUploadQueue()}
         </Paper>
       </Container>
       

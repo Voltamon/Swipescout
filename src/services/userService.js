@@ -27,7 +27,7 @@ export const getUserExperiences = async () => {
     throw error;
   }
 };
-
+ 
 export const getUserProfile = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/profile`, {
