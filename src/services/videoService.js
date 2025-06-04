@@ -45,6 +45,10 @@ export const getUserVideos = () => {
   return api.get(`${API_BASE_URL}/api/job-seekers/videos`);
 };
 
+export const getVideoStatus = (videoId) => {
+  return api.get(`${API_BASE_URL}/api/job-seekers/upload-status/${videoId}`);
+};
+
 /**
  * Get a specific video by ID
  * @param {string} videoId - ID of the video to retrieve

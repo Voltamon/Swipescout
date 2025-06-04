@@ -227,6 +227,7 @@ useEffect(() => {
 }, [uploadId, updateVideoStatus]);
 
 
+// In VideoResumeUpload.jsx
 const handleSubmit = async () => {
   if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
     setSnackbar({
@@ -242,7 +243,6 @@ const handleSubmit = async () => {
   try {
     setIsUploading(true);
     
-    // Create form data
     const formData = new FormData();
     const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
       type: 'video/webm'
@@ -257,47 +257,57 @@ const handleSubmit = async () => {
 
     // Add to local videos immediately
     const tempId = uuidv4();
-    addLocalVideo({
+    const persistentBlobUrl = URL.createObjectURL(
+      videoFile || new Blob([videoBlob], { type: 'video/webm' })
+    );
+    
+    const newVideo = {
       id: tempId,
-      video_url: videoUrl,
+      video_url: persistentBlobUrl,
       video_title: videoTitle,
-      video_position: videoPosition,
       video_type: videoType,
       hashtags: hashtags.join(','),
       job_id: jobId,
       video_duration: videoRef.current?.duration || 0,
-      progress: 0
-    });
+      progress: 0,
+      status: 'uploading',
+      isLocal: true,
+      submitted_at: new Date().toISOString()
+    };
+    
+    addLocalVideo(newVideo);
+    console.log('Added local video with tempId:', tempId);
 
-    // Navigate after short delay
-    setTimeout(() => {
-      navigate('/videos');
-    }, 100);
+    // Navigate immediately but continue upload in background
+    navigate('/videos');
 
     // Upload in background
     const uploadResponse = await uploadVideo(formData, (progress) => {
       updateVideoStatus(tempId, { progress });
     });
 
+    console.log('Upload response received:', uploadResponse);
+    
     // Update with server ID and mark as processing
     updateVideoStatus(tempId, {
-      id: uploadResponse.uploadId,
+      id: uploadResponse.data.uploadId,
       status: 'processing'
     });
 
-    // Start checking processing status
-    setUploadId(uploadResponse.uploadId);
+    
+    console.log('Updated video with uploadId:', uploadResponse.data.uploadId);
+    setUploadId(uploadResponse.data.uploadId);
 
   } catch (error) {
     console.error('Upload error:', error);
+    updateVideoStatus(tempId, {
+      status: 'failed',
+      error: error.message
+    });
     setSnackbar({
       open: true,
       message: 'Upload failed. You can retry from the videos page.',
       severity: 'error'
-    });
-    updateVideoStatus(tempId, {
-      status: 'failed',
-      error: error.message
     });
   } finally {
     setIsUploading(false);
