@@ -70,6 +70,8 @@ import EmployerProfile from "./pages/EmployerProfile";
 import NotificationsPage from "./pages/NotificationsPage";
 import { useAuth} from "./hooks/useAuth";
 import { Cloudinary } from '@cloudinary/url-gen';
+import MarketingVideos  from './pages/MarketingVideos';
+
 // import {SocketProvider} from './hooks/useAuth';
 
 // Initialize once (put this in a separate config file)
@@ -169,6 +171,7 @@ function App() {
             <Route path="/employer-profile" element={<EmployerProfile />} />
 
             <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
+            <Route path="/MarketingVideos-page" element={<MarketingVideos  />} />
           </Route>
         </Routes>
       </Suspense>
