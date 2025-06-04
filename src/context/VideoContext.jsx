@@ -1,4 +1,3 @@
-// src/context/VideoContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const VideoContext = createContext();
@@ -9,8 +8,15 @@ export const VideoProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Add this useEffect to clean up blob URLs when videos are removed
   useEffect(() => {
-    localStorage.setItem('videoResumes', JSON.stringify(videos));
+    return () => {
+      videos.forEach(video => {
+        if (video.isLocal && video.video_url?.startsWith('blob:')) {
+          URL.revokeObjectURL(video.video_url);
+        }
+      });
+    };
   }, [videos]);
 
   const addLocalVideo = (video) => {
@@ -26,9 +32,16 @@ export const VideoProvider = ({ children }) => {
   };
 
   const updateVideoStatus = (id, updates) => {
-    setVideos(prev => prev.map(video => 
-      video.id === id ? { ...video, ...updates } : video
-    ));
+    setVideos(prev => prev.map(video => {
+      if (video.id === id) {
+        // If updating from local to server version, clean up blob URL
+        if (video.isLocal && !updates.isLocal && video.video_url?.startsWith('blob:')) {
+          URL.revokeObjectURL(video.video_url);
+        }
+        return { ...video, ...updates };
+      }
+      return video;
+    }));
   };
 
   return (
@@ -38,7 +51,6 @@ export const VideoProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the video context
 export const useVideoContext = () => {
   const context = useContext(VideoContext);
   if (!context) {
