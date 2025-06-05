@@ -56,8 +56,8 @@ const CheckExplorePage = () => {
   
   // Define all possible tab routes
   const tabRoutes = [
-    { path: '/explore-layout/Employer-explore-public', label: 'Employer ' },
-    { path: '/explore-layout/Job-seeker-explore-public', label: 'Job Seeker ' },
+    { path: '/explore-layout/Employer-explore-public', label: 'Employers ' },
+    { path: '/explore-layout/Job-seeker-explore-public', label: 'Job Seekers ' },
   ];
 
   // Find the current tab value
