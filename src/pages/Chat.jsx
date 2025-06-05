@@ -22,7 +22,9 @@ import {
   Send as SendIcon,
   Search as SearchIcon,
   MoreVert as MoreVertIcon,
-  ArrowBack as ArrowBackIcon
+  // Removed ArrowBack as ArrowBackIcon from here, as it's being replaced in MessageArea
+  Close as CloseIcon, // Added CloseIcon for closing the conversation list on mobile
+  FormatListBulleted as FormatListBulletedIcon // New icon for showing the conversation list
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -36,6 +38,7 @@ import {
 import { useSocket } from '../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
+import SegmentIcon from '@mui/icons-material/Segment';
 
 // Styled components for chat UI
 const ChatContainer = styled(Box)(({ theme }) => ({
@@ -44,32 +47,33 @@ const ChatContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   [theme.breakpoints.down('md')]: {
     height: 'calc(100vh - 56px)',
-      display: 'flex',
-  flexDirection: 'column',
+    display: 'flex',
+    flexDirection: 'column',
   },
 }));
 
 const ConversationList = styled(Paper)(({ theme, isMobile, showConversations }) => ({
   height: '100%',
-  width:'100%',
+  width: '100%',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
   [theme.breakpoints.down('md')]: {
-    display: showConversations ? 'flex' : 'none',
-    position: 'absolute',
+    display: showConversations ? 'flex' : 'none', // Control visibility on mobile
+    position: 'absolute', // To overlay content
     width: '100%',
     zIndex: 10,
+    backgroundColor: theme.palette.background.paper, // Ensure it covers content below
   },
 }));
 
 const MessageArea = styled(Paper)(({ theme, isMobile, showConversations }) => ({
   height: '100%',
-  width:'100%',
+  width: '100%',
   display: 'flex',
   flexDirection: 'column',
   [theme.breakpoints.down('md')]: {
-    display: showConversations ? 'none' : 'flex',
+    display: showConversations ? 'none' : 'flex', // Control visibility on mobile
   },
 }));
 
@@ -84,7 +88,7 @@ const MessageItem = styled(Box)(({ theme, isOwn }) => ({
   overflow: 'auto',
   flexDirection: isOwn ? 'row-reverse' : 'row',
   marginBottom: theme.spacing(1),
-  width:'100%',
+  width: '100%',
 }));
 
 const MessageBubble = styled(Box)(({ theme, isOwn }) => ({
@@ -94,8 +98,7 @@ const MessageBubble = styled(Box)(({ theme, isOwn }) => ({
   backgroundColor: isOwn ? theme.palette.primary.main : theme.palette.grey[200],
   color: isOwn ? theme.palette.primary.contrastText : theme.palette.text.primary,
   wordBreak: 'break-word',
-  display: 'inline-block', 
-  
+  display: 'inline-block',
 }));
 
 const MessageTime = styled(Typography)(({ theme, isOwn }) => ({
@@ -112,8 +115,7 @@ const MessageInput = styled(Box)(({ theme }) => ({
 }));
 
 const Chat = () => {
- 
-  const { user, loading: authLoading  } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -123,7 +125,7 @@ const Chat = () => {
     messages: false
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [showConversations, setShowConversations] = useState(true);
+  const [showConversations, setShowConversations] = useState(true); // Default to showing conversations
   const messagesEndRef = useRef(null);
   const socket = useSocket();
   const [isConnected, setIsConnected] = useState(false);
@@ -132,11 +134,8 @@ const Chat = () => {
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const typingTimeoutRef = useRef(null);
   const [showAllUsers, setShowAllUsers] = useState(false);
-const [allUsers, setAllUsers] = useState([]);
-const [usersLoading, setUsersLoading] = useState(false);
-
-  
-
+  const [allUsers, setAllUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
 
   const isMobile = window.innerWidth < 960;
 
@@ -152,40 +151,50 @@ const [usersLoading, setUsersLoading] = useState(false);
     }
   };
 
-const handleTyping = (data) => {
-  console.log("typing:::", data);
-  if (
-    data.conversationId === activeConversation?.id &&
-    data.userId !== user.id
-  ) {
-    setOtherUserTyping(data.isTyping);
-  }
-};
+  const handleTyping = (data) => {
+    console.log("typing:::", data);
+    if (
+      data.conversationId === activeConversation?.id &&
+      data.userId !== user.id
+    ) {
+      setOtherUserTyping(data.isTyping);
+    }
+  };
 
-const handleChange = (e) => {
-  const value = e.target.value;
-  setNewMessage(value);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setNewMessage(value);
 
-  // Clear existing timeout
-  if (typingTimeoutRef.current) {
-    clearTimeout(typingTimeoutRef.current);
-  }
-
-  const trimmed = value.trim();
-
-  if (trimmed) {
-    if (!isTyping) {
-      setIsTyping(true);
-      socket.emit('typing', {
-        conversationId: activeConversation?.id,
-        userId: String(user.id),
-        otherUserId: String(activeConversation.other_user.id),
-        isTyping: true,
-      });
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
     }
 
-    // Set timeout to send "not typing" after 3 seconds of inactivity
-    typingTimeoutRef.current = setTimeout(() => {
+    const trimmed = value.trim();
+
+    if (trimmed) {
+      if (!isTyping) {
+        setIsTyping(true);
+        socket.emit('typing', {
+          conversationId: activeConversation?.id,
+          userId: String(user.id),
+          otherUserId: String(activeConversation.other_user.id),
+          isTyping: true,
+        });
+      }
+
+      // Set timeout to send "not typing" after 3 seconds of inactivity
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+        socket.emit('typing', {
+          conversationId: activeConversation?.id,
+          userId: String(user.id),
+          otherUserId: String(activeConversation.other_user.id),
+          isTyping: false,
+        });
+      }, 1300);
+    } else if (isTyping) {
+      // Immediately stop typing if input is empty
       setIsTyping(false);
       socket.emit('typing', {
         conversationId: activeConversation?.id,
@@ -193,23 +202,13 @@ const handleChange = (e) => {
         otherUserId: String(activeConversation.other_user.id),
         isTyping: false,
       });
-    }, 1300);
-  } else if (isTyping) {
-    // Immediately stop typing if input is empty
-    setIsTyping(false);
-    socket.emit('typing', {
-      conversationId: activeConversation?.id,
-      userId: String(user.id),
-       otherUserId: String(activeConversation.other_user.id),
-      isTyping: false,
-    });
-  }
-};
+    }
+  };
 
 
   // Fetch conversations on component mount
   useEffect(() => {
-    
+
     const fetchConversations = async () => {
       try {
         setLoading(prev => ({ ...prev, conversations: true }));
@@ -223,8 +222,8 @@ const handleChange = (e) => {
     };
 
     fetchConversations();
-    
- 
+
+
   }, []);
 
   useEffect(() => {
@@ -236,8 +235,8 @@ const handleChange = (e) => {
   }, []);
 
   useEffect(() => {
-    console.log("userid::::", user.id);
-     socket.off('typing',handleTyping);
+    console.log("userid::::", user?.id);
+    socket.off('typing', handleTyping);
     if (!user?.id) return;
 
     socket.connect();
@@ -267,26 +266,26 @@ const handleChange = (e) => {
     // socket.emit('register', user.id);
 
 
-  // When a user comes online
-  socket.on('user_online', (userId) => {
-    setOnlineUsers(prev => new Set(prev).add(userId));
-  });
-
-  // When a user goes offline
-  socket.on('user_offline', (userId) => {
-    setOnlineUsers(prev => {
-      const updated = new Set(prev);
-      updated.delete(userId);
-      return updated;
+    // When a user comes online
+    socket.on('user_online', (userId) => {
+      setOnlineUsers(prev => new Set(prev).add(userId));
     });
-  });
 
-  
+    // When a user goes offline
+    socket.on('user_offline', (userId) => {
+      setOnlineUsers(prev => {
+        const updated = new Set(prev);
+        updated.delete(userId);
+        return updated;
+      });
+    });
+
+
     // Listen for new messages
     const handleNewMessage = (message) => {
-      // Clean up previous listeners first
-      socket.off('new_message');
-      socket.off('message_read');
+      // Clean up previous listeners first (this might be causing issues with multiple listeners)
+      // Remove this line
+      // socket.off('message_read'); // Remove this line
 
       console.log("msg2222222:::", message);
       if (activeConversation && message.conversation_id === activeConversation.id) {
@@ -311,7 +310,7 @@ const handleChange = (e) => {
           updated.splice(index, 1);
           updated.unshift(conversation);
         }
-
+socket.off('new_message'); 
         return updated;
       });
     };
@@ -331,9 +330,9 @@ const handleChange = (e) => {
     return () => {
       socket.off('new_message', handleNewMessage);
       socket.off('message_read', handleMessageRead);
-      socket.off('typing', handleTyping);
-       socket.off('user_online');
-    socket.off('user_offline');
+      socket.off('typing', handleTyping); // Ensure typing is cleaned up
+      socket.off('user_online');
+      socket.off('user_offline');
 
     };
   }, [socket, user, activeConversation]);
@@ -365,35 +364,36 @@ const handleChange = (e) => {
 
     fetchMessages();
 
-    if (isMobile) {
-      setShowConversations(true);
+    // On mobile, if an active conversation is set, hide the conversation list
+    if (isMobile && activeConversation) {
+      setShowConversations(false); // Hide the conversation list
     }
   }, [activeConversation, isMobile]);
 
   useEffect(() => {
-  socket.on('typing', handleTyping);
-  
-  return () => {
-    socket.off('typing', handleTyping); // Clean up
-  };
-}, [socket, activeConversation]);
+    socket.on('typing', handleTyping);
+
+    return () => {
+      socket.off('typing', handleTyping); // Clean up
+    };
+  }, [socket, activeConversation]);
 
   useEffect(() => {
-  return () => {
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-    
-    // Send stop typing when component unmounts if user was typing
-    if (isTyping && activeConversation) {
-      socket.emit('typing', {
-        conversationId: activeConversation.id,
-        userId: String(user.id),
-        isTyping: false,
-      });
-    }
-  };
-}, [isTyping, activeConversation, socket, user?.id]);
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Send stop typing when component unmounts if user was typing
+      if (isTyping && activeConversation) {
+        socket.emit('typing', {
+          conversationId: activeConversation.id,
+          userId: String(user.id),
+          isTyping: false,
+        });
+      }
+    };
+  }, [isTyping, activeConversation, socket, user?.id]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -411,18 +411,18 @@ const handleChange = (e) => {
       const response = await sendMessage(activeConversation.id, newMessage);
       const sentMessage = response.data.message;
 
-       if (typingTimeoutRef.current) {
-    clearTimeout(typingTimeoutRef.current);
-  }
-  
-  if (isTyping) {
-    setIsTyping(false);
-    socket.emit('typing', {
-      conversationId: activeConversation?.id,
-      userId: String(user.id),
-      isTyping: false,
-    });
-  }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      if (isTyping) {
+        setIsTyping(false);
+        socket.emit('typing', {
+          conversationId: activeConversation?.id,
+          userId: String(user.id),
+          isTyping: false,
+        });
+      }
       setMessages(prev => [...prev, sentMessage]);
 
       setConversations(prev => {
@@ -467,9 +467,33 @@ const handleChange = (e) => {
     });
   };
 
+  // Function to go back to the conversations list and clear active conversation
   const handleBackToConversations = () => {
-    setShowConversations(true);
+    setActiveConversation(null); // Clear active conversation
+    setShowConversations(true); // Show conversations list
+    setShowAllUsers(false); // Make sure to show conversations not all users initially
   };
+
+  // Function to handle starting a conversation or switching to existing one
+  const handleConversationOrUserClick = async (userItem, existingConv) => {
+    if (existingConv) {
+      setActiveConversation(existingConv);
+    } else {
+      try {
+        const response = await startConversation(
+          userItem.id,
+          `Hi ${userItem.display_name}, \nI'd like to connect with you!`
+        );
+        const newConv = response.data.conversation;
+        setConversations(prev => [newConv, ...prev]);
+        setActiveConversation(newConv);
+      } catch (error) {
+        console.error('Error starting conversation:', error);
+      }
+    }
+    // The useEffect watching activeConversation will handle setShowConversations(false) for mobile
+  };
+
 
   if (authLoading) {
     return (
@@ -478,7 +502,7 @@ const handleChange = (e) => {
       </Box>
     );
   }
-  
+
   const renderUsersList = () => {
     if (usersLoading) {
       return (
@@ -487,7 +511,7 @@ const handleChange = (e) => {
         </Box>
       );
     }
-  
+
     return (
       <List sx={{ overflow: 'auto', flex: 1 }}>
         {allUsers.length === 0 ? (
@@ -499,37 +523,17 @@ const handleChange = (e) => {
             .filter(u => u.id !== user?.id) // Exclude current user
             .map((userItem) => {
               // Check if there's an existing conversation
-              const existingConv = conversations.find(c => 
+              const existingConv = conversations.find(c =>
                 c.other_user.id === userItem.id
               );
-  
+
               return (
                 <React.Fragment key={userItem.id}>
                   <ListItem
                     button
-                    onClick={async () => {
-                      if (existingConv) {
-                        setActiveConversation(existingConv);
-                        setShowConversations(false);
-                      } else {
-                        try {
-                          const response = await startConversation(
-                            userItem.id, 
-                            `Hi ${userItem.display_name}, \nI'd like to connect with you!`
-                          );
-                          const newConv = response.data.conversation;
-                          setConversations(prev => [newConv, ...prev]);
-                          setActiveConversation(newConv);
-                          setShowConversations(false);
-                        } catch (error) {
-                          console.error('Error starting conversation:', error);
-                        }
-                      }
-                      // if (isMobile) {
-                      //   setShowAllUsers(false);
-                      // }
-                    }}
+                    onClick={() => handleConversationOrUserClick(userItem, existingConv)}
                   >
+                      
                     <ListItemAvatar>
                       <Badge
                         overlap="circular"
@@ -564,7 +568,7 @@ const handleChange = (e) => {
                             sx={{
                               display: 'inline-block',
                               maxWidth: '180px',
-                              fontStyle: existingConv.unread_count > 0 ? 'bold' : 'normal'
+                              fontWeight: existingConv.unread_count > 0 ? 'bold' : 'normal'
                             }}
                           >
                             {existingConv.last_message
@@ -590,10 +594,10 @@ const handleChange = (e) => {
       </List>
     );
   };
- 
+
   return (
-    <ChatContainer sx={{  width: '100%' }}>
-      <Grid container  sx={{ height: '100%', width: '100%' }}>
+    <ChatContainer sx={{ width: '100%' }}>
+      <Grid container sx={{ height: '100%', width: '100%' }}>
         {/* Conversations List */}
         <Grid item xs={12} md={4} sx={{ height: '100%' }}>
           <ConversationList
@@ -602,9 +606,21 @@ const handleChange = (e) => {
             showConversations={showConversations}
           >
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-              <Typography variant="h6" gutterBottom>
-                Messages
-              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="h6">
+                  Messages
+                </Typography>
+                {/* 'X' Close icon for conversation list on mobile when a conversation is active */}
+                {isMobile && activeConversation && (
+                  <IconButton
+                    edge="end"
+                    onClick={() => setShowConversations(false)} // Hide the conversation list
+                    sx={{ ml: 1 }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                )}
+              </Box>
               <TextField
                 fullWidth
                 placeholder="Search conversations..."
@@ -621,118 +637,119 @@ const handleChange = (e) => {
               />
 
               <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-    <Typography gutterBottom sx={{
-      fontWeight: 'bold',
-      background: 'rgba(178, 209, 224, 0.73)',
-      borderBottom: '2px solid #ccc',
-      borderColor: 'primary.main',
-      px:2,
-      pt:1,
-      display: 'inline-block',
-      color: 'primary.main',
-      pb: 0.5,
-    }}>
-      {showAllUsers ? 'All Users' : 'Conversations'}
-    </Typography>
-    <Button 
-      variant="outlined" 
-      size="small"
-      onClick={() => {
-        let newval=!showAllUsers;
-        setShowAllUsers(newval);
-        if (!showAllUsers && allUsers.length === 0) {
-          fetchAllUsers();
-        }
-      }}
-    >
-      {showAllUsers ? 'Conversations' : 'All Users'}
-    </Button>
-  </Box></Box>
-            </Box>
-                               
-{showAllUsers ? renderUsersList() : ( 
-  
-            <List sx={{ overflow: 'auto', flex: 1 }}>
-              {loading.conversations && conversations.length === 0 ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-                  <CircularProgress />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography gutterBottom sx={{
+                    fontWeight: 'bold',
+                    background: 'rgba(178, 209, 224, 0.73)',
+                    borderBottom: '2px solid #ccc',
+                    borderColor: 'primary.main',
+                    px: 2,
+                    pt: 1,
+                    display: 'inline-block',
+                    color: 'primary.main',
+                    pb: 0.5,
+                  }}>
+                    {showAllUsers ? 'All Users' : 'Conversations'}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => {
+                      let newval = !showAllUsers;
+                      setShowAllUsers(newval);
+                      if (!showAllUsers && allUsers.length === 0) {
+                        fetchAllUsers();
+                      }
+                    }}
+                  >
+                    {showAllUsers ? 'Conversations' : 'All Users'}
+                  </Button>
                 </Box>
-              ) : filteredConversations.length === 0 ? (
-                <ListItem>
-                  <ListItemText
-                    primary="No conversations found"
-                    secondary={searchQuery ? "Try a different search term" : "Start a new conversation"}
-                  />
-                </ListItem>
-              ) : (
-                filteredConversations.map((conversation) => (
-                  <React.Fragment key={conversation.id}>
-                    <ListItem
-                      button
-                      selected={activeConversation?.id === conversation.id}
-                      onClick={() => setActiveConversation(conversation)}
-                    >
-                      <ListItemAvatar>
-                        <Badge
-                          color="primary"
-                          badgeContent={conversation.unread_count}
-                          invisible={!conversation.unread_count}
-                        >
-                          <Avatar src={conversation.other_user.photo_url}>
-                            {conversation.other_user.display_name?.charAt(0)}
-                          </Avatar>
-                        </Badge>
-                      </ListItemAvatar>
-                      
-                      <ListItemText
-                        primary={<>{conversation.other_user.display_name}  {onlineUsers.has(conversation.other_user.id) && (
-        <span style={{ color: 'green', fontSize: '0.75rem', marginLeft: '5px' }}>
-          ● Online
-        </span>
-      )}</>}
-                        secondary={
-                          conversation.last_message ? (
-                            <Typography
-                              component="span"
-                              variant="body2"
-                              color="textSecondary"
-                              noWrap
-                              sx={{
-                                display: 'inline-block',
-                                maxWidth: '180px',
-                                fontWeight: conversation.unread_count > 0 ? 'bold' : 'normal'
-                              }}
-                            >
-                              {conversation.last_message.content}
-                            </Typography>
-                          ) : "No messages yet"
-                        }
-                      />
-                      {conversation.last_message && (
-                        <Typography variant="caption" color="textSecondary">
-                          {formatMessageTime(conversation.last_message.created_at)}
-                        </Typography>
-                      )}
-                    </ListItem>
-                    
-                    <Divider />
-                  </React.Fragment>
-                ))
-              )}
-            </List>
+              </Box>
+            </Box>
+
+            {showAllUsers ? renderUsersList() : (
+
+              <List sx={{ overflow: 'auto', flex: 1 }}>
+                {loading.conversations && conversations.length === 0 ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                    <CircularProgress />
+                  </Box>
+                ) : filteredConversations.length === 0 ? (
+                  <ListItem>
+                    <ListItemText
+                      primary="No conversations found"
+                      secondary={searchQuery ? "Try a different search term" : "Start a new conversation"}
+                    />
+                  </ListItem>
+                ) : (
+                  filteredConversations.map((conversation) => (
+                    <React.Fragment key={conversation.id}>
+                      <ListItem
+                        button
+                        selected={activeConversation?.id === conversation.id}
+                        onClick={() => handleConversationOrUserClick(null, conversation)} // Pass conversation directly
+                      >
+                        <ListItemAvatar>
+                          <Badge
+                            color="primary"
+                            badgeContent={conversation.unread_count}
+                            invisible={!conversation.unread_count}
+                          >
+                            <Avatar src={conversation.other_user.photo_url}>
+                              {conversation.other_user.display_name?.charAt(0)}
+                            </Avatar>
+                          </Badge>
+                        </ListItemAvatar>
+
+                        <ListItemText
+                          primary={<>{conversation.other_user.display_name}  {onlineUsers.has(conversation.other_user.id) && (
+                            <span style={{ color: 'green', fontSize: '0.75rem', marginLeft: '5px' }}>
+                              ● Online
+                            </span>
+                          )}</>}
+                          secondary={
+                            conversation.last_message ? (
+                              <Typography
+                                component="span"
+                                variant="body2"
+                                color="textSecondary"
+                                noWrap
+                                sx={{
+                                  display: 'inline-block',
+                                  maxWidth: '180px',
+                                  fontWeight: conversation.unread_count > 0 ? 'bold' : 'normal'
+                                }}
+                              >
+                                {conversation.last_message.content}
+                              </Typography>
+                            ) : "No messages yet"
+                          }
+                        />
+                        {conversation.last_message && (
+                          <Typography variant="caption" color="textSecondary">
+                            {formatMessageTime(conversation.last_message.created_at)}
+                          </Typography>
+                        )}
+                      </ListItem>
+
+                      <Divider />
+                    </React.Fragment>
+                  ))
+                )}
+              </List>
             )}
           </ConversationList>
-        
+
         </Grid>
 
         {/* Message Area */}
-        <Grid item xs={12} md={8} sx={{ height: '100%',flexGrow:2 }}>
+        <Grid item xs={12} md={8} sx={{ height: '100%', flexGrow: 2 }}>
           <MessageArea
             elevation={0}
             isMobile={isMobile}
             showConversations={showConversations}
-           
+
           >
             {activeConversation ? (
               <>
@@ -741,17 +758,17 @@ const handleChange = (e) => {
                   p: 2,
                   borderBottom: 1,
                   borderColor: 'divider',
-                  width:'80%',
+                  width: '80%', // Consider adjusting this if it causes layout issues
                   display: 'flex',
                   alignItems: 'center'
                 }}>
                   {isMobile && (
                     <IconButton
                       edge="start"
-                      onClick={handleBackToConversations}
-                      sx={{ mr: 1 }}
+                      onClick={handleBackToConversations} // This will show the conversation list
+                      sx={{ ml: 3,mt:3 }}
                     >
-                      <ArrowBackIcon />
+                      <SegmentIcon />
                     </IconButton>
                   )}
                   <Avatar
@@ -760,10 +777,13 @@ const handleChange = (e) => {
                   >
                     {activeConversation.other_user.display_name?.charAt(0)}
                   </Avatar>
-                  <Box sx={{ flex: 1 ,width:'100%',}}>
+                  <Box sx={{ flex: 1, width: '100%', }}>
                     <Typography variant="h6">
                       {activeConversation.other_user.display_name}
+
                     </Typography>
+                     {/* New icon for showing the conversation list on mobile */}
+                 
                     <Typography variant="body2" color="textSecondary">
                       {activeConversation.other_user.role === 'employer' ? 'Employer' : 'Job Seeker'}
                     </Typography>
@@ -771,12 +791,13 @@ const handleChange = (e) => {
                   <IconButton>
                     <MoreVertIcon />
                   </IconButton>
+                  
                 </Box>
 
                 {/* Messages */}
                 <MessageList>
                   {loading.messages ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 ,width:'100%', }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 3, width: '100%', }}>
                       <CircularProgress />
                     </Box>
                   ) : messages.length === 0 ? (
@@ -785,21 +806,21 @@ const handleChange = (e) => {
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      height: '100%',width:'100%',
+                      height: '100%', width: '100%',
                     }}>
                       <Typography variant="body1" color="textSecondary">
                         No messages yet
                       </Typography>
-                      <Typography variant="body2" color="textSecondary">
+                      <Typography variant="body2" color="textSecondary" align="center">
                         Start the conversation by sending a message
                       </Typography>
                     </Box>
                   ) : (
                     messages.map((message) => {
-if (!message.sender_id || !user?.id) return;
+                      if (!message.sender_id || !user?.id) return null; // Added null return for safety
                       const isOwn = message.sender_id === user?.id;
                       return (
-                        <MessageItem key={message.id} isOwn={isOwn} sx={{width:'100%'}}>
+                        <MessageItem key={message.id} isOwn={isOwn} sx={{ width: '100%' }}>
                           {!isOwn && (
                             <Avatar
                               src={activeConversation.other_user.photo_url}
@@ -828,16 +849,16 @@ if (!message.sender_id || !user?.id) return;
                     })
                   )}
                   <div ref={messagesEndRef} />
-                  
-              {otherUserTyping && (
-  <Typography variant="caption" color="textSecondary" sx={{color:"rgb(51, 159, 221)",pb:2}}>
-    {activeConversation.other_user.display_name} is typing...
-  </Typography>
-)}
+
+                  {otherUserTyping && (
+                    <Typography variant="caption" color="textSecondary" sx={{ color: "rgb(51, 159, 221)", pb: 2 }}>
+                      {activeConversation.other_user.display_name} is typing...
+                    </Typography>
+                  )}
                 </MessageList>
 
                 {/* Message Input */}
-                <MessageInput component="form" onSubmit={handleSendMessage} sx={{width:'100%'}}>
+                <MessageInput component="form" onSubmit={handleSendMessage} sx={{ width: '100%' }}>
                   <TextField
                     fullWidth
                     placeholder="Type a message..."
@@ -863,7 +884,7 @@ if (!message.sender_id || !user?.id) return;
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100%',width:'100%',
+                height: '100%', width: '100%',
                 p: 3
               }}>
                 <Typography variant="h6" gutterBottom>
