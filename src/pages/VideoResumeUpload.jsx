@@ -49,6 +49,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useVideoContext } from '../context/VideoContext';
 
 
+
 // Styled components (keep the same as before)
 const UploadBox = styled(Box)(({ theme }) => ({
   border: "2px dashed #f0f0f0",
@@ -143,6 +144,7 @@ const VideoResumeUpload = () => {
   const mediaRecorderRef = useRef(null);
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
+  
   
   // State for video upload/recording
   const [videoFile, setVideoFile] = useState(null);
@@ -1011,11 +1013,15 @@ const startRecording = async () => {
   );
 
   
+  
   return (
     <Box sx={{ 
       background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
       minHeight: "100vh",
-      py: 3
+      py: 3 ,pt: {
+      xs: 20,  
+      sm: 16   
+    }
     }}>
       <Container maxWidth="sm">
         <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
