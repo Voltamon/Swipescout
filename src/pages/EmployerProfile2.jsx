@@ -43,7 +43,10 @@ import {
   Description as DescriptionIcon
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getEmployerProfile, getEmployerVideos, getEmployerJobs } from '../services/employerService';
+import employerService  from '../services/employerService';
+
+const { getEmployerProfile, getEmployerVideos, getEmployerJobs } = employerService;
+
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({

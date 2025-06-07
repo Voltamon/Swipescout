@@ -74,6 +74,7 @@ const Layout = ({role}) => {
     /^\/login(\/.*)?$/,           // /login or /login-form (if login-form is considered a subpath of login)
     /^\/signup(\/.*)?$/,
     /^\/video-feed(\/.*)?$/,
+    /^\/video-player(\/.*)?$/,
     // /^\/Employer-explore-sidebar(\/.*)?$/,
     // /^\/jobseeker-explore-sidebar(\/.*)?$/,
     /^\/jobseeker-video-feed(\/.*)?$/, // This will match /jobseeker-video-feed, /jobseeker-video-feed/1, /jobseeker-video-feed/abc etc.

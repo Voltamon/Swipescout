@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useVideoContext } from '../context/VideoContext';
-import { 
-  Container, Grid, Card, CardMedia, CardContent, 
+import {
+  Container, Grid, Card, CardMedia, CardContent,
   Typography, Button, CircularProgress, Box,
   LinearProgress, Chip, Stack, Alert, IconButton,
   Pagination
@@ -9,6 +9,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Error, CloudUpload, Replay } from '@mui/icons-material';
 import api from '../services/api';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import { VolumeUp, VolumeOff } from '@mui/icons-material';
+
 
 const VideosPage = () => {
   const { videos: localVideos, retryUpload } = useVideoContext();
@@ -18,17 +21,25 @@ const VideosPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [uploadLimitReached, setUploadLimitReached] = useState(false);
+  const [hoveredVideo, setHoveredVideo] = useState(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const videoRefs = useRef({});
   const navigate = useNavigate();
 
-  const VIDEOS_PER_PAGE = 9;
+  const VIDEOS_PER_PAGE = 10;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    // localStorage.removeItem('videoResumes'); // Clear previous data
 
+    const toggleMute = () => {
+  setIsMuted(prev => !prev);
+};
 
   // Fetch server videos with pagination
   const fetchServerVideos = async (pageNum) => {
     try {
       setLoading(true);
-      const response = await api.get(`${API_BASE_URL}/api/job-seekers/videos?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
+      const response = await api.get(`/job-seekers/videos?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
       setServerVideos(response.data.videos);
       setTotalPages(response.data.totalPages || 1);
       setUploadLimitReached(response.data.uploadLimitReached || false);
@@ -44,7 +55,7 @@ const VideosPage = () => {
   // Check upload limit from server
   const checkUploadLimit = async () => {
     try {
-      const response = await api.get(`${API_BASE_URL}/api/job-seekers/upload-limit`);
+      const response = await api.get(`/job-seekers/upload-limit`);
       setUploadLimitReached(response.data.limitReached);
       return response.data.limitReached;
     } catch (err) {
@@ -71,6 +82,44 @@ const VideosPage = () => {
     setPage(value);
   };
 
+const handleVideoHover = (videoId, isHovering) => {
+  const allRefs = videoRefs.current;
+
+  // Stop all videos first
+  Object.entries(allRefs).forEach(([id, videoEl]) => {
+    if (videoEl && !videoEl.paused) {
+      videoEl.pause();
+      videoEl.currentTime = 0;
+    }
+  });
+
+  if (isHovering) {
+    setHoveredVideo(videoId);
+    const videoEl = videoRefs.current[videoId];
+    if (videoEl) {
+      videoEl.play().catch(e => console.log('Autoplay prevented:', e));
+    }
+  } else {
+    const videoEl = videoRefs.current[videoId];
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.currentTime = 0;
+    }
+    setHoveredVideo(null);
+  }
+};
+
+
+  const handleVideoClick = (video) => {
+    navigate(`/video-player/${video.id}`, {
+      state: {
+        currentVideo: video,
+        allVideos: filteredVideos,
+    initialPage: page,
+      }
+    });
+  };
+
   // Combine local and server videos, with local videos first
   const allVideos = [
     ...localVideos.map(v => ({ ...v, isLocal: true })),
@@ -88,8 +137,8 @@ const VideosPage = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-          My Video Resumes
+        <Typography variant="h5" sx={{ fontWeight: 'bold' ,color: 'rgba(29, 99, 139, 0.6)' ,fontFamily: 'arial'}}>
+          My Videos
         </Typography>
         <Button 
           variant="contained" 
@@ -134,125 +183,179 @@ const VideosPage = () => {
         </Box>
       ) : (
         <>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} sx={{ alignItems:'center', justifyContent:'center'}}>
             {filteredVideos.map((video) => (
               <Grid item xs={12} sm={6} md={4} key={video.id}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Card
+                  sx={{
+                    width: '350px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    borderRadius: 2,
+                    boxShadow: 2,
+                    transition: 'transform 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'scale(1.02)',
+                    },
+                  }}
+                  onMouseEnter={() => handleVideoHover(video.id, true)}
+                  onMouseLeave={() => handleVideoHover(video.id, false)}
+                  onClick={() => handleVideoClick(video)}
+                >
                   <CardMedia
                     component="div"
                     sx={{
-                      height: "300px",
-                      paddingTop: '56.25%',
+                      paddingTop: '56.25%', // 16:9 aspect ratio
                       backgroundColor: '#000',
-                      position: 'relative'
+                      position: 'relative',
+                      overflow: 'hidden',
+                      height: '600px',
+                      borderRadius: '8px 8px 0 0',
+                      cursor: 'pointer'
                     }}
                   >
                     {video.video_url && (
                       <video
+                        ref={el => videoRefs.current[video.id] = el}
                         src={video.video_url}
-                        controls
                         style={{
                           position: 'absolute',
                           top: 0,
                           left: 0,
                           width: '100%',
-                          height: '100%',
-                          objectFit: 'cover'
+                          height: '600px',
+                          objectFit: 'cover',
+                          backgroundColor: '#000',
                         }}
+                        muted={isMuted}
+                        loop
+                        playsInline
+                        disablePictureInPicture
+                        controlsList="nodownload"
                       />
                     )}
-                  </CardMedia>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography gutterBottom variant="h6" sx={{ flexGrow: 1 }}>
-                        {video.video_title}
+                  <IconButton
+  onClick={(e) => {
+    e.stopPropagation(); // don't trigger card click
+    toggleMute();
+  }}
+  sx={{
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 2,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    color: 'white'
+  }}
+>
+  {isMuted ? <VolumeOff /> : <VolumeUp />}
+</IconButton>
+                    {/* Overlay Content */}
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: 25,
+                        left: 0,
+                        right: 0,
+                        p: 0,
+                        color: 'white',
+                        background: 'linear-gradient(to top, rgba(0,0,0,0.1), transparent)',
+                        zIndex: 1,
+                      }}
+                    >
+    
+                      <Typography gutterBottom noWrap sx={{color: 'white', pl: 1 ,pb: 0 ,mp: 0}}>
+                        {video.video_title || 'Untitled Video'}
                       </Typography>
-                      {video.status === 'completed' && !video.isLocal && (
-                        <CheckCircle color="success" />
+
+                      <Typography variant="body2" sx={{color: 'white', pl: 1 ,pb: 0 ,mp: 0}}>
+                        {video.video_type || 'Uncategorized'} •{' '}
+                        {Math.round(video.video_duration || 0)}s
+                      </Typography>
+
+                      {video.hashtags && (
+                        <Stack direction="row" spacing={1} sx={{ mt: 0, flexWrap: 'wrap', gap: 0 ,pb: 0 ,mp: 0}}>
+                          {(() => {
+                            try {
+                              let tags = [];
+                              if (Array.isArray(video.hashtags)) {
+                                tags = video.hashtags;
+                              } else {
+                                try {
+                                  const parsed = JSON.parse(video.hashtags);
+                                  tags = Array.isArray(parsed) ? parsed : [parsed];
+                                } catch (e) {
+                                  tags = video.hashtags.split(',').map(t => t.trim()).filter(Boolean);
+                                }
+                              }
+                              return tags.map((tag, i) => (
+                                <Chip
+                                  key={`${video.id}-${i}`}
+                                  label={`#${tag}`}
+                                  size="small"
+                                  sx={{ color: 'white', borderColor: 'white' }}
+                                />
+                              ));
+                            } catch (error) {
+                              console.error('Error parsing hashtags:', error);
+                              return null;
+                            }
+                          })()}
+                        </Stack>
                       )}
-                      {video.isLocal && (
-                        <Chip label="Local" size="small" color="info" />
-                      )}
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
-                      {video.video_type} • {Math.round(video.video_duration || 0)}s
+                      {video.isLocal && (<>{video.status === 'uploading' && (
+                    <>
+                      <Typography variant="caption" display="block">
+                        Uploading... {video.progress}%
+                      </Typography>
+                      <LinearProgress
+                        variant="determinate"
+                        value={video.progress}
+                      />
+                    </>
+                  )}
+                  {video.status === 'processing' && (
+                    <Typography variant="caption" display="block">
+                      Processing...
                     </Typography>
-                    {video.hashtags && (
-  <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 0.5 }}>
-    {(() => {
-      try {
-        // Handle different formats:
-        // 1. Already an array
-        // 2. JSON string that can be parsed
-        // 3. Comma-separated string
-        let tags = [];
-        if (Array.isArray(video.hashtags)) {
-          tags = video.hashtags;
-        } else {
-          try {
-            // First try to parse as JSON
-            const parsed = JSON.parse(video.hashtags);
-            tags = Array.isArray(parsed) ? parsed : [parsed];
-          } catch (e) {
-            // If JSON parsing fails, try splitting by commas
-            tags = video.hashtags.split(',').map(t => t.trim()).filter(t => t);
-          }
-        }
-        return tags.map((tag, i) => (
-          <Chip key={`${video.id}-${i}`} label={tag} size="small" />
-        ));
-      } catch (error) {
-        console.error('Error parsing hashtags:', error);
-        return null;
-      }
-    })()}
-  </Stack>
-)}
-                    <Box sx={{ mt: 1 }}>
-                      <Typography variant="caption" color="text.secondary">
-                        {new Date(video.submitted_at).toLocaleString()}
-                      </Typography>
-                      {video.isLocal && (
-                        <Box sx={{ mt: 1 }}>
-                          {video.status === 'uploading' && (
-                            <>
-                              <Typography variant="caption" display="block">
-                                Uploading... {video.progress}%
-                              </Typography>
-                              <LinearProgress 
-                                variant="determinate" 
-                                value={video.progress} 
-                              />
-                            </>
-                          )}
-                          {video.status === 'processing' && (
-                            <Typography variant="caption" display="block">
-                              Processing...
-                            </Typography>
-                          )}
-                          {video.status === 'failed' && (
-                            <>
-                              <Typography variant="caption" color="error" display="block">
-                                Upload Failed: {video.error}
-                              </Typography>
-                              <Button
-                                variant="outlined"
-                                color="error"
-                                size="small"
-                                startIcon={<Replay />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  retryUpload(video.id);
-                                }}
-                                sx={{ mt: 1 }}
-                              >
-                                Retry
-                              </Button>
-                            </>
-                          )}
-                        </Box>
+                  )}<CloudSyncIcon/></>)}
+                    </Box>
+                  </CardMedia>
+
+                  {/* CardContent - Additional info below the video */}
+                  <CardContent sx={{ flexGrow: 1, pt: 2, pb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      {video.status === 'completed' && !video.isLocal && (
+                        <CheckCircle color="success" fontSize="small" sx={{ mr: 1 }} />
                       )}
                     </Box>
+
+                    {video.isLocal && (
+                      <Box sx={{ mt: 0 }}>
+                        
+                        {video.status === 'failed' && (
+                          <>
+                            <Typography variant="caption" color="error" display="block">
+                              Upload Failed: {video.error}
+                            </Typography>
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              size="small"
+                              startIcon={<Replay />}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                retryUpload(video.id);
+                              }}
+                              sx={{ mt: 1 }}
+                            >
+                              Retry
+                            </Button>
+                          </>
+                        )}
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>

@@ -9,7 +9,11 @@ import {
   Notifications as NotificationsIcon
 } from '@mui/icons-material';
 
+import { useAuth } from '../hooks/useAuth';
+
 const MobileNavigation = () => {
+    const { user, role } = useAuth();
+    
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,7 +33,7 @@ const MobileNavigation = () => {
     setValue(newValue);
     switch (newValue) {
       case 0:
-        navigate('#');
+        navigate(role === 'employer' ? '/employer-dashboard' : '/dashboard');
         break;
       case 1:
         navigate('/search');

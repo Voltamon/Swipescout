@@ -74,11 +74,13 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import JobSeekersVideosPage from './pages/JobSeekersVideosPage';
 import JobSeekerProfile from './pages/JobSeekerProfile';
 // import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
-// import EmployerProfile2 from "./pages/EmployerProfile2";
+import EmployerProfile2 from "./pages/EmployerProfile2";
 // import JobsListingPage from "./pages/JobsListingPage";
 // import PostJobPage_2 from "./pages/PostJobPage_2";
 import { VideoProvider } from './context/VideoContext';
 import VideosPage from './pages/VideosPage';
+import VideoFeedViewer from './pages/VideoFeedViewer';
+
    
 
 
@@ -136,8 +138,8 @@ function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/chat/:conversationId" element={<Chat />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile_ />} />
-            <Route path="/profile/:userId" element={<Profile_ />} />
+            <Route path="/profile_" element={<Profile_ />} />
+            <Route path="/profile_/:userId" element={<Profile_ />} />
             {/* Job Seeker Routes */}
             <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} />
             <Route path="/job-videos" element={<JobVideos />} />
@@ -172,11 +174,14 @@ function App() {
             <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
             <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
             <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
+            <Route path="/EmployerProfile2" element={<EmployerProfile2 />} />
           {/* <Route path="/EditJobSeekerProfile" element={<EditJobSeekerProfile />} />
-            // <Route path="/EmployerProfile2" element={<EmployerProfile2 />} />
             // <Route path="/JobsListingPage" element={<JobsListingPage />} />
             // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
             <Route path="/videos" element={<VideosPage />} />
+
+<Route path="/video-player/:id" element={<VideoFeedViewer />} />
+
 
           </Route>
         </Routes>
