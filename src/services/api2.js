@@ -1,19 +1,17 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL+'/api' || 'http://localhost:5000/api';
-
-// إنشاء نسخة من axios مع الإعدادات الأساسية
+// Create axios instance with base URL and default headers
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// إضافة معترض للطلبات لإضافة توكن المصادقة
+// Add request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
-    const token = JSON.parse(localStorage.getItem('accessToken'));
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -24,6 +22,20 @@ api.interceptors.request.use(
   }
 );
 
+// Add response interceptor for error handling
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Handle token expiration
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 // User and Auth API services
 export const registerUser = (userData) => {
@@ -152,28 +164,28 @@ export const deleteUserVideo = (id) => {
 };
 
 // Employer API services
-export const getEmployerProfile = () => {
-  return api.get(`/employer/company-profile`) ;//: api.get('/employers/company');
+export const getEmployerProfile = (id) => {
+  return id ? api.get(`/employers/${id}`) : api.get('/employers/company');
 };
 
-export const updateEmployerProfile = (id,companyData) => {
-  return api.put(`/employer/company-profile/${id}`, companyData);
+export const updateEmployerProfile = (companyData) => {
+  return api.put('/employers/company', companyData);
 };
 
-export const uploadCompanyLogo = (id,formData) => {
-  return api.post(`/employer/cupload-logo/${id}`, formData, {
+export const uploadCompanyLogo = (formData) => {
+  return api.post('/employers/company/logo', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
 };
 
-export const getEmployerJobs = () => {
-  return api.get(`/employer/jobs`); //: api.get('/employers/jobs');
+export const getEmployerJobs = (employerId) => {
+  return employerId ? api.get(`/employers/${employerId}/jobs`) : api.get('/employers/jobs');
 };
 
-export const getEmployerVideos = () => {
-  return api.get(`/employer/company/videos`);// : api.get('/employers/videos');
+export const getEmployerVideos = (employerId) => {
+  return employerId ? api.get(`/employers/${employerId}/videos`) : api.get('/employers/videos');
 };
 
 // Job API services
@@ -325,46 +337,5 @@ export const uploadVideo = (formData, onUploadProgress) => {
     },
   });
 };
-// إضافة معترض للاستجابات للتعامل مع أخطاء المصادقة
-// api.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   async (error) => {
-//     const originalRequest = error.config;
-    
-//     // إذا كان الخطأ 401 (غير مصرح) وليس محاولة تحديث التوكن
-//     if (error.response.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh') {
-//       originalRequest._retry = true;
-      
-//       try {
-//         // محاولة تحديث التوكن
-//         const refreshToken = localStorage.getItem('refreshToken');
-//         if (!refreshToken) {
-//           throw new Error('No refresh token available');
-//         }
-        
-//         const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-//           refresh_token: refreshToken
-//         });
-        
-//         const { token } = response.data;
-//         localStorage.setItem('token', token);
-        
-//         // إعادة الطلب الأصلي مع التوكن الجديد
-//         originalRequest.headers['Authorization'] = `Bearer ${token}`;
-//         return api(originalRequest);
-//       } catch (refreshError) {
-//         // إذا فشل تحديث التوكن، قم بتسجيل الخروج
-//         localStorage.removeItem('token');
-//         localStorage.removeItem('refreshToken');
-//         // window.location.href = '/login';
-//         return Promise.reject(refreshError);
-//       }
-//     }
-    
-//     return Promise.reject(error);
-//   }
-// );
 
 export default api;

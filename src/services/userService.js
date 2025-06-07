@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAuthHeader } from './authService';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL +'/api/'|| 'http://localhost:5000/api';
 
 // User Settings Functions
 export const getUserSettings = async () => {
@@ -12,6 +12,54 @@ export const getUserSettings = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching user settings:', error);
+    throw error;
+  }
+};
+
+export const getUserExperiences = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/experiences`, {
+      headers: getAuthHeader()
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user experiences:', error);
+    throw error;
+  }
+};
+ 
+export const getUserProfile = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/profile`, {
+      headers: getAuthHeader()
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
+};
+
+export const getUserSkills = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/job-seekers/skills`, {
+      headers: getAuthHeader()
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user skills:', error);
+    throw error;
+  }
+};
+
+export const getUserVideos = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/job-seekers/videos`, {
+      headers: getAuthHeader()
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user videos:', error);
     throw error;
   }
 };
