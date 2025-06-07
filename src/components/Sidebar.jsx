@@ -32,6 +32,7 @@ import { useNavigate, useLocation  } from 'react-router-dom';
 import { useAuth } from "../hooks/useAuth";
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import VideocamIcon from '@mui/icons-material/Videocam';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 
 
 const expandedWidth = 200;
@@ -50,7 +51,8 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    { text: 'Marketing', icon: <VideocamIcon  />, path: '/MarketingVideos-page' },
+    { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
+    { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
     { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },

@@ -27,7 +27,7 @@ const VideosPage = () => {
   const videoRefs = useRef({});
   const navigate = useNavigate();
 
-  const VIDEOS_PER_PAGE = 10;
+  const VIDEOS_PER_PAGE = 9;
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     // localStorage.removeItem('videoResumes'); // Clear previous data
 
@@ -315,11 +315,11 @@ const handleVideoHover = (videoId, isHovering) => {
                       />
                     </>
                   )}
-                  {video.status === 'processing' && (
+                  {video.status === 'processing' && (<>
                     <Typography variant="caption" display="block">
                       Processing...
-                    </Typography>
-                  )}<CloudSyncIcon/></>)}
+                    </Typography><CloudSyncIcon/></>
+                  )}</>)}
                     </Box>
                   </CardMedia>
 

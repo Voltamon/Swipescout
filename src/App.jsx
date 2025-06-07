@@ -83,6 +83,7 @@ import { VideoProvider } from './context/VideoContext';
 import VideosPage from './pages/VideosPage';
 import VideoFeedViewer from './pages/VideoFeedViewer';
 
+
    
 
 
@@ -181,6 +182,7 @@ function App() {
             // <Route path="/JobsListingPage" element={<JobsListingPage />} />
             // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
             <Route path="/videos" element={<VideosPage />} />
+            <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
 
 <Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
 
