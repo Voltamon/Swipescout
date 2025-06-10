@@ -39,7 +39,7 @@ const VideosPage = () => {
   const fetchServerVideos = async (pageNum) => {
     try {
       setLoading(true);
-      const response = await api.get(`/job-seekers/videos?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
+      const response = await api.get(`/videos/?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
       setServerVideos(response.data.videos);
       setTotalPages(response.data.totalPages || 1);
       setUploadLimitReached(response.data.uploadLimitReached || false);
@@ -55,7 +55,7 @@ const VideosPage = () => {
   // Check upload limit from server
   const checkUploadLimit = async () => {
     try {
-      const response = await api.get(`/job-seekers/upload-limit`);
+      const response = await api.get(`/videos/upload-limit`);
       setUploadLimitReached(response.data.limitReached);
       return response.data.limitReached;
     } catch (err) {

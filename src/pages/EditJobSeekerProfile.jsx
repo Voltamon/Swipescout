@@ -71,8 +71,8 @@ import {
   getUserVideos,
   deleteUserVideo,
   uploadProfileImage
-} from '../services/userService';
-import { getAllSkills } from '../services/skillService';
+} from '../services/api';
+// import { getUserSkills } from '../services/api';
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -240,7 +240,7 @@ const EditJobSeekerProfile = () => {
         setSkills(skillsResponse.data.skills);
         
         // Fetch available skills
-        const availableSkillsResponse = await getAllSkills();
+        const availableSkillsResponse = await getUserSkills();
         setAvailableSkills(availableSkillsResponse.data.skills);
         
         // Fetch experiences
@@ -249,7 +249,7 @@ const EditJobSeekerProfile = () => {
         
         // Fetch education
         const educationResponse = await getUserEducation();
-        setEducation(educationResponse.data.education);
+        setEducation(educationResponse.data.educations|| []);
         
         // Fetch videos
         const videosResponse = await getUserVideos();
@@ -1104,9 +1104,9 @@ const EditJobSeekerProfile = () => {
                   {userSkills.map((skill, index) => (
                     <SkillChip
                       key={index}
-                      label={skill}
-                      onDelete={() => handleDeleteSkill(skill)}
-                      onClick={() => handleOpenSkillDialog(skill)}
+                      label={skill.name}
+                      onDelete={() => handleDeleteSkill(skill.id)}
+                      onClick={() => handleOpenSkillDialog(skill.id)}
                     />
                   ))}
                   {userSkills.length === 0 && (
