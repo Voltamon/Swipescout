@@ -79,7 +79,7 @@ const VideoFeedViewer = () => {
   const loadNextPage = async () => {
     setLoadingMore(true);
     try {
-      const res = await api.get(`/job-seekers/videos?page=${page + 1}&limit=10`);
+      const res = await api.get(`/videos/?page=${page + 1}&limit=10`);
       const newVideos = res.data.videos;
       if (!newVideos || newVideos.length === 0) {
         setHasMore(false);
