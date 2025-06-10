@@ -41,7 +41,7 @@ import {
   Twitter as TwitterIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences } from '../services/userService';
+import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences , getUserEducation} from '../services/api.js'; // Adjust the import path as necessary
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -89,6 +89,7 @@ const VideoControls = styled(Box)(({ theme }) => ({
   bottom: 0,
   left: 0,
   right: 0,
+  color: '#fff',
   padding: theme.spacing(1),
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   display: 'flex',
@@ -100,8 +101,9 @@ const VideoActions = styled(Box)(({ theme }) => ({
   position: 'absolute',
   right: theme.spacing(1),
   top: '50%',
-  transform: 'translateY(-50%)',
+  transform: 'translateY(-35%)',
   display: 'flex',
+  color: 'rgb(218, 245, 255)',
   flexDirection: 'column',
   alignItems: 'center',
   gap: theme.spacing(2),
@@ -158,7 +160,7 @@ const VideoCard = styled(Card)(({ theme }) => ({
 
 const VideoCardMedia = styled(CardMedia)(({ theme }) => ({
   height: 0,
-  paddingTop: '177.78%', // 16:9 aspect ratio
+  paddingTop: '0', //177.78% 16:9 aspect ratio
   position: 'relative',
 }));
 
@@ -192,6 +194,7 @@ const JobSeekerProfile = () => {
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [mainVideo, setMainVideo] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Refs
@@ -213,12 +216,16 @@ const JobSeekerProfile = () => {
         
         // Fetch experiences
         const experiencesResponse = await getUserExperiences();
+        const educationResponse = await getUserEducation();
         setExperiences(experiencesResponse.data.experiences);
-        setEducation(experiencesResponse.data.education);
-        
+        setEducation(educationResponse.data.educations);
+        console.log('Education :::::', educationResponse.data.educations);
         // Fetch videos
         const videosResponse = await getUserVideos();
         setVideos(videosResponse.data.videos);
+        const mainVideo = videosResponse.data.videos.find(video => video.video_position === "main");
+
+setMainVideo(mainVideo || { video_url: '' });
         
         setLoading(false);
       } catch (error) {
@@ -229,6 +236,7 @@ const JobSeekerProfile = () => {
     
     fetchUserData();
   }, []);
+  
   
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -254,144 +262,28 @@ const JobSeekerProfile = () => {
   
   // Navigate to edit profile
   const handleEditProfile = () => {
-    navigate('/profile/edit');
+    navigate('/Edit-JobSeeker-Profile');
   };
+  
   // Mock data for demonstration
 const mockProfile = {
-  id: '1',
-  name: 'Ahmed Mohamed',
-  title: 'Frontend Developer',
-  location: 'Riyadh, Saudi Arabia',
-  bio: 'Frontend developer with 5 years of experience in web application development using React and Angular. Specializing in UI design and user experience optimization.',
-  email: 'ahmed@example.com',
-  phone: '+966 50 123 4567',
-  website: 'www.ahmeddev.com',
-  avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-  mainVideo: 'https://www.w3schools.com/html/mov_bbb.mp4',
-  social: {
-    linkedin: 'linkedin.com/in/ahmed',
-    github: 'github.com/ahmed',
-    twitter: 'twitter.com/ahmed'
-  }
+
 };
 
 const mockSkills = [
-  'React', 'Angular', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3',
-  'Material UI', 'Redux', 'Node.js', 'Express', 'MongoDB', 'Git',
-  'Responsive Design', 'UI/UX', 'RESTful APIs', 'GraphQL'
+
 ];
 
 const mockExperiences = [
-  {
-    id: '1',
-    company: 'Advanced Technology Company',
-    position: 'Senior Frontend Developer',
-    startDate: '2020-01',
-    endDate: null,
-    current: true,
-    description: 'Developed user interfaces for web applications using React and TypeScript. Designed and implemented application architecture and managed application state using Redux. Collaborated with a team of developers to improve application performance and user experience.',
-    location: 'Riyadh'
-  },
-  {
-    id: '2',
-    company: 'Global Software Company',
-    position: 'Frontend Developer',
-    startDate: '2018-03',
-    endDate: '2019-12',
-    current: false,
-    description: 'Developed user interfaces for web applications using Angular. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive web applications.',
-    location: 'Jeddah'
-  },
-  {
-    id: '3',
-    company: 'Digital Solutions Company',
-    position: 'Web Developer',
-    startDate: '2016-06',
-    endDate: '2018-02',
-    current: false,
-    description: 'Developed websites using HTML, CSS, and JavaScript. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive websites.',
-    location: 'Dammam'
-  }
+
 ];
 
 const mockEducation = [
-  {
-    id: '1',
-    institution: 'King Saud University',
-    degree: 'Bachelor of Computer Science',
-    field: 'Computer Science',
-    startDate: '2012-09',
-    endDate: '2016-05',
-    description: 'Specialized in software development and software engineering. Graduation project: Developed a web application for project management.',
-    location: 'Riyadh'
-  },
-  {
-    id: '2',
-    institution: 'Programming Academy',
-    degree: 'Advanced Web Development Certificate',
-    field: 'Web Development',
-    startDate: '2016-06',
-    endDate: '2016-08',
-    description: 'Intensive course in web development using the latest technologies.',
-    location: 'Riyadh'
-  }
+
 ];
 
 const mockVideos = [
-  {
-    id: '1',
-    title: 'Introduction to Myself',
-    thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 30,
-    type: 'intro',
-    views: 120
-  },
-  {
-    id: '2',
-    title: 'My React Skills',
-    thumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 45,
-    type: 'skills',
-    views: 85
-  },
-  {
-    id: '3',
-    title: 'My Past Experiences',
-    thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 40,
-    type: 'experience',
-    views: 67
-  },
-  {
-    id: '4',
-    title: 'My Previous Projects',
-    thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 35,
-    type: 'portfolio',
-    views: 92
-  },
-  {
-    id: '5',
-    title: 'Why I am a good fit for the job',
-    thumbnail: 'https://i.ytimg.com/vi/RgKAFK5djSk/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 42,
-    type: 'outro',
-    views: 105
-  },
-  {
-    id: '6',
-    title: 'My Angular Skills',
-    thumbnail: 'https://i.ytimg.com/vi/fRh_vgS2dFE/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 38,
-    type: 'skills',
-    views: 73
-  }
+
 ];
 
 // Use mock data if real data is not available
@@ -422,7 +314,7 @@ return (
       <ProfileHeader>
         <ProfileInfo>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <ProfileAvatar src={userData.avatar} alt={userData.name} />
+            <ProfileAvatar src={userData.profile_pic} alt={userData.name} />
             <Box>
               <Typography variant="h4" component="h1" gutterBottom>
                 {userData.name}
@@ -459,7 +351,7 @@ return (
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
               {userSkills.map((skill, index) => (
-                <SkillChip key={index} label={skill} />
+                <SkillChip key={index} label={skill.name} />
               ))}
             </Box>
           </Box>
@@ -502,11 +394,11 @@ return (
         <MainVideoContainer>
           <video
             ref={videoRef}
-            src={userData.mainVideo}
+            src={mainVideo.video_url}
             width="100%"
             height="100%"
-            poster={userVideos[0]?.thumbnail}
             onEnded={handleVideoEnded}
+            onClick={togglePlayback}
             style={{ objectFit: 'cover' }}
           />
 
@@ -515,7 +407,7 @@ return (
               {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
             </IconButton>
             <Typography variant="caption" color="inherit">
-              Introductory Video {/* 'فيديو تعريفي' converted to 'Introductory Video' */}
+               {mainVideo.video_title || ''}{/* 'فيديو تعريفي' converted to 'Introductory Video' */}
             </Typography>
           </VideoControls>
 
@@ -558,14 +450,14 @@ return (
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <Box>
                     <Typography variant="h6" component="h3">
-                      {exp.position}
+                     {exp.title}{exp.position? ` - ${exp.position}` : ''}
                     </Typography>
                     <Typography variant="subtitle1" color="primary">
-                      {exp.company}
+                      {exp.company_name}
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="textSecondary">
-                    {formatDate(exp.startDate)} - {exp.current ? 'Present' : formatDate(exp.endDate)} {/* 'الحالي' converted to 'Present' */}
+                    {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)} {/* 'الحالي' converted to 'Present' */}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
@@ -623,7 +515,7 @@ return (
             {userSkills.map((skill, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', height: '100%' }}>
-                  <SkillChip label={skill} />
+                  <SkillChip label={skill.name} />
                 </Paper>
               </Grid>
             ))}
@@ -704,21 +596,32 @@ return (
           {userVideos.map((video) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
               <VideoCard>
-                <VideoCardMedia
-                  image={video.thumbnail}
-                  title={video.title}
-                >
-                  <VideoPlayButton aria-label="play">
-                    <PlayArrowIcon />
+                  <video
+            ref={videoRef}
+            src={mainVideo.video_url}
+            padding="2"
+      width="300px"
+            height="600px"
+            onEnded={handleVideoEnded}
+            onClick={togglePlayback}
+            style={{ objectFit: 'cover' }}
+          ></video><VideoPlayButton aria-label="play">
+                    <PlayArrowIcon onClick={togglePlayback} />
                   </VideoPlayButton>
+                <VideoCardMedia
+             
+                  image={video.thumbnail}
+                  title={video.video_title}
+                > 
+                  
                 </VideoCardMedia>
                 <CardContent>
                   <Typography variant="subtitle1" component="h3" noWrap>
-                    {video.title}
+                    {video.video_title}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
                     <Typography variant="caption" color="textSecondary">
-                      {video.duration} seconds {/* 'ثانية' converted to 'seconds' */}
+                      {video.video_duration} seconds {/* 'ثانية' converted to 'seconds' */}
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
                       {video.views} views {/* 'مشاهدة' converted to 'views' */}

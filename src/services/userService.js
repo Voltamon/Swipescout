@@ -54,7 +54,7 @@ export const getUserSkills = async () => {
 
 export const getUserVideos = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/job-seekers/videos`, {
+    const response = await axios.get(`${API_BASE_URL}/videos`, {
       headers: getAuthHeader()
     });
     return response.data;
