@@ -200,7 +200,7 @@ useEffect(() => {
 
   const interval = setInterval(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${uploadId}`);
+      const response = await fetch(`${API_BASE_URL}/api/videos/upload-status/${uploadId}`);
       const data = await response.json();
       
       if (data.status === 'completed') {
@@ -533,7 +533,7 @@ const startRecording = async () => {
 // Fixed checkUploadStatus function
   const checkUploadStatus = async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/videos/upload-status/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

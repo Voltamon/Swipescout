@@ -58,7 +58,8 @@ export const updateCurrentUser = (userData) => {
   return api.put('/users/me', userData);
 };
 
-export const uploadProfileImage = (formData) => {
+
+export const uploadAvator = (formData) => {
   return api.post('/users/me/avatar', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -66,11 +67,6 @@ export const uploadProfileImage = (formData) => {
   });
 };
 
-export const getUserProfile = (userId) => {
-  return userId ? api.get(`/users/${userId}`) : api.get('/users/me');
-};
-
-// JobSeeker API services
 export const uploadVideoResume = (formData) => {
   return api.post('/videos/', formData, {
     headers: {
@@ -87,55 +83,85 @@ export const deleteVideoResume = (id) => {
   return api.delete(`videos/${id}`);
 };
 
+
+export const uploadProfileImage = (formData) => {
+  return api.post('/job-seeker/upload-logo/',formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+export const updateUserProfile = (formData) => {
+  return api.post('/job-seeker/',formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
+
+export const getUserProfile = () => {
+  return api.get(`/job-seeker/`); // : api.get('/users/me');
+};
+
+// JobSeeker API services
 export const getUserSkills = () => {
-  return api.get('/job-seekers/skills');
+  return api.get('/job-seeker/skills');
 };
 
 export const addUserSkill = (skill) => {
-  return api.post('/job-seekers/skills', { skill });
+  return api.post('/job-seeker/skills', { skill });
 };
 
-export const updateUserSkill = (oldSkill, newSkill) => {
-  return api.put(`/job-seekers/skills/${encodeURIComponent(oldSkill)}`, { skill: newSkill });
+export const updateUserSkill = (id, newSkill) => {
+  return api.put(`/job-seeker/skills/${id}`, { skill: newSkill });
 };
 
-export const deleteUserSkill = (skill) => {
-  return api.delete(`/job-seekers/skills/${encodeURIComponent(skill)}`);
+export const deleteUserSkill = (id) => {
+  return api.delete(`/job-seeker/skills/${id}`);
 };
 
 export const getUserExperiences = () => {
-  return api.get('/experiences');
-};
+  return api.get('/experiences/'); 
+}; 
 
 export const addUserExperience = (experience) => {
-  return api.post('/experiences', experience);
+  return api.post('/experiences/', experience);
 };
 
 export const updateUserExperience = (id, experience) => {
   return api.put(`/experiences/${id}`, experience);
+  // return api.put(`/experiences/${id}`, experience);
 };
 
 export const deleteUserExperience = (id) => {
   return api.delete(`/experiences/${id}`);
+  // return api.delete(`/experiences/${id}`);
 };
 
 export const getUserEducation = () => {
+  return api.get('/education/');
   return api.get('/education');
 };
 
 export const addUserEducation = (education) => {
+  return api.post('/education/', education);
   return api.post('/education', education);
 };
 
 export const updateUserEducation = (id, education) => {
   return api.put(`/education/${id}`, education);
+  return api.put(`/education/${id}`, education);
 };
 
 export const deleteUserEducation = (id) => {
   return api.delete(`/education/${id}`);
+  return api.delete(`/education/${id}`);
 };
 
 export const getUserVideos = () => {
+  return api.get('/videos');
   return api.get('/videos');
 };
 
@@ -313,7 +339,7 @@ export const getCandidateEngagement = () => {
 
 // Video processing services
 export const uploadVideo = (formData, onUploadProgress) => {
-  return api.post('/job-seekers/video-resume', formData, {
+  return api.post('/job-seeker/video-resume', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

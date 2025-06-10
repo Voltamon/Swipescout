@@ -48,15 +48,26 @@ export const VideoProvider = ({ children }) => {
                     id: video.id,
                     updates: {
                       status: 'failed',
-                      error: data.message || 'Processing failed'
+                      error: data.message || 'Processing failed',
+                     
                     }
                   };
                 }
               } catch (error) {
                 console.error(`Status check error for video ${video.id}:`, error);
+                if (error.response?.status === 404) {
+                  return {
+                    id: video.id,
+                    updates: {
+                      status: 'failed',
+                      error: 'Processing failed',
+                      isLocal: true,
+                      
+                    }
+                  }
+                }
                 return null;
               }
-              return null;
             })
         );
 

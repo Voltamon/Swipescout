@@ -71,8 +71,8 @@ import {
   getUserVideos,
   deleteUserVideo,
   uploadProfileImage
-} from '../services/userService';
-import { getAllSkills } from '../services/skillService';
+} from '../services/api';
+// import { getUserSkills } from '../services/api';
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -163,20 +163,7 @@ const EditJobSeekerProfile = () => {
   const [tabValue, setTabValue] = useState(0);
   
   // State for profile data
-  const [profile, setProfile] = useState({
-    name: '',
-    title: '',
-    location: '',
-    bio: '',
-    email: '',
-    phone: '',
-    website: '',
-    social: {
-      linkedin: '',
-      github: '',
-      twitter: ''
-    }
-  });
+  const [profile, setProfile] = useState(null);
   
   // State for skills
   const [skills, setSkills] = useState([]);
@@ -234,22 +221,24 @@ const EditJobSeekerProfile = () => {
         // Fetch profile data
         const profileResponse = await getUserProfile();
         setProfile(profileResponse.data);
+        console.log('Profile data::::::::::::::::::');
+        console.log(profileResponse.data);
         
         // Fetch skills
         const skillsResponse = await getUserSkills();
         setSkills(skillsResponse.data.skills);
         
         // Fetch available skills
-        const availableSkillsResponse = await getAllSkills();
+        const availableSkillsResponse = await getUserSkills();
         setAvailableSkills(availableSkillsResponse.data.skills);
-        
+         
         // Fetch experiences
         const experiencesResponse = await getUserExperiences();
         setExperiences(experiencesResponse.data.experiences);
         
         // Fetch education
         const educationResponse = await getUserEducation();
-        setEducation(educationResponse.data.education);
+        setEducation(educationResponse.data.educations|| []);
         
         // Fetch videos
         const videosResponse = await getUserVideos();
@@ -746,7 +735,7 @@ const EditJobSeekerProfile = () => {
   
   // Navigate to upload video page
   const handleUploadVideo = () => {
-    navigate('/profile/upload-video');
+    navigate('/job-seeker/upload-video');
   };
   
   // Format date (YYYY-MM to input format)
@@ -879,7 +868,7 @@ const EditJobSeekerProfile = () => {
   ];
   
   // Use mock data if real data is not available
-  const userData = profile.name ? profile : mockProfile;
+  const userData = profile  ? profile : mockProfile;
   const userSkills = skills.length > 0 ? skills : mockSkills;
   const userExperiences = experiences.length > 0 ? experiences : mockExperiences;
   const userEducation = education.length > 0 ? education : mockEducation;
@@ -914,8 +903,8 @@ const EditJobSeekerProfile = () => {
             <SectionPaper elevation={1}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box sx={{ position: 'relative' }}>
-                  <ProfileAvatar src={userData.avatar} alt={userData.name}>
-                    {userData.name.charAt(0)}
+                  <ProfileAvatar src={userData.profile_pic} alt={userData.first_name||' ' +" "+userData.Second_name+" "+userData.last_name+"'s Avatar"}>
+                    {userData.first_name?.charAt(0)}
                   </ProfileAvatar>
                   <input
                     accept="image/*"
@@ -934,7 +923,7 @@ const EditJobSeekerProfile = () => {
                   </label>
                 </Box>
                 <Typography variant="h6" sx={{ mt: 2 }}>
-                  {userData.name}
+                {(userData.first_name ||" ") + " "+(userData.Second_name ||" ") + " "+ (userData.last_name ||" ")}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {userData.title}
@@ -968,7 +957,7 @@ const EditJobSeekerProfile = () => {
                       fullWidth
                       label="Full Name"
                       name="name"
-                      value={userData.name}
+                      value={(userData.first_name ||" ") + " "+(userData.Second_name ||" ") + " "+ (userData.last_name ||" ")}
                       onChange={handleProfileChange}
                       required
                     />
@@ -1104,9 +1093,9 @@ const EditJobSeekerProfile = () => {
                   {userSkills.map((skill, index) => (
                     <SkillChip
                       key={index}
-                      label={skill}
-                      onDelete={() => handleDeleteSkill(skill)}
-                      onClick={() => handleOpenSkillDialog(skill)}
+                      label={skill.name}
+                      onDelete={() => handleDeleteSkill(skill.id)}
+                      onClick={() => handleOpenSkillDialog(skill.id)}
                     />
                   ))}
                   {userSkills.length === 0 && (
@@ -1151,7 +1140,7 @@ const EditJobSeekerProfile = () => {
                               {exp.position}
                             </Typography>
                             <Typography variant="subtitle1" color="primary">
-                              {exp.company}
+                              {exp.company_name}
                             </Typography>
                           </Box>
                           <Box>
@@ -1178,7 +1167,7 @@ const EditJobSeekerProfile = () => {
                           </Typography>
                         </Box>
                         <Typography variant="body2" color="textSecondary" gutterBottom>
-                          {formatDateForInput(exp.startDate)} - {exp.current ? 'Present' : formatDateForInput(exp.endDate)}
+                          {formatDateForInput(exp.start_date)} - {exp.current ? 'Present' : formatDateForInput(exp.end_date)}
                         </Typography>
                         <Typography variant="body2">
                           {exp.description}
