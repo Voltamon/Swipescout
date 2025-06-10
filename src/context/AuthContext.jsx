@@ -1,18 +1,18 @@
-import { AuthContext } from "./useAuth"; 
-import { useAuth } from "./useAuth";
+// import { AuthContext } from "../hooks/useAuth.js"; 
+// import { useAuth } from "../hooks/useAuth.js";
 
 
-export const AuthProvider = ({ children }) => {
-  const auth = useAuth();
+// export const AuthProvider = ({ children }) => {
+//   const auth = useAuth();
 
-  return (
-    <AuthContext.Provider value={auth}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+//   return (
+//     <AuthContext.Provider value={auth}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
 
-
+// this fiel not used
 
 
 

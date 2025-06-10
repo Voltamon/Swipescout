@@ -72,7 +72,7 @@ export const getUserProfile = (userId) => {
 
 // JobSeeker API services
 export const uploadVideoResume = (formData) => {
-  return api.post('/job-seekers/video-resume', formData, {
+  return api.post('/videos/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -80,11 +80,11 @@ export const uploadVideoResume = (formData) => {
 };
 
 export const getVideoResume = () => {
-  return api.get('/job-seekers/video-resume');
+  return api.get('/videos/');
 };
 
-export const deleteVideoResume = () => {
-  return api.delete('/job-seekers/video-resume');
+export const deleteVideoResume = (id) => {
+  return api.delete(`videos/${id}`);
 };
 
 export const getUserSkills = () => {
@@ -104,51 +104,51 @@ export const deleteUserSkill = (skill) => {
 };
 
 export const getUserExperiences = () => {
-  return api.get('/job-seekers/experiences');
+  return api.get('/experiences');
 };
 
 export const addUserExperience = (experience) => {
-  return api.post('/job-seekers/experiences', experience);
+  return api.post('/experiences', experience);
 };
 
 export const updateUserExperience = (id, experience) => {
-  return api.put(`/job-seekers/experiences/${id}`, experience);
+  return api.put(`/experiences/${id}`, experience);
 };
 
 export const deleteUserExperience = (id) => {
-  return api.delete(`/job-seekers/experiences/${id}`);
+  return api.delete(`/experiences/${id}`);
 };
 
 export const getUserEducation = () => {
-  return api.get('/job-seekers/education');
+  return api.get('/education');
 };
 
 export const addUserEducation = (education) => {
-  return api.post('/job-seekers/education', education);
+  return api.post('/education', education);
 };
 
 export const updateUserEducation = (id, education) => {
-  return api.put(`/job-seekers/education/${id}`, education);
+  return api.put(`/education/${id}`, education);
 };
 
 export const deleteUserEducation = (id) => {
-  return api.delete(`/job-seekers/education/${id}`);
+  return api.delete(`/education/${id}`);
 };
 
 export const getUserVideos = () => {
-  return api.get('/job-seekers/videos');
+  return api.get('/videos');
 };
 
 export const getUserVideoById = (id) => {
-  return api.get(`/job-seekers/videos/${id}`);
+  return api.get(`/videos/${id}`);
 };
 
 export const updateUserVideo = (id, videoData) => {
-  return api.put(`/job-seekers/videos/${id}`, videoData);
+  return api.put(`/videos/${id}`, videoData);
 };
 
 export const deleteUserVideo = (id) => {
-  return api.delete(`/job-seekers/videos/${id}`);
+  return api.delete(`/videos/${id}`);
 };
 
 // Employer API services
