@@ -111,7 +111,7 @@ export const getUserSkills = () => {
 };
 
 export const addUserSkill = (skill) => {
-  return api.post('/job-seeker/skills', { skill });
+  return api.post('/job-seeker/skills',  skill );
 };
 
 export const updateUserSkill = (id, newSkill) => {
