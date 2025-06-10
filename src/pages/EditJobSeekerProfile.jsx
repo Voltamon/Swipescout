@@ -70,9 +70,15 @@ import {
   deleteUserEducation,
   getUserVideos,
   deleteUserVideo,
-  uploadProfileImage
+  uploadProfileImage,
+  getSkills
 } from '../services/api';
 // import { getUserSkills } from '../services/api';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
+
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -177,14 +183,13 @@ const EditJobSeekerProfile = () => {
   const [experienceDialogOpen, setExperienceDialogOpen] = useState(false);
   const [editingExperience, setEditingExperience] = useState(null);
   const [experienceForm, setExperienceForm] = useState({
-    company: '',
+    company_name: '', 
     position: '',
     location: '',
-    startDate: '',
-    endDate: '',
-    current: false,
-    description: ''
-  });
+    start_date: '',
+    end_date: '',
+    currently_working: false,
+    description: ''});
   
   // State for education
   const [education, setEducation] = useState([]);
@@ -211,6 +216,8 @@ const EditJobSeekerProfile = () => {
     message: '',
     severity: 'success'
   });
+  const [dateError, setDateError] = useState(false);
+  const [expDateError, setExpDateError] = useState(false);
   
   // Fetch user data
   useEffect(() => {
@@ -229,7 +236,7 @@ const EditJobSeekerProfile = () => {
         setSkills(skillsResponse.data.skills);
         
         // Fetch available skills
-        const availableSkillsResponse = await getUserSkills();
+        const availableSkillsResponse = await getSkills();
         setAvailableSkills(availableSkillsResponse.data.skills);
          
         // Fetch experiences
@@ -384,15 +391,15 @@ const EditJobSeekerProfile = () => {
       
       if (editingSkill) {
         // Update existing skill
-        await updateUserSkill(editingSkill, newSkill);
+        await updateUserSkill(editingSkill.id, newSkill);
         
         setSkills(skills.map(skill => 
           skill === editingSkill ? newSkill : skill
         ));
       } else {
         // Add new skill
-        await addUserSkill(newSkill);
-        
+        await addUserSkill({skill_id:newSkill});
+        console.log('New skill:::::::::', newSkill);
         setSkills([...skills, newSkill]);
       }
       
@@ -419,8 +426,8 @@ const EditJobSeekerProfile = () => {
   const handleDeleteSkill = async (skill) => {
     try {
       setSaving(true);
-      
-      await deleteUserSkill(skill);
+      console.log('Deleting skill:::::::::', skill.skill_id);
+      await deleteUserSkill(skill.skill_id);
       
       setSkills(skills.filter(s => s !== skill));
       
@@ -447,23 +454,23 @@ const EditJobSeekerProfile = () => {
     if (experience) {
       setEditingExperience(experience);
       setExperienceForm({
-        company: experience.company,
+        company_name: experience.company_name,
         position: experience.position,
         location: experience.location,
-        startDate: experience.startDate,
-        endDate: experience.endDate || '',
-        current: experience.current || false,
+        start_date: experience.start_date,
+        end_date: experience.end_date || '',
+        currently_working: experience.currently_working || false,
         description: experience.description
       });
     } else {
       setEditingExperience(null);
       setExperienceForm({
-        company: '',
+        company_name: '',
         position: '',
         location: '',
-        startDate: '',
-        endDate: '',
-        current: false,
+        start_date: '',
+        end_date: '',
+        currently_working: false,
         description: ''
       });
     }
@@ -475,12 +482,12 @@ const EditJobSeekerProfile = () => {
     setExperienceDialogOpen(false);
     setEditingExperience(null);
     setExperienceForm({
-      company: '',
+      company_name: '',
       position: '',
       location: '',
-      startDate: '',
-      endDate: '',
-      current: false,
+      start_date: '',
+      end_date: '',
+      currently_working: false,
       description: ''
     });
   };
@@ -488,6 +495,9 @@ const EditJobSeekerProfile = () => {
   // Handle experience form change
   const handleExperienceFormChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if ((name === 'start_date' || name === 'end_date') && value!=='') {
+    checkExpDate(value); 
+    }
     setExperienceForm({
       ...experienceForm,
       [name]: type === 'checkbox' ? checked : value
@@ -497,7 +507,7 @@ const EditJobSeekerProfile = () => {
   // Handle experience save
   const handleSaveExperience = async () => {
     // Validate form
-    if (!experienceForm.company || !experienceForm.position || !experienceForm.startDate) {
+    if (!experienceForm.company_name || !experienceForm.position || !experienceForm.start_date) {
       setSnackbar({
         open: true,
         message: 'Please fill in all required fields',
@@ -574,6 +584,38 @@ const EditJobSeekerProfile = () => {
     }
   };
   
+  function checkSafeDate(input) {
+  const format = 'dd/M/YYYY';
+
+const parsedDate = new Date(input);
+if(isNaN(parsedDate) && !dateError) 
+  {
+  setDateError(true);
+  return null;
+  }
+  else {
+    setDateError(false);
+  return new Date(input);//parsedDate.toDate();
+  }
+  }
+   
+  function checkExpDate(input) {
+  const format = 'dd/M/YYYY';
+
+const parsedDate = new Date(input);
+if(isNaN(parsedDate) && !dateError) 
+  {
+  setExpDateError(true);
+  return false;
+  }
+  else {
+    setExpDateError(false);
+  return new Date(input);//parsedDate.toDate();
+  }
+// const dbDate = parsed.isValid() ? parsed.format("YYYY-MM-DD") : null;
+
+}
+
   // Handle education dialog open
   const handleOpenEducationDialog = (education = null) => {
     if (education) {
@@ -583,8 +625,8 @@ const EditJobSeekerProfile = () => {
         degree: education.degree,
         field: education.field,
         location: education.location,
-        startDate: education.startDate,
-        endDate: education.endDate || '',
+        startDate: education.startDate ? dayjs(education.startDate, ['DD-MM-YYYY', 'YYYY-MM', 'YYYY-MM-DD']).format('YYYY-MM-DD') : '',
+        endDate: education.endDate ? dayjs(education.endDate, ['DD-MM-YYYY', 'YYYY-MM', 'YYYY-MM-DD']).format('YYYY-MM-DD') : '',
         description: education.description
       });
     } else {
@@ -602,6 +644,9 @@ const EditJobSeekerProfile = () => {
     setEducationDialogOpen(true);
   };
   
+
+// const startDate = parseSafeDate(education.startDate);
+
   // Handle education dialog close
   const handleCloseEducationDialog = () => {
     setEducationDialogOpen(false);
@@ -620,6 +665,9 @@ const EditJobSeekerProfile = () => {
   // Handle education form change
   const handleEducationFormChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'startDate' || name === 'endDate') {
+checkSafeDate(value);
+    }
     setEducationForm({
       ...educationForm,
       [name]: value
@@ -629,12 +677,20 @@ const EditJobSeekerProfile = () => {
   // Handle education save
   const handleSaveEducation = async () => {
     // Validate form
-    if (!educationForm.institution || !educationForm.degree || !educationForm.startDate) {
+    if (!educationForm.institution || !educationForm.degree || !educationForm.startDate ) {
       setSnackbar({
         open: true,
         message: 'Please fill in all required fields',
         severity: 'error'
       });
+    }
+      else if (dateError) {
+        setSnackbar({
+          open: true,
+          message: 'Please enter a valid date in MM/YYYY format',
+          severity: 'error'
+        });
+      
       return;
     }
     
@@ -1094,8 +1150,8 @@ const EditJobSeekerProfile = () => {
                     <SkillChip
                       key={index}
                       label={skill.name}
-                      onDelete={() => handleDeleteSkill(skill.id)}
-                      onClick={() => handleOpenSkillDialog(skill.id)}
+                      onDelete={() => handleDeleteSkill(skill)}
+                      onClick={() => handleOpenSkillDialog(skill)}
                     />
                   ))}
                   {userSkills.length === 0 && (
@@ -1167,7 +1223,7 @@ const EditJobSeekerProfile = () => {
                           </Typography>
                         </Box>
                         <Typography variant="body2" color="textSecondary" gutterBottom>
-                          {formatDateForInput(exp.start_date)} - {exp.current ? 'Present' : formatDateForInput(exp.end_date)}
+                          {formatDateForInput(exp.start_date)} - {exp.currently_working ? 'Present' : formatDateForInput(exp.end_date)}
                         </Typography>
                         <Typography variant="body2">
                           {exp.description}
@@ -1351,8 +1407,8 @@ const EditJobSeekerProfile = () => {
               label="Skill"
             >
               {availableSkills.map((skill) => (
-                <MenuItem key={skill} value={skill}>
-                  {skill}
+                <MenuItem key={skill.id} value={skill.name}>
+                  {skill.name}
                 </MenuItem>
               ))}
             </Select>
@@ -1391,8 +1447,8 @@ const EditJobSeekerProfile = () => {
               <TextField
                 fullWidth
                 label="Company"
-                name="company"
-                value={experienceForm.company}
+                name="company_name"
+                value={experienceForm.company_name}
                 onChange={handleExperienceFormChange}
                 required
               />
@@ -1422,8 +1478,8 @@ const EditJobSeekerProfile = () => {
                 <InputLabel id="current-job-label">Current Job</InputLabel>
                 <Select
                   labelId="current-job-label"
-                  name="current"
-                  value={experienceForm.current}
+                  name="currently_working"
+                  value={experienceForm.currently_working}
                   onChange={handleExperienceFormChange}
                   label="Current Job"
                 >
@@ -1436,9 +1492,9 @@ const EditJobSeekerProfile = () => {
               <TextField
                 fullWidth
                 label="Start Date"
-                name="startDate"
+                name="start_date"
                 type="month"
-                value={formatDateForInput(experienceForm.startDate)}
+                value={experienceForm.start_date}
                 onChange={handleExperienceFormChange}
                 InputLabelProps={{
                   shrink: true,
@@ -1450,15 +1506,15 @@ const EditJobSeekerProfile = () => {
               <TextField
                 fullWidth
                 label="End Date"
-                name="endDate"
+                name="end_date"
                 type="month"
-                value={formatDateForInput(experienceForm.endDate)}
+                value={experienceForm.end_date}
                 onChange={handleExperienceFormChange}
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled={experienceForm.current}
-                required={!experienceForm.current}
+                disabled={experienceForm.currently_working}
+                required={!experienceForm.currently_working}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1473,6 +1529,9 @@ const EditJobSeekerProfile = () => {
                 placeholder="Describe your responsibilities and achievements"
               />
             </Grid>
+            <Typography fontWeight={600} color="error" sx={{ mt: 1 }}>
+                { expDateError ? "Date most be in format dd-mm-yyyy" : ""}
+              </Typography>
           </Grid>
         </DialogContent>
         <DialogActions>
@@ -1546,8 +1605,8 @@ const EditJobSeekerProfile = () => {
                 label="Start Date"
                 name="startDate"
                 type="month"
-                value={formatDateForInput(educationForm.startDate)}
-                onChange={handleEducationFormChange}
+                value={educationForm.startDate}
+                onChange={handleEducationFormChange} 
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -1560,7 +1619,7 @@ const EditJobSeekerProfile = () => {
                 label="End Date"
                 name="endDate"
                 type="month"
-                value={formatDateForInput(educationForm.endDate)}
+                value={educationForm.endDate}
                 onChange={handleEducationFormChange}
                 InputLabelProps={{
                   shrink: true,
@@ -1578,7 +1637,10 @@ const EditJobSeekerProfile = () => {
                 rows={4}
                 placeholder="Describe your studies, achievements, and projects"
               />
-            </Grid>
+              
+            </Grid><Typography fontWeight={600} color="error" sx={{ mt: 1 }}>
+                { dateError ? "Date most be in format dd-mm-yyyy" : ""}
+              </Typography>
           </Grid>
         </DialogContent>
         <DialogActions>
