@@ -84,8 +84,6 @@ import VideosPage from './pages/VideosPage';
 import VideoFeedViewer from './pages/VideoFeedViewer';
 
 
-   
-
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({

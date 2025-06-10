@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useMemo, useCallback ,useContext } from "react";
-import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup ,browserLocalPersistence ,signOut } from "firebase/auth";
+import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup ,browserLocalPersistence ,signOut,  setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
 
@@ -22,8 +22,20 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   
   const auth = getAuth(app);
+
+  setPersistence(auth, browserLocalPersistence);
+  
+  
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
+  // Add these constants at the top
+const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000; // Refresh token 5 minutes before expiration
+
+const extendSession = () => {
+  localStorage.setItem('sessionExpiry', Date.now() + SESSION_DURATION);
+};
+
 
   // Handle successful authentication
   const handleAuthSuccess = useCallback(async (token, origin, role = null, userP = null) => {
@@ -31,6 +43,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       localStorage.removeItem("role");
+      localStorage.setItem('sessionExpiry', Date.now() + SESSION_DURATION);
+
 
       let idToken = token;
       let user = userP;
@@ -80,30 +94,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [apiUrl]);
 
-const refreshAuthToken = useCallback(async () => {
-  try {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      // If no current user but we have stored data, try to re-authenticate
-      const storedToken = JSON.parse(localStorage.getItem("accessToken"));
-      if (storedToken) {
-        await checkAuth();
-      }
-      return;
-    }
-
-    const newToken = await currentUser.getIdToken(true);
-    localStorage.setItem("accessToken", JSON.stringify(newToken));
-    
-    // Verify the new token
-    await verifyToken(newToken);
-    
-    return newToken;
-  } catch (error) {
-    console.error("Error refreshing token:", error);
-    return null;
-  }
-}, [auth, verifyToken]);
 
   // Refresh token if needed
   // const refreshTokenIfNeeded = useCallback(async (token) => {
@@ -141,40 +131,85 @@ const refreshAuthToken = useCallback(async () => {
   // }, [apiUrl]);
 
   // Check authentication status
+  const refreshAuthToken = useCallback(async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        // If no current user but we have stored data, try to re-authenticate
+        const storedToken = JSON.parse(localStorage.getItem("accessToken"));
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        
+        if (storedToken && storedUser) {
+          // Try to re-authenticate with the stored token
+          const userCredential = await signInWithCustomToken(auth, storedToken);
+          const newToken = await userCredential.user.getIdToken(true);
+          localStorage.setItem("accessToken", JSON.stringify(newToken));
+          return newToken;
+        }
+        return null;
+      }
+  
+      // Force token refresh
+      const newToken = await currentUser.getIdToken(true);
+      localStorage.setItem("accessToken", JSON.stringify(newToken));
+      
+      // Verify the new token
+      await verifyToken(newToken);
+      
+      return newToken;
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      // If refresh fails, clear auth state
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      setUser(null);
+      setRole(null);
+      return null;
+    }
+  }, [auth, verifyToken]);
+  
   const checkAuth = useCallback(async () => {
     try {
       setLoading(true);
       let token = JSON.parse(localStorage.getItem("accessToken"));
-      const storedUser =JSON.parse(localStorage.getItem("user"));
+      const storedUser = JSON.parse(localStorage.getItem("user"));
       const storedRole = JSON.parse(localStorage.getItem("role"));
-
+  
       if (!token) {
         setLoading(false);
         return;
       }
-
-
-      // token = await refreshTokenIfNeeded(token);
-         try {
-      await verifyToken(token);
-    } catch (verifyError) {
-      console.log("Token verification failed, attempting refresh...");
-      token = await refreshAuthToken();
-      if (!token) throw verifyError;
-    }
+  
+      try {
+        // First try to verify the existing token
+        await verifyToken(token);
+      } catch (verifyError) {
+        console.log("Token verification failed, attempting refresh...");
+        token = await refreshAuthToken();
+        if (!token) {
+          throw verifyError;
+        }
+      }
       
       if (storedUser) {
-        setUser(user);
-      setRole(storedRole);}
+        setUser(storedUser);
+        setRole(storedRole);
+      }
+      
       setError(null);
     } catch (err) {
       console.error("Auth check failed:", err);
       setError(err.message);
       setUser(null);
+      setRole(null);
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
     } finally {
       setLoading(false);
     }
-  }, [ verifyToken,refreshAuthToken,user]);
+  }, [verifyToken, refreshAuthToken]);
 
   // Email/Password Login
   const loginByEmailAndPassword = useCallback(async (email, password) => {
@@ -388,30 +423,59 @@ const refreshAuthToken = useCallback(async () => {
   //   checkAuth();
   // }, [checkAuth]);
 
-useEffect(() => {
-  let intervalId;
+  const stableCheckAuth = useCallback(() => {
+    checkAuth();
+  }, [checkAuth]);
 
-  const initializeAuth = async () => {
-    try {
-      await checkAuth();
-      
-      // Set up the refresh interval only after successful auth
-      intervalId = setInterval(() => {
-        refreshAuthToken().catch(error => {
-          console.error('Token refresh failed:', error);
-        });
-      }, 30 * 60 * 1000); // 30 minutes
-    } catch (error) {
-      console.error('Initial auth check failed:', error);
-    }
-  };
+  useEffect(() => {
+    // Session sync across tabs
+    const handleStorageChange = (e) => {
+      if (e.key === 'sessionExpiry' || 
+          e.key === 'accessToken' || 
+          e.key === 'user' || 
+          e.key === 'role') {
+        stableCheckAuth();
+      }
+    };
 
-  initializeAuth();
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [stableCheckAuth]);
 
-  return () => {
-    if (intervalId) clearInterval(intervalId);
-  };
-}, []);
+  
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        // Check existing session
+        const sessionExpiry = localStorage.getItem('sessionExpiry');
+        if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
+          throw new Error('Session expired');
+        }
+  
+        await checkAuth();
+        
+        // Set up the refresh interval only after successful auth
+        const refreshInterval = setInterval(async () => {
+          try {
+            await refreshAuthToken();
+          } catch (error) {
+            console.error('Token refresh failed:', error);
+            logout();
+          }
+        }, TOKEN_REFRESH_BUFFER); // Refresh just before expiration
+        
+        return () => clearInterval(refreshInterval);
+      } catch (error) {
+        console.error('Initial auth check failed:', error);
+        logout();
+      }
+    };
+  
+    initializeAuth();
+  }, [checkAuth]);
 
   // Memoize context value
   const contextValue = useMemo(() => ({
@@ -428,6 +492,7 @@ useEffect(() => {
     refreshAuthToken,
     checkAuth,
     handleAuthSuccess
+    ,extendSession
   }), [
     user,
     role,
@@ -440,7 +505,8 @@ useEffect(() => {
     logout,
     refreshAuthToken,
     checkAuth,
-    handleAuthSuccess
+    handleAuthSuccess,
+    extendSession
   ]);
 
   return (

@@ -15,7 +15,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
  * @returns {Promise} Promise object with uploaded video data
  */
 export const uploadVideo = async (formData, progressCallback) => {
-  return api.post(`${API_BASE_URL}/api/job-seekers/video-resume`, formData, {
+  return api.post(`${API_BASE_URL}/api/videos/`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -34,7 +34,7 @@ export const uploadVideo = async (formData, progressCallback) => {
  * @returns {Promise} Promise object with saved video metadata
  */
 export const saveVideoMetadata = async (videoData) => {
-  return api.post(`${API_BASE_URL}/api/job-seekers/video-metadata`, videoData);
+  return api.post(`${API_BASE_URL}/api/videos/video-metadata`, videoData);
 };
 
 /**
@@ -42,11 +42,11 @@ export const saveVideoMetadata = async (videoData) => {
  * @returns {Promise} Promise object with user videos
  */
 export const getUserVideos = () => {
-  return api.get(`${API_BASE_URL}/api/job-seekers/videos`);
+  return api.get(`${API_BASE_URL}/api/videos/`);
 };
 
 export const getVideoStatus = (videoId) => {
-  return api.get(`${API_BASE_URL}/api/job-seekers/upload-status/${videoId}`);
+  return api.get(`${API_BASE_URL}/api/videos/upload-status/${videoId}`);
 };
 
 /**
@@ -55,7 +55,7 @@ export const getVideoStatus = (videoId) => {
  * @returns {Promise} Promise object with video data
  */
 export const getVideoById = (videoId) => {
-  return api.get(`${API_BASE_URL}/api/job-seekers/videos/${videoId}`);
+  return api.get(`${API_BASE_URL}/api/videos/${videoId}`);
 };
 
 /**
@@ -64,7 +64,7 @@ export const getVideoById = (videoId) => {
  * @returns {Promise} Promise object with deletion confirmation
  */
 export const deleteVideo = (videoId) => {
-  return api.delete(`${API_BASE_URL}/api/job-seekers/videos/${videoId}`);
+  return api.delete(`${API_BASE_URL}/api/videos/${videoId}`);
 };
 
 /**
@@ -74,5 +74,5 @@ export const deleteVideo = (videoId) => {
  * @returns {Promise} Promise object with updated video data
  */
 export const updateVideoMetadata = (videoId, videoData) => {
-  return api.put(`${API_BASE_URL}/api/job-seekers/videos/${videoId}`, videoData);
+  return api.put(`${API_BASE_URL}/api/videos/${videoId}`, videoData);
 };
