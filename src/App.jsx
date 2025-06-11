@@ -76,13 +76,14 @@ import MarketingVideos  from './pages/MarketingVideos';
 import JobSeekersVideosPage from './pages/JobSeekersVideosPage';
 import JobSeekerProfile from './pages/JobSeekerProfile';
 import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
-import EmployerProfile2 from "./pages/EmployerProfile2";
+import EmployerProfilePage from "./pages/EmployerProfilePage";
 import JobsListingPage from "./pages/JobsListingPage";
 // import PostJobPage_2 from "./pages/PostJobPage_2";
 import { VideoProvider } from './context/VideoContext';
 import VideosPage from './pages/VideosPage';
 import VideoFeedViewer from './pages/VideoFeedViewer';
 import  EditEmployerProfilePage  from './pages/EditEmployerProfilePage';
+import EditVideoPage  from './pages/EditeVideoPage';
 
 
 
@@ -172,19 +173,20 @@ function App() {
             <Route path="/Settings-page" element={<SettingsPage />} />
             <Route path="/MyApplications-page" element={<MyApplications />} />
             <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/employer-profile" element={<EmployerProfile />} />
+            <Route path="/employer-profile2" element={<EmployerProfile />} />
             <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
             <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
             <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
-            <Route path="/EmployerProfile2" element={<EmployerProfile2 />} /> 
-           <Route path="/Edit-JobSeeker-Profile" element={<EditJobSeekerProfile />} />
+            <Route path="/employer-profile" element={<EmployerProfilePage />} /> 
+           <Route path="/edit-JobSeeker-Profile" element={<EditJobSeekerProfile />} />
              <Route path="/Jobs-Listing-Page" element={<JobsListingPage />} />
            {/* // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
 
 <Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
-<Route path="/Edit-profile" element={<EditEmployerProfilePage />} /> 
+<Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} /> 
+<Route path="/edit-video/:id" element={<EditVideoPage />} /> 
 
 
           </Route>

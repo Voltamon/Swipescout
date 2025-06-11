@@ -75,10 +75,15 @@ export const uploadVideoResume = (formData) => {
   });
 };
 
+export const checkUploadStatus = (id) => {
+  return api.get(`job-seekers/upload-status/${id}`);
+};
 export const getVideoResume = () => {
   return api.get('/videos/');
 };
-
+export const getJobVideos = (id) => {
+  return api.get(`/videos/job/${id}`);
+};
 export const deleteVideoResume = (id) => {
   return api.delete(`videos/${id}`);
 };
@@ -93,7 +98,7 @@ export const uploadProfileImage = (formData) => {
 };
 
 export const updateUserProfile = (formData) => {
-  return api.post('/job-seeker/',formData, {
+  return api.put('/job-seeker/',formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -179,15 +184,15 @@ export const deleteUserVideo = (id) => {
 
 // Employer API services
 export const getEmployerProfile = () => {
-  return api.get(`/employer/company-profile`) ;//: api.get('/employers/company');
+  return api.get(`/employer/employer-profile`) ;//: api.get('/employers/company');
 };
 
-export const updateEmployerProfile = (id,companyData) => {
-  return api.put(`/employer/company-profile/${id}`, companyData);
+export const updateEmployerProfile = (companyData) => {
+  return api.put(`/employer/employer-profile/`, companyData);
 };
 
-export const uploadCompanyLogo = (id,formData) => {
-  return api.post(`/employer/cupload-logo/${id}`, formData, {
+export const uploadCompanyLogo = (formData) => {
+  return api.post(`/employer/cupload-logo/`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -195,11 +200,11 @@ export const uploadCompanyLogo = (id,formData) => {
 };
 
 export const getEmployerJobs = () => {
-  return api.get(`/employer/jobs`); //: api.get('/employers/jobs');
+  return api.get(`employer/jobs`); //: api.get('/employers/jobs');
 };
 
 export const getEmployerVideos = () => {
-  return api.get(`/employer/company/videos`);// : api.get('/employers/videos');
+  return api.get(`/videos/`);// : api.get('/employers/videos');
 };
 
 // Job API services

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Container,
@@ -11,7 +11,6 @@ import {
   Tab,
   Card,
   CardContent,
-  CardMedia,
   IconButton,
   Divider,
   Paper,
@@ -21,7 +20,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  Tooltip
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -38,32 +38,39 @@ import {
   Language as LanguageIcon,
   LinkedIn as LinkedInIcon,
   GitHub as GitHubIcon,
-  Twitter as TwitterIcon
+  Twitter as TwitterIcon,
+  VolumeUp,
+  VolumeOff
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences , getUserEducation} from '../services/api.js'; // Adjust the import path as necessary
+import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences, getUserEducation } from '../services/api.js';
 
-// Styled components
+// Enhanced styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.paper,
   minHeight: '100vh',
-  paddingTop: theme.spacing(2),
-  paddingBottom: theme.spacing(4)
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(6)
 }));
 
 const ProfileHeader = styled(Box)(({ theme }) => ({
   position: 'relative',
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(4),
   display: 'flex',
   flexDirection: 'column',
+  gap: theme.spacing(3),
   [theme.breakpoints.up('md')]: {
     flexDirection: 'row',
+    gap: theme.spacing(4)
   }
 }));
 
 const ProfileInfo = styled(Box)(({ theme }) => ({
   flex: 1,
-  padding: theme.spacing(2),
+  padding: theme.spacing(3),
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.background.default,
+  boxShadow: theme.shadows[1],
   [theme.breakpoints.up('md')]: {
     paddingRight: theme.spacing(4),
   }
@@ -71,16 +78,16 @@ const ProfileInfo = styled(Box)(({ theme }) => ({
 
 const MainVideoContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: 250,
-  borderRadius: theme.spacing(1),
+  height: 300,
+  borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
   position: 'relative',
-  marginBottom: theme.spacing(2),
-  backgroundColor: '#000',
+  backgroundColor: theme.palette.grey[900],
+  boxShadow: theme.shadows[4],
   [theme.breakpoints.up('md')]: {
-    width: 300,
-    height: 400,
-    marginBottom: 0,
+    width: 350,
+    height: 450,
+    flexShrink: 0
   }
 }));
 
@@ -91,37 +98,44 @@ const VideoControls = styled(Box)(({ theme }) => ({
   right: 0,
   color: '#fff',
   padding: theme.spacing(1),
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  transition: 'opacity 0.3s ease',
 }));
 
 const VideoActions = styled(Box)(({ theme }) => ({
   position: 'absolute',
-  right: theme.spacing(1),
-  top: '50%',
-  transform: 'translateY(-35%)',
+  right: theme.spacing(2),
+  top: theme.spacing(2),
   display: 'flex',
-  color: 'rgb(218, 245, 255)',
+  color: theme.palette.common.white,
   flexDirection: 'column',
   alignItems: 'center',
   gap: theme.spacing(2),
+  opacity: 0.8,
+  '&:hover': {
+    opacity: 1
+  }
 }));
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
-  width: 100,
-  height: 100,
+  width: 120,
+  height: 120,
   border: `4px solid ${theme.palette.primary.main}`,
-  marginRight: theme.spacing(2),
+  marginRight: theme.spacing(3),
+  boxShadow: theme.shadows[4]
 }));
 
 const SkillChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
   backgroundColor: theme.palette.primary.light,
   color: theme.palette.primary.contrastText,
+  fontWeight: 500,
   '&:hover': {
     backgroundColor: theme.palette.primary.main,
+    transform: 'translateY(-2px)'
   }
 }));
 
@@ -149,19 +163,35 @@ const VideoCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
-  transition: 'transform 0.3s ease',
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[10],
+    transform: 'translateY(-8px)',
+    boxShadow: theme.shadows[8],
+    '& $VideoCardMedia': {
+      '&:after': {
+        opacity: 1
+      }
+    }
   }
 }));
 
-const VideoCardMedia = styled(CardMedia)(({ theme }) => ({
-  height: 0,
-  paddingTop: '0', //177.78% 16:9 aspect ratio
+const VideoCardMedia = styled(Box)(({ theme }) => ({
   position: 'relative',
+  paddingTop: '56.25%', // 16:9 aspect ratio
+  backgroundColor: theme.palette.grey[800],
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.2)',
+    opacity: 0,
+    transition: 'opacity 0.3s ease'
+  }
 }));
 
 const VideoPlayButton = styled(IconButton)(({ theme }) => ({
@@ -169,16 +199,21 @@ const VideoPlayButton = styled(IconButton)(({ theme }) => ({
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  color: '#fff',
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  color: theme.palette.common.white,
   '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: theme.palette.primary.main,
+    transform: 'translate(-50%, -50%) scale(1.1)'
   }
 }));
 
 const ExperienceCard = styled(Card)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
+  marginBottom: theme.spacing(3),
   borderLeft: `4px solid ${theme.palette.primary.main}`,
+  transition: 'transform 0.3s ease',
+  '&:hover': {
+    transform: 'translateX(5px)'
+  }
 }));
 
 const JobSeekerProfile = () => {
@@ -188,17 +223,25 @@ const JobSeekerProfile = () => {
   
   // State
   const [tabValue, setTabValue] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [profile, setProfile] = useState(null);
   const [skills, setSkills] = useState([]);
   const [experiences, setExperiences] = useState([]);
   const [education, setEducation] = useState([]);
   const [videos, setVideos] = useState([]);
-  const [mainVideo, setMainVideo] = useState([]);
+  const [mainVideo, setMainVideo] = useState({ video_url: '', video_title: '' });
   const [loading, setLoading] = useState(true);
   
+  // Video states
+  const [mainVideoState, setMainVideoState] = useState({
+    isPlaying: false,
+    isMuted: true
+  });
+  
+  const [videoStates, setVideoStates] = useState({});
+  
   // Refs
-  const videoRef = React.useRef(null);
+  const mainVideoRef = useRef(null);
+  const videoRefs = useRef({});
   
   // Fetch user data
   useEffect(() => {
@@ -206,26 +249,32 @@ const JobSeekerProfile = () => {
       try {
         setLoading(true);
         
-        // Fetch profile data
         const profileResponse = await getUserProfile();
         setProfile(profileResponse.data);
         
-        // Fetch skills
         const skillsResponse = await getUserSkills();
         setSkills(skillsResponse.data.skills);
         
-        // Fetch experiences
         const experiencesResponse = await getUserExperiences();
         const educationResponse = await getUserEducation();
         setExperiences(experiencesResponse.data.experiences);
         setEducation(educationResponse.data.educations);
-        console.log('Education :::::', educationResponse.data.educations);
-        // Fetch videos
+        
         const videosResponse = await getUserVideos();
         setVideos(videosResponse.data.videos);
+        
         const mainVideo = videosResponse.data.videos.find(video => video.video_position === "main");
-
-setMainVideo(mainVideo || { video_url: '' });
+        setMainVideo(mainVideo || { video_url: '', video_title: '' });
+        
+        // Initialize video states
+        const initialVideoStates = {};
+        videosResponse.data.videos.forEach(video => {
+          initialVideoStates[video.id] = {
+            isPlaying: false,
+            isMuted: true
+          };
+        });
+        setVideoStates(initialVideoStates);
         
         setLoading(false);
       } catch (error) {
@@ -237,405 +286,601 @@ setMainVideo(mainVideo || { video_url: '' });
     fetchUserData();
   }, []);
   
-  
-  // Handle tab change
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
   
-  // Toggle video playback
-  const togglePlayback = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
+  // Main video controls
+  const toggleMainVideoPlayback = () => {
+    if (mainVideoRef.current) {
+      if (mainVideoState.isPlaying) {
+        mainVideoRef.current.pause();
       } else {
-        videoRef.current.play();
+        mainVideoRef.current.play();
       }
-      setIsPlaying(!isPlaying);
+      setMainVideoState(prev => ({
+        ...prev,
+        isPlaying: !prev.isPlaying
+      }));
     }
   };
   
-  // Handle video ended
-  const handleVideoEnded = () => {
-    setIsPlaying(false);
+  const toggleMainVideoMute = () => {
+    if (mainVideoRef.current) {
+      mainVideoRef.current.muted = !mainVideoState.isMuted;
+      setMainVideoState(prev => ({
+        ...prev,
+        isMuted: !prev.isMuted
+      }));
+    }
   };
   
-  // Navigate to edit profile
+  const handleMainVideoEnded = () => {
+    setMainVideoState(prev => ({
+      ...prev,
+      isPlaying: false
+    }));
+  };
+  
+  // Gallery video controls
+  const toggleVideoPlayback = (videoId) => {
+    const videoRef = videoRefs.current[videoId];
+    if (videoRef) {
+      if (videoStates[videoId]?.isPlaying) {
+        videoRef.pause();
+      } else {
+        videoRef.play();
+      }
+      setVideoStates(prev => ({
+        ...prev,
+        [videoId]: {
+          ...prev[videoId],
+          isPlaying: !prev[videoId]?.isPlaying
+        }
+      }));
+    }
+  };
+  
+  const toggleVideoMute = (videoId) => {
+    const videoRef = videoRefs.current[videoId];
+    if (videoRef) {
+      videoRef.muted = !videoStates[videoId]?.isMuted;
+      setVideoStates(prev => ({
+        ...prev,
+        [videoId]: {
+          ...prev[videoId],
+          isMuted: !prev[videoId]?.isMuted
+        }
+      }));
+    }
+  };
+  
+  const handleVideoEnded = (videoId) => {
+    setVideoStates(prev => ({
+      ...prev,
+      [videoId]: {
+        ...prev[videoId],
+        isPlaying: false
+      }
+    }));
+  };
+  
   const handleEditProfile = () => {
-    navigate('/Edit-JobSeeker-Profile');
+    navigate('/edit-JobSeeker-Profile');
   };
   
-  // Mock data for demonstration
-const mockProfile = {
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Present';
+    const date = new Date(dateString);
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return `${months[date.getMonth()]} ${date.getFullYear()}`;
+  };
 
-};
+  // Use mock data if real data is not available
+  const userData = profile || {};
+  const userSkills = skills || [];
+  const userExperiences = experiences || [];
+  const userEducation = education || [];
+  const userVideos = videos || [];
 
-const mockSkills = [
+  if (loading) {
+    return (
+      <ProfileContainer>
+        <Container maxWidth="lg">
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+            <Typography variant="h6">Loading profile...</Typography>
+          </Box>
+        </Container>
+      </ProfileContainer>
+    );
+  }
 
-];
-
-const mockExperiences = [
-
-];
-
-const mockEducation = [
-
-];
-
-const mockVideos = [
-
-];
-
-// Use mock data if real data is not available
-// Assuming `profile`, `skills`, `experiences`, `education`, `videos` are props or state variables passed into this component
-const userData = profile || mockProfile;
-const userSkills = skills && skills.length > 0 ? skills : mockSkills;
-const userExperiences = experiences && experiences.length > 0 ? experiences : mockExperiences;
-const userEducation = education && education.length > 0 ? education : mockEducation;
-const userVideos = videos && videos.length > 0 ? videos : mockVideos;
-
-// Format date (YYYY-MM to readable format)
-const formatDate = (dateString) => {
-  if (!dateString) return 'Present'; // 'الحالي' converted to 'Present'
-
-  const date = new Date(dateString);
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  return `${months[date.getMonth()]} ${date.getFullYear()}`;
-};
-
-return (
-  <ProfileContainer>
-    <Container maxWidth="lg">
-      {/* Profile Header */}
-      <ProfileHeader>
-        <ProfileInfo>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <ProfileAvatar src={userData.profile_pic} alt={userData.name} />
-            <Box>
-              <Typography variant="h4" component="h1" gutterBottom>
-                {userData.name}
-              </Typography>
-              <Typography variant="h6" color="textSecondary">
-                {userData.title}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                <LocationIcon fontSize="small" color="action" />
-                <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                  {userData.location}
+  return (
+    <ProfileContainer>
+      <Container maxWidth="lg">
+        {/* Profile Header */}
+        <ProfileHeader>
+          <ProfileInfo>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <ProfileAvatar src={userData.profile_pic} alt={userData.name} />
+              <Box>
+                <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+                  {userData.name}
                 </Typography>
+                <Typography variant="h6" color="primary" fontWeight="medium">
+                  {userData.title}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                  <LocationIcon fontSize="small" color="action" />
+                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                    {userData.location}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
-          </Box>
 
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
-            onClick={handleEditProfile}
-            sx={{ mb: 2 }}
-          >
-            Edit Profile {/* 'تعديل الملف الشخصي' converted to 'Edit Profile' */}
-          </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<EditIcon />}
+              onClick={handleEditProfile}
+              sx={{ mb: 3, boxShadow: 2 }}
+            >
+              Edit Profile
+            </Button>
 
-          <Typography variant="body1" paragraph>
-            {userData.bio}
-          </Typography>
-
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-              Skills {/* 'المهارات' converted to 'Skills' */}
+            <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
+              {userData.bio}
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-              {userSkills.map((skill, index) => (
-                <SkillChip key={index} label={skill.name} />
-              ))}
-            </Box>
-          </Box>
 
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <EmailIcon fontSize="small" color="action" />
-              <Typography variant="body2" sx={{ ml: 0.5 }}>
-                {userData.email}
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                Skills
               </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                {userSkills.map((skill, index) => (
+                  <SkillChip key={index} label={skill.name} sx={{ mb: 1, mr: 1 }} />
+                ))}
+              </Box>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <PhoneIcon fontSize="small" color="action" />
-              <Typography variant="body2" sx={{ ml: 0.5 }}>
-                {userData.phone}
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <LanguageIcon fontSize="small" color="action" />
-              <Typography variant="body2" sx={{ ml: 0.5 }}>
-                {userData.website}
-              </Typography>
-            </Box>
-          </Box>
 
-          <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
-            <IconButton color="primary" aria-label="LinkedIn">
-              <LinkedInIcon />
-            </IconButton>
-            <IconButton color="primary" aria-label="GitHub">
-              <GitHubIcon />
-            </IconButton>
-            <IconButton color="primary" aria-label="Twitter">
-              <TwitterIcon />
-            </IconButton>
-          </Box>
-        </ProfileInfo>
-
-        {/* Main Video */}
-        <MainVideoContainer>
-          <video
-            ref={videoRef}
-            src={mainVideo.video_url}
-            width="100%"
-            height="100%"
-            onEnded={handleVideoEnded}
-            onClick={togglePlayback}
-            style={{ objectFit: 'cover' }}
-          />
-
-          <VideoControls>
-            <IconButton size="small" color="inherit" onClick={togglePlayback}>
-              {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-            </IconButton>
-            <Typography variant="caption" color="inherit">
-               {mainVideo.video_title || ''}{/* 'فيديو تعريفي' converted to 'Introductory Video' */}
-            </Typography>
-          </VideoControls>
-
-          <VideoActions>
-            <IconButton color="inherit">
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton color="inherit">
-              <ShareIcon />
-            </IconButton>
-            <IconButton color="inherit">
-              <BookmarkIcon />
-            </IconButton>
-          </VideoActions>
-        </MainVideoContainer>
-      </ProfileHeader>
-
-      {/* Tabs Section */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant={isMobile ? "scrollable" : "fullWidth"}
-          scrollButtons={isMobile ? "auto" : false}
-          centered={!isMobile}
-        >
-          <Tab label="Experience" /> {/* 'الخبرات' converted to 'Experience' */}
-          <Tab label="Education" /> {/* 'التعليم' converted to 'Education' */}
-          <Tab label="Skills" /> {/* 'المهارات' converted to 'Skills' */}
-          <Tab label="Additional Info" /> {/* 'معلومات إضافية' converted to 'Additional Info' */}
-        </Tabs>
-
-        {/* Experience Tab */}
-        <TabPanel value={tabValue} index={0}>
-          {userExperiences.map((exp) => (
-            <ExperienceCard key={exp.id}>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="h6" component="h3">
-                     {exp.title}{exp.position? ` - ${exp.position}` : ''}
-                    </Typography>
-                    <Typography variant="subtitle1" color="primary">
-                      {exp.company_name}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="textSecondary">
-                    {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)} {/* 'الحالي' converted to 'Present' */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+              {userData.email && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <EmailIcon fontSize="small" color="action" />
+                  <Typography variant="body2" sx={{ ml: 0.5 }}>
+                    {userData.email}
                   </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
-                  <LocationIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                    {exp.location}
+              )}
+              {userData.phone && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <PhoneIcon fontSize="small" color="action" />
+                  <Typography variant="body2" sx={{ ml: 0.5 }}>
+                    {userData.phone}
                   </Typography>
                 </Box>
-                <Typography variant="body2">
-                  {exp.description}
-                </Typography>
-              </CardContent>
-            </ExperienceCard>
-          ))}
-        </TabPanel>
-
-        {/* Education Tab */}
-        <TabPanel value={tabValue} index={1}>
-          {userEducation.map((edu) => (
-            <ExperienceCard key={edu.id}>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="h6" component="h3">
-                      {edu.degree}
-                    </Typography>
-                    <Typography variant="subtitle1" color="primary">
-                      {edu.institution}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {edu.field}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="textSecondary">
-                    {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+              )}
+              {userData.website && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LanguageIcon fontSize="small" color="action" />
+                  <Typography variant="body2" sx={{ ml: 0.5 }}>
+                    {userData.website}
                   </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
-                  <LocationIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                    {edu.location}
-                  </Typography>
-                </Box>
-                <Typography variant="body2">
-                  {edu.description}
-                </Typography>
-              </CardContent>
-            </ExperienceCard>
-          ))}
-        </TabPanel>
+              )}
+            </Box>
 
-        {/* Skills Tab */}
-        <TabPanel value={tabValue} index={2}>
-          <Grid container spacing={2}>
-            {userSkills.map((skill, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', height: '100%' }}>
-                  <SkillChip label={skill.name} />
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </TabPanel>
-
-        {/* Additional Info Tab */}
-        <TabPanel value={tabValue} index={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Contact Information {/* 'معلومات الاتصال' converted to 'Contact Information' */}
-              </Typography>
-              <List>
-                <ListItem>
-                  <ListItemIcon>
-                    <EmailIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Email" secondary={userData.email} /> {/* 'البريد الإلكتروني' converted to 'Email' */}
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <PhoneIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Phone Number" secondary={userData.phone} /> {/* 'رقم الهاتف' converted to 'Phone Number' */}
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <LanguageIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Website" secondary={userData.website} /> {/* 'الموقع الإلكتروني' converted to 'Website' */}
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon>
-                    <LocationIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Location" secondary={userData.location} /> {/* 'الموقع' converted to 'Location' */}
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" gutterBottom>
-                Social Media {/* 'وسائل التواصل الاجتماعي' converted to 'Social Media' */}
-              </Typography>
-              <List>
-                <ListItem button component="a" href={userData.social?.linkedin} target="_blank">
-                  <ListItemIcon>
+            <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
+              {userData.social?.linkedin && (
+                <Tooltip title="LinkedIn">
+                  <IconButton color="primary" aria-label="LinkedIn" href={userData.social.linkedin} target="_blank">
                     <LinkedInIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="LinkedIn" secondary={userData.social?.linkedin} />
-                </ListItem>
-                <ListItem button component="a" href={userData.social?.github} target="_blank">
-                  <ListItemIcon>
+                  </IconButton>
+                </Tooltip>
+              )}
+              {userData.social?.github && (
+                <Tooltip title="GitHub">
+                  <IconButton color="primary" aria-label="GitHub" href={userData.social.github} target="_blank">
                     <GitHubIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="GitHub" secondary={userData.social?.github} />
-                </ListItem>
-                <ListItem button component="a" href={userData.social?.twitter} target="_blank">
-                  <ListItemIcon>
+                  </IconButton>
+                </Tooltip>
+              )}
+              {userData.social?.twitter && (
+                <Tooltip title="Twitter">
+                  <IconButton color="primary" aria-label="Twitter" href={userData.social.twitter} target="_blank">
                     <TwitterIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Twitter" secondary={userData.social?.twitter} />
-                </ListItem>
-              </List>
-            </Grid>
-          </Grid>
-        </TabPanel>
-      </Paper>
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          </ProfileInfo>
 
-      {/* Videos Gallery */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h5" component="h2" gutterBottom>
-          My Videos {/* 'فيديوهاتي' converted to 'My Videos' */}
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
+          {/* Main Video */}
+          {mainVideo.video_url && (
+            <MainVideoContainer>
+              <video
+                ref={mainVideoRef}
+                src={mainVideo.video_url}
+                width="100%"
+                height="100%"
+                muted={mainVideoState.isMuted}
+                onEnded={handleMainVideoEnded}
+                onClick={toggleMainVideoPlayback}
+                style={{ objectFit: 'cover', cursor: 'pointer' }}
+              />
 
-        <Grid container spacing={2}>
-          {userVideos.map((video) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
-              <VideoCard>
-                  <video
-            ref={videoRef}
-            src={mainVideo.video_url}
-            padding="2"
-      width="300px"
-            height="600px"
-            onEnded={handleVideoEnded}
-            onClick={togglePlayback}
-            style={{ objectFit: 'cover' }}
-          ></video><VideoPlayButton aria-label="play">
-                    <PlayArrowIcon onClick={togglePlayback} />
-                  </VideoPlayButton>
-                <VideoCardMedia
-             
-                  image={video.thumbnail}
-                  title={video.video_title}
-                > 
-                  
-                </VideoCardMedia>
-                <CardContent>
-                  <Typography variant="subtitle1" component="h3" noWrap>
-                    {video.video_title}
+              <VideoControls>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <IconButton size="small" color="inherit" onClick={toggleMainVideoPlayback}>
+                    {mainVideoState.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+                  </IconButton>
+                  <IconButton size="small" color="inherit" onClick={toggleMainVideoMute}>
+                    {mainVideoState.isMuted ? <VolumeOff /> : <VolumeUp />}
+                  </IconButton>
+                </Box>
+                <Typography variant="caption" color="inherit" noWrap sx={{ maxWidth: '60%' }}>
+                  {mainVideo.video_title || 'Intro Video'}
+                </Typography>
+              </VideoControls>
+
+              <VideoActions>
+                <Tooltip title="Like">
+                  <IconButton color="inherit">
+                    <FavoriteIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Share">
+                  <IconButton color="inherit">
+                    <ShareIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Save">
+                  <IconButton color="inherit">
+                    <BookmarkIcon />
+                  </IconButton>
+                </Tooltip>
+              </VideoActions>
+            </MainVideoContainer>
+          )}
+        </ProfileHeader>
+
+        {/* Tabs Section */}
+        <Paper sx={{ mb: 4, borderRadius: theme.shape.borderRadius, overflow: 'hidden', boxShadow: theme.shadows[3] }}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant={isMobile ? "scrollable" : "fullWidth"}
+            scrollButtons={isMobile ? "auto" : false}
+            centered={!isMobile}
+            sx={{
+              '& .MuiTab-root': {
+                fontSize: isMobile ? '0.875rem' : '1rem',
+                fontWeight: 500,
+                minHeight: 48
+              }
+            }}
+          >
+            <Tab label="Experience" icon={<WorkIcon />} iconPosition="start" />
+            <Tab label="Education" icon={<SchoolIcon />} iconPosition="start" />
+            <Tab label="Skills" />
+            <Tab label="Additional Info" />
+          </Tabs>
+
+          {/* Experience Tab */}
+          <TabPanel value={tabValue} index={0}>
+            {userExperiences.length > 0 ? (
+              userExperiences.map((exp) => (
+                <ExperienceCard key={exp.id} sx={{ mb: 3 }}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="h6" component="h3" fontWeight="medium">
+                          {exp.title}{exp.position ? ` - ${exp.position}` : ''}
+                        </Typography>
+                        <Typography variant="subtitle1" color="primary" fontWeight="medium">
+                          {exp.company_name}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="textSecondary">
+                        {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
+                      <LocationIcon fontSize="small" color="action" />
+                      <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                        {exp.location}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                      {exp.description}
+                    </Typography>
+                  </CardContent>
+                </ExperienceCard>
+              ))
+            ) : (
+              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
+                No experience information available
+              </Typography>
+            )}
+          </TabPanel>
+
+          {/* Education Tab */}
+          <TabPanel value={tabValue} index={1}>
+            {userEducation.length > 0 ? (
+              userEducation.map((edu) => (
+                <ExperienceCard key={edu.id} sx={{ mb: 3 }}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="h6" component="h3" fontWeight="medium">
+                          {edu.degree}
+                        </Typography>
+                        <Typography variant="subtitle1" color="primary" fontWeight="medium">
+                          {edu.institution}
+                        </Typography>
+                        {edu.field && (
+                          <Typography variant="body2" color="textSecondary">
+                            {edu.field}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Typography variant="body2" color="textSecondary">
+                        {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
+                      <LocationIcon fontSize="small" color="action" />
+                      <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                        {edu.location}
+                      </Typography>
+                    </Box>
+                    {edu.description && (
+                      <Typography variant="body2" sx={{ lineHeight: 1.7 }}>
+                        {edu.description}
+                      </Typography>
+                    )}
+                  </CardContent>
+                </ExperienceCard>
+              ))
+            ) : (
+              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
+                No education information available
+              </Typography>
+            )}
+          </TabPanel>
+
+          {/* Skills Tab */}
+          <TabPanel value={tabValue} index={2}>
+            <Grid container spacing={2}>
+              {userSkills.length > 0 ? (
+                userSkills.map((skill, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Paper sx={{ 
+                      p: 2, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      height: '100%',
+                      transition: 'transform 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-3px)',
+                        boxShadow: theme.shadows[4]
+                      }
+                    }}>
+                      <SkillChip label={skill.name} sx={{ mr: 1 }} />
+                      {skill.level && (
+                        <Typography variant="caption" color="textSecondary">
+                          {skill.level}
+                        </Typography>
+                      )}
+                    </Paper>
+                  </Grid>
+                ))
+              ) : (
+                <Grid item xs={12}>
+                  <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
+                    No skills information available
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
-                    <Typography variant="caption" color="textSecondary">
-                      {video.video_duration} seconds {/* 'ثانية' converted to 'seconds' */}
-                    </Typography>
-                    <Typography variant="caption" color="textSecondary">
-                      {video.views} views {/* 'مشاهدة' converted to 'views' */}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </VideoCard>
+                </Grid>
+              )}
             </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Container>
-  </ProfileContainer>
-);
+          </TabPanel>
 
+          {/* Additional Info Tab */}
+          <TabPanel value={tabValue} index={3}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" gutterBottom fontWeight="medium">
+                  Contact Information
+                </Typography>
+                <List>
+                  {userData.email && (
+                    <ListItem sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <EmailIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Email" 
+                        secondary={userData.email} 
+                        secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
+                      />
+                    </ListItem>
+                  )}
+                  {userData.phone && (
+                    <ListItem sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <PhoneIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText primary="Phone Number" secondary={userData.phone} />
+                    </ListItem>
+                  )}
+                  {userData.website && (
+                    <ListItem sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <LanguageIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Website" 
+                        secondary={userData.website} 
+                        secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
+                      />
+                    </ListItem>
+                  )}
+                  {userData.location && (
+                    <ListItem sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <LocationIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText primary="Location" secondary={userData.location} />
+                    </ListItem>
+                  )}
+                </List>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" gutterBottom fontWeight="medium">
+                  Social Media
+                </Typography>
+                <List>
+                  {userData.social?.linkedin && (
+                    <ListItem button component="a" href={userData.social.linkedin} target="_blank" sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <LinkedInIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="LinkedIn" 
+                        secondary={userData.social.linkedin} 
+                        secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
+                      />
+                    </ListItem>
+                  )}
+                  {userData.social?.github && (
+                    <ListItem button component="a" href={userData.social.github} target="_blank" sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <GitHubIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="GitHub" 
+                        secondary={userData.social.github} 
+                        secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
+                      />
+                    </ListItem>
+                  )}
+                  {userData.social?.twitter && (
+                    <ListItem button component="a" href={userData.social.twitter} target="_blank" sx={{ px: 0 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <TwitterIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Twitter" 
+                        secondary={userData.social.twitter} 
+                        secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
+                      />
+                    </ListItem>
+                  )}
+                </List>
+              </Grid>
+            </Grid>
+          </TabPanel>
+        </Paper>
+
+        {/* Videos Gallery */}
+        {userVideos.length > 0 && (
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">
+              My Videos
+            </Typography>
+            <Divider sx={{ mb: 3 }} />
+
+            <Grid container spacing={3}>
+              {userVideos.filter(video => video.video_position !== "main").map((video) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
+                  <VideoCard>
+                    <VideoCardMedia>
+                      <video
+                        ref={el => videoRefs.current[video.id] = el}
+                        src={video.video_url}
+                        width="100%"
+                        height="100%"
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          cursor: 'pointer'
+                        }}
+                        muted={videoStates[video.id]?.isMuted ?? true}
+                        onClick={() => toggleVideoPlayback(video.id)}
+                        onEnded={() => handleVideoEnded(video.id)}
+                      />
+                      <VideoPlayButton 
+                        aria-label="play" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleVideoPlayback(video.id);
+                        }}
+                      >
+                        {videoStates[video.id]?.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+                      </VideoPlayButton>
+                      <Box sx={{
+                        position: 'absolute',
+                        bottom: 8,
+                        left: 8,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                      }}>
+                        <IconButton 
+                          size="small" 
+                          color="inherit" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleVideoMute(video.id);
+                          }}
+                          sx={{
+                            backgroundColor: 'rgba(0,0,0,0.6)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0,0,0,0.8)'
+                            }
+                          }}
+                        >
+                          {videoStates[video.id]?.isMuted ? <VolumeOff fontSize="small" /> : <VolumeUp fontSize="small" />}
+                        </IconButton>
+                      </Box>
+                    </VideoCardMedia>
+                    <CardContent>
+                      <Typography variant="subtitle1" component="h3" noWrap>
+                        {video.video_title}
+                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                        {video.video_duration && (
+                          <Typography variant="caption" color="textSecondary">
+                            {Math.round(video.video_duration)}s
+                          </Typography>
+                        )}
+                        {video.views && (
+                          <Typography variant="caption" color="textSecondary">
+                            {video.views} views
+                          </Typography>
+                        )}
+                      </Box>
+                    </CardContent>
+                  </VideoCard>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+      </Container>
+    </ProfileContainer>
+  );
 };
+
 export default JobSeekerProfile;

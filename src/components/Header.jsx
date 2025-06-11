@@ -23,10 +23,20 @@ import {
 
 import { useAuth } from "../hooks/useAuth";
 
-
+function roleProfileNav(role) {
+  if (role === "jobseeker") {
+    return "/Job-seeker-profile";
+  } else if (role === "employer") {
+    return "/employer-profile";
+  } else if (role === "admin") {
+    return "/admin-profile";
+  } else {
+    return "/";
+  }
+}
 
  {/* //Header */}
-const Header = ({ onSidebarToggle , isSidebarVisible }) => {
+const Header = ({ onSidebarToggle , isSidebarVisible, role }) => {
   const Navigate=useNavigate();
   const { user, logout } = useAuth();
   return (<> {isSidebarVisible && ( 
@@ -61,7 +71,7 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
                 <IconButton color="inherit" onClick={()=>Navigate("/chat")}>
                   <Chat />
                 </IconButton>
-                <IconButton color="inherit" onClick={()=>Navigate("/candidate-profile")}>
+                <IconButton color="inherit" onClick={()=>{Navigate(roleProfileNav(role))} }>
                   <Person />
                   
                 </IconButton>
@@ -69,7 +79,7 @@ const Header = ({ onSidebarToggle , isSidebarVisible }) => {
                   <ExitToApp onClick={logout}/>
                 </IconButton>
                     <IconButton
-      onClick={()=>Navigate("/candidate-profile")} // Correctly call the navigate function
+      onClick={()=>{Navigate(roleProfileNav(role))} } // Correctly call the navigate function
       aria-label="view candidate profile" // Crucial for accessibility
       // sx={{ marginLeft: 2 }} // You can apply spacing here if needed,
                                // or use typical flexbox spacing in a Toolbar
