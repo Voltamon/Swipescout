@@ -135,7 +135,19 @@ const handleVideoHover = (videoId, isHovering) => {
   });
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth={false}  sx={{
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: 0,
+    minHeight: '100vh',
+    height: '100%', 
+    mt: 0,
+    pt: 2,
+    mb: 0,
+    paddingBottom: 4,
+  }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" sx={{ fontWeight: 'bold' ,color: 'rgba(29, 99, 139, 0.6)' ,fontFamily: 'arial'}}>
           My Videos
