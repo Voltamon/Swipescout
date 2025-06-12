@@ -217,19 +217,23 @@ export const getJobById = (id) => {
 };
 
 export const postJob = (jobData) => {
-  return api.post('/employers/jobs', jobData);
+  return api.post('/employer/job', jobData);
 };
 
 export const updateJob = (id, jobData) => {
-  return api.put(`/employers/jobs/${id}`, jobData);
+  return api.put(`/employer/job/${id}`, jobData);
 };
 
 export const deleteJob = (id) => {
-  return api.delete(`/employers/jobs/${id}`);
+  return api.delete(`/employer/job/${id}`);
 };
 
-export const getJobCategories = () => {
-  return api.get('/jobs/categories');
+export const getJobCategories = (id) => {
+  return api.get(`/categorie/job/${id}`); //.categories
+};
+
+export const getCategories = () => {
+  return api.get('/categories');
 };
 
 export const getSkills = () => {
