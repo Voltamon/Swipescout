@@ -400,7 +400,19 @@ const JobSeekerProfile = () => {
   }
 
   return (
-    <ProfileContainer>
+    <ProfileContainer  sx={{
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top right',
+    padding: 0,
+    minHeight: '100vh',
+    height: '100%', 
+    mt: 0,
+    pt: 2,
+    mb: 0,
+    paddingBottom: 4,
+  }}>
       <Container maxWidth="lg">
         {/* Profile Header */}
         <ProfileHeader>

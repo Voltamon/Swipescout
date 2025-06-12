@@ -45,7 +45,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   postJob, 
   updateJob, 
-  getJobCategories, 
+  getJobCategories,  
   getCategories,
   getSkills 
 } from '../services/api';
@@ -579,7 +579,14 @@ const PostJobPage = () => {
 
   // In the return statement, replace the form sections with the updated ones
   return (
-    <PageContainer>
+    <PageContainer sx={{ 
+      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
+      minHeight: "100vh",
+      py: 3 ,pt: {
+      xs: 20,  
+      sm: 16   
+    }
+    }} >
       <Container maxWidth="lg">
         {/* Page Header */}
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
