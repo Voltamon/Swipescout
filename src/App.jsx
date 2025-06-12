@@ -30,7 +30,7 @@ import Inbox from './pages/Inbox.jsx';
 import LandingPage_ from "./pages/LandingPage_/LandingPage_.jsx";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import JobDetailsPage from "./pages/JobDetailsPage";
-import PostJobPage from "./pages/PostJobPage";
+import PostJobPag_ from "./pages/PostJobPag_";
 
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
@@ -78,7 +78,7 @@ import JobSeekerProfile from './pages/JobSeekerProfile';
 import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
 import EmployerProfilePage from "./pages/EmployerProfilePage";
 import JobsListingPage from "./pages/JobsListingPage";
-// import PostJobPage_2 from "./pages/PostJobPage_2";
+import PostJobPage from "./pages/PostJobPage";
 import { VideoProvider } from './context/VideoContext';
 import VideosPage from './pages/VideosPage';
 import VideoFeedViewer from './pages/VideoFeedViewer';
@@ -163,7 +163,7 @@ function App() {
             <Route path="/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/search" element={<JobSearchPage />} />
             <Route path="/job/:id" element={<JobDetailsPage />} />
-            <Route path="/post-job" element={<PostJobPage />} />
+            <Route path="/post-job" element={<PostJobPag_ />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/feed-page" element={<FeedPage />} />
             <Route path="/Employer-explore" element={<EmployerExplore />} />
@@ -180,13 +180,13 @@ function App() {
             <Route path="/employer-profile" element={<EmployerProfilePage />} /> 
            <Route path="/edit-JobSeeker-Profile" element={<EditJobSeekerProfile />} />
              <Route path="/Jobs-Listing-Page" element={<JobsListingPage />} />
-           {/* // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
+           <Route path="/Post-job-page" element={<PostJobPage />} /> 
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
 
-<Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
-<Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} /> 
-<Route path="/edit-video/:id" element={<EditVideoPage />} /> 
+            <Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
+            <Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} /> 
+            <Route path="/edit-video/:id" element={<EditVideoPage />} /> 
 
 
           </Route>

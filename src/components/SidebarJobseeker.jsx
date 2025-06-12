@@ -72,7 +72,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Job Details', icon: <SearchIcon />, path: '/job/1' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
     { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
-    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
+    { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
   ];
 
@@ -112,7 +112,7 @@ const roleStyles = {
     // ... other employer styles
   },
   job_seeker: {
-   background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2_j.png')`,
+   background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
     '& .MuiListItem-root': {
       color: 'rgb(39, 56, 83)', // Base text color
       '&.Mui-selected': {
