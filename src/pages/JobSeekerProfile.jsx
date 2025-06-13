@@ -409,7 +409,7 @@ const JobSeekerProfile = () => {
     minHeight: '100vh',
     height: '100%', 
     mt: 0,
-    pt: 2,
+    pt: 2, 
     mb: 0,
     paddingBottom: 4,
   }}>
