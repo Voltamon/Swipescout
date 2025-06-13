@@ -13,7 +13,7 @@ const api = axios.create({
 // إضافة معترض للطلبات لإضافة توكن المصادقة
 api.interceptors.request.use(
   (config) => {
-    const token = JSON.parse(localStorage.getItem('accessToken'));
+    const token = localStorage.getItem('accessToken') ;
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -42,12 +42,23 @@ export const refreshToken = () => {
   return api.post('/auth/refresh');
 };
 
-export const forgotPassword = (email) => {
-  return api.post('/auth/forgot-password', { email });
+export const forgotPassword = async (data) => {
+  
+    const response = await api.post(`/auth/forgot-password/`, {
+      email: data.email
+    });
+    return response.data;
+  
 };
 
-export const resetPassword = (token, password) => {
-  return api.post('/auth/reset-password', { token, password });
+export const resetPassword = async (data) => {
+  
+    const response = await api.post(`/auth/reset-password/`, {
+      oobCode: data.oobCode,
+      newPassword: data.newPassword
+    });
+    return response.data;
+ 
 };
 
 export const getCurrentUser = () => {

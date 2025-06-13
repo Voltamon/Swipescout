@@ -7,18 +7,32 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   // Initialize state from localStorage if available
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  
-  const [role, setRole] = useState(() => {
-    const storedRole = localStorage.getItem("role");
-    return storedRole ? JSON.parse(storedRole) : null;
-  });
+const [user, setUser] = useState(() => {
+  try {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : { role: null }; // Default with role
+  } catch (e) {
+    console.error("Failed to parse user from localStorage", e);
+    return { role: null }; // Always return an object with role
+  }
+});
+
+// In your AuthProvider component
+
+
+const [role, setRole] = useState(() => {
+  try {
+    const storedRole = localStorage.getItem('role');
+    return storedRole || null;
+  } catch (e) {
+    console.error("Failed to parse role from localStorage", e);
+    return null;
+  }
+});
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [fallbackMode, setFallbackMode] = useState(false);
   const navigate = useNavigate();
   
   const auth = getAuth(app);
@@ -37,405 +51,468 @@ const extendSession = () => {
 };
 
 
-  // New token management functions
-  const storeTokens = (accessToken, refreshToken) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000); // 55 minutes
-  };
-
-  const clearTokens = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('tokenExpiry');
-  };
-
-  const refreshTokens = useCallback(async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) throw new Error('No refresh token available');
-      
-      const response = await fetch(`${apiUrl}/api/auth/refresh-token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken })
-      });
-
-      if (!response.ok) throw new Error('Token refresh failed');
-      
-      const { accessToken, refreshToken: newRefreshToken } = await response.json();
-      storeTokens(accessToken, newRefreshToken);
-      return accessToken;
-    } catch (error) {
-      clearTokens();
-      throw error;
-    }
-  }, [apiUrl]);
-
-  // Modified handleAuthSuccess
-  const handleAuthSuccess = useCallback(async (accessToken, refreshToken, origin, role = null, userP = null) => {
-    try {
-      storeTokens(accessToken, refreshToken);
-      // localStorage.setItem('sessionExpiry', Date.now() + SESSION_DURATION);
 
 
-      let idToken = accessToken;
-      let user = userP;
-      let userFB;
-      
-      if (origin === "linkedin" || origin === "EmailPass") {
-        const userCredential = await signInWithCustomToken(auth, accessToken);
-        userFB = userCredential.user;
-        userFB.role = role;
-        idToken = await userFB.getIdToken(true);
-      }
-      await auth.setPersistence(browserLocalPersistence);
 
-      localStorage.setItem("accessToken", JSON.stringify(idToken));
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("role", JSON.stringify(role));
-      
-      setUser(user);
-      setRole(role);
-      
-      return { success: true, user:(JSON.stringify(user)), role };
-    } catch (error) {
-      return {
-        error: true,
-        message: error.message || "Authentication processing failed"
-      };
-    }
-  }, [auth]);
+// Update storeTokens function
+const storeTokens = (accessToken, refreshToken, userData) => {
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('refreshToken', refreshToken);
+  localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000); // 55 minutes
+  
+  if (userData) {
+    const userWithRefreshToken = {
+      ...userData,
+      refresh_token: refreshToken // Store refresh token in user object
+    };
+    localStorage.setItem('user', JSON.stringify(userWithRefreshToken));
+    localStorage.setItem('role', userData?.role || null);
+  }
+};
 
-  // New token verification flow
-  const verifyAccessToken = useCallback(async (token) => {
-    try {
-      const response = await fetch(`${apiUrl}/api/auth/verify-token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }, [apiUrl]);
-
-  // Updated checkAuth
-  const checkAuth = useCallback(async () => {
-    try {
-      setLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      const refreshToken = localStorage.getItem('refreshToken');
-      
-      if (!accessToken || !refreshToken) {
-        throw new Error('No tokens available');
-      }
-
-      // Check if token is expired or about to expire
-      const isExpired = Date.now() > parseInt(localStorage.getItem('tokenExpiry') || 0);
-      
-      if (isExpired) {
-        await refreshTokens();
-      } else {
-        const isValid = await verifyAccessToken(accessToken);
-        if (!isValid) await refreshTokens();
-      }
-
-      // Verify the (possibly refreshed) token
-      const currentToken = localStorage.getItem('accessToken');
-      const response = await fetch(`${apiUrl}/api/auth/verify-token`, {
-        headers: { Authorization: `Bearer ${currentToken}` }
-      });
-
-      if (!response.ok) throw new Error('Token verification failed');
-      
-      const userData = await response.json();
-      setUser(userData.user);
-      setRole(userData.role);
-      setError(null);
-    } catch (error) {
-      clearTokens();
-      setUser(null);
-      setRole(null);
-      setError(error.message);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiUrl, refreshTokens, verifyAccessToken]);
-
-  // Email/Password Login
-  const loginByEmailAndPassword = useCallback(async (email, password) => {
-    localStorage.removeItem("accessToken");
-    setUser(null);
-
-    try {
-      const response = await fetch(`${apiUrl}/api/auth/signin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : {};
-
-      if (!response.ok) {
-        return {
-          error: true,
-          message: data.message || "Login failed",
-          status: response.status
-        };
-      }
-      return await handleAuthSuccess(data.token, "EmailPass", data.role ,data.user);
-    } catch (error) {
-      console.error("Login error:", error);
-      return {
-        error: true,
-        message: error.message || "Login failed"
-      };
-    }
-  }, [apiUrl, handleAuthSuccess]);
-
-  // Google Authentication
-  const authenticateWithGoogle = useCallback(async (role = null) => {
-    localStorage.removeItem("accessToken");
-    setUser(null);
+const clearTokens = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('tokenExpiry');
+  localStorage.removeItem('user');
+  localStorage.removeItem('role');
+  localStorage.removeItem('persistentToken');
+};
+// Update refreshTokens function
+const refreshTokens = useCallback(async () => {
+  try {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    const refreshToken = userData?.refresh_token;
     
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken(true);
-
-      const endpoint = role
-        ? `${apiUrl}/api/auth/signup/google`
-        : `${apiUrl}/api/auth/signin/google`;
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${idToken}`
-        },
-        body: JSON.stringify(role ? { idToken, role } : { idToken })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Authentication failed");
-      }
-
-      const data = await response.json();
-      return await handleAuthSuccess(idToken, "google", data.role, data.user);
-    } catch (error) {
-      console.error("Google authentication error:", error);
-      await auth.signOut();
-      return {
-        error: true,
-        message: error.message || "Google authentication failed"
-      };
-    }
-  }, [apiUrl, auth, handleAuthSuccess]);
-
-  // LinkedIn Authentication
-  const authenticateWithLinkedIn = useCallback(async (role = null) => {
-    localStorage.removeItem("accessToken");
-    setUser(null);
+    if (!refreshToken) throw new Error('No refresh token available');
     
-    try {
-      const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+    const response = await fetch(`${apiUrl}/api/auth/refresh-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken })
+    });
 
-      const linkedinAuthWindow = window.open(
-        linkedinAuthUrl,
-        '_blank',
-        'width=600,height=600'
-      );
+    if (!response.ok) throw new Error('Token refresh failed');
+    
+    const { accessToken, refreshToken: newRefreshToken, user } = await response.json();
+    storeTokens(accessToken, newRefreshToken, user);
+    return accessToken;
+  } catch (error) {
+    console.error('Refresh failed:', error);
+    clearTokens();
+    setUser(null);
+    setRole(null);
+    throw error;
+  }
+}, [apiUrl]);
 
-      if (!linkedinAuthWindow) {
-        throw new Error("Popup window was blocked. Please allow popups for this site.");
-      }
-
-      const result = await new Promise((resolve, reject) => {
-        const messageListener = (event) => {
-          if (event.origin === window.location.origin) {
-            if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
-              window.removeEventListener('message', messageListener);
-              resolve(event.data.payload);
-            } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
-              window.removeEventListener('message', messageListener);
-              reject(new Error(event.data.error || "LinkedIn authentication failed"));
-            }
-          }
-        };
-
-        window.addEventListener('message', messageListener);
-
-        const timeoutId = setTimeout(() => {
-          window.removeEventListener('message', messageListener);
-          reject(new Error("LinkedIn authentication timed out."));
-        }, 120000);
-
-        return () => {
-          window.removeEventListener('message', messageListener);
-          clearTimeout(timeoutId);
-        };
-      });
-
-      const endpoint = role
-        ? `${apiUrl}/api/auth/signup/linkedin`
-        : `${apiUrl}/api/auth/signin/linkedin`;
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: result.id_token,
-          ...(role ? { role } : {})
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        return {
-          error: true,
-          message: errorData.error || "login duplicate or error"
-        };
-      }
-
-      const responseData = await response.json();
-      return await handleAuthSuccess(responseData.token, "linkedin", responseData.role);
-    } catch (error) {
-      console.error("LinkedIn authentication error:", error);
-      return {
-        error: true,
-        message: error.message || "LinkedIn authentication failed"
-      };
-    }
-  }, [apiUrl, LINKEDIN_CLIENT_ID, handleAuthSuccess]);
-
-  // Email Signup
-  const signupWithEmail = useCallback(async (email, password, displayName, role) => {
-    try {
-      const response = await fetch(`${apiUrl}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, displayName, role })
-      });
-
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : {};
-
-      if (!response.ok) {
-        return {
-          error: true,
-          message: data.message || "Signup failed"
-        };
-      }
-
-      if (data.token) {
-        return await handleAuthSuccess(data.token, "EmailPass", role);
-      } else {
-        return {
-          error: true,
-          message: "error in authentication",
-        };
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      return {
-        error: true,
-        message: error.message || "Signup failed"
-      };
-    }
-  }, [apiUrl, handleAuthSuccess]);
 
   // Logout
-  const logout = useCallback(async () => {
-    try {
-      await fetch(`${apiUrl}/api/auth/logout`, { method: "POST" });
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-      localStorage.removeItem("role");
-      setUser(null);
-      setRole(null);
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout error:", error);
+const logout = useCallback(async () => {
+  try {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.warn('No access token available for logout');
+      clearTokens();
+      return;
     }
-    signOut(auth)
-  .then(() => {
-    console.log("User signed out successfully");
-    // Optionally redirect or update UI
-  })
-  .catch((error) => {
-    console.error("Sign-out error:", error);
-  });
-  }, [apiUrl, navigate]);
 
-  // Initial auth check
-  // useEffect(() => {
-  //   checkAuth();
-  // }, [checkAuth]);
-
-  const stableCheckAuth = useCallback(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  useEffect(() => {
-    // Session sync across tabs
-    const handleStorageChange = (e) => {
-      if (e.key === 'sessionExpiry' || 
-          e.key === 'accessToken' || 
-          e.key === 'user' || 
-          e.key === 'role') {
-        stableCheckAuth();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [stableCheckAuth]);
-
-  
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        // Check existing session
-        const sessionExpiry = localStorage.getItem('sessionExpiry');
-        if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
-          throw new Error('Session expired');
+    // First try backend logout
+    try {
+      await fetch(`${apiUrl}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-  
-        await checkAuth();
-        
-        // Set up the refresh interval only after successful auth
-        const refreshInterval = setInterval(async () => {
-          try {
-            await refreshTokens();
-          } catch (error) {
-            console.error('Token refresh failed:', error);
-            logout();
-          }
-        }, TOKEN_REFRESH_BUFFER); // Refresh just before expiration
-        
-        return () => clearInterval(refreshInterval);
-      } catch (error) {
-        console.error('Initial auth check failed:', error);
-        logout();
+      });
+    } catch (backendError) {
+      console.error('Backend logout failed:', backendError);
+    }
+
+    // Then Firebase logout
+    try {
+      await signOut(auth);
+    } catch (firebaseError) {
+      console.error('Firebase logout failed:', firebaseError);
+    }
+
+    // Clear all local state
+    clearTokens();
+    setUser(null);
+    setRole(null);
+    navigate("/login");
+  } catch (error) {
+    console.error("Logout error:", error);
+    // Ensure we clear state even if logout fails
+    clearTokens();
+    setUser(null);
+    setRole(null);
+    navigate("/login");
+  }
+}, [apiUrl, navigate]);
+
+// Update checkAuth function
+const checkAuth = useCallback(async () => {
+  try {
+    setLoading(true);
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    const userData = JSON.parse(localStorage.getItem('user')) || {};
+
+    if (!accessToken && !refreshToken) {
+      throw new Error('No tokens available');
+    }
+
+    // First try to verify the access token
+    if (accessToken) {
+      try {
+        const verifyResponse = await fetch(`${apiUrl}/api/auth/verify-token`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ verifyOnly: true }) // Add this if your backend expects it
+        });
+
+        if (verifyResponse.ok) {
+          const data = await verifyResponse.json();
+          storeAuthData(data.user, false, data.accessToken);
+          return;
+        }
+        throw new Error('Token verification failed');
+      } catch (verifyError) {
+        console.warn('Token verification failed:', verifyError);
+        // Don't throw here, proceed to refresh
       }
-    };
+    }
+
+    // If verification failed, try refresh
+    if (refreshToken) {
+      try {
+        const newTokens = await refreshTokens();
+        if (newTokens) return;
+      } catch (refreshError) {
+        console.warn('Token refresh failed:', refreshError);
+        throw refreshError;
+      }
+    }
+
+    // If all else fails, logout
+    throw new Error('Authentication failed');
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    await logout();
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+}, [apiUrl, logout, refreshTokens]);
+
+// Helper to store user and role in localStorage and state
+const storeAuthData = (userData, isFallback, accessToken = null) => {
+  const safeUser = {
+    ...(userData || {}),
+    role: userData?.role || null
+  };
+
+  localStorage.setItem('user', JSON.stringify(safeUser));
+  localStorage.setItem('role', safeUser.role);
   
-    initializeAuth();
-  }, [checkAuth]);
+  if (accessToken) {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000); // 55 minutes
+  }
+  
+  setUser(safeUser);
+  setRole(safeUser.role);
+  setFallbackMode(isFallback);
+};
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Enhanced handleAuthSuccess
+const handleAuthSuccess = useCallback(async (accessToken, refreshToken, provider, role, user, persistentToken = null, firebaseStatus = null) => {
+  const userWithRefreshToken = {
+    ...user,
+    refresh_token: refreshToken // Store refresh token inside user
+  };
+
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('user', JSON.stringify(userWithRefreshToken)); // Store user with refresh token
+  localStorage.setItem('role', JSON.stringify(role));
+  localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
+
+  setUser(userWithRefreshToken);
+  setRole(role);
+  setFallbackMode(firebaseStatus === 'fallback');
+  return { success: true, user: userWithRefreshToken, role, provider };
+}, []);
+
+
+
+  
+
+  // Email/Password Login
+const loginByEmailAndPassword = useCallback(async (email, password) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/auth/signin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        error: true,
+        message: data.message || "Login failed",
+        status: response.status
+      };
+    }
+
+    // Store tokens and user data
+    storeTokens(data.accessToken, data.refreshToken, data.user);
+    
+    setUser(data.user);
+    setRole(data.user?.role || null);
+    
+    return { success: true, user: data.user };
+    
+  } catch (error) {
+    console.error("Login error:", error);
+    return {
+      error: true,
+      message: error.message || "Login failed"
+    };
+  }
+}, [apiUrl]);
+
+  // Google Authentication
+const authenticateWithGoogle = useCallback(async (role = null) => {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const idToken = await result.user.getIdToken(true);
+
+    const endpoint = role
+      ? `${apiUrl}/api/auth/signup/google`
+      : `${apiUrl}/api/auth/signin/google`;
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken, ...(role ? { role } : {}) })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Google authentication failed");
+    }
+
+    const data = await response.json();
+    
+    // Store tokens and user data
+    storeTokens(data.accessToken, data.refreshToken, data.user);
+    setUser(data.user);
+    setRole(data.user?.role || null);
+    
+    return { success: true, user: data.user };
+    
+  } catch (error) {
+    console.error("Google auth error:", error);
+    await signOut(auth);
+    return {
+      error: true,
+      message: error.message || "Google authentication failed"
+    };
+  }
+}, [apiUrl, auth]);
+
+  // LinkedIn Authentication
+const authenticateWithLinkedIn = useCallback(async (role = null) => {
+  try {
+    const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/linkedin/callback')}&scope=${encodeURIComponent('openid profile email')}&state=${Date.now()}`;
+
+    const linkedinAuthWindow = window.open(
+      linkedinAuthUrl,
+      '_blank',
+      'width=600,height=600'
+    );
+
+    if (!linkedinAuthWindow) {
+      throw new Error("Popup window was blocked. Please allow popups for this site.");
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const messageListener = (event) => {
+        if (event.origin === window.location.origin) {
+          if (event.data.type === 'LINKEDIN_AUTH_SUCCESS') {
+            window.removeEventListener('message', messageListener);
+            resolve(event.data.payload);
+          } else if (event.data.type === 'LINKEDIN_AUTH_ERROR') {
+            window.removeEventListener('message', messageListener);
+            reject(new Error(event.data.error || "LinkedIn authentication failed"));
+          }
+        }
+      };
+
+      window.addEventListener('message', messageListener);
+    });
+
+    const endpoint = role
+      ? `${apiUrl}/api/auth/signup/linkedin`
+      : `${apiUrl}/api/auth/signin/linkedin`;
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: result.id_token,
+        ...(role ? { role } : {})
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "LinkedIn authentication failed");
+    }
+
+    const data = await response.json();
+    
+    // Store tokens and user data
+    storeTokens(data.accessToken, data.refreshToken, data.user);
+    setUser(data.user);
+    setRole(data.user?.role || null);
+    
+    return { success: true, user: data.user };
+    
+  } catch (error) {
+    console.error("LinkedIn auth error:", error);
+    return {
+      error: true,
+      message: error.message || "LinkedIn authentication failed"
+    };
+  }
+}, [apiUrl, LINKEDIN_CLIENT_ID]);
+
+  // Email Signup
+const signupWithEmail = useCallback(async (email, password, displayName, role) => {
+  try {
+    const response = await fetch(`${apiUrl}/api/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, displayName, role })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        error: true,
+        message: data.message || "Signup failed",
+        status: response.status
+      };
+    }
+
+    // Store all tokens and user data
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
+    
+    const userWithRefresh = {
+      ...data.user,
+      refresh_token: data.refreshToken
+    };
+    localStorage.setItem('user', JSON.stringify(userWithRefresh));
+    localStorage.setItem('role', data.user.role);
+
+    setUser(userWithRefresh);
+    setRole(data.user.role);
+    
+    return { 
+      success: true, 
+      user: userWithRefresh,
+      role: data.user.role
+    };
+  } catch (error) {
+    console.error("Signup error:", error);
+    return {
+      error: true,
+      message: error.message || "Signup failed"
+    };
+  }
+}, [apiUrl]);
+
+
+
+// Add this to your AuthProvider component
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      checkAuth();
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  return () => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}, [checkAuth]);
+
+  
+useEffect(() => {
+  let refreshInterval;
+
+  const initializeAuth = async () => {
+    try {
+      await checkAuth();
+      
+      // Set up token refresh interval
+      refreshInterval = setInterval(async () => {
+        try {
+          const tokenExpiry = localStorage.getItem('tokenExpiry');
+          if (tokenExpiry && Date.now() > parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER) {
+            await refreshTokens();
+          }
+        } catch (error) {
+          console.error('Background refresh failed:', error);
+        }
+      }, 30000); // Check every 30 seconds
+    } catch (error) {
+      console.error('Initial auth check failed:', error);
+    }
+  };
+
+  initializeAuth();
+
+  return () => {
+    if (refreshInterval) clearInterval(refreshInterval);
+  };
+}, [checkAuth, refreshTokens]);
+// In your auth provider
+useEffect(() => {
+  const expiry = localStorage.getItem('tokenExpiry');
+  if (expiry && Date.now() > parseInt(expiry)) {
+    console.log('Token expired - forcing logout');
+    logout();
+  }
+}, [logout]);
+
+console.log('[Auth] Current tokens:', {
+  accessToken: !!localStorage.getItem('accessToken'),
+  refreshToken: !!localStorage.getItem('refreshToken'),
+  user: localStorage.getItem('user')
+});
 
   // Memoize context value
   const contextValue = useMemo(() => ({
-    user,
-    role,
-    loading,
+  user: user || { role: null }, // Ensure user always has role
+  role: role || null,
+    loading, 
     error,
     loginByEmailAndPassword,
     authenticateWithGoogle,
@@ -451,7 +528,7 @@ const extendSession = () => {
     user,
     role,
     loading,
-    error,
+    error, 
     loginByEmailAndPassword,
     authenticateWithGoogle,
     authenticateWithLinkedIn,

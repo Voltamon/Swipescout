@@ -84,7 +84,8 @@ import VideosPage from './pages/VideosPage';
 import VideoFeedViewer from './pages/VideoFeedViewer';
 import  EditEmployerProfilePage  from './pages/EditEmployerProfilePage';
 import EditVideoPage  from './pages/EditeVideoPage';
-
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 
 // Initialize once (put this in a separate config file)
@@ -131,6 +132,8 @@ function App() {
           </Route>
           <Route path="/video-feed/:vid?" element={<VideoFeed />} />
           <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
 
           {/* Private Routes */}
 

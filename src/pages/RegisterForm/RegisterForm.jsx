@@ -137,6 +137,10 @@ const LoginLink = styled(Typography)(({ theme }) => ({
   cursor: 'pointer',
 }));
 
+
+
+// Styled components (keep the same as original)
+
 const RegisterForm = () => {
   const {
     signupWithEmail,
@@ -199,14 +203,25 @@ const RegisterForm = () => {
   };
 
   const navigateAsRole = (role) => {
-    if (role === "job_seeker") {
-      navigate("/dashboard");
+    if (!role) {
+      console.error("No role provided for navigation");
+      setError("Unable to determine user role");
+      return;
     }
-    else if (role === "employer") {
-      navigate("/employer-dashboard");
-    }
-    else if (role === "admin") {
-      navigate("/admin-dashboard");
+
+    switch (role.toLowerCase()) {
+      case "job_seeker":
+        navigate("/dashboard");
+        break;
+      case "employer":
+        navigate("/employer-dashboard");
+        break;
+      case "admin":
+        navigate("/admin-dashboard");
+        break;
+      default:
+        console.error("Unknown role:", role);
+        navigate("/");
     }
   };
 
@@ -215,6 +230,7 @@ const RegisterForm = () => {
     setLoading({ normal: true, google: false, linkedin: false });
     setError("");
 
+    // Validation
     if (!formData.role) {
       setError("Please select a role (Job Seeker or Employer)");
       setLoading({ normal: false, google: false, linkedin: false });
@@ -225,56 +241,88 @@ const RegisterForm = () => {
       setLoading({ normal: false, google: false, linkedin: false });
       return;
     }
-console.log("formData:",formData);
-    const result = await signupWithEmail(
-      formData.email,
-      formData.password, 
-      formData.fullName,
-      formData.role
-    );
-console.log("result:",result);
-    if (result.error) {
-      setError(result.message);
-      setLoading({ normal: false, google: false, linkedin: false });
-    } else {
-      navigateAsRole(result.role);
-    }
 
-    setLoading({ normal: false, google: false, linkedin: false });
+    try {
+      const result = await signupWithEmail(
+        formData.email,
+        formData.password, 
+        formData.fullName,
+        formData.role
+      );
+
+      if (result?.error) {
+        setError(result.message || "Registration failed");
+      } else {
+        const userRole = result?.user?.role || result?.role;
+        if (userRole) {
+          navigateAsRole(userRole);
+        } else {
+          setError("Registration successful but unable to determine user role");
+        }
+      }
+    } catch (err) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setLoading({ normal: false, google: false, linkedin: false });
+    }
   };
 
   const handleGoogleSignUp = async (role) => {
-    if (!role) return;
+    if (!role) {
+      setError("Please select a role");
+      return;
+    }
     
     setLoading({ normal: false, google: true, linkedin: false });
     setError("");
 
-    const result = await authenticateWithGoogle(role);
-
-    if (result.error) {
-      setError(result.message);
-    } else {
-      navigateAsRole(result.role);
+    try {
+      const result = await authenticateWithGoogle(role);
+      
+      if (result.error) {
+        setError(result.message || "Google signup failed");
+      } else {
+        const userRole = result?.user?.role || result?.role;
+        if (userRole) {
+          navigateAsRole(userRole);
+        } else {
+          setError("Google signup successful but unable to determine user role");
+        }
+      }
+    } catch (err) {
+      setError(err.message || "Google signup failed");
+    } finally {
+      setLoading({ normal: false, google: false, linkedin: false });
     }
-
-    setLoading({ normal: false, google: false, linkedin: false });
   };
 
   const handleLinkedInSignUp = async (role) => {
-    if (!role) return;
+    if (!role) {
+      setError("Please select a role");
+      return;
+    }
     
     setLoading({ normal: false, google: false, linkedin: true });
     setError("");
     
-    const result = await authenticateWithLinkedIn(role);
-    if (result.error) {
-      setError(result.message);
-    } else {
-      console.log("rsultttt:",result.role);
-      navigateAsRole(result.role);
+    try {
+      const result = await authenticateWithLinkedIn(role);
+      
+      if (result.error) {
+        setError(result.message || "LinkedIn signup failed");
+      } else {
+        const userRole = result?.user?.role || result?.role;
+        if (userRole) {
+          navigateAsRole(userRole);
+        } else {
+          setError("LinkedIn signup successful but unable to determine user role");
+        }
+      }
+    } catch (err) {
+      setError(err.message || "LinkedIn signup failed");
+    } finally {
+      setLoading({ normal: false, google: false, linkedin: false });
     }
-
-    setLoading({ normal: false, google: false, linkedin: false });
   };
 
   useEffect(() => {
@@ -290,6 +338,7 @@ console.log("result:",result);
         <RegisterFormSubtitle>Join our platform to find your perfect job match</RegisterFormSubtitle>
 
         <Box component="form" onSubmit={handleNormalSignup}>
+          {/* Form fields remain the same */}
           <InputField
             label="Full Name"
             type="text"
@@ -439,7 +488,15 @@ console.log("result:",result);
         </Menu>
 
         {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mt: 2,
+              display: 'flex',
+              alignItems: 'center' 
+            }}
+            onClose={() => setError("")}
+          >
             <AlertCircleIcon className="mr-2 h-4 w-4" />
             {error}
           </Alert>

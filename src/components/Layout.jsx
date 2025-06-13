@@ -113,10 +113,10 @@ const Layout = ({role}) => {
   },
 }));
 
-  const { user, logout } = useAuth();
-
-  let roleVar =  JSON.parse(localStorage.getItem("role"));
-  if(user && user.role)roleVar=user.role;
+  const { user, logout   } = useAuth();
+// roleVar=role;
+   let roleVar= role; // JSON.parse(localStorage.getItem("role"));
+  if(user && user.role) roleVar=user.role;
 
 const roleGradients = {
   employer: 'linear-gradient(135deg,rgb(121, 144, 235) 0%,rgb(239, 242, 255) 100%)',
