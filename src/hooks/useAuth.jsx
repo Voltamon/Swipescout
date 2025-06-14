@@ -81,9 +81,7 @@ const clearTokens = () => {
 // Update refreshTokens function
 const refreshTokens = useCallback(async () => {
   try {
-    const userData = JSON.parse(localStorage.getItem('user'));
-    const refreshToken = userData?.refresh_token;
-    
+    const refreshToken = localStorage.getItem('refreshToken'); // Fixed key name
     if (!refreshToken) throw new Error('No refresh token available');
     
     const response = await fetch(`${apiUrl}/api/auth/refresh-token`, {
@@ -108,49 +106,46 @@ const refreshTokens = useCallback(async () => {
 
 
   // Logout
-const logout = useCallback(async () => {
-  try {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      console.warn('No access token available for logout');
+  const logout = useCallback(async () => {
+    try {
+      // Clear all local state first
       clearTokens();
-      return;
-    }
-
-    // First try backend logout
-    try {
-      await fetch(`${apiUrl}/api/auth/logout`, {
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      setUser(null);
+      setRole(null);
+      
+      // Then try backend logout if token exists
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        try {
+          await fetch(`${apiUrl}/api/auth/logout`, {
+            method: "POST",
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+        } catch (backendError) {
+          console.error('Backend logout failed:', backendError);
         }
-      });
-    } catch (backendError) {
-      console.error('Backend logout failed:', backendError);
+      }
+  
+      // Then Firebase logout
+      try {
+        await signOut(auth);
+      } catch (firebaseError) {
+        console.error('Firebase logout failed:', firebaseError);
+      }
+  
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Ensure we clear state even if logout fails
+      clearTokens();
+      setUser(null);
+      setRole(null);
+      navigate("/login");
     }
-
-    // Then Firebase logout
-    try {
-      await signOut(auth);
-    } catch (firebaseError) {
-      console.error('Firebase logout failed:', firebaseError);
-    }
-
-    // Clear all local state
-    clearTokens();
-    setUser(null);
-    setRole(null);
-    navigate("/login");
-  } catch (error) {
-    console.error("Logout error:", error);
-    // Ensure we clear state even if logout fails
-    clearTokens();
-    setUser(null);
-    setRole(null);
-    navigate("/login");
-  }
-}, [apiUrl, navigate]);
+  }, [apiUrl, navigate, auth]);
 
 // Update checkAuth function
 const checkAuth = useCallback(async () => {
@@ -417,7 +412,6 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
     });
 
     const data = await response.json();
-alert('data:');
     if (!response.ok) {
       return {
         error: true,
@@ -427,20 +421,20 @@ alert('data:');
     }
 
     // Store all tokens and user data
-    // localStorage.setItem('accessToken', data.accessToken);
-    // localStorage.setItem('refreshToken', data.refreshToken);
-    // localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
-    await storeTokens(data.accessToken, data.refreshToken, data.user);
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
+    // await storeTokens(data.accessToken, data.refreshToken, data.user);
     console.log('accessToken 11111111111:', data.accessToken);
-    // const userWithRefresh = {
-    //   ...data.user,
-    //   refresh_token: data.refreshToken
-    // };
-    // localStorage.setItem('user', JSON.stringify(userWithRefresh));
-    // localStorage.setItem('role', data.user.role);
+    const userWithRefresh = {
+      ...data.user,
+      refresh_token: data.refreshToken
+    };
+    localStorage.setItem('user', JSON.stringify(userWithRefresh));
+    localStorage.setItem('role', data.user.role);
 
-    // setUser(userWithRefresh);
-    // setRole(data.user.role);
+    setUser(userWithRefresh);
+    setRole(data.user.role);
     
     return { 
       success: true, 
@@ -480,17 +474,18 @@ useEffect(() => {
     try {
       await checkAuth();
       
-      // Set up token refresh interval
+      // Set up token refresh interval (check every 30 seconds)
       refreshInterval = setInterval(async () => {
         try {
           const tokenExpiry = localStorage.getItem('tokenExpiry');
           if (tokenExpiry && Date.now() > parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER) {
+            console.log('Refreshing token...');
             await refreshTokens();
           }
         } catch (error) {
           console.error('Background refresh failed:', error);
         }
-      }, 30000); // Check every 30 seconds
+      }, 30000); // 30 seconds
     } catch (error) {
       console.error('Initial auth check failed:', error);
     }
@@ -502,6 +497,7 @@ useEffect(() => {
     if (refreshInterval) clearInterval(refreshInterval);
   };
 }, [checkAuth, refreshTokens]);
+  
 // In your auth provider
 useEffect(() => {
   const expiry = localStorage.getItem('tokenExpiry');

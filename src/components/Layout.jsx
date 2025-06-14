@@ -149,7 +149,7 @@ const roleGradients = {
       {/* Conditionally render Header based on shouldHideSidebar */}
       {!isMobile && !shouldHideSidebar  && (
         <HeaderWrapper open={sidebarOpen} isMobile={isMobile}>
-          <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={!shouldHideSidebar} role={roleVar}/>
+          <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={!shouldHideSidebar} />
         </HeaderWrapper>
       )}
       <LayoutContent>
