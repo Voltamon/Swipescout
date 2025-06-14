@@ -159,7 +159,11 @@ const checkAuth = useCallback(async () => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
     const userData = JSON.parse(localStorage.getItem('user')) || {};
-
+console.log('userData:', userData);
+    
+    console.log('role 11111111111:',localStorage.getItem('role'));
+    console.log('role 11111111111:',JSON.parse(localStorage.getItem('user')));
+    console.log('role 11111111111:',localStorage.getItem('role'));
     if (!accessToken && !refreshToken) {
       throw new Error('No tokens available');
     }
@@ -167,18 +171,20 @@ const checkAuth = useCallback(async () => {
     // First try to verify the access token
     if (accessToken) {
       try {
-        const verifyResponse = await fetch(`${apiUrl}/api/auth/verify-token`, {
+        const verifyResponse = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
           method: 'POST',
           headers: { 
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ verifyOnly: true }) // Add this if your backend expects it
+          }
+           // Add this if your backend expects it
         });
-
+console.log('accessToken 222222222222222:', accessToken);
+console.log('verifyResponse:', verifyResponse.ok);
         if (verifyResponse.ok) {
           const data = await verifyResponse.json();
-          storeAuthData(data.user, false, data.accessToken);
+          storeAuthData(user, false, accessToken);
+          console.log('accessToken 222222222222222:', localStorage.getItem('role'));
           return;
         }
         throw new Error('Token verification failed');
@@ -402,14 +408,16 @@ const authenticateWithLinkedIn = useCallback(async (role = null) => {
   // Email Signup
 const signupWithEmail = useCallback(async (email, password, displayName, role) => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/signup`, {
+    clearTokens(); // Clear any existing tokens before signup
+    const response = 
+    await fetch(`${apiUrl}/api/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, displayName, role })
     });
 
     const data = await response.json();
-
+alert('data:');
     if (!response.ok) {
       return {
         error: true,
@@ -419,23 +427,24 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
     }
 
     // Store all tokens and user data
-    localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
-    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
-    
-    const userWithRefresh = {
-      ...data.user,
-      refresh_token: data.refreshToken
-    };
-    localStorage.setItem('user', JSON.stringify(userWithRefresh));
-    localStorage.setItem('role', data.user.role);
+    // localStorage.setItem('accessToken', data.accessToken);
+    // localStorage.setItem('refreshToken', data.refreshToken);
+    // localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
+    await storeTokens(data.accessToken, data.refreshToken, data.user);
+    console.log('accessToken 11111111111:', data.accessToken);
+    // const userWithRefresh = {
+    //   ...data.user,
+    //   refresh_token: data.refreshToken
+    // };
+    // localStorage.setItem('user', JSON.stringify(userWithRefresh));
+    // localStorage.setItem('role', data.user.role);
 
-    setUser(userWithRefresh);
-    setRole(data.user.role);
+    // setUser(userWithRefresh);
+    // setRole(data.user.role);
     
     return { 
       success: true, 
-      user: userWithRefresh,
+      user: data.user,
       role: data.user.role
     };
   } catch (error) {
