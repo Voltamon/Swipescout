@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation ,Link} from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -291,6 +291,7 @@ const LoginPage = () => {
               ),
             }}
           />
+          <Link to="/forgot-password">Forgot Password?</Link>
           <LoginButton type="submit" disabled={loading.email}>
             {loading.email ? <CircularProgress size={24} color="inherit" /> : "Log In"}
           </LoginButton>

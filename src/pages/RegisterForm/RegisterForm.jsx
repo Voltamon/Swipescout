@@ -236,12 +236,20 @@ const RegisterForm = () => {
       setLoading({ normal: false, google: false, linkedin: false });
       return;
     }
+    if (formData.password.length < 2) {
+      setError("Password must be at least 6 characters long");
+      setLoading({ normal: false, google: false, linkedin: false });
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       setLoading({ normal: false, google: false, linkedin: false });
       return;
     }
-
+    console.log("333333:");
+    console.log( formData.email, formData.password,
+      formData.fullName,
+      formData.role);
     try {
       const result = await signupWithEmail(
         formData.email,
@@ -249,7 +257,7 @@ const RegisterForm = () => {
         formData.fullName,
         formData.role
       );
-
+  
       if (result?.error) {
         setError(result.message || "Registration failed");
       } else {

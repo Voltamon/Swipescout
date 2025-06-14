@@ -313,7 +313,8 @@ const PostJobPage = () => {
         Additional Information
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+        {/* Application Deadline */}
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             fullWidth
             label="Application Deadline"
@@ -326,31 +327,9 @@ const PostJobPage = () => {
             }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={jobForm.videoRequired}
-                onChange={handleFormChange}
-                name="videoRequired"
-                color="primary"
-              />
-            }
-            label="Require video resume from applicants"
-          />
-          {jobForm.videoRequired && (
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<VideoCallIcon />}
-              onClick={() => setShowVideoUpload(true)}
-              sx={{ mt: 1 }}
-            >
-              {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
-            </Button>
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6}>
+  
+        {/* Experience Level - Expanded width */}
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel id="experience-level-label">Experience Level</InputLabel>
             <Select
@@ -359,6 +338,9 @@ const PostJobPage = () => {
               value={jobForm.experience_level}
               onChange={handleFormChange}
               label="Experience Level"
+              sx={{
+                minWidth: '200px', // Set minimum width
+              }}
             >
               <MenuItem value="entry">Entry Level</MenuItem>
               <MenuItem value="mid">Mid Level</MenuItem>
@@ -367,7 +349,9 @@ const PostJobPage = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6}>
+  
+        {/* Education Level - Expanded width */}
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel id="education-level-label">Education Level</InputLabel>
             <Select
@@ -376,6 +360,9 @@ const PostJobPage = () => {
               value={jobForm.education_level}
               onChange={handleFormChange}
               label="Education Level"
+              sx={{
+                minWidth: '200px', // Set minimum width
+              }}
             >
               <MenuItem value="high_school">High School</MenuItem>
               <MenuItem value="associate">Associate Degree</MenuItem>
@@ -385,10 +372,24 @@ const PostJobPage = () => {
             </Select>
           </FormControl>
         </Grid>
+  
+        {/* Remote Position */}
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={jobForm.remote_ok}
+                onChange={handleFormChange}
+                name="remote_ok"
+                color="primary"
+              />
+            }
+            label="Remote position"
+          />
+        </Grid>
       </Grid>
     </FormPaper>
   );
-
   // Update the Categories and Skills section to use the correct field names
   const renderCategoriesAndSkillsSection = () => (
     <FormPaper elevation={1}>
@@ -515,19 +516,31 @@ const PostJobPage = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={jobForm.remote_ok}
-                onChange={handleFormChange}
-                name="remote_ok"
-                color="primary"
-              />
-            }
-            label="Remote position"
-          />
-        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={jobForm.videoRequired}
+              onChange={handleFormChange}
+              name="videoRequired"
+              color="primary"
+            />
+          }
+          label="Post Video for this job"
+        />
+        {jobForm.videoRequired && (
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<VideoCallIcon />}
+            onClick={() => setShowVideoUpload(true)}
+            sx={{ mt: 1 }}
+          >
+            {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
+          </Button>
+        )}
+      </Grid>
       </Grid>
     </FormPaper>
   );
