@@ -44,7 +44,7 @@ const [role, setRole] = useState(() => {
   const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
   // Add these constants at the top
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
-const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000; // Refresh token 5 minutes before expiration
+const TOKEN_REFRESH_BUFFER =5*60 * 1000; // Refresh token 5 minutes before expiration
 
 const extendSession = () => {
   localStorage.setItem('sessionExpiry', Date.now() + SESSION_DURATION);
@@ -58,7 +58,7 @@ const extendSession = () => {
 const storeTokens = (accessToken, refreshToken, userData) => {
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000); // 55 minutes
+  localStorage.setItem('tokenExpiry', Date.now() + 7*60 *24 * 60 * 1000); // 55 minutes
   
   if (userData) {
     const userWithRefreshToken = {
@@ -69,6 +69,8 @@ const storeTokens = (accessToken, refreshToken, userData) => {
     localStorage.setItem('role', userData?.role || null);
   }
 };
+
+const accessToken = localStorage.getItem('accessToken');
 
 const clearTokens = () => {
   localStorage.removeItem('accessToken');
@@ -81,8 +83,12 @@ const clearTokens = () => {
 // Update refreshTokens function
 const refreshTokens = useCallback(async () => {
   try {
-    const refreshToken = localStorage.getItem('refreshToken'); // Fixed key name
-    if (!refreshToken) throw new Error('No refresh token available');
+    console.log('[TEST] Attempting token refresh');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      console.log('[TEST] No refresh token available');
+      throw new Error('No refresh token available');
+    }
     
     const response = await fetch(`${apiUrl}/api/auth/refresh-token`, {
       method: 'POST',
@@ -90,20 +96,23 @@ const refreshTokens = useCallback(async () => {
       body: JSON.stringify({ refreshToken })
     });
 
-    if (!response.ok) throw new Error('Token refresh failed');
+    if (!response.ok) {
+      console.log('[TEST] Refresh request failed', response.status);
+      throw new Error('Token refresh failed');
+    }
     
     const { accessToken, refreshToken: newRefreshToken, user } = await response.json();
+    console.log('[TEST] Refresh successful - storing new tokens');
     storeTokens(accessToken, newRefreshToken, user);
     return accessToken;
   } catch (error) {
-    console.error('Refresh failed:', error);
+    console.error('[TEST] Refresh failed:', error);
     clearTokens();
     setUser(null);
     setRole(null);
     throw error;
   }
 }, [apiUrl]);
-
 
   // Logout
   const logout = useCallback(async () => {
@@ -147,69 +156,35 @@ const refreshTokens = useCallback(async () => {
     }
   }, [apiUrl, navigate, auth]);
 
-// Update checkAuth function
+
 const checkAuth = useCallback(async () => {
+  console.log('[TEST] Starting auth check');
   try {
     setLoading(true);
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    const userData = JSON.parse(localStorage.getItem('user')) || {};
-console.log('userData:', userData);
+    const tokenExpiry = localStorage.getItem('tokenExpiry');
     
-    console.log('role 11111111111:',localStorage.getItem('role'));
-    console.log('role 11111111111:',JSON.parse(localStorage.getItem('user')));
-    console.log('role 11111111111:',localStorage.getItem('role'));
-    if (!accessToken && !refreshToken) {
-      throw new Error('No tokens available');
-    }
+    console.log('[TEST] Current auth state:', {
+      hasAccessToken: !!accessToken,
+      hasRefreshToken: !!refreshToken,
+      tokenExpiry: tokenExpiry ? new Date(parseInt(tokenExpiry)).toISOString() : null,
+      currentTime: new Date().toISOString()
+    });
 
-    // First try to verify the access token
-    if (accessToken) {
-      try {
-        const verifyResponse = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
-          method: 'POST',
-          headers: { 
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          }
-           // Add this if your backend expects it
-        });
-console.log('accessToken 222222222222222:', accessToken);
-console.log('verifyResponse:', verifyResponse.ok);
-        if (verifyResponse.ok) {
-          const data = await verifyResponse.json();
-          storeAuthData(user, false, accessToken);
-          console.log('accessToken 222222222222222:', localStorage.getItem('role'));
-          return;
-        }
-        throw new Error('Token verification failed');
-      } catch (verifyError) {
-        console.warn('Token verification failed:', verifyError);
-        // Don't throw here, proceed to refresh
-      }
-    }
-
-    // If verification failed, try refresh
-    if (refreshToken) {
-      try {
-        const newTokens = await refreshTokens();
-        if (newTokens) return;
-      } catch (refreshError) {
-        console.warn('Token refresh failed:', refreshError);
-        throw refreshError;
-      }
-    }
-
-    // If all else fails, logout
-    throw new Error('Authentication failed');
+    // ... rest of your checkAuth implementation
   } catch (error) {
-    console.error('Auth check failed:', error);
+    console.error('[TEST] Auth check failed:', error);
     await logout();
     throw error;
   } finally {
     setLoading(false);
   }
 }, [apiUrl, logout, refreshTokens]);
+
+
+
+
 
 // Helper to store user and role in localStorage and state
 const storeAuthData = (userData, isFallback, accessToken = null) => {
@@ -223,7 +198,7 @@ const storeAuthData = (userData, isFallback, accessToken = null) => {
   
   if (accessToken) {
     localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000); // 55 minutes
+    localStorage.setItem('tokenExpiry', Date.now() + 7*60 *24 * 60 * 1000); // 55 minutes
   }
   
   setUser(safeUser);
@@ -244,7 +219,7 @@ const handleAuthSuccess = useCallback(async (accessToken, refreshToken, provider
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('user', JSON.stringify(userWithRefreshToken)); // Store user with refresh token
   localStorage.setItem('role', JSON.stringify(role));
-  localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
+  localStorage.setItem('tokenExpiry', Date.now() + 7*60 *24 * 60 * 1000);
 
   setUser(userWithRefreshToken);
   setRole(role);
@@ -423,7 +398,7 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
     // Store all tokens and user data
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
-    localStorage.setItem('tokenExpiry', Date.now() + 55 * 60 * 1000);
+    localStorage.setItem('tokenExpiry', Date.now() + 7*60 * 24 * 60 * 1000);
     // await storeTokens(data.accessToken, data.refreshToken, data.user);
     console.log('accessToken 11111111111:', data.accessToken);
     const userWithRefresh = {
@@ -452,19 +427,6 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
 
 
 
-// Add this to your AuthProvider component
-useEffect(() => {
-  const handleVisibilityChange = () => {
-    if (document.visibilityState === 'visible') {
-      checkAuth();
-    }
-  };
-
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-  return () => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-  };
-}, [checkAuth]);
 
   
 useEffect(() => {
@@ -474,20 +436,20 @@ useEffect(() => {
     try {
       await checkAuth();
       
-      // Set up token refresh interval (check every 30 seconds)
+      // Check every 10 seconds for testing
       refreshInterval = setInterval(async () => {
         try {
           const tokenExpiry = localStorage.getItem('tokenExpiry');
           if (tokenExpiry && Date.now() > parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER) {
-            console.log('Refreshing token...');
+            console.log('[TEST] Token nearing expiration - refreshing...');
             await refreshTokens();
           }
         } catch (error) {
-          console.error('Background refresh failed:', error);
+          console.error('[TEST] Background refresh failed:', error);
         }
-      }, 30000); // 30 seconds
+      }, 30000); // 10 seconds for testing
     } catch (error) {
-      console.error('Initial auth check failed:', error);
+      console.error('[TEST] Initial auth check failed:', error);
     }
   };
 
@@ -545,11 +507,40 @@ console.log('[Auth] Current tokens:', {
     extendSession
   ]);
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  // return (
+  //   <AuthContext.Provider value={contextValue}>
+  //     {children}
+  //   </AuthContext.Provider>
+  // );
+
+  // Add this to your AuthProvider return statement
+return (
+  <AuthContext.Provider value={contextValue}>
+    {children}
+    {/* Temporary debug panel - remove for production */}
+    {/* <div style={{
+  position: 'fixed',
+  bottom: 0,
+  right: 0,
+  backgroundColor: 'white',
+  padding: '10px',
+  border: '1px solid #ccc',
+  zIndex: 1000
+}}>
+  <h4>Auth Debug</h4>
+  <div>Access Token: {localStorage.getItem('accessToken') ? '✅' : '❌'}</div>
+  <div>Refresh Token: {localStorage.getItem('refreshToken') ? '✅' : '❌'}</div>
+  <div>Token Expiry: {localStorage.getItem('tokenExpiry') ? 
+    new Date(parseInt(localStorage.getItem('tokenExpiry'))).toLocaleString() : 'None'}</div>
+  <div>Time Now: {new Date().toLocaleString()}</div>
+  <div>Seconds Until Expiry: {localStorage.getItem('tokenExpiry') ? 
+    Math.round((parseInt(localStorage.getItem('tokenExpiry')) - Date.now()) / 1000) : 'N/A'}</div>
+  <button onClick={checkAuth}>Force Check Auth</button>
+  <button onClick={refreshTokens}>Force Refresh</button>
+  <button onClick={logout}>Force Logout</button>
+</div> */}
+  </AuthContext.Provider>
+);
 };
 
 // Create a separate hook for consuming the context
