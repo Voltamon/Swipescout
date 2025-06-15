@@ -58,7 +58,7 @@ const extendSession = () => {
 const storeTokens = (accessToken, refreshToken, userData) => {
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('tokenExpiry', Date.now() + 7*60 *24 * 60 * 1000); // 55 minutes
+  localStorage.setItem('tokenExpiry', Date.now() + 44 * 60 * 1000); // 7d minutes 7*60 *24 * 60
   
   if (userData) {
     const userWithRefreshToken = {
@@ -198,7 +198,7 @@ const storeAuthData = (userData, isFallback, accessToken = null) => {
   
   if (accessToken) {
     localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('tokenExpiry', Date.now() + 7*60 *24 * 60 * 1000); // 55 minutes
+    localStorage.setItem('tokenExpiry', Date.now() + 44 * 60  * 1000); // 55 minutes
   }
   
   setUser(safeUser);
@@ -219,7 +219,7 @@ const handleAuthSuccess = useCallback(async (accessToken, refreshToken, provider
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('user', JSON.stringify(userWithRefreshToken)); // Store user with refresh token
   localStorage.setItem('role', JSON.stringify(role));
-  localStorage.setItem('tokenExpiry', Date.now() + 7*60 *24 * 60 * 1000);
+  localStorage.setItem('tokenExpiry', Date.now() + 44 * 60 *  1000);
 
   setUser(userWithRefreshToken);
   setRole(role);
@@ -398,7 +398,7 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
     // Store all tokens and user data
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
-    localStorage.setItem('tokenExpiry', Date.now() + 7*60 * 24 * 60 * 1000);
+    localStorage.setItem('tokenExpiry', Date.now() + 44 * 60 * 1000);
     // await storeTokens(data.accessToken, data.refreshToken, data.user);
     console.log('accessToken 11111111111:', data.accessToken);
     const userWithRefresh = {
@@ -517,8 +517,8 @@ console.log('[Auth] Current tokens:', {
 return (
   <AuthContext.Provider value={contextValue}>
     {children}
-    {/* Temporary debug panel - remove for production */}
-    {/* <div style={{
+    {/* Temporary debug panel - remove for production
+   <div style={{
   position: 'fixed',
   bottom: 0,
   right: 0,
