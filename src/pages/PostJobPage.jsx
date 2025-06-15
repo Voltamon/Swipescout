@@ -30,7 +30,6 @@ import {
 } from '@mui/material';
 import {
   Work as WorkIcon,
-  Work as IconButton,
   LocationOn as LocationIcon,
   AttachMoney as MoneyIcon,
   Save as SaveIcon,
@@ -41,15 +40,14 @@ import {
   Description as DescriptionIcon,
   VideoCall as VideoCallIcon
 } from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
 import { 
   postJob, 
-  updateJob, 
-  getJobCategories,  
   getCategories,
   getSkills 
 } from '../services/api';
-import VideoResumeUpload from './VideoResumeUpload'; // Import the video upload component
+import VideoResumeUpload from './VideoResumeUpload';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -81,11 +79,18 @@ const SkillChip = styled(Chip)(({ theme }) => ({
     backgroundColor: theme.palette.primary.main,
   }
 }));
+
+const StyledSnackbar = styled(Snackbar)(({ theme }) => ({
+  '& .MuiAlert-root': {
+    fontSize: '1rem',
+    padding: theme.spacing(2),
+  },
+}));
+
 const PostJobPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   
-  // State for job form - updated field names
   const [jobForm, setJobForm] = useState({
     title: '',
     description: '',
@@ -105,15 +110,16 @@ const PostJobPage = () => {
     videoRequired: false
   });
   
-  // State for video upload
+  const [errors, setErrors] = useState({
+    title: false,
+    description: false,
+    location: false,
+  });
+  
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [uploadedVideoId, setUploadedVideoId] = useState(null);
-  
-  // State for available options
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
-  
-  // State for UI
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -121,21 +127,15 @@ const PostJobPage = () => {
     message: '',
     severity: 'success'
   });
-  
-  // Fetch categories and skills
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
-        // Fetch categories
         const categoriesResponse = await getCategories();
         setAvailableCategories(categoriesResponse.data.categories);
-        
-        // Fetch skills
         const skillsResponse = await getSkills();
         setAvailableSkills(skillsResponse.data.skills);
-        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -150,33 +150,45 @@ const PostJobPage = () => {
     
     fetchData();
   }, []);
-  
-  // Handle form change
+
+  const validateForm = () => {
+    const newErrors = {
+      title: !jobForm.title,
+      description: !jobForm.description,
+      location: !jobForm.location,
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error);
+  };
+
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
     setJobForm({
       ...jobForm,
       [name]: type === 'checkbox' ? checked : value
     });
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: false
+      });
+    }
   };
-  
-  // Handle category change
+
   const handleCategoryChange = (event, newValue) => {
     setJobForm({
       ...jobForm,
-      categoryIds: newValue.map(cat => cat.id) // Store only category IDs
+      categoryIds: newValue.map(cat => cat.id)
     });
   };
-  
-  // Handle skill change
+
   const handleSkillChange = (event, newValue) => {
     setJobForm({
       ...jobForm,
-      skillIds: newValue.map(skill => skill.skill_id) // Store only skill IDs
+      skillIds: newValue.map(skill => skill.skill_id)
     });
   };
-  
-  // Handle list item change (requirements, responsibilities)
+
   const handleListItemChange = (type, index, value) => {
     const updatedList = [...jobForm[type]];
     updatedList[index] = value;
@@ -185,16 +197,14 @@ const PostJobPage = () => {
       [type]: updatedList
     });
   };
-  
-  // Add list item
+
   const addListItem = (type) => {
     setJobForm({
       ...jobForm,
       [type]: [...jobForm[type], '']
     });
   };
-  
-  // Remove list item
+
   const removeListItem = (type, index) => {
     const updatedList = [...jobForm[type]];
     updatedList.splice(index, 1);
@@ -203,8 +213,7 @@ const PostJobPage = () => {
       [type]: updatedList
     });
   };
-  
-  // Handle video upload completion
+
   const handleVideoUploadComplete = (videoId) => {
     setUploadedVideoId(videoId);
     setShowVideoUpload(false);
@@ -214,13 +223,11 @@ const PostJobPage = () => {
       severity: 'success'
     });
   };
-  
-  // Handle form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate form
-    if (!jobForm.title || !jobForm.description || !jobForm.location) {
+    if (!validateForm()) {
       setSnackbar({
         open: true,
         message: 'Please fill in all required fields',
@@ -229,7 +236,6 @@ const PostJobPage = () => {
       return;
     }
     
-    // Check if video is required but not uploaded
     if (jobForm.videoRequired && !uploadedVideoId) {
       setSnackbar({
         open: true,
@@ -239,7 +245,6 @@ const PostJobPage = () => {
       return;
     }
     
-    // Prepare the data for submission
     const jobData = {
       ...jobForm,
       requirements: jobForm.requirements.filter(item => item.trim() !== ''),
@@ -250,9 +255,7 @@ const PostJobPage = () => {
     
     try {
       setSaving(true);
-      
-      // Post job
-      await postJob(jobData);
+      const response = await postJob(jobData);
       
       setSnackbar({
         open: true,
@@ -260,12 +263,9 @@ const PostJobPage = () => {
         severity: 'success'
       });
       
-      // Navigate to jobs page after successful submission
-      setTimeout(() => {
-        navigate('/Jobs-Listing-Page');
-      }, 2000);
+      // Navigate to job details page after successful submission
+      navigate(`/job-details/${response.data.id}`);
       
-      setSaving(false);
     } catch (error) {
       console.error('Error posting job:', error);
       setSnackbar({
@@ -273,16 +273,15 @@ const PostJobPage = () => {
         message: 'Error posting job',
         severity: 'error'
       });
+    } finally {
       setSaving(false);
     }
   };
-  
-  // Handle cancel
+
   const handleCancel = () => {
     navigate(-1);
   };
 
-  // Render the video upload dialog
   const renderVideoUploadDialog = () => (
     <Dialog
       open={showVideoUpload}
@@ -294,7 +293,7 @@ const PostJobPage = () => {
       <DialogContent>
         <VideoResumeUpload 
           onComplete={handleVideoUploadComplete}
-          jobId={null} // Will be set after job creation if needed
+          jobId={null}
           embedded={true}
         />
       </DialogContent>
@@ -304,93 +303,92 @@ const PostJobPage = () => {
     </Dialog>
   );
 
-  // ... rest of the component remains mostly the same, just update the field names in the form
-
-  // Update the Additional Information section to include the video upload button
-  const renderAdditionalInfoSection = () => (
+  const renderBasicInfoSection = () => (
     <FormPaper elevation={1}>
       <Typography variant="h6" gutterBottom>
-        Additional Information
+        Basic Information
       </Typography>
       <Grid container spacing={3}>
-        {/* Application Deadline */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Application Deadline"
-            name="expires_at"
-            type="date"
-            value={jobForm.expires_at}
+            label="Job Title"
+            name="title"
+            value={jobForm.title}
             onChange={handleFormChange}
-            InputLabelProps={{
-              shrink: true,
+            required
+            error={errors.title}
+            helperText={errors.title ? "This field is required" : ""}
+            placeholder="e.g., Senior Frontend Developer"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Location"
+            name="location"
+            value={jobForm.location}
+            onChange={handleFormChange}
+            required
+            error={errors.location}
+            helperText={errors.location ? "This field is required" : ""}
+            placeholder="e.g., San Francisco, CA"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LocationIcon />
+                </InputAdornment>
+              ),
             }}
           />
         </Grid>
-  
-        {/* Experience Level - Expanded width */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel id="experience-level-label">Experience Level</InputLabel>
+            <InputLabel id="employment-type-label">Employment Type</InputLabel>
             <Select
-              labelId="experience-level-label"
-              name="experience_level"
-              value={jobForm.experience_level}
+              labelId="employment-type-label"
+              name="employment_type"
+              value={jobForm.employment_type}
               onChange={handleFormChange}
-              label="Experience Level"
-              sx={{
-                minWidth: '200px', // Set minimum width
-              }}
+              label="Employment Type"
             >
-              <MenuItem value="entry">Entry Level</MenuItem>
-              <MenuItem value="mid">Mid Level</MenuItem>
-              <MenuItem value="senior">Senior Level</MenuItem>
-              <MenuItem value="executive">Executive</MenuItem>
+              <MenuItem value="full-time">Full-time</MenuItem>
+              <MenuItem value="part-time">Part-time</MenuItem>
+              <MenuItem value="contract">Contract</MenuItem>
+              <MenuItem value="internship">Internship</MenuItem>
+              <MenuItem value="temporary">Temporary</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-  
-        {/* Education Level - Expanded width */}
-        <Grid item xs={12} sm={6} md={4}>
-          <FormControl fullWidth>
-            <InputLabel id="education-level-label">Education Level</InputLabel>
-            <Select
-              labelId="education-level-label"
-              name="education_level"
-              value={jobForm.education_level}
-              onChange={handleFormChange}
-              label="Education Level"
-              sx={{
-                minWidth: '200px', // Set minimum width
-              }}
-            >
-              <MenuItem value="high_school">High School</MenuItem>
-              <MenuItem value="associate">Associate Degree</MenuItem>
-              <MenuItem value="bachelor">Bachelor's Degree</MenuItem>
-              <MenuItem value="master">Master's Degree</MenuItem>
-              <MenuItem value="phd">PhD</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-  
-        {/* Remote Position */}
-        <Grid item xs={12}>
+        
+        <Grid item xs={12} sm={6}>
           <FormControlLabel
             control={
               <Checkbox
-                checked={jobForm.remote_ok}
+                checked={jobForm.videoRequired}
                 onChange={handleFormChange}
-                name="remote_ok"
+                name="videoRequired"
                 color="primary"
               />
             }
-            label="Remote position"
+            label="Require Video Resume"
           />
+          {jobForm.videoRequired && (
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<VideoCallIcon />}
+              onClick={() => setShowVideoUpload(true)}
+              sx={{ mt: 1 }}
+            >
+              {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
+            </Button>
+          )}
         </Grid>
       </Grid>
     </FormPaper>
   );
-  // Update the Categories and Skills section to use the correct field names
+
   const renderCategoriesAndSkillsSection = () => (
     <FormPaper elevation={1}>
       <Typography variant="h6" gutterBottom>
@@ -428,6 +426,7 @@ const PostJobPage = () => {
                 <CategoryChip
                   label={option.name}
                   {...getTagProps({ index })}
+                  key={option.id}
                 />
               ))
             }
@@ -446,6 +445,8 @@ const PostJobPage = () => {
                 {...params}
                 label="Required Skills"
                 placeholder="Select skills"
+                fullWidth
+                sx={{ minWidth: '300px' }}
               />
             )}
             renderTags={(value, getTagProps) =>
@@ -453,6 +454,7 @@ const PostJobPage = () => {
                 <SkillChip
                   label={option.name}
                   {...getTagProps({ index })}
+                  key={option.skill_id}
                 />
               ))
             }
@@ -462,90 +464,6 @@ const PostJobPage = () => {
     </FormPaper>
   );
 
-  // Update the Basic Information section
-  const renderBasicInfoSection = () => (
-    <FormPaper elevation={1}>
-      <Typography variant="h6" gutterBottom>
-        Basic Information
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Job Title"
-            name="title"
-            value={jobForm.title}
-            onChange={handleFormChange}
-            required
-            placeholder="e.g., Senior Frontend Developer"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Location"
-            name="location"
-            value={jobForm.location}
-            onChange={handleFormChange}
-            required
-            placeholder="e.g., San Francisco, CA"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LocationIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel id="employment-type-label">Employment Type</InputLabel>
-            <Select
-              labelId="employment-type-label"
-              name="employment_type"
-              value={jobForm.employment_type}
-              onChange={handleFormChange}
-              label="Employment Type"
-            >
-              <MenuItem value="full-time">Full-time</MenuItem>
-              <MenuItem value="part-time">Part-time</MenuItem>
-              <MenuItem value="contract">Contract</MenuItem>
-              <MenuItem value="internship">Internship</MenuItem>
-              <MenuItem value="temporary">Temporary</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        
-        <Grid item xs={12} sm={6}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={jobForm.videoRequired}
-              onChange={handleFormChange}
-              name="videoRequired"
-              color="primary"
-            />
-          }
-          label="Post Video for this job"
-        />
-        {jobForm.videoRequired && (
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<VideoCallIcon />}
-            onClick={() => setShowVideoUpload(true)}
-            sx={{ mt: 1 }}
-          >
-            {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
-          </Button>
-        )}
-      </Grid>
-      </Grid>
-    </FormPaper>
-  );
-
-  // Update the Salary Information section
   const renderSalaryInfoSection = () => (
     <FormPaper elevation={1}>
       <Typography variant="h6" gutterBottom>
@@ -590,18 +508,97 @@ const PostJobPage = () => {
     </FormPaper>
   );
 
-  // In the return statement, replace the form sections with the updated ones
+  const renderAdditionalInfoSection = () => (
+    <FormPaper elevation={1}>
+      <Typography variant="h6" gutterBottom>
+        Additional Information
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6} md={4}>
+          <TextField
+            fullWidth
+            label="Application Deadline"
+            name="expires_at"
+            type="date"
+            value={jobForm.expires_at}
+            onChange={handleFormChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </Grid>
+  
+        <Grid item xs={12} sm={6} md={4}>
+          <FormControl fullWidth>
+            <InputLabel id="experience-level-label">Experience Level</InputLabel>
+            <Select
+              labelId="experience-level-label"
+              name="experience_level"
+              value={jobForm.experience_level}
+              onChange={handleFormChange}
+              label="Experience Level"
+              sx={{ minWidth: '200px' }}
+            >
+              <MenuItem value="entry">Entry Level</MenuItem>
+              <MenuItem value="mid">Mid Level</MenuItem>
+              <MenuItem value="senior">Senior Level</MenuItem>
+              <MenuItem value="executive">Executive</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+  
+        <Grid item xs={12} sm={6} md={4}>
+          <FormControl fullWidth>
+            <InputLabel id="education-level-label">Education Level</InputLabel>
+            <Select
+              labelId="education-level-label"
+              name="education_level"
+              value={jobForm.education_level}
+              onChange={handleFormChange}
+              label="Education Level"
+              sx={{ minWidth: '200px' }}
+            >
+              <MenuItem value="high_school">High School</MenuItem>
+              <MenuItem value="associate">Associate Degree</MenuItem>
+              <MenuItem value="bachelor">Bachelor's Degree</MenuItem>
+              <MenuItem value="master">Master's Degree</MenuItem>
+              <MenuItem value="phd">PhD</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+  
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={jobForm.remote_ok}
+                onChange={handleFormChange}
+                name="remote_ok"
+                color="primary"
+              />
+            }
+            label="Remote position"
+          />
+        </Grid>
+      </Grid>
+    </FormPaper>
+  );
+
   return (
-    <PageContainer sx={{ 
-      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
-      minHeight: "100vh",
-      py: 3 ,pt: {
-      xs: 20,  
-      sm: 16   
-    }
-    }} >
+    <PageContainer   sx={{
+      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'top right',
+      padding: 0,
+      minHeight: '100vh',
+      height: '100%', 
+      mt: 0,
+      pt: 2,
+      mb: 0,
+      paddingBottom: 4,
+    }}>
       <Container maxWidth="lg">
-        {/* Page Header */}
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h4" component="h1">
             Post a New Job
@@ -638,7 +635,6 @@ const PostJobPage = () => {
             {renderCategoriesAndSkillsSection()}
             {renderSalaryInfoSection()}
             
-            {/* Job Description (unchanged) */}
             <FormPaper elevation={1}>
               <Typography variant="h6" gutterBottom>
                 Job Description
@@ -654,6 +650,8 @@ const PostJobPage = () => {
                     multiline
                     rows={6}
                     required
+                    error={errors.description}
+                    helperText={errors.description ? "This field is required" : ""}
                     placeholder="Provide a detailed description of the job position"
                     InputProps={{
                       startAdornment: (
@@ -667,7 +665,6 @@ const PostJobPage = () => {
               </Grid>
             </FormPaper>
             
-            {/* Requirements (unchanged except field names) */}
             <FormPaper elevation={1}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6">
@@ -703,7 +700,6 @@ const PostJobPage = () => {
               ))}
             </FormPaper>
             
-            {/* Responsibilities (unchanged except field names) */}
             <FormPaper elevation={1}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6">
@@ -741,7 +737,6 @@ const PostJobPage = () => {
             
             {renderAdditionalInfoSection()}
             
-            {/* Submit Buttons */}
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
               <Button
                 variant="outlined"
@@ -766,14 +761,13 @@ const PostJobPage = () => {
         )}
       </Container>
       
-      {/* Video Upload Dialog */}
       {renderVideoUploadDialog()}
       
-      {/* Snackbar for notifications */}
-      <Snackbar
+      <StyledSnackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <Alert 
           onClose={() => setSnackbar({ ...snackbar, open: false })} 
@@ -782,7 +776,7 @@ const PostJobPage = () => {
         >
           {snackbar.message}
         </Alert>
-      </Snackbar>
+      </StyledSnackbar>
     </PageContainer>
   );
 };

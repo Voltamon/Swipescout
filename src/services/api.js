@@ -159,26 +159,21 @@ export const deleteUserExperience = (id) => {
 
 export const getUserEducation = () => {
   return api.get('/education/');
-  return api.get('/education');
 };
 
 export const addUserEducation = (education) => {
   return api.post('/education/', education);
-  return api.post('/education', education);
 };
 
 export const updateUserEducation = (id, education) => {
-  return api.put(`/education/${id}`, education);
   return api.put(`/education/${id}`, education);
 };
 
 export const deleteUserEducation = (id) => {
   return api.delete(`/education/${id}`);
-  return api.delete(`/education/${id}`);
 };
 
 export const getUserVideos = () => {
-  return api.get('/videos');
   return api.get('/videos');
 };
 
@@ -212,8 +207,12 @@ export const uploadCompanyLogo = (formData) => {
   });
 };
 
-export const getEmployerJobs = () => {
-  return api.get(`employer/jobs`); //: api.get('/employers/jobs');
+export const getEmployerJobs = (id) => {
+  return api.get(`employer/jobs/${id}`); //: api.get('/employers/jobs');
+};
+
+export const getJobDetails = () => {
+  return api.get(`employer/job/`); //: api.get('/employers/jobs');
 };
 
 export const getEmployerVideos = () => {
