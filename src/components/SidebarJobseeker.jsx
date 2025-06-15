@@ -62,7 +62,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
 
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
-        { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
+        // { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
     { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
     { text: 'Employers Jobs Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
     { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
