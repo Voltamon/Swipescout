@@ -10,10 +10,11 @@ const api = axios.create({
   },
 });
 
+let token;
 // إضافة معترض للطلبات لإضافة توكن المصادقة
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken') ;
+     token = localStorage.getItem('accessToken') ;
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -195,6 +196,7 @@ export const deleteUserVideo = (id) => {
 
 // Employer API services
 export const getEmployerProfile = () => {
+  console.log('Fetching employer profile...',token);
   return api.get(`/employer/employer-profile`) ;//: api.get('/employers/company');
 };
 
