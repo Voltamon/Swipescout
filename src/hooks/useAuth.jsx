@@ -44,8 +44,8 @@ const [role, setRole] = useState(() => {
   const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
   // Add these constants at the top
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
-const TOKEN_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
-const TOKEN_REFRESH_BUFFER =15*60 * 1000; // Refresh token 15 minutes before expiration
+const TOKEN_DURATION =  60 * 1000; // 7 days in ms 7 * 24 * 60 *
+const TOKEN_REFRESH_BUFFER =25 * 1000; // *60 Refresh token 15 minutes before expiration
 
 const extendSession = () => {
   localStorage.setItem('sessionExpiry', Date.now() + SESSION_DURATION);
@@ -512,39 +512,79 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
 }, [apiUrl]);
 
 
+const decodeToken = (token) => {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return {
+      ...payload,
+      expDate: new Date(payload.exp * 1000),
+      iatDate: new Date(payload.iat * 1000)
+    };
+  } catch (e) {
+    console.error('Token decode error:', e);
+    return null;
+  }
+};
+
 
 
   
 useEffect(() => {
+  console.log('[AUTH] Setting up refresh interval');
   let refreshInterval;
+  let isMounted = true; // Track if component is mounted
 
   const initializeAuth = async () => {
     try {
+      console.log('[AUTH] Running initial auth check');
       await checkAuth();
       
-      // Check every 10 seconds for testing
+      // Start refresh interval
       refreshInterval = setInterval(async () => {
+        if (!isMounted) return; // Don't run if unmounted
+        
         try {
+          console.log('[AUTH] Interval check running');
           const tokenExpiry = localStorage.getItem('tokenExpiry');
-          if (tokenExpiry && Date.now() > parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER) {
-            console.log('[TEST] Token nearing expiration - refreshing...');
+          const currentTime = Date.now();
+          
+          console.log('[AUTH] Token check:', {
+            tokenExpiry,
+            parsedExpiry: tokenExpiry ? parseInt(tokenExpiry) : null,
+            currentTime,
+            buffer: TOKEN_REFRESH_BUFFER,
+            shouldRefresh: tokenExpiry && currentTime > (parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER)
+          });
+
+          if (tokenExpiry && currentTime > (parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER)) {
+            console.log('[AUTH] Token nearing expiration - refreshing...');
             await refreshTokens();
+            console.log('[AUTH] Refresh completed');
           }
         } catch (error) {
-          console.error('[TEST] Background refresh failed:', error);
+          console.error('[AUTH] Background refresh failed:', error);
         }
-      }, 3000); // 10 seconds for testing
+      }, 3000); // 3 seconds for testing
+
+      console.log('[AUTH] Refresh interval set up');
     } catch (error) {
-      console.error('[TEST] Initial auth check failed:', error);
+      console.error('[AUTH] Initial auth check failed:', error);
     }
   };
 
   initializeAuth();
 
   return () => {
-    if (refreshInterval) clearInterval(refreshInterval);
+    console.log('[AUTH] Cleaning up refresh interval');
+    isMounted = false;
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      console.log('[AUTH] Interval cleared');
+    }
   };
-}, [checkAuth, refreshTokens]);
+}, [checkAuth, refreshTokens, TOKEN_REFRESH_BUFFER]); // Add TOKEN_REFRESH_BUFFER to dependencies
+  
   
 // In your auth provider
 useEffect(() => {
@@ -603,8 +643,8 @@ console.log('[Auth] Current tokens:', {
 return (
   <AuthContext.Provider value={contextValue}>
     {children}
-    {/* Temporary debug panel - remove for production */}
-    {/* <div style={{
+    {/* Temporary debug panel - remove for production*/}
+     <div style={{
   position: 'fixed',
   bottom: 0,
   right: 0,
@@ -618,13 +658,56 @@ return (
   <div>Refresh Token: {localStorage.getItem('refreshToken') ? '✅' : '❌'}</div>
   <div>Token Expiry: {localStorage.getItem('tokenExpiry') ? 
     new Date(parseInt(localStorage.getItem('tokenExpiry'))).toLocaleString() : 'None'}</div>
+  
+    <h5>Backend Token</h5>
+    {accessToken && (
+      <>
+        <div>Issued At: {decodeToken(accessToken)?.iatDate.toLocaleString()}</div>
+        <div>Expires At: {decodeToken(accessToken)?.expDate.toLocaleString()}</div>
+        <div>Seconds Left: {decodeToken(accessToken)?.exp - Math.floor(Date.now()/1000)}</div>
+      </>
+      )}
+      
+      <h5>Verification</h5>
+  <button onClick={async () => {
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+      console.log('Verification response:', data);
+      alert(`Token valid until: ${new Date(data.expiresAt).toLocaleString()}`);
+    } catch (error) {
+      console.error('Verification failed:', error);
+      alert('Verification failed - check console');
+    }
+  }}>
+    Verify Token on Server
+      </button>
+      <div  style={{
+  width: '150px',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  whiteSpace: 'normal'
+}}>Access Token Payload: {JSON.stringify(decodeToken(localStorage.getItem('accessToken'))).iatDate}</div>
+      <div  style={{
+  width: '150px',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  whiteSpace: 'normal'
+}}>Refresh Token Payload: {JSON.stringify(decodeToken(localStorage.getItem('refreshToken'))).iatDate}</div>
+      
   <div>Time Now: {new Date().toLocaleString()}</div>
   <div>Seconds Until Expiry: {localStorage.getItem('tokenExpiry') ? 
     Math.round((parseInt(localStorage.getItem('tokenExpiry')) - Date.now()) / 1000) : 'N/A'}</div>
   <button onClick={checkAuth}>Force Check Auth</button>
   <button onClick={refreshTokens}>Force Refresh</button>
   <button onClick={logout}>Force Logout</button>
-</div> */}
+</div>  
   </AuthContext.Provider>
 );
 };
