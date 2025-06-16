@@ -207,12 +207,12 @@ export const uploadCompanyLogo = (formData) => {
   });
 };
 
-export const getEmployerJobs = (id) => {
-  return api.get(`employer/jobs/${id}`); //: api.get('/employers/jobs');
+export const getEmployerJobs = () => {
+  return api.get(`employer/jobs/`); //: api.get('/employers/jobs');
 };
 
-export const getJobDetails = () => {
-  return api.get(`employer/job/`); //: api.get('/employers/jobs');
+export const getJobDetails = (id) => {
+  return api.get(`employer/job/${id}`); //: api.get('/employers/jobs');
 };
 
 export const getEmployerVideos = () => {

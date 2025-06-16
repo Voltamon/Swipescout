@@ -40,7 +40,6 @@ import {
   Description as DescriptionIcon,
   VideoCall as VideoCallIcon
 } from '@mui/icons-material';
-import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
 import { 
   postJob, 
@@ -48,13 +47,18 @@ import {
   getSkills 
 } from '../services/api';
 import VideoResumeUpload from './VideoResumeUpload';
+import IconButton from '@mui/material/IconButton';
 
-// Styled components
+
 const PageContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
+  background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
   minHeight: '100vh',
   paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(4)
+  paddingBottom: theme.spacing(4),
+  pt: {
+    xs: 20,  
+    sm: 16   
+  }
 }));
 
 const FormPaper = styled(Paper)(({ theme }) => ({
@@ -127,6 +131,7 @@ const PostJobPage = () => {
     message: '',
     severity: 'success'
   });
+  const [newJobId, setNewJobId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -214,14 +219,58 @@ const PostJobPage = () => {
     });
   };
 
-  const handleVideoUploadComplete = (videoId) => {
+  const handleVideoUploadClick = () => {
+    if (!validateForm()) {
+      setSnackbar({
+        open: true,
+        message: 'Please fill in all required fields before uploading video',
+        severity: 'error'
+      });
+      return;
+    }
+    setShowVideoUpload(true);
+  };
+
+  const handleVideoUploadComplete = async (videoId) => {
     setUploadedVideoId(videoId);
     setShowVideoUpload(false);
-    setSnackbar({
-      open: true,
-      message: 'Video uploaded successfully!',
-      severity: 'success'
-    });
+    
+    if (newJobId) {
+      navigate(`/job/${newJobId}`);
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const jobData = {
+        ...jobForm,
+        requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+        responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+        expires_at: jobForm.expires_at || null,
+        video_id: videoId
+      };
+
+      const response = await postJob(jobData);
+      setNewJobId(response.data.id);
+      
+      setSnackbar({
+        open: true,
+        message: 'Job posted successfully!',
+        severity: 'success'
+      });
+      
+      navigate(`/job/${response.data.id}`);
+      
+    } catch (error) {
+      console.error('Error posting job:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error posting job',
+        severity: 'error'
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -245,17 +294,18 @@ const PostJobPage = () => {
       return;
     }
     
-    const jobData = {
-      ...jobForm,
-      requirements: jobForm.requirements.filter(item => item.trim() !== ''),
-      responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-      expires_at: jobForm.expires_at || null,
-      video_id: jobForm.videoRequired ? uploadedVideoId : null
-    };
-    
     try {
       setSaving(true);
+      const jobData = {
+        ...jobForm,
+        requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+        responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+        expires_at: jobForm.expires_at || null,
+        video_id: jobForm.videoRequired ? uploadedVideoId : null
+      };
+
       const response = await postJob(jobData);
+      setNewJobId(response.data.id);
       
       setSnackbar({
         open: true,
@@ -263,8 +313,7 @@ const PostJobPage = () => {
         severity: 'success'
       });
       
-      // Navigate to job details page after successful submission
-      navigate(`/job-details/${response.data.id}`);
+      navigate(`/job/${response.data.id}`);
       
     } catch (error) {
       console.error('Error posting job:', error);
@@ -378,7 +427,7 @@ const PostJobPage = () => {
               variant="outlined"
               color="primary"
               startIcon={<VideoCallIcon />}
-              onClick={() => setShowVideoUpload(true)}
+              onClick={handleVideoUploadClick}
               sx={{ mt: 1 }}
             >
               {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
@@ -584,20 +633,114 @@ const PostJobPage = () => {
     </FormPaper>
   );
 
+  const renderJobDescriptionSection = () => (
+    <FormPaper elevation={1}>
+      <Typography variant="h6" gutterBottom>
+        Job Description
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Job Description"
+            name="description"
+            value={jobForm.description}
+            onChange={handleFormChange}
+            multiline
+            rows={6}
+            required
+            error={errors.description}
+            helperText={errors.description ? "This field is required" : ""}
+            placeholder="Provide a detailed description of the job position"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
+                  <DescriptionIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+      </Grid>
+    </FormPaper>
+  );
+
+  const renderRequirementsSection = () => (
+    <FormPaper elevation={1}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">
+          Requirements
+        </Typography>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => addListItem('requirements')}
+        >
+          Add Requirement
+        </Button>
+      </Box>
+      {jobForm.requirements.map((requirement, index) => (
+        <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <TextField
+            fullWidth
+            label={`Requirement ${index + 1}`}
+            value={requirement}
+            onChange={(e) => handleListItemChange('requirements', index, e.target.value)}
+            placeholder="e.g., At least 3 years of experience in React development"
+          />
+          <IconButton
+            color="error"
+            onClick={() => removeListItem('requirements', index)}
+            disabled={jobForm.requirements.length <= 1}
+            sx={{ ml: 1 }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ))}
+    </FormPaper>
+  );
+
+  const renderResponsibilitiesSection = () => (
+    <FormPaper elevation={1}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">
+          Responsibilities
+        </Typography>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => addListItem('responsibilities')}
+        >
+          Add Responsibility
+        </Button>
+      </Box>
+      {jobForm.responsibilities.map((responsibility, index) => (
+        <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <TextField
+            fullWidth
+            label={`Responsibility ${index + 1}`}
+            value={responsibility}
+            onChange={(e) => handleListItemChange('responsibilities', index, e.target.value)}
+            placeholder="e.g., Develop and maintain web applications using React"
+          />
+          <IconButton
+            color="error"
+            onClick={() => removeListItem('responsibilities', index)}
+            disabled={jobForm.responsibilities.length <= 1}
+            sx={{ ml: 1 }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ))}
+    </FormPaper>
+  );
+
   return (
-    <PageContainer   sx={{
-      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'top right',
-      padding: 0,
-      minHeight: '100vh',
-      height: '100%', 
-      mt: 0,
-      pt: 2,
-      mb: 0,
-      paddingBottom: 4,
-    }}>
+    <PageContainer>
       <Container maxWidth="lg">
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h4" component="h1">
@@ -634,107 +777,9 @@ const PostJobPage = () => {
             {renderBasicInfoSection()}
             {renderCategoriesAndSkillsSection()}
             {renderSalaryInfoSection()}
-            
-            <FormPaper elevation={1}>
-              <Typography variant="h6" gutterBottom>
-                Job Description
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Job Description"
-                    name="description"
-                    value={jobForm.description}
-                    onChange={handleFormChange}
-                    multiline
-                    rows={6}
-                    required
-                    error={errors.description}
-                    helperText={errors.description ? "This field is required" : ""}
-                    placeholder="Provide a detailed description of the job position"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
-                          <DescriptionIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </FormPaper>
-            
-            <FormPaper elevation={1}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">
-                  Requirements
-                </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={() => addListItem('requirements')}
-                >
-                  Add Requirement
-                </Button>
-              </Box>
-              {jobForm.requirements.map((requirement, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <TextField
-                    fullWidth
-                    label={`Requirement ${index + 1}`}
-                    value={requirement}
-                    onChange={(e) => handleListItemChange('requirements', index, e.target.value)}
-                    placeholder="e.g., At least 3 years of experience in React development"
-                  />
-                  <IconButton
-                    color="error"
-                    onClick={() => removeListItem('requirements', index)}
-                    disabled={jobForm.requirements.length <= 1}
-                    sx={{ ml: 1 }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              ))}
-            </FormPaper>
-            
-            <FormPaper elevation={1}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">
-                  Responsibilities
-                </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={() => addListItem('responsibilities')}
-                >
-                  Add Responsibility
-                </Button>
-              </Box>
-              {jobForm.responsibilities.map((responsibility, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <TextField
-                    fullWidth
-                    label={`Responsibility ${index + 1}`}
-                    value={responsibility}
-                    onChange={(e) => handleListItemChange('responsibilities', index, e.target.value)}
-                    placeholder="e.g., Develop and maintain web applications using React"
-                  />
-                  <IconButton
-                    color="error"
-                    onClick={() => removeListItem('responsibilities', index)}
-                    disabled={jobForm.responsibilities.length <= 1}
-                    sx={{ ml: 1 }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              ))}
-            </FormPaper>
-            
+            {renderJobDescriptionSection()}
+            {renderRequirementsSection()}
+            {renderResponsibilitiesSection()}
             {renderAdditionalInfoSection()}
             
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
