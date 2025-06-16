@@ -124,7 +124,7 @@ export const VideoProvider = ({ children }) => {
 
     try {
       updateVideoStatus(videoId, { status: 'uploading', progress: 0, error: null });
-      
+      console.log(video);
       const formData = new FormData();
       const videoBlob = await fetch(video.video_url).then(r => r.blob());
       const videoFile = new File([videoBlob], `video-retry-${Date.now()}.webm`, { type: 'video/webm' });
