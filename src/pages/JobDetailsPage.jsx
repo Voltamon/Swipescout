@@ -77,7 +77,7 @@ const JobDetailsPage = () => {
         try {
           setLoading(true);
           const response = await getJobDetails(id);
-          setJob(response.data);
+          setJob(response.data.job);
           setLoading(false);
         } catch (err) {
           setError("Failed to load job details");
