@@ -187,7 +187,7 @@ export const getVideoResume = () => {
 };
 
 // NEW: Delete Video Resume (if needed, assuming DELETE /job-seekers/video-resume)
-export const deleteVideoResume = () => {
+export const deleteVideo = () => {
   return api.delete('/job-seekers/video-resume');
 };
 
@@ -495,7 +495,7 @@ export const getVideoResume = () => {
   return api.get('/job-seekers/video-resume');
 };
 
-export const deleteVideoResume = () => {
+export const deleteVideo = () => {
   return api.delete('/job-seekers/video-resume');
 };
 

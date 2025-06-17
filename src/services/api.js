@@ -96,7 +96,7 @@ export const getVideoResume = () => {
 export const getJobVideos = (id) => {
   return api.get(`/videos/job/${id}`);
 };
-export const deleteVideoResume = (id) => {
+export const deleteVideo = (id) => {
   return api.delete(`videos/${id}`);
 };
 

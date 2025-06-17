@@ -146,6 +146,7 @@ const toggleMute = () => {
         overflowY: 'scroll',
         scrollSnapType: 'y mandatory',
         scrollBehavior: 'smooth',
+        
       }}
     >
       {videos.map((video) => {
@@ -159,6 +160,7 @@ const toggleMute = () => {
               scrollSnapAlign: 'start',
               position: 'relative',
               backgroundColor: 'black',
+              mt:'0px'
             }}
           >
             <video

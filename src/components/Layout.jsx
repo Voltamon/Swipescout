@@ -57,11 +57,14 @@ const SidebarContainer = styled(Box)(({ open, isMobile }) => ({
 
 const MainContent = styled(Box)(({ open, isMobile }) => ({
   flexGrow: 1,
-  width: '100%',
-    flexDirection: 'column',
-  flexBasis: open && !isMobile ? 'calc(100% - 200px)' : !isMobile ? 'calc(100% - 72px)' : '100%' ,
-  transition: 'flex-basis 0.3s ease-in-out',
-
+  width: "100%",
+  height: "100%",
+  flexDirection: "column",
+  flexBasis:
+    open && !isMobile
+      ? "calc(100% - 200px)"
+      : !isMobile ? "calc(100% - 72px)" : "100%",
+  transition: "flex-basis 0.3s ease-in-out"
 }));
 
 const Layout = ({role}) => {
