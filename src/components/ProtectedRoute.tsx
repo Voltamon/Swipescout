@@ -20,9 +20,14 @@ interface ProtectedRouteProps {
 }
 
 
+// In ProtectedRoute.tsx
 const ProtectedRoute = ({ children, requiredRoles = [] }) => {
   const location = useLocation();
-  const { user, loading, role } = useAuth();
+  const { user, loading, role, checkAuth } = useAuth();
+
+  useEffect(() => {
+    checkAuth({ silent: true }); // Use silent mode during initial check
+  }, [checkAuth]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -32,9 +37,8 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check if user has required role
   if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
-    return <Navigate to="/login" replace />; //unauthorized access
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return (
