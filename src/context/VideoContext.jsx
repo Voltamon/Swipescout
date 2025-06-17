@@ -118,16 +118,26 @@ export const VideoProvider = ({ children }) => {
     ));
   };
 
-  const retryUpload = async (videoId) => {
-    const video = videos.find(v => v.id === videoId);
-    if (!video) return;
+// In VideoContext.jsx, modify the retryUpload function:
+const retryUpload = async (videoId) => {
+  const video = videos.find(v => v.id === videoId);
+  if (!video) return;
 
-    try {
-      updateVideoStatus(videoId, { status: 'uploading', progress: 0, error: null });
-      console.log(video);
+  try {
+    // Update status immediately
+    updateVideoStatus(videoId, { 
+      status: 'uploading', 
+      progress: 0, 
+      error: null 
+    });
+
+    // For local videos, we need to re-upload the file
+    if (video.isLocal) {
       const formData = new FormData();
       const videoBlob = await fetch(video.video_url).then(r => r.blob());
-      const videoFile = new File([videoBlob], `video-retry-${Date.now()}.webm`, { type: 'video/webm' });
+      const videoFile = new File([videoBlob], `video-retry-${Date.now()}.webm`, { 
+        type: 'video/webm' 
+      });
 
       formData.append('video', videoFile);
       formData.append('title', video.video_title);
@@ -140,27 +150,39 @@ export const VideoProvider = ({ children }) => {
         updateVideoStatus(videoId, { progress });
       });
 
+      // Update with new upload ID
       updateVideoStatus(videoId, {
         id: response.uploadId,
         status: 'processing'
       });
-
-      console.log(`Retry upload successful for video ${videoId}, new uploadId: ${response.uploadId}`);
-    } catch (error) {
-      console.error(`Retry upload failed for video ${videoId}:`, error);
+      return response.uploadId;
+    } 
+    // For server videos, call the retry API endpoint
+    else {
+      const response = await api.post(`/videos/${videoId}/retry-upload`);
       updateVideoStatus(videoId, {
-        status: 'failed',
-        error: error.message
+        status: 'processing'
       });
+      return videoId;
     }
-  };
+  } catch (error) {
+    console.error(`Retry failed for video ${videoId}:`, error);
+    updateVideoStatus(videoId, {
+      status: 'failed',
+      error: error.message || 'Retry failed'
+    });
+    throw error;
+  }
+};
+
+// Add this to the provider value:
 
   return (
     <VideoContext.Provider value={{ 
       videos, 
       addLocalVideo, 
       updateVideoStatus,
-      retryUpload
+      retryUpload,
     }}>
       {children}
     </VideoContext.Provider>

@@ -244,7 +244,9 @@ const handleSubmit = async () => {
 
   try {
     setIsUploading(true);
+    setUploadStatus('preparing');
     
+    // Create FormData for the upload
     const formData = new FormData();
     const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
       type: 'video/webm'
@@ -257,12 +259,13 @@ const handleSubmit = async () => {
     formData.append('videoType', videoType);
     formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
 
-    // Add to local videos immediately
+    // Create a temporary ID for local tracking
     const tempId = uuidv4();
     const persistentBlobUrl = URL.createObjectURL(
       videoFile || new Blob([videoBlob], { type: 'video/webm' })
     );
     
+    // Add to local videos immediately
     const newVideo = {
       id: tempId,
       video_url: persistentBlobUrl,
@@ -278,43 +281,79 @@ const handleSubmit = async () => {
     };
     
     addLocalVideo(newVideo);
-    console.log('Added local video with tempId:', tempId);
+    setUploadStatus('uploading');
 
-    // Navigate immediately but continue upload in background
-    navigate('/videos');
-
-    // Upload in background
+    // Start the upload process
     const uploadResponse = await uploadVideo(formData, (progress) => {
+      setUploadProgress(progress);
       updateVideoStatus(tempId, { progress });
     });
 
-    console.log('Upload response received:', uploadResponse);
-    
     // Update with server ID and mark as processing
     updateVideoStatus(tempId, {
       id: uploadResponse.data.uploadId,
       status: 'processing'
     });
 
-    
-    console.log('Updated video with uploadId:', uploadResponse.data.uploadId);
     setUploadId(uploadResponse.data.uploadId);
+    setUploadStatus('processing');
+
+    // Navigate to videos page
+    navigate('/videos');
+
+    // Start status checking
+    const checkStatus = async () => {
+      try {
+        const status = await checkUploadStatus(uploadResponse.data.uploadId);
+        if (status) {
+          // Update with final details
+          updateVideoStatus(uploadResponse.data.uploadId, {
+            status: 'completed',
+            video_url: status.video_url,
+            isLocal: false,
+            ...status
+          });
+          setSnackbar({
+            open: true,
+            message: 'Video processing completed!',
+            severity: 'success'
+          });
+        }
+      } catch (error) {
+        console.error('Status check error:', error);
+        updateVideoStatus(uploadResponse.data.uploadId, {
+          status: 'failed',
+          error: error.message
+        });
+      }
+    };
+
+    // Check status every 5 seconds
+    const statusInterval = setInterval(checkStatus, 5000);
+    
+    // Clean up interval when component unmounts
+    return () => clearInterval(statusInterval);
 
   } catch (error) {
     console.error('Upload error:', error);
-    updateVideoStatus(tempId, {
-      status: 'failed',
-      error: error.message
-    });
+    setUploadStatus('failed');
     setSnackbar({
       open: true,
       message: 'Upload failed. You can retry from the videos page.',
       severity: 'error'
     });
+    if (tempId) {
+      updateVideoStatus(tempId, {
+        status: 'failed',
+        error: error.message
+      });
+    }
   } finally {
     setIsUploading(false);
   }
 };
+
+  
   // Handle file selection with proper duration validation
   const handleFileSelect = async (event) => {
     const file = event.target.files[0];
@@ -531,39 +570,34 @@ const startRecording = async () => {
 
   // Check upload status
 // Fixed checkUploadStatus function
-  const checkUploadStatus = async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/videos/upload-status/${id}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      // First check if the response is HTML (like a 404 page)
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.indexOf('application/json') === -1) {
-        const text = await response.text();
-        if (text.startsWith('<!DOCTYPE html>')) {
-          throw new Error('Server returned HTML instead of JSON');
-        }
-        throw new Error('Invalid response format');
-      }
-      
-      const data = await response.json();
-      
-      if (data.status === 'completed') {
-        clearInterval(statusCheckIntervalRef.current);
-        return data.video;
-      } else if (data.status === 'failed') {
-        clearInterval(statusCheckIntervalRef.current);
-        throw new Error(data.message || 'Upload failed');
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error checking upload status:', error);
-      throw error;
+const checkUploadStatus = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/videos/upload-status/${id}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format');
+    }
+    
+    const data = await response.json();
+    
+    if (data.status === 'completed') {
+      return data.video;
+    } else if (data.status === 'failed') {
+      throw new Error(data.message || 'Processing failed');
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error checking upload status:', error);
+    throw error;
+  }
+};
+
 
 
   // Reset form completely
@@ -839,9 +873,25 @@ const startRecording = async () => {
       {isUploading && (
         <Box sx={{ width: '100%', mt: 2 }}>
           <Typography variant="body2" align="center" gutterBottom>
-            {uploadId ? 'Processing video...' : `Uploading video... ${uploadProgress}%`}
+            {uploadStatus === 'preparing' && 'Preparing video for upload...'}
+            {uploadStatus === 'uploading' && `Uploading video... ${uploadProgress}%`}
+            {uploadStatus === 'processing' && 'Processing video...'}
           </Typography>
-          <LinearProgress variant="determinate" value={uploadProgress} />
+          <LinearProgress 
+            variant={
+              uploadStatus === 'processing' ? 'indeterminate' : 'determinate'
+            } 
+            value={uploadProgress} 
+            color={
+              uploadStatus === 'failed' ? 'error' : 
+              uploadStatus === 'completed' ? 'success' : 'primary'
+            }
+          />
+          {uploadStatus === 'processing' && (
+            <Typography variant="caption" display="block" align="center" sx={{ mt: 1 }}>
+              This may take a few minutes. You can check back later.
+            </Typography>
+          )}
         </Box>
       )}
 
