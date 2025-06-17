@@ -1,3 +1,4 @@
+// useAuth.jsx
 import { createContext, useState, useEffect, useMemo, useCallback ,useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup ,browserLocalPersistence ,signOut,  setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
@@ -17,9 +18,6 @@ const [user, setUser] = useState(() => {
   }
 });
 
-// In your AuthProvider component
-
-
 const [role, setRole] = useState(() => {
   try {
     const storedRole = localStorage.getItem('role');
@@ -33,6 +31,7 @@ const [role, setRole] = useState(() => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fallbackMode, setFallbackMode] = useState(false);
+  // Removed accessExpiresIn state from here as it's received from the backend dynamically
   const navigate = useNavigate();
   
   const auth = getAuth(app);
@@ -42,24 +41,18 @@ const [role, setRole] = useState(() => {
   
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   const LINKEDIN_CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID || "YOUR_LINKEDIN_CLIENT_ID";
-  // Add these constants at the top
-const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
-const TOKEN_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
-const TOKEN_REFRESH_BUFFER =15*60 * 1000; // Refresh token 15 minutes before expiration
 
-const extendSession = () => {
-  localStorage.setItem('sessionExpiry', Date.now() + SESSION_DURATION);
-};
+// TOKEN_REFRESH_BUFFER should be less than the backend's accessExpiresIn to allow refresh
+// Set to 30 seconds (30000 ms) which is well within a 5-minute access token expiry.
+const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000; // Refresh token 30 seconds before access token expiration
 
-
-
-
-
-// Update storeTokens function
-const storeTokens = (accessToken, refreshToken, userData) => {
+// storeTokens function now correctly uses the accessExpiresIn received from the backend
+const storeTokens = (accessToken, refreshToken, userData, expiresInBackend) => {
+  // `expiresInBackend` is in seconds, converting to to milliseconds for Date.now() calculation
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('tokenExpiry', Date.now() + TOKEN_DURATION); // 55 minutes
+  // accessExpiresTime is stored as a future timestamp in milliseconds
+  localStorage.setItem('accessExpiresTime', Date.now() + (expiresInBackend * 1000));
   
   if (userData) {
     const userWithRefreshToken = {
@@ -71,25 +64,19 @@ const storeTokens = (accessToken, refreshToken, userData) => {
   }
 };
 
-const accessToken = localStorage.getItem('accessToken');
-
 const clearTokens = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
-  localStorage.removeItem('tokenExpiry');
+  localStorage.removeItem('accessExpiresTime');
   localStorage.removeItem('user');
   localStorage.removeItem('role');
   localStorage.removeItem('persistentToken');
 };
-// Update refreshTokens function
+
 const refreshTokens = useCallback(async () => {
   try {
-    console.log('[TEST] Attempting token refresh');
     const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      console.log('[TEST] No refresh token available');
-      throw new Error('No refresh token available');
-    }
+    if (!refreshToken) throw new Error('No refresh token available');
     
     const response = await fetch(`${apiUrl}/api/auth/refresh-token`, {
       method: 'POST',
@@ -98,22 +85,26 @@ const refreshTokens = useCallback(async () => {
     });
 
     if (!response.ok) {
-      console.log('[TEST] Refresh request failed', response.status);
-      throw new Error('Token refresh failed');
+      const errorData = await response.json();
+      // Handle specific error cases
+      if (response.status === 401) {
+        // Refresh token is invalid/expired - force logout
+        clearTokens();
+        setUser(null);
+        setRole(null);
+        navigate('/login');
+      }
+      throw new Error(errorData.message || 'Token refresh failed');
     }
-    
-    const { accessToken, refreshToken: newRefreshToken, user } = await response.json();
-    console.log('[TEST] Refresh successful - storing new tokens');
-    storeTokens(accessToken, newRefreshToken, user);
+
+    const { accessToken, refreshToken: newRefreshToken, user, accessExpiresIn } = await response.json();
+    storeTokens(accessToken, newRefreshToken, user, accessExpiresIn);
     return accessToken;
   } catch (error) {
-    console.error('[TEST] Refresh failed:', error);
-    clearTokens();
-    setUser(null);
-    setRole(null);
+    console.error('Refresh failed:', error);
     throw error;
   }
-}, [apiUrl]);
+}, [apiUrl, navigate]);
 
   // Logout
   const logout = useCallback(async () => {
@@ -158,122 +149,63 @@ const refreshTokens = useCallback(async () => {
   }, [apiUrl, navigate, auth]);
 
 
-const checkAuth = useCallback(async () => {
-  console.log('[AUTH] Starting authentication check');
+const checkAuth = useCallback(async (options = { silent: false }) => {
   try {
     setLoading(true);
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    const tokenExpiry = localStorage.getItem('tokenExpiry');
-    const userData = JSON.parse(localStorage.getItem('user')) || {};
-    
-    console.log('[AUTH] Current auth state:', {
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-      tokenExpiry: tokenExpiry ? new Date(parseInt(tokenExpiry)).toLocaleString() : 'None',
-      secondsUntilExpiry: tokenExpiry ? Math.round((parseInt(tokenExpiry) - Date.now()) / 1000) : 'N/A',
-      currentTime: new Date().toLocaleString(),
-      userRole: userData?.role || 'None'
-    });
+    const accessExpiresTime = parseInt(localStorage.getItem('accessExpiresTime'), 10);
 
-    // If no tokens available at all
+    // Skip verification if we're already on login page
+    if (window.location.pathname.includes('/login')) return;
+
+    // If no tokens available
     if (!accessToken && !refreshToken) {
-      console.log('[AUTH] No authentication tokens found');
+      if (!options.silent) {
+        navigate('/login');
+      }
       throw new Error('No tokens available');
     }
 
-    // First try to verify the access token if it exists
-    if (accessToken) {
-      try {
-        console.log('[AUTH] Verifying access token');
-        const verifyResponse = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
-          method: 'POST',
-          headers: { 
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
+    // Check token expiration
+    if (accessToken && accessExpiresTime) {
+      // Token is still valid
+      if (Date.now() < accessExpiresTime - TOKEN_REFRESH_BUFFER) {
+        return;
+      }
+      
+      // Token needs refresh
+      if (refreshToken) {
+        try {
+          await refreshTokens();
+          return;
+        } catch (refreshError) {
+          if (!options.silent) {
+            navigate('/login');
           }
-        });
-
-        console.log('[AUTH] Verification response status:', verifyResponse.status);
-        
-        if (verifyResponse.ok) {
-          const data = await verifyResponse.json();
-          console.log('[AUTH] Token is valid:', {
-            userId: data.userId,
-            email: data.email,
-            role: data.role
-          });
-          
-          // Update stored data if needed
-          storeAuthData(userData, false, accessToken);
-          return;
+          throw refreshError;
         }
-        
-        // If verification failed but we have a response
-        const errorData = await verifyResponse.json().catch(() => ({}));
-        console.warn('[AUTH] Token verification failed:', {
-          status: verifyResponse.status,
-          error: errorData.error || 'Unknown error'
-        });
-        
-        throw new Error('Token verification failed');
-      } catch (verifyError) {
-        console.warn('[AUTH] Token verification error:', verifyError.message);
-        // Continue to try refresh if available
       }
     }
 
-    // If we have a refresh token, try to use it
-    if (refreshToken) {
-      try {
-        console.log('[AUTH] Attempting token refresh with refresh token');
-        const newAccessToken = await refreshTokens();
-        
-        if (newAccessToken) {
-          console.log('[AUTH] Token refresh successful');
-          return;
-        }
-        
-        console.log('[AUTH] Refresh returned no new token');
-        throw new Error('Refresh failed - no new token');
-      } catch (refreshError) {
-        console.error('[AUTH] Token refresh failed:', refreshError.message);
-        throw refreshError;
-      }
-    }
-
-    // If we get here, authentication has failed
-    console.log('[AUTH] Authentication failed - no valid tokens');
-    throw new Error('Authentication failed');
-  } catch (error) {
-    console.error('[AUTH] Authentication check failed:', {
-      error: error.message,
-      stack: error.stack
-    });
-    
-    // Clear invalid tokens and logout
-    clearTokens();
-    setUser(null);
-    setRole(null);
-    
-    // Only navigate if we're not already on login page
-    if (!window.location.pathname.includes('/login')) {
-      console.log('[AUTH] Redirecting to login');
+    // If we get here, authentication failed
+    if (!options.silent) {
       navigate('/login');
     }
-    
+    throw new Error('Authentication failed');
+  } catch (error) {
+    if (!options.silent) {
+      console.error('Authentication check failed:', error);
+    }
     throw error;
   } finally {
-    console.log('[AUTH] Authentication check complete');
     setLoading(false);
   }
-}, [apiUrl, logout, refreshTokens, navigate]);
-
-
-
+}, [navigate, refreshTokens]);
 
 // Helper to store user and role in localStorage and state
-const storeAuthData = (userData, isFallback, accessToken = null) => {
+// This function needs the expiresIn (in seconds) from the backend
+const storeAuthData = (userData, isFallback, accessExpiresInSeconds, accessToken = null) => {
   const safeUser = {
     ...(userData || {}),
     role: userData?.role || null
@@ -283,20 +215,19 @@ const storeAuthData = (userData, isFallback, accessToken = null) => {
   localStorage.setItem('role', safeUser.role);
   
   if (accessToken) {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('tokenExpiry', Date.now() + TOKEN_DURATION); // 55 minutes
+    // Store accessExpiresTime as a future timestamp in milliseconds
+    localStorage.setItem('accessExpiresTime', Date.now() + (accessExpiresInSeconds * 1000));
+    localStorage.setItem('accessToken', accessToken); // Ensure accessToken is also stored here
   }
   
   setUser(safeUser);
   setRole(safeUser.role);
   setFallbackMode(isFallback);
 };
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 // Enhanced handleAuthSuccess
-const handleAuthSuccess = useCallback(async (accessToken, refreshToken, provider, role, user, persistentToken = null, firebaseStatus = null) => {
+// This function needs accessExpiresIn (in seconds) from the backend
+const handleAuthSuccess = useCallback(async (accessToken, refreshToken, provider, role, user, accessExpiresInSeconds, persistentToken = null, firebaseStatus = null) => {
   const userWithRefreshToken = {
     ...user,
     refresh_token: refreshToken // Store refresh token inside user
@@ -305,17 +236,14 @@ const handleAuthSuccess = useCallback(async (accessToken, refreshToken, provider
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('user', JSON.stringify(userWithRefreshToken)); // Store user with refresh token
   localStorage.setItem('role', JSON.stringify(role));
-  localStorage.setItem('tokenExpiry', Date.now() + TOKEN_DURATION);
+  // Store accessExpiresTime as a future timestamp in milliseconds
+  localStorage.setItem('accessExpiresTime', Date.now() + (accessExpiresInSeconds * 1000));
 
   setUser(userWithRefreshToken);
   setRole(role);
   setFallbackMode(firebaseStatus === 'fallback');
   return { success: true, user: userWithRefreshToken, role, provider };
 }, []);
-
-
-
-  
 
   // Email/Password Login
 const loginByEmailAndPassword = useCallback(async (email, password) => {
@@ -336,9 +264,9 @@ const loginByEmailAndPassword = useCallback(async (email, password) => {
       };
     }
 
-    // Store tokens and user data
-    storeTokens(data.accessToken, data.refreshToken, data.user);
-    
+    // Store tokens and user data, passing the accessExpiresIn from the backend response
+    storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn);
+
     setUser(data.user);
     setRole(data.user?.role || null);
     
@@ -377,8 +305,8 @@ const authenticateWithGoogle = useCallback(async (role = null) => {
 
     const data = await response.json();
     
-    // Store tokens and user data
-    storeTokens(data.accessToken, data.refreshToken, data.user);
+    // Store tokens and user data, passing the accessExpiresIn from the backend response
+    storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn);
     setUser(data.user);
     setRole(data.user?.role || null);
     
@@ -445,8 +373,8 @@ const authenticateWithLinkedIn = useCallback(async (role = null) => {
 
     const data = await response.json();
     
-    // Store tokens and user data
-    storeTokens(data.accessToken, data.refreshToken, data.user);
+    // Store tokens and user data, passing the accessExpiresIn from the backend response
+    storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn);
     setUser(data.user);
     setRole(data.user?.role || null);
     
@@ -481,20 +409,10 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
       };
     }
 
-    // Store all tokens and user data
-    localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
-    localStorage.setItem('tokenExpiry', Date.now() + TOKEN_DURATION);
-    // await storeTokens(data.accessToken, data.refreshToken, data.user);
-    console.log('accessToken 11111111111:', data.accessToken);
-    const userWithRefresh = {
-      ...data.user,
-      refresh_token: data.refreshToken
-    };
-    localStorage.setItem('user', JSON.stringify(userWithRefresh));
-    localStorage.setItem('role', data.user.role);
-
-    setUser(userWithRefresh);
+    // Store all tokens and user data, using data.accessExpiresIn from the backend
+    storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn);
+    
+    setUser(data.user);
     setRole(data.user.role);
     
     return { 
@@ -512,8 +430,6 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
 }, [apiUrl]);
 
 
-
-
   
 useEffect(() => {
   let refreshInterval;
@@ -522,35 +438,31 @@ useEffect(() => {
     try {
       await checkAuth();
       
-      // Check every 10 seconds for testing
       refreshInterval = setInterval(async () => {
-        try {
-          const tokenExpiry = localStorage.getItem('tokenExpiry');
-          if (tokenExpiry && Date.now() > parseInt(tokenExpiry) - TOKEN_REFRESH_BUFFER) {
-            console.log('[TEST] Token nearing expiration - refreshing...');
+        const accessExpiresTime = parseInt(localStorage.getItem('accessExpiresTime'), 10);
+        if (accessExpiresTime && Date.now() > accessExpiresTime - TOKEN_REFRESH_BUFFER) {
+          try {
             await refreshTokens();
+          } catch (error) {
+            console.error('Background refresh failed:', error);
           }
-        } catch (error) {
-          console.error('[TEST] Background refresh failed:', error);
         }
-      }, 3000); // 10 seconds for testing
+      }, 3600000); // 1 hour instead of 5 minutes
     } catch (error) {
-      console.error('[TEST] Initial auth check failed:', error);
+      console.error('Initial auth check failed:', error);
     }
   };
 
   initializeAuth();
-
-  return () => {
-    if (refreshInterval) clearInterval(refreshInterval);
-  };
+  return () => clearInterval(refreshInterval);
 }, [checkAuth, refreshTokens]);
-  
+
 // In your auth provider
 useEffect(() => {
-  const expiry = localStorage.getItem('tokenExpiry');
-  if (expiry && Date.now() > parseInt(expiry)) {
-    console.log('Token expired - forcing logout');
+  const expiry = parseInt(localStorage.getItem('accessExpiresTime'), 10);
+  // If expiry exists and current time is past expiry, force logout
+  if (expiry && Date.now() > expiry) {
+    console.log('Token fully expired - forcing logout');
     logout();
   }
 }, [logout]);
@@ -576,7 +488,7 @@ console.log('[Auth] Current tokens:', {
     refreshTokens,
     checkAuth,
     handleAuthSuccess
-    ,extendSession
+    
   }), [
     user,
     role,
@@ -590,16 +502,9 @@ console.log('[Auth] Current tokens:', {
     refreshTokens,
     checkAuth,
     handleAuthSuccess,
-    extendSession
+   
   ]);
 
-  // return (
-  //   <AuthContext.Provider value={contextValue}>
-  //     {children}
-  //   </AuthContext.Provider>
-  // );
-
-  // Add this to your AuthProvider return statement
 return (
   <AuthContext.Provider value={contextValue}>
     {children}
@@ -616,11 +521,11 @@ return (
   <h4>Auth Debug</h4>
   <div>Access Token: {localStorage.getItem('accessToken') ? '✅' : '❌'}</div>
   <div>Refresh Token: {localStorage.getItem('refreshToken') ? '✅' : '❌'}</div>
-  <div>Token Expiry: {localStorage.getItem('tokenExpiry') ? 
-    new Date(parseInt(localStorage.getItem('tokenExpiry'))).toLocaleString() : 'None'}</div>
+  <div>Token Expiry: {localStorage.getItem('accessExpiresTime') ? 
+    new Date(parseInt(localStorage.getItem('accessExpiresTime'))).toLocaleString() : 'None'}</div>
   <div>Time Now: {new Date().toLocaleString()}</div>
-  <div>Seconds Until Expiry: {localStorage.getItem('tokenExpiry') ? 
-    Math.round((parseInt(localStorage.getItem('tokenExpiry')) - Date.now()) / 1000) : 'N/A'}</div>
+  <div>Seconds Until Expiry: {localStorage.getItem('accessExpiresTime') ? 
+    Math.round((parseInt(localStorage.getItem('accessExpiresTime')) - Date.now()) / 1000) : 'N/A'}</div>
   <button onClick={checkAuth}>Force Check Auth</button>
   <button onClick={refreshTokens}>Force Refresh</button>
   <button onClick={logout}>Force Logout</button>
