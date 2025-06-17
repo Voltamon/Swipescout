@@ -430,12 +430,32 @@ const signupWithEmail = useCallback(async (email, password, displayName, role) =
 }, [apiUrl]);
 
 
+const decodeToken = (token) => {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return {
+      ...payload,
+      expDate: new Date(payload.exp * 1000),
+      iatDate: new Date(payload.iat * 1000)
+    };
+  } catch (e) {
+    console.error('Token decode error:', e);
+    return null;
+  }
+};
+
+
+
   
 useEffect(() => {
+  console.log('[AUTH] Setting up refresh interval');
   let refreshInterval;
+  let isMounted = true; // Track if component is mounted
 
   const initializeAuth = async () => {
     try {
+      console.log('[AUTH] Running initial auth check');
       await checkAuth();
       
       refreshInterval = setInterval(async () => {
@@ -508,8 +528,8 @@ console.log('[Auth] Current tokens:', {
 return (
   <AuthContext.Provider value={contextValue}>
     {children}
-    {/* Temporary debug panel - remove for production */}
-    {/* <div style={{
+    {/* Temporary debug panel - remove for production*/}
+     <div style={{
   position: 'fixed',
   bottom: 0,
   right: 0,
@@ -523,13 +543,58 @@ return (
   <div>Refresh Token: {localStorage.getItem('refreshToken') ? '✅' : '❌'}</div>
   <div>Token Expiry: {localStorage.getItem('accessExpiresTime') ? 
     new Date(parseInt(localStorage.getItem('accessExpiresTime'))).toLocaleString() : 'None'}</div>
+  <div>Token Expiry: {localStorage.getItem('tokenExpiry') ? 
+    new Date(parseInt(localStorage.getItem('tokenExpiry'))).toLocaleString() : 'None'}</div>
+  
+    <h5>Backend Token</h5>
+    {accessToken && (
+      <>
+        <div>Issued At: {decodeToken(accessToken)?.iatDate.toLocaleString()}</div>
+        <div>Expires At: {decodeToken(accessToken)?.expDate.toLocaleString()}</div>
+        <div>Seconds Left: {decodeToken(accessToken)?.exp - Math.floor(Date.now()/1000)}</div>
+      </>
+      )}
+      
+      <h5>Verification</h5>
+  <button onClick={async () => {
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/verify-token?verifyOnly=true`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+      console.log('Verification response:', data);
+      alert(`Token valid until: ${new Date(data.expiresAt).toLocaleString()}`);
+    } catch (error) {
+      console.error('Verification failed:', error);
+      alert('Verification failed - check console');
+    }
+  }}>
+    Verify Token on Server
+      </button>
+      <div  style={{
+  width: '150px',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  whiteSpace: 'normal'
+}}>Access Token Payload: {JSON.stringify(decodeToken(localStorage.getItem('accessToken'))).iatDate}</div>
+      <div  style={{
+  width: '150px',
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  whiteSpace: 'normal'
+}}>Refresh Token Payload: {JSON.stringify(decodeToken(localStorage.getItem('refreshToken'))).iatDate}</div>
+      
   <div>Time Now: {new Date().toLocaleString()}</div>
   <div>Seconds Until Expiry: {localStorage.getItem('accessExpiresTime') ? 
     Math.round((parseInt(localStorage.getItem('accessExpiresTime')) - Date.now()) / 1000) : 'N/A'}</div>
   <button onClick={checkAuth}>Force Check Auth</button>
   <button onClick={refreshTokens}>Force Refresh</button>
   <button onClick={logout}>Force Logout</button>
-</div> */}
+</div>  
   </AuthContext.Provider>
 );
 };
