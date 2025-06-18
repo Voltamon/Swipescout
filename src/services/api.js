@@ -88,7 +88,7 @@ export const uploadVideoResume = (formData) => {
 };
 
 export const checkUploadStatus = (id) => {
-  return api.get(`job-seekers/upload-status/${id}`);
+  return api.get(`/videos/upload-status/${id}`);
 };
 export const getVideoResume = () => {
   return api.get('/videos/');
