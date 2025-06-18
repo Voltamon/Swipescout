@@ -101,8 +101,8 @@ const PostJobPage = () => {
     location: '',
     employment_type: 'full-time',
     remote_ok: false,
-    salary_min: '',
-    salary_max: '',
+    salary_min: null,
+    salary_max: null,
     experience_level: '',
     education_level: '',
     job_status: 'active',
@@ -158,27 +158,38 @@ const PostJobPage = () => {
 
   const validateForm = () => {
     const newErrors = {
-      title: !jobForm.title,
-      description: !jobForm.description,
-      location: !jobForm.location,
-    };
-    setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error);
+    title: !jobForm.title,
+    description: !jobForm.description,
+    location: !jobForm.location,
+    salary: jobForm.salary_min && jobForm.salary_max && 
+            Number(jobForm.salary_min) > Number(jobForm.salary_max)
   };
+  
+  setErrors(newErrors);
+  return !Object.values(newErrors).some(error => error);
+};
 
-  const handleFormChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setJobForm({
-      ...jobForm,
-      [name]: type === 'checkbox' ? checked : value
+const handleFormChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  
+  // Convert salary values to numbers
+  let processedValue = type === 'checkbox' ? checked : value;
+  if ((name === 'salary_min' || name === 'salary_max') && value !== '') {
+    processedValue = Number(value);
+  }
+  
+  setJobForm({
+    ...jobForm,
+    [name]: processedValue
+  });
+  
+  if (errors[name]) {
+    setErrors({
+      ...errors,
+      [name]: false
     });
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: false
-      });
-    }
-  };
+  }
+};
 
   const handleCategoryChange = (event, newValue) => {
     setJobForm({
@@ -240,39 +251,38 @@ const PostJobPage = () => {
       return;
     }
 
-    try {
-      setSaving(true);
-      const jobData = {
-        ...jobForm,
-        requirements: jobForm.requirements.filter(item => item.trim() !== ''),
-        responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-        expires_at: jobForm.expires_at || null,
-        video_id: videoId
-      };
+try {
+    setSaving(true);
+    const jobData = {
+      ...jobForm,
+      requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+      responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+      expires_at: jobForm.expires_at || null,
+      video_id: videoId
+    };
 
-      const response = await postJob(jobData);
-      setNewJobId(response.data.id);
-      
-      setSnackbar({
-        open: true,
-        message: 'Job posted successfully!',
-        severity: 'success'
-      });
-      
-      navigate(`/job/${response.data.id}`);
-      
-    } catch (error) {
-      console.error('Error posting job:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error posting job',
-        severity: 'error'
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
-
+    const response = await postJob(jobData);
+    setNewJobId(response.data.job.id);
+    
+    setSnackbar({
+      open: true,
+      message: 'Job posted successfully!',
+      severity: 'success'
+    });
+    
+    navigate(`/job/${response.data.job.id}`);
+    
+  } catch (error) {
+    console.error('Error posting job:', error);
+    setSnackbar({
+      open: true,
+      message: 'Error posting job',
+      severity: 'error'
+    });
+  } finally {
+    setSaving(false);
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -305,7 +315,8 @@ const PostJobPage = () => {
       };
 
       const response = await postJob(jobData);
-      setNewJobId(response.data.id);
+      console.log("::::::",response.data);
+      setNewJobId(response.data.job.id);
       
       setSnackbar({
         open: true,
@@ -313,7 +324,7 @@ const PostJobPage = () => {
         severity: 'success'
       });
       
-      navigate(`/job/${response.data.id}`);
+      navigate(`/job/${response.data.job.id}`);
       
     } catch (error) {
       console.error('Error posting job:', error);
@@ -527,7 +538,10 @@ const PostJobPage = () => {
             type="number"
             value={jobForm.salary_min}
             onChange={handleFormChange}
+              error={errors.salary}
+  helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
             InputProps={{
+              
               startAdornment: (
                 <InputAdornment position="start">
                   <MoneyIcon />
@@ -544,6 +558,8 @@ const PostJobPage = () => {
             type="number"
             value={jobForm.salary_max}
             onChange={handleFormChange}
+              error={errors.salary}
+  helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
