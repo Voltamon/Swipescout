@@ -254,44 +254,49 @@ const VideosPage = () => {
         </Box>
       ) : (
         <>
-          <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
-            {filteredVideos.map((video) => (
-              <Grid item key={video.id} xs={12} sm={6} md={4} lg={3}>
-                <Card
-                  sx={{
-                    width: '100%',
-                    maxWidth: 350,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    borderRadius: 2,
-                    boxShadow: 2,
-                    transition: 'transform 0.2s ease-in-out',
-                    '&:hover': {
-                      transform: 'scale(1.02)',
-                    },
-                    position: 'relative',
-                    overflow: 'visible',
-                  }}
-                  onMouseEnter={() => handleVideoHover(video.id, true)}
-                  onMouseLeave={() => handleVideoHover(video.id, false)}
-                  onClick={() => handleVideoClick(video)}
-                >
+        <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
+        {filteredVideos.map((video) => (
+          <Grid item key={video.id} xs={12} sm={6} md={4} lg={4}> {/* Changed lg from 3 to 4 */}
+            <Card
+              sx={{
+                width: '300px',
+                maxWidth: 400, // Increased from 350
+                height: '400px', // Ensure card takes full height
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                borderRadius: 2,
+                boxShadow: 2,
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                },
+                position: 'relative',
+                overflow: 'visible',
+              }}
+              onMouseEnter={() => handleVideoHover(video.id, true)}
+              onMouseLeave={() => handleVideoHover(video.id, false)}
+              onClick={() => handleVideoClick(video)}
+            >
                   {(video.status === 'uploading' || video.status === 'processing') && (
                     <StatusBorder status={video.status} />
                   )}
 
                   <CardMedia
-                    component="div"
-                    sx={{
-                      paddingTop: '56.25%', // 16:9 aspect ratio
-                      backgroundColor: '#000',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      borderRadius: '8px 8px 0 0',
-                      cursor: 'pointer'
-                    }}
-                  >
+          component="div"
+                sx={{
+                
+                    width: '300px',
+                    
+                    height: '400px',
+            paddingTop: '56.25%', // 16:9 aspect ratio
+            backgroundColor: '#000',
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '8px 8px 0 0',
+            cursor: 'pointer'
+          }}
+        >
                     {video.video_url && (
                       <video
                         ref={el => videoRefs.current[video.id] = el}
@@ -300,9 +305,11 @@ const VideosPage = () => {
                           position: 'absolute',
                           top: 0,
                           left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
+                          
+                            width: '300px',
+                            
+                            height: '400px',
+                          
                           backgroundColor: '#000',
                         }}
                         muted={isMuted}
