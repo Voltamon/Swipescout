@@ -44,7 +44,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
   postJob, 
   getCategories,
-  getSkills 
+  getSkills,
+  updateJob // Assuming you have an updateJob API
 } from '../services/api';
 import VideoResumeUpload from './VideoResumeUpload';
 import IconButton from '@mui/material/IconButton';
@@ -111,7 +112,7 @@ const PostJobPage = () => {
     requirements: [''],
     responsibilities: [''],
     expires_at: '',
-    videoRequired: false
+    videoRequired: false // Indicates if a video is required for this job post
   });
   
   const [errors, setErrors] = useState({
@@ -121,7 +122,7 @@ const PostJobPage = () => {
   });
   
   const [showVideoUpload, setShowVideoUpload] = useState(false);
-  const [uploadedVideoId, setUploadedVideoId] = useState(null);
+  const [uploadedVideoId, setUploadedVideoId] = useState(null); // This is the ID of the video from VideoResumeUpload
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -131,7 +132,8 @@ const PostJobPage = () => {
     message: '',
     severity: 'success'
   });
-  const [newJobId, setNewJobId] = useState(null);
+  const [newJobId, setNewJobId] = useState(null); // Stores the ID of the newly created job
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -172,7 +174,6 @@ const PostJobPage = () => {
 const handleFormChange = (e) => {
   const { name, value, type, checked } = e.target;
   
-  // Convert salary values to numbers
   let processedValue = type === 'checkbox' ? checked : value;
   if ((name === 'salary_min' || name === 'salary_max') && value !== '') {
     processedValue = Number(value);
@@ -230,7 +231,8 @@ const handleFormChange = (e) => {
     });
   };
 
-  const handleVideoUploadClick = () => {
+  // Modified: This function now handles creating the job first if not already created
+  const handleVideoUploadClick = async () => {
     if (!validateForm()) {
       setSnackbar({
         open: true,
@@ -239,50 +241,92 @@ const handleFormChange = (e) => {
       });
       return;
     }
+
+    // If job hasn't been posted yet, post it first to get an ID
+    if (!newJobId) {
+      try {
+        setSaving(true);
+        const jobDataToPost = {
+          ...jobForm,
+          requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+          responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+          expires_at: jobForm.expires_at || null,
+          video_id: null, // Video ID will be added later
+        };
+        const response = await postJob(jobDataToPost);
+        setNewJobId(response.data.job.id);
+        setSnackbar({
+          open: true,
+          message: 'Job draft saved. Proceeding to video upload.',
+          severity: 'info'
+        });
+      } catch (error) {
+        console.error('Error creating job draft:', error);
+        setSnackbar({
+          open: true,
+          message: 'Error creating job draft for video upload.',
+          severity: 'error'
+        });
+        setSaving(false);
+        return;
+      } finally {
+        setSaving(false);
+      }
+    }
     setShowVideoUpload(true);
   };
 
+  // Callback from VideoResumeUpload once video is uploaded
   const handleVideoUploadComplete = async (videoId) => {
     setUploadedVideoId(videoId);
     setShowVideoUpload(false);
     
+    // Now that video is uploaded, update the job with the video ID
     if (newJobId) {
-      navigate(`/job/${newJobId}`);
-      return;
+      try {
+        setSaving(true);
+        const updatedJobData = {
+          ...jobForm, // Keep existing job form data
+          video_id: videoId, // Add the uploaded video ID
+          requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+          responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+          expires_at: jobForm.expires_at || null,
+        };
+        // Assuming you have an API function like updateJob(jobId, data)
+        await updateJob(newJobId, updatedJobData);
+        setSnackbar({
+          open: true,
+          message: 'Video linked to job and job updated successfully!',
+          severity: 'success'
+        });
+        navigate(`/job/${newJobId}`); // Navigate to job details page
+      } catch (error) {
+        console.error('Error updating job with video ID:', error);
+        setSnackbar({
+          open: true,
+          message: 'Error linking video to job.',
+          severity: 'error'
+        });
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      // This case should ideally not happen with the new flow,
+      // but as a fallback, if newJobId is somehow null here,
+      // it means the job was not created before the video upload.
+      // We would then need to create the job with the video ID.
+      // For simplicity, we assume newJobId will be set by handleVideoUploadClick.
+      console.warn('newJobId was null after video upload. This indicates a flow issue.');
+      // You could re-call handleSubmit here, ensuring it handles the video_id
+      // but it's better to ensure newJobId is always present.
+      setSnackbar({
+        open: true,
+        message: 'Video uploaded, but job could not be linked. Please try submitting the job again.',
+        severity: 'error'
+      });
     }
+  };
 
-try {
-    setSaving(true);
-    const jobData = {
-      ...jobForm,
-      requirements: jobForm.requirements.filter(item => item.trim() !== ''),
-      responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-      expires_at: jobForm.expires_at || null,
-      video_id: videoId
-    };
-
-    const response = await postJob(jobData);
-    setNewJobId(response.data.job.id);
-    
-    setSnackbar({
-      open: true,
-      message: 'Job posted successfully!',
-      severity: 'success'
-    });
-    
-    navigate(`/job/${response.data.job.id}`);
-    
-  } catch (error) {
-    console.error('Error posting job:', error);
-    setSnackbar({
-      open: true,
-      message: 'Error posting job',
-      severity: 'error'
-    });
-  } finally {
-    setSaving(false);
-  }
-};
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -295,15 +339,15 @@ try {
       return;
     }
     
-    if (jobForm.videoRequired && !uploadedVideoId) {
+    if (jobForm.videoRequired && !uploadedVideoId && !newJobId) { // Check if video is required but not uploaded/linked yet
       setSnackbar({
         open: true,
-        message: 'Please upload the required video resume',
+        message: 'Please upload the required video resume, or ensure job is created first.',
         severity: 'error'
       });
       return;
     }
-    
+
     try {
       setSaving(true);
       const jobData = {
@@ -311,26 +355,39 @@ try {
         requirements: jobForm.requirements.filter(item => item.trim() !== ''),
         responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
         expires_at: jobForm.expires_at || null,
-        video_id: jobForm.videoRequired ? uploadedVideoId : null
+        // If newJobId exists and a video was uploaded/linked, keep its video_id.
+        // Otherwise, it might be a job without a required video, or a fresh post without video.
+        video_id: uploadedVideoId || null, 
       };
 
-      const response = await postJob(jobData);
-      console.log("::::::",response.data);
-      setNewJobId(response.data.job.id);
+      let finalJobId = newJobId;
+      if (finalJobId) {
+        // If job already exists (from video upload pre-creation), update it
+        await updateJob(finalJobId, jobData);
+        setSnackbar({
+          open: true,
+          message: 'Job updated successfully!',
+          severity: 'success'
+        });
+      } else {
+        // If job does not exist yet, create it
+        const response = await postJob(jobData);
+        finalJobId = response.data.job.id;
+        setNewJobId(finalJobId);
+        setSnackbar({
+          open: true,
+          message: 'Job posted successfully!',
+          severity: 'success'
+        });
+      }
       
-      setSnackbar({
-        open: true,
-        message: 'Job posted successfully',
-        severity: 'success'
-      });
-      
-      navigate(`/job/${response.data.job.id}`);
+      navigate(`/job/${finalJobId}`);
       
     } catch (error) {
-      console.error('Error posting job:', error);
+      console.error('Error posting/updating job:', error);
       setSnackbar({
         open: true,
-        message: 'Error posting job',
+        message: 'Error posting/updating job',
         severity: 'error'
       });
     } finally {
@@ -351,9 +408,10 @@ try {
     >
       <DialogTitle>Upload Video Resume</DialogTitle>
       <DialogContent>
+        {/* Pass newJobId to VideoResumeUpload */}
         <VideoResumeUpload 
           onComplete={handleVideoUploadComplete}
-          jobId={null}
+          newjobid={newJobId} // Pass the jobId here
           embedded={true}
         />
       </DialogContent>
@@ -431,15 +489,16 @@ try {
                 color="primary"
               />
             }
-            label="Require Video Resume"
+            label="Post Job Video"
           />
           {jobForm.videoRequired && (
             <Button
               variant="outlined"
               color="primary"
               startIcon={<VideoCallIcon />}
-              onClick={handleVideoUploadClick}
+              onClick={handleVideoUploadClick} // This will now ensure newJobId exists
               sx={{ mt: 1 }}
+              disabled={saving} // Disable while job is being drafted/saved
             >
               {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
             </Button>
@@ -539,9 +598,8 @@ try {
             value={jobForm.salary_min}
             onChange={handleFormChange}
               error={errors.salary}
-  helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
+              helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
             InputProps={{
-              
               startAdornment: (
                 <InputAdornment position="start">
                   <MoneyIcon />
@@ -559,7 +617,7 @@ try {
             value={jobForm.salary_max}
             onChange={handleFormChange}
               error={errors.salary}
-  helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
+              helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

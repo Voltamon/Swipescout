@@ -1,5 +1,6 @@
+// VideosPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { useVideoContext } from '../context/VideoContext';
+import { useVideoContext } from '../context/VideoContext'; // Correct import
 import { styled } from "@mui/material/styles";
 import {
   Container, Grid, Card, CardMedia, CardContent,
@@ -10,12 +11,13 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Error, CloudUpload, Replay, Delete } from '@mui/icons-material';
-import api, { deleteVideo } from '../services/api';
+import api, { deleteVideo } from '../services/api'; // Ensure deleteVideo is imported from your API service
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { VolumeUp, VolumeOff } from '@mui/icons-material';
 
 const VideosPage = () => {
-  const { videos: localVideos, retryUpload } = useVideoContext();
+  // Destructure removeVideo from useVideoContext
+  const { videos: localVideos, retryUpload, removeVideo } = useVideoContext(); 
   const [serverVideos, setServerVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,6 +28,7 @@ const VideosPage = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' }); // Added for retry messages
 
   const videoRefs = useRef({});
   const navigate = useNavigate();
@@ -70,17 +73,34 @@ const VideosPage = () => {
     if (!videoToDelete) return;
     
     try {
-      await deleteVideo(videoToDelete.id);
       if (videoToDelete.isLocal) {
-        // For local videos, we just need to refresh the context
-        // The VideoContext will handle removing it from localStorage
+        // If it's a local video (e.g., failed upload, or still uploading)
+        // We directly remove it from the local context/localStorage
+        removeVideo(videoToDelete.id);
+        setSnackbar({
+          open: true,
+          message: 'Video removed successfully.',
+          severity: 'success'
+        });
       } else {
-        // For server videos, refetch the list
+        // If it's a server video, call the API to delete it
+        await deleteVideo(videoToDelete.id);
+        setSnackbar({
+          open: true,
+          message: 'Video deleted from server successfully.',
+          severity: 'success'
+        });
+        // After successful server deletion, refetch server videos
         await fetchServerVideos(page);
       }
     } catch (err) {
       console.error('Failed to delete video:', err);
       setError('Failed to delete video. Please try again.');
+      setSnackbar({
+        open: true,
+        message: 'Failed to delete video: ' + (err.response?.data?.message || err.message),
+        severity: 'error'
+      });
     } finally {
       setDeleteConfirmOpen(false);
       setVideoToDelete(null);
@@ -90,11 +110,9 @@ const VideosPage = () => {
   // Handle retry for stuck processing videos
   const handleRetry = async (video) => {
     try {
-      if (video.status === 'failed') {
-        // For failed uploads
+      if (video.status === 'failed' || video.isLocal) { // Use retryUpload for local failed or stuck uploads
         await retryUpload(video.id);
-      } else if (video.status === 'processing') {
-        // For stuck processing
+      } else if (video.status === 'processing') { // For server-side stuck processing
         await api.post(`/videos/${video.id}/retry-processing`);
       }
       
@@ -167,7 +185,8 @@ const VideosPage = () => {
     ...serverVideos.map(v => ({ ...v, isLocal: false, status: v.status || 'completed' }))
   ];
 
-  // Filter out local videos that have been successfully uploaded
+  // Filter out local videos that have been successfully uploaded AND are now present on the server
+  // This prevents duplicates of successfully uploaded videos.
   const filteredVideos = allVideos.filter(video => {
     if (video.isLocal && video.status === 'completed') {
       return !serverVideos.some(sv => sv.id === video.id);
@@ -342,7 +361,7 @@ const VideosPage = () => {
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          setVideoToDelete(video);
+                          setVideoToDelete(video); // This is correct, 'video' contains 'isLocal'
                           setDeleteConfirmOpen(true);
                         }}
                         sx={{
