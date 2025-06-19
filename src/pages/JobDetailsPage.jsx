@@ -35,6 +35,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { getJobDetails } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
+import { useVideoContext } from '../context/VideoContext'; // Import useVideoContext
 
 const PageContainer = styled(Box)(({ theme }) => ({
   background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
@@ -133,6 +134,7 @@ const JobDetailsPage = () => {
   });
   const [showVideoInfo, setShowVideoInfo] = useState(false);
   const { role } = useAuth();
+  const { videos: localVideos } = useVideoContext(); // Get local videos from context
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -155,14 +157,58 @@ const JobDetailsPage = () => {
     fetchJobDetails();
   }, [id]);
 
+  // Determine the video to display
+  const getDisplayVideo = () => {
+    // 1. Find the local video entry associated with this job ID
+    // This will find the video regardless of whether its ID is a temporary local one
+    // or has been updated to the server-assigned ID, as long as job_id matches.
+    const associatedLocalVideo = localVideos.find(v => v.job_id === id);
+
+    // 2. Prioritize the local video if it's currently uploading or processing.
+    // This ensures real-time updates and displays the local blob URL.
+    // Also include 'failed' videos that are local, so users can see them and potentially retry.
+    if (associatedLocalVideo && 
+        (associatedLocalVideo.status === 'uploading' || associatedLocalVideo.status === 'processing' || associatedLocalVideo.status === 'failed') && 
+        associatedLocalVideo.video_url // Ensure it has a blob URL to play/display progress
+    ) {
+        console.log("[JobDetailsPage] Displaying local, in-progress or failed video:", associatedLocalVideo);
+        return associatedLocalVideo;
+    }
+
+    // 3. Fallback to server-provided video if available and completed.
+    // If the server's job data includes a completed video for this job, use it.
+    if (job?.video?.video_url && job.video.status === 'completed') {
+      console.log("[JobDetailsPage] Displaying server-completed video:", job.video);
+      return job.video;
+    }
+
+    // 4. If the job has a video_id from the server (meaning a video is associated)
+    // but no full video object or URL is yet available from the server API,
+    // AND we didn't find an actively uploading/processing local video matching.
+    // This implies the server is processing it, or it's a server-side failed video.
+    if (job?.video_id && (!job?.video?.video_url || job.video.status !== 'completed')) {
+      console.log("[JobDetailsPage] Server has video_id but no completed URL, assuming processing or pending:", job.video_id);
+      return {
+          id: job.video_id, 
+          status: job.video?.status || 'processing', // Use server status if available, else 'processing'
+          video_title: job.title ? `${job.title} Video` : 'Job Video', 
+          submitted_at: job.video?.submitted_at || new Date().toISOString(), 
+          video_url: null // No URL available yet from server
+      };
+    }
+    
+    console.log("[JobDetailsPage] No video to display for this job.");
+    return null; // No video found to display
+  };
+
+  const displayVideo = getDisplayVideo(); 
+
   const hasVideo = () => {
-    return job?.video_url || (job?.video?.video_url && job.video.video_url !== "");
+    return !!displayVideo;
   };
 
   const getVideoUrl = () => {
-    if (job?.video_url) return job.video_url;
-    if (job?.video?.video_url && job.video.video_url !== "") return job.video.video_url;
-    return null;
+    return displayVideo?.video_url || null;
   };
 
   const renderVideoHero = () => {
@@ -199,7 +245,18 @@ const JobDetailsPage = () => {
               color: theme.palette.common.white
             }}
           >
-            <Typography variant="h5">Video is processing...</Typography>
+            {displayVideo.status === 'uploading' && (
+                <Typography variant="h5">Video is uploading: {displayVideo.progress}%</Typography>
+            )}
+            {displayVideo.status === 'processing' && (
+                <Typography variant="h5">Video is processing...</Typography>
+            )}
+            {displayVideo.status === 'failed' && (
+                <Typography variant="h5">Video upload failed. Please check the videos page for details or retry.</Typography>
+            )}
+            {(!displayVideo.status || displayVideo.status === 'completed') && !videoUrl && (
+                <Typography variant="h5">Video content not available.</Typography>
+            )}
           </Box>
         )}
 
@@ -207,22 +264,22 @@ const JobDetailsPage = () => {
           {showVideoInfo ? <CloseIcon /> : <InfoIcon />}
         </VideoInfoButton>
 
-        {showVideoInfo && job?.video && (
+        {showVideoInfo && displayVideo && ( 
           <VideoInfoPanel>
             <Typography variant="subtitle1" gutterBottom>
               Video Information
             </Typography>
             <Typography variant="body2" paragraph>
-              <strong>Title:</strong> {job.video.video_title || "Not specified"}
+              <strong>Title:</strong> {displayVideo.video_title || "Not specified"}
             </Typography>
             <Typography variant="body2" paragraph>
-              <strong>Type:</strong> {job.video.video_type || "Not specified"}
+              <strong>Type:</strong> {displayVideo.video_type || "Not specified"}
             </Typography>
             <Typography variant="body2" paragraph>
-              <strong>Status:</strong> {job.video.status || "Not specified"}
+              <strong>Status:</strong> {displayVideo.status || "Not specified"}
             </Typography>
             <Typography variant="body2">
-              <strong>Uploaded:</strong> {new Date(job.video.submitted_at).toLocaleDateString()}
+              <strong>Uploaded:</strong> {new Date(displayVideo.submitted_at).toLocaleDateString()}
             </Typography>
           </VideoInfoPanel>
         )}
