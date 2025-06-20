@@ -56,7 +56,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },
-    { text: 'Job Postings', icon: <JobsIcon />, path: '/Post-job-page' },
+    { text: 'Post Job', icon: <JobsIcon />, path: '/Post-job-page' },
     // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },

@@ -127,6 +127,10 @@ const PostJobPage = () => {
   const [availableSkills, setAvailableSkills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  // States to track VideoResumeUpload's internal status for dialog control
+  const [isChildUploading, setIsChildUploading] = useState(false);
+  const [isChildRecording, setIsChildRecording] = useState(false);
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -276,55 +280,57 @@ const handleFormChange = (e) => {
     setShowVideoUpload(true);
   };
 
-  // Callback from VideoResumeUpload once video is uploaded
-  const handleVideoUploadComplete = async (videoId) => {
-    setUploadedVideoId(videoId);
-    setShowVideoUpload(false);
-    
-    // Now that video is uploaded, update the job with the video ID
-    if (newJobId) {
-      try {
-        setSaving(true);
-        const updatedJobData = {
-          ...jobForm, // Keep existing job form data
-          video_id: videoId, // Add the uploaded video ID
-          requirements: jobForm.requirements.filter(item => item.trim() !== ''),
-          responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-          expires_at: jobForm.expires_at || null,
-        };
-        // Assuming you have an API function like updateJob(jobId, data)
-        await updateJob(newJobId, updatedJobData);
-        setSnackbar({
-          open: true,
-          message: 'Video linked to job and job updated successfully!',
-          severity: 'success'
-        });
-        navigate(`/job/${newJobId}`); // Navigate to job details page
-      } catch (error) {
-        console.error('Error updating job with video ID:', error);
-        setSnackbar({
-          open: true,
-          message: 'Error linking video to job.',
-          severity: 'error'
-        });
-      } finally {
-        setSaving(false);
-      }
-    } else {
-      // This case should ideally not happen with the new flow,
-      // but as a fallback, if newJobId is somehow null here,
-      // it means the job was not created before the video upload.
-      // We would then need to create the job with the video ID.
-      // For simplicity, we assume newJobId will be set by handleVideoUploadClick.
-      console.warn('newJobId was null after video upload. This indicates a flow issue.');
-      // You could re-call handleSubmit here, ensuring it handles the video_id
-      // but it's better to ensure newJobId is always present.
+  // Modify the handleVideoUploadComplete function
+const handleVideoUploadComplete = async (videoId) => {
+  console.log('handleVideoUploadComplete called with videoId:', videoId);
+  setUploadedVideoId(videoId);
+  setShowVideoUpload(false); // Close the dialog immediately after upload initiation
+  console.log('setShowVideoUpload(false) called.');
+  
+  if (newJobId && videoId) {
+    try {
+      setSaving(true);
+      const updatedJobData = {
+        ...jobForm,
+        video_id: videoId,
+        requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+        responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+        expires_at: jobForm.expires_at || null,
+      };
+      
+      await updateJob(newJobId, updatedJobData);
       setSnackbar({
         open: true,
-        message: 'Video uploaded, but job could not be linked. Please try submitting the job again.',
+        message: 'Video linked to job and job updated successfully!',
+        severity: 'success'
+      });
+      
+      // Navigate to job details page
+      navigate(`/job/${newJobId}`);
+    } catch (error) {
+      console.error('Error updating job with video ID:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error linking video to job.',
         severity: 'error'
       });
+    } finally {
+      setSaving(false);
     }
+  } else if (!videoId) {
+    setSnackbar({
+      open: true,
+      message: 'Video upload failed or was cancelled. Job not updated with video.',
+      severity: 'error'
+    });
+  }
+};
+
+
+  // Callback to receive current uploading/recording status from VideoResumeUpload
+  const handleChildStatusChange = (uploading, recording) => {
+    setIsChildUploading(uploading);
+    setIsChildRecording(recording);
   };
 
   const handleSubmit = async (e) => {
@@ -399,27 +405,38 @@ const handleFormChange = (e) => {
     navigate(-1);
   };
 
-  const renderVideoUploadDialog = () => (
-    <Dialog
-      open={showVideoUpload}
-      onClose={() => setShowVideoUpload(false)}
-      fullWidth
-      maxWidth="md"
-    >
-      <DialogTitle>Upload Video Resume</DialogTitle>
-      <DialogContent>
-        {/* Pass newJobId to VideoResumeUpload */}
-        <VideoResumeUpload 
-          onComplete={handleVideoUploadComplete}
-          newjobid={newJobId} // Pass the jobId here
-          embedded={true}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setShowVideoUpload(false)}>Cancel</Button>
-      </DialogActions>
-    </Dialog>
-  );
+  // Update the renderVideoUploadDialog function
+const renderVideoUploadDialog = () => (
+  <Dialog
+    open={showVideoUpload}
+    // Dialog should close when `showVideoUpload` becomes false
+    onClose={() => setShowVideoUpload(false)}
+    fullWidth
+    maxWidth="md"
+    // Loosen restrictions: allow escape key to close. The parent explicitly closes on upload complete.
+    disableEscapeKeyDown={false} 
+  >
+    <DialogTitle>Upload Job Video</DialogTitle>
+    <DialogContent>
+      <VideoResumeUpload 
+        onComplete={handleVideoUploadComplete}
+        onStatusChange={handleChildStatusChange}
+        newjobid={newJobId}
+        embedded={true}
+      />
+    </DialogContent>
+    <DialogActions>
+      {/* Always allow cancel button if the dialog is open and not actively recording */}
+      <Button 
+        onClick={() => setShowVideoUpload(false)} 
+        disabled={isChildRecording} // Only disable if actively recording
+      >
+        Cancel
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
 
   const renderBasicInfoSection = () => (
     <FormPaper elevation={1}>

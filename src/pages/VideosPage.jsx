@@ -202,15 +202,15 @@ const VideosPage = () => {
     right: 0,
     bottom: 0,
     borderRadius: '8px',
-    border: `4px solid ${status === 'processing' ? theme.palette.warning.main : theme.palette.error.main}`,
+    border: `8px solid ${status === 'processing' ? "rgb(22, 85, 167)" : theme.palette.error.main}`,
     background: 'transparent',
     zIndex: 2,
     pointerEvents: 'none',
     animation: 'pulse 2s infinite',
     '@keyframes pulse': {
-      '0%': { opacity: 0.7 },
-      '50%': { opacity: 0.3 },
-      '100%': { opacity: 0.7 },
+      '0%': { opacity: 0.9 },
+      '50%': { opacity: 0.5 },
+      '100%': { opacity: 0.9 },
     },
   }));
 

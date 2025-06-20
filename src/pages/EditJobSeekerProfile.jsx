@@ -174,23 +174,26 @@ const EditJobSeekerProfile = () => {
   const [tabValue, setTabValue] = useState(0);
   
   // State for profile data
-  const [profile, setProfile] = useState({
-    first_name: '',
-    second_name: '',
-    last_name: '',
-    title: '',
-    location: '',
-    bio: '',
-    email: '',
-    phone: '',
-    website: '',
-    profile_pic: '',
-    social: {
-      linkedin: '',
-      github: '',
-      twitter: ''
-    }
-  });
+const [profile, setProfile] = useState({
+  first_name: '',
+  Second_name: '',
+  last_name: '',
+  title: '',
+  location: '',
+  bio: '',
+  email: '',
+  phone: '',
+  mobile: '',
+  website: '',
+  profile_pic: '',
+  address: '',
+  preferred_job_title: '',
+  social: {
+    linkedin_url: '',
+    github: '',
+    twitter: ''
+  }
+});
   
   // State for skills
   const [skills, setSkills] = useState([]);
@@ -253,8 +256,9 @@ const EditJobSeekerProfile = () => {
           getUserEducation(),
           getUserVideos()
         ]);
-        
+        console.log(profileResponse.data);
         setProfile(profileResponse.data);
+        console.log("Profile::::::",profile);
         setSkills(skillsResponse.data.skills);
         setAvailableSkills(availableSkillsResponse.data.skills);
         setExperiences(experiencesResponse.data.experiences);
@@ -282,32 +286,32 @@ const EditJobSeekerProfile = () => {
   };
   
   // Handle profile form change
-  const handleProfileChange = (e) => {
-    const { name, value } = e.target;
-    
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setProfile({
-        ...profile,
-        [parent]: {
-          ...profile[parent],
-          [child]: value
-        }
-      });
-    } else {
-      setProfile({
-        ...profile,
-        [name]: value
-      });
-    }
-  };
+const handleProfileChange = (e) => {
+  const { name, value } = e.target;
   
+  if (name.includes('.')) {
+    const [parent, child] = name.split('.');
+    setProfile({
+      ...profile,
+      [parent]: {
+        ...profile[parent],
+        [child]: value
+      }
+    });
+  } else {
+    setProfile({
+      ...profile,
+      [name]: value
+    });
+  }
+};
+
   // Handle profile save
   const handleSaveProfile = async () => {
     try {
       setSaving(true);
       await updateUserProfile(profile);
-      
+      console.log(profile);
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
@@ -334,13 +338,13 @@ const EditJobSeekerProfile = () => {
     try {
       setSaving(true);
       const formData = new FormData();
-      formData.append('avatar', file);
+      formData.append('logo', file);
       
       const response = await uploadProfileImage(formData);
       
       setProfile({
         ...profile,
-        profile_pic: response.data.avatar_url
+        profile_pic: response.data.profile_pic
       });
       
       setSnackbar({
@@ -401,12 +405,12 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  const handleDeleteSkill = async (skillId) => {
+  const handleDeleteSkill = async (skill_id) => {
     try {
       setSaving(true);
-      await deleteUserSkill(skillId);
+      await deleteUserSkill(skill_id);
       
-      setSkills(skills.filter(skill => skill.id !== skillId));
+      setSkills(skills.filter(skill => skill.skill_id !== skill_id));
       
       setSnackbar({
         open: true,
@@ -430,6 +434,7 @@ const EditJobSeekerProfile = () => {
   const handleOpenExperienceDialog = (experience = null) => {
     if (experience) {
       setExperienceForm({
+        id:experience.id,
         company_name: experience.company_name,
         position: experience.position,
         location: experience.location,
@@ -467,11 +472,13 @@ const EditJobSeekerProfile = () => {
   const handleSaveExperience = async () => {
     try {
       setSaving(true);
-      
+      let edited=false;
       if (experienceForm.id) {
+         
         // Update existing experience
         await updateUserExperience(experienceForm.id, experienceForm);
-      } else {
+        edited=true;
+      } else if(edited!=true) {
         // Add new experience
         await addUserExperience(experienceForm);
       }
@@ -487,6 +494,7 @@ const EditJobSeekerProfile = () => {
       });
       
       handleCloseExperienceDialog();
+       edited=false;
       setSaving(false);
     } catch (error) {
       console.error('Error saving experience:', error);
@@ -654,7 +662,7 @@ const EditJobSeekerProfile = () => {
   };
   
   const handleEditVideo = (videoId) => {
-    navigate(`/profile/edit-video/${videoId}`);
+    navigate(`/edit-video/${videoId}`);
   };
   
   // Format date for display
@@ -756,183 +764,125 @@ const EditJobSeekerProfile = () => {
               
               {/* Basic Info Tab */}
               <TabPanel value={tabValue} index={0}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="First Name"
-                      name="first_name"
-                      value={profile.first_name || ''}
-                      onChange={handleProfileChange}
-                      required
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PersonIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Last Name"
-                      name="last_name"
-                      value={profile.last_name || ''}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Professional Title"
-                      name="title"
-                      value={profile.title || ''}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Location"
-                      name="location"
-                      value={profile.location || ''}
-                      onChange={handleProfileChange}
-                      placeholder="City, Country"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LocationIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Bio"
-                      name="bio"
-                      value={profile.bio || ''}
-                      onChange={handleProfileChange}
-                      multiline
-                      rows={4}
-                      placeholder="Tell employers about yourself, your skills, and your experience"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={profile.email || ''}
-                      onChange={handleProfileChange}
-                      required
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <EmailIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Phone"
-                      name="phone"
-                      value={profile.phone || ''}
-                      onChange={handleProfileChange}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PhoneIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Website"
-                      name="website"
-                      value={profile.website || ''}
-                      onChange={handleProfileChange}
-                      placeholder="www.example.com"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LanguageIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                      Social Media
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          fullWidth
-                          label="LinkedIn"
-                          name="social.linkedin"
-                          value={profile.social?.linkedin || ''}
-                          onChange={handleProfileChange}
-                          placeholder="linkedin.com/in/username"
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <LinkedInIcon color="primary" />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          fullWidth
-                          label="GitHub"
-                          name="social.github"
-                          value={profile.social?.github || ''}
-                          onChange={handleProfileChange}
-                          placeholder="github.com/username"
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <GitHubIcon />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          fullWidth
-                          label="Twitter"
-                          name="social.twitter"
-                          value={profile.social?.twitter || ''}
-                          onChange={handleProfileChange}
-                          placeholder="twitter.com/username"
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <TwitterIcon color="primary" />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
+              <Grid container spacing={3}>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="First Name"
+      name="first_name"
+      value={profile.first_name || ''}
+      onChange={handleProfileChange}
+      required
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <PersonIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Second Name"
+      name="Second_name"
+      value={profile.Second_name || ''}
+      onChange={handleProfileChange}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Last Name"
+      name="last_name"
+      value={profile.last_name || ''}
+      onChange={handleProfileChange}
+    />
+  </Grid>
+  <Grid item xs={12}>
+    <TextField
+      fullWidth
+      label="Professional Title"
+      name="title"
+      value={profile.title || ''}
+      onChange={handleProfileChange}
+      required
+    />
+  </Grid>
+  <Grid item xs={12}>
+    <TextField
+      fullWidth
+      label="Location"
+      name="location"
+      value={profile.location || ''}
+      onChange={handleProfileChange}
+      placeholder="City, Country"
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <LocationIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12}>
+    <TextField
+      fullWidth
+      label="Bio"
+      name="bio"
+      value={profile.bio || ''}
+      onChange={handleProfileChange}
+      multiline
+      rows={4}
+      placeholder="Tell employers about yourself, your skills, and your experience"
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Email"
+      name="email"
+      type="email"
+      value={profile.email || ''}
+      onChange={handleProfileChange}
+      required
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <EmailIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Phone"
+      name="phone"
+      value={profile.phone || ''}
+      onChange={handleProfileChange}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <PhoneIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Mobile"
+      name="mobile"
+      value={profile.mobile || ''}
+      onChange={handleProfileChange}
+    />
+  </Grid>
+</Grid>
               </TabPanel>
               
               {/* Skills Tab */}
@@ -968,9 +918,9 @@ const EditJobSeekerProfile = () => {
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                     {skills.map((skill) => (
                       <SkillChip
-                        key={skill.id}
+                        key={skill.skill_id}
                         label={skill.name}
-                        onDelete={() => handleDeleteSkill(skill.id)}
+                        onDelete={() => handleDeleteSkill(skill.skill_id)}
                         sx={{ borderRadius: '4px' }}
                       />
                     ))}

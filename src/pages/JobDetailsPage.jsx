@@ -15,7 +15,9 @@ import {
   Alert,
   Snackbar,
   Stack,
-  IconButton
+  IconButton,
+  LinearProgress,
+  Tooltip
 } from "@mui/material";
 import {
   Work as WorkIcon,
@@ -26,17 +28,21 @@ import {
   Star as StarIcon,
   Business as BusinessIcon,
   PlayCircle as PlayIcon,
+  Pause as PauseIcon,
   Event as EventIcon,
   Description as DescriptionIcon,
   List as ListIcon,
   Info as InfoIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  VolumeUp,
+  VolumeOff
 } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { getJobDetails } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
-import { useVideoContext } from '../context/VideoContext'; // Import useVideoContext
+import { useVideoContext } from '../context/VideoContext';
 
+// Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
   background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
   minHeight: "100vh",
@@ -47,6 +53,7 @@ const PageContainer = styled(Box)(({ theme }) => ({
     sm: 16
   }
 }));
+
 
 const VideoHeroContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -61,7 +68,10 @@ const VideoHeroContainer = styled(Box)(({ theme }) => ({
   boxShadow: theme.shadows[4],
   display: "flex",
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
+  '&:hover': {
+    cursor: 'pointer',
+  }
 }));
 
 const VideoOverlay = styled(Box)(({ theme }) => ({
@@ -75,31 +85,21 @@ const VideoOverlay = styled(Box)(({ theme }) => ({
   zIndex: 2
 }));
 
-const VideoInfoButton = styled(IconButton)(({ theme }) => ({
-  position: "absolute",
-  top: theme.spacing(2),
-  right: theme.spacing(2),
-  backgroundColor: "rgba(0,0,0,0.5)",
-  color: "#fff",
-  zIndex: 3,
-  "&:hover": {
-    backgroundColor: "rgba(0,0,0,0.7)"
-  }
+const VideoControls = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  padding: theme.spacing(1),
+  color:'rgba(248, 241, 241, 0.98)',
+  backgroundColor: 'rgba(226, 224, 224, 0.08)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  zIndex: 3
 }));
 
-const VideoInfoPanel = styled(Paper)(({ theme }) => ({
-  position: "absolute",
-  top: theme.spacing(2),
-  right: theme.spacing(2),
-  width: "300px",
-  padding: theme.spacing(2),
-  backgroundColor: "rgba(255,255,255,0.9)",
-  zIndex: 4,
-  boxShadow: theme.shadows[4],
-  borderRadius: theme.shape.borderRadius
-}));
 
-// Styled component for the main detail card (was missing)
 const DetailCard = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: theme.shape.borderRadius * 2,
@@ -107,7 +107,6 @@ const DetailCard = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(4),
 }));
 
-// Component for individual detail items (was missing)
 const DetailItem = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "flex-start",
@@ -119,6 +118,28 @@ const DetailItem = styled(Box)(({ theme }) => ({
   },
 }));
 
+const StatusBorder = styled('div')(({ status, theme }) => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  borderRadius: '8px',
+  border: `4px solid ${
+    status === 'uploading' ? 'rgb(46, 68, 194)' : 
+    status === 'processing' ? 'rgb(46, 68, 194)' : 
+    theme.palette.error.main
+  }`,
+  background: 'transparent',
+  zIndex: 2,
+  pointerEvents: 'none',
+  animation: 'pulse 2s infinite',
+  '@keyframes pulse': {
+    '0%': { opacity: 0.7 },
+    '50%': { opacity: 0.3 },
+    '100%': { opacity: 0.7 },
+  },
+}));
 
 const JobDetailsPage = () => {
   const theme = useTheme();
@@ -133,8 +154,13 @@ const JobDetailsPage = () => {
     severity: "success"
   });
   const [showVideoInfo, setShowVideoInfo] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const { role } = useAuth();
-  const { videos: localVideos } = useVideoContext(); // Get local videos from context
+  const { videos: localVideos } = useVideoContext();
+  const videoRef = React.useRef(null);
+  const [isHovering, setIsHovering] = useState(false);
+const [isMouseOverControls, setIsMouseOverControls] = useState(false);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -144,6 +170,7 @@ const JobDetailsPage = () => {
         setJob(response.data.job);
         setLoading(false);
       } catch (err) {
+        console.error("Error fetching job details:", err);
         setError("Failed to load job details");
         setLoading(false);
         setSnackbar({
@@ -157,154 +184,288 @@ const JobDetailsPage = () => {
     fetchJobDetails();
   }, [id]);
 
-  // Determine the video to display
   const getDisplayVideo = () => {
-    // 1. Find the local video entry associated with this job ID
-    // This will find the video regardless of whether its ID is a temporary local one
-    // or has been updated to the server-assigned ID, as long as job_id matches.
+    // 1. Check for local videos first (uploading/processing)
     const associatedLocalVideo = localVideos.find(v => v.job_id === id);
-
-    // 2. Prioritize the local video if it's currently uploading or processing.
-    // This ensures real-time updates and displays the local blob URL.
-    // Also include 'failed' videos that are local, so users can see them and potentially retry.
+    
     if (associatedLocalVideo && 
-        (associatedLocalVideo.status === 'uploading' || associatedLocalVideo.status === 'processing' || associatedLocalVideo.status === 'failed') && 
-        associatedLocalVideo.video_url // Ensure it has a blob URL to play/display progress
+        (associatedLocalVideo.status === 'uploading' || 
+         associatedLocalVideo.status === 'processing' || 
+         associatedLocalVideo.status === 'failed') && 
+        associatedLocalVideo.video_url
     ) {
-        console.log("[JobDetailsPage] Displaying local, in-progress or failed video:", associatedLocalVideo);
-        return associatedLocalVideo;
+      return associatedLocalVideo;
     }
 
-    // 3. Fallback to server-provided video if available and completed.
-    // If the server's job data includes a completed video for this job, use it.
+    // 2. Check for completed server video in job data
     if (job?.video?.video_url && job.video.status === 'completed') {
-      console.log("[JobDetailsPage] Displaying server-completed video:", job.video);
       return job.video;
     }
 
-    // 4. If the job has a video_id from the server (meaning a video is associated)
-    // but no full video object or URL is yet available from the server API,
-    // AND we didn't find an actively uploading/processing local video matching.
-    // This implies the server is processing it, or it's a server-side failed video.
-    if (job?.video_id && (!job?.video?.video_url || job.video.status !== 'completed')) {
-      console.log("[JobDetailsPage] Server has video_id but no completed URL, assuming processing or pending:", job.video_id);
+    // 3. Check if job has a video_id but no full video object
+    if (job?.video_id) {
       return {
-          id: job.video_id, 
-          status: job.video?.status || 'processing', // Use server status if available, else 'processing'
-          video_title: job.title ? `${job.title} Video` : 'Job Video', 
-          submitted_at: job.video?.submitted_at || new Date().toISOString(), 
-          video_url: null // No URL available yet from server
+        id: job.video_id,
+        status: job.video?.status || 'processing',
+        video_title: job.title ? `${job.title} Video` : 'Job Video',
+        submitted_at: job.video?.submitted_at || new Date().toISOString(),
+        video_url: null
       };
     }
     
-    console.log("[JobDetailsPage] No video to display for this job.");
-    return null; // No video found to display
+    // 4. Check if there's a completed local video for this job
+    const completedLocalVideo = localVideos.find(v => 
+      v.job_id === id && v.status === 'completed'
+    );
+    if (completedLocalVideo) {
+      return completedLocalVideo;
+    }
+
+    return null;
   };
 
-  const displayVideo = getDisplayVideo(); 
+  const displayVideo = getDisplayVideo();
+  const hasVideo = () => !!displayVideo;
+  const getVideoUrl = () => displayVideo?.video_url || null;
 
-  const hasVideo = () => {
-    return !!displayVideo;
+  const togglePlayback = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play().catch(e => console.log("Play failed:", e));
+    }
+    setIsPlaying(!isPlaying);
   };
 
-  const getVideoUrl = () => {
-    return displayVideo?.video_url || null;
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const formatSalary = (amount) => {
+    if (!amount) return "Not specified";
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "Not specified";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  };
+
+  const formatTime = (seconds) => {
+    if (!seconds) return "00:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const renderVideoHero = () => {
-    const videoUrl = getVideoUrl();
-    
     if (!hasVideo()) return null;
 
+    const videoUrl = getVideoUrl();
+    const video = displayVideo;
+
+
+
+const handleMouseEnterVideo = () => {
+  setIsHovering(true);
+  if (!isPlaying && !isMouseOverControls) {
+    videoRef.current?.play().catch(e => console.log("Play failed:", e));
+  }
+};
+
+const handleMouseLeaveVideo = () => {
+  setIsHovering(false);
+  if (isPlaying && !isMouseOverControls) {
+    videoRef.current?.pause();
+  }
+};
+
+
+
+    
     return (
-      <VideoHeroContainer>
+      <VideoHeroContainer onClick={togglePlayback} 
+          onMouseEnter={handleMouseEnterVideo}
+    onMouseLeave={handleMouseLeaveVideo}
+ >
         {videoUrl ? (
-          <video
-            src={videoUrl}
-            controls
-            autoPlay
-            muted
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              position: "absolute",
-              top: 0,
-              left: 0
-            }}
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              controls={false}
+              autoPlay={isPlaying}
+              muted={isMuted}
+              loop
+              onEnded={() => setIsPlaying(false)}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                position: "absolute",
+                top: 0,
+                left: 0
+              }}
+            />
+            
+            <VideoControls>
+              <IconButton 
+                size="small" 
+                color="inherit" 
+                onClick={togglePlayback}
+              >
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </IconButton>
+              <Typography variant="caption" color="inherit">
+                {videoRef.current ? formatTime(videoRef.current.currentTime) : '00:00'} / 
+                {videoRef.current ? formatTime(videoRef.current.duration) : '00:00'}
+              </Typography>
+              <IconButton 
+                size="small" 
+                color="inherit" 
+                onClick={toggleMute}
+              >
+                {isMuted ? <VolumeOff /> : <VolumeUp />}
+              </IconButton>
+            </VideoControls>
+          </>
         ) : (
           <Box
+                onMouseEnter={() => setIsMouseOverControls(true)}
+      onMouseLeave={() => setIsMouseOverControls(false)}
             sx={{
               width: "100%",
               height: "100%",
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: theme.palette.grey[900],
-              color: theme.palette.common.white
+              color: theme.palette.common.white,
+              p: 3
             }}
           >
-            {displayVideo.status === 'uploading' && (
-                <Typography variant="h5">Video is uploading: {displayVideo.progress}%</Typography>
+            {(video.status === 'uploading' || video.status === 'processing') && (
+              <>
+                <CircularProgress size={60} thickness={4} sx={{ mb: 2 }} />
+                <Typography variant="h5" align="center">
+                  {video.status === 'uploading' ? 
+                    `Uploading: ${video.progress || 0}%` : 
+                    "Processing your video..."}
+                </Typography>
+                {video.status === 'uploading' && (
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={video.progress || 0} 
+                    sx={{ width: '80%', mt: 2 }}
+                  />
+                )}
+                <Typography variant="body2" sx={{ mt: 2 }}>
+                  This may take a few moments...
+                </Typography>
+              </>
             )}
-            {displayVideo.status === 'processing' && (
-                <Typography variant="h5">Video is processing...</Typography>
+            {video.status === 'failed' && (
+              <>
+                <Error color="error" sx={{ fontSize: 60, mb: 2 }} />
+                <Typography variant="h5" align="center">
+                  Video upload failed
+                </Typography>
+                <Typography variant="body1" align="center" sx={{ mt: 1 }}>
+                  Please check the videos page for details or try again
+                </Typography>
+              </>
             )}
-            {displayVideo.status === 'failed' && (
-                <Typography variant="h5">Video upload failed. Please check the videos page for details or retry.</Typography>
-            )}
-            {(!displayVideo.status || displayVideo.status === 'completed') && !videoUrl && (
-                <Typography variant="h5">Video content not available.</Typography>
+            {(!video.status || video.status === 'completed') && !videoUrl && (
+              <>
+                <InfoIcon color="disabled" sx={{ fontSize: 60, mb: 2 }} />
+                <Typography variant="h5" align="center">
+                  Video content not available
+                </Typography>
+              </>
             )}
           </Box>
         )}
 
-        <VideoInfoButton onClick={() => setShowVideoInfo(!showVideoInfo)}>
-          {showVideoInfo ? <CloseIcon /> : <InfoIcon />}
-        </VideoInfoButton>
-
-        {showVideoInfo && displayVideo && ( 
-          <VideoInfoPanel>
-            <Typography variant="subtitle1" gutterBottom>
-              Video Information
-            </Typography>
-            <Typography variant="body2" paragraph>
-              <strong>Title:</strong> {displayVideo.video_title || "Not specified"}
-            </Typography>
-            <Typography variant="body2" paragraph>
-              <strong>Type:</strong> {displayVideo.video_type || "Not specified"}
-            </Typography>
-            <Typography variant="body2" paragraph>
-              <strong>Status:</strong> {displayVideo.status || "Not specified"}
-            </Typography>
-            <Typography variant="body2">
-              <strong>Uploaded:</strong> {new Date(displayVideo.submitted_at).toLocaleDateString()}
-            </Typography>
-          </VideoInfoPanel>
+        {(video.status === 'processing' || video.status === 'failed') && (
+          <StatusBorder status={video.status} />
         )}
 
+
+
+
         <VideoOverlay>
-          <Typography variant="h3" component="h1" sx={{ color: "#fff", mb: 1 }}>
-            {job?.title}
-          </Typography>
-          <Stack direction="row" spacing={2}>
-            <Typography
-              variant="subtitle1"
-              sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
-            >
-              <BusinessIcon fontSize="small" sx={{ mr: 1 }} />
-              {job?.company_name}
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
-            >
-              <LocationIcon fontSize="small" sx={{ mr: 1 }} />
-              {job?.location}
-            </Typography>
-          </Stack>
-        </VideoOverlay>
+  {/* Job title and company info at the bottom */}
+  <Box sx={{ mb: 4 }}>
+    <Typography variant="h3" component="h1" sx={{ color: "#fff", mb: 1 }}>
+      {job?.title}
+    </Typography>
+    <Stack direction="row" spacing={2}>
+      <Typography
+        variant="subtitle1"
+        sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
+      >
+        <BusinessIcon fontSize="small" sx={{ mr: 1 }} />
+        {job?.company_name}
+      </Typography>
+      <Typography
+        variant="subtitle1"
+        sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
+      >
+        <LocationIcon fontSize="small" sx={{ mr: 1 }} />
+        {job?.location}
+      </Typography>
+    </Stack>
+  </Box>
+
+  {/* Video info at the top */}
+  { displayVideo && (
+    <Box 
+      sx={{ 
+    position: "absolute",
+    top: theme.spacing(2),
+    right: theme.spacing(2),
+    padding: theme.spacing(1.5),
+    borderRadius: theme.shape.borderRadius,
+    maxWidth: "300px",
+    transition: 'all 0.3s ease',
+
+  }}
+    >
+      {/* <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+        Video Information
+      </Typography> */}
+      <Typography variant="body2">
+        <Box component="span" sx={{ opacity: 0.8 }}></Box> {displayVideo.video_title || "Video Title"}
+      </Typography>
+      {/* <Typography variant="body2">
+        <Box component="span" sx={{ opacity: 0.8 }}>Status:</Box> {displayVideo.status || "Not specified"}
+      </Typography>
+      {displayVideo.status === 'uploading' && (
+        <Typography variant="body2">
+          <Box component="span" sx={{ opacity: 0.8 }}>Progress:</Box> {displayVideo.progress || 0}%
+        </Typography>
+      )}
+      <Typography variant="body2">
+        <Box component="span" sx={{ opacity: 0.8 }}>Uploaded:</Box> {new Date(displayVideo.submitted_at).toLocaleDateString()}
+      </Typography> */}
+    </Box>
+  )}
+</VideoOverlay>
       </VideoHeroContainer>
     );
   };
@@ -341,24 +502,6 @@ const JobDetailsPage = () => {
     );
   }
 
-  const formatSalary = (amount) => {
-    if (!amount) return "Not specified";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "Not specified";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
-  };
-
   return (
     <PageContainer>
       <Container maxWidth="lg">
@@ -371,7 +514,6 @@ const JobDetailsPage = () => {
           Back to Jobs
         </Button>
 
-        {/* Render the video hero only if hasVideo() is true */}
         {hasVideo() && renderVideoHero()}
 
         <DetailCard elevation={3}>
@@ -417,88 +559,121 @@ const JobDetailsPage = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <DetailItem
-                icon={<LocationIcon />}
-                title="Location"
-                value={`${job.location} ${job.remote_ok ? "(Remote OK)" : ""}`}
-              />
+              <DetailItem>
+                <LocationIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Location
+                  </Typography>
+                  <Typography variant="body1">
+                    {job.location} {job.remote_ok ? "(Remote OK)" : ""}
+                  </Typography>
+                </Box>
+              </DetailItem>
 
-              <DetailItem
-                icon={<MoneyIcon />}
-                title="Salary Range"
-                value={
-                  job.salary_min || job.salary_max
-                    ? `${formatSalary(job.salary_min)} - ${formatSalary(job.salary_max)}`
-                    : "Not specified"
-                }
-              />
+              <DetailItem>
+                <MoneyIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Salary Range
+                  </Typography>
+                  <Typography variant="body1">
+                    {job.salary_min || job.salary_max
+                      ? `${formatSalary(job.salary_min)} - ${formatSalary(job.salary_max)}`
+                      : "Not specified"}
+                  </Typography>
+                </Box>
+              </DetailItem>
 
-              <DetailItem
-                icon={<ScheduleIcon />}
-                title="Employment Type"
-                value={job.employment_type
-                  ? job.employment_type.replace("-", " ").toUpperCase()
-                  : null}
-              />
+              <DetailItem>
+                <ScheduleIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Employment Type
+                  </Typography>
+                  <Typography variant="body1">
+                    {job.employment_type
+                      ? job.employment_type.replace("-", " ").toUpperCase()
+                      : "Not specified"}
+                  </Typography>
+                </Box>
+              </DetailItem>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <DetailItem
-                icon={<StarIcon />}
-                title="Experience Level"
-                value={
-                  job.experience_level === "entry"
-                    ? "Entry Level"
-                    : job.experience_level === "mid"
-                    ? "Mid Level"
-                    : job.experience_level === "senior"
-                    ? "Senior Level"
-                    : job.experience_level === "executive"
-                    ? "Executive"
-                    : null
-                }
-              />
+              <DetailItem>
+                <StarIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Experience Level
+                  </Typography>
+                  <Typography variant="body1">
+                    {job.experience_level === "entry"
+                      ? "Entry Level"
+                      : job.experience_level === "mid"
+                      ? "Mid Level"
+                      : job.experience_level === "senior"
+                      ? "Senior Level"
+                      : job.experience_level === "executive"
+                      ? "Executive"
+                      : "Not specified"}
+                  </Typography>
+                </Box>
+              </DetailItem>
 
-              <DetailItem
-                icon={<SchoolIcon />}
-                title="Education Level"
-                value={
-                  job.education_level === "high_school"
-                    ? "High School"
-                    : job.education_level === "associate"
-                    ? "Associate Degree"
-                    : job.education_level === "bachelor"
-                    ? "Bachelor's Degree"
-                    : job.education_level === "master"
-                    ? "Master's Degree"
-                    : job.education_level === "phd"
-                    ? "PhD"
-                    : null
-                }
-              />
+              <DetailItem>
+                <SchoolIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Education Level
+                  </Typography>
+                  <Typography variant="body1">
+                    {job.education_level === "high_school"
+                      ? "High School"
+                      : job.education_level === "associate"
+                      ? "Associate Degree"
+                      : job.education_level === "bachelor"
+                      ? "Bachelor's Degree"
+                      : job.education_level === "master"
+                      ? "Master's Degree"
+                      : job.education_level === "phd"
+                      ? "PhD"
+                      : "Not specified"}
+                  </Typography>
+                </Box>
+              </DetailItem>
             </Grid>
 
             <Grid item xs={12}>
               <Divider sx={{ my: 3 }} />
-              <DetailItem
-                icon={<DescriptionIcon />}
-                title="Job Description"
-                value={job.description}
-              />
+              <DetailItem>
+                <DescriptionIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Job Description
+                  </Typography>
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                    {job.description}
+                  </Typography>
+                </Box>
+              </DetailItem>
             </Grid>
 
             {job.requirements && job.requirements.length > 0 && (
               <Grid item xs={12}>
-                <DetailItem
-                  icon={<ListIcon />}
-                  title="Requirements"
-                >
-                  <Box component="ul" sx={{ pl: 4, mt: 1 }}>
-                    {job.requirements.map((req, index) => (
-                      <Box component="li" key={index} sx={{ mb: 1 }}>
-                        <Typography variant="body1">{req}</Typography>
-                      </Box>
-                    ))}
+                <DetailItem>
+                  <ListIcon />
+                  <Box>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Requirements
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 4, mt: 1 }}>
+                      {job.requirements.map((req, index) => (
+                        <Box component="li" key={index} sx={{ mb: 1 }}>
+                          <Typography variant="body1">{req}</Typography>
+                        </Box>
+                      ))}
+                    </Box>
                   </Box>
                 </DetailItem>
               </Grid>
@@ -506,16 +681,19 @@ const JobDetailsPage = () => {
 
             {job.responsibilities && job.responsibilities.length > 0 && (
               <Grid item xs={12}>
-                <DetailItem
-                  icon={<ListIcon />}
-                  title="Responsibilities"
-                >
-                  <Box component="ul" sx={{ pl: 4, mt: 1 }}>
-                    {job.responsibilities.map((resp, index) => (
-                      <Box component="li" key={index} sx={{ mb: 1 }}>
-                        <Typography variant="body1">{resp}</Typography>
-                      </Box>
-                    ))}
+                <DetailItem>
+                  <ListIcon />
+                  <Box>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Responsibilities
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 4, mt: 1 }}>
+                      {job.responsibilities.map((resp, index) => (
+                        <Box component="li" key={index} sx={{ mb: 1 }}>
+                          <Typography variant="body1">{resp}</Typography>
+                        </Box>
+                      ))}
+                    </Box>
                   </Box>
                 </DetailItem>
               </Grid>
@@ -523,20 +701,23 @@ const JobDetailsPage = () => {
 
             {job.skills && job.skills.length > 0 && (
               <Grid item xs={12}>
-                <DetailItem
-                  icon={<StarIcon />}
-                  title="Required Skills"
-                >
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-                    {job.skills.map((skill) => (
-                      <Chip
-                        key={skill.id}
-                        label={skill.name}
-                        color="primary"
-                        variant="outlined"
-                        sx={{ fontSize: "0.875rem" }}
-                      />
-                    ))}
+                <DetailItem>
+                  <StarIcon />
+                  <Box>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Required Skills
+                    </Typography>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+                      {job.skills.map((skill) => (
+                        <Chip
+                          key={skill.id}
+                          label={skill.name}
+                          color="primary"
+                          variant="outlined"
+                          sx={{ fontSize: "0.875rem" }}
+                        />
+                      ))}
+                    </Box>
                   </Box>
                 </DetailItem>
               </Grid>
@@ -544,20 +725,23 @@ const JobDetailsPage = () => {
 
             {job.categories && job.categories.length > 0 && (
               <Grid item xs={12}>
-                <DetailItem
-                  icon={<ListIcon />}
-                  title="Categories"
-                >
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-                    {job.categories.map((category) => (
-                      <Chip
-                        key={category.id}
-                        label={category.name}
-                        color="secondary"
-                        variant="outlined"
-                        sx={{ fontSize: "0.875rem" }}
-                      />
-                    ))}
+                <DetailItem>
+                  <ListIcon />
+                  <Box>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Categories
+                    </Typography>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+                      {job.categories.map((category) => (
+                        <Chip
+                          key={category.id}
+                          label={category.name}
+                          color="secondary"
+                          variant="outlined"
+                          sx={{ fontSize: "0.875rem" }}
+                        />
+                      ))}
+                    </Box>
                   </Box>
                 </DetailItem>
               </Grid>
@@ -579,7 +763,7 @@ const JobDetailsPage = () => {
         )}
       </Container>
 
-       <Snackbar
+      <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}

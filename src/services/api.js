@@ -110,11 +110,7 @@ export const uploadProfileImage = (formData) => {
 };
 
 export const updateUserProfile = (formData) => {
-  return api.put('/job-seeker/',formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  return api.put('/job-seeker/',formData);
 };
 
 
