@@ -482,7 +482,7 @@ const EmployerProfile = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<WorkIcon />}
-                onClick={() => navigate('/employer/post-job')}
+                onClick={() => navigate('/Post-job-page')}
                 sx={{ boxShadow: 1 }}
               >
                 Post Job
@@ -720,7 +720,7 @@ const EmployerProfile = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<WorkIcon />}
-                onClick={() => navigate('/employer/post-job')}
+                onClick={() => navigate('/Post-job-page')}
                 sx={{ boxShadow: 2 }}
               >
                 Post New Job
@@ -918,7 +918,7 @@ const EmployerProfile = () => {
                       <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => navigate(`/jobs/${job.id}`)}
+                        onClick={() => navigate(`/job/${job.id}`)}
                         sx={{ boxShadow: 2 }}
                       >
                         View Details
