@@ -355,6 +355,8 @@ const JobSeekerProfile = () => {
     }
   };
   
+  const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
   const handleVideoEnded = (videoId) => {
     setVideoStates(prev => ({
       ...prev,
@@ -418,7 +420,7 @@ const JobSeekerProfile = () => {
         <ProfileHeader>
           <ProfileInfo>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <ProfileAvatar src={userData.profile_pic} alt={userData.name} />
+              <ProfileAvatar src={VITE_API_BASE_URL+userData.profile_pic} alt={userData.name} />
               <Box>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
                   {userData.name}

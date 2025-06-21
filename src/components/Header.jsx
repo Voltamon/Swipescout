@@ -16,6 +16,7 @@ import {
   ExitToApp
 } from "@mui/icons-material";
 import { useAuth } from "../hooks/useAuth";
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function roleProfileNav(role) {
   if (!role) return "/"; // Handle undefined/null role
@@ -94,7 +95,8 @@ const Header = ({ onSidebarToggle, isSidebarVisible }) => {
         </IconButton>
         
         <IconButton onClick={handleProfileClick}>
-          <Avatar sx={{ marginLeft: 2 }}>
+          <Avatar sx={{ marginLeft: 2 }} src={VITE_API_BASE_URL+user.photo_url}>
+          {VITE_API_BASE_URL+user.profile_pic}
             {user?.displayName?.[0] || 'A'}
           </Avatar>
         </IconButton>

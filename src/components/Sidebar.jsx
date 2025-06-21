@@ -44,6 +44,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   const location = useLocation();
   const { user, role , logout } = useAuth();
   
+  const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const employer_menuItems = [
           // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
@@ -185,7 +186,7 @@ const roleStyles = {
                                // or use typical flexbox spacing in a Toolbar
     >
                 {console.log("user:::",user?.photo_url)}
-                 <Avatar src={user?.photo_url || user?.photoUrl} sx={{ 
+                 <Avatar src={VITE_API_BASE_URL+user?.photo_url || user?.photoUrl} sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,
