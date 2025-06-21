@@ -133,7 +133,7 @@ const HashtagChip = styled(Chip)(({ theme }) => ({
 }));
 
 // Added newjobid prop and onComplete for callback
-const VideoResumeUpload = ({newjobid, onComplete, embedded}) => {
+const VideoUpload = ({newjobid, onComplete, embedded}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [uploadStatus, setUploadStatus] = useState(null);
@@ -270,7 +270,7 @@ useEffect(() => {
 }, [uploadId, updateVideoStatus, onComplete, embedded, navigate, API_BASE_URL]);
 
 
-// In VideoResumeUpload.jsx
+// In VideoUpload.jsx
 const handleSubmit = async () => {
   if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
     setSnackbar({
@@ -1114,4 +1114,4 @@ const checkUploadStatus = async (id) => {
   );
 };
 
-export default VideoResumeUpload;
+export default VideoUpload;

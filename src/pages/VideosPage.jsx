@@ -144,7 +144,7 @@ const VideosPage = () => {
       alert('You have reached your daily upload limit. Please try again tomorrow.');
       return;
     }
-    navigate('/video-resume-upload');
+    navigate('/video-upload');
   };
 
   const handlePageChange = (event, value) => {

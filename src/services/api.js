@@ -217,11 +217,11 @@ export const getEmployerVideos = () => {
 
 // Job API services
 export const getAllJobs = (params) => {
-  return api.get('/jobs', { params });
+  return api.get('/employer/jobs', { params });
 };
 
 export const getJobById = (id) => {
-  return api.get(`/jobs/${id}`);
+  return api.get(`/employer/job/${id}`);
 };
 
 export const postJob = (jobData) => {
@@ -242,6 +242,19 @@ export const getJobCategories = (id) => {
 
 export const getCategories = () => {
   return api.get('/categories');
+};
+
+export const getEmployerCategories = () => {
+  return api.get('/employer/categories');
+};
+
+
+export const addEmployerCategory = (id) => {
+  return api.delete(`/employer/category${id}`);
+};
+
+export const deleteEmployerCategory = (id) => {
+  return api.delete(`/employer/category${id}`);
 };
 
 export const getSkills = () => {

@@ -42,6 +42,8 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
   const location = useLocation();
   const { user, logout } = useAuth();
 
+    const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
   const employer_menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
@@ -50,7 +52,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Detailed Search', icon: <SearchIcon />, path: '/candidate-search' },
     { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
     { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
+    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
@@ -69,8 +71,8 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/job-search' },
     { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
-    { text: 'Job Details', icon: <SearchIcon />, path: '/job/1' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
+    { text: 'Job List', icon: <SearchIcon />, path: '/Jobs-Listing-Page' },
+    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
     { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
@@ -166,7 +168,7 @@ const roleStyles = {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
 <Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-  <Avatar src={user?.photoUrl ||user?.photo_url } sx={{ 
+  <Avatar src={VITE_API_BASE_URL+user?.photo_url || user?.photoUrl ||user?.photo_url } sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,

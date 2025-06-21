@@ -22,7 +22,7 @@ const Navbar = () => {
         <Link to="/job-search">Search Jobs</Link>
         <Link to="/candidate-profile">Candidate Profile</Link>
         <Link to="/job-posting">Job Posting Form</Link>
-        <Link to="/video-resume-upload">Upload Video Resume</Link>
+        <Link to="/video-upload">Upload Video Resume</Link>
         <Link to="/profile">Profile</Link>
         <Link to="/inbox">Inbox</Link>
         <Link to="/feed-page">Feed Page_oldStyle</Link>

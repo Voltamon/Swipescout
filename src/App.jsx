@@ -24,7 +24,7 @@ import EmployerDashboard from "./pages/EmployerDashboard";
 import CandidateSearchPage from "./pages/CandidateSearchPage";
 import CandidateProfilePage from "./pages/CandidateProfilePage";
 import JobPostingForm from "./pages/JobPostingForm";
-import VideoResumeUpload from './pages/VideoResumeUpload';
+import VideoUpload from './pages/VideoUpload';
 import Profile from "./pages/Profile";
 import Inbox from './pages/Inbox.jsx';
 import LandingPage_ from "./pages/LandingPage_/LandingPage_.jsx";
@@ -159,7 +159,7 @@ function App() {
             <Route path="/candidate-search" element={<CandidateSearchPage />} />
             <Route path="/candidate-profile" element={<CandidateProfilePage />} />
             <Route path="/job-posting" element={<JobPostingForm />} />
-            <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
+            <Route path="/video-upload" element={<VideoUpload />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/PagesNavigation" element={<LandingPage_ />} />
