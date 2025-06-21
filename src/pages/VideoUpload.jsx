@@ -135,7 +135,7 @@ const HashtagChip = styled(Chip)(({ theme }) => ({
 }));
 
 // Modify the component props to include onStatusChange
-const VideoResumeUpload = ({newjobid, onComplete, onStatusChange, embedded}) => {
+const VideoUpload = ({newjobid, onComplete, onStatusChange, embedded}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [uploadStatus, setUploadStatus] = useState(null);
@@ -208,16 +208,16 @@ useEffect(() => {
   let statusCheckInterval;
   // Use `uploadId` for status checks as it's the server-assigned ID
   if (uploadId) { 
-    console.log(`[VideoResumeUpload] Starting status check for uploadId: ${uploadId}`);
+    console.log(`[VideoUpload] Starting status check for uploadId: ${uploadId}`);
     statusCheckInterval = setInterval(async () => {
       try {
         const response = await checkUploadStatus(uploadId);
         const data = response;// await response.json();
         
-        console.log(`[VideoResumeUpload] Status check response for ${uploadId}:`, data.status);
+        console.log(`[VideoUpload] Status check response for ${uploadId}:`, data.status);
 
         if (data.status === 'completed') {
-          console.log(`[VideoResumeUpload] Video ${uploadId} completed processing.`);
+          console.log(`[VideoUpload] Video ${uploadId} completed processing.`);
           clearInterval(statusCheckInterval);
           
           updateVideoStatus(uploadId, {
@@ -235,7 +235,7 @@ useEffect(() => {
 
           // This useEffect only updates VideoContext; onComplete and navigation are handled by parent
         } else if (data.status === 'failed') {
-          console.log(`[VideoResumeUpload] Video ${uploadId} failed processing.`);
+          console.log(`[VideoUpload] Video ${uploadId} failed processing.`);
           clearInterval(statusCheckInterval);
           updateVideoStatus(uploadId, {
             status: 'failed',
@@ -250,7 +250,7 @@ useEffect(() => {
           // This useEffect only updates VideoContext; onComplete and navigation are handled by parent
         }
       } catch (error) {
-        console.error(`[VideoResumeUpload] Status check error for ${uploadId}:`, error);
+        console.error(`[VideoUpload] Status check error for ${uploadId}:`, error);
         clearInterval(statusCheckInterval);
         updateVideoStatus(uploadId, {
           status: 'failed',
@@ -269,7 +269,7 @@ useEffect(() => {
 
   return () => {
     if (statusCheckInterval) {
-      console.log(`[VideoResumeUpload] Clearing status check interval for uploadId: ${uploadId}`);
+      console.log(`[VideoUpload] Clearing status check interval for uploadId: ${uploadId}`);
       clearInterval(statusCheckInterval);
     }
   };
@@ -297,7 +297,7 @@ const handleSubmit = async () => {
     // preventing duplicates if the component re-renders before server ID is available.
     const currentTempLocalId = uuidv4(); 
     setTempLocalId(currentTempLocalId); 
-    console.log(`[VideoResumeUpload] Generated new tempLocalId: ${currentTempLocalId}`);
+    console.log(`[VideoUpload] Generated new tempLocalId: ${currentTempLocalId}`);
 
     const formData = new FormData();
     const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
@@ -341,7 +341,7 @@ const handleSubmit = async () => {
     });
 
     const serverUploadId = uploadResponse.data.uploadId;
-    console.log(`[VideoResumeUpload] Server assigned ID: ${serverUploadId}. Updating local entry from ${currentTempLocalId} to ${serverUploadId}.`);
+    console.log(`[VideoUpload] Server assigned ID: ${serverUploadId}. Updating local entry from ${currentTempLocalId} to ${serverUploadId}.`);
     
     // Update the video's ID and status in the context
     updateVideoStatus(currentTempLocalId, { // Update the video that was tracked by tempLocalId
@@ -364,7 +364,7 @@ const handleSubmit = async () => {
     }
 
   } catch (error) {
-    console.error('[VideoResumeUpload] Upload error:', error);
+    console.error('[VideoUpload] Upload error:', error);
     setUploadStatus('failed');
     setSnackbar({
       open: true,
@@ -380,9 +380,9 @@ const handleSubmit = async () => {
         error: error.message,
         isLocal: true 
       });
-      console.log(`[VideoResumeUpload] Updated video status to failed for ID: ${idToUpdate}`);
+      console.log(`[VideoUpload] Updated video status to failed for ID: ${idToUpdate}`);
     } else {
-      console.warn('[VideoResumeUpload] Could not update video status as no valid ID was found during error.');
+      console.warn('[VideoUpload] Could not update video status as no valid ID was found during error.');
     }
 
     if (onComplete) {
@@ -390,7 +390,7 @@ const handleSubmit = async () => {
     }
   } finally {
     setIsUploading(false); 
-    console.log('[VideoResumeUpload] handleSubmit finished. isUploading set to false.');
+    console.log('[VideoUpload] handleSubmit finished. isUploading set to false.');
   }
 };
 
@@ -435,7 +435,7 @@ const handleSubmit = async () => {
       setVideoUrl(URL.createObjectURL(file));
       setRecordingStep(1);
     } catch (error) {
-      console.error('[VideoResumeUpload] Error checking video:', error);
+      console.error('[VideoUpload] Error checking video:', error);
       setSnackbar({
         open: true,
         message: 'Error processing video file',
@@ -476,7 +476,7 @@ const requestMediaPermissions = async () => {
       try {
         await videoRef.current.play();
       } catch (err) {
-        console.warn("[VideoResumeUpload] Autoplay prevented:", err);
+        console.warn("[VideoUpload] Autoplay prevented:", err);
       }
     }
 
@@ -484,7 +484,7 @@ const requestMediaPermissions = async () => {
     return true;
 
   } catch (error) {
-    console.error('[VideoResumeUpload] Media access error:', error);
+    console.error('[VideoUpload] Media access error:', error);
     setSnackbar({
       open: true,
       message: 'Please enable camera and microphone access',
@@ -523,7 +523,7 @@ const startRecording = async () => {
     
     if (!supportedType) {
       supportedType = '';
-      console.warn('[VideoResumeUpload] No specific codec supported, using browser default');
+      console.warn('[VideoUpload] No specific codec supported, using browser default');
     }
     
     const mediaRecorder = new MediaRecorder(stream, { 
@@ -557,7 +557,7 @@ const startRecording = async () => {
       if (seconds >= 45) stopRecording();
     }, 1000);
   } catch (error) {
-    console.error('[VideoResumeUpload] Recording error:', error);
+    console.error('[VideoUpload] Recording error:', error);
     setSnackbar({
       open: true,
       message: `Error starting recording: ${error.message}`,
@@ -611,7 +611,7 @@ const startRecording = async () => {
 
   // Reset form completely
   const resetForm = () => {
-    console.log("[VideoResumeUpload] Resetting form.");
+    console.log("[VideoUpload] Resetting form.");
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -1062,4 +1062,4 @@ const startRecording = async () => {
   );
 };
 
-export default VideoResumeUpload;
+export default VideoUpload;

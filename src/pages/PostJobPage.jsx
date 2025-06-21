@@ -47,7 +47,7 @@ import {
   getSkills,
   updateJob // Assuming you have an updateJob API
 } from '../services/api';
-import VideoResumeUpload from './VideoResumeUpload';
+import VideoUpload from './VideoUpload';
 import IconButton from '@mui/material/IconButton';
 
 
@@ -122,12 +122,12 @@ const PostJobPage = () => {
   });
   
   const [showVideoUpload, setShowVideoUpload] = useState(false);
-  const [uploadedVideoId, setUploadedVideoId] = useState(null); // This is the ID of the video from VideoResumeUpload
+  const [uploadedVideoId, setUploadedVideoId] = useState(null); // This is the ID of the video from VideoUpload
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  // States to track VideoResumeUpload's internal status for dialog control
+  // States to track VideoUpload's internal status for dialog control
   const [isChildUploading, setIsChildUploading] = useState(false);
   const [isChildRecording, setIsChildRecording] = useState(false);
 
@@ -327,7 +327,7 @@ const handleVideoUploadComplete = async (videoId) => {
 };
 
 
-  // Callback to receive current uploading/recording status from VideoResumeUpload
+  // Callback to receive current uploading/recording status from VideoUpload
   const handleChildStatusChange = (uploading, recording) => {
     setIsChildUploading(uploading);
     setIsChildRecording(recording);
@@ -418,7 +418,7 @@ const renderVideoUploadDialog = () => (
   >
     <DialogTitle>Upload Job Video</DialogTitle>
     <DialogContent>
-      <VideoResumeUpload 
+      <VideoUpload 
         onComplete={handleVideoUploadComplete}
         onStatusChange={handleChildStatusChange}
         newjobid={newJobId}

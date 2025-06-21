@@ -801,16 +801,16 @@ const JobsListingPage = () => {
                     </Typography>
                     
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
-                      {job.skills.slice(0, 3).map((skill, index) => (
+                      {job.jobSkills.slice(0, 3).map((skill, index) => (
                         <SkillChip
                           key={index}
                           label={skill}
                           size="small"
                         />
                       ))}
-                      {job.skills.length > 3 && (
+                      {job.jobSkills.length > 3 && (
                         <Chip
-                          label={`+${job.skills.length - 3}`}
+                          label={`+${job.jobSkills.length - 3}`}
                           size="small"
                           variant="outlined"
                         />

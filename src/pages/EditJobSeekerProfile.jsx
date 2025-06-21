@@ -247,6 +247,32 @@ const [profile, setProfile] = useState({
   const [dateError, setDateError] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Add this helper function somewhere in your component (outside the main function)
+const verifyImageAvailability = (url) => {
+  return new Promise((resolve, reject) => {
+    if (!url) reject(new Error('Empty URL'));
+
+    const img = new Image();
+    let timer = setTimeout(() => {
+      img.onload = img.onerror = null;
+      reject(new Error('Image load timeout'));
+    }, 5000);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      if (img.width > 0 && img.height > 0) {
+        resolve();
+      } else {
+        reject(new Error('Zero dimensions'));
+      }
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      reject(new Error('Failed to load'));
+    };
+    img.src = url;
+  });
+};
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
@@ -274,17 +300,21 @@ const [profile, setProfile] = useState({
         setAvatarVersion(0);
 
 
-const initialAvatarUrl = `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}`;
+const initialAvatarUrl = profileResponse.data.profile_pic 
+  ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}`
+  : '';
 
 // Verify the image exists before setting it
-const img = new Image();
-img.onload = () => {
+try {
+  if (initialAvatarUrl) {
+    await verifyImageAvailability(initialAvatarUrl);
+  }
   setAvatarPicture(initialAvatarUrl);
-};
-img.onerror = () => {
-  setAvatarPicture(''); // Will fall back to initials
-};
-img.src = initialAvatarUrl;
+} catch (error) {
+  console.error('Avatar image not available:', error);
+  setAvatarPicture('');
+}
+
 
 setProfile(profileResponse.data);
         setLoading(false);
@@ -354,62 +384,52 @@ const handleProfileChange = (e) => {
   
 
   // Handle avatar upload
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-  
-    try {
-      setSaving(true);
-      
-      // Show a preview of the selected file immediately
-      const previewUrl = URL.createObjectURL(file);
-      setAvatarPicture(previewUrl);
-  
-      const formData = new FormData();
-      formData.append('logo', file);
-      
-      const response = await uploadProfileImage(formData);
-      
-      // After successful upload, update with the server URL
-      const serverUrl = `${VITE_API_BASE_URL}${response.data.profile_pic}?t=${Date.now()}`;
-      
-      setProfile(prev => ({
-        ...prev,
-        profile_pic: response.data.profile_pic
-      }));
-  
-      // First try with the server URL
-      setAvatarPicture(serverUrl);
-      
-      // Fallback mechanism in case the server takes time to process
-      const img = new Image();
-      img.onerror = () => {
-        // If server image fails, keep showing the preview for 5 seconds then retry
-        setTimeout(() => {
-          setAvatarPicture(`${serverUrl}&retry=${Date.now()}`);
-        }, 5000);
-      };
-      img.src = serverUrl;
-  
-      setSnackbar({
-        open: true,
-        message: 'Profile picture updated successfully',
-        severity: 'success'
-      });
-      
-      setSaving(false);
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error uploading profile picture',
-        severity: 'error'
-      });
-      setSaving(false);
-      // Revert to previous avatar if upload fails
-      setAvatarPicture(`${VITE_API_BASE_URL}${profile.profile_pic}`);
+const handleAvatarUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    setSaving(true);
+    
+    // 1. Show instant preview
+    const tempPreviewUrl = URL.createObjectURL(file);
+    setAvatarPicture(tempPreviewUrl);
+
+    // 2. Upload to server
+    const response = await uploadProfileImage(file); 
+
+    // 3. Server returns the FINAL URL (must be immediately accessible)
+    const serverUrl = `${VITE_API_BASE_URL}${response.data.path}?t=${Date.now()}`;
+
+    // 4. Verify the image is truly ready (with retries)
+    let loaded = false;
+    for (let i = 0; i < 3; i++) {
+      try {
+        await verifyImageAvailability(serverUrl);
+        loaded = true;
+        break;
+      } catch {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+      }
     }
-  };
+
+    if (loaded) {
+      setProfile(prev => ({ ...prev, profile_pic: response.data.path }));
+      setAvatarPicture(serverUrl);
+      showSnackbar("Profile picture updated!", "success");
+    } else {
+      showSnackbar("Uploaded! Refresh to see changes.", "info");
+    }
+
+    // Clean up preview
+    URL.revokeObjectURL(tempPreviewUrl);
+
+  } catch (error) {
+    showSnackbar("Upload failed. Please try again.", "error");
+  } finally {
+    setSaving(false);
+  }
+};
   
   // Skill dialog handlers
   const handleOpenSkillDialog = () => {
@@ -704,7 +724,7 @@ const handleProfileChange = (e) => {
   };
   
   const handleUploadVideo = () => {
-    navigate('/job-seeker/upload-video');
+    navigate('/video-upload');
   };
   
   const handleEditVideo = (videoId) => {
@@ -752,22 +772,28 @@ const handleProfileChange = (e) => {
             <SectionPaper elevation={1}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box sx={{ position: 'relative' }}>
-                <ProfileAvatar 
-                src={avatarPicture || `${VITE_API_BASE_URL}${profile.profile_pic}`}
-                alt={`${profile.first_name} ${profile.last_name}`}
-                imgProps={{
-                  onError: (e) => {
-                    // If image fails to load, show initials
-                    e.target.style.display = 'none';
-                  }
-                }}
-              >
-                {(!avatarPicture && !profile.profile_pic) && (
-                  <>
-                    {profile.first_name?.charAt(0)}{profile.last_name?.charAt(0)}
-                  </>
-                )}
-              </ProfileAvatar>
+<ProfileAvatar 
+  src={avatarPicture}
+  alt={`${profile.first_name} ${profile.last_name}`}
+  sx={{
+    '& .MuiAvatar-img': {
+      display: avatarPicture ? 'block' : 'none'
+    }
+  }}
+  imgProps={{
+    onError: (e) => {
+      e.target.style.display = 'none';
+      // Automatically retry after delay
+      if (avatarPicture && avatarPicture.startsWith(VITE_API_BASE_URL)) {
+        setTimeout(() => {
+          setAvatarPicture(`${avatarPicture.split('?')[0]}?retry=${Date.now()}`);
+        }, 2000);
+      }
+    }
+  }}
+>
+  {!avatarPicture && `${profile.first_name?.charAt(0)}${profile.last_name?.charAt(0)}`}
+</ProfileAvatar>
                     
                 
                   <input
