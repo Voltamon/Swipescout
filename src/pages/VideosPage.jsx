@@ -306,7 +306,6 @@ const VideosPage = () => {
                 sx={{
                 
                     width: '300px',
-                    
                     height: '400px',
             paddingTop: '56.25%', // 16:9 aspect ratio
             backgroundColor: '#000',
@@ -390,11 +389,11 @@ const VideosPage = () => {
                         zIndex: 1,
                       }}
                     >
-                      <Typography variant="subtitle1" noWrap>
+                      <Typography variant="subtitle1" noWrap  sx={{   color:'white',}}>
                         {video.video_title || 'Untitled Video'}
                       </Typography>
 
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{   color:'white',}}>
                         {video.video_type || 'Uncategorized'} •{' '}
                         {Math.round(video.video_duration || 0)}s
                       </Typography>
@@ -441,6 +440,7 @@ const VideosPage = () => {
                   <CardContent sx={{ pt: 1, pb: 1 }}>
                     {video.isLocal && (
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <CloudSyncIcon/>
                         {video.status === 'uploading' && (
                           <>
                             <Typography variant="caption" color="text.secondary">
@@ -471,7 +471,7 @@ const VideosPage = () => {
                           </Button>
                         )}
                         
-                        {video.status === 'processing' && (
+                        {video.status !== 'processing' && (
                           <Button
                             variant="outlined"
                             color="warning"

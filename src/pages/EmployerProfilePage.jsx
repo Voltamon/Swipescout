@@ -44,6 +44,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { getEmployerProfile, getVideoResume, getEmployerJobs, getJobVideos } from '../services/api';
 
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 // Enhanced styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -231,11 +233,15 @@ const EmployerProfile = () => {
 
         // Fetch profile
         const profileResponse = await getEmployerProfile();
-        if (isMounted) setProfile(profileResponse.data.company);
+        if (isMounted) setProfile(profileResponse.data);
 
+        console.log("logo::::::::::::::::");
+        console.log(profileResponse.data.logo);
+        console.log("videos::::::::::::::::");
+        console.log(profileResponse.data?.videos);
         // Fetch company videos
-        const videosResponse = await getVideoResume({ page: 1, limit: 10 });
-        if (isMounted) setVideos(videosResponse.data?.videos || []);
+        // const videosResponse = await getVideoResume({ page: 1, limit: 10 });
+        if (isMounted) setVideos(profileResponse.data?.videos || []);
 
         // Fetch jobs
         const jobsResponse = await getEmployerJobs();
@@ -389,7 +395,7 @@ const EmployerProfile = () => {
 
   // Mock profile fallback
   const mockProfile = {
-    name: 'Tech Innovations Inc.',
+    name: 'A SAMPLE Profile data / Edit Yours instead',
     industry: 'Information Technology',
     size: '50-200 employees',
     founded: 2010,
@@ -451,7 +457,7 @@ const EmployerProfile = () => {
         <ProfileHeader>
           <ProfileInfo>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <CompanyLogo src={employerData.logo} alt={employerData.name} />
+              <CompanyLogo src={VITE_API_BASE_URL+employerData.logo} alt={employerData.name} />
               <Box>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
                   {employerData.name}

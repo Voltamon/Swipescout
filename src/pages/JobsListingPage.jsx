@@ -46,7 +46,8 @@ import {
   VolumeUp as VolumeUpIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { getAllJobs, getJobById, getEmployerProfile, getCategories } from '../services/api';
+import {useAuth} from '../hooks/useAuth';
+import { getAllJobs, getJobById, getEmployerProfile, getCategories ,getAllJobsPosted } from '../services/api';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -153,6 +154,7 @@ const JobsListingPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const {role} =useAuth;
   
   // State
   const [jobs, setJobs] = useState([]);
@@ -188,8 +190,21 @@ const JobsListingPage = () => {
       try {
         setLoading(true);
         
+        let  jobsResponse;
         // Fetch jobs
-        const jobsResponse = await getAllJobs({
+        if (role=="job_seeker")
+        {
+jobsResponse = await getAllJobsPosted({
+          page,
+          limit: jobsPerPage,
+          search: searchQuery,
+          location: locationFilter,
+          category: categoryFilter,
+          sort: sortBy
+        });
+        }
+        else
+         jobsResponse = await getAllJobs({
           page,
           limit: jobsPerPage,
           search: searchQuery,
@@ -375,7 +390,7 @@ const JobsListingPage = () => {
   
   // Navigate to job details
   const navigateToJobDetails = (jobId) => {
-    navigate(`/jobs/${jobId}`);
+    navigate(`/job/${jobId}`);
   };
   
   // Navigate to employer profile
@@ -610,20 +625,16 @@ const JobsListingPage = () => {
                         <PlayArrowIcon />
                       </VideoPlayButton>
                     </Box>
-                  ) : (
-                    <JobCardMedia
-                      image={`https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
-                      title={job.title}
-                    />
-                  )}
+                  ) : ''}
                   
                   <JobCardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Box
+                      {job.company.logo && (
+                        <><Box
                         component="img"
                         src={job.company.logo || 'https://via.placeholder.com/40x40?text=Logo'}
                         alt={job.company.name}
-                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1, objectFit: 'cover' }}
+                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1, objectFit: 'cover' ,fontSize:8 }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -632,7 +643,7 @@ const JobsListingPage = () => {
                         onClick={() => navigateToEmployerProfile(job.company.id)}
                       >
                         {job.company.name}
-                      </Typography>
+                      </Typography></>)}
                     </Box>
                     
                     <Typography

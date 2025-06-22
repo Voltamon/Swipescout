@@ -34,8 +34,11 @@ import {
   useMediaQuery,
   InputAdornment,
   Checkbox,
-  FormControlLabel
+  FormControlLabel 
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+
 import {
   Edit as EditIcon,
   Save as SaveIcon,
@@ -133,7 +136,10 @@ const EditEmployerProfilePage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+  const [categories, setCategories] = useState([]);
+const [availableCategories, setAvailableCategories] = useState([]);
+const [selectedCategory, setSelectedCategory] = useState('');
+
   // State for tabs
   const [tabValue, setTabValue] = useState(0);
   
@@ -157,10 +163,8 @@ const EditEmployerProfilePage = () => {
   });
 
   const [companyLogoPicture, setCompanyLogoPicture] = useState('');
-  const [categories, setCategories] = useState([]);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [availableCategories, setAvailableCategories] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -196,6 +200,60 @@ const EditEmployerProfilePage = () => {
     });
   };
 
+  const handleSaveCategory = async () => {
+  if (!selectedCategory) return;
+  
+  try {
+    setSaving(true);
+    console.log("selcted catg:::::");
+    console.log(selectedCategory);
+    await addEmployerCategory(selectedCategory);
+    
+    // Find the added category
+    const addedCategory = availableCategories.find(cat => cat.id === selectedCategory);
+    
+    if (addedCategory) {
+      // Update categories list
+      setCategories([...categories, addedCategory]);
+      
+      // Remove from available categories
+      setAvailableCategories(availableCategories.filter(cat => cat.id !== selectedCategory));
+    }
+    
+    showSnackbar('Category added successfully', 'success');
+    setSelectedCategory('');
+    handleCloseCategoryDialog();
+  } catch (error) {
+    console.error('Error saving category:', error);
+    showSnackbar('Error saving category', 'error');
+  } finally {
+    setSaving(false);
+  }
+};
+
+  const handleDeleteCategory = async (categoryId) => {
+  try {
+    setSaving(true);
+    await deleteEmployerCategory(categoryId);
+    
+    // Update local state
+    setCategories(categories.filter(cat => cat.id !== categoryId));
+    
+    // Add the deleted category back to available options
+    const deletedCategory = categories.find(cat => cat.id === categoryId);
+    if (deletedCategory) {
+      setAvailableCategories([...availableCategories, deletedCategory]);
+    }
+    
+    showSnackbar('Category removed successfully', 'success');
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    showSnackbar('Error deleting category', 'error');
+  } finally {
+    setSaving(false);
+  }
+};
+
   // Fetch employer data
 // In your useEffect where you fetch data:
 useEffect(() => {
@@ -209,8 +267,9 @@ useEffect(() => {
         getCategories()
       ]);
       
+
       // Handle profile data
-      const employerData = profileResponse.data.company;
+      const employerData = profileResponse.data;
       setProfile({
         name: employerData.name || '',
         industry: employerData.industry || '',
@@ -230,10 +289,18 @@ useEffect(() => {
       });
 
       // Handle employer categories
-      setCategories(categoriesResponse.data?.categories || []);
+      // setCategories(categoriesResponse.data?.categories || []);
 
       // Handle all available categories
-      setAvailableCategories(allCategoriesResponse.data?.categories || []);
+      // setAvailableCategories(allCategoriesResponse.data?.categories || []);
+
+      const companyCategoryIds = categoriesResponse.data?.categories?.map(c => c.id) || [];
+const filteredAvailableCategories = allCategoriesResponse.data?.categories?.filter(
+  cat => !companyCategoryIds.includes(cat.id)
+) || [];
+
+setCategories(categoriesResponse.data?.categories || []);
+setAvailableCategories(filteredAvailableCategories);
 
       // Handle logo
       if (employerData.logo) {
@@ -372,44 +439,9 @@ useEffect(() => {
     setSelectedCategory('');
   };
   
-  const handleSaveCategory = async () => {
-    if (!selectedCategory) return;
-    
-    try {
-      setSaving(true);
-      await addEmployerCategory(selectedCategory);
-      
-      // Refresh categories
-      const response = await getEmployerCategories();
-      setCategories(response.data.categories || []);
-      
-      showSnackbar('Category added successfully', 'success');
-      
-      handleCloseCategoryDialog();
-      setSaving(false);
-    } catch (error) {
-      console.error('Error saving category:', error);
-      showSnackbar('Error saving category', 'error');
-      setSaving(false);
-    }
-  };
+
   
-  const handleDeleteCategory = async (categoryId) => {
-    try {
-      setSaving(true);
-      await deleteEmployerCategory(categoryId);
-      
-      setCategories(categories.filter(cat => cat.id !== categoryId));
-      
-      showSnackbar('Category deleted successfully', 'success');
-      
-      setSaving(false);
-    } catch (error) {
-      console.error('Error deleting category:', error);
-      showSnackbar('Error deleting category', 'error');
-      setSaving(false);
-    }
-  };
+
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -701,75 +733,90 @@ useEffect(() => {
 
               {/* Categories Tab */}
               <TabPanel value={tabValue} index={1}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6">Categories</Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<EditIcon />}
-                    onClick={handleOpenCategoryDialog}
-                  >
-                    Manage Categories
-                  </Button>
-                </Box>
-                <Divider sx={{ mb: 2 }} />
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <CategoryChip
-                        key={category.id}
-                        label={category.name}
-                        onDelete={() => handleDeleteCategory(category.id)}
-                        color="primary"
-                        variant="outlined"
-                      />
-                    ))
-                  ) : (
-                    <Typography variant="body2" color="textSecondary">
-                      No categories added yet.
-                    </Typography>
-                  )}
-                </Box>
-              </TabPanel>
+  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+    <Typography variant="h6">Company Categories</Typography>
+    <Button
+      variant="contained"
+      color="primary"
+      startIcon={<AddIcon />}
+      onClick={handleOpenCategoryDialog}
+      disabled={availableCategories.length === 0}
+    >
+      Add Category
+    </Button>
+  </Box>
+  <Divider sx={{ mb: 2 }} />
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+    {categories.length > 0 ? (
+      categories.map((category) => (
+        <Chip
+          key={category.id}
+          label={category.name}
+          onDelete={() => handleDeleteCategory(category.id)}
+          color="primary"
+          variant="outlined"
+          deleteIcon={<CloseIcon />}
+          sx={{ 
+            '& .MuiChip-deleteIcon': {
+              color: 'primary.main',
+              '&:hover': {
+                color: 'primary.dark'
+              }
+            }
+          }}
+        />
+      ))
+    ) : (
+      <Typography variant="body2" color="textSecondary">
+        No categories added yet.
+      </Typography>
+    )}
+  </Box>
+</TabPanel>
             </Paper>
           </>
         )}
 
-        {/* Category Add/Edit Dialog */}
-        <Dialog open={categoryDialogOpen} onClose={handleCloseCategoryDialog} fullWidth maxWidth="sm">
-          <DialogTitle>Add Category</DialogTitle>
-          <DialogContent>
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="select-category-label">Select Category</InputLabel>
-              <Select
-              labelId="select-category-label"
-              id="select-category"
-              value={selectedCategory}
-              label="Select Category"
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              {availableCategories.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </MenuItem>
-              ))}
-            </Select>
-              <FormHelperText>Choose a category for your company.</FormHelperText>
-            </FormControl>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseCategoryDialog} color="inherit">
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleSaveCategory} 
-              color="primary"
-              disabled={saving || !selectedCategory}
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </Button>
-          </DialogActions>
-        </Dialog>
+
+<Dialog open={categoryDialogOpen} onClose={handleCloseCategoryDialog} fullWidth maxWidth="sm">
+  <DialogTitle>Add Category to Company</DialogTitle>
+  <DialogContent>
+    <FormControl fullWidth margin="normal">
+      <InputLabel id="select-category-label">Available Categories</InputLabel>
+      <Select
+        labelId="select-category-label"
+        id="select-category"
+        value={selectedCategory}
+        label="Available Categories"
+        onChange={(e) => setSelectedCategory(e.target.value)}
+      >
+        {availableCategories.map((cat) => (
+          <MenuItem key={cat.id} value={cat.id}>
+            {cat.name}
+          </MenuItem>
+        ))}
+      </Select>
+      <FormHelperText>
+        {availableCategories.length === 0 ? 
+          "No more categories available to add" : 
+          "Select a category to add to your company"}
+      </FormHelperText>
+    </FormControl>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseCategoryDialog} color="inherit">
+      Cancel
+    </Button>
+    <Button 
+      onClick={handleSaveCategory} 
+      color="primary"
+      disabled={saving || !selectedCategory}
+    >
+      {saving ? 'Adding...' : 'Add Category'}
+    </Button>
+  </DialogActions>
+</Dialog>
+
         
         {/* Snackbar for notifications */}
         <Snackbar

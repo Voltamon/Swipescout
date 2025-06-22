@@ -71,7 +71,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/job-search' },
     { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
-    { text: 'Job List', icon: <SearchIcon />, path: '/Jobs-Listing-Page' },
+    { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
     { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
