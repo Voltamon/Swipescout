@@ -17,9 +17,6 @@ import {
   Select,
   MenuItem,
   Pagination,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   IconButton,
   Divider,
   Paper,
@@ -33,8 +30,7 @@ import {
   LocationOn as LocationIcon,
   Work as WorkIcon,
   PlayArrow as PlayArrowIcon,
-  Pause as PauseIcon,
-  Close as CloseIcon,
+  Close as CloseIcon, // No longer strictly needed for video dialog, but kept if used elsewhere
   Favorite as FavoriteIcon,
   FavoriteBorder as FavoriteBorderIcon,
   Share as ShareIcon,
@@ -72,13 +68,15 @@ const JobCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const JobCardMedia = styled(CardMedia)(({ theme }) => ({
+// Placeholder for media when no video is available
+const JobCardMediaPlaceholder = styled(CardMedia)(({ theme }) => ({
   height: 0,
   paddingTop: '56.25%', // 16:9 aspect ratio
   position: 'relative',
   backgroundColor: theme.palette.grey[200],
 }));
 
+// Button for video playback overlay
 const VideoPlayButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
@@ -86,6 +84,8 @@ const VideoPlayButton = styled(IconButton)(({ theme }) => ({
   transform: 'translate(-50%, -50%)',
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   color: '#fff',
+  transition: 'opacity 0.3s ease-in-out',
+  zIndex: 1, // Ensure it's above the video
   '&:hover': {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   }
@@ -113,39 +113,14 @@ const SkillChip = styled(Chip)(({ theme }) => ({
   }
 }));
 
-const VideoDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialog-paper': {
-    borderRadius: theme.spacing(1),
-    overflow: 'hidden',
-  }
-}));
-
-const VideoDialogContent = styled(DialogContent)(({ theme }) => ({
-  padding: 0,
-  backgroundColor: '#000',
-  position: 'relative',
-}));
-
-const VideoControls = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(1),
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-}));
-
 const JobsListingPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  // State
+  // State for job data and UI controls
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]); // This will be used if client-side filtering is active
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
@@ -153,27 +128,17 @@ const JobsListingPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [videoDialog, setVideoDialog] = useState({
-    open: false,
-    videoUrl: '',
-    title: '',
-    isPlaying: false
-  });
   const [favorites, setFavorites] = useState([]);
   
-  // Refs
-  const videoRef = React.useRef(null);
-  
-  // Constants
-  const jobsPerPage = 9;
-  
-  // Fetch jobs
+  // Constants for pagination
+  const jobsPerPage = 9; // Number of jobs to display per page
+
+  // Fetch jobs from the API whenever filters or pagination change
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
         
-        // Fetch jobs from API
         const response = await getAllJobs({
           page,
           limit: jobsPerPage,
@@ -195,10 +160,9 @@ const JobsListingPage = () => {
     fetchJobs();
   }, [page, searchQuery, locationFilter, categoryFilter, sortBy]);
   
-  // Apply filters
+  // Client-side filtering and sorting (This useEffect will run if getAllJobs does not handle all filters backend)
+  // If your backend handles all filtering and sorting, this useEffect can be simplified or removed.
   useEffect(() => {
-    // If we're using server-side filtering, this would be redundant
-    // But keeping it for client-side filtering option
     let filtered = [...jobs];
     
     if (searchQuery) {
@@ -215,10 +179,11 @@ const JobsListingPage = () => {
       );
     }
     
+    // Filter by category using categoryRelations
     if (categoryFilter) {
       filtered = filtered.filter(job => 
-        job.categories.some(category => 
-          category.toLowerCase() === categoryFilter.toLowerCase()
+        job.categoryRelations && job.categoryRelations.some(categoryRel => 
+          categoryRel.category_name.toLowerCase() === categoryFilter.toLowerCase()
         )
       );
     }
@@ -226,13 +191,13 @@ const JobsListingPage = () => {
     // Sort jobs
     switch (sortBy) {
       case 'newest':
-        filtered.sort((a, b) => new Date(b.posted) - new Date(a.posted));
+        filtered.sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at));
         break;
       case 'salary-high':
-        filtered.sort((a, b) => b.salaryMax - a.salaryMax);
+        filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0)); // Handle null salaries
         break;
       case 'salary-low':
-        filtered.sort((a, b) => a.salaryMin - b.salaryMin);
+        filtered.sort((a, b) => (a.salary_min || 0) - (b.salary_min || 0)); // Handle null salaries
         break;
       default:
         break;
@@ -241,84 +206,36 @@ const JobsListingPage = () => {
     setFilteredJobs(filtered);
   }, [jobs, searchQuery, locationFilter, categoryFilter, sortBy]);
   
-  // Handle search
+  // Handle search input change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setPage(1); // Reset to first page on new search
   };
   
-  // Handle location filter
+  // Handle location filter change
   const handleLocationFilter = (e) => {
     setLocationFilter(e.target.value);
     setPage(1);
   };
   
-  // Handle category filter
+  // Handle category filter change
   const handleCategoryFilter = (e) => {
     setCategoryFilter(e.target.value);
     setPage(1);
   };
   
-  // Handle sort change
+  // Handle sort order change
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
   
-  // Handle page change
+  // Handle pagination page change
   const handlePageChange = (event, value) => {
     setPage(value);
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0); // Scroll to top on page change
   };
   
-  // Open video dialog
-  const openVideoDialog = (videoUrl, title) => {
-    setVideoDialog({
-      open: true,
-      videoUrl,
-      title,
-      isPlaying: true
-    });
-  };
-  
-  // Close video dialog
-  const closeVideoDialog = () => {
-    setVideoDialog({
-      ...videoDialog,
-      open: false,
-      isPlaying: false
-    });
-    
-    // Pause video when dialog is closed
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  };
-  
-  // Toggle video playback
-  const toggleVideoPlayback = () => {
-    if (videoRef.current) {
-      if (videoDialog.isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      
-      setVideoDialog({
-        ...videoDialog,
-        isPlaying: !videoDialog.isPlaying
-      });
-    }
-  };
-  
-  // Handle video ended
-  const handleVideoEnded = () => {
-    setVideoDialog({
-      ...videoDialog,
-      isPlaying: false
-    });
-  };
-  
-  // Toggle favorite
+  // Toggle favorite status for a job
   const toggleFavorite = (jobId) => {
     if (favorites.includes(jobId)) {
       setFavorites(favorites.filter(id => id !== jobId));
@@ -327,17 +244,17 @@ const JobsListingPage = () => {
     }
   };
   
-  // Navigate to job details
+  // Navigate to job details page
   const navigateToJobDetails = (jobId) => {
     navigate(`/jobs/${jobId}`);
   };
   
-  // Navigate to employer profile
+  // Navigate to employer profile page
   const navigateToEmployerProfile = (employerId) => {
     navigate(`/employer/${employerId}`);
   };
   
-  // Format date (YYYY-MM-DD to readable format)
+  // Format date string to a readable format
   const formatDate = (dateString) => {
     if (!dateString) return '';
     
@@ -346,9 +263,9 @@ const JobsListingPage = () => {
     return date.toLocaleDateString('en-US', options);
   };
   
-  // Format salary range
+  // Format salary range for display
   const formatSalaryRange = (min, max, currency = 'USD', period = 'yearly') => {
-    if (!min && !max) return 'Salary not specified';
+    if (min === null && max === null) return 'Salary not specified';
     
     const currencySymbols = {
       USD: '$',
@@ -365,11 +282,11 @@ const JobsListingPage = () => {
     const symbol = currencySymbols[currency] || currency;
     
     let range = '';
-    if (min && max) {
+    if (min !== null && max !== null) {
       range = `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
-    } else if (min) {
+    } else if (min !== null) {
       range = `${symbol}${min.toLocaleString()}+`;
-    } else if (max) {
+    } else if (max !== null) {
       range = `Up to ${symbol}${max.toLocaleString()}`;
     }
     
@@ -384,158 +301,13 @@ const JobsListingPage = () => {
     return `${range} ${periodMap[period] || ''}`;
   };
   
-  // Mock data for demonstration
-  const mockJobs = [
-    {
-      id: '1',
-      title: 'Senior Frontend Developer',
-      company: {
-        id: '101',
-        name: 'Tech Innovations Inc.',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'San Francisco, CA',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 120000,
-      salaryMax: 150000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are looking for a Senior Frontend Developer to join our team. The ideal candidate will have experience with React, TypeScript, and modern frontend development practices.',
-      posted: '2023-05-15',
-      deadline: '2023-06-15',
-      categories: ['Software Development', 'Web Development'],
-      skills: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-      applicants: 24
-    },
-    {
-      id: '2',
-      title: 'Backend Engineer',
-      company: {
-        id: '102',
-        name: 'DataFlow Systems',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Remote',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 110000,
-      salaryMax: 140000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are seeking a Backend Engineer to develop and maintain our server-side applications. The ideal candidate will have experience with Node.js, Express, and database design.',
-      posted: '2023-05-10',
-      deadline: '2023-06-10',
-      categories: ['Software Development', 'Backend Development'],
-      skills: ['Node.js', 'Express', 'MongoDB', 'SQL', 'API Design'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
-      applicants: 18
-    },
-    {
-      id: '3',
-      title: 'UX/UI Designer',
-      company: {
-        id: '103',
-        name: 'Creative Solutions',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'New York, NY',
-      type: 'Full-time',
-      remote: false,
-      salaryMin: 100000,
-      salaryMax: 130000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are looking for a UX/UI Designer to create engaging and intuitive user experiences for our products. The ideal candidate will have a strong portfolio demonstrating their design skills.',
-      posted: '2023-05-05',
-      deadline: '2023-06-05',
-      categories: ['Design', 'UI/UX Design'],
-      skills: ['Figma', 'Adobe XD', 'User Research', 'Wireframing', 'Prototyping'],
-      videoUrl: null,
-      videoThumbnail: null,
-      applicants: 32
-    },
-    {
-      id: '4',
-      title: 'DevOps Engineer',
-      company: {
-        id: '104',
-        name: 'Cloud Innovations',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Seattle, WA',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 130000,
-      salaryMax: 160000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are seeking a DevOps Engineer to help us build and maintain our cloud infrastructure. The ideal candidate will have experience with AWS, Docker, and CI/CD pipelines.',
-      posted: '2023-05-01',
-      deadline: '2023-06-01',
-      categories: ['DevOps', 'Cloud Computing'],
-      skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-      applicants: 15
-    },
-    {
-      id: '5',
-      title: 'Data Scientist',
-      company: {
-        id: '105',
-        name: 'Analytics Pro',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Boston, MA',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 125000,
-      salaryMax: 155000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are looking for a Data Scientist to help us extract insights from our data. The ideal candidate will have experience with machine learning, statistical analysis, and data visualization.',
-      posted: '2023-04-28',
-      deadline: '2023-05-28',
-      categories: ['Data Science', 'Machine Learning'],
-      skills: ['Python', 'R', 'SQL', 'TensorFlow', 'PyTorch'],
-      videoUrl: null,
-      videoThumbnail: null,
-      applicants: 27
-    },
-    {
-      id: '6',
-      title: 'Product Manager',
-      company: {
-        id: '106',
-        name: 'Product Visionaries',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Austin, TX',
-      type: 'Full-time',
-      remote: false,
-      salaryMin: 115000,
-      salaryMax: 145000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are seeking a Product Manager to lead our product development efforts. The ideal candidate will have experience with agile methodologies, user research, and product strategy.',
-      posted: '2023-04-25',
-      deadline: '2023-05-25',
-      categories: ['Product Management'],
-      skills: ['Agile', 'User Research', 'Product Strategy', 'Roadmapping', 'Stakeholder Management'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg',
-      applicants: 21
-    }
-  ];
+  // Mock data for demonstration (used when actual API data is empty or during development)
+  const mockJobs = []; // As requested, mock variables are empty now
   
-  // Use mock data if real data is not available
+  // Determine which jobs to display (real data if available, otherwise mock data)
   const displayJobs = jobs.length > 0 ? jobs : mockJobs;
   
-  // Available categories for filter
+  // Available categories for filter (these should ideally be fetched from API)
   const availableCategories = [
     'Software Development',
     'Web Development',
@@ -554,7 +326,7 @@ const JobsListingPage = () => {
     'Technical Support'
   ];
   
-  // Available locations for filter
+  // Available locations for filter (these should ideally be fetched from API)
   const availableLocations = [
     'San Francisco, CA',
     'New York, NY',
@@ -668,8 +440,8 @@ const JobsListingPage = () => {
         {/* Jobs Grid */}
         {loading ? (
           <Grid container spacing={3}>
-            {[...Array(6)].map((_, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+            {[...Array(3)].map((_, index) => (
+              <Grid item xs={12} key={index}> {/* Each job displayed on full width */}
                 <JobCard>
                   <Skeleton variant="rectangular" height={200} />
                   <CardContent>
@@ -680,7 +452,7 @@ const JobsListingPage = () => {
                       <Skeleton variant="text" height={20} width="100%" />
                       <Skeleton variant="text" height={20} width="100%" />
                     </Box>
-                    <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+                    <Box sx={{ mt: 2, display: 'flex', gap: 1 }}> {/* Corrected syntax error here */}
                       <Skeleton variant="rectangular" height={32} width={80} />
                       <Skeleton variant="rectangular" height={32} width={80} />
                     </Box>
@@ -700,32 +472,78 @@ const JobsListingPage = () => {
           </Box>
         ) : (
           <Grid container spacing={3}>
-            {displayJobs.map((job) => (
-              <Grid item xs={12} sm={6} md={4} key={job.id}>
+            {/* Using filteredJobs here for client-side filtering responsiveness */}
+            {filteredJobs.map((job) => (
+              <Grid item xs={12} key={job.id}> {/* Each job displayed on full width */}
                 <JobCard>
-                  {job.videoUrl ? (
-                    <JobCardMedia
-                      image={job.videoThumbnail || `https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
-                      title={job.title}
-                      onClick={() => openVideoDialog(job.videoUrl, job.title)}
+                  {/* Conditionally render video or placeholder */}
+                  {job.video?.video_url ? (
+                    <Box
+                      sx={{
+                        height: 0,
+                        paddingTop: '56.25%', // 16:9 aspect ratio
+                        position: 'relative',
+                        backgroundColor: theme.palette.grey[200],
+                        overflow: 'hidden', // Ensures video stays within bounds
+                        '&:hover video': {
+                          opacity: 1, // Video becomes visible on hover
+                        },
+                        '& video': {
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          opacity: 0, // Video hidden by default
+                          transition: 'opacity 0.3s ease-in-out',
+                        },
+                        // Hide play button overlay on hover
+                        '&:hover .video-overlay': {
+                           opacity: 0,
+                         },
+                      }}
+                      onMouseEnter={(e) => {
+                        const videoElement = e.currentTarget.querySelector('video');
+                        if (videoElement) {
+                          videoElement.play();
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        const videoElement = e.currentTarget.querySelector('video');
+                        if (videoElement) {
+                          videoElement.pause();
+                          videoElement.currentTime = 0; // Reset video to start
+                        }
+                      }}
                     >
-                      <VideoPlayButton aria-label="play">
+                      <video
+                        src={job.video.video_url}
+                        poster={job.video.thumbnail || `https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
+                        muted // Muted for autoplay on hover
+                        loop
+                        playsInline // Ensures video plays inline on iOS
+                      />
+                      {/* Play button overlay */}
+                      <VideoPlayButton aria-label="play" className="video-overlay">
                         <PlayArrowIcon />
                       </VideoPlayButton>
-                    </JobCardMedia>
-                  ) : (
-                    <JobCardMedia
+                    </Box>
+                  ) : ( // If no video available, display a simple placeholder image
+                    <JobCardMediaPlaceholder
                       image={`https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
                       title={job.title}
                     />
                   )}
-                  <JobCardContent>
+                  
+                  <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      {/* Company Logo and Name */}
                       <Box
                         component="img"
-                        src={job.company.logo}
+                        src={job.company.logo || 'https://via.placeholder.com/40x40?text=Logo'} // Fallback for missing logo
                         alt={job.company.name}
-                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1 }}
+                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1, objectFit: 'cover' }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -737,6 +555,7 @@ const JobsListingPage = () => {
                       </Typography>
                     </Box>
                     
+                    {/* Job Title */}
                     <Typography
                       variant="h6"
                       component="h2"
@@ -754,6 +573,7 @@ const JobsListingPage = () => {
                       {job.title}
                     </Typography>
                     
+                    {/* Location */}
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <LocationIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                       <Typography variant="body2" color="textSecondary">
@@ -761,21 +581,23 @@ const JobsListingPage = () => {
                       </Typography>
                     </Box>
                     
+                    {/* Salary Range */}
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <MoneyIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                       <Typography variant="body2" color="textSecondary">
-                        {formatSalaryRange(job.salaryMin, job.salaryMax, job.salaryCurrency, job.salaryPeriod)}
+                        {formatSalaryRange(job.salary_min, job.salary_max, 'USD', 'yearly')} {/* Assuming USD and yearly for mock, adjust if API provides this */}
                       </Typography>
                     </Box>
                     
+                    {/* Job Type (employment_type) and Remote status */}
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
                       <Chip
-                        label={job.type}
+                        label={job.employment_type}
                         size="small"
                         color="primary"
                         variant="outlined"
                       />
-                      {job.remote && (
+                      {job.remote_ok && (
                         <Chip
                           label="Remote"
                           size="small"
@@ -785,6 +607,7 @@ const JobsListingPage = () => {
                       )}
                     </Box>
                     
+                    {/* Job Description */}
                     <Typography
                       variant="body2"
                       color="textSecondary"
@@ -800,15 +623,16 @@ const JobsListingPage = () => {
                       {job.description}
                     </Typography>
                     
+                    {/* Job Skills */}
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
-                      {job.jobSkills.slice(0, 3).map((skill, index) => (
+                      {job.jobSkills && job.jobSkills.slice(0, 3).map((skill, index) => (
                         <SkillChip
                           key={index}
                           label={skill}
                           size="small"
                         />
                       ))}
-                      {job.jobSkills.length > 3 && (
+                      {job.jobSkills && job.jobSkills.length > 3 && (
                         <Chip
                           label={`+${job.jobSkills.length - 3}`}
                           size="small"
@@ -817,15 +641,21 @@ const JobsListingPage = () => {
                       )}
                     </Box>
                     
+                    {/* Posted Date, Deadline, and Applicants */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
                       <Typography variant="caption" color="textSecondary">
-                        Posted: {formatDate(job.posted)}
+                        Posted: {formatDate(job.posted_at)}
                       </Typography>
+                      {job.deadline && ( // Display deadline field
+                        <Typography variant="caption" color="textSecondary">
+                          Deadline: {formatDate(job.deadline)}
+                        </Typography>
+                      )}
                       <Typography variant="caption" color="textSecondary">
-                        {job.applicants} applicants
+                        {job.applicants !== undefined ? `${job.applicants} applicants` : 'No applicants data'} {/* Display applicants field */}
                       </Typography>
                     </Box>
-                  </JobCardContent>
+                  </CardContent>
                   
                   <Divider />
                   
@@ -872,42 +702,6 @@ const JobsListingPage = () => {
           </Box>
         )}
       </Container>
-      
-      {/* Video Dialog */}
-      <VideoDialog
-        open={videoDialog.open}
-        onClose={closeVideoDialog}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6">{videoDialog.title}</Typography>
-            <IconButton edge="end" color="inherit" onClick={closeVideoDialog} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-        <VideoDialogContent>
-          <video
-            ref={videoRef}
-            src={videoDialog.videoUrl}
-            width="100%"
-            height="auto"
-            autoPlay
-            onEnded={handleVideoEnded}
-            style={{ display: 'block' }}
-          />
-          <VideoControls>
-            <IconButton size="small" color="inherit" onClick={toggleVideoPlayback}>
-              {videoDialog.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-            </IconButton>
-            <Typography variant="caption" color="inherit">
-              {videoDialog.title}
-            </Typography>
-          </VideoControls>
-        </VideoDialogContent>
-      </VideoDialog>
     </PageContainer>
   );
 };

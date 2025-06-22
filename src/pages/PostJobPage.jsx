@@ -111,7 +111,7 @@ const PostJobPage = () => {
     skillIds: [],
     requirements: [''],
     responsibilities: [''],
-    expires_at: '',
+    deadline: '',
     videoRequired: false // Indicates if a video is required for this job post
   });
   
@@ -254,7 +254,7 @@ const handleFormChange = (e) => {
           ...jobForm,
           requirements: jobForm.requirements.filter(item => item.trim() !== ''),
           responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-          expires_at: jobForm.expires_at || null,
+          deadline: jobForm.deadline || null,
           video_id: null, // Video ID will be added later
         };
         const response = await postJob(jobDataToPost);
@@ -295,7 +295,7 @@ const handleVideoUploadComplete = async (videoId) => {
         video_id: videoId,
         requirements: jobForm.requirements.filter(item => item.trim() !== ''),
         responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-        expires_at: jobForm.expires_at || null,
+        deadline: jobForm.deadline || null,
       };
       
       await updateJob(newJobId, updatedJobData);
@@ -360,7 +360,7 @@ const handleVideoUploadComplete = async (videoId) => {
         ...jobForm,
         requirements: jobForm.requirements.filter(item => item.trim() !== ''),
         responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-        expires_at: jobForm.expires_at || null,
+        deadline: jobForm.deadline || null,
         // If newJobId exists and a video was uploaded/linked, keep its video_id.
         // Otherwise, it might be a job without a required video, or a fresh post without video.
         video_id: uploadedVideoId || null, 
@@ -658,9 +658,9 @@ const renderVideoUploadDialog = () => (
           <TextField
             fullWidth
             label="Application Deadline"
-            name="expires_at"
+            name="deadline"
             type="date"
-            value={jobForm.expires_at}
+            value={jobForm.deadline}
             onChange={handleFormChange}
             InputLabelProps={{
               shrink: true,
