@@ -58,6 +58,8 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },
     { text: 'Post Job', icon: <JobsIcon />, path: '/Post-job-page' },
+    { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
+
     // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
     { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },

@@ -221,6 +221,10 @@ export const getAllJobs = (params) => {
   return api.get('/employer/jobs', { params });
 };
 
+export const getAllJobsPosted = (params) => {
+  return api.get('/job/', { params });
+};
+
 export const getJobById = (id) => {
   return api.get(`/employer/job/${id}`);
 };
@@ -251,7 +255,7 @@ export const getEmployerCategories = () => {
 
 
 export const addEmployerCategory = (id) => {
-  return api.delete(`/employer/category/${id}`);
+  return api.post(`/employer/category/${id}`);
 };
 
 export const deleteEmployerCategory = (id) => {

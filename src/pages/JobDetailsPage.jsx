@@ -41,6 +41,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getJobDetails } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
 import { useVideoContext } from '../context/VideoContext';
+import FeedIcon from '@mui/icons-material/Feed';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -139,6 +140,16 @@ const StatusBorder = styled('div')(({ status, theme }) => ({
     '50%': { opacity: 0.3 },
     '100%': { opacity: 0.7 },
   },
+}));
+
+const CompanyCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[2],
+  marginBottom: theme.spacing(4),
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(2),
 }));
 
 const JobDetailsPage = () => {
@@ -492,7 +503,7 @@ const handleMouseLeaveVideo = () => {
           <Button
             variant="outlined"
             startIcon={<WorkIcon />}
-            onClick={() => navigate("/jobs")}
+            onClick={() => navigate("/jobs-Listing-Page")}
             sx={{ mt: 2 }}
           >
             Back to Jobs
@@ -508,7 +519,7 @@ const handleMouseLeaveVideo = () => {
         <Button
           variant="outlined"
           startIcon={<WorkIcon />}
-          onClick={() => navigate("/jobs")}
+          onClick={() => navigate("/jobs-Listing-Page")}
           sx={{ mb: 3 }}
         >
           Back to Jobs
@@ -516,6 +527,166 @@ const handleMouseLeaveVideo = () => {
 
         {hasVideo() && renderVideoHero()}
 
+     <CompanyCard elevation={3}>
+       <Button 
+        onClick={() => navigate(`/employer-profile/${job.company.id}`)}
+        sx={{
+          textTransform: 'none',
+          p: 0,
+          justifyContent: 'flex-start',
+          '&:hover': {
+            background: 'transparent',
+            textDecoration: 'underline'
+          }
+        }}
+      >
+        <Typography variant="h5" component="h2" fontWeight="bold">
+          About {job.company_name}
+        </Typography>  <Tooltip title="View company profile">
+      <IconButton 
+        onClick={() => navigate(`/employer-profile/${job.company.userId}`)}
+        sx={{ color: theme.palette.primary.main }}
+      >
+        <BusinessIcon />
+      </IconButton>
+    </Tooltip>
+        </Button>
+      
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <DetailItem>
+              <BusinessIcon />
+              <Box>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Industry
+                </Typography>
+                <Typography variant="body1">
+                  {job.company.industry || "Not specified"}
+                </Typography>
+              </Box>
+            </DetailItem>
+
+            <DetailItem>
+              <LocationIcon />
+              <Box>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Company Location
+                </Typography>
+                <Typography variant="body1">
+                  {job.company.location || "Not specified"}
+                </Typography>
+              </Box>
+            </DetailItem>
+
+            <DetailItem>
+              <WorkIcon />
+              <Box>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Company Size
+                </Typography>
+                <Typography variant="body1">
+                  {job.company.size || "Not specified"}
+                </Typography>
+              </Box>
+            </DetailItem>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DetailItem>
+              <EventIcon />
+              <Box>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Established
+                </Typography>
+                <Typography variant="body1">
+                  {job.company.establish_year || "Not specified"}
+                </Typography>
+              </Box>
+            </DetailItem>
+
+            {job.company.website && (
+              <DetailItem>
+                <DescriptionIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Website
+                  </Typography>
+                  <Typography variant="body1">
+                    <a 
+                      href={job.company.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ color: theme.palette.primary.main }}
+                    >
+                      {job.company.website}
+                    </a>
+                  </Typography>
+                </Box>
+              </DetailItem>
+            )}
+
+            {job.company.description && (
+              <DetailItem>
+                <InfoIcon />
+                <Box>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    About
+                  </Typography>
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                    {job.company.description}
+                  </Typography>
+                </Box>
+              </DetailItem>
+            )}
+          </Grid>
+        </Grid>
+
+        {job.company.social && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
+              Social Media
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              {job.company.social.linkedin && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<BusinessIcon />}
+                  href={job.company.social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn
+                </Button>
+              )}
+              {job.company.social.twitter && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<BusinessIcon />}
+                  href={job.company.social.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Twitter
+                </Button>
+              )}
+              {job.company.social.facebook && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<BusinessIcon />}
+                  href={job.company.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Facebook
+                </Button>
+              )}
+            </Stack>
+          </Box>
+        )}
+      </CompanyCard>
         <DetailCard elevation={3}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -527,12 +698,12 @@ const handleMouseLeaveVideo = () => {
                     width: 60,
                     height: 60
                   }}
-                >
-                  <BusinessIcon fontSize="large" />
+                > 
+                  <FeedIcon fontSize="large" />
                 </Avatar>
-                <Box>
+                <Box> <Typography variant="h6">Job:</Typography>
                   <Typography variant="h3" component="h1" fontWeight="bold">
-                    {job.title}
+                     {job.title}
                   </Typography>
                   <Stack direction="row" spacing={2} mt={1}>
                     <Typography

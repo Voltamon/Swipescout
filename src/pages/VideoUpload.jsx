@@ -422,7 +422,7 @@ const handleSubmit = async () => {
         video.src = URL.createObjectURL(file);
       });
       
-      if (duration < 15 || duration > 45) {
+      if (duration < 14  || duration > 45) {
         setSnackbar({
           open: true,
           message: 'Video must be between 15 and 45 seconds',
