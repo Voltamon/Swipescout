@@ -52,13 +52,14 @@ import { getAllJobs, getJobById, getEmployerProfile, getCategories } from '../se
 const PageContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   minHeight: '100vh',
-  paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(4)
+  padding: theme.spacing(3),
+  width: '100%'
 }));
 
 const SearchPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   marginBottom: theme.spacing(3),
+  width: '100%'
 }));
 
 const JobCard = styled(Card)(({ theme }) => ({
@@ -137,6 +138,8 @@ const VideoDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     borderRadius: theme.spacing(1),
     overflow: 'hidden',
+    width: '100%',
+    maxWidth: '800px'
   }
 }));
 
@@ -179,7 +182,7 @@ const JobsListingPage = () => {
   // Constants
   const jobsPerPage = 9;
   
-  // Fetch jobs
+  // Fetch jobs and categories
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -204,7 +207,6 @@ const JobsListingPage = () => {
         
         // Extract unique locations from jobs
         const uniqueLocations = [...new Set(jobsResponse.data.jobs.map(job => job.location).filter(Boolean))];
-
         setLocations(uniqueLocations);
         
         setLoading(false);
@@ -430,9 +432,9 @@ const JobsListingPage = () => {
   
   return (
     <PageContainer>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ width: '100%', padding: 0 }}>
         {/* Page Header */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 4, width: '100%' }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Job Listings
           </Typography>
@@ -529,13 +531,13 @@ const JobsListingPage = () => {
           </Grid>
         </SearchPaper>
         
-        {/* Jobs Grid */}
+        {/* Jobs List */}
         {loading ? (
-          <Grid container spacing={3}>
+          <Box sx={{ width: '100%' }}>
             {[...Array(3)].map((_, index) => (
-              <Grid item xs={12} key={index}>
+              <Box key={index} sx={{ mb: 3, width: '100%' }}>
                 <JobCard>
-                  <Skeleton variant="rectangular" height={200} />
+                  <Skeleton variant="rectangular" height={200} width="100%" />
                   <CardContent>
                     <Skeleton variant="text" height={32} width="80%" />
                     <Skeleton variant="text" height={24} width="60%" />
@@ -550,11 +552,11 @@ const JobsListingPage = () => {
                     </Box>
                   </CardContent>
                 </JobCard>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         ) : filteredJobs.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 5 }}>
+          <Box sx={{ textAlign: 'center', py: 5, width: '100%' }}>
             <Typography variant="h6" color="textSecondary">
               No jobs found matching your criteria
             </Typography>
@@ -563,9 +565,9 @@ const JobsListingPage = () => {
             </Typography>
           </Box>
         ) : (
-          <Grid container spacing={3}>
+          <Box sx={{ width: '100%' }}>
             {filteredJobs.map((job) => (
-              <Grid item xs={12} key={job.id}>
+              <Box key={job.id} sx={{ mb: 3, width: '100%' }}>
                 <JobCard>
                   {job.video?.video_url ? (
                     <Box
@@ -747,14 +749,14 @@ const JobsListingPage = () => {
                     </IconButton>
                   </CardActions>
                 </JobCard>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         )}
         
         {/* Pagination */}
         {totalPages > 1 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, width: '100%' }}>
             <Pagination
               count={totalPages}
               page={page}
@@ -809,4 +811,4 @@ const JobsListingPage = () => {
   );
 };
 
-export default JobsListingPage; 
+export default JobsListingPage;
