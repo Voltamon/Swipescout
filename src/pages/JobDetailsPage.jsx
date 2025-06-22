@@ -543,14 +543,14 @@ const handleMouseLeaveVideo = () => {
                       <EventIcon fontSize="small" sx={{ mr: 1 }} />
                       Posted: {formatDate(job.posted_at)}
                     </Typography>
-                    {job.expires_at && (
+                    {job.deadline && (
                       <Typography
                         variant="subtitle1"
                         color="text.secondary"
                         sx={{ display: "flex", alignItems: "center" }}
                       >
                         <EventIcon fontSize="small" sx={{ mr: 1 }} />
-                        Expires: {formatDate(job.expires_at)}
+                        Expires: {formatDate(job.deadline)}
                       </Typography>
                     )}
                   </Stack>
