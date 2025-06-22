@@ -48,19 +48,20 @@ import {
   LinkedIn as LinkedInIcon,
   Facebook as FacebookIcon,
   Twitter as TwitterIcon,
-  Public as PublicIcon, // For website
-  Category as CategoryIcon, // For categories
-  Group as GroupIcon, // For size
-  Event as EventIcon, // For founded
+  Public as PublicIcon,
+  Category as CategoryIcon,
+  Group as GroupIcon,
+  Event as EventIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { 
   getEmployerProfile, 
   updateEmployerProfile, 
   uploadCompanyLogo,
-  getEmployerCategories, // Assuming a new API for categories if they are editable
+  getEmployerCategories,
   addEmployerCategory,
-  deleteEmployerCategory
+  deleteEmployerCategory,
+  getCategories
 } from '../services/api';
 
 // Styled components
@@ -145,10 +146,9 @@ const EditEmployerProfilePage = () => {
     email: '',
     phone: '',
     website: '',
-    logo: '',
-    founded: '',
+    logo: null,
+    establish_year: null,
     size: '',
-    categories: [],
     social: {
       linkedin: '',
       facebook: '',
@@ -157,14 +157,10 @@ const EditEmployerProfilePage = () => {
   });
 
   const [companyLogoPicture, setCompanyLogoPicture] = useState('');
-  
-  // State for categories (if editable as a separate section)
   const [categories, setCategories] = useState([]);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [availableCategories, setAvailableCategories] = useState([]); // All possible categories to choose from
-
-  // UI state
+  const [availableCategories, setAvailableCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -174,7 +170,6 @@ const EditEmployerProfilePage = () => {
   });
   const fileInputRef = useRef(null);
 
-  // Helper function to verify image availability
   const verifyImageAvailability = (url) => {
     return new Promise((resolve, reject) => {
       if (!url) reject(new Error('Empty URL'));
@@ -202,73 +197,74 @@ const EditEmployerProfilePage = () => {
   };
 
   // Fetch employer data
-  useEffect(() => {
-    const fetchEmployerData = async () => {
-      try {
-        setLoading(true);
-        
-        const [profileResponse, categoriesResponse] = await Promise.all([
-          getEmployerProfile(),
-          getEmployerCategories() // Assuming an API to get all available categories
-        ]);
-        
-        const employerData = profileResponse.data.company;
-        setProfile({
-          name: employerData.name || '',
-          industry: employerData.industry || '',
-          location: employerData.location || '',
-          description: employerData.description || '',
-          email: employerData.email || '',
-          phone: employerData.phone || '',
-          website: employerData.website || '',
-          logo: employerData.logo || '',
-          founded: employerData.founded || '',
-          size: employerData.size || '',
-          categories: employerData.categories || [],
-          social: {
-            linkedin: employerData.social?.linkedin || '',
-            facebook: employerData.social?.facebook || '',
-            twitter: employerData.social?.twitter || ''
-          }
-        });
-        setCategories(employerData.categories || []);
-        setAvailableCategories(categoriesResponse.data.categories || []); // Set available categories
+// In your useEffect where you fetch data:
+useEffect(() => {
+  const fetchEmployerData = async () => {
+    try {
+      setLoading(true);
+      
+      const [profileResponse, categoriesResponse, allCategoriesResponse] = await Promise.all([
+        getEmployerProfile(),
+        getEmployerCategories(),
+        getCategories()
+      ]);
+      
+      // Handle profile data
+      const employerData = profileResponse.data.company;
+      setProfile({
+        name: employerData.name || '',
+        industry: employerData.industry || '',
+        location: employerData.location || '',
+        description: employerData.description || '',
+        email: employerData.email || '',
+        phone: employerData.phone || '',
+        website: employerData.website || '',
+        logo: employerData.logo || null,
+        establish_year: employerData.establish_year || null,
+        size: employerData.size || '',
+        social: employerData.social || {
+          linkedin: '',
+          facebook: '',
+          twitter: ''
+        }
+      });
 
-        const initialLogoUrl = employerData.logo 
-          ? `${VITE_API_BASE_URL}${employerData.logo}?t=${Date.now()}`
-          : '';
+      // Handle employer categories
+      setCategories(categoriesResponse.data?.categories || []);
 
+      // Handle all available categories
+      setAvailableCategories(allCategoriesResponse.data?.categories || []);
+
+      // Handle logo
+      if (employerData.logo) {
+        const logoUrl = `${VITE_API_BASE_URL}${employerData.logo}?t=${Date.now()}`;
         try {
-          if (initialLogoUrl) {
-            await verifyImageAvailability(initialLogoUrl);
-          }
-          setCompanyLogoPicture(initialLogoUrl);
+          await verifyImageAvailability(logoUrl);
+          setCompanyLogoPicture(logoUrl);
         } catch (error) {
           console.error('Company logo image not available:', error);
           setCompanyLogoPicture('');
         }
-        
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching employer data:', error);
-        setSnackbar({
-          open: true,
-          message: 'Error loading profile data',
-          severity: 'error'
-        });
-        setLoading(false);
       }
-    };
-    
-    fetchEmployerData();
-  }, []);
-
-  // Handle tab change
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching employer data:', error);
+      setSnackbar({
+        open: true,
+        message: 'Error loading profile data',
+        severity: 'error'
+      });
+      setLoading(false);
+    }
+  };
+  
+  fetchEmployerData();
+}, []);
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
   
-  // Handle profile form change
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     
@@ -289,7 +285,6 @@ const EditEmployerProfilePage = () => {
     }
   };
 
-  // Function to show Snackbar messages
   const showSnackbar = (message, severity) => {
     setSnackbar({
       open: true,
@@ -298,13 +293,13 @@ const EditEmployerProfilePage = () => {
     });
   };
   
-  // Handle profile save
   const handleSaveProfile = async () => {
     try {
       setSaving(true);
-      // Exclude categories from the main profile update payload if they are managed separately
-      const { categories, ...profileToUpdate } = profile; 
-      await updateEmployerProfile(profileToUpdate);
+      const {  ...profileToUpdate } = profile;
+      console.log("profile:::::::::::");
+      console.log(profile);
+      const response = await updateEmployerProfile(profile);
       
       showSnackbar('Profile updated successfully', 'success');
       
@@ -316,7 +311,6 @@ const EditEmployerProfilePage = () => {
     }
   };
   
-  // Handle logo upload
   const handleLogoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -324,17 +318,21 @@ const EditEmployerProfilePage = () => {
     try {
       setSaving(true);
       
-      // 1. Show instant preview
+      // Create FormData and append the file
+      const formData = new FormData();
+      formData.append('logo', file); // Match the field name expected by the backend
+
+      // Show instant preview
       const tempPreviewUrl = URL.createObjectURL(file);
       setCompanyLogoPicture(tempPreviewUrl);
 
-      // 2. Upload to server
-      const response = await uploadCompanyLogo(file); 
+      // Upload to server
+      const response = await uploadCompanyLogo(formData);
 
-      // 3. Server returns the FINAL URL (must be immediately accessible)
-      const serverUrl = `${VITE_API_BASE_URL}${response.data.path}?t=${Date.now()}`;
+      // Server returns the FINAL URL (must be immediately accessible)
+      const serverUrl = `${VITE_API_BASE_URL}${response.data.logo_url}?t=${Date.now()}`;
 
-      // 4. Verify the image is truly ready (with retries)
+      // Verify the image is truly ready (with retries)
       let loaded = false;
       for (let i = 0; i < 3; i++) {
         try {
@@ -342,12 +340,12 @@ const EditEmployerProfilePage = () => {
           loaded = true;
           break;
         } catch {
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
 
       if (loaded) {
-        setProfile(prev => ({ ...prev, logo: response.data.path }));
+        setProfile(prev => ({ ...prev, logo: response.data.logo_url }));
         setCompanyLogoPicture(serverUrl);
         showSnackbar("Company logo updated!", "success");
       } else {
@@ -358,13 +356,13 @@ const EditEmployerProfilePage = () => {
       URL.revokeObjectURL(tempPreviewUrl);
 
     } catch (error) {
+      console.error('Error uploading logo:', error);
       showSnackbar("Upload failed. Please try again.", "error");
     } finally {
       setSaving(false);
     }
   };
   
-  // Category dialog handlers
   const handleOpenCategoryDialog = () => {
     setCategoryDialogOpen(true);
   };
@@ -379,11 +377,11 @@ const EditEmployerProfilePage = () => {
     
     try {
       setSaving(true);
-      await addEmployerCategory({ category_id: selectedCategory }); // Assuming category_id is needed
+      await addEmployerCategory(selectedCategory);
       
       // Refresh categories
-      const response = await getEmployerProfile(); // Re-fetch profile to get updated categories
-      setCategories(response.data.company.categories || []);
+      const response = await getEmployerCategories();
+      setCategories(response.data.categories || []);
       
       showSnackbar('Category added successfully', 'success');
       
@@ -413,7 +411,6 @@ const EditEmployerProfilePage = () => {
     }
   };
 
-  // Close snackbar
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -468,12 +465,13 @@ const EditEmployerProfilePage = () => {
                   <input
                     accept="image/*"
                     style={{ display: 'none' }}
-                    id="logo-upload"
+                    id="logo"
                     type="file"
+                    name="logo"
                     onChange={handleLogoUpload}
                     ref={fileInputRef}
                   />
-                  <label htmlFor="logo-upload">
+                  <label htmlFor="logo">
                     <LogoUploadButton component="span" size="small">
                       <PhotoCameraIcon fontSize="small" />
                     </LogoUploadButton>
@@ -571,7 +569,6 @@ const EditEmployerProfilePage = () => {
                       type="email"
                       value={profile.email || ''}
                       onChange={handleProfileChange}
-                      required
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -617,8 +614,8 @@ const EditEmployerProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Founded Year"
-                      name="founded"
-                      value={profile.founded || ''}
+                      name="establish_year"
+                      value={profile.establish_year || ''}
                       onChange={handleProfileChange}
                       type="number"
                       InputProps={{
@@ -633,7 +630,7 @@ const EditEmployerProfilePage = () => {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Company Size (e.g., 50-200 employees)"
+                      label="Company Size"
                       name="size"
                       value={profile.size || ''}
                       onChange={handleProfileChange}
@@ -654,7 +651,7 @@ const EditEmployerProfilePage = () => {
                           fullWidth
                           label="LinkedIn URL"
                           name="social.linkedin"
-                          value={profile.social.linkedin || ''}
+                          value={profile.social?.linkedin || ''}
                           onChange={handleProfileChange}
                           InputProps={{
                             startAdornment: (
@@ -670,7 +667,7 @@ const EditEmployerProfilePage = () => {
                           fullWidth
                           label="Facebook URL"
                           name="social.facebook"
-                          value={profile.social.facebook || ''}
+                          value={profile.social?.facebook || ''}
                           onChange={handleProfileChange}
                           InputProps={{
                             startAdornment: (
@@ -686,7 +683,7 @@ const EditEmployerProfilePage = () => {
                           fullWidth
                           label="Twitter URL"
                           name="social.twitter"
-                          value={profile.social.twitter || ''}
+                          value={profile.social?.twitter || ''}
                           onChange={handleProfileChange}
                           InputProps={{
                             startAdornment: (
@@ -740,23 +737,23 @@ const EditEmployerProfilePage = () => {
 
         {/* Category Add/Edit Dialog */}
         <Dialog open={categoryDialogOpen} onClose={handleCloseCategoryDialog} fullWidth maxWidth="sm">
-          <DialogTitle>Add/Edit Category</DialogTitle>
+          <DialogTitle>Add Category</DialogTitle>
           <DialogContent>
             <FormControl fullWidth margin="normal">
               <InputLabel id="select-category-label">Select Category</InputLabel>
               <Select
-                labelId="select-category-label"
-                id="select-category"
-                value={selectedCategory}
-                label="Select Category"
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {availableCategories.map((cat) => (
-                  <MenuItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </MenuItem>
-                ))}
-              </Select>
+              labelId="select-category-label"
+              id="select-category"
+              value={selectedCategory}
+              label="Select Category"
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {availableCategories.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </MenuItem>
+              ))}
+            </Select>
               <FormHelperText>Choose a category for your company.</FormHelperText>
             </FormControl>
           </DialogContent>
