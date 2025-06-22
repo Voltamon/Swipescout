@@ -17,6 +17,9 @@ import {
   Select,
   MenuItem,
   Pagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
   IconButton,
   Divider,
   Paper,
@@ -30,17 +33,20 @@ import {
   LocationOn as LocationIcon,
   Work as WorkIcon,
   PlayArrow as PlayArrowIcon,
-  Close as CloseIcon, // No longer strictly needed for video dialog, but kept if used elsewhere
+  Pause as PauseIcon,
+  Close as CloseIcon,
   Favorite as FavoriteIcon,
   FavoriteBorder as FavoriteBorderIcon,
   Share as ShareIcon,
   Business as BusinessIcon,
   AttachMoney as MoneyIcon,
   FilterList as FilterListIcon,
-  Sort as SortIcon
+  Sort as SortIcon,
+  VolumeOff as VolumeOffIcon,
+  VolumeUp as VolumeUpIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { getAllJobs, getJobById, getEmployerProfile } from '../services/api';
+import { getAllJobs, getJobById, getEmployerProfile, getCategories } from '../services/api';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
@@ -56,7 +62,7 @@ const SearchPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const JobCard = styled(Card)(({ theme }) => ({
-  height: '100%',
+  width: '100%',
   display: 'flex',
   flexDirection: 'column',
   borderRadius: theme.spacing(1),
@@ -68,15 +74,17 @@ const JobCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-// Placeholder for media when no video is available
-const JobCardMediaPlaceholder = styled(CardMedia)(({ theme }) => ({
+const JobCardMedia = styled(CardMedia)(({ theme }) => ({
   height: 0,
-  paddingTop: '56.25%', // 16:9 aspect ratio
+  paddingTop: '56.25%',
   position: 'relative',
   backgroundColor: theme.palette.grey[200],
+  cursor: 'pointer',
+  '&:hover .video-controls': {
+    opacity: 1
+  }
 }));
 
-// Button for video playback overlay
 const VideoPlayButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
@@ -84,11 +92,23 @@ const VideoPlayButton = styled(IconButton)(({ theme }) => ({
   transform: 'translate(-50%, -50%)',
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   color: '#fff',
-  transition: 'opacity 0.3s ease-in-out',
-  zIndex: 1, // Ensure it's above the video
   '&:hover': {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   }
+}));
+
+const VideoControls = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  padding: theme.spacing(1),
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  opacity: 0,
+  transition: 'opacity 0.3s ease',
 }));
 
 const JobCardContent = styled(CardContent)(({ theme }) => ({
@@ -113,14 +133,27 @@ const SkillChip = styled(Chip)(({ theme }) => ({
   }
 }));
 
+const VideoDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    borderRadius: theme.spacing(1),
+    overflow: 'hidden',
+  }
+}));
+
+const VideoDialogContent = styled(DialogContent)(({ theme }) => ({
+  padding: 0,
+  backgroundColor: '#000',
+  position: 'relative',
+}));
+
 const JobsListingPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  // State for job data and UI controls
+  // State
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]); // This will be used if client-side filtering is active
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
@@ -128,18 +161,32 @@ const JobsListingPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [videoDialog, setVideoDialog] = useState({
+    open: false,
+    videoUrl: '',
+    title: '',
+    isPlaying: false,
+    isMuted: true
+  });
   const [favorites, setFavorites] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   
-  // Constants for pagination
-  const jobsPerPage = 9; // Number of jobs to display per page
-
-  // Fetch jobs from the API whenever filters or pagination change
+  // Refs
+  const videoRef = React.useRef(null);
+  const hoverVideoRefs = React.useRef({});
+  
+  // Constants
+  const jobsPerPage = 9;
+  
+  // Fetch jobs
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         
-        const response = await getAllJobs({
+        // Fetch jobs
+        const jobsResponse = await getAllJobs({
           page,
           limit: jobsPerPage,
           search: searchQuery,
@@ -148,20 +195,29 @@ const JobsListingPage = () => {
           sort: sortBy
         });
         
-        setJobs(response.data.jobs);
-        setTotalPages(Math.ceil(response.data.total / jobsPerPage));
+        // Fetch categories
+        const categoriesResponse = await getCategories();
+        
+        setJobs(jobsResponse.data.jobs);
+        setTotalPages(Math.ceil(jobsResponse.data.total / jobsPerPage));
+        setCategories(categoriesResponse.data.categories);
+        
+        // Extract unique locations from jobs
+        const uniqueLocations = [...new Set(jobsResponse.data.jobs.map(job => job.location).filter(Boolean))];
+
+        setLocations(uniqueLocations);
+        
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching jobs:', error);
+        console.error('Error fetching data:', error);
         setLoading(false);
       }
     };
     
-    fetchJobs();
+    fetchData();
   }, [page, searchQuery, locationFilter, categoryFilter, sortBy]);
   
-  // Client-side filtering and sorting (This useEffect will run if getAllJobs does not handle all filters backend)
-  // If your backend handles all filtering and sorting, this useEffect can be simplified or removed.
+  // Apply filters
   useEffect(() => {
     let filtered = [...jobs];
     
@@ -179,11 +235,10 @@ const JobsListingPage = () => {
       );
     }
     
-    // Filter by category using categoryRelations
     if (categoryFilter) {
       filtered = filtered.filter(job => 
         job.categoryRelations && job.categoryRelations.some(categoryRel => 
-          categoryRel.category_name.toLowerCase() === categoryFilter.toLowerCase()
+          categoryRel.category_id === categoryFilter
         )
       );
     }
@@ -194,10 +249,10 @@ const JobsListingPage = () => {
         filtered.sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at));
         break;
       case 'salary-high':
-        filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0)); // Handle null salaries
+        filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
         break;
       case 'salary-low':
-        filtered.sort((a, b) => (a.salary_min || 0) - (b.salary_min || 0)); // Handle null salaries
+        filtered.sort((a, b) => (a.salary_min || 0) - (b.salary_min || 0));
         break;
       default:
         break;
@@ -206,36 +261,108 @@ const JobsListingPage = () => {
     setFilteredJobs(filtered);
   }, [jobs, searchQuery, locationFilter, categoryFilter, sortBy]);
   
-  // Handle search input change
+  // Handle search
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setPage(1); // Reset to first page on new search
+    setPage(1);
   };
   
-  // Handle location filter change
+  // Handle location filter
   const handleLocationFilter = (e) => {
     setLocationFilter(e.target.value);
     setPage(1);
   };
   
-  // Handle category filter change
+  // Handle category filter
   const handleCategoryFilter = (e) => {
     setCategoryFilter(e.target.value);
     setPage(1);
   };
   
-  // Handle sort order change
+  // Handle sort change
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
   
-  // Handle pagination page change
+  // Handle page change
   const handlePageChange = (event, value) => {
     setPage(value);
-    window.scrollTo(0, 0); // Scroll to top on page change
+    window.scrollTo(0, 0);
   };
   
-  // Toggle favorite status for a job
+  // Open video dialog
+  const openVideoDialog = (videoUrl, title) => {
+    setVideoDialog({
+      open: true,
+      videoUrl,
+      title,
+      isPlaying: true,
+      isMuted: true
+    });
+  };
+  
+  // Close video dialog
+  const closeVideoDialog = () => {
+    setVideoDialog({
+      ...videoDialog,
+      open: false,
+      isPlaying: false
+    });
+    
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+  
+  // Toggle video playback
+  const toggleVideoPlayback = () => {
+    if (videoRef.current) {
+      if (videoDialog.isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      
+      setVideoDialog({
+        ...videoDialog,
+        isPlaying: !videoDialog.isPlaying
+      });
+    }
+  };
+  
+  // Toggle video mute
+  const toggleVideoMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setVideoDialog({
+        ...videoDialog,
+        isMuted: !videoDialog.isMuted
+      });
+    }
+  };
+  
+  // Handle video ended
+  const handleVideoEnded = () => {
+    setVideoDialog({
+      ...videoDialog,
+      isPlaying: false
+    });
+  };
+  
+  // Handle hover video play
+  const handleVideoHover = (jobId, action) => {
+    const videoElement = hoverVideoRefs.current[jobId];
+    if (videoElement) {
+      if (action === 'enter') {
+        videoElement.play();
+      } else {
+        videoElement.pause();
+        videoElement.currentTime = 0;
+      }
+    }
+  };
+  
+  // Toggle favorite
   const toggleFavorite = (jobId) => {
     if (favorites.includes(jobId)) {
       setFavorites(favorites.filter(id => id !== jobId));
@@ -244,17 +371,17 @@ const JobsListingPage = () => {
     }
   };
   
-  // Navigate to job details page
+  // Navigate to job details
   const navigateToJobDetails = (jobId) => {
     navigate(`/jobs/${jobId}`);
   };
   
-  // Navigate to employer profile page
+  // Navigate to employer profile
   const navigateToEmployerProfile = (employerId) => {
     navigate(`/employer/${employerId}`);
   };
   
-  // Format date string to a readable format
+  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return '';
     
@@ -263,9 +390,9 @@ const JobsListingPage = () => {
     return date.toLocaleDateString('en-US', options);
   };
   
-  // Format salary range for display
+  // Format salary range
   const formatSalaryRange = (min, max, currency = 'USD', period = 'yearly') => {
-    if (min === null && max === null) return 'Salary not specified';
+    if (!min && !max) return 'Salary not specified';
     
     const currencySymbols = {
       USD: '$',
@@ -282,11 +409,11 @@ const JobsListingPage = () => {
     const symbol = currencySymbols[currency] || currency;
     
     let range = '';
-    if (min !== null && max !== null) {
+    if (min && max) {
       range = `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
-    } else if (min !== null) {
+    } else if (min) {
       range = `${symbol}${min.toLocaleString()}+`;
-    } else if (max !== null) {
+    } else if (max) {
       range = `Up to ${symbol}${max.toLocaleString()}`;
     }
     
@@ -300,41 +427,6 @@ const JobsListingPage = () => {
     
     return `${range} ${periodMap[period] || ''}`;
   };
-  
-  // Mock data for demonstration (used when actual API data is empty or during development)
-  const mockJobs = []; // As requested, mock variables are empty now
-  
-  // Determine which jobs to display (real data if available, otherwise mock data)
-  const displayJobs = jobs.length > 0 ? jobs : mockJobs;
-  
-  // Available categories for filter (these should ideally be fetched from API)
-  const availableCategories = [
-    'Software Development',
-    'Web Development',
-    'Mobile Development',
-    'UI/UX Design',
-    'Data Science',
-    'Machine Learning',
-    'DevOps',
-    'Cloud Computing',
-    'Cybersecurity',
-    'Network Administration',
-    'Database Administration',
-    'Project Management',
-    'Product Management',
-    'Quality Assurance',
-    'Technical Support'
-  ];
-  
-  // Available locations for filter (these should ideally be fetched from API)
-  const availableLocations = [
-    'San Francisco, CA',
-    'New York, NY',
-    'Seattle, WA',
-    'Boston, MA',
-    'Austin, TX',
-    'Remote'
-  ];
   
   return (
     <PageContainer>
@@ -383,7 +475,7 @@ const JobsListingPage = () => {
                   }
                 >
                   <MenuItem value="">All Locations</MenuItem>
-                  {availableLocations.map((location) => (
+                  {locations.map((location) => (
                     <MenuItem key={location} value={location}>
                       {location}
                     </MenuItem>
@@ -406,9 +498,9 @@ const JobsListingPage = () => {
                   }
                 >
                   <MenuItem value="">All Categories</MenuItem>
-                  {availableCategories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
+                  {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -441,7 +533,7 @@ const JobsListingPage = () => {
         {loading ? (
           <Grid container spacing={3}>
             {[...Array(3)].map((_, index) => (
-              <Grid item xs={12} key={index}> {/* Each job displayed on full width */}
+              <Grid item xs={12} key={index}>
                 <JobCard>
                   <Skeleton variant="rectangular" height={200} />
                   <CardContent>
@@ -452,7 +544,7 @@ const JobsListingPage = () => {
                       <Skeleton variant="text" height={20} width="100%" />
                       <Skeleton variant="text" height={20} width="100%" />
                     </Box>
-                    <Box sx={{ mt: 2, display: 'flex', gap: 1 }}> {/* Corrected syntax error here */}
+                    <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
                       <Skeleton variant="rectangular" height={32} width={80} />
                       <Skeleton variant="rectangular" height={32} width={80} />
                     </Box>
@@ -461,7 +553,7 @@ const JobsListingPage = () => {
               </Grid>
             ))}
           </Grid>
-        ) : displayJobs.length === 0 ? (
+        ) : filteredJobs.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 5 }}>
             <Typography variant="h6" color="textSecondary">
               No jobs found matching your criteria
@@ -472,21 +564,19 @@ const JobsListingPage = () => {
           </Box>
         ) : (
           <Grid container spacing={3}>
-            {/* Using filteredJobs here for client-side filtering responsiveness */}
             {filteredJobs.map((job) => (
-              <Grid item xs={12} key={job.id}> {/* Each job displayed on full width */}
+              <Grid item xs={12} key={job.id}>
                 <JobCard>
-                  {/* Conditionally render video or placeholder */}
                   {job.video?.video_url ? (
                     <Box
                       sx={{
                         height: 0,
-                        paddingTop: '56.25%', // 16:9 aspect ratio
+                        paddingTop: '56.25%',
                         position: 'relative',
                         backgroundColor: theme.palette.grey[200],
-                        overflow: 'hidden', // Ensures video stays within bounds
+                        overflow: 'hidden',
                         '&:hover video': {
-                          opacity: 1, // Video becomes visible on hover
+                          opacity: 1,
                         },
                         '& video': {
                           position: 'absolute',
@@ -495,53 +585,41 @@ const JobsListingPage = () => {
                           width: '100%',
                           height: '100%',
                           objectFit: 'cover',
-                          opacity: 0, // Video hidden by default
+                          opacity: 0,
                           transition: 'opacity 0.3s ease-in-out',
                         },
-                        // Hide play button overlay on hover
                         '&:hover .video-overlay': {
-                           opacity: 0,
-                         },
+                          opacity: 0,
+                        },
                       }}
-                      onMouseEnter={(e) => {
-                        const videoElement = e.currentTarget.querySelector('video');
-                        if (videoElement) {
-                          videoElement.play();
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        const videoElement = e.currentTarget.querySelector('video');
-                        if (videoElement) {
-                          videoElement.pause();
-                          videoElement.currentTime = 0; // Reset video to start
-                        }
-                      }}
+                      onMouseEnter={() => handleVideoHover(job.id, 'enter')}
+                      onMouseLeave={() => handleVideoHover(job.id, 'leave')}
+                      onClick={() => openVideoDialog(job.video.video_url, job.title)}
                     >
                       <video
+                        ref={el => hoverVideoRefs.current[job.id] = el}
                         src={job.video.video_url}
                         poster={job.video.thumbnail || `https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
-                        muted // Muted for autoplay on hover
+                        muted
                         loop
-                        playsInline // Ensures video plays inline on iOS
+                        playsInline
                       />
-                      {/* Play button overlay */}
                       <VideoPlayButton aria-label="play" className="video-overlay">
                         <PlayArrowIcon />
                       </VideoPlayButton>
                     </Box>
-                  ) : ( // If no video available, display a simple placeholder image
-                    <JobCardMediaPlaceholder
+                  ) : (
+                    <JobCardMedia
                       image={`https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
                       title={job.title}
                     />
                   )}
                   
-                  <CardContent>
+                  <JobCardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      {/* Company Logo and Name */}
                       <Box
                         component="img"
-                        src={job.company.logo || 'https://via.placeholder.com/40x40?text=Logo'} // Fallback for missing logo
+                        src={job.company.logo || 'https://via.placeholder.com/40x40?text=Logo'}
                         alt={job.company.name}
                         sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1, objectFit: 'cover' }}
                       />
@@ -555,7 +633,6 @@ const JobsListingPage = () => {
                       </Typography>
                     </Box>
                     
-                    {/* Job Title */}
                     <Typography
                       variant="h6"
                       component="h2"
@@ -573,26 +650,23 @@ const JobsListingPage = () => {
                       {job.title}
                     </Typography>
                     
-                    {/* Location */}
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <LocationIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                       <Typography variant="body2" color="textSecondary">
-                        {job.location}
+                        {job.location || 'Location not specified'}
                       </Typography>
                     </Box>
                     
-                    {/* Salary Range */}
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <MoneyIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                       <Typography variant="body2" color="textSecondary">
-                        {formatSalaryRange(job.salary_min, job.salary_max, 'USD', 'yearly')} {/* Assuming USD and yearly for mock, adjust if API provides this */}
+                        {formatSalaryRange(job.salary_min, job.salary_max)}
                       </Typography>
                     </Box>
                     
-                    {/* Job Type (employment_type) and Remote status */}
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
                       <Chip
-                        label={job.employment_type}
+                        label={job.employment_type || 'Full-time'}
                         size="small"
                         color="primary"
                         variant="outlined"
@@ -607,7 +681,6 @@ const JobsListingPage = () => {
                       )}
                     </Box>
                     
-                    {/* Job Description */}
                     <Typography
                       variant="body2"
                       color="textSecondary"
@@ -620,19 +693,18 @@ const JobsListingPage = () => {
                         WebkitBoxOrient: 'vertical',
                       }}
                     >
-                      {job.description}
+                      {job.description || 'No description provided'}
                     </Typography>
                     
-                    {/* Job Skills */}
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
-                      {job.jobSkills && job.jobSkills.slice(0, 3).map((skill, index) => (
+                      {job.jobSkills?.slice(0, 3).map((skill, index) => (
                         <SkillChip
                           key={index}
                           label={skill}
                           size="small"
                         />
                       ))}
-                      {job.jobSkills && job.jobSkills.length > 3 && (
+                      {job.jobSkills?.length > 3 && (
                         <Chip
                           label={`+${job.jobSkills.length - 3}`}
                           size="small"
@@ -641,21 +713,12 @@ const JobsListingPage = () => {
                       )}
                     </Box>
                     
-                    {/* Posted Date, Deadline, and Applicants */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
                       <Typography variant="caption" color="textSecondary">
                         Posted: {formatDate(job.posted_at)}
                       </Typography>
-                      {job.deadline && ( // Display deadline field
-                        <Typography variant="caption" color="textSecondary">
-                          Deadline: {formatDate(job.deadline)}
-                        </Typography>
-                      )}
-                      <Typography variant="caption" color="textSecondary">
-                        {job.applicants !== undefined ? `${job.applicants} applicants` : 'No applicants data'} {/* Display applicants field */}
-                      </Typography>
                     </Box>
-                  </CardContent>
+                  </JobCardContent>
                   
                   <Divider />
                   
@@ -702,8 +765,48 @@ const JobsListingPage = () => {
           </Box>
         )}
       </Container>
+      
+      {/* Video Dialog */}
+      <VideoDialog
+        open={videoDialog.open}
+        onClose={closeVideoDialog}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6">{videoDialog.title}</Typography>
+            <IconButton edge="end" color="inherit" onClick={closeVideoDialog} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <VideoDialogContent>
+          <video
+            ref={videoRef}
+            src={videoDialog.videoUrl}
+            width="100%"
+            height="auto"
+            autoPlay
+            muted={videoDialog.isMuted}
+            onEnded={handleVideoEnded}
+            style={{ display: 'block' }}
+          />
+          <VideoControls>
+            <IconButton size="small" color="inherit" onClick={toggleVideoPlayback}>
+              {videoDialog.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+            </IconButton>
+            <IconButton size="small" color="inherit" onClick={toggleVideoMute}>
+              {videoDialog.isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+            </IconButton>
+            <Typography variant="caption" color="inherit">
+              {videoDialog.title}
+            </Typography>
+          </VideoControls>
+        </VideoDialogContent>
+      </VideoDialog>
     </PageContainer>
   );
 };
 
-export default JobsListingPage;
+export default JobsListingPage; 

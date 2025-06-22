@@ -188,15 +188,16 @@ export const deleteUserVideo = (id) => {
 // Employer API services
 export const getEmployerProfile = () => {
   console.log('Fetching employer profile...',token);
-  return api.get(`/employer/employer-profile`) ;//: api.get('/employers/company');
+  return api.get(`/employer/employer-profile/`) ;//: api.get('/employers/company');
 };
 
 export const updateEmployerProfile = (companyData) => {
+  console.log(companyData);
   return api.put(`/employer/employer-profile/`, companyData);
 };
 
 export const uploadCompanyLogo = (formData) => {
-  return api.post(`/employer/cupload-logo/`, formData, {
+  return api.post(`/employer/upload-logo/`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -250,11 +251,11 @@ export const getEmployerCategories = () => {
 
 
 export const addEmployerCategory = (id) => {
-  return api.delete(`/employer/category${id}`);
+  return api.delete(`/employer/category/${id}`);
 };
 
 export const deleteEmployerCategory = (id) => {
-  return api.delete(`/employer/category${id}`);
+  return api.delete(`/employer/category/${id}`);
 };
 
 export const getSkills = () => {
