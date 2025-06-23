@@ -261,6 +261,8 @@ const JobSeekerProfile = () => {
         setEducation(educationResponse.data.educations);
         
         const videosResponse = await getUserVideos();
+        console.log("videosResponse");
+        console.log(videosResponse.data.videos);
         setVideos(videosResponse.data.videos);
         
         const mainVideo = videosResponse.data.videos.find(video => video.video_position === "main");
@@ -385,7 +387,7 @@ const JobSeekerProfile = () => {
     // Mock data for demonstration
 const mockProfile = {
   id: '1',
-  name: 'A SAMPLE Profile data / Edit Yours instead',
+  name: 'A SAMPLE Profile data / Start Edit Yours instead',
   title: 'Frontend Developer',
   location: 'Riyadh, Saudi Arabia',
   bio: 'Frontend developer with 5 years of experience in web application development using React and Angular. Specializing in UI design and user experience improvement.',

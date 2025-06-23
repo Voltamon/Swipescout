@@ -448,7 +448,17 @@ setAvailableCategories(filteredAvailableCategories);
   };
 
   return (
-    <ProfileContainer>
+    <ProfileContainer sx={{
+      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'top right',
+      padding: 0,
+      minHeight: 'calc(100vh - 64px)', // Adjust for header
+      mt: 0,
+      pt: 2,
+      pb: 4,
+    }}>
       <Container maxWidth="lg">
         {/* Page Header */}
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

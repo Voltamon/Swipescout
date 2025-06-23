@@ -88,6 +88,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import JobseekerProfileView from './pages/JobseekerProfileView';
 import EmployerProfileView from './pages/EmployerProfileView';
+import AllVideosPage from './pages/AllVideosPage';
 
 
 // Initialize once (put this in a separate config file)
@@ -128,16 +129,18 @@ function App() {
           <Route path="/authpage" element={<AuthPage />} />
           <Route path="/auth/linkedin/callback" element={<Linkedincallback />} />
           <Route path="/check-it" element={<CheckExplorePage />} />
-          <Route path="/explore-layout" element={<ExploreLayout />}>
             <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
             <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
-          </Route>
+            {/* <Route path="/explore-layout" element={<ExploreLayout />}>
+            </Route> */}
           <Route path="/video-feed/:vid?" element={<VideoFeed />} />
           <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
           <Route path="/jobseeker-profile/:id" element={<JobseekerProfileView />} />
           <Route path="/employer-profile/:id" element={<EmployerProfileView  />} />
+          <Route path="/videos/:pagetype" element={<AllVideosPage  />} />
+          <Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
 
           {/* Private Routes */}
 
@@ -191,7 +194,7 @@ function App() {
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
 
-            <Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
+            
             <Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} /> 
             <Route path="/edit-video/:id" element={<EditVideoPage />} /> 
 

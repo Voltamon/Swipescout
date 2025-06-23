@@ -395,7 +395,7 @@ const EmployerProfile = () => {
 
   // Mock profile fallback
   const mockProfile = {
-    name: 'A SAMPLE Profile data / Edit Yours instead',
+    name: 'A SAMPLE Profile data / Start Edit Yours instead',
     industry: 'Information Technology',
     size: '50-200 employees',
     founded: 2010,
