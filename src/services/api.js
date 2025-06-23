@@ -187,20 +187,36 @@ export const getUserVideos = () => {
   return api.get('/videos');
 };
 
-export const getAllVideos = () => {
-  return api.get('/videos/all');
+export const getAllVideos = (page = 1, limit = 10) => {
+  return api.get('/videos', {
+    params: {
+      page,
+      limit,
+    },
+  });
 };
+
 
 export const getUserVideosByUserId = (id) => {
   return api.get(`/videos/user/${id}`);
 };
 
-export const getJobSeekersVideos = () => {
-  return api.get('/videos/jobseekers');
+export const getJobSeekersVideos = (page = 1, limit = 10) => {
+  return api.get('/videos/jobseekers', {
+    params: {
+      page,
+      limit,
+    },
+  });
 };
 
-export const getEmployersVideos = () => {
-  return api.get('/videos/employers');
+export const getEmployerPublicVideos = (page = 1, limit = 10) => {
+  return api.get('/videos/employers', {
+    params: {
+      page,
+      limit,
+    },
+  });
 };
 
 export const getUserVideoById = (id) => {
@@ -221,7 +237,7 @@ export const getEmployerProfile = () => {
   return api.get(`/employer/employer-profile/`) ;//: api.get('/employers/company');
 };
 
-export const getEmployerProfileById = (id) => {
+export const getEmployerPublicProfile = (id) => {
   return api.get(`/employer/employer-profile/${id}`); // : api.get('/users/me');
 };
 
@@ -240,6 +256,10 @@ export const uploadCompanyLogo = (formData) => {
 
 export const getEmployerJobs = () => {
   return api.get(`employer/jobs/`); //: api.get('/employers/jobs');
+};
+
+export const getEmployerPublicJobs = (id) => {
+  return api.get(`employer/jobs/${id}`); 
 };
 
 export const getJobDetails = (id) => {

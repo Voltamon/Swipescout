@@ -231,6 +231,27 @@ const JobseekerExplorePage = () => {
         "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } }
       }}
     >
+      {/* Site Name Watermark */}
+      <Box sx={{
+        position: 'absolute',
+        top: 20,
+        right: 40,
+        zIndex: 0, // Behind other content
+        opacity: 0.3, // Very subtle
+        pointerEvents: 'none' // Makes it non-interactive
+      }}>
+        <Typography variant="h1" sx={{
+          fontSize: '3rem',
+          fontWeight: 'bold',
+          color: 'rgb(28, 70, 184)',
+          lineHeight: 1,
+          textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+          fontFamily: 'Arial, sans-serif'
+        }}>
+          SwipeScout
+        </Typography>
+      </Box>
+      
       <Avatar src="/employer-logo.png" sx={{ width: isMobile ? 36 : 48, height: isMobile ? 36 : 48, mb: 3, border: `2px solid ${theme.palette.text.primary}` }} />
 
       <List sx={{ width: "100%" }}>
@@ -321,6 +342,228 @@ const JobseekerExplorePage = () => {
         {drawerContent}
       </Drawer>*/}
 
+     {/* Navigation Links Panel - Floating Version */}
+     
+<Box sx={{
+   width: 'fit-content',
+  
+  position: 'absolute', // This makes it float
+ 
+  top: 16,             // Distance from top
+  left: 16,            // Distance from left
+  zIndex: 1000,        // Ensures it stays above other content
+  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  borderRadius: '8px',
+  padding: '12px 16px',
+  backdropFilter: 'blur(5px)',
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  maxWidth: '250px',
+  mb: 3,
+  
+}}>
+  {/* Rest of your panel content remains the same */}
+  <Typography  sx={{ 
+    fontWeight: 'bold', 
+    color: 'rgb(46, 111, 155)',
+    mb: 1,
+    fontFamily: 'Arial, sans-serif',
+    textTransform: 'uppercase',
+    letterSpacing: '1px'
+  }}>
+    Sample Videos
+  </Typography>
+
+  {/* Links Container */}
+  <Box sx={{ 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  }}>
+    {/* All Videos Link */}
+    <Box sx={{ 
+      display: 'flex',
+      alignItems: 'center',
+      '&:hover': { 
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '4px'
+      }
+    }}>
+      <Box sx={{
+        width: '4px',
+        height: '24px',
+        backgroundColor: 'primary.main',
+        mr: 1,
+        borderRadius: '2px'
+      }} />
+      <Typography 
+        variant="subtitle2" 
+        sx={{ 
+          
+          cursor: 'pointer',
+          py: '4px',
+          px: 1,
+          flexGrow: 1
+        }}
+        onClick={() => navigate('/job-seeker-explore-public')}
+      >
+        Jobseekers
+      </Typography>
+</Box>
+ <Box sx={{ 
+      display: 'flex',
+      alignItems: 'center',
+      '&:hover': { 
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '4px'
+      }
+    }}>
+        <Box sx={{
+        width: '4px',
+        height: '24px',
+        backgroundColor: 'primary.main',
+        mr: 1,
+        borderRadius: '2px'
+      }} />
+      <Typography 
+        variant="subtitle2" 
+        sx={{ 
+          
+          cursor: 'pointer',
+          py: '4px',
+          px: 1,
+          flexGrow: 1
+        }}
+        onClick={() => navigate('/employer-explore-public')}
+      >
+        Employers
+      </Typography>
+    
+</Box>
+    
+    </Box>
+  <Typography  sx={{ 
+    fontWeight: 'bold', 
+    color: 'rgb(39, 111, 121)',
+    mt: 1,
+    
+    fontFamily: 'Arial, sans-serif',
+    textTransform: 'uppercase',
+    letterSpacing: '1px'
+  }}>
+    Real Videos submited
+  </Typography>
+
+  {/* Links Container */}
+  <Box sx={{ 
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  }}>
+    {/* All Videos Link */}
+    <Box sx={{ 
+      display: 'flex',
+      alignItems: 'center',
+      '&:hover': { 
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '4px'
+      }
+    }}>
+      <Box sx={{
+        width: '4px',
+        height: '24px',
+        backgroundColor: 'primary.main',
+        mr: 1,
+        borderRadius: '2px'
+      }} />
+      <Typography 
+        variant="subtitle2" 
+        sx={{ 
+          
+          cursor: 'pointer',
+          py: '4px',
+          px: 1,
+          flexGrow: 1
+        }}
+        onClick={() => navigate('/videos/all')}
+      >
+        All Videos
+      </Typography>
+    </Box>
+
+    {/* Jobseekers Link */}
+    <Box sx={{ 
+      display: 'flex',
+      alignItems: 'center',
+      '&:hover': { 
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '4px'
+      }
+    }}>
+      <Box sx={{
+        width: '4px',
+        height: '24px',
+        backgroundColor: 'primary.main',
+        mr: 1,
+        borderRadius: '2px'
+      }} />
+      <Typography 
+        variant="subtitle2" 
+        sx={{ 
+          
+          cursor: 'pointer',
+          py: '4px',
+          px: 1,
+          flexGrow: 1
+        }}
+        onClick={() => navigate('/videos/jobseekers')}
+      >
+        Jobseekers
+      </Typography>
+    </Box>
+
+    {/* Employers Link */}
+    <Box sx={{ 
+      display: 'flex',
+      alignItems: 'center',
+      '&:hover': { 
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: '4px'
+      }
+    }}>
+      <Box sx={{
+        width: '4px',
+        height: '24px',
+        backgroundColor: 'primary.main',
+        mr: 1,
+        borderRadius: '2px'
+      }} />
+      <Typography 
+        variant="subtitle2" 
+        sx={{ 
+          
+          cursor: 'pointer',
+          py: '4px',
+          px: 1,
+          flexGrow: 1
+        }}
+        onClick={() => navigate('/videos/employers')}
+      >
+        Employers
+      </Typography>
+    </Box>
+  </Box>
+
+  {/* Tagline */}
+  <Typography variant="caption" sx={{ 
+    color: 'rgba(49, 36, 36, 0.8)',
+    fontStyle: 'italic',
+    mt: 1,
+    
+    display: 'block'
+  }}>
+  </Typography>
+</Box>
       {/* Main Content */}
       <Box
         component="main"
@@ -339,7 +582,7 @@ const JobseekerExplorePage = () => {
       >
         <Box
           sx={{
-            display: "grid",
+            display: "grid", ml:31,
             gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
             gap: 2
           }}
