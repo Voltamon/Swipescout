@@ -86,6 +86,8 @@ import  EditEmployerProfilePage  from './pages/EditEmployerProfilePage';
 import EditVideoPage  from './pages/EditeVideoPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import JobseekerProfileView from './pages/JobseekerProfileView';
+import EmployerProfileView from './pages/EmployerProfileView';
 
 
 // Initialize once (put this in a separate config file)
@@ -132,8 +134,10 @@ function App() {
           </Route>
           <Route path="/video-feed/:vid?" element={<VideoFeed />} />
           <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
+          <Route path="/jobseeker-profile/:id" element={<JobseekerProfileView />} />
+          <Route path="/employer-profile/:id" element={<EmployerProfileView  />} />
 
           {/* Private Routes */}
 

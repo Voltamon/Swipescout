@@ -118,6 +118,11 @@ export const getUserProfile = () => {
   return api.get(`/job-seeker/`); // : api.get('/users/me');
 };
 
+export const getJobSeekerProfile = (id) => {
+  return api.get(`/job-seeker/${id}`); // : api.get('/users/me');
+};
+
+
 // JobSeeker API services
 export const getUserSkills = () => {
   return api.get('/job-seeker/skills');
@@ -139,6 +144,11 @@ export const getUserExperiences = () => {
   return api.get('/experiences/'); 
 }; 
 
+
+export const getJobSeekerExperiences = (id) => { 
+  return api.get(`/experiences/user/${id}`); 
+}; 
+
 export const addUserExperience = (experience) => {
   return api.post('/experiences/', experience);
 };
@@ -157,6 +167,10 @@ export const getUserEducation = () => {
   return api.get('/education/');
 };
 
+export const getJobSeekerEducation = (id) => {
+  return api.get(`/education/user/${id}`);
+};
+
 export const addUserEducation = (education) => {
   return api.post('/education/', education);
 };
@@ -171,6 +185,22 @@ export const deleteUserEducation = (id) => {
 
 export const getUserVideos = () => {
   return api.get('/videos');
+};
+
+export const getAllVideos = () => {
+  return api.get('/videos/all');
+};
+
+export const getUserVideosByUserId = (id) => {
+  return api.get(`/videos/user/${id}`);
+};
+
+export const getJobSeekersVideos = () => {
+  return api.get('/videos/jobseekers');
+};
+
+export const getEmployersVideos = () => {
+  return api.get('/videos/employers');
 };
 
 export const getUserVideoById = (id) => {
@@ -189,6 +219,10 @@ export const deleteUserVideo = (id) => {
 export const getEmployerProfile = () => {
   console.log('Fetching employer profile...',token);
   return api.get(`/employer/employer-profile/`) ;//: api.get('/employers/company');
+};
+
+export const getEmployerProfileById = (id) => {
+  return api.get(`/employer/employer-profile/${id}`); // : api.get('/users/me');
 };
 
 export const updateEmployerProfile = (companyData) => {
@@ -266,6 +300,9 @@ export const getSkills = () => {
   return api.get('/skills');
 };
 
+export const getJobSeekerSkills = (id) => {
+  return api.get(`/skills/user/${id}`);
+};
 // Swipe API services
 export const swipeJob = (jobId, direction) => {
   return api.post('/swipe', { jobId, direction });
