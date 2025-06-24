@@ -5,7 +5,6 @@ import {
   Grid,
   Typography,
   Avatar,
-  Button,
   Chip,
   Tabs,
   Tab,
@@ -24,7 +23,6 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  Edit as EditIcon,
   PlayArrow as PlayArrowIcon,
   Pause as PauseIcon,
   Favorite as FavoriteIcon,
@@ -42,10 +40,10 @@ import {
   VolumeUp,
   VolumeOff
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences, getUserEducation } from '../services/api.js';
+import { useParams } from 'react-router-dom';
+import { getJobSeekerProfile, getUserVideosByUserId, getJobSeekerSkills, getJobSeekerExperiences, getJobSeekerEducation } from '../services/api.js';
 
-// Enhanced styled components
+// Enhanced styled components (same as original)
 const ProfileContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   minHeight: '100vh',
@@ -216,10 +214,10 @@ const ExperienceCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const JobSeekerProfile = () => {
+const JobSeekerPublicProfile = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { id } = useParams(); // Get job seeker ID from URL params
   
   // State
   const [tabValue, setTabValue] = useState(0);
@@ -243,26 +241,24 @@ const JobSeekerProfile = () => {
   const mainVideoRef = useRef(null);
   const videoRefs = useRef({});
   
-  // Fetch user data
+  // Fetch job seeker data by ID
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchJobSeekerData = async () => {
       try {
         setLoading(true);
         
-        const profileResponse = await getUserProfile();
+        const profileResponse = await getJobSeekerProfile(id);
         setProfile(profileResponse.data);
         
-        const skillsResponse = await getUserSkills();
+        const skillsResponse = await getJobSeekerSkills(id);
         setSkills(skillsResponse.data.skills);
         
-        const experiencesResponse = await getUserExperiences();
-        const educationResponse = await getUserEducation();
+        const experiencesResponse = await getJobSeekerExperiences(id);
+        const educationResponse = await getJobSeekerEducation(id);
         setExperiences(experiencesResponse.data.experiences);
         setEducation(educationResponse.data.educations);
         
-        const videosResponse = await getUserVideos();
-        console.log("videosResponse");
-        console.log(videosResponse.data.videos);
+        const videosResponse = await getUserVideosByUserId(id);
         setVideos(videosResponse.data.videos);
         
         const mainVideo = videosResponse.data.videos.find(video => video.video_position === "main");
@@ -280,13 +276,15 @@ const JobSeekerProfile = () => {
         
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching job seeker data:', error);
         setLoading(false);
       }
     };
     
-    fetchUserData();
-  }, []);
+    if (id) {
+      fetchJobSeekerData();
+    }
+  }, [id]);
   
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -369,10 +367,6 @@ const JobSeekerProfile = () => {
     }));
   };
   
-  const handleEditProfile = () => {
-    navigate('/edit-JobSeeker-Profile');
-  };
-  
   // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Present';
@@ -383,153 +377,6 @@ const JobSeekerProfile = () => {
     ];
     return `${months[date.getMonth()]} ${date.getFullYear()}`;
   };
-
-    // Mock data for demonstration
-const mockProfile = {
-  id: '1',
-  name: 'A SAMPLE Profile data / Start Edit Yours instead',
-  title: 'Frontend Developer',
-  location: 'Riyadh, Saudi Arabia',
-  bio: 'Frontend developer with 5 years of experience in web application development using React and Angular. Specializing in UI design and user experience improvement.',
-  email: 'ahmed@example.com',
-  phone: '+966 50 123 4567',
-  website: 'www.ahmeddev.com',
-  avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-  mainVideo: 'https://www.w3schools.com/html/mov_bbb.mp4',
-  social: {
-    linkedin: 'linkedin.com/in/ahmed',
-    github: 'github.com/ahmed',
-    twitter: 'twitter.com/ahmed'
-  }
-};
-
-const mockSkills = [
-  'React', 'Angular', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3',
-  'Material UI', 'Redux', 'Node.js', 'Express', 'MongoDB', 'Git',
-  'Responsive Design', 'UI/UX', 'RESTful APIs', 'GraphQL'
-];
-
-const mockExperiences = [
-  {
-    id: '1',
-    company: 'Advanced Technology Company',
-    position: 'Senior Frontend Developer',
-    startDate: '2020-01',
-    endDate: null,
-    current: true,
-    description: 'Developed user interfaces for web applications using React and TypeScript. Designed and implemented application architecture and managed application state using Redux. Collaborated with a team of developers to improve application performance and user experience.',
-    location: 'Riyadh'
-  },
-  {
-    id: '2',
-    company: 'Global Software Company',
-    position: 'Frontend Developer',
-    startDate: '2018-03',
-    endDate: '2019-12',
-    current: false,
-    description: 'Developed user interfaces for web applications using Angular. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive web applications.',
-    location: 'Jeddah'
-  },
-  {
-    id: '3',
-    company: 'Digital Solutions Company',
-    position: 'Web Developer',
-    startDate: '2016-06',
-    endDate: '2018-02',
-    current: false,
-    description: 'Developed websites using HTML, CSS, and JavaScript. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive websites.',
-    location: 'Dammam'
-  }
-];
-
-const mockEducation = [
-  {
-    id: '1',
-    institution: 'King Saud University',
-    degree: 'Bachelor of Computer Science',
-    field: 'Computer Science',
-    startDate: '2012-09',
-    endDate: '2016-05',
-    description: 'Specialized in software development and software engineering. Graduation project: Developed a web application for project management.',
-    location: 'Riyadh'
-  },
-  {
-    id: '2',
-    institution: 'Programming Academy',
-    degree: 'Advanced Web Development Certificate',
-    field: 'Web Development',
-    startDate: '2016-06',
-    endDate: '2016-08',
-    description: 'Intensive course in web development using the latest technologies.',
-    location: 'Riyadh'
-  }
-];
-
-const mockVideos = [
-  {
-    id: '1',
-    title: 'Introduction to Myself',
-    thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 30,
-    type: 'intro',
-    views: 120
-  },
-  {
-    id: '2',
-    title: 'My React Skills',
-    thumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 45,
-    type: 'skills',
-    views: 85
-  },
-  {
-    id: '3',
-    title: 'My Previous Experiences',
-    thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 40,
-    type: 'experience',
-    views: 67
-  },
-  {
-    id: '4',
-    title: 'My Previous Projects',
-    thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 35,
-    type: 'portfolio',
-    views: 92
-  },
-  {
-    id: '5',
-    title: 'Why I am a Good Fit for the Job',
-    thumbnail: 'https://i.ytimg.com/vi/RgKAFK5djSk/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 42,
-    type: 'outro',
-    views: 105
-  },
-  {
-    id: '6',
-    title: 'My Angular Skills',
-    thumbnail: 'https://i.ytimg.com/vi/fRh_vgS2dFE/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 38,
-    type: 'skills',
-    views: 73
-  }
-];
-
-  
-  // Use mock data if real data is not available
-  const userData = profile || mockProfile;
-  const userSkills = profile ? skills : mockSkills;
-  const userExperiences = profile ? experiences : mockExperiences;
-  const userEducation = profile ? education : mockEducation;
-  const userVideos = profile ? videos : mockVideos;
-
 
   if (loading) {
     return (
@@ -543,54 +390,56 @@ const mockVideos = [
     );
   }
 
+  if (!profile) {
+    return (
+      <ProfileContainer>
+        <Container maxWidth="lg">
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+            <Typography variant="h6">Profile not found</Typography>
+          </Box>
+        </Container>
+      </ProfileContainer>
+    );
+  }
+
   return (
-    <ProfileContainer  sx={{
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    padding: 0,
-    minHeight: '100vh',
-    height: '100%', 
-    mt: 0,
-    pt: 2, 
-    mb: 0,
-    paddingBottom: 4,
-  }}>
+    <ProfileContainer sx={{
+      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'top right',
+      padding: 0,
+      minHeight: '100vh',
+      height: '100%', 
+      mt: 0,
+      pt: 2, 
+      mb: 0,
+      paddingBottom: 4,
+    }}>
       <Container maxWidth="lg">
         {/* Profile Header */}
         <ProfileHeader>
           <ProfileInfo>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <ProfileAvatar src={VITE_API_BASE_URL+userData.profile_pic} alt={userData.name} />
+              <ProfileAvatar src={`${VITE_API_BASE_URL}${profile.profile_pic}`} alt={profile.name} />
               <Box>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-                  {userData.name}
+                  {profile.name}
                 </Typography>
                 <Typography variant="h6" color="primary" fontWeight="medium">
-                  {userData.title}
+                  {profile.title}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                   <LocationIcon fontSize="small" color="action" />
                   <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                    {userData.location}
+                    {profile.location}
                   </Typography>
                 </Box>
               </Box>
             </Box>
 
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<EditIcon />}
-              onClick={handleEditProfile}
-              sx={{ mb: 3, boxShadow: 2 }}
-            >
-              Edit Profile
-            </Button>
-
             <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
-              {userData.bio}
+              {profile.bio}
             </Typography>
 
             <Box sx={{ mb: 3 }}>
@@ -598,57 +447,57 @@ const mockVideos = [
                 Skills
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                {userSkills.map((skill, index) => (
+                {skills.map((skill, index) => (
                   <SkillChip key={index} label={skill.name} sx={{ mb: 1, mr: 1 }} />
                 ))}
               </Box>
             </Box>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-              {userData.email && (
+              {profile.email && (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <EmailIcon fontSize="small" color="action" />
                   <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {userData.email}
+                    {profile.email}
                   </Typography>
                 </Box>
               )}
-              {userData.phone && (
+              {profile.phone && (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <PhoneIcon fontSize="small" color="action" />
                   <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {userData.phone}
+                    {profile.phone}
                   </Typography>
                 </Box>
               )}
-              {userData.website && (
+              {profile.website && (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <LanguageIcon fontSize="small" color="action" />
                   <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {userData.website}
+                    {profile.website}
                   </Typography>
                 </Box>
               )}
             </Box>
 
             <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
-              {userData.social?.linkedin && (
+              {profile.social?.linkedin && (
                 <Tooltip title="LinkedIn">
-                  <IconButton color="primary" aria-label="LinkedIn" href={userData.social.linkedin} target="_blank">
+                  <IconButton color="primary" aria-label="LinkedIn" href={profile.social.linkedin} target="_blank">
                     <LinkedInIcon />
                   </IconButton>
                 </Tooltip>
               )}
-              {userData.social?.github && (
+              {profile.social?.github && (
                 <Tooltip title="GitHub">
-                  <IconButton color="primary" aria-label="GitHub" href={userData.social.github} target="_blank">
+                  <IconButton color="primary" aria-label="GitHub" href={profile.social.github} target="_blank">
                     <GitHubIcon />
                   </IconButton>
                 </Tooltip>
               )}
-              {userData.social?.twitter && (
+              {profile.social?.twitter && (
                 <Tooltip title="Twitter">
-                  <IconButton color="primary" aria-label="Twitter" href={userData.social.twitter} target="_blank">
+                  <IconButton color="primary" aria-label="Twitter" href={profile.social.twitter} target="_blank">
                     <TwitterIcon />
                   </IconButton>
                 </Tooltip>
@@ -731,8 +580,8 @@ const mockVideos = [
 
           {/* Experience Tab */}
           <TabPanel value={tabValue} index={0}>
-            {userExperiences.length > 0 ? (
-              userExperiences.map((exp) => (
+            {experiences.length > 0 ? (
+              experiences.map((exp) => (
                 <ExperienceCard key={exp.id} sx={{ mb: 3 }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -769,8 +618,8 @@ const mockVideos = [
 
           {/* Education Tab */}
           <TabPanel value={tabValue} index={1}>
-            {userEducation.length > 0 ? (
-              userEducation.map((edu) => (
+            {education.length > 0 ? (
+              education.map((edu) => (
                 <ExperienceCard key={edu.id} sx={{ mb: 3 }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -815,8 +664,8 @@ const mockVideos = [
           {/* Skills Tab */}
           <TabPanel value={tabValue} index={2}>
             <Grid container spacing={2}>
-              {userSkills.length > 0 ? (
-                userSkills.map((skill, index) => (
+              {skills.length > 0 ? (
+                skills.map((skill, index) => (
                   <Grid item xs={12} sm={6} md={4} key={index}>
                     <Paper sx={{ 
                       p: 2, 
@@ -856,44 +705,44 @@ const mockVideos = [
                   Contact Information
                 </Typography>
                 <List>
-                  {userData.email && (
+                  {profile.email && (
                     <ListItem sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <EmailIcon color="primary" />
                       </ListItemIcon>
                       <ListItemText 
                         primary="Email" 
-                        secondary={userData.email} 
+                        secondary={profile.email} 
                         secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
                       />
                     </ListItem>
                   )}
-                  {userData.phone && (
+                  {profile.phone && (
                     <ListItem sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <PhoneIcon color="primary" />
                       </ListItemIcon>
-                      <ListItemText primary="Phone Number" secondary={userData.phone} />
+                      <ListItemText primary="Phone Number" secondary={profile.phone} />
                     </ListItem>
                   )}
-                  {userData.website && (
+                  {profile.website && (
                     <ListItem sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <LanguageIcon color="primary" />
                       </ListItemIcon>
                       <ListItemText 
                         primary="Website" 
-                        secondary={userData.website} 
+                        secondary={profile.website} 
                         secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
                       />
                     </ListItem>
                   )}
-                  {userData.location && (
+                  {profile.location && (
                     <ListItem sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <LocationIcon color="primary" />
                       </ListItemIcon>
-                      <ListItemText primary="Location" secondary={userData.location} />
+                      <ListItemText primary="Location" secondary={profile.location} />
                     </ListItem>
                   )}
                 </List>
@@ -903,38 +752,38 @@ const mockVideos = [
                   Social Media
                 </Typography>
                 <List>
-                  {userData.social?.linkedin && (
-                    <ListItem button component="a" href={userData.social.linkedin} target="_blank" sx={{ px: 0 }}>
+                  {profile.social?.linkedin && (
+                    <ListItem button component="a" href={profile.social.linkedin} target="_blank" sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <LinkedInIcon color="primary" />
                       </ListItemIcon>
                       <ListItemText 
                         primary="LinkedIn" 
-                        secondary={userData.social.linkedin} 
+                        secondary={profile.social.linkedin} 
                         secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
                       />
                     </ListItem>
                   )}
-                  {userData.social?.github && (
-                    <ListItem button component="a" href={userData.social.github} target="_blank" sx={{ px: 0 }}>
+                  {profile.social?.github && (
+                    <ListItem button component="a" href={profile.social.github} target="_blank" sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <GitHubIcon color="primary" />
                       </ListItemIcon>
                       <ListItemText 
                         primary="GitHub" 
-                        secondary={userData.social.github} 
+                        secondary={profile.social.github} 
                         secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
                       />
                     </ListItem>
                   )}
-                  {userData.social?.twitter && (
-                    <ListItem button component="a" href={userData.social.twitter} target="_blank" sx={{ px: 0 }}>
+                  {profile.social?.twitter && (
+                    <ListItem button component="a" href={profile.social.twitter} target="_blank" sx={{ px: 0 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
                         <TwitterIcon color="primary" />
                       </ListItemIcon>
                       <ListItemText 
                         primary="Twitter" 
-                        secondary={userData.social.twitter} 
+                        secondary={profile.social.twitter} 
                         secondaryTypographyProps={{ sx: { wordBreak: 'break-all' } }}
                       />
                     </ListItem>
@@ -946,7 +795,7 @@ const mockVideos = [
         </Paper>
 
         {/* Videos Gallery */}
-        {userVideos.length > 0 && (
+        {videos.length > 0 && (
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">
               My Videos
@@ -954,7 +803,7 @@ const mockVideos = [
             <Divider sx={{ mb: 3 }} />
 
             <Grid container spacing={3}>
-              {userVideos.filter(video => video.video_position !== "main").map((video) => (
+              {videos.filter(video => video.video_position !== "main").map((video) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
                   <VideoCard>
                     <VideoCardMedia>
@@ -1039,4 +888,4 @@ const mockVideos = [
   );
 };
 
-export default JobSeekerProfile;
+export default JobSeekerPublicProfile;

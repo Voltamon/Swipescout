@@ -41,26 +41,30 @@ import {
   Business as BusinessIcon,
   AttachMoney as MoneyIcon,
   FilterList as FilterListIcon,
-  Sort as SortIcon
+  Sort as SortIcon,
+  VolumeOff as VolumeOffIcon,
+  VolumeUp as VolumeUpIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { getAllJobs, getJobById, getEmployerProfile } from '../services/api';
+import {useAuth} from '../hooks/useAuth';
+import { getAllJobs, getJobById, getEmployerProfile, getCategories ,getAllJobsPosted } from '../services/api';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   minHeight: '100vh',
-  paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(4)
+  padding: theme.spacing(3),
+  width: '100%'
 }));
 
 const SearchPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   marginBottom: theme.spacing(3),
+  width: '100%'
 }));
 
 const JobCard = styled(Card)(({ theme }) => ({
-  height: '100%',
+  width: '100%',
   display: 'flex',
   flexDirection: 'column',
   borderRadius: theme.spacing(1),
@@ -74,9 +78,13 @@ const JobCard = styled(Card)(({ theme }) => ({
 
 const JobCardMedia = styled(CardMedia)(({ theme }) => ({
   height: 0,
-  paddingTop: '56.25%', // 16:9 aspect ratio
+  paddingTop: '56.25%',
   position: 'relative',
   backgroundColor: theme.palette.grey[200],
+  cursor: 'pointer',
+  '&:hover .video-controls': {
+    opacity: 1
+  }
 }));
 
 const VideoPlayButton = styled(IconButton)(({ theme }) => ({
@@ -89,6 +97,20 @@ const VideoPlayButton = styled(IconButton)(({ theme }) => ({
   '&:hover': {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   }
+}));
+
+const VideoControls = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  padding: theme.spacing(1),
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  opacity: 0,
+  transition: 'opacity 0.3s ease',
 }));
 
 const JobCardContent = styled(CardContent)(({ theme }) => ({
@@ -117,6 +139,8 @@ const VideoDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     borderRadius: theme.spacing(1),
     overflow: 'hidden',
+    width: '100%',
+    maxWidth: '800px'
   }
 }));
 
@@ -126,22 +150,11 @@ const VideoDialogContent = styled(DialogContent)(({ theme }) => ({
   position: 'relative',
 }));
 
-const VideoControls = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(1),
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-}));
-
 const JobsListingPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const {role} =useAuth;
   
   // State
   const [jobs, setJobs] = useState([]);
@@ -157,24 +170,41 @@ const JobsListingPage = () => {
     open: false,
     videoUrl: '',
     title: '',
-    isPlaying: false
+    isPlaying: false,
+    isMuted: true
   });
   const [favorites, setFavorites] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   
   // Refs
   const videoRef = React.useRef(null);
+  const hoverVideoRefs = React.useRef({});
   
   // Constants
   const jobsPerPage = 9;
   
-  // Fetch jobs
+  // Fetch jobs and categories
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         
-        // Fetch jobs from API
-        const response = await getAllJobs({
+        let  jobsResponse;
+        // Fetch jobs
+        if (role=="job_seeker")
+        {
+jobsResponse = await getAllJobsPosted({
+          page,
+          limit: jobsPerPage,
+          search: searchQuery,
+          location: locationFilter,
+          category: categoryFilter,
+          sort: sortBy
+        });
+        }
+        else
+         jobsResponse = await getAllJobs({
           page,
           limit: jobsPerPage,
           search: searchQuery,
@@ -183,22 +213,29 @@ const JobsListingPage = () => {
           sort: sortBy
         });
         
-        setJobs(response.data.jobs);
-        setTotalPages(Math.ceil(response.data.total / jobsPerPage));
+        // Fetch categories
+        const categoriesResponse = await getCategories();
+        
+        setJobs(jobsResponse.data.jobs);
+        setTotalPages(Math.ceil(jobsResponse.data.total / jobsPerPage));
+        setCategories(categoriesResponse.data.categories);
+        
+        // Extract unique locations from jobs
+        const uniqueLocations = [...new Set(jobsResponse.data.jobs.map(job => job.location).filter(Boolean))];
+        setLocations(uniqueLocations);
+        
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching jobs:', error);
+        console.error('Error fetching data:', error);
         setLoading(false);
       }
     };
     
-    fetchJobs();
+    fetchData();
   }, [page, searchQuery, locationFilter, categoryFilter, sortBy]);
   
   // Apply filters
   useEffect(() => {
-    // If we're using server-side filtering, this would be redundant
-    // But keeping it for client-side filtering option
     let filtered = [...jobs];
     
     if (searchQuery) {
@@ -217,8 +254,8 @@ const JobsListingPage = () => {
     
     if (categoryFilter) {
       filtered = filtered.filter(job => 
-        job.categories.some(category => 
-          category.toLowerCase() === categoryFilter.toLowerCase()
+        job.categoryRelations && job.categoryRelations.some(categoryRel => 
+          categoryRel.category_id === categoryFilter
         )
       );
     }
@@ -226,13 +263,13 @@ const JobsListingPage = () => {
     // Sort jobs
     switch (sortBy) {
       case 'newest':
-        filtered.sort((a, b) => new Date(b.posted) - new Date(a.posted));
+        filtered.sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at));
         break;
       case 'salary-high':
-        filtered.sort((a, b) => b.salaryMax - a.salaryMax);
+        filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
         break;
       case 'salary-low':
-        filtered.sort((a, b) => a.salaryMin - b.salaryMin);
+        filtered.sort((a, b) => (a.salary_min || 0) - (b.salary_min || 0));
         break;
       default:
         break;
@@ -244,7 +281,7 @@ const JobsListingPage = () => {
   // Handle search
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setPage(1); // Reset to first page on new search
+    setPage(1);
   };
   
   // Handle location filter
@@ -276,7 +313,8 @@ const JobsListingPage = () => {
       open: true,
       videoUrl,
       title,
-      isPlaying: true
+      isPlaying: true,
+      isMuted: true
     });
   };
   
@@ -288,7 +326,6 @@ const JobsListingPage = () => {
       isPlaying: false
     });
     
-    // Pause video when dialog is closed
     if (videoRef.current) {
       videoRef.current.pause();
     }
@@ -310,12 +347,36 @@ const JobsListingPage = () => {
     }
   };
   
+  // Toggle video mute
+  const toggleVideoMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setVideoDialog({
+        ...videoDialog,
+        isMuted: !videoDialog.isMuted
+      });
+    }
+  };
+  
   // Handle video ended
   const handleVideoEnded = () => {
     setVideoDialog({
       ...videoDialog,
       isPlaying: false
     });
+  };
+  
+  // Handle hover video play
+  const handleVideoHover = (jobId, action) => {
+    const videoElement = hoverVideoRefs.current[jobId];
+    if (videoElement) {
+      if (action === 'enter') {
+        videoElement.play();
+      } else {
+        videoElement.pause();
+        videoElement.currentTime = 0;
+      }
+    }
   };
   
   // Toggle favorite
@@ -329,7 +390,7 @@ const JobsListingPage = () => {
   
   // Navigate to job details
   const navigateToJobDetails = (jobId) => {
-    navigate(`/jobs/${jobId}`);
+    navigate(`/job/${jobId}`);
   };
   
   // Navigate to employer profile
@@ -337,7 +398,7 @@ const JobsListingPage = () => {
     navigate(`/employer/${employerId}`);
   };
   
-  // Format date (YYYY-MM-DD to readable format)
+  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return '';
     
@@ -384,191 +445,11 @@ const JobsListingPage = () => {
     return `${range} ${periodMap[period] || ''}`;
   };
   
-  // Mock data for demonstration
-  const mockJobs = [
-    {
-      id: '1',
-      title: 'Senior Frontend Developer',
-      company: {
-        id: '101',
-        name: 'Tech Innovations Inc.',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'San Francisco, CA',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 120000,
-      salaryMax: 150000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are looking for a Senior Frontend Developer to join our team. The ideal candidate will have experience with React, TypeScript, and modern frontend development practices.',
-      posted: '2023-05-15',
-      deadline: '2023-06-15',
-      categories: ['Software Development', 'Web Development'],
-      skills: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-      applicants: 24
-    },
-    {
-      id: '2',
-      title: 'Backend Engineer',
-      company: {
-        id: '102',
-        name: 'DataFlow Systems',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Remote',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 110000,
-      salaryMax: 140000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are seeking a Backend Engineer to develop and maintain our server-side applications. The ideal candidate will have experience with Node.js, Express, and database design.',
-      posted: '2023-05-10',
-      deadline: '2023-06-10',
-      categories: ['Software Development', 'Backend Development'],
-      skills: ['Node.js', 'Express', 'MongoDB', 'SQL', 'API Design'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
-      applicants: 18
-    },
-    {
-      id: '3',
-      title: 'UX/UI Designer',
-      company: {
-        id: '103',
-        name: 'Creative Solutions',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'New York, NY',
-      type: 'Full-time',
-      remote: false,
-      salaryMin: 100000,
-      salaryMax: 130000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are looking for a UX/UI Designer to create engaging and intuitive user experiences for our products. The ideal candidate will have a strong portfolio demonstrating their design skills.',
-      posted: '2023-05-05',
-      deadline: '2023-06-05',
-      categories: ['Design', 'UI/UX Design'],
-      skills: ['Figma', 'Adobe XD', 'User Research', 'Wireframing', 'Prototyping'],
-      videoUrl: null,
-      videoThumbnail: null,
-      applicants: 32
-    },
-    {
-      id: '4',
-      title: 'DevOps Engineer',
-      company: {
-        id: '104',
-        name: 'Cloud Innovations',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Seattle, WA',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 130000,
-      salaryMax: 160000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are seeking a DevOps Engineer to help us build and maintain our cloud infrastructure. The ideal candidate will have experience with AWS, Docker, and CI/CD pipelines.',
-      posted: '2023-05-01',
-      deadline: '2023-06-01',
-      categories: ['DevOps', 'Cloud Computing'],
-      skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-      applicants: 15
-    },
-    {
-      id: '5',
-      title: 'Data Scientist',
-      company: {
-        id: '105',
-        name: 'Analytics Pro',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Boston, MA',
-      type: 'Full-time',
-      remote: true,
-      salaryMin: 125000,
-      salaryMax: 155000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are looking for a Data Scientist to help us extract insights from our data. The ideal candidate will have experience with machine learning, statistical analysis, and data visualization.',
-      posted: '2023-04-28',
-      deadline: '2023-05-28',
-      categories: ['Data Science', 'Machine Learning'],
-      skills: ['Python', 'R', 'SQL', 'TensorFlow', 'PyTorch'],
-      videoUrl: null,
-      videoThumbnail: null,
-      applicants: 27
-    },
-    {
-      id: '6',
-      title: 'Product Manager',
-      company: {
-        id: '106',
-        name: 'Product Visionaries',
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: 'Austin, TX',
-      type: 'Full-time',
-      remote: false,
-      salaryMin: 115000,
-      salaryMax: 145000,
-      salaryCurrency: 'USD',
-      salaryPeriod: 'yearly',
-      description: 'We are seeking a Product Manager to lead our product development efforts. The ideal candidate will have experience with agile methodologies, user research, and product strategy.',
-      posted: '2023-04-25',
-      deadline: '2023-05-25',
-      categories: ['Product Management'],
-      skills: ['Agile', 'User Research', 'Product Strategy', 'Roadmapping', 'Stakeholder Management'],
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      videoThumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg',
-      applicants: 21
-    }
-  ];
-  
-  // Use mock data if real data is not available
-  const displayJobs = jobs.length > 0 ? jobs : mockJobs;
-  
-  // Available categories for filter
-  const availableCategories = [
-    'Software Development',
-    'Web Development',
-    'Mobile Development',
-    'UI/UX Design',
-    'Data Science',
-    'Machine Learning',
-    'DevOps',
-    'Cloud Computing',
-    'Cybersecurity',
-    'Network Administration',
-    'Database Administration',
-    'Project Management',
-    'Product Management',
-    'Quality Assurance',
-    'Technical Support'
-  ];
-  
-  // Available locations for filter
-  const availableLocations = [
-    'San Francisco, CA',
-    'New York, NY',
-    'Seattle, WA',
-    'Boston, MA',
-    'Austin, TX',
-    'Remote'
-  ];
-  
   return (
     <PageContainer>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ width: '100%', padding: 0 }}>
         {/* Page Header */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 4, width: '100%' }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Job Listings
           </Typography>
@@ -611,7 +492,7 @@ const JobsListingPage = () => {
                   }
                 >
                   <MenuItem value="">All Locations</MenuItem>
-                  {availableLocations.map((location) => (
+                  {locations.map((location) => (
                     <MenuItem key={location} value={location}>
                       {location}
                     </MenuItem>
@@ -634,9 +515,9 @@ const JobsListingPage = () => {
                   }
                 >
                   <MenuItem value="">All Categories</MenuItem>
-                  {availableCategories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
+                  {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -665,13 +546,13 @@ const JobsListingPage = () => {
           </Grid>
         </SearchPaper>
         
-        {/* Jobs Grid */}
+        {/* Jobs List */}
         {loading ? (
-          <Grid container spacing={3}>
-            {[...Array(6)].map((_, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+          <Box sx={{ width: '100%' }}>
+            {[...Array(3)].map((_, index) => (
+              <Box key={index} sx={{ mb: 3, width: '100%' }}>
                 <JobCard>
-                  <Skeleton variant="rectangular" height={200} />
+                  <Skeleton variant="rectangular" height={200} width="100%" />
                   <CardContent>
                     <Skeleton variant="text" height={32} width="80%" />
                     <Skeleton variant="text" height={24} width="60%" />
@@ -686,11 +567,11 @@ const JobsListingPage = () => {
                     </Box>
                   </CardContent>
                 </JobCard>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
-        ) : displayJobs.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 5 }}>
+          </Box>
+        ) : filteredJobs.length === 0 ? (
+          <Box sx={{ textAlign: 'center', py: 5, width: '100%' }}>
             <Typography variant="h6" color="textSecondary">
               No jobs found matching your criteria
             </Typography>
@@ -699,33 +580,61 @@ const JobsListingPage = () => {
             </Typography>
           </Box>
         ) : (
-          <Grid container spacing={3}>
-            {displayJobs.map((job) => (
-              <Grid item xs={12} sm={6} md={4} key={job.id}>
+          <Box sx={{ width: '100%' }}>
+            {filteredJobs.map((job) => (
+              <Box key={job.id} sx={{ mb: 3, width: '100%' }}>
                 <JobCard>
-                  {job.videoUrl ? (
-                    <JobCardMedia
-                      image={job.videoThumbnail || `https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
-                      title={job.title}
-                      onClick={() => openVideoDialog(job.videoUrl, job.title)}
+                  {job.video?.video_url ? (
+                    <Box
+                      sx={{
+                        height: 0,
+                        paddingTop: '56.25%',
+                        position: 'relative',
+                        backgroundColor: theme.palette.grey[200],
+                        overflow: 'hidden',
+                        '&:hover video': {
+                          opacity: 1,
+                        },
+                        '& video': {
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease-in-out',
+                        },
+                        '&:hover .video-overlay': {
+                          opacity: 0,
+                        },
+                      }}
+                      onMouseEnter={() => handleVideoHover(job.id, 'enter')}
+                      onMouseLeave={() => handleVideoHover(job.id, 'leave')}
+                      onClick={() => openVideoDialog(job.video.video_url, job.title)}
                     >
-                      <VideoPlayButton aria-label="play">
+                      <video
+                        ref={el => hoverVideoRefs.current[job.id] = el}
+                        src={job.video.video_url}
+                        poster={job.video.thumbnail || `https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
+                        muted
+                        loop
+                        playsInline
+                      />
+                      <VideoPlayButton aria-label="play" className="video-overlay">
                         <PlayArrowIcon />
                       </VideoPlayButton>
-                    </JobCardMedia>
-                  ) : (
-                    <JobCardMedia
-                      image={`https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
-                      title={job.title}
-                    />
-                  )}
+                    </Box>
+                  ) : ''}
+                  
                   <JobCardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Box
+                      {job.company.logo && (
+                        <><Box
                         component="img"
-                        src={job.company.logo}
+                        src={job.company.logo || 'https://via.placeholder.com/40x40?text=Logo'}
                         alt={job.company.name}
-                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1 }}
+                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1, objectFit: 'cover' ,fontSize:8 }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -734,7 +643,7 @@ const JobsListingPage = () => {
                         onClick={() => navigateToEmployerProfile(job.company.id)}
                       >
                         {job.company.name}
-                      </Typography>
+                      </Typography></>)}
                     </Box>
                     
                     <Typography
@@ -757,25 +666,25 @@ const JobsListingPage = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <LocationIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                       <Typography variant="body2" color="textSecondary">
-                        {job.location}
+                        {job.location || 'Location not specified'}
                       </Typography>
                     </Box>
                     
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <MoneyIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
                       <Typography variant="body2" color="textSecondary">
-                        {formatSalaryRange(job.salaryMin, job.salaryMax, job.salaryCurrency, job.salaryPeriod)}
+                        {formatSalaryRange(job.salary_min, job.salary_max)}
                       </Typography>
                     </Box>
                     
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
                       <Chip
-                        label={job.type}
+                        label={job.employment_type || 'Full-time'}
                         size="small"
                         color="primary"
                         variant="outlined"
                       />
-                      {job.remote && (
+                      {job.remote_ok && (
                         <Chip
                           label="Remote"
                           size="small"
@@ -797,20 +706,20 @@ const JobsListingPage = () => {
                         WebkitBoxOrient: 'vertical',
                       }}
                     >
-                      {job.description}
+                      {job.description || 'No description provided'}
                     </Typography>
                     
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
-                      {job.skills.slice(0, 3).map((skill, index) => (
+                      {job.jobSkills?.slice(0, 3).map((skill, index) => (
                         <SkillChip
                           key={index}
                           label={skill}
                           size="small"
                         />
                       ))}
-                      {job.skills.length > 3 && (
+                      {job.jobSkills?.length > 3 && (
                         <Chip
-                          label={`+${job.skills.length - 3}`}
+                          label={`+${job.jobSkills.length - 3}`}
                           size="small"
                           variant="outlined"
                         />
@@ -819,10 +728,7 @@ const JobsListingPage = () => {
                     
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
                       <Typography variant="caption" color="textSecondary">
-                        Posted: {formatDate(job.posted)}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {job.applicants} applicants
+                        Posted: {formatDate(job.posted_at)}
                       </Typography>
                     </Box>
                   </JobCardContent>
@@ -854,14 +760,14 @@ const JobsListingPage = () => {
                     </IconButton>
                   </CardActions>
                 </JobCard>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         )}
         
         {/* Pagination */}
         {totalPages > 1 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, width: '100%' }}>
             <Pagination
               count={totalPages}
               page={page}
@@ -895,12 +801,16 @@ const JobsListingPage = () => {
             width="100%"
             height="auto"
             autoPlay
+            muted={videoDialog.isMuted}
             onEnded={handleVideoEnded}
             style={{ display: 'block' }}
           />
           <VideoControls>
             <IconButton size="small" color="inherit" onClick={toggleVideoPlayback}>
               {videoDialog.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+            </IconButton>
+            <IconButton size="small" color="inherit" onClick={toggleVideoMute}>
+              {videoDialog.isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
             </IconButton>
             <Typography variant="caption" color="inherit">
               {videoDialog.title}

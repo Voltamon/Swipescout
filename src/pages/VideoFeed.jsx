@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   Box,
   IconButton,
@@ -26,26 +26,9 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useVideoContext } from '../context/VideoContext';
 
-// --- Mock Data for Company Videos ---
-const mockCompanyVideos = [
-  {
-    id: '1',
-    companyName: 'Corporate Solutions Inc.',
-    videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935032/Employer/grfwutcixeecejrsqu7o.mp4',
-    logoUrl: 'https://via.placeholder.com/48/5DADE2/FFFFFF?text=CSI',
-    description: 'Discover the vibrant culture and innovative projects at Corporate Solutions Inc. We are always looking for passionate individuals to join our growing team.',
-    industry: 'Consulting',
-    foundedYear: 2005,
-    employeeCount: '500-1000',
-    benefits: ['Health Insurance', '401k', 'Paid Time Off', 'Flexible Hours'],
-    tagline: 'Innovate. Grow. Succeed.',
-    liked: false,
-    saved: false // Added saved property to match component logic
-  }
-];
-
-// Styled components (unchanged - keep these as they are)
+// Styled components with improved styles
 const VideoContainer = styled('div')({
   position: 'relative',
   width: '100%',
@@ -59,6 +42,26 @@ const StyledVideo = styled('video')({
   height: '100%',
   objectFit: 'cover',
 });
+
+const UploadingVideoOverlay = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  border: '4px solid transparent',
+  borderRadius: '8px',
+  background: 'linear-gradient(45deg, #ff0000, #ff8a00) border-box',
+  mask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+  maskComposite: 'exclude',
+  animation: 'pulse 2s infinite',
+  zIndex: 2,
+  '@keyframes pulse': {
+    '0%': { opacity: 0.7 },
+    '50%': { opacity: 0.3 },
+    '100%': { opacity: 0.7 },
+  },
+}));
 
 const OverlayContent = styled('div')({
   position: 'absolute',
@@ -103,32 +106,58 @@ const ConnectButton = styled(Button)({
   },
 });
 
-const CompanyDetailDialog = styled(Dialog)({ // Renamed from JobDetailDialog
+const CompanyDetailDialog = styled(Dialog)({
   '& .MuiDialog-paper': {
     borderRadius: '16px',
     maxWidth: '600px',
     width: '90%',
+    backgroundColor: '#1e1e1e',
+    color: '#fff',
   },
 });
-
 
 const VideoFeed = () => {
   const { vid } = useParams();
   const navigate = useNavigate();
+  const { videos } = useVideoContext();
 
-  const [videos, setVideos] = useState(mockCompanyVideos);
-
-  const initialIndex = vid ? videos.findIndex(video => video.id === vid) : 0;
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(
-    initialIndex >= 0 ? initialIndex : 0
-  );
-
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const videoRef = useRef(null);
 
-  const currentVideo = videos[currentVideoIndex];
+  // Combine mock data with context videos
+  const allVideos = [
+    ...videos.filter(v => v.status === 'completed' && v.video_url),
+    {
+      id: '1',
+      companyName: 'Corporate Solutions Inc.',
+      videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935032/Employer/grfwutcixeecejrsqu7o.mp4',
+      logoUrl: 'https://via.placeholder.com/48/5DADE2/FFFFFF?text=CSI',
+      description: 'Discover the vibrant culture and innovative projects at Corporate Solutions Inc. We are always looking for passionate individuals to join our growing team.',
+      industry: 'Consulting',
+      foundedYear: 2005,
+      employeeCount: '500-1000',
+      benefits: ['Health Insurance', '401k', 'Paid Time Off', 'Flexible Hours'],
+      tagline: 'Innovate. Grow. Succeed.',
+      liked: false,
+      saved: false,
+      status: 'completed'
+    }
+  ];
+
+  const currentVideo = allVideos[currentVideoIndex];
+
+  useEffect(() => {
+    // Set initial video index based on URL param
+    if (vid) {
+      const index = allVideos.findIndex(video => video.id === vid);
+      if (index >= 0) {
+        setCurrentVideoIndex(index);
+      }
+    }
+  }, [vid, allVideos]);
 
   const tryPlayVideo = () => {
     if (videoRef.current) {
@@ -145,7 +174,7 @@ const VideoFeed = () => {
   };
 
   const handleSwipeUp = () => {
-    if (currentVideoIndex < videos.length - 1) {
+    if (currentVideoIndex < allVideos.length - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
       setIsLoading(true);
       setIsPlaying(false);
@@ -172,24 +201,12 @@ const VideoFeed = () => {
   };
 
   const toggleLike = () => {
-    const updatedVideos = [...videos];
-    // Ensure 'liked' property exists on the current video object
-    if (updatedVideos[currentVideoIndex]) {
-      updatedVideos[currentVideoIndex].liked = !updatedVideos[currentVideoIndex].liked;
-      setVideos(updatedVideos);
-    }
+    // Implement like functionality
   };
 
   const toggleSave = () => {
-    const updatedVideos = [...videos];
-    // Ensure 'saved' property exists on the current video object
-    if (updatedVideos[currentVideoIndex]) {
-        // Add 'saved' property if it doesn't exist, default to false
-        updatedVideos[currentVideoIndex].saved = !updatedVideos[currentVideoIndex].saved;
-        setVideos(updatedVideos);
-    }
+    // Implement save functionality
   };
-
 
   const handleVideoLoaded = () => {
     setIsLoading(false);
@@ -245,10 +262,18 @@ const VideoFeed = () => {
       videoRef.current.muted = false;
       videoRef.current.load();
     }
-  }, [currentVideoIndex, currentVideo.videoUrl]);
+  }, [currentVideoIndex, currentVideo?.videoUrl]);
+
+  if (!currentVideo) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography variant="h6">No videos available</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ position: 'relative', height: '100vh', overflow: 'hidden', backgroundColor: '#000' }}>
       <VideoContainer
         onClick={togglePlay}
         onTouchStart={(e) => {
@@ -279,6 +304,8 @@ const VideoFeed = () => {
           </Box>
         )}
 
+        {currentVideo.status === 'uploading' && <UploadingVideoOverlay />}
+
         <StyledVideo
           ref={videoRef}
           src={currentVideo.videoUrl}
@@ -302,6 +329,9 @@ const VideoFeed = () => {
               zIndex: 2,
               width: '64px',
               height: '64px',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.7)',
+              },
             }}
             onClick={togglePlay}
           >
@@ -326,13 +356,12 @@ const VideoFeed = () => {
           <Close />
         </IconButton>
 
-        {/* Overlay Content (Bottom Left) - Corrected for Company Data */}
         <OverlayContent>
-          <Typography variant="h5" fontWeight="bold" sx={{ color: "#fff", }}>
-            {currentVideo.companyName}
+          <Typography variant="h5" fontWeight="bold" sx={{ color: "#fff" }}>
+            {currentVideo.companyName || 'Company Name'}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1, color: "rgba(216, 220, 223, 0.5)", }}>
-            {currentVideo.tagline}
+          <Typography variant="subtitle1" sx={{ mb: 1, color: "rgba(255, 255, 255, 0.7)" }}>
+            {currentVideo.tagline || 'Company Tagline'}
           </Typography>
           <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
             {currentVideo.industry && (
@@ -358,8 +387,8 @@ const VideoFeed = () => {
               />
             )}
           </Stack>
-          <Typography variant="body2" sx={{ mb: 2, color: "rgba(238, 238, 238, 0.5)", }}>
-            {currentVideo.description}
+          <Typography variant="body2" sx={{ mb: 2, color: "rgba(255, 255, 255, 0.7)" }}>
+            {currentVideo.description || 'Company description'}
           </Typography>
         </OverlayContent>
 
@@ -373,7 +402,7 @@ const VideoFeed = () => {
               },
             }}
             onClick={handleSwipeUp}
-            disabled={currentVideoIndex >= videos.length - 1}
+            disabled={currentVideoIndex >= allVideos.length - 1}
           >
             <ArrowUpward />
           </IconButton>
@@ -429,11 +458,10 @@ const VideoFeed = () => {
         </ConnectButton>
       </VideoContainer>
 
-      {/* Company Details Dialog - Corrected for Company Data */}
       <CompanyDetailDialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6">Company Details</Typography>
-          <IconButton onClick={handleCloseDialog}>
+          <IconButton onClick={handleCloseDialog} sx={{ color: '#fff' }}>
             <Close />
           </IconButton>
         </DialogTitle>
@@ -449,35 +477,47 @@ const VideoFeed = () => {
           </Box>
 
           <Box sx={{ mb: 3 }}>
-            <Typography variant="body1" paragraph>
-              **About Us:** {currentVideo.description}
+            <Typography variant="body1" paragraph sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+              {currentVideo.description}
             </Typography>
           </Box>
 
           <Stack direction="column" spacing={1} sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
+            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
               Industry
             </Typography>
-            <Typography variant="body1">{currentVideo.industry}</Typography>
+            <Typography variant="body1" sx={{ color: '#fff' }}>
+              {currentVideo.industry}
+            </Typography>
 
-            <Typography variant="subtitle2" color="text.secondary">
+            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
               Founded
             </Typography>
-            <Typography variant="body1">{currentVideo.foundedYear}</Typography>
+            <Typography variant="body1" sx={{ color: '#fff' }}>
+              {currentVideo.foundedYear}
+            </Typography>
 
-            <Typography variant="subtitle2" color="text.secondary">
+            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
               Employees
             </Typography>
-            <Typography variant="body1">{currentVideo.employeeCount}</Typography>
+            <Typography variant="body1" sx={{ color: '#fff' }}>
+              {currentVideo.employeeCount}
+            </Typography>
 
             {currentVideo.benefits && currentVideo.benefits.length > 0 && (
               <>
-                <Typography variant="subtitle2" color="text.secondary">
+                <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
                   Benefits
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {currentVideo.benefits.map((benefit, index) => (
-                    <Chip key={index} label={benefit} color="primary" variant="outlined" />
+                    <Chip 
+                      key={index} 
+                      label={benefit} 
+                      color="primary" 
+                      variant="outlined" 
+                      sx={{ color: '#fff', borderColor: '#1976d2' }}
+                    />
                   ))}
                 </Box>
               </>
@@ -485,7 +525,11 @@ const VideoFeed = () => {
           </Stack>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
-            <Button variant="outlined" onClick={handleCloseDialog}>
+            <Button 
+              variant="outlined" 
+              onClick={handleCloseDialog}
+              sx={{ color: '#fff', borderColor: '#fff' }}
+            >
               Close
             </Button>
             <Button variant="contained" color="primary">

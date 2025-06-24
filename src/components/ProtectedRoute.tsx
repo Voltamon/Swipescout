@@ -1,10 +1,8 @@
 // src/components/ProtectedRoute.tsx
-import { ReactNode, useEffect  } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import Layout from '../components/Layout';
-
 import { useAuth } from "../hooks/useAuth";
-
 
 
 interface User {
@@ -21,30 +19,33 @@ interface ProtectedRouteProps {
   children?: ReactNode;
 }
 
-    
 
-
-const ProtectedRoute = ({   children }) => {
+// In ProtectedRoute.tsx
+const ProtectedRoute = ({ children, requiredRoles = [] }) => {
   const location = useLocation();
-  const { user, logout ,loading} = useAuth();
-  if (loading) {
-    return <div>Loading...</div>; // Or a proper loading spinner
-  }
-      //  user =  JSON.parse(localStorage.getItem("user"));
-  // const role =  JSON.parse(localStorage.getItem("role"));
+  const { user, loading, role, checkAuth } = useAuth();
 
-console.log("-------------------- :",user);
+  useEffect(() => {
+    checkAuth({ silent: true }); // Use silent mode during initial check
+  }, [checkAuth]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!user) {
-    // Redirect to login but save the current location to return to after login
-    return <Navigate to="/login" state={{ from: location }} />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return      <> {children || (
-    <Layout role={user.role}>
-      <Outlet />
+  if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return (
+    <Layout role={role}>
+      {children || <Outlet />}
     </Layout>
-  )} </>;
+  );
 };
 
 export default ProtectedRoute;

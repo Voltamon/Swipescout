@@ -43,12 +43,14 @@ import {
   CheckCircle as CheckCircleIcon,
   ArrowBack as ArrowBackIcon
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // Add useParams
 import { uploadVideo, saveVideoMetadata } from '../services/videoService';
 import { v4 as uuidv4 } from 'uuid';
 import { useVideoContext } from '../context/VideoContext';
+import { 
+  checkUploadStatus, 
 
-
+} from '../services/api';
 
 // Styled components (keep the same as before)
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -132,10 +134,12 @@ const HashtagChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
 }));
 
-const VideoResumeUpload = () => {
+// Modify the component props to include onStatusChange
+const VideoUpload = ({newjobid, onComplete, onStatusChange, embedded}) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [uploadStatus, setUploadStatus] = useState(null);
+  // Destructure addLocalVideo and updateVideoStatus from context
   const { addLocalVideo, updateVideoStatus } = useVideoContext();
 
   
@@ -156,14 +160,14 @@ const VideoResumeUpload = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [recordingStep, setRecordingStep] = useState(0);
-  const [uploadId, setUploadId] = useState(null);
+  const [uploadId, setUploadId] = useState(null); // This is the server-assigned ID once upload starts
+  const [tempLocalId, setTempLocalId] = useState(null); // This is the temporary ID for local tracking
   
   // State for video metadata
   const [videoTitle, setVideoTitle] = useState('');
   const [videoPosition, setVideoPosition] = useState('main');
   const [videoType, setVideoType] = useState('intro');
   const [hashtags, setHashtags] = useState([]);
-  const [jobId, setJobId] = useState([]);
   const [newHashtag, setNewHashtag] = useState('');
   
   // UI state
@@ -173,10 +177,16 @@ const VideoResumeUpload = () => {
   
   // Timer for recording
   const timerRef = useRef(null);
-  const statusCheckIntervalRef = useRef(null);
-
+  
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
+  // Inform parent component about uploading/recording status
+  useEffect(() => {
+    if (onStatusChange) {
+      onStatusChange(isUploading, isRecording);
+    }
+  }, [isUploading, isRecording, onStatusChange]);
+
   // Clean up resources when component unmounts
   useEffect(() => {
     return () => {
@@ -186,50 +196,86 @@ const VideoResumeUpload = () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
-      if (statusCheckIntervalRef.current) {
-        clearInterval(statusCheckIntervalRef.current);
-      }
-      if (videoUrl && videoUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(videoUrl);
+      if (videoUrl && videoUrl.startsWith('blob:') && !tempLocalId) {
+        URL.revokeObjectURL(videoUrl); 
       }
     };
-  }, [videoUrl]);
+  }, [videoUrl, tempLocalId]); 
 
+
+// Effect to monitor upload status from the server
 useEffect(() => {
-  if (!uploadId) return;
-
-  const interval = setInterval(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${uploadId}`);
-      const data = await response.json();
-      
-      if (data.status === 'completed') {
-        clearInterval(interval);
+  let statusCheckInterval;
+  // Use `uploadId` for status checks as it's the server-assigned ID
+  if (uploadId) { 
+    console.log(`[VideoUpload] Starting status check for uploadId: ${uploadId}`);
+    statusCheckInterval = setInterval(async () => {
+      try {
+        const response = await checkUploadStatus(uploadId);
+        const data = response;// await response.json();
         
-        // Update the video in context with final details
-        updateVideoStatus(uploadId, {
-          status: 'completed',
-          video_url: data.video_url,
-          isLocal: false,
-          ...data.video
-        });
+        console.log(`[VideoUpload] Status check response for ${uploadId}:`, data.status);
 
+        if (data.status === 'completed') {
+          console.log(`[VideoUpload] Video ${uploadId} completed processing.`);
+          clearInterval(statusCheckInterval);
+          
+          updateVideoStatus(uploadId, {
+            status: 'completed',
+            video_url: data.video_url,
+            isLocal: false, // Now it's truly not local, fully processed on server
+            ...data.video
+          });
+
+          setSnackbar({
+            open: true,
+            message: 'Video processing completed!',
+            severity: 'success'
+          });
+
+          // This useEffect only updates VideoContext; onComplete and navigation are handled by parent
+        } else if (data.status === 'failed') {
+          console.log(`[VideoUpload] Video ${uploadId} failed processing.`);
+          clearInterval(statusCheckInterval);
+          updateVideoStatus(uploadId, {
+            status: 'failed',
+            error: data.message || 'Processing failed',
+            isLocal: true // Mark as local again if it failed, for potential client-side retry/management
+          });
+          setSnackbar({
+            open: true,
+            message: 'Video processing failed.',
+            severity: 'error'
+          });
+          // This useEffect only updates VideoContext; onComplete and navigation are handled by parent
+        }
+      } catch (error) {
+        console.error(`[VideoUpload] Status check error for ${uploadId}:`, error);
+        clearInterval(statusCheckInterval);
+        updateVideoStatus(uploadId, {
+          status: 'failed',
+          error: error.message || 'Network error during status check',
+          isLocal: true // Mark as local if network error during status check
+        });
         setSnackbar({
           open: true,
-          message: 'Video processing completed!',
-          severity: 'success'
+          message: 'Error checking video status.',
+          severity: 'error'
         });
+        // This useEffect only updates VideoContext; onComplete and navigation are handled by parent
       }
-    } catch (error) {
-      console.error('Status check error:', error);
+    }, 3000); 
+  }
+
+  return () => {
+    if (statusCheckInterval) {
+      console.log(`[VideoUpload] Clearing status check interval for uploadId: ${uploadId}`);
+      clearInterval(statusCheckInterval);
     }
-  }, 3000);
-
-  return () => clearInterval(interval);
-}, [uploadId, updateVideoStatus]);
+  };
+}, [uploadId, updateVideoStatus, API_BASE_URL]);
 
 
-// In VideoResumeUpload.jsx
 const handleSubmit = async () => {
   if ((!videoFile && !videoBlob) || !videoTitle.trim()) {
     setSnackbar({
@@ -244,7 +290,15 @@ const handleSubmit = async () => {
 
   try {
     setIsUploading(true);
+    setUploadStatus('preparing');
     
+    // Generate a temporary ID for local tracking
+    // This ensures a unique ID for the initial addLocalVideo call,
+    // preventing duplicates if the component re-renders before server ID is available.
+    const currentTempLocalId = uuidv4(); 
+    setTempLocalId(currentTempLocalId); 
+    console.log(`[VideoUpload] Generated new tempLocalId: ${currentTempLocalId}`);
+
     const formData = new FormData();
     const videoData = videoFile || new File([videoBlob], `video-resume-${Date.now()}.webm`, {
       type: 'video/webm'
@@ -252,24 +306,24 @@ const handleSubmit = async () => {
 
     formData.append('video', videoData);
     formData.append('title', videoTitle);
-    formData.append('jobId', jobId);
+    formData.append('jobId', newjobid || ''); // Use newjobid prop
     formData.append('hashtags', hashtags.join(','));
     formData.append('videoType', videoType);
+    formData.append('video_position', videoPosition);
     formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
 
-    // Add to local videos immediately
-    const tempId = uuidv4();
     const persistentBlobUrl = URL.createObjectURL(
       videoFile || new Blob([videoBlob], { type: 'video/webm' })
     );
     
+    // Add to local videos immediately with the temporary ID
     const newVideo = {
-      id: tempId,
+      id: currentTempLocalId, // Use the newly generated temp ID here
       video_url: persistentBlobUrl,
       video_title: videoTitle,
       video_type: videoType,
       hashtags: hashtags.join(','),
-      job_id: jobId,
+      job_id: newjobid || null,
       video_duration: videoRef.current?.duration || 0,
       progress: 0,
       status: 'uploading',
@@ -277,44 +331,70 @@ const handleSubmit = async () => {
       submitted_at: new Date().toISOString()
     };
     
-    addLocalVideo(newVideo);
-    console.log('Added local video with tempId:', tempId);
+    addLocalVideo(newVideo); // This will add it to the context
+    setUploadStatus('uploading');
 
-    // Navigate immediately but continue upload in background
-    navigate('/videos');
-
-    // Upload in background
+    // Start the upload process
     const uploadResponse = await uploadVideo(formData, (progress) => {
-      updateVideoStatus(tempId, { progress });
+      setUploadProgress(progress);
+      updateVideoStatus(currentTempLocalId, { progress }); // Update status using the temp ID
     });
 
-    console.log('Upload response received:', uploadResponse);
+    const serverUploadId = uploadResponse.data.uploadId;
+    console.log(`[VideoUpload] Server assigned ID: ${serverUploadId}. Updating local entry from ${currentTempLocalId} to ${serverUploadId}.`);
     
-    // Update with server ID and mark as processing
-    updateVideoStatus(tempId, {
-      id: uploadResponse.data.uploadId,
-      status: 'processing'
+    // Update the video's ID and status in the context
+    updateVideoStatus(currentTempLocalId, { // Update the video that was tracked by tempLocalId
+      id: serverUploadId, // Set the actual server ID
+      status: 'processing', // Video is now 'processing' on the server side
+      isLocal: true // Keep true until server reports 'completed'
     });
-
     
-    console.log('Updated video with uploadId:', uploadResponse.data.uploadId);
-    setUploadId(uploadResponse.data.uploadId);
+    // Update component's local state to use the server ID for future status checks
+    setUploadId(serverUploadId); 
+    setUploadStatus('processing');
+
+    // Call onComplete here to signal to the parent (PostJobPage) that the upload process has been initiated
+    // and the dialog can be closed.
+        if (!newjobid ) { //&& !embedded
+      navigate('/videos'); 
+    }
+    if (onComplete) {
+      onComplete(serverUploadId); 
+    }
 
   } catch (error) {
-    console.error('Upload error:', error);
-    updateVideoStatus(tempId, {
-      status: 'failed',
-      error: error.message
-    });
+    console.error('[VideoUpload] Upload error:', error);
+    setUploadStatus('failed');
     setSnackbar({
       open: true,
       message: 'Upload failed. You can retry from the videos page.',
       severity: 'error'
     });
+    
+    // Use currentTempLocalId for error update as server ID might not be available
+    const idToUpdate = tempLocalId; 
+    if (idToUpdate) {
+      updateVideoStatus(idToUpdate, {
+        status: 'failed',
+        error: error.message,
+        isLocal: true 
+      });
+      console.log(`[VideoUpload] Updated video status to failed for ID: ${idToUpdate}`);
+    } else {
+      console.warn('[VideoUpload] Could not update video status as no valid ID was found during error.');
+    }
+
+    if (onComplete) {
+      onComplete(null); // Signal failure to the parent
+    }
   } finally {
-    setIsUploading(false);
+    setIsUploading(false); 
+    console.log('[VideoUpload] handleSubmit finished. isUploading set to false.');
   }
 };
+
+  
   // Handle file selection with proper duration validation
   const handleFileSelect = async (event) => {
     const file = event.target.files[0];
@@ -342,7 +422,7 @@ const handleSubmit = async () => {
         video.src = URL.createObjectURL(file);
       });
       
-      if (duration < 15 || duration > 45) {
+      if (duration < 14  || duration > 45) {
         setSnackbar({
           open: true,
           message: 'Video must be between 15 and 45 seconds',
@@ -355,7 +435,7 @@ const handleSubmit = async () => {
       setVideoUrl(URL.createObjectURL(file));
       setRecordingStep(1);
     } catch (error) {
-      console.error('Error checking video:', error);
+      console.error('[VideoUpload] Error checking video:', error);
       setSnackbar({
         open: true,
         message: 'Error processing video file',
@@ -396,7 +476,7 @@ const requestMediaPermissions = async () => {
       try {
         await videoRef.current.play();
       } catch (err) {
-        console.warn("Autoplay failed:", err);
+        console.warn("[VideoUpload] Autoplay prevented:", err);
       }
     }
 
@@ -404,7 +484,7 @@ const requestMediaPermissions = async () => {
     return true;
 
   } catch (error) {
-    console.error('Media access error:', error);
+    console.error('[VideoUpload] Media access error:', error);
     setSnackbar({
       open: true,
       message: 'Please enable camera and microphone access',
@@ -442,9 +522,8 @@ const startRecording = async () => {
     );
     
     if (!supportedType) {
-      // Fallback to browser default if no explicit type is supported
       supportedType = '';
-      console.warn('No specific codec supported, using browser default');
+      console.warn('[VideoUpload] No specific codec supported, using browser default');
     }
     
     const mediaRecorder = new MediaRecorder(stream, { 
@@ -478,7 +557,7 @@ const startRecording = async () => {
       if (seconds >= 45) stopRecording();
     }, 1000);
   } catch (error) {
-    console.error('Recording error:', error);
+    console.error('[VideoUpload] Recording error:', error);
     setSnackbar({
       open: true,
       message: `Error starting recording: ${error.message}`,
@@ -529,55 +608,20 @@ const startRecording = async () => {
     }
   };
 
-  // Check upload status
-// Fixed checkUploadStatus function
-  const checkUploadStatus = async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/job-seekers/upload-status/${id}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      // First check if the response is HTML (like a 404 page)
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.indexOf('application/json') === -1) {
-        const text = await response.text();
-        if (text.startsWith('<!DOCTYPE html>')) {
-          throw new Error('Server returned HTML instead of JSON');
-        }
-        throw new Error('Invalid response format');
-      }
-      
-      const data = await response.json();
-      
-      if (data.status === 'completed') {
-        clearInterval(statusCheckIntervalRef.current);
-        return data.video;
-      } else if (data.status === 'failed') {
-        clearInterval(statusCheckIntervalRef.current);
-        throw new Error(data.message || 'Upload failed');
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error checking upload status:', error);
-      throw error;
-    }
-  };
-
 
   // Reset form completely
   const resetForm = () => {
+    console.log("[VideoUpload] Resetting form.");
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
     
-    if (videoUrl.startsWith('blob:')) URL.revokeObjectURL(videoUrl);
+    if (videoUrl && videoUrl.startsWith('blob:')) URL.revokeObjectURL(videoUrl);
     
     setVideoFile(null);
     setVideoBlob(null);
-    setVideoUrl('');
+    setVideoUrl(''); 
     setIsRecording(false);
     setRecordingTime(0);
     setIsPlaying(false);
@@ -585,17 +629,13 @@ const startRecording = async () => {
     setIsUploading(false);
     setRecordingStep(0);
     setVideoTitle('');
-    setVideoPosition('main');
-    setVideoType('intro');
-    setJobId(null);
+    setVideoPosition('');
+    setVideoType('');
     setHashtags([]);
     setNewHashtag('');
     setShowRecordDialog(false);
-    setUploadId(null);
-    
-    if (statusCheckIntervalRef.current) {
-      clearInterval(statusCheckIntervalRef.current);
-    }
+    setUploadId(null); 
+    setTempLocalId(null); // Crucial: Reset tempLocalId on form reset
   };
 
   // Format time as MM:SS
@@ -604,46 +644,6 @@ const startRecording = async () => {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-   // Add this to your render method
-  const renderUploadQueue = () => (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
-        Upload Status
-      </Typography>
-      {uploadQueue.map((item) => (
-        <Paper key={item.id} sx={{ p: 2, mb: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography>{item.title}</Typography>
-            <Typography color={
-              item.status === 'completed' ? 'success.main' :
-              item.status === 'failed' ? 'error.main' : 'text.secondary'
-            }>
-              {item.status.toUpperCase()}
-            </Typography>
-          </Box>
-          {item.status === 'uploading' && (
-            <Box sx={{ mt: 1 }}>
-              <LinearProgress variant="determinate" value={item.progress || 0} />
-              <Typography variant="caption">
-                {item.progress || 0}% uploaded
-              </Typography>
-            </Box>
-          )}
-          {item.status === 'failed' && (
-            <Button 
-              size="small" 
-              color="error" 
-              onClick={() => retryUpload(item.id)}
-              sx={{ mt: 1 }}
-            >
-              Retry
-            </Button>
-          )}
-        </Paper>
-      ))}
-    </Box>
-  );
 
   // Render different steps
   const renderInitialStep = () => (
@@ -839,9 +839,25 @@ const startRecording = async () => {
       {isUploading && (
         <Box sx={{ width: '100%', mt: 2 }}>
           <Typography variant="body2" align="center" gutterBottom>
-            {uploadId ? 'Processing video...' : `Uploading video... ${uploadProgress}%`}
+            {uploadStatus === 'preparing' && 'Preparing video for upload...'}
+            {uploadStatus === 'uploading' && `Uploading video... ${uploadProgress}%`}
+            {uploadStatus === 'processing' && 'Processing video...'}
           </Typography>
-          <LinearProgress variant="determinate" value={uploadProgress} />
+          <LinearProgress 
+            variant={
+              uploadStatus === 'processing' ? 'indeterminate' : 'determinate'
+            } 
+            value={uploadProgress} 
+            color={
+              uploadStatus === 'failed' ? 'error' : 
+              uploadStatus === 'completed' ? 'success' : 'primary'
+            }
+          />
+          {uploadStatus === 'processing' && (
+            <Typography variant="caption" display="block" align="center" sx={{ mt: 1 }}>
+              This may take a few minutes. You can check back later.
+            </Typography>
+          )}
         </Box>
       )}
 
@@ -1046,4 +1062,4 @@ const startRecording = async () => {
   );
 };
 
-export default VideoResumeUpload;
+export default VideoUpload;
