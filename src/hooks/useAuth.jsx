@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }) => {
     
       // Skip auth check for public routes
       const publicRoutes = [
-        '/login',
+       
         '/signup',
         '/about',
         '/FAQs',
