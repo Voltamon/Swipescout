@@ -16,8 +16,7 @@ const Header3 = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  return (
-    <header className="header">
+  return <header className="header">
       <div className="logo" onClick={() => navigate("/")}>
         <img src={logo} alt="Logo" />
         <p style={{ cursor: "pointer" }}>SwipeScout</p>
@@ -34,26 +33,17 @@ const Header3 = () => {
         <Link className="nav-link" to="/FAQs">
           FAQs
         </Link>
-         <Link className="nav-link" to="/explore-layout/Job-seeker-explore-public">
-          Check it
+        <Link className="nav-link" to="/videos/all">
+          Start
         </Link>
-                <Link className="nav-link" to="/login">
+        <Link className="nav-link" to="/login">
           Login
         </Link>
-        <Box sx={{
-        px: 1,
-        py: 0,
-        
-        borderRadius: 1,
-        backgroundColor: 'rgba(93, 155, 207, 0.1)',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-          backgroundColor: 'rgba(93, 155, 207, 0.2)'
-        }
-      }}>
-        <Link className="nav-link" to="/register-form" >
-          Sign up
-        </Link>
+        <Box sx={{ px: 1, py: 0,
+            borderRadius: 1, backgroundColor: "rgba(93, 155, 207, 0.1)", transition: "background-color 0.3s ease", "&:hover": { backgroundColor: "rgba(93, 155, 207, 0.2)" } }}>
+          <Link className="nav-link" to="/register-form">
+            Sign up
+          </Link>
         </Box>
       </nav>
 
@@ -71,8 +61,7 @@ const Header3 = () => {
           <FaYoutube />
         </a>
       </div>
-    </header>
-  );
+    </header>;
 };
 
 export default Header3;

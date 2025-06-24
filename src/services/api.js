@@ -188,7 +188,7 @@ export const getUserVideos = () => {
 };
 
 export const getAllVideos = (page = 1, limit = 10) => {
-  return api.get('/videos', {
+  return api.get('/videos/all', {
     params: {
       page,
       limit,
