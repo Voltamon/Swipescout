@@ -136,6 +136,56 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = useCallback(async (options = { silent: false }) => {
     try {
       setLoading(true);
+
+      const pathname = window.location.pathname;
+    
+      // Skip auth check for public routes
+      const publicRoutes = [
+        '/login',
+        '/signup',
+        '/about',
+        '/FAQs',
+        '/unauthorized',
+        '/auth/linkedin/callback',
+        '/forgot-password',
+        '/reset-password',
+        '/',
+        '/jobseeker-profile/:id',
+        '/employer-profile/:id',
+        '/register-form',
+        '/authpage',
+        '/auth/linkedin/callback',
+        '/check-it',
+        '/employer-explore-public',
+        '/job-seeker-explore-public',
+        '/video-feed/:vid',
+         '/jobseeker-video-feed/:vid',
+       '/forgot-password',
+         '/reset-password/:oobCode',
+          '/jobseeker-profile/:id',
+                '/employer-profile/:id',
+                '/videos/:pagetype',
+                '/video-player/:id'
+        
+      ];
+      
+      
+           
+              
+ 
+      const isPublicRoute = publicRoutes.some(route => {
+        // Handle dynamic routes like '/jobseeker-profile/:id'
+        if (route.includes(':')) {
+          const basePath = route.split('/:')[0];
+          return pathname.startsWith(basePath);
+        }
+        return pathname === route;
+      });
+  
+      if (isPublicRoute) {
+        return; // Skip auth check for public routes
+      }
+  
       const accessToken = localStorage.getItem('accessToken');
       const refreshToken = localStorage.getItem('refreshToken');
       const accessExpiresTime = parseInt(localStorage.getItem('accessExpiresTime'), 10);
