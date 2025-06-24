@@ -4,7 +4,8 @@ const employerService = {
   // Get employer profile data
   getEmployerProfile: async () => {
     try {
-      const response = await api.get(`/employer/company-profile`);
+      const response = await api.get(`/employer/employer-profile`);
+      console.log('Employer profile data::::::', response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching employer profile:', error);
@@ -16,7 +17,7 @@ const employerService = {
   getEmployerVideos: async () => {
     try {
       const response = await api.get(`/employer/company/videos`);
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error fetching employer videos:', error);
       throw error;

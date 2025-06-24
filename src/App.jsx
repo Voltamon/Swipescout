@@ -24,13 +24,13 @@ import EmployerDashboard from "./pages/EmployerDashboard";
 import CandidateSearchPage from "./pages/CandidateSearchPage";
 import CandidateProfilePage from "./pages/CandidateProfilePage";
 import JobPostingForm from "./pages/JobPostingForm";
-import VideoResumeUpload from './pages/VideoResumeUpload';
+import VideoUpload from './pages/VideoUpload';
 import Profile from "./pages/Profile";
 import Inbox from './pages/Inbox.jsx';
 import LandingPage_ from "./pages/LandingPage_/LandingPage_.jsx";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import JobDetailsPage from "./pages/JobDetailsPage";
-import PostJobPage from "./pages/PostJobPage";
+import PostJobPag_ from "./pages/PostJobPag_";
 
 import AdminDashboard from './pages/adminDashboard';
 import FeedPage from "./pages/FeedPage";
@@ -75,16 +75,20 @@ import MarketingVideos  from './pages/MarketingVideos';
 // import {SocketProvider} from './hooks/useAuth';
 import JobSeekersVideosPage from './pages/JobSeekersVideosPage';
 import JobSeekerProfile from './pages/JobSeekerProfile';
-// import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
-import EmployerProfile2 from "./pages/EmployerProfile2";
-// import JobsListingPage from "./pages/JobsListingPage";
-// import PostJobPage_2 from "./pages/PostJobPage_2";
+import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
+import EmployerProfilePage from "./pages/EmployerProfilePage";
+import JobsListingPage from "./pages/JobsListingPage";
+import PostJobPage from "./pages/PostJobPage";
 import { VideoProvider } from './context/VideoContext';
 import VideosPage from './pages/VideosPage';
 import VideoFeedViewer from './pages/VideoFeedViewer';
-
-
-   
+import  EditEmployerProfilePage  from './pages/EditEmployerProfilePage';
+import EditVideoPage  from './pages/EditeVideoPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import JobseekerProfileView from './pages/JobseekerProfileView';
+import EmployerProfileView from './pages/EmployerProfileView';
+import AllVideosPage from './pages/AllVideosPage';
 
 
 // Initialize once (put this in a separate config file)
@@ -125,12 +129,18 @@ function App() {
           <Route path="/authpage" element={<AuthPage />} />
           <Route path="/auth/linkedin/callback" element={<Linkedincallback />} />
           <Route path="/check-it" element={<CheckExplorePage />} />
-          <Route path="/explore-layout" element={<ExploreLayout />}>
             <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
             <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
-          </Route>
+            {/* <Route path="/explore-layout" element={<ExploreLayout />}>
+            </Route> */}
           <Route path="/video-feed/:vid?" element={<VideoFeed />} />
           <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
+          <Route path="/jobseeker-profile/:id" element={<JobseekerProfileView />} />
+          <Route path="/employer-profile/:id" element={<EmployerProfileView  />} />
+          <Route path="/videos/:pagetype" element={<AllVideosPage  />} />
+          <Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
 
           {/* Private Routes */}
 
@@ -156,14 +166,14 @@ function App() {
             <Route path="/candidate-search" element={<CandidateSearchPage />} />
             <Route path="/candidate-profile" element={<CandidateProfilePage />} />
             <Route path="/job-posting" element={<JobPostingForm />} />
-            <Route path="/video-resume-upload" element={<VideoResumeUpload />} />
+            <Route path="/video-upload" element={<VideoUpload />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/PagesNavigation" element={<LandingPage_ />} />
             <Route path="/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/search" element={<JobSearchPage />} />
             <Route path="/job/:id" element={<JobDetailsPage />} />
-            <Route path="/post-job" element={<PostJobPage />} />
+            <Route path="/post-job" element={<PostJobPag_ />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/feed-page" element={<FeedPage />} />
             <Route path="/Employer-explore" element={<EmployerExplore />} />
@@ -173,18 +183,20 @@ function App() {
             <Route path="/Settings-page" element={<SettingsPage />} />
             <Route path="/MyApplications-page" element={<MyApplications />} />
             <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/employer-profile" element={<EmployerProfile />} />
+            <Route path="/employer-profile2" element={<EmployerProfile />} />
             <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
             <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
             <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
-            <Route path="/EmployerProfile2" element={<EmployerProfile2 />} /> 
-          {/* <Route path="/EditJobSeekerProfile" element={<EditJobSeekerProfile />} />
-            // <Route path="/JobsListingPage" element={<JobsListingPage />} />
-            // <Route path="/PostJobPage_2" element={<PostJobPage_2 />} /> */}
+            <Route path="/employer-profile" element={<EmployerProfilePage />} /> 
+           <Route path="/edit-JobSeeker-Profile" element={<EditJobSeekerProfile />} />
+             <Route path="/Jobs-Listing-Page" element={<JobsListingPage />} />
+           <Route path="/Post-job-page" element={<PostJobPage />} /> 
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
 
-<Route path="/video-player/:id" element={<VideoFeedViewer />} /> 
+            
+            <Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} /> 
+            <Route path="/edit-video/:id" element={<EditVideoPage />} /> 
 
 
           </Route>

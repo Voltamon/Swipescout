@@ -44,6 +44,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
   const location = useLocation();
   const { user, role , logout } = useAuth();
   
+  const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const employer_menuItems = [
           // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
@@ -56,11 +57,13 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },
-    { text: 'Job Postings', icon: <JobsIcon />, path: '/job-posting' },
+    { text: 'Post Job', icon: <JobsIcon />, path: '/Post-job-page' },
+    { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
+
     // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
+    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
-    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
+    { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
   ];
 
@@ -74,7 +77,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Detailed Search', icon: <SearchIcon />, path: '/job-search' },
     { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
     { text: 'Job Details', icon: <SearchIcon />, path: '/job/1' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-resume-upload' },
+    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
     { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
@@ -185,7 +188,7 @@ const roleStyles = {
                                // or use typical flexbox spacing in a Toolbar
     >
                 {console.log("user:::",user?.photo_url)}
-                 <Avatar src={user?.photo_url || user?.photoUrl} sx={{ 
+                 <Avatar src={VITE_API_BASE_URL+user?.photo_url || user?.photoUrl} sx={{ 
     width: 50, 
     height: 50, 
     mr: open ? 2 : 0,

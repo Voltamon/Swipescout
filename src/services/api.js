@@ -10,10 +10,11 @@ const api = axios.create({
   },
 });
 
+let token;
 // إضافة معترض للطلبات لإضافة توكن المصادقة
 api.interceptors.request.use(
   (config) => {
-    const token = JSON.parse(localStorage.getItem('accessToken'));
+     token = localStorage.getItem('accessToken') ;
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -42,12 +43,23 @@ export const refreshToken = () => {
   return api.post('/auth/refresh');
 };
 
-export const forgotPassword = (email) => {
-  return api.post('/auth/forgot-password', { email });
+export const forgotPassword = async (data) => {
+  
+    const response = await api.post(`/auth/forgot-password/`, {
+      email: data.email
+    });
+    return response.data;
+  
 };
 
-export const resetPassword = (token, password) => {
-  return api.post('/auth/reset-password', { token, password });
+export const resetPassword = async (data) => {
+  
+    const response = await api.post(`/auth/reset-password/`, {
+      oobCode: data.oobCode,
+      newPassword: data.newPassword
+    });
+    return response.data;
+ 
 };
 
 export const getCurrentUser = () => {
@@ -58,7 +70,8 @@ export const updateCurrentUser = (userData) => {
   return api.put('/users/me', userData);
 };
 
-export const uploadProfileImage = (formData) => {
+
+export const uploadAvator = (formData) => {
   return api.post('/users/me/avatar', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -66,102 +79,175 @@ export const uploadProfileImage = (formData) => {
   });
 };
 
-export const getUserProfile = (userId) => {
-  return userId ? api.get(`/users/${userId}`) : api.get('/users/me');
-};
-
-// JobSeeker API services
 export const uploadVideoResume = (formData) => {
-  return api.post('/job-seekers/video-resume', formData, {
+  return api.post('/videos/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
 };
 
+export const checkUploadStatus = (id) => {
+  return api.get(`/videos/upload-status/${id}`);
+};
 export const getVideoResume = () => {
-  return api.get('/job-seekers/video-resume');
+  return api.get('/videos/');
+};
+export const getJobVideos = (id) => {
+  return api.get(`/videos/job/${id}`);
+};
+export const deleteVideo = (id) => {
+  return api.delete(`videos/${id}`);
 };
 
-export const deleteVideoResume = () => {
-  return api.delete('/job-seekers/video-resume');
+
+export const uploadProfileImage = (formData) => {
+  return api.post('/job-seeker/upload-logo/',formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 };
 
+export const updateUserProfile = (formData) => {
+  return api.put('/job-seeker/',formData);
+};
+
+
+export const getUserProfile = () => {
+  return api.get(`/job-seeker/`); // : api.get('/users/me');
+};
+
+export const getJobSeekerProfile = (id) => {
+  return api.get(`/job-seeker/${id}`); // : api.get('/users/me');
+};
+
+
+// JobSeeker API services
 export const getUserSkills = () => {
-  return api.get('/job-seekers/skills');
+  return api.get('/job-seeker/skills');
 };
 
 export const addUserSkill = (skill) => {
-  return api.post('/job-seekers/skills', { skill });
+  return api.post('/job-seeker/skills',  skill );
 };
 
-export const updateUserSkill = (oldSkill, newSkill) => {
-  return api.put(`/job-seekers/skills/${encodeURIComponent(oldSkill)}`, { skill: newSkill });
+export const updateUserSkill = (id, newSkill) => {
+  return api.put(`/job-seeker/skills/${id}`, { skill: newSkill });
 };
 
-export const deleteUserSkill = (skill) => {
-  return api.delete(`/job-seekers/skills/${encodeURIComponent(skill)}`);
+export const deleteUserSkill = (id) => {
+  return api.delete(`/job-seeker/skills/${id}`);
 };
 
 export const getUserExperiences = () => {
-  return api.get('/job-seekers/experiences');
-};
+  return api.get('/experiences/'); 
+}; 
+
+
+export const getJobSeekerExperiences = (id) => { 
+  return api.get(`/experiences/user/${id}`); 
+}; 
 
 export const addUserExperience = (experience) => {
-  return api.post('/job-seekers/experiences', experience);
+  return api.post('/experiences/', experience);
 };
 
 export const updateUserExperience = (id, experience) => {
-  return api.put(`/job-seekers/experiences/${id}`, experience);
+  return api.put(`/experiences/${id}`, experience);
+  // return api.put(`/experiences/${id}`, experience);
 };
 
 export const deleteUserExperience = (id) => {
-  return api.delete(`/job-seekers/experiences/${id}`);
+  return api.delete(`/experiences/${id}`);
+  // return api.delete(`/experiences/${id}`);
 };
 
 export const getUserEducation = () => {
-  return api.get('/job-seekers/education');
+  return api.get('/education/');
+};
+
+export const getJobSeekerEducation = (id) => {
+  return api.get(`/education/user/${id}`);
 };
 
 export const addUserEducation = (education) => {
-  return api.post('/job-seekers/education', education);
+  return api.post('/education/', education);
 };
 
 export const updateUserEducation = (id, education) => {
-  return api.put(`/job-seekers/education/${id}`, education);
+  return api.put(`/education/${id}`, education);
 };
 
 export const deleteUserEducation = (id) => {
-  return api.delete(`/job-seekers/education/${id}`);
+  return api.delete(`/education/${id}`);
 };
 
 export const getUserVideos = () => {
-  return api.get('/job-seekers/videos');
+  return api.get('/videos');
+};
+
+export const getAllVideos = (page = 1, limit = 10) => {
+  return api.get('/videos/all', {
+    params: {
+      page,
+      limit,
+    },
+  });
+};
+
+
+export const getUserVideosByUserId = (id) => {
+  return api.get(`/videos/user/${id}`);
+};
+
+export const getJobSeekersVideos = (page = 1, limit = 10) => {
+  return api.get('/videos/jobseekers', {
+    params: {
+      page,
+      limit,
+    },
+  });
+};
+
+export const getEmployerPublicVideos = (page = 1, limit = 10) => {
+  return api.get('/videos/employers', {
+    params: {
+      page,
+      limit,
+    },
+  });
 };
 
 export const getUserVideoById = (id) => {
-  return api.get(`/job-seekers/videos/${id}`);
+  return api.get(`/videos/${id}`);
 };
 
 export const updateUserVideo = (id, videoData) => {
-  return api.put(`/job-seekers/videos/${id}`, videoData);
+  return api.put(`/videos/${id}`, videoData);
 };
 
 export const deleteUserVideo = (id) => {
-  return api.delete(`/job-seekers/videos/${id}`);
+  return api.delete(`/videos/${id}`);
 };
 
 // Employer API services
 export const getEmployerProfile = () => {
-  return api.get(`/employer/company-profile`) ;//: api.get('/employers/company');
+  console.log('Fetching employer profile...',token);
+  return api.get(`/employer/employer-profile/`) ;//: api.get('/employers/company');
 };
 
-export const updateEmployerProfile = (id,companyData) => {
-  return api.put(`/employer/company-profile/${id}`, companyData);
+export const getEmployerPublicProfile = (id) => {
+  return api.get(`/employer/employer-profile/${id}`); // : api.get('/users/me');
 };
 
-export const uploadCompanyLogo = (id,formData) => {
-  return api.post(`/employer/cupload-logo/${id}`, formData, {
+export const updateEmployerProfile = (companyData) => {
+  console.log(companyData);
+  return api.put(`/employer/employer-profile/`, companyData);
+};
+
+export const uploadCompanyLogo = (formData) => {
+  return api.post(`/employer/upload-logo/`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -169,42 +255,74 @@ export const uploadCompanyLogo = (id,formData) => {
 };
 
 export const getEmployerJobs = () => {
-  return api.get(`/employer/jobs`); //: api.get('/employers/jobs');
+  return api.get(`employer/jobs/`); //: api.get('/employers/jobs');
+};
+
+export const getEmployerPublicJobs = (id) => {
+  return api.get(`employer/jobs/${id}`); 
+};
+
+export const getJobDetails = (id) => {
+  return api.get(`employer/job/${id}`); //: api.get('/employers/jobs');
 };
 
 export const getEmployerVideos = () => {
-  return api.get(`/employer/company/videos`);// : api.get('/employers/videos');
+  return api.get(`/videos/`);// : api.get('/employers/videos');
 };
 
 // Job API services
 export const getAllJobs = (params) => {
-  return api.get('/jobs', { params });
+  return api.get('/employer/jobs', { params });
+};
+
+export const getAllJobsPosted = (params) => {
+  return api.get('/job/', { params });
 };
 
 export const getJobById = (id) => {
-  return api.get(`/jobs/${id}`);
+  return api.get(`/employer/job/${id}`);
 };
 
 export const postJob = (jobData) => {
-  return api.post('/employers/jobs', jobData);
+  return api.post('/employer/job', jobData);
 };
 
 export const updateJob = (id, jobData) => {
-  return api.put(`/employers/jobs/${id}`, jobData);
+  return api.put(`/employer/job/${id}`, jobData);
 };
 
 export const deleteJob = (id) => {
-  return api.delete(`/employers/jobs/${id}`);
+  return api.delete(`/employer/job/${id}`);
 };
 
-export const getJobCategories = () => {
-  return api.get('/jobs/categories');
+export const getJobCategories = (id) => {
+  return api.get(`/categorie/job/${id}`); //.categories
+};
+
+export const getCategories = () => {
+  return api.get('/categories');
+};
+
+export const getEmployerCategories = () => {
+  return api.get('/employer/categories');
+};
+
+
+export const addEmployerCategory = (id) => {
+  return api.post(`/employer/category/${id}`);
+};
+
+export const deleteEmployerCategory = (id) => {
+  return api.delete(`/employer/category/${id}`);
 };
 
 export const getSkills = () => {
   return api.get('/skills');
 };
 
+export const getJobSeekerSkills = (id) => {
+  return api.get(`/skills/user/${id}`);
+};
 // Swipe API services
 export const swipeJob = (jobId, direction) => {
   return api.post('/swipe', { jobId, direction });
@@ -313,7 +431,7 @@ export const getCandidateEngagement = () => {
 
 // Video processing services
 export const uploadVideo = (formData, onUploadProgress) => {
-  return api.post('/job-seekers/video-resume', formData, {
+  return api.post('/job-seeker/video-resume', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

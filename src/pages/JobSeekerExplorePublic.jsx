@@ -22,6 +22,10 @@ import {
   Menu,
   PlayArrow
 } from "@mui/icons-material";
+import { useAuth } from '../hooks/useAuth';
+import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
+import NavigationPanel from "../components/NavigationPanel";
+
 
 // --- Mock Data for Video Resumes (using Cloudinary URLs from previous example) ---
 const mockVideoResumes = [
@@ -211,7 +215,7 @@ const JobseekerExplorePage = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const { user } = useAuth();
   const drawerWidthDesktop = 80;
   const drawerWidthMobile = 60;
 
@@ -231,6 +235,8 @@ const JobseekerExplorePage = () => {
         "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } }
       }}
     >
+
+      
       <Avatar src="/employer-logo.png" sx={{ width: isMobile ? 36 : 48, height: isMobile ? 36 : 48, mb: 3, border: `2px solid ${theme.palette.text.primary}` }} />
 
       <List sx={{ width: "100%" }}>
@@ -279,8 +285,7 @@ const JobseekerExplorePage = () => {
     </Box>
   );
 
-  return (
-    <Box sx={{ display: "flex" }}>
+  return <Box sx={{ display: "flex" }}>
       {/* Mobile Menu Icon */}
       {/*{isMobile && (
         <IconButton
@@ -321,30 +326,15 @@ const JobseekerExplorePage = () => {
         {drawerContent}
       </Drawer>*/}
 
+      <SwipeScoutWatermark />
+
+      {/* Navigation Panel */}
+      <NavigationPanel navigate={navigate} user={user} />
+
       {/* Main Content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 2,
-          mt: 0,
-          pl:5,
-          height: "100vh",
-          background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-          backgroundSize: "auto",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "top right",
-          overflowY: "auto"
-        }}
-      >
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: 2
-          }}
-        >
-          {mockVideoResumes.map(video => (
+      <Box component="main" sx={{ flexGrow: 1, p: 2, mt: 0, pl: 5, height: "100vh", background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`, backgroundSize: "auto", backgroundRepeat: "no-repeat", backgroundPosition: "top right", overflowY: "auto" }}>
+        <Box sx={{ display: "grid", ml: 31, gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 2 }}>
+          {mockVideoResumes.map(video =>
             <PlayableVideoPreview
               key={video.id}
               title={video.title}
@@ -352,11 +342,10 @@ const JobseekerExplorePage = () => {
               videoUrl={video.videoUrl} // Pass the video URL
               onClick={() => navigate(`/jobseeker-video-feed/${video.id}`)} // Navigate to feed on click
             />
-          ))}
+          )}
         </Box>
       </Box>
-    </Box>
-  );
+    </Box>;
 };
 
 export default JobseekerExplorePage;

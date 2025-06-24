@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Container,
@@ -31,7 +31,10 @@ import {
   Alert,
   styled,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  InputAdornment,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -50,7 +53,12 @@ import {
   LinkedIn as LinkedInIcon,
   GitHub as GitHubIcon,
   Twitter as TwitterIcon,
-  PlayArrow as PlayArrowIcon
+  PlayArrow as PlayArrowIcon,
+  Person as PersonIcon,
+  Code as CodeIcon,
+  Business as BusinessIcon,
+  Book as BookIcon,
+  Videocam as VideocamIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -70,9 +78,11 @@ import {
   deleteUserEducation,
   getUserVideos,
   deleteUserVideo,
-  uploadProfileImage
-} from '../services/userService';
-import { getAllSkills } from '../services/skillService';
+  uploadProfileImage,
+  getSkills
+} from '../services/api';
+import dayjs from 'dayjs';
+
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -81,6 +91,8 @@ const ProfileContainer = styled(Box)(({ theme }) => ({
   paddingTop: theme.spacing(3),
   paddingBottom: theme.spacing(4)
 }));
+
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -104,6 +116,8 @@ const AvatarUploadButton = styled(IconButton)(({ theme }) => ({
 const SectionPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   marginBottom: theme.spacing(3),
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[2],
 }));
 
 const SkillChip = styled(Chip)(({ theme }) => ({
@@ -119,18 +133,18 @@ const VideoCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius * 2,
   overflow: 'hidden',
   transition: 'transform 0.3s ease',
   '&:hover': {
     transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[10],
+    boxShadow: theme.shadows[8],
   }
 }));
 
 const VideoCardMedia = styled(CardMedia)(({ theme }) => ({
   height: 0,
-  paddingTop: '177.78%', // 16:9 aspect ratio
+  paddingTop: '56.25%', // 16:9 aspect ratio
   position: 'relative',
 }));
 
@@ -163,46 +177,52 @@ const EditJobSeekerProfile = () => {
   const [tabValue, setTabValue] = useState(0);
   
   // State for profile data
-  const [profile, setProfile] = useState({
-    name: '',
-    title: '',
-    location: '',
-    bio: '',
-    email: '',
-    phone: '',
-    website: '',
-    social: {
-      linkedin: '',
-      github: '',
-      twitter: ''
-    }
-  });
+const [profile, setProfile] = useState({
+  first_name: '',
+  Second_name: '',
+  last_name: '',
+  title: '',
+  location: '',
+  bio: '',
+  email: '',
+  phone: '',
+  mobile: '',
+  website: '',
+  profile_pic: '',
+  address: '',
+  preferred_job_title: '',
+  social: {
+    linkedin_url: '',
+    github: '',
+    twitter: ''
+  }
+});
   
   // State for skills
   const [skills, setSkills] = useState([]);
-  const [newSkill, setNewSkill] = useState('');
   const [availableSkills, setAvailableSkills] = useState([]);
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
-  const [editingSkill, setEditingSkill] = useState(null);
+  const [selectedSkill, setSelectedSkill] = useState('');
+  const [avatarPicture, setAvatarPicture] = useState('');
+  const [avatarVersion, setAvatarVersion] = useState(0); // Cache busting
+
   
   // State for experiences
   const [experiences, setExperiences] = useState([]);
   const [experienceDialogOpen, setExperienceDialogOpen] = useState(false);
-  const [editingExperience, setEditingExperience] = useState(null);
   const [experienceForm, setExperienceForm] = useState({
-    company: '',
+    company_name: '', 
     position: '',
     location: '',
-    startDate: '',
-    endDate: '',
-    current: false,
+    start_date: '',
+    end_date: '',
+    currently_working: false,
     description: ''
   });
   
   // State for education
   const [education, setEducation] = useState([]);
   const [educationDialogOpen, setEducationDialogOpen] = useState(false);
-  const [editingEducation, setEditingEducation] = useState(null);
   const [educationForm, setEducationForm] = useState({
     institution: '',
     degree: '',
@@ -216,7 +236,7 @@ const EditJobSeekerProfile = () => {
   // State for videos
   const [videos, setVideos] = useState([]);
   
-  // State for UI
+  // UI state
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -224,37 +244,79 @@ const EditJobSeekerProfile = () => {
     message: '',
     severity: 'success'
   });
-  
+  const [dateError, setDateError] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Add this helper function somewhere in your component (outside the main function)
+const verifyImageAvailability = (url) => {
+  return new Promise((resolve, reject) => {
+    if (!url) reject(new Error('Empty URL'));
+
+    const img = new Image();
+    let timer = setTimeout(() => {
+      img.onload = img.onerror = null;
+      reject(new Error('Image load timeout'));
+    }, 5000);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      if (img.width > 0 && img.height > 0) {
+        resolve();
+      } else {
+        reject(new Error('Zero dimensions'));
+      }
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      reject(new Error('Failed to load'));
+    };
+    img.src = url;
+  });
+};
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
         
-        // Fetch profile data
-        const profileResponse = await getUserProfile();
-        setProfile(profileResponse.data);
-        
-        // Fetch skills
-        const skillsResponse = await getUserSkills();
+        const [profileResponse, skillsResponse, availableSkillsResponse, 
+               experiencesResponse, educationResponse, videosResponse] = await Promise.all([
+          getUserProfile(),
+          getUserSkills(),
+          getSkills(),
+          getUserExperiences(),
+          getUserEducation(),
+          getUserVideos()
+        ]);
+        console.log(profileResponse.data);
+        // setProfile(profileResponse.data);
+        console.log("Profile::::::",profile);
         setSkills(skillsResponse.data.skills);
-        
-        // Fetch available skills
-        const availableSkillsResponse = await getAllSkills();
         setAvailableSkills(availableSkillsResponse.data.skills);
-        
-        // Fetch experiences
-        const experiencesResponse = await getUserExperiences();
         setExperiences(experiencesResponse.data.experiences);
-        
-        // Fetch education
-        const educationResponse = await getUserEducation();
-        setEducation(educationResponse.data.education);
-        
-        // Fetch videos
-        const videosResponse = await getUserVideos();
+        setEducation(educationResponse.data.educations || []);
         setVideos(videosResponse.data.videos);
-        
+       
+        setAvatarVersion(0);
+
+
+const initialAvatarUrl = profileResponse.data.profile_pic 
+  ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}`
+  : '';
+
+// Verify the image exists before setting it
+try {
+  if (initialAvatarUrl) {
+    await verifyImageAvailability(initialAvatarUrl);
+  }
+  setAvatarPicture(initialAvatarUrl);
+} catch (error) {
+  console.error('Avatar image not available:', error);
+  setAvatarPicture('');
+}
+
+
+setProfile(profileResponse.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -269,40 +331,39 @@ const EditJobSeekerProfile = () => {
     
     fetchUserData();
   }, []);
-  
+
   // Handle tab change
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
   
   // Handle profile form change
-  const handleProfileChange = (e) => {
-    const { name, value } = e.target;
-    
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setProfile({
-        ...profile,
-        [parent]: {
-          ...profile[parent],
-          [child]: value
-        }
-      });
-    } else {
-      setProfile({
-        ...profile,
-        [name]: value
-      });
-    }
-  };
+const handleProfileChange = (e) => {
+  const { name, value } = e.target;
   
+  if (name.includes('.')) {
+    const [parent, child] = name.split('.');
+    setProfile({
+      ...profile,
+      [parent]: {
+        ...profile[parent],
+        [child]: value
+      }
+    });
+  } else {
+    setProfile({
+      ...profile,
+      [name]: value
+    });
+  }
+};
+
   // Handle profile save
   const handleSaveProfile = async () => {
     try {
       setSaving(true);
-      
       await updateUserProfile(profile);
-      
+      console.log(profile);
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
@@ -321,95 +382,79 @@ const EditJobSeekerProfile = () => {
     }
   };
   
+
   // Handle avatar upload
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleAvatarUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    setSaving(true);
     
-    // Check file type
-    if (!file.type.startsWith('image/')) {
-      setSnackbar({
-        open: true,
-        message: 'Please select a valid image file',
-        severity: 'error'
-      });
-      return;
+    // 1. Show instant preview
+    const tempPreviewUrl = URL.createObjectURL(file);
+    setAvatarPicture(tempPreviewUrl);
+
+    // 2. Upload to server
+    const response = await uploadProfileImage(file); 
+
+    // 3. Server returns the FINAL URL (must be immediately accessible)
+    const serverUrl = `${VITE_API_BASE_URL}${response.data.path}?t=${Date.now()}`;
+
+    // 4. Verify the image is truly ready (with retries)
+    let loaded = false;
+    for (let i = 0; i < 3; i++) {
+      try {
+        await verifyImageAvailability(serverUrl);
+        loaded = true;
+        break;
+      } catch {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+      }
     }
-    
-    try {
-      setSaving(true);
-      
-      const formData = new FormData();
-      formData.append('avatar', file);
-      
-      const response = await uploadProfileImage(formData);
-      
-      setProfile({
-        ...profile,
-        avatar: response.data.avatar_url
-      });
-      
-      setSnackbar({
-        open: true,
-        message: 'Profile picture updated successfully',
-        severity: 'success'
-      });
-      
-      setSaving(false);
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error uploading profile picture',
-        severity: 'error'
-      });
-      setSaving(false);
-    }
-  };
-  
-  // Handle skill dialog open
-  const handleOpenSkillDialog = (skill = null) => {
-    if (skill) {
-      setEditingSkill(skill);
-      setNewSkill(skill);
+
+    if (loaded) {
+      setProfile(prev => ({ ...prev, profile_pic: response.data.path }));
+      setAvatarPicture(serverUrl);
+      showSnackbar("Profile picture updated!", "success");
     } else {
-      setEditingSkill(null);
-      setNewSkill('');
+      showSnackbar("Uploaded! Refresh to see changes.", "info");
     }
+
+    // Clean up preview
+    URL.revokeObjectURL(tempPreviewUrl);
+
+  } catch (error) {
+    showSnackbar("Upload failed. Please try again.", "error");
+  } finally {
+    setSaving(false);
+  }
+};
+  
+  // Skill dialog handlers
+  const handleOpenSkillDialog = () => {
     setSkillDialogOpen(true);
   };
   
-  // Handle skill dialog close
   const handleCloseSkillDialog = () => {
     setSkillDialogOpen(false);
-    setEditingSkill(null);
-    setNewSkill('');
+    setSelectedSkill('');
   };
   
-  // Handle skill save
   const handleSaveSkill = async () => {
-    if (!newSkill) return;
+    if (!selectedSkill) return;
     
     try {
       setSaving(true);
+      await addUserSkill({ skill_id: selectedSkill });
       
-      if (editingSkill) {
-        // Update existing skill
-        await updateUserSkill(editingSkill, newSkill);
-        
-        setSkills(skills.map(skill => 
-          skill === editingSkill ? newSkill : skill
-        ));
-      } else {
-        // Add new skill
-        await addUserSkill(newSkill);
-        
-        setSkills([...skills, newSkill]);
-      }
+      // Refresh skills
+      const response = await getUserSkills();
+      setSkills(response.data.skills);
       
       setSnackbar({
         open: true,
-        message: editingSkill ? 'Skill updated successfully' : 'Skill added successfully',
+        message: 'Skill added successfully',
         severity: 'success'
       });
       
@@ -426,14 +471,12 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Handle skill delete
-  const handleDeleteSkill = async (skill) => {
+  const handleDeleteSkill = async (skill_id) => {
     try {
       setSaving(true);
+      await deleteUserSkill(skill_id);
       
-      await deleteUserSkill(skill);
-      
-      setSkills(skills.filter(s => s !== skill));
+      setSkills(skills.filter(skill => skill.skill_id !== skill_id));
       
       setSnackbar({
         open: true,
@@ -453,50 +496,37 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Handle experience dialog open
+  // Experience dialog handlers
   const handleOpenExperienceDialog = (experience = null) => {
     if (experience) {
-      setEditingExperience(experience);
       setExperienceForm({
-        company: experience.company,
+        id:experience.id,
+        company_name: experience.company_name,
         position: experience.position,
         location: experience.location,
-        startDate: experience.startDate,
-        endDate: experience.endDate || '',
-        current: experience.current || false,
+        start_date: experience.start_date,
+        end_date: experience.end_date || '',
+        currently_working: experience.currently_working || false,
         description: experience.description
       });
     } else {
-      setEditingExperience(null);
       setExperienceForm({
-        company: '',
+        company_name: '',
         position: '',
         location: '',
-        startDate: '',
-        endDate: '',
-        current: false,
+        start_date: '',
+        end_date: '',
+        currently_working: false,
         description: ''
       });
     }
     setExperienceDialogOpen(true);
   };
   
-  // Handle experience dialog close
   const handleCloseExperienceDialog = () => {
     setExperienceDialogOpen(false);
-    setEditingExperience(null);
-    setExperienceForm({
-      company: '',
-      position: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      current: false,
-      description: ''
-    });
   };
   
-  // Handle experience form change
   const handleExperienceFormChange = (e) => {
     const { name, value, type, checked } = e.target;
     setExperienceForm({
@@ -505,47 +535,32 @@ const EditJobSeekerProfile = () => {
     });
   };
   
-  // Handle experience save
   const handleSaveExperience = async () => {
-    // Validate form
-    if (!experienceForm.company || !experienceForm.position || !experienceForm.startDate) {
-      setSnackbar({
-        open: true,
-        message: 'Please fill in all required fields',
-        severity: 'error'
-      });
-      return;
-    }
-    
     try {
       setSaving(true);
-      
-      if (editingExperience) {
+      let edited=false;
+      if (experienceForm.id) {
+         
         // Update existing experience
-        const updatedExperience = {
-          ...editingExperience,
-          ...experienceForm
-        };
-        
-        await updateUserExperience(editingExperience.id, updatedExperience);
-        
-        setExperiences(experiences.map(exp => 
-          exp.id === editingExperience.id ? updatedExperience : exp
-        ));
-      } else {
+        await updateUserExperience(experienceForm.id, experienceForm);
+        edited=true;
+      } else if(edited!=true) {
         // Add new experience
-        const response = await addUserExperience(experienceForm);
-        
-        setExperiences([...experiences, response.data.experience]);
+        await addUserExperience(experienceForm);
       }
+      
+      // Refresh experiences
+      const response = await getUserExperiences();
+      setExperiences(response.data.experiences);
       
       setSnackbar({
         open: true,
-        message: editingExperience ? 'Experience updated successfully' : 'Experience added successfully',
+        message: 'Experience saved successfully',
         severity: 'success'
       });
       
       handleCloseExperienceDialog();
+       edited=false;
       setSaving(false);
     } catch (error) {
       console.error('Error saving experience:', error);
@@ -558,11 +573,9 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Handle experience delete
   const handleDeleteExperience = async (experienceId) => {
     try {
       setSaving(true);
-      
       await deleteUserExperience(experienceId);
       
       setExperiences(experiences.filter(exp => exp.id !== experienceId));
@@ -585,11 +598,11 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Handle education dialog open
+  // Education dialog handlers
   const handleOpenEducationDialog = (education = null) => {
     if (education) {
-      setEditingEducation(education);
       setEducationForm({
+        id: education.id,
         institution: education.institution,
         degree: education.degree,
         field: education.field,
@@ -599,7 +612,6 @@ const EditJobSeekerProfile = () => {
         description: education.description
       });
     } else {
-      setEditingEducation(null);
       setEducationForm({
         institution: '',
         degree: '',
@@ -613,22 +625,10 @@ const EditJobSeekerProfile = () => {
     setEducationDialogOpen(true);
   };
   
-  // Handle education dialog close
   const handleCloseEducationDialog = () => {
     setEducationDialogOpen(false);
-    setEditingEducation(null);
-    setEducationForm({
-      institution: '',
-      degree: '',
-      field: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      description: ''
-    });
   };
   
-  // Handle education form change
   const handleEducationFormChange = (e) => {
     const { name, value } = e.target;
     setEducationForm({
@@ -637,43 +637,25 @@ const EditJobSeekerProfile = () => {
     });
   };
   
-  // Handle education save
   const handleSaveEducation = async () => {
-    // Validate form
-    if (!educationForm.institution || !educationForm.degree || !educationForm.startDate) {
-      setSnackbar({
-        open: true,
-        message: 'Please fill in all required fields',
-        severity: 'error'
-      });
-      return;
-    }
-    
     try {
       setSaving(true);
       
-      if (editingEducation) {
+      if (educationForm.id) {
         // Update existing education
-        const updatedEducation = {
-          ...editingEducation,
-          ...educationForm
-        };
-        
-        await updateUserEducation(editingEducation.id, updatedEducation);
-        
-        setEducation(education.map(edu => 
-          edu.id === editingEducation.id ? updatedEducation : edu
-        ));
+        await updateUserEducation(educationForm.id, educationForm);
       } else {
         // Add new education
-        const response = await addUserEducation(educationForm);
-        
-        setEducation([...education, response.data.education]);
+        await addUserEducation(educationForm);
       }
+      
+      // Refresh education
+      const response = await getUserEducation();
+      setEducation(response.data.educations || []);
       
       setSnackbar({
         open: true,
-        message: editingEducation ? 'Education updated successfully' : 'Education added successfully',
+        message: 'Education saved successfully',
         severity: 'success'
       });
       
@@ -690,11 +672,9 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Handle education delete
   const handleDeleteEducation = async (educationId) => {
     try {
       setSaving(true);
-      
       await deleteUserEducation(educationId);
       
       setEducation(education.filter(edu => edu.id !== educationId));
@@ -717,11 +697,10 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Handle video delete
+  // Video handlers
   const handleDeleteVideo = async (videoId) => {
     try {
       setSaving(true);
-      
       await deleteUserVideo(videoId);
       
       setVideos(videos.filter(video => video.id !== videoId));
@@ -744,154 +723,32 @@ const EditJobSeekerProfile = () => {
     }
   };
   
-  // Navigate to upload video page
   const handleUploadVideo = () => {
-    navigate('/profile/upload-video');
+    navigate('/video-upload');
   };
   
-  // Format date (YYYY-MM to input format)
-  const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    
-    // If it's already in YYYY-MM format, return as is
-    if (/^\d{4}-\d{2}$/.test(dateString)) {
-      return dateString;
-    }
-    
-    // Otherwise, try to parse and format
-    try {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      return `${year}-${month}`;
-    } catch (error) {
-      return '';
-    }
+  const handleEditVideo = (videoId) => {
+    navigate(`/edit-video/${videoId}`);
   };
   
-  // Mock data for demonstration
-  const mockProfile = {
-    id: '1',
-    name: 'John Smith',
-    title: 'Frontend Developer',
-    location: 'New York, USA',
-    bio: 'Frontend developer with 5 years of experience in developing web applications using React and Angular. Specialized in UI design and user experience.',
-    email: 'john@example.com',
-    phone: '+1 123 456 7890',
-    website: 'www.johnsmith.dev',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    social: {
-      linkedin: 'linkedin.com/in/johnsmith',
-      github: 'github.com/johnsmith',
-      twitter: 'twitter.com/johnsmith'
-    }
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Present';
+    return dayjs(dateString).format('MMM YYYY');
   };
   
-  const mockSkills = [
-    'React', 'Angular', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3', 
-    'Material UI', 'Redux', 'Node.js', 'Express', 'MongoDB', 'Git'
-  ];
-  
-  const mockExperiences = [
-    {
-      id: '1',
-      company: 'Tech Solutions Inc.',
-      position: 'Senior Frontend Developer',
-      startDate: '2020-01',
-      endDate: null,
-      current: true,
-      description: 'Developing web applications using React and TypeScript. Designing and implementing application architecture and state management using Redux. Working with a team of developers to improve application performance and user experience.',
-      location: 'New York'
-    },
-    {
-      id: '2',
-      company: 'Global Software Ltd.',
-      position: 'Frontend Developer',
-      startDate: '2018-03',
-      endDate: '2019-12',
-      current: false,
-      description: 'Developed web applications using Angular. Implemented user interface designs and improved user experience. Worked with a team of developers to develop interactive web applications.',
-      location: 'Boston'
-    },
-    {
-      id: '3',
-      company: 'Digital Solutions',
-      position: 'Web Developer',
-      startDate: '2016-06',
-      endDate: '2018-02',
-      current: false,
-      description: 'Developed websites using HTML, CSS, and JavaScript. Implemented user interface designs and improved user experience. Worked with a team of developers to develop interactive websites.',
-      location: 'Chicago'
-    }
-  ];
-  
-  const mockEducation = [
-    {
-      id: '1',
-      institution: 'University of Technology',
-      degree: 'Bachelor of Science',
-      field: 'Computer Science',
-      startDate: '2012-09',
-      endDate: '2016-05',
-      description: 'Specialized in software development and software engineering. Final project: Development of a web application for project management.',
-      location: 'New York'
-    },
-    {
-      id: '2',
-      institution: 'Coding Academy',
-      degree: 'Advanced Web Development Certificate',
-      field: 'Web Development',
-      startDate: '2016-06',
-      endDate: '2016-08',
-      description: 'Intensive course in web development using the latest technologies.',
-      location: 'New York'
-    }
-  ];
-  
-  const mockVideos = [
-    {
-      id: '1',
-      title: 'Introduction About Me',
-      thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      duration: 30,
-      type: 'intro',
-      views: 120
-    },
-    {
-      id: '2',
-      title: 'My React Skills',
-      thumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      duration: 45,
-      type: 'skills',
-      views: 85
-    },
-    {
-      id: '3',
-      title: 'My Previous Experience',
-      thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      duration: 40,
-      type: 'experience',
-      views: 67
-    }
-  ];
-  
-  // Use mock data if real data is not available
-  const userData = profile.name ? profile : mockProfile;
-  const userSkills = skills.length > 0 ? skills : mockSkills;
-  const userExperiences = experiences.length > 0 ? experiences : mockExperiences;
-  const userEducation = education.length > 0 ? education : mockEducation;
-  const userVideos = videos.length > 0 ? videos : mockVideos;
-  
+  // Close snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <ProfileContainer>
       <Container maxWidth="lg">
         {/* Page Header */}
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" component="h1">
-            Edit Profile
+          <Typography variant="h4" component="h1" fontWeight="bold">
+            Edit My Profile
           </Typography>
           <Button
             variant="contained"
@@ -899,6 +756,7 @@ const EditJobSeekerProfile = () => {
             startIcon={<SaveIcon />}
             onClick={handleSaveProfile}
             disabled={saving}
+            sx={{ borderRadius: '20px', px: 3 }}
           >
             {saving ? 'Saving...' : 'Save Profile'}
           </Button>
@@ -910,19 +768,41 @@ const EditJobSeekerProfile = () => {
           </Box>
         ) : (
           <>
-            {/* Profile Avatar */}
+            {/* Profile Avatar Section */}
             <SectionPaper elevation={1}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box sx={{ position: 'relative' }}>
-                  <ProfileAvatar src={userData.avatar} alt={userData.name}>
-                    {userData.name.charAt(0)}
-                  </ProfileAvatar>
+<ProfileAvatar 
+  src={avatarPicture}
+  alt={`${profile.first_name} ${profile.last_name}`}
+  sx={{
+    '& .MuiAvatar-img': {
+      display: avatarPicture ? 'block' : 'none'
+    }
+  }}
+  imgProps={{
+    onError: (e) => {
+      e.target.style.display = 'none';
+      // Automatically retry after delay
+      if (avatarPicture && avatarPicture.startsWith(VITE_API_BASE_URL)) {
+        setTimeout(() => {
+          setAvatarPicture(`${avatarPicture.split('?')[0]}?retry=${Date.now()}`);
+        }, 2000);
+      }
+    }
+  }}
+>
+  {!avatarPicture && `${profile.first_name?.charAt(0)}${profile.last_name?.charAt(0)}`}
+</ProfileAvatar>
+                    
+                
                   <input
                     accept="image/*"
                     style={{ display: 'none' }}
                     id="avatar-upload"
                     type="file"
                     onChange={handleAvatarUpload}
+                    ref={fileInputRef}
                   />
                   <label htmlFor="avatar-upload">
                     <AvatarUploadButton
@@ -933,17 +813,17 @@ const EditJobSeekerProfile = () => {
                     </AvatarUploadButton>
                   </label>
                 </Box>
-                <Typography variant="h6" sx={{ mt: 2 }}>
-                  {userData.name}
+                <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
+                  {profile.first_name} {profile.last_name}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {userData.title}
+                  {profile.title}
                 </Typography>
               </Box>
             </SectionPaper>
             
             {/* Tabs Navigation */}
-            <Paper sx={{ mb: 3 }}>
+            <Paper sx={{ mb: 3, borderRadius: '16px', overflow: 'hidden' }}>
               <Tabs
                 value={tabValue}
                 onChange={handleTabChange}
@@ -952,179 +832,190 @@ const EditJobSeekerProfile = () => {
                 variant={isMobile ? "scrollable" : "fullWidth"}
                 scrollButtons={isMobile ? "auto" : false}
                 centered={!isMobile}
+                sx={{
+                  '& .MuiTab-root': {
+                    minHeight: 64,
+                    ...(isMobile ? { minWidth: 'auto', px: 1 } : {})
+                  }
+                }}
               >
-                <Tab label="Basic Info" />
-                <Tab label="Skills" />
-                <Tab label="Experience" />
-                <Tab label="Education" />
-                <Tab label="Videos" />
+                <Tab icon={<PersonIcon />} label="Basic Info" />
+                <Tab icon={<CodeIcon />} label="Skills" />
+                <Tab icon={<BusinessIcon />} label="Experience" />
+                <Tab icon={<BookIcon />} label="Education" />
+                <Tab icon={<VideocamIcon />} label="Videos" />
               </Tabs>
               
               {/* Basic Info Tab */}
               <TabPanel value={tabValue} index={0}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Full Name"
-                      name="name"
-                      value={userData.name}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Professional Title"
-                      name="title"
-                      value={userData.title}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Location"
-                      name="location"
-                      value={userData.location}
-                      onChange={handleProfileChange}
-                      placeholder="City, Country"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Bio"
-                      name="bio"
-                      value={userData.bio}
-                      onChange={handleProfileChange}
-                      multiline
-                      rows={4}
-                      placeholder="Tell employers about yourself, your skills, and your experience"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={userData.email}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Phone"
-                      name="phone"
-                      value={userData.phone}
-                      onChange={handleProfileChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Website"
-                      name="website"
-                      value={userData.website}
-                      onChange={handleProfileChange}
-                      placeholder="www.example.com"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom>
-                      Social Media
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          fullWidth
-                          label="LinkedIn"
-                          name="social.linkedin"
-                          value={userData.social?.linkedin || ''}
-                          onChange={handleProfileChange}
-                          placeholder="linkedin.com/in/username"
-                          InputProps={{
-                            startAdornment: <LinkedInIcon color="primary" sx={{ mr: 1 }} />,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          fullWidth
-                          label="GitHub"
-                          name="social.github"
-                          value={userData.social?.github || ''}
-                          onChange={handleProfileChange}
-                          placeholder="github.com/username"
-                          InputProps={{
-                            startAdornment: <GitHubIcon color="primary" sx={{ mr: 1 }} />,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          fullWidth
-                          label="Twitter"
-                          name="social.twitter"
-                          value={userData.social?.twitter || ''}
-                          onChange={handleProfileChange}
-                          placeholder="twitter.com/username"
-                          InputProps={{
-                            startAdornment: <TwitterIcon color="primary" sx={{ mr: 1 }} />,
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
+              <Grid container spacing={3}>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="First Name"
+      name="first_name"
+      value={profile.first_name || ''}
+      onChange={handleProfileChange}
+      required
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <PersonIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Second Name"
+      name="Second_name"
+      value={profile.Second_name || ''}
+      onChange={handleProfileChange}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Last Name"
+      name="last_name"
+      value={profile.last_name || ''}
+      onChange={handleProfileChange}
+    />
+  </Grid>
+  <Grid item xs={12}>
+    <TextField
+      fullWidth
+      label="Professional Title"
+      name="title"
+      value={profile.title || ''}
+      onChange={handleProfileChange}
+      required
+    />
+  </Grid>
+  <Grid item xs={12}>
+    <TextField
+      fullWidth
+      label="Location"
+      name="location"
+      value={profile.location || ''}
+      onChange={handleProfileChange}
+      placeholder="City, Country"
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <LocationIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12}>
+    <TextField
+      fullWidth
+      label="Bio"
+      name="bio"
+      value={profile.bio || ''}
+      onChange={handleProfileChange}
+      multiline
+      rows={4}
+      placeholder="Tell employers about yourself, your skills, and your experience"
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Email"
+      name="email"
+      type="email"
+      value={profile.email || ''}
+      onChange={handleProfileChange}
+      required
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <EmailIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Phone"
+      name="phone"
+      value={profile.phone || ''}
+      onChange={handleProfileChange}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <PhoneIcon color="action" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <TextField
+      fullWidth
+      label="Mobile"
+      name="mobile"
+      value={profile.mobile || ''}
+      onChange={handleProfileChange}
+    />
+  </Grid>
+</Grid>
               </TabPanel>
               
               {/* Skills Tab */}
               <TabPanel value={tabValue} index={1}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6">
+                  <Typography variant="h6" fontWeight="bold">
                     Your Skills
                   </Typography>
                   <Button
                     variant="contained"
                     color="primary"
                     startIcon={<AddIcon />}
-                    onClick={() => handleOpenSkillDialog()}
+                    onClick={handleOpenSkillDialog}
+                    sx={{ borderRadius: '20px' }}
                   >
                     Add Skill
                   </Button>
                 </Box>
                 
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 3 }}>
-                  {userSkills.map((skill, index) => (
-                    <SkillChip
-                      key={index}
-                      label={skill}
-                      onDelete={() => handleDeleteSkill(skill)}
-                      onClick={() => handleOpenSkillDialog(skill)}
-                    />
-                  ))}
-                  {userSkills.length === 0 && (
-                    <Typography variant="body2" color="textSecondary">
-                      No skills added yet. Click "Add Skill" to add your first skill.
+                {skills.length === 0 ? (
+                  <Box sx={{ 
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    p: 4,
+                    textAlign: 'center'
+                  }}>
+                    <Typography variant="body1" color="textSecondary">
+                      No skills added yet. Click "Add Skill" to showcase your expertise.
                     </Typography>
-                  )}
-                </Box>
-                
-                <Typography variant="body2" color="textSecondary">
-                  Add skills that showcase your expertise. These will help employers find you for relevant job opportunities.
-                </Typography>
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {skills.map((skill) => (
+                      <SkillChip
+                        key={skill.skill_id}
+                        label={skill.name}
+                        onDelete={() => handleDeleteSkill(skill.skill_id)}
+                        sx={{ borderRadius: '4px' }}
+                      />
+                    ))}
+                  </Box>
+                )}
               </TabPanel>
               
               {/* Experience Tab */}
               <TabPanel value={tabValue} index={2}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6">
+                  <Typography variant="h6" fontWeight="bold">
                     Work Experience
                   </Typography>
                   <Button
@@ -1132,67 +1023,80 @@ const EditJobSeekerProfile = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={() => handleOpenExperienceDialog()}
+                    sx={{ borderRadius: '20px' }}
                   >
                     Add Experience
                   </Button>
                 </Box>
                 
-                {userExperiences.length === 0 ? (
-                  <Typography variant="body2" color="textSecondary">
-                    No work experience added yet. Click "Add Experience" to add your first work experience.
-                  </Typography>
+                {experiences.length === 0 ? (
+                  <Box sx={{ 
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    p: 4,
+                    textAlign: 'center'
+                  }}>
+                    <Typography variant="body1" color="textSecondary">
+                      No work experience added yet. Click "Add Experience" to get started.
+                    </Typography>
+                  </Box>
                 ) : (
-                  userExperiences.map((exp) => (
-                    <Card key={exp.id} sx={{ mb: 2 }}>
-                      <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <Box>
-                            <Typography variant="h6" component="h3">
-                              {exp.position}
-                            </Typography>
-                            <Typography variant="subtitle1" color="primary">
-                              {exp.company}
-                            </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {experiences.map((exp) => (
+                      <Card key={exp.id} sx={{ borderRadius: 2 }}>
+                        <CardContent>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Box>
+                              <Typography variant="h6" fontWeight="bold">
+                                {exp.position}
+                              </Typography>
+                              <Typography variant="subtitle1" color="primary">
+                                {exp.company_name}
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
+                                {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)}
+                              </Typography>
+                              {exp.location && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                  <LocationIcon fontSize="small" color="action" />
+                                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                                    {exp.location}
+                                  </Typography>
+                                </Box>
+                              )}
+                            </Box>
+                            <Box>
+                              <IconButton 
+                                onClick={() => handleOpenExperienceDialog(exp)}
+                                sx={{ color: 'primary.main' }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton 
+                                onClick={() => handleDeleteExperience(exp.id)}
+                                sx={{ color: 'error.main' }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
                           </Box>
-                          <Box>
-                            <IconButton 
-                              size="small" 
-                              color="primary"
-                              onClick={() => handleOpenExperienceDialog(exp)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton 
-                              size="small" 
-                              color="error"
-                              onClick={() => handleDeleteExperience(exp.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
-                          <LocationIcon fontSize="small" color="action" />
-                          <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                            {exp.location}
-                          </Typography>
-                        </Box>
-                        <Typography variant="body2" color="textSecondary" gutterBottom>
-                          {formatDateForInput(exp.startDate)} - {exp.current ? 'Present' : formatDateForInput(exp.endDate)}
-                        </Typography>
-                        <Typography variant="body2">
-                          {exp.description}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  ))
+                          {exp.description && (
+                            <Typography variant="body2" sx={{ mt: 2 }}>
+                              {exp.description}
+                            </Typography>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
                 )}
               </TabPanel>
               
               {/* Education Tab */}
               <TabPanel value={tabValue} index={3}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6">
+                  <Typography variant="h6" fontWeight="bold">
                     Education
                   </Typography>
                   <Button
@@ -1200,70 +1104,85 @@ const EditJobSeekerProfile = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={() => handleOpenEducationDialog()}
+                    sx={{ borderRadius: '20px' }}
                   >
                     Add Education
                   </Button>
                 </Box>
                 
-                {userEducation.length === 0 ? (
-                  <Typography variant="body2" color="textSecondary">
-                    No education added yet. Click "Add Education" to add your first education.
-                  </Typography>
+                {education.length === 0 ? (
+                  <Box sx={{ 
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    p: 4,
+                    textAlign: 'center'
+                  }}>
+                    <Typography variant="body1" color="textSecondary">
+                      No education added yet. Click "Add Education" to get started.
+                    </Typography>
+                  </Box>
                 ) : (
-                  userEducation.map((edu) => (
-                    <Card key={edu.id} sx={{ mb: 2 }}>
-                      <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <Box>
-                            <Typography variant="h6" component="h3">
-                              {edu.degree}
-                            </Typography>
-                            <Typography variant="subtitle1" color="primary">
-                              {edu.institution}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              {edu.field}
-                            </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {education.map((edu) => (
+                      <Card key={edu.id} sx={{ borderRadius: 2 }}>
+                        <CardContent>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Box>
+                              <Typography variant="h6" fontWeight="bold">
+                                {edu.degree}
+                              </Typography>
+                              <Typography variant="subtitle1" color="primary">
+                                {edu.institution}
+                              </Typography>
+                              {edu.field && (
+                                <Typography variant="body2" color="textSecondary">
+                                  {edu.field}
+                                </Typography>
+                              )}
+                              <Typography variant="body2" color="textSecondary">
+                                {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                              </Typography>
+                              {edu.location && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                  <LocationIcon fontSize="small" color="action" />
+                                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                                    {edu.location}
+                                  </Typography>
+                                </Box>
+                              )}
+                            </Box>
+                            <Box>
+                              <IconButton 
+                                onClick={() => handleOpenEducationDialog(edu)}
+                                sx={{ color: 'primary.main' }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton 
+                                onClick={() => handleDeleteEducation(edu.id)}
+                                sx={{ color: 'error.main' }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
                           </Box>
-                          <Box>
-                            <IconButton 
-                              size="small" 
-                              color="primary"
-                              onClick={() => handleOpenEducationDialog(edu)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton 
-                              size="small" 
-                              color="error"
-                              onClick={() => handleDeleteEducation(edu.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 1 }}>
-                          <LocationIcon fontSize="small" color="action" />
-                          <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                            {edu.location}
-                          </Typography>
-                        </Box>
-                        <Typography variant="body2" color="textSecondary" gutterBottom>
-                          {formatDateForInput(edu.startDate)} - {formatDateForInput(edu.endDate)}
-                        </Typography>
-                        <Typography variant="body2">
-                          {edu.description}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  ))
+                          {edu.description && (
+                            <Typography variant="body2" sx={{ mt: 2 }}>
+                              {edu.description}
+                            </Typography>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
                 )}
               </TabPanel>
               
               {/* Videos Tab */}
               <TabPanel value={tabValue} index={4}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6">
+                  <Typography variant="h6" fontWeight="bold">
                     Your Videos
                   </Typography>
                   <Button
@@ -1271,23 +1190,32 @@ const EditJobSeekerProfile = () => {
                     color="primary"
                     startIcon={<VideoCallIcon />}
                     onClick={handleUploadVideo}
+                    sx={{ borderRadius: '20px' }}
                   >
-                    Upload New Video
+                    Upload Video
                   </Button>
                 </Box>
                 
-                {userVideos.length === 0 ? (
-                  <Typography variant="body2" color="textSecondary">
-                    No videos uploaded yet. Click "Upload New Video" to add your first video resume.
-                  </Typography>
+                {videos.length === 0 ? (
+                  <Box sx={{ 
+                    border: '1px dashed',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    p: 4,
+                    textAlign: 'center'
+                  }}>
+                    <Typography variant="body1" color="textSecondary">
+                      No videos uploaded yet. Click "Upload Video" to add your first video.
+                    </Typography>
+                  </Box>
                 ) : (
-                  <Grid container spacing={3}>
-                    {userVideos.map((video) => (
+                  <Grid container spacing={2}>
+                    {videos.map((video) => (
                       <Grid item xs={12} sm={6} md={4} key={video.id}>
                         <VideoCard>
                           <VideoCardMedia
                             image={video.thumbnail}
-                            title={video.title}
+                            title={video.video_title}
                           >
                             <IconButton
                               sx={{
@@ -1306,24 +1234,24 @@ const EditJobSeekerProfile = () => {
                             </IconButton>
                           </VideoCardMedia>
                           <CardContent>
-                            <Typography variant="subtitle1" component="h3" gutterBottom>
-                              {video.title}
+                            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                              {video.video_title}
                             </Typography>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                               <Typography variant="caption" color="textSecondary">
-                                {video.duration} seconds
+                                {video.video_duration} sec
                               </Typography>
                               <Typography variant="caption" color="textSecondary">
                                 {video.views} views
                               </Typography>
                             </Box>
                           </CardContent>
-                          <CardActions>
+                          <CardActions sx={{ justifyContent: 'space-between' }}>
                             <Button
                               size="small"
                               color="primary"
                               startIcon={<EditIcon />}
-                              onClick={() => navigate(`/profile/edit-video/${video.id}`)}
+                              onClick={() => handleEditVideo(video.id)}
                             >
                               Edit
                             </Button>
@@ -1349,27 +1277,22 @@ const EditJobSeekerProfile = () => {
       
       {/* Skill Dialog */}
       <Dialog open={skillDialogOpen} onClose={handleCloseSkillDialog}>
-        <DialogTitle>
-          {editingSkill ? 'Edit Skill' : 'Add Skill'}
-        </DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth sx={{ mt: 1 }}>
-            <InputLabel id="skill-select-label">Skill</InputLabel>
+        <DialogTitle>Add New Skill</DialogTitle>
+        <DialogContent sx={{ minWidth: 400 }}>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel id="skill-select-label">Select Skill</InputLabel>
             <Select
               labelId="skill-select-label"
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              label="Skill"
+              value={selectedSkill}
+              onChange={(e) => setSelectedSkill(e.target.value)}
+              label="Select Skill"
             >
               {availableSkills.map((skill) => (
-                <MenuItem key={skill} value={skill}>
-                  {skill}
+                <MenuItem key={skill.id} value={skill.id}>
+                  {skill.name}
                 </MenuItem>
               ))}
             </Select>
-            <FormHelperText>
-              Select a skill from the list or type a new one
-            </FormHelperText>
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -1379,7 +1302,7 @@ const EditJobSeekerProfile = () => {
           <Button 
             onClick={handleSaveSkill} 
             color="primary"
-            disabled={!newSkill || saving}
+            disabled={!selectedSkill || saving}
           >
             {saving ? 'Saving...' : 'Save'}
           </Button>
@@ -1391,24 +1314,24 @@ const EditJobSeekerProfile = () => {
         open={experienceDialogOpen} 
         onClose={handleCloseExperienceDialog}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
         <DialogTitle>
-          {editingExperience ? 'Edit Experience' : 'Add Experience'}
+          {experienceForm.id ? 'Edit Experience' : 'Add Experience'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Company"
-                name="company"
-                value={experienceForm.company}
+                label="Company Name"
+                name="company_name"
+                value={experienceForm.company_name}
                 onChange={handleExperienceFormChange}
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Position"
@@ -1418,7 +1341,7 @@ const EditJobSeekerProfile = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Location"
@@ -1429,27 +1352,12 @@ const EditJobSeekerProfile = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id="current-job-label">Current Job</InputLabel>
-                <Select
-                  labelId="current-job-label"
-                  name="current"
-                  value={experienceForm.current}
-                  onChange={handleExperienceFormChange}
-                  label="Current Job"
-                >
-                  <MenuItem value={true}>Yes</MenuItem>
-                  <MenuItem value={false}>No</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Start Date"
-                name="startDate"
-                type="month"
-                value={formatDateForInput(experienceForm.startDate)}
+                name="start_date"
+                type="date"
+                value={experienceForm.start_date}
                 onChange={handleExperienceFormChange}
                 InputLabelProps={{
                   shrink: true,
@@ -1461,15 +1369,27 @@ const EditJobSeekerProfile = () => {
               <TextField
                 fullWidth
                 label="End Date"
-                name="endDate"
-                type="month"
-                value={formatDateForInput(experienceForm.endDate)}
+                name="end_date"
+                type="date"
+                value={experienceForm.end_date}
                 onChange={handleExperienceFormChange}
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled={experienceForm.current}
-                required={!experienceForm.current}
+                disabled={experienceForm.currently_working}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={experienceForm.currently_working}
+                    onChange={handleExperienceFormChange}
+                    name="currently_working"
+                    color="primary"
+                  />
+                }
+                label="I currently work here"
               />
             </Grid>
             <Grid item xs={12}>
@@ -1505,14 +1425,14 @@ const EditJobSeekerProfile = () => {
         open={educationDialogOpen} 
         onClose={handleCloseEducationDialog}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
         <DialogTitle>
-          {editingEducation ? 'Edit Education' : 'Add Education'}
+          {educationForm.id ? 'Edit Education' : 'Add Education'}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Institution"
@@ -1522,7 +1442,7 @@ const EditJobSeekerProfile = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Degree"
@@ -1532,7 +1452,7 @@ const EditJobSeekerProfile = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Field of Study"
@@ -1541,7 +1461,7 @@ const EditJobSeekerProfile = () => {
                 onChange={handleEducationFormChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Location"
@@ -1556,8 +1476,8 @@ const EditJobSeekerProfile = () => {
                 fullWidth
                 label="Start Date"
                 name="startDate"
-                type="month"
-                value={formatDateForInput(educationForm.startDate)}
+                type="date"
+                value={educationForm.startDate}
                 onChange={handleEducationFormChange}
                 InputLabelProps={{
                   shrink: true,
@@ -1570,8 +1490,8 @@ const EditJobSeekerProfile = () => {
                 fullWidth
                 label="End Date"
                 name="endDate"
-                type="month"
-                value={formatDateForInput(educationForm.endDate)}
+                type="date"
+                value={educationForm.endDate}
                 onChange={handleEducationFormChange}
                 InputLabelProps={{
                   shrink: true,
@@ -1610,12 +1530,15 @@ const EditJobSeekerProfile = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          onClose={handleCloseSnackbar} 
           severity={snackbar.severity}
           sx={{ width: '100%' }}
+          elevation={6}
+          variant="filled"
         >
           {snackbar.message}
         </Alert>

@@ -1,489 +1,873 @@
-"use client"
-
-import { useState } from "react"
+import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Typography,
   Container,
-  Paper,
-  Chip,
+  Grid,
+  Typography,
+  Avatar,
   Button,
-  Switch,
+  Chip,
+  Tabs,
+  Tab,
+  Card,
+  CardContent,
+  CardMedia,
   IconButton,
-  AppBar,
-  Toolbar,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Dialog,
-  DialogContent,
+  Divider,
+  Paper,
   styled,
-  createTheme,
-  ThemeProvider,
-  CssBaseline,
-} from "@mui/material"
+  useTheme,
+  useMediaQuery,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon
+} from '@mui/material';
 import {
   Edit as EditIcon,
-  MoreVert as MoreVertIcon,
-  Visibility as VisibilityIcon,
-  Settings as SettingsIcon,
   PlayArrow as PlayArrowIcon,
-  Close as CloseIcon,
-  VideoLibrary as VideoLibraryIcon,
-  Chat as ChatIcon,
-  Person as PersonIcon,
-} from "@mui/icons-material"
-import { useNavigate } from "react-router-dom";
-
-// Create a custom theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#4F46E5", // Indigo color from the original design
-    },
-    background: {
-      default: "#F9FAFB",
-    },
-  },
-  typography: {
-    fontFamily: "'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif",
-    h5: {
-      fontWeight: 700,
-    },
-    h6: {
-      fontWeight: 600,
-      fontSize: "1.1rem",
-    },
-    subtitle1: {
-      fontWeight: 600,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          borderRadius: 8,
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-        },
-      },
-    },
-    MuiToolbar: {
-      styleOverrides: {
-        root: {
-          minHeight: 56,
-          "@media (min-width:0px)": {
-            minHeight: 56,
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-        },
-      },
-    },
-  },
-})
+  Pause as PauseIcon,
+  Favorite as FavoriteIcon,
+  Share as ShareIcon,
+  Bookmark as BookmarkIcon,
+  Work as WorkIcon,
+  Business as BusinessIcon,
+  LocationOn as LocationIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Language as LanguageIcon,
+  LinkedIn as LinkedInIcon,
+  Facebook as FacebookIcon,
+  Twitter as TwitterIcon,
+  People as PeopleIcon,
+  Description as DescriptionIcon,
+  VolumeOff as VolumeOffIcon,
+  VolumeUp as VolumeOnIcon
+} from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getEmployerProfile, getVideoResume, getEmployerJobs ,getJobVideos} from '../services/api';
 
 // Styled components
-const ProfileHeader = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  textAlign: "center",
-  marginBottom: theme.spacing(2),
-}))
+const ProfileContainer = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
+  minHeight: '100vh',
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(4)
+}));
 
-const VideoThumbnail = styled(Box)(({ theme }) => ({
-  width: 120,
-  height: 120,
-  borderRadius: "50%",
-  margin: "0 auto",
-  marginBottom: theme.spacing(2),
-  position: "relative",
-  overflow: "hidden",
-  border: "4px solid white",
-  boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-}))
+const ProfileHeader = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  marginBottom: theme.spacing(3),
+  display: 'flex',
+  flexDirection: 'column',
+  [theme.breakpoints.up('md')]: {
+    flexDirection: 'row',
+  }
+}));
 
-const PlayIconOverlay = styled(Box)(({ theme }) => ({
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "rgba(0,0,0,0.3)",
-  borderRadius: "50%",
-  cursor: "pointer",
-}))
+const ProfileInfo = styled(Box)(({ theme }) => ({
+  flex: 1,
+  padding: theme.spacing(2),
+  [theme.breakpoints.up('md')]: {
+    paddingRight: theme.spacing(4),
+  }
+}));
 
-const Section = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(2.5),
+const MainVideoContainer = styled(Box)(({ theme }) => ({
+  width: '100%',
+  height: 250,
+  borderRadius: theme.spacing(1),
+  overflow: 'hidden',
+  position: 'relative',
   marginBottom: theme.spacing(2),
-  borderRadius: theme.spacing(1.5),
-}))
-
-const SectionTitle = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: theme.spacing(2),
-}))
-
-const ExperienceItem = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  paddingBottom: theme.spacing(2),
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  "&:last-child": {
+  backgroundColor: '#000',
+  [theme.breakpoints.up('md')]: {
+    width: 300,
+    height: 400,
     marginBottom: 0,
-    paddingBottom: 0,
-    borderBottom: "none",
-  },
-}))
+  }
+}));
 
-const VideoContainer = styled(Box)(({ theme }) => ({
-  position: "relative",
-  width: "100%",
-  height: 200,
-  borderRadius: theme.spacing(1.5),
-  overflow: "hidden",
-  marginTop: theme.spacing(2),
-  backgroundColor: theme.palette.grey[900],
-}))
-
-// Modified BottomNav to span full width
-const BottomNav = styled(Paper)(({ theme }) => ({
-  position: "fixed",
+const VideoControls = styled(Box)(({ theme }) => ({
+  position: 'absolute',
   bottom: 0,
   left: 0,
   right: 0,
-  display: "flex",
-  justifyContent: "space-around",
-  padding: theme.spacing(0.5, 0),
-  zIndex: 100,
-  // Removed maxWidth property
-  // Added width: 100% to ensure it spans the full width
-  width: "100%",
-}))
-
-const NavItem = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
   padding: theme.spacing(1),
-  color: theme.palette.text.secondary,
-  cursor: "pointer",
-  "&.active": {
-    color: theme.palette.primary.main,
-  },
-}))
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
 
-export default function EmployerProfile() {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [videoModalOpen, setVideoModalOpen] = useState(false)
-  const [availabilityOn, setAvailabilityOn] = useState(true)
-const navigate = useNavigate();
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget)
-    navigate("/event.currentTarget");
+const VideoActions = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  right: theme.spacing(1),
+  top: '50%',
+  transform: 'translateY(-50%)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: theme.spacing(2),
+}));
+
+const CompanyLogo = styled(Avatar)(({ theme }) => ({
+  width: 100,
+  height: 100,
+  border: `4px solid ${theme.palette.primary.main}`,
+  marginRight: theme.spacing(2),
+}));
+
+const CategoryChip = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.5),
+  backgroundColor: theme.palette.secondary.light,
+  color: theme.palette.secondary.contrastText,
+  '&:hover': {
+    backgroundColor: theme.palette.secondary.main,
   }
+}));
 
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handleVideoOpen = () => {
-    setVideoModalOpen(true)
-  }
-
-  const handleVideoClose = () => {
-    setVideoModalOpen(false)
-  }
-
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ pb: 10, minHeight: "100vh" }}>
-        {/* Top Navigation */}
-        <AppBar position="sticky" color="default" elevation={0} sx={{ height: "auto" }}>
-          <Toolbar sx={{ minHeight: { xs: "48px" }, px: 2 }}>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                flexGrow: 1,
-                fontWeight: 700,
-                fontSize: "1.25rem",
-                "& span": { color: "primary.main" },
-              }}
-            >
-              Swipe<span>Scout</span>
-            </Typography>
-            <IconButton size="small" edge="end" color="inherit" aria-label="menu" onClick={handleMenuOpen}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              transformOrigin={{ horizontal: "right", vertical: "top" }}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-              <MenuItem onClick={handleMenuClose}>
-                <ListItemIcon>
-                  <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Edit Profile</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={handleMenuClose}>
-                <ListItemIcon>
-                  <VisibilityIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>View as Employer</ListItemText>
-              </MenuItem>
-              <MenuItem onClick={handleMenuClose}>
-                <ListItemIcon>
-                  <SettingsIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Settings</ListItemText>
-              </MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`profile-tabpanel-${index}`}
+      aria-labelledby={`profile-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+};
 
-        {/* Main Content */}
-        <Container maxWidth="sm" sx={{ py: 2 }}>
-          {/* Profile Header */}
-          <ProfileHeader>
-            <VideoThumbnail onClick={handleVideoOpen}>
-              <Box
-                component="img"
-                // src="/placeholder.svg?height=120&width=120"
-                // alt="Profile video thumbnail"
-                sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-              <PlayIconOverlay>
-                <PlayArrowIcon sx={{ color: "white", fontSize: 40 }} />
-              </PlayIconOverlay>
-            </VideoThumbnail>
+const VideoCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: theme.spacing(1),
+  overflow: 'hidden',
+  transition: 'transform 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-50%, -50%)',
+    boxShadow: theme.shadows[10],
+  }
+}));
 
-            <Typography variant="h5" component="h1" sx={{ mb: 0.5 }}>
-              Alex Chen
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
-              UX/UI Designer
-            </Typography>
+const VideoCardMedia = styled(CardMedia)(({ theme }) => ({
+  height: 0,
+  paddingTop: '56.25%', // 16:9 aspect ratio
+  position: 'relative',
+}));
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: "center", mb: 2 }}>
-              <Chip label="Figma" size="small" sx={{ bgcolor: "rgba(79, 70, 229, 0.1)", color: "primary.main" }} />
-              <Chip
-                label="User Research"
-                size="small"
-                sx={{ bgcolor: "rgba(79, 70, 229, 0.1)", color: "primary.main" }}
-              />
-              <Chip label="HTML/CSS" size="small" sx={{ bgcolor: "rgba(79, 70, 229, 0.1)", color: "primary.main" }} />
-              <Chip
-                label="Prototyping"
-                size="small"
-                sx={{ bgcolor: "rgba(79, 70, 229, 0.1)", color: "primary.main" }}
-              />
-              <Chip
-                label="Wireframing"
-                size="small"
-                sx={{ bgcolor: "rgba(79, 70, 229, 0.1)", color: "primary.main" }}
-              />
-              <Chip label="UX Writing" size="small" sx={{ bgcolor: "rgba(79, 70, 229, 0.1)", color: "primary.main" }} />
-            </Box>
-          </ProfileHeader>
+const VideoPlayButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  color: '#fff',
+  '&:hover': {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  }
+}));
 
-          {/* Experience Section */}
-          <Section>
-            <SectionTitle>
-              <Typography variant="h6">Experience</Typography>
-              <Button startIcon={<EditIcon fontSize="small" />} color="primary" size="small">
-                Edit
-              </Button>
-            </SectionTitle>
+const JobCard = styled(Card)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  borderLeft: `4px solid ${theme.palette.primary.main}`,
+}));
 
-            <ExperienceItem>
-              <Typography variant="subtitle1">Senior UX Designer</Typography>
-              <Typography variant="body2" color="text.secondary">
-                DigitalAgency Inc.
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                2020 - 2023
-              </Typography>
-            </ExperienceItem>
+const EmployerProfile = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
+  // State
+  const [tabValue, setTabValue] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [mutedVideos, setMutedVideos] = useState({});
+  
+  // Refs
+  const videoRefs = React.useRef({});
+  
+  // Fetch employer data
+  useEffect(() => {
+    const fetchEmployerData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch profile data
+        const profileResponse = await getEmployerProfile(id);
+        const videosResponse = await getVideoResume();
+        const employerJobsResponse = await getEmployerJobs();
+        const employerData = profileResponse?.data?.company || {};
+        console.log('Employer profile data:::::::', employerData);
+        
+        // Extract user info for email, phone, etc.
+        // const userData = employerData.user || {};
+        
+        // Format categories
+        const categories = employerData.category ? [employerData.category.name] : [];
+        
+        // Find main video
+        const mainVideo = employerData.videos?.find(v => v.video_position === 'main')?.video_url || null;
+        
+        // Build final profile object using entity field names
+        const formattedProfile = {
+          id: employerData.id,
+          name: employerData.name,
+          userId: employerData.userId,
+          description: employerData.description,
+          website: employerData.website,
+          location: employerData.location,
+          industry: employerData.industry,
+          address: employerData.address,
+          logo: employerData.logo,
+          size: employerData.size,
+          verified: employerData.verified,
+          establish_year: employerData.establish_year,
+          created_at: employerData.created_at,
+          email: employerData.email || '',
+          phone: employerData.phone || '',
+          mainVideo,
+          categories
+        };
+        
+        setProfile(formattedProfile);
+         
+        // Set videos and jobs
+        setVideos(employerData.videos || []);
+        setJobs(employerJobsResponse || []);
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching employer data:', error);
+        setLoading(false);
+      }
+    };
+    fetchEmployerData();
+  }, [id]);
+  
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+  
+  // Toggle video playback for specific video
+  const togglePlayback = (videoId) => {
+    if (videoRefs.current[videoId]) {
+      const videoElement = videoRefs.current[videoId];
+      
+      if (videoElement.paused) {
+        videoElement.play();
+      } else {
+        videoElement.pause();
+      }
+      
+      // Update playing state for this specific video
+      setIsPlaying(prevState => ({
+        ...prevState,
+        [videoId]: !prevState[videoId]
+      }));
+    }
+  };
+  
+  // Handle mute/unmute for specific video
+  const toggleMute = (videoId) => {
+    if (videoRefs.current[videoId]) {
+      const videoElement = videoRefs.current[videoId];
+      videoElement.muted = !videoElement.muted;
+      
+      setMutedVideos(prevState => ({
+        ...prevState,
+        [videoId]: videoElement.muted
+      }));
+    }
+  };
+  
+  // Navigate to edit profile
+  const handleEditProfile = () => {
+    navigate(`/employer/edit/${id}`);
+  };
+  
+  // Navigate to post job
+  const handlePostJob = () => {
+    navigate('/employer/post-job');
+  };
+  
+  // Navigate to edit video page
+  const handleEditVideo = (videoId) => {
+    navigate(`/employer/videos/edit/${videoId}`);
+  };
 
-            <ExperienceItem>
-              <Typography variant="subtitle1">UI Designer</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Creative Studio
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                2018 - 2020
-              </Typography>
-            </ExperienceItem>
-          </Section>
-
-          {/* Education Section */}
-          <Section>
-            <SectionTitle>
-              <Typography variant="h6">Education</Typography>
-              <Button startIcon={<EditIcon fontSize="small" />} color="primary" size="small">
-                Edit
-              </Button>
-            </SectionTitle>
-
-            <ExperienceItem>
-              <Typography variant="subtitle1">B.A. in Design</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Stanford University
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                2014 - 2018
-              </Typography>
-            </ExperienceItem>
-          </Section>
-
-          {/* Video Resume Section */}
-          <Section>
-            <SectionTitle>
-              <Typography variant="h6">Video Resume</Typography>
-              <Button startIcon={<EditIcon fontSize="small" />} color="primary" size="small">
-                Edit
-              </Button>
-            </SectionTitle>
-
-            <VideoContainer onClick={handleVideoOpen}>
-              <Box
-                component="img"
-                src="/placeholder.svg?height=200&width=400"
-                alt="Video resume"
-                sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <PlayArrowIcon sx={{ color: "white", fontSize: 60 }} />
+  // Mock data for demonstration
+  const mockProfile = {
+    id: '1',
+    name: 'Tech Innovations Inc.',
+    industry: 'Information Technology',
+    size: '50-200 employees',
+    establish_year: 2010,
+    location: 'San Francisco, CA',
+    description: 'Tech Innovations Inc. is a leading technology company specializing in innovative software solutions for businesses. We develop cutting-edge applications that help companies streamline their operations and improve efficiency.',
+    email: 'careers@techinnovations.com',
+    phone: '+1 (415) 555-1234',
+    website: 'www.techinnovations.com',
+    logo: 'https://via.placeholder.com/100', 
+    mainVideo: 'https://www.w3schools.com/html/mov_bbb.mp4', 
+    categories: ['Software Development', 'Cloud Computing', 'AI & Machine Learning'],
+    social: {
+      linkedin: 'linkedin.com/company/techinnovations',
+      facebook: 'facebook.com/techinnovations',
+      twitter: 'twitter.com/techinnovations'
+    }
+  };
+  
+  const mockVideos = [
+    {
+      id: '1',
+      title: 'Company Introduction',
+      thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg', 
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4', 
+      duration: 120,
+      type: 'intro',
+      views: 1250
+    },
+    {
+      id: '2',
+      title: 'Our Work Culture',
+      thumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg', 
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4', 
+      duration: 90,
+      type: 'culture',
+      views: 850
+    },
+    {
+      id: '3',
+      title: 'Office Tour',
+      thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg', 
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4', 
+      duration: 180,
+      type: 'tour',
+      views: 670
+    },
+    {
+      id: '4',
+      title: 'Employee Testimonials',
+      thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg', 
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4', 
+      duration: 150,
+      type: 'testimonial',
+      views: 920
+    }
+  ];
+  
+  const mockJobs = [
+    {
+      id: '1',
+      title: 'Senior Frontend Developer',
+      location: 'San Francisco, CA',
+      type: 'Full-time',
+      salary: '$120,000 - $150,000',
+      posted: '2023-05-15',
+      applicants: 24,
+      description: 'We are looking for a Senior Frontend Developer to join our team. The ideal candidate will have experience with React, TypeScript, and modern frontend development practices.',
+      requirements: [
+        'At least 5 years of experience in frontend development',
+        'Strong knowledge of React and TypeScript',
+        'Experience with state management libraries like Redux',
+        'Understanding of responsive design and cross-browser compatibility'
+      ]
+    },
+    {
+      id: '2',
+      title: 'Backend Engineer',
+      location: 'Remote',
+      type: 'Full-time',
+      salary: '$110,000 - $140,000',
+      posted: '2023-05-10',
+      applicants: 18,
+      description: 'We are seeking a Backend Engineer to develop and maintain our server-side applications. The ideal candidate will have experience with Node.js, Express, and database design.',
+      requirements: [
+        'At least 3 years of experience in backend development',
+        'Strong knowledge of Node.js and Express',
+        'Experience with SQL and NoSQL databases',
+        'Understanding of RESTful API design principles'
+      ]
+    },
+    {
+      id: '3',
+      title: 'UX/UI Designer',
+      location: 'San Francisco, CA',
+      type: 'Full-time',
+      salary: '$100,000 - $130,000',
+      posted: '2023-05-05',
+      applicants: 32,
+      description: 'We are looking for a UX/UI Designer to create engaging and intuitive user experiences for our products. The ideal candidate will have a strong portfolio demonstrating their design skills.',
+      requirements: [
+        'At least 3 years of experience in UX/UI design',
+        'Proficiency in design tools like Figma or Adobe XD',
+        'Experience with user research and usability testing',
+        'Understanding of design systems and component libraries'
+      ]
+    }
+  ];
+  
+  // Use mock data if real data is not available
+  const employerData = profile || mockProfile;
+  const employerVideos = videos.length > 0 ? videos : mockVideos;
+  const employerJobs = jobs.length > 0 ? jobs : mockJobs;
+  
+  // Format date (YYYY-MM-DD to readable format)
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+  
+  // Format duration (seconds to MM:SS)
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  return (
+    <ProfileContainer>
+      <Container maxWidth="lg">
+        {/* Profile Header */}
+        <ProfileHeader>
+          <ProfileInfo>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <CompanyLogo src={employerData.logo} alt={employerData.name} />
+              <Box>
+                <Typography variant="h4" component="h1" gutterBottom>
+                  {employerData.name}
+                </Typography>
+                <Typography variant="h6" color="textSecondary">
+                  {employerData.industry}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                  <LocationIcon fontSize="small" color="action" />
+                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                    {employerData.location}
+                  </Typography>
+                </Box>
               </Box>
-            </VideoContainer>
-
-            <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
-              <Button variant="outlined" fullWidth size="small">
-                Re-record
-              </Button>
-              <Button variant="contained" fullWidth size="small" onClick={handleVideoOpen}>
-                Play Preview
-              </Button>
             </Box>
-          </Section>
-
-          {/* Availability Section */}
-          <Section>
-            <SectionTitle>
-              <Typography variant="h6">Availability</Typography>
-            </SectionTitle>
-
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                Available for interviews
-              </Typography>
-              <Switch
-                checked={availabilityOn}
-                onChange={(e) => setAvailabilityOn(e.target.checked)}
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+              <Button
+                variant="contained"
                 color="primary"
-                size="small"
-              />
-            </Box>
-
-            <Box sx={{ display: "flex", gap: 1.5 }}>
-              <Button variant="outlined" fullWidth size="small">
-                Schedule meeting
+                startIcon={<EditIcon />}
+                onClick={handleEditProfile}
+              >
+                Edit Profile
               </Button>
-              <Button variant="contained" fullWidth size="small">
-                Message
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<WorkIcon />}
+                onClick={handlePostJob}
+              >
+                Post Job
               </Button>
             </Box>
-          </Section>
-        </Container>
-
-        {/* Bottom Navigation */}
-        <BottomNav square>
-          <NavItem>
-            <VideoLibraryIcon sx={{ mb: 0.5, fontSize: "1.3rem" }} />
-            <Typography variant="caption">Feed</Typography>
-          </NavItem>
-          <NavItem>
-            <ChatIcon sx={{ mb: 0.5, fontSize: "1.3rem" }} />
-            <Typography variant="caption">Inbox</Typography>
-          </NavItem>
-          <NavItem className="active">
-            <PersonIcon sx={{ mb: 0.5, fontSize: "1.3rem" }} />
-            <Typography variant="caption">Profile</Typography>
-          </NavItem>
-        </BottomNav>
-
-        {/* Video Modal */}
-        <Dialog
-          fullWidth
-          maxWidth="sm"
-          open={videoModalOpen}
-          onClose={handleVideoClose}
-          PaperProps={{
-            sx: {
-              bgcolor: "black",
-              color: "white",
-              borderRadius: 2,
-            },
-          }}
-        >
-          <IconButton
-            onClick={handleVideoClose}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: "white",
-              zIndex: 1,
-            }}
+            <Typography variant="body1" paragraph>
+              {employerData.description}
+            </Typography>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                Categories
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                {employerData.categories.map((category, index) => (
+                  <CategoryChip key={index} label={category} />
+                ))}
+              </Box>
+            </Box>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid item xs={12} sm={6} md={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <BusinessIcon fontSize="small" color="action" sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    Founded: {employerData.establish_year}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <PeopleIcon fontSize="small" color="action" sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    Size: {employerData.size}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <DescriptionIcon fontSize="small" color="action" sx={{ mr: 1 }} />
+                  <Typography variant="body2">
+                    {employerJobs.length} Active Jobs
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <EmailIcon fontSize="small" color="action" />
+                <Typography variant="body2" sx={{ ml: 0.5 }}>
+                  {employerData.email}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <PhoneIcon fontSize="small" color="action" />
+                <Typography variant="body2" sx={{ ml: 0.5 }}>
+                  {employerData.phone}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <LanguageIcon fontSize="small" color="action" />
+                <Typography variant="body2" sx={{ ml: 0.5 }}>
+                  {employerData.website}
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
+              <IconButton color="primary" aria-label="LinkedIn">
+                <LinkedInIcon />
+              </IconButton>
+              <IconButton color="primary" aria-label="Facebook">
+                <FacebookIcon />
+              </IconButton>
+              <IconButton color="primary" aria-label="Twitter">
+                <TwitterIcon />
+              </IconButton>
+            </Box>
+          </ProfileInfo>
+          
+          {/* Main Video */}
+          <MainVideoContainer>
+            <video
+              ref={(el) => videoRefs.current['main'] = el}
+              src={employerData.mainVideo}
+              width="100%"
+              height="100%"
+              poster={employerVideos[0]?.thumbnail}
+              style={{ objectFit: 'cover' }}
+            />
+            <VideoControls>
+              <IconButton 
+                size="small" 
+                color="inherit" 
+                onClick={() => togglePlayback('main')}
+              >
+                {(isPlaying['main'] ? <PauseIcon /> : <PlayArrowIcon />)}
+              </IconButton>
+              <Typography variant="caption" color="inherit">
+                Company Introduction
+              </Typography>
+            </VideoControls>
+            <VideoActions>
+              <IconButton 
+                color="inherit"
+                onClick={() => toggleMute('main')}
+              >
+                {mutedVideos['main'] ? <VolumeOffIcon /> : <VolumeOnIcon />}
+              </IconButton>
+              <IconButton color="inherit">
+                <FavoriteIcon />
+              </IconButton>
+              <IconButton color="inherit">
+                <ShareIcon />
+              </IconButton>
+              <IconButton color="inherit">
+                <BookmarkIcon />
+              </IconButton>
+            </VideoActions>
+          </MainVideoContainer>
+        </ProfileHeader>
+        
+        {/* Tabs Section */}
+        <Paper sx={{ mb: 3 }}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant={isMobile ? "scrollable" : "fullWidth"}
+            scrollButtons={isMobile ? "auto" : false}
+            centered={!isMobile}
           >
-            <CloseIcon />
-          </IconButton>
-          <DialogContent sx={{ p: 0, overflow: "hidden" }}>
-            <Box
-              component="video"
-              controls
-              autoPlay
-              sx={{ width: "100%", display: "block" }}
-              poster="/placeholder.svg?height=400&width=600"
-            >
-              <source src="https://example.com/resume-video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
+            <Tab label="About" />
+            <Tab label="Jobs" />
+            <Tab label="Videos" />
+            <Tab label="Contact" />
+          </Tabs>
+          
+          {/* About Tab */}
+          <TabPanel value={tabValue} index={0}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" gutterBottom>
+                  Company Overview
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {employerData.description}
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  Industry
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {employerData.industry}
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  Company Size
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {employerData.size}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" gutterBottom>
+                  Founded
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {employerData.establish_year}
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  Headquarters
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {employerData.location}
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  Categories
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                  {employerData.categories.map((category, index) => (
+                    <CategoryChip key={index} label={category} />
+                  ))}
+                </Box>
+              </Grid>
+            </Grid>
+          </TabPanel>
+          
+          {/* Jobs Tab */}
+          <TabPanel value={tabValue} index={1}>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h6">
+                Open Positions
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<WorkIcon />}
+                onClick={handlePostJob}
+              >
+                Post New Job
+              </Button>
             </Box>
-          </DialogContent>
-        </Dialog>
-      </Box>
-    </ThemeProvider>
-  )
-}
+            {employerJobs.map((job) => (
+              <JobCard key={job.id}>
+                <CardContent>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                      <Typography variant="h6" component="h3">
+                        {job.title}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                        <LocationIcon fontSize="small" color="action" />
+                        <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
+                          {job.location}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" color="textSecondary">
+                        Posted: {formatDate(job.posted)}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {job.applicants} Applicants
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    <Chip label={job.type} size="small" color="primary" variant="outlined" />
+                    <Chip label={job.salary} size="small" color="secondary" variant="outlined" />
+                  </Box>
+                  <Typography variant="body1" sx={{ mt: 2 }}>
+                    {job.description}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                    Requirements:
+                  </Typography>
+                  <List dense>
+                    {job.requirements.map((req, index) => (
+                      <ListItem key={index}>
+                        <ListItemText primary={req} />
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => navigate(`/jobs/${job.id}`)}
+                    >
+                      View Details
+                    </Button>
+                  </Box>
+                </CardContent>
+              </JobCard>
+            ))}
+          </TabPanel>
+          
+          {/* Videos Tab */}
+          <TabPanel value={tabValue} index={2}>
+            <Grid container spacing={3}>
+              {employerVideos.map((video) => (
+                <Grid item xs={12} sm={6} md={4} key={video.id}>
+                  <VideoCard>
+                    <VideoCardMedia
+                      image={video.thumbnail}
+                      title={video.title}
+                    >
+                      <VideoPlayButton 
+                        aria-label="play"
+                        onClick={() => togglePlayback(video.id)}
+                      >
+                        {isPlaying[video.id] ? <PauseIcon /> : <PlayArrowIcon />}
+                      </VideoPlayButton>
+                      
+                      <IconButton
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          right: '10px',
+                          transform: 'translateY(-50%)',
+                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                          color: '#fff'
+                        }}
+                        onClick={() => handleEditVideo(video.id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      
+                      <IconButton
+                        style={{
+                          position: 'absolute',
+                          bottom: '5px',
+                          right: '10px',
+                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                          color: '#fff'
+                        }}
+                        onClick={() => toggleMute(video.id)}
+                      >
+                        {mutedVideos[video.id] ? <VolumeOffIcon /> : <VolumeOnIcon />}
+                      </IconButton>
+                    </VideoCardMedia>
+                    
+                    <video
+                      ref={(el) => videoRefs.current[video.id] = el}
+                      src={video.url}
+                      style={{ display: 'none' }}
+                      muted={mutedVideos[video.id]}
+                    />
+                    
+                    <CardContent>
+                      <Typography variant="subtitle1" component="h3" gutterBottom>
+                        {video.title}
+                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="caption" color="textSecondary">
+                          {formatDuration(video.duration)}
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          {video.views} views
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </VideoCard>
+                </Grid>
+              ))}
+            </Grid>
+          </TabPanel>
+          
+          {/* Contact Tab */}
+          <TabPanel value={tabValue} index={3}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" gutterBottom>
+                  Contact Information
+                </Typography>
+                <List>
+                  <ListItem>
+                    <ListItemIcon>
+                      <EmailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Email" secondary={employerData.email} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <PhoneIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Phone" secondary={employerData.phone} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <LanguageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Website" secondary={employerData.website} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <LocationIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Location" secondary={employerData.location} />
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" gutterBottom>
+                  Social Media
+                </Typography>
+                <List>
+                  <ListItem button component="a" href={employerData.social?.linkedin} target="_blank">
+                    <ListItemIcon>
+                      <LinkedInIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="LinkedIn" secondary={employerData.social?.linkedin} />
+                  </ListItem>
+                  <ListItem button component="a" href={employerData.social?.facebook} target="_blank">
+                    <ListItemIcon>
+                      <FacebookIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Facebook" secondary={employerData.social?.facebook} />
+                  </ListItem>
+                  <ListItem button component="a" href={employerData.social?.twitter} target="_blank">
+                    <ListItemIcon>
+                      <TwitterIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Twitter" secondary={employerData.social?.twitter} />
+                  </ListItem>
+                </List>
+              </Grid>
+            </Grid>
+          </TabPanel>
+        </Paper>
+      </Container>
+    </ProfileContainer>
+  );
+};
+
+export default EmployerProfile;
