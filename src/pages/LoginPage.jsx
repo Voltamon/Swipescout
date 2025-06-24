@@ -181,7 +181,7 @@ const LoginPage = () => {
       case 'job_seeker': return '/dashboard';
       case 'employer': return '/employer-dashboard';
       case 'admin': return '/admin-dashboard';
-      default: return '/';
+      default: return '/login';
     }
   };
 
