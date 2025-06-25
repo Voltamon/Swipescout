@@ -183,7 +183,7 @@ const LoginPage = () => {
       case 'admin': return '/admin-dashboard';
       default: return '/login';
     }
-  };
+  }; 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
