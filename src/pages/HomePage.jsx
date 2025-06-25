@@ -154,7 +154,7 @@ const HomePage = () => {
                                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                                     <Button
                                         component={Link}
-                                        to="/signup"
+                                        to="/register-form"
                                         variant="contained"
                                         size="large"
                                         sx={{
