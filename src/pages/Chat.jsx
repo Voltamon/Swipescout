@@ -1,3 +1,4 @@
+//complete Chat.jsx file with all the requested enhancements, incorporating better contrast, improved message time display, distinct sent/read indicators, refined online status presentation, and clear background differentiation for conversation and user lists.
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
@@ -14,7 +15,8 @@ import {
   Badge,
   Divider,
   CircularProgress,
-  InputAdornment
+  InputAdornment,
+  Tooltip
 } from '@mui/material';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -23,8 +25,9 @@ import {
   Search as SearchIcon,
   MoreVert as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
-  Done as DoneIcon,
-  DoneAll as DoneAllIcon
+  Done as DoneIcon, // For sent
+  DoneAll as DoneAllIcon, // For read
+  Refresh as RefreshIcon // For retry failed message
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -36,30 +39,29 @@ import {
   getAllUsers
 } from '../services/chatService';
 import { useSocket } from '../hooks/useSocket';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns'; // Still useful for general relative time, but replaced by custom for messages
 import { enUS } from 'date-fns/locale';
 
-// Styled components for chat UI
+// Styled components with beautiful design
 const ChatContainer = styled(Box)(({ theme }) => ({
   height: 'calc(100vh - 64px)',
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: '#f5f7fa', // Light background for the overall chat area
   [theme.breakpoints.down('md')]: {
     height: 'calc(100vh - 56px)',
-    display: 'flex',
-    flexDirection: 'column',
   },
 }));
 
-const ConversationList = styled(Paper)(({ theme, isMobile, showConversations, showAllUsers }) => ({
+const ConversationList = styled(Paper)(({ theme, showConversations, showAllUsers }) => ({
   height: '100%',
   width: '100%',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
   borderRight: `1px solid ${theme.palette.divider}`,
-  backgroundColor: showAllUsers ? theme.palette.background.default : theme.palette.background.paper,
+  // Different background for "All Users" vs. "Conversations"
+  backgroundColor: showAllUsers ? '#edf2f7' : '#ffffff',
   [theme.breakpoints.down('md')]: {
     display: showConversations ? 'flex' : 'none',
     position: 'absolute',
@@ -69,15 +71,18 @@ const ConversationList = styled(Paper)(({ theme, isMobile, showConversations, sh
   },
 }));
 
-const MessageArea = styled(Paper)(({ theme, isMobile, showConversations }) => ({
+const MessageArea = styled(Paper)(({ theme, showConversations }) => ({
   height: '100%',
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: '#f5f7fa', // Light background for message area
+  position: 'relative',
   [theme.breakpoints.down('md')]: {
     display: showConversations ? 'none' : 'flex',
     height: 'calc(100vh - 56px)',
+    marginLeft: showConversations ? 0 : '15px', // Adjust margin for mobile when conversation is active
+    transition: 'margin-left 0.3s ease',
   },
 }));
 
@@ -85,71 +90,107 @@ const MessageList = styled(Box)(({ theme }) => ({
   flex: 1,
   overflowY: 'auto',
   padding: theme.spacing(2),
-  backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
+  background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)', // Gradient background for message list
   '&::-webkit-scrollbar': {
-    width: '6px',
+    width: '8px',
   },
   '&::-webkit-scrollbar-thumb': {
-    backgroundColor: theme.palette.action.hover,
-    borderRadius: '3px',
+    backgroundColor: '#c1c1c1', // Scrollbar thumb color
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: '#f1f1f1', // Scrollbar track color
   },
 }));
 
 const MessageItem = styled(Box)(({ theme, isOwn }) => ({
   display: 'flex',
-  overflow: 'auto',
   flexDirection: isOwn ? 'row-reverse' : 'row',
   marginBottom: theme.spacing(2),
   width: '100%',
   alignItems: 'flex-end',
+  transition: 'all 0.2s ease', // Smooth transition for item changes
 }));
 
-const MessageBubble = styled(Box)(({ theme, isOwn }) => ({
-  maxWidth: '70%',
-  padding: theme.spacing(1.5, 2),
-  borderRadius: isOwn ? '18px 18px 0 18px' : '18px 18px 18px 0',
-  backgroundColor: isOwn ? theme.palette.primary.main : theme.palette.secondary.main,
-  color: isOwn ? theme.palette.primary.contrastText : theme.palette.secondary.contrastText,
+const MessageBubble = styled(Box)(({ theme, isOwn, isPending, hasError }) => ({
+  maxWidth: '80%',
+  minWidth: '120px', // Ensure readability for short messages
+  padding: '12px 16px',
+  borderRadius: isOwn ? '18px 4px 18px 18px' : '4px 18px 18px 18px', // Modern rounded corners
+  // Enhanced contrast and visual feedback for message states
+  backgroundColor: isPending 
+    ? (isOwn ? 'rgba(63, 81, 181, 0.7)' : 'rgba(255, 255, 255, 0.7)') // Lighter for pending
+    : hasError
+    ? (isOwn ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255, 255, 255, 0.8)') // Reddish for error
+    : (isOwn ? '#3f51b5' : '#ffffff'), // Primary blue for own, white for others
+  color: isOwn ? '#ffffff' : '#374151', // White text on blue, dark grey on white
   wordBreak: 'break-word',
   display: 'inline-block',
-  boxShadow: theme.shadows[1],
+  boxShadow: '0 2px 4px rgba(0,0,0,0.05)', // Subtle shadow
   marginLeft: isOwn ? 'auto' : theme.spacing(1),
   marginRight: isOwn ? theme.spacing(1) : 'auto',
+  border: isOwn ? 'none' : '1px solid #e5e7eb', // Border for received messages
+  opacity: isPending || hasError ? 0.8 : 1, // Slightly transparent for pending/error
+  '&:hover': {
+    boxShadow: '0 3px 6px rgba(0,0,0,0.1)', // Slight lift on hover
+  },
 }));
 
-const MessageTime = styled(Typography)(({ theme, isOwn }) => ({
-  fontSize: '0.70rem',
-  color: isOwn ? theme.palette.text.secondary : theme.palette.text.secondary,
-  marginTop: theme.spacing(0.5),
+const MessageTime = styled(Typography)(({ isOwn }) => ({
+  fontSize: '0.65rem', // Smaller font size for message time
+  color: isOwn ? 'rgba(255,255,255,0.7)' : '#6b7280', // Consistent color, slightly transparent for own
+  marginTop: '4px',
   textAlign: isOwn ? 'right' : 'left',
-  paddingLeft: isOwn ? 0 : theme.spacing(1),
-  paddingRight: isOwn ? theme.spacing(1) : 0,
+  paddingLeft: isOwn ? 0 : '8px',
+  paddingRight: isOwn ? '8px' : 0,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px', // Space between time and status icon
+  fontFamily: 'inherit', // Inherit font for consistency
 }));
 
 const MessageInput = styled(Box)(({ theme }) => ({
   display: 'flex',
   padding: theme.spacing(2),
-  borderTop: `1px solid ${theme.palette.divider}`,
-  backgroundColor: theme.palette.background.paper,
+  borderTop: '1px solid #e5e7eb', // Border above input
+  backgroundColor: '#ffffff', // White background for input area
   alignItems: 'center',
 }));
 
 const UserStatusBadge = styled('span')(({ theme }) => ({
-  color: theme.palette.success.main,
+  color: '#10b981', // Green for online status
   fontSize: '0.75rem',
   marginLeft: theme.spacing(0.5),
   display: 'inline-flex',
   alignItems: 'center',
-  fontWeight: 'bold',
+  fontWeight: 500,
+  '&::before': {
+    content: '"•"', // Dot for online status
+    marginRight: '2px',
+  },
 }));
 
-const MessageStatusIcon = styled(Box)(({ theme, read }) => ({
+const MessageStatusIcon = styled(Box)(({ read, isOwn }) => ({
   display: 'inline-flex',
   alignItems: 'center',
-  marginLeft: theme.spacing(0.5),
+  marginLeft: '4px',
   '& .MuiSvgIcon-root': {
-    fontSize: '0.85rem',
-    color: read ? theme.palette.info.main : theme.palette.text.disabled,
+    fontSize: '0.85rem', // Smaller icon size
+    color: read ? '#a5d6a7' : (isOwn ? 'rgba(255,255,255,0.6)' : '#9ca3af'), // Greenish for read, greyish for sent
+  },
+}));
+
+const BackButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  left: '-50px', // Position off-screen for mobile
+  top: '12px',
+  backgroundColor: '#ffffff',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  '&:hover': {
+    backgroundColor: '#f3f4f6',
+  },
+  [theme.breakpoints.up('md')]: {
+    display: 'none', // Hide on larger screens
   },
 }));
 
@@ -166,7 +207,7 @@ const Chat = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showConversations, setShowConversations] = useState(true);
   const messagesEndRef = useRef(null);
-  const messageListRef = useRef(null);
+  const messageListRef = useRef(null); // Reference for message list scroll
   const socket = useSocket();
   const [isConnected, setIsConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -177,8 +218,31 @@ const Chat = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [startingConversation, setStartingConversation] = useState(false);
+  const [pendingMessages, setPendingMessages] = useState({}); // To track messages being sent
+  const [failedMessages, setFailedMessages] = useState({}); // To track messages that failed to send
 
   const isMobile = window.innerWidth < 960;
+
+  // Improved time formatting function for brevity and clarity
+  const formatMessageTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) return 'yesterday';
+    
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: now.getFullYear() !== date.getFullYear() ? 'numeric' : undefined // Show year only if different
+    });
+  };
 
   const fetchAllUsers = async () => {
     try {
@@ -256,7 +320,7 @@ const Chat = () => {
     };
 
     fetchConversations();
-  }, [user?.id]); // Added user.id as dependency
+  }, [user?.id]); // Depend on user.id to refetch if user changes
 
   useEffect(() => {
     return () => {
@@ -273,7 +337,7 @@ const Chat = () => {
 
     socket.on('connect', () => {
       setIsConnected(true);
-      socket.emit('register', String(user.id));
+      socket.emit('register', String(user.id)); // Register user with socket server
     });
 
     socket.on('disconnect', () => {
@@ -290,6 +354,7 @@ const Chat = () => {
   useEffect(() => {
     if (!socket || !user?.id) return;
 
+    // Listen for user online/offline status
     socket.on('user_online', (userId) => {
       setOnlineUsers(prev => new Set(prev).add(userId));
     });
@@ -303,10 +368,11 @@ const Chat = () => {
     });
 
     const handleNewMessage = (message) => {
+      // If the new message is for the currently active conversation
       if (activeConversation && message.conversation_id === activeConversation.id) {
-        setMessages(prev => [...prev, message]);
-        markAsRead(message.id);
-        socket.emit('mark_as_read', { messageId: message.id, senderId: message.sender_id });
+        setMessages(prev => [...prev, message]); // Add to messages displayed
+        markAsRead(message.id); // Mark as read via API
+        socket.emit('mark_as_read', { messageId: message.id, senderId: message.sender_id }); // Emit read event
       }
 
       setConversations(prev => {
@@ -317,13 +383,13 @@ const Chat = () => {
           const conversation = { ...updated[index], last_message: message };
 
           if (activeConversation?.id !== message.conversation_id) {
-            conversation.unread_count = (conversation.unread_count || 0) + 1;
+            conversation.unread_count = (conversation.unread_count || 0) + 1; // Increment unread if not active
           } else {
-            conversation.unread_count = 0;
+            conversation.unread_count = 0; // Reset unread if active
           }
 
-          updated.splice(index, 1);
-          updated.unshift(conversation);
+          updated.splice(index, 1); // Remove old position
+          updated.unshift(conversation); // Move to top
         }
         return updated;
       });
@@ -332,15 +398,17 @@ const Chat = () => {
     const handleMessageRead = (messageId) => {
       setMessages(prev =>
         prev.map(msg =>
-          msg.id === messageId ? { ...msg, read: true } : msg
+          msg.id === messageId ? { ...msg, read: true } : msg // Update read status of message
         )
       );
     };
 
+    // Attach socket listeners
     socket.on('new_message', handleNewMessage);
     socket.on('message_read', handleMessageRead);
     socket.on('typing', handleTyping);
 
+    // Clean up listeners on component unmount
     return () => {
       socket.off('new_message', handleNewMessage);
       socket.off('message_read', handleMessageRead);
@@ -348,7 +416,7 @@ const Chat = () => {
       socket.off('user_online');
       socket.off('user_offline');
     };
-  }, [socket, user, activeConversation]);
+  }, [socket, user, activeConversation]); // Re-run if socket, user, or active conversation changes
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -360,16 +428,18 @@ const Chat = () => {
         const fetchedMessages = response.data.messages || [];
         setMessages(fetchedMessages);
 
+        // Mark all newly fetched unread messages as read when conversation is opened
         const unreadMessagesInActiveConv = fetchedMessages.filter(
           (msg) => msg.receiver_id === user?.id && !msg.read
         );
         if (unreadMessagesInActiveConv.length > 0) {
           unreadMessagesInActiveConv.forEach(async (msg) => {
-            await markAsRead(msg.id);
-            socket.emit('mark_as_read', { messageId: msg.id, senderId: msg.sender_id });
+            await markAsRead(msg.id); // Call API to mark as read
+            socket.emit('mark_as_read', { messageId: msg.id, senderId: msg.sender_id }); // Notify other users
           });
         }
 
+        // Reset unread count for the active conversation in the conversations list
         setConversations(prev =>
           prev.map(conv =>
             conv.id === activeConversation.id
@@ -387,41 +457,72 @@ const Chat = () => {
     fetchMessages();
 
     if (isMobile) {
-      setShowConversations(false);
+      setShowConversations(false); // Hide conversation list on mobile when message area is active
     }
-  }, [activeConversation, isMobile, user?.id, socket]);
+  }, [activeConversation, isMobile, user?.id, socket]); // Dependencies for message fetching
 
   useEffect(() => {
-    if (messages.length > 0 && messagesEndRef.current) {
+    // Scroll to the bottom of the message list when messages update, unless there are pending messages
+    // This prevents auto-scrolling when a pending message is added, allowing user to type
+    if (messages.length > 0 && messagesEndRef.current && !Object.keys(pendingMessages).length) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
+  }, [messages, pendingMessages]); // Depend on messages and pendingMessages
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-
     if (!newMessage.trim() || !activeConversation) return;
+
+    // Create a temporary message with a unique ID for optimistic UI update
+    const tempId = `temp-${Date.now()}`;
+    const tempMessage = {
+      id: tempId,
+      content: newMessage,
+      sender_id: user.id,
+      receiver_id: activeConversation.other_user.id,
+      conversation_id: activeConversation.id,
+      created_at: new Date().toISOString(),
+      read: false,
+      isPending: true // Custom flag for pending state
+    };
+
+    // Add to pending messages tracker
+    setPendingMessages(prev => ({ ...prev, [tempId]: tempMessage }));
+    
+    // Update UI immediately with the temporary message
+    setMessages(prev => [...prev, tempMessage]);
+    setNewMessage(''); // Clear input field
 
     try {
       const response = await sendMessage(activeConversation.id, newMessage);
       const sentMessage = response.data.message;
 
+      // Clear typing timeout if message was sent while typing
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
       
+      // Emit stop typing if currently typing
       if (isTyping) {
         setIsTyping(false);
         socket.emit('typing', {
           conversationId: activeConversation.id,
           userId: String(user.id),
-          otherUserId: String(activeConversation.other_user.id),
           isTyping: false,
         });
       }
 
-      setMessages(prev => [...prev, sentMessage]);
+      // Replace the temporary message with the actual sent message
+      setPendingMessages(prev => {
+        const { [tempId]: _, ...rest } = prev; // Remove from pending
+        return rest;
+      });
+      
+      setMessages(prev => 
+        prev.map(msg => msg.id === tempId ? sentMessage : msg)
+      );
 
+      // Update conversations list with the last message
       setConversations(prev => {
         const updated = [...prev];
         const index = updated.findIndex(c => c.id === activeConversation.id);
@@ -435,39 +536,109 @@ const Chat = () => {
         return updated;
       });
 
+      // Emit message via socket
       if (socket) {
         socket.emit('send_message', {
           receiverId: activeConversation.other_user.id,
           message: sentMessage
         });
       }
-
-      setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
+      // Mark as failed
+      setPendingMessages(prev => {
+        const { [tempId]: _, ...rest } = prev;
+        return rest;
+      });
+      setFailedMessages(prev => ({ ...prev, [tempId]: tempMessage })); // Add to failed messages
+      
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === tempId 
+            ? { ...msg, isPending: false, hasError: true } // Update status flags for UI
+            : msg
+        )
+      );
+    }
+  };
+
+  const handleRetryMessage = async (tempId) => {
+    const failedMsg = failedMessages[tempId];
+    if (!failedMsg) return;
+
+    try {
+      // Move from failed back to pending state for UI feedback
+      setFailedMessages(prev => {
+        const { [tempId]: _, ...rest } = prev;
+        return rest;
+      });
+      setPendingMessages(prev => ({ ...prev, [tempId]: failedMsg }));
+      
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === tempId 
+            ? { ...msg, isPending: true, hasError: false } 
+            : msg
+        )
+      );
+
+      // Retry sending the message
+      const response = await sendMessage(activeConversation.id, failedMsg.content);
+      const sentMessage = response.data.message;
+
+      // Replace pending message with successful message
+      setPendingMessages(prev => {
+        const { [tempId]: _, ...rest } = prev;
+        return rest;
+      });
+      
+      setMessages(prev => 
+        prev.map(msg => msg.id === tempId ? sentMessage : msg)
+      );
+
+      // Update conversations list
+      setConversations(prev => {
+        const updated = [...prev];
+        const index = updated.findIndex(c => c.id === activeConversation.id);
+
+        if (index !== -1) {
+          const conversation = { ...updated[index], last_message: sentMessage };
+          updated.splice(index, 1);
+          updated.unshift(conversation);
+        }
+
+        return updated;
+      });
+
+      // Emit message via socket
+      if (socket) {
+        socket.emit('send_message', {
+          receiverId: activeConversation.other_user.id,
+          message: sentMessage
+        });
+      }
+    } catch (error) {
+      console.error('Error retrying message:', error);
+      // If retry fails, mark as failed again
+      setPendingMessages(prev => {
+        const { [tempId]: _, ...rest } = prev;
+        return rest;
+      });
+      setFailedMessages(prev => ({ ...prev, [tempId]: failedMsg }));
+      
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === tempId 
+            ? { ...msg, isPending: false, hasError: true } 
+            : msg
+        )
+      );
     }
   };
 
   const filteredConversations = conversations.filter(conversation =>
     conversation.other_user?.display_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const formatMessageTime = (timestamp) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const isToday = date.getDate() === now.getDate() &&
-                    date.getMonth() === now.getMonth() &&
-                    date.getFullYear() === now.getFullYear();
-    const isYesterday = new Date(now.setDate(now.getDate() - 1)).toDateString() === date.toDateString();
-
-    if (isToday) {
-      return format(date, 'p', { locale: enUS });
-    } else if (isYesterday) {
-      return 'Yesterday';
-    } else {
-      return format(date, 'MMM d', { locale: enUS });
-    }
-  };
 
   const handleBackToConversations = () => {
     setShowConversations(true);
@@ -477,20 +648,20 @@ const Chat = () => {
     if (usersLoading) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-          <CircularProgress />
+          <CircularProgress size={24} />
         </Box>
       );
     }
   
     return (
-      <List sx={{ overflow: 'auto', flex: 1 }}>
+      <List sx={{ overflow: 'auto', flex: 1, bgcolor: '#edf2f7' }}> {/* Background for All Users list */}
         {allUsers.length === 0 ? (
           <ListItem>
             <ListItemText primary="No users found" />
           </ListItem>
         ) : (
           allUsers
-            .filter(u => u.id !== user?.id)
+            .filter(u => u.id !== user?.id) // Filter out current user
             .map((userItem) => {
               const existingConv = conversations.find(c => 
                 c.other_user?.id === userItem.id
@@ -512,7 +683,7 @@ const Chat = () => {
                             `Hi ${userItem.display_name}, \nI'd like to connect with you!`
                           );
                           const newConv = response.data.conversation;
-                          setConversations(prev => [newConv, ...prev]);
+                          setConversations(prev => [newConv, ...prev]); // Add new conversation
                           setActiveConversation(newConv);
                           setShowConversations(false);
                         }
@@ -523,6 +694,10 @@ const Chat = () => {
                       }
                     }}
                     disabled={startingConversation}
+                    sx={{
+                      '&:hover': { backgroundColor: '#e2e8f0' }, // Hover effect
+                      '&.Mui-selected': { backgroundColor: '#cbd5e0' } // Selected state
+                    }}
                   >
                     {startingConversation && existingConv?.other_user?.id === userItem.id ? (
                       <CircularProgress size={24} sx={{ mr: 2 }} />
@@ -535,7 +710,10 @@ const Chat = () => {
                           color="success"
                           invisible={!onlineUsers.has(userItem.id)}
                         >
-                          <Avatar src={userItem.photo_url}>
+                          <Avatar 
+                            src={userItem.photo_url}
+                            sx={{ bgcolor: '#3f51b5', width: 40, height: 40 }}
+                          >
                             {userItem.display_name?.charAt(0)}
                           </Avatar>
                         </Badge>
@@ -543,12 +721,14 @@ const Chat = () => {
                     )}
                     <ListItemText
                       primary={
-                        <>
-                          {userItem.display_name}
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Typography sx={{ fontWeight: 500 }}>
+                            {userItem.display_name}
+                          </Typography>
                           {onlineUsers.has(userItem.id) && (
-                            <UserStatusBadge>● Online</UserStatusBadge>
+                            <UserStatusBadge>Online</UserStatusBadge>
                           )}
-                        </>
+                        </Box>
                       }
                       secondary={
                         existingConv ? (
@@ -560,7 +740,7 @@ const Chat = () => {
                             sx={{
                               display: 'inline-block',
                               maxWidth: '180px',
-                              fontStyle: existingConv.unread_count > 0 ? 'bold' : 'normal'
+                              fontWeight: existingConv.unread_count > 0 ? 600 : 400
                             }}
                           >
                             {existingConv.last_message
@@ -589,7 +769,13 @@ const Chat = () => {
 
   if (authLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        bgcolor: 'background.default'
+      }}>
         <CircularProgress />
       </Box>
     );
@@ -602,11 +788,14 @@ const Chat = () => {
         <Grid item xs={12} md={4} sx={{ height: '100%' }}>
           <ConversationList
             elevation={0}
-            isMobile={isMobile}
             showConversations={showConversations}
             showAllUsers={showAllUsers}
           >
-            <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ 
+              p: 2, 
+              borderBottom: '1px solid #e5e7eb',
+              bgcolor: 'background.paper' // White background for the header
+            }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 {isMobile && !showConversations && (
                   <IconButton
@@ -617,7 +806,7 @@ const Chat = () => {
                     <ArrowBackIcon />
                   </IconButton>
                 )}
-                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
                   Messages
                 </Typography>
               </Box>
@@ -632,19 +821,29 @@ const Chat = () => {
                       <SearchIcon />
                     </InputAdornment>
                   ),
+                  sx: {
+                    borderRadius: '12px',
+                    bgcolor: '#f3f4f6' // Light grey background for search input
+                  }
                 }}
                 size="small"
                 sx={{ mb: 2 }}
               />
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mb: 1 
+              }}>
                 <Typography variant="subtitle1" sx={{ 
-                  fontWeight: 'bold',
+                  fontWeight: 600,
                   color: 'primary.main',
                   px: 1,
                   py: 0.5,
-                  borderRadius: 1,
-                  backgroundColor: showAllUsers ? 'rgba(0, 123, 255, 0.1)' : 'rgba(25, 118, 210, 0.08)'
+                  borderRadius: '6px',
+                  // Different background for active mode
+                  bgcolor: showAllUsers ? 'rgba(63, 81, 181, 0.1)' : 'rgba(63, 81, 181, 0.08)'
                 }}>
                   {showAllUsers ? 'All Users' : 'Conversations'}
                 </Typography>
@@ -654,26 +853,32 @@ const Chat = () => {
                   onClick={() => {
                     setShowAllUsers(!showAllUsers);
                     if (!showAllUsers && allUsers.length === 0) {
-                      fetchAllUsers();
+                      fetchAllUsers(); // Fetch all users only when switching to that view
                     }
                   }}
                   sx={{
                     textTransform: 'none',
-                    borderRadius: 2,
+                    borderRadius: '12px',
                     px: 2,
-                    py: 0.5
+                    py: 0.5,
+                    borderColor: '#e5e7eb',
+                    color: '#374151',
+                    '&:hover': {
+                      borderColor: '#3f51b5',
+                      color: '#3f51b5'
+                    }
                   }}
                 >
-                  {showAllUsers ? 'Show Conversations' : 'Show All Users'}
+                  {showAllUsers ? 'Conversations' : 'All Users'}
                 </Button>
               </Box>
             </Box>
                                
             {showAllUsers ? renderUsersList() : ( 
-              <List sx={{ overflow: 'auto', flex: 1 }}>
+              <List sx={{ overflow: 'auto', flex: 1, bgcolor: 'background.paper' }}> {/* Background for Conversations list */}
                 {loading.conversations && conversations.length === 0 ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-                    <CircularProgress />
+                    <CircularProgress size={24} />
                   </Box>
                 ) : filteredConversations.length === 0 ? (
                   <ListItem>
@@ -690,14 +895,13 @@ const Chat = () => {
                         selected={activeConversation?.id === conversation.id}
                         onClick={() => {
                           setActiveConversation(conversation);
-                          if (isMobile) setShowConversations(false);
+                          if (isMobile) setShowConversations(false); // Hide list on mobile when selected
                         }}
                         sx={{
+                          '&:hover': { bgcolor: '#f3f4f6' }, // Hover effect
                           '&.Mui-selected': {
-                            backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                          },
-                          '&.Mui-selected:hover': {
-                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                            bgcolor: '#e5e7eb', // Selected background
+                            '&:hover': { bgcolor: '#e5e7eb' }
                           },
                         }}
                       >
@@ -707,7 +911,15 @@ const Chat = () => {
                             badgeContent={conversation.unread_count}
                             invisible={!conversation.unread_count}
                           >
-                            <Avatar src={conversation.other_user?.photo_url}>
+                            <Avatar 
+                              src={conversation.other_user?.photo_url}
+                              sx={{ 
+                                bgcolor: '#3f51b5', 
+                                width: 40, 
+                                height: 40,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                              }}
+                            >
                               {conversation.other_user?.display_name?.charAt(0)}
                             </Avatar>
                           </Badge>
@@ -715,12 +927,14 @@ const Chat = () => {
                         
                         <ListItemText
                           primary={
-                            <>
-                              {conversation.other_user?.display_name}
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography sx={{ fontWeight: 500 }}>
+                                {conversation.other_user?.display_name}
+                              </Typography>
                               {onlineUsers.has(conversation.other_user?.id) && (
-                                <UserStatusBadge>● Online</UserStatusBadge>
+                                <UserStatusBadge>Online</UserStatusBadge>
                               )}
-                            </>
+                            </Box>
                           }
                           secondary={
                             conversation.last_message ? (
@@ -732,7 +946,7 @@ const Chat = () => {
                                 sx={{
                                   display: 'inline-block',
                                   maxWidth: '180px',
-                                  fontWeight: conversation.unread_count > 0 ? 'bold' : 'normal'
+                                  fontWeight: conversation.unread_count > 0 ? 600 : 400
                                 }}
                               >
                                 {conversation.last_message.content}
@@ -760,22 +974,27 @@ const Chat = () => {
         <Grid item xs={12} md={8} sx={{ height: '100%', flexGrow: 2 }}>
           <MessageArea
             elevation={0}
-            isMobile={isMobile}
             showConversations={showConversations}
           >
+            {isMobile && !showConversations && (
+              <BackButton onClick={handleBackToConversations}>
+                <ArrowBackIcon />
+              </BackButton>
+            )}
+            
             {activeConversation ? (
               <>
                 {/* Conversation Header */}
                 <Box sx={{
                   p: 2,
-                  borderBottom: 1,
-                  borderColor: 'divider',
+                  borderBottom: '1px solid #e5e7eb',
                   display: 'flex',
                   alignItems: 'center',
-                  backgroundColor: 'background.paper',
+                  bgcolor: 'background.paper',
                   position: 'sticky',
                   top: 0,
-                  zIndex: 1
+                  zIndex: 1,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)' // Shadow for header
                 }}>
                   {isMobile && (
                     <IconButton
@@ -788,13 +1007,22 @@ const Chat = () => {
                   )}
                   <Avatar
                     src={activeConversation.other_user?.photo_url}
-                    sx={{ mr: 2, width: 40, height: 40 }}
+                    sx={{ 
+                      mr: 2, 
+                      width: 40, 
+                      height: 40,
+                      bgcolor: '#3f51b5',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
                   >
                     {activeConversation.other_user?.display_name?.charAt(0)}
                   </Avatar>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                       {activeConversation.other_user?.display_name}
+                      {onlineUsers.has(activeConversation.other_user?.id) && (
+                        <UserStatusBadge sx={{ ml: 1 }}>Online</UserStatusBadge>
+                      )}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {activeConversation.other_user?.role === 'employer' ? 'Employer' : 'Job Seeker'}
@@ -832,28 +1060,66 @@ const Chat = () => {
                     messages.map((message) => {
                       if (!message.sender_id || !user?.id) return null;
                       const isOwn = message.sender_id === user?.id;
+                      const isPending = message.isPending; // Check if message is pending
+                      const hasError = message.hasError; // Check if message failed
+
                       return (
                         <MessageItem key={message.id} isOwn={isOwn}>
                           {!isOwn && (
                             <Avatar
                               src={activeConversation.other_user?.photo_url}
-                              sx={{ mr: 1, width: 32, height: 32 }}
+                              sx={{ 
+                                mr: 1, 
+                                width: 32, 
+                                height: 32,
+                                bgcolor: '#3f51b5',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                              }}
                             >
                               {activeConversation.other_user?.display_name?.charAt(0)}
                             </Avatar>
                           )}
                           <Box sx={{ maxWidth: 'calc(100% - 48px)' }}>
-                            <MessageBubble isOwn={isOwn}>
-                              <Typography variant="body1">
+                            <MessageBubble 
+                              isOwn={isOwn} 
+                              isPending={isPending}
+                              hasError={hasError}
+                            >
+                              <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
                                 {message.content}
                               </Typography>
                             </MessageBubble>
                             <MessageTime variant="caption" isOwn={isOwn}>
                               {formatMessageTime(message.created_at)}
-                              {isOwn && (
-                                <MessageStatusIcon read={message.read}>
+                              {isOwn && !isPending && !hasError && ( // Show status icons only if not pending or failed
+                                <MessageStatusIcon read={message.read} isOwn={isOwn}>
                                   {message.read ? <DoneAllIcon /> : <DoneIcon />}
                                 </MessageStatusIcon>
+                              )}
+                              {hasError && ( // Show retry icon for failed messages
+                                <Tooltip title="Failed to send. Click to retry">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ 
+                                      ml: 0.5,
+                                      color: isOwn ? 'rgba(255,255,255,0.7)' : '#6b7280',
+                                      p: 0.5
+                                    }}
+                                    onClick={() => handleRetryMessage(message.id)}
+                                  >
+                                    <RefreshIcon fontSize="inherit" />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
+                              {isPending && ( // Show loading spinner for pending messages
+                                <CircularProgress 
+                                  size={12} 
+                                  thickness={4}
+                                  sx={{ 
+                                    ml: 0.5,
+                                    color: isOwn ? 'rgba(255,255,255,0.7)' : '#6b7280',
+                                  }} 
+                                />
                               )}
                             </MessageTime>
                           </Box>
@@ -861,14 +1127,13 @@ const Chat = () => {
                       );
                     })
                   )}
-                  <div ref={messagesEndRef} />
+                  <div ref={messagesEndRef} /> {/* Scroll target */}
                   
-                  {otherUserTyping && (
+                  {otherUserTyping && ( // Display typing indicator
                     <Typography 
                       variant="caption" 
-                      color="textSecondary" 
                       sx={{
-                        color: "rgb(51, 159, 221)",
+                        color: "#3f51b5", // Distinct color for typing indicator
                         pb: 2,
                         pl: 1,
                         display: 'block'
@@ -891,7 +1156,7 @@ const Chat = () => {
                     autoComplete="off"
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 20,
+                        borderRadius: 20, // Rounded input field
                         backgroundColor: 'background.paper',
                       }
                     }}
@@ -943,3 +1208,4 @@ const Chat = () => {
 };
 
 export default Chat;
+
