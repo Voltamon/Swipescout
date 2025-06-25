@@ -53,7 +53,7 @@ export const sendMessage = (conversationId, content) => {
  * @returns {Promise} Promise object with the updated message data
  */
 export const markAsRead = (messageId) => {
-  return api.put(`/chat/read/${messageId}`);
+  return api.post(`/chat/read/${messageId}`);
 };
 
 /**
