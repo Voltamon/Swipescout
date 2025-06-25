@@ -89,6 +89,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import JobseekerProfileView from './pages/JobseekerProfileView';
 import EmployerProfileView from './pages/EmployerProfileView';
 import AllVideosPage from './pages/AllVideosPage';
+import HomePage from './pages/HomePage';
 
 
 // Initialize once (put this in a separate config file)
@@ -124,6 +125,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/FAQs" element={<FAQs />} />
+          <Route path="/home-page" element={<HomePage />} /> 
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           <Route path="/register-form" element={<RegisterForm />} />
           <Route path="/authpage" element={<AuthPage />} />
