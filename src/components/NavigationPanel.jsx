@@ -7,24 +7,25 @@ const NavigationPanel = ({ navigate, user }) => {
 
 
   return (
-    <Box sx={{
-      position: { xs: 'static', sm: 'absolute' },
-      top: 16,
-      left: 16,
-      mt: 2,
-      
-      zIndex: 1000,
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-      borderRadius: '8px',
-      padding: '12px 16px',
-      backdropFilter: 'blur(5px)',
-      border: '1px solid rgba(255, 255, 255, 0.3)',
-      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      maxWidth: '250px',
-      width: { xs: '100%', sm: 'auto' },
-      mb: { xs: 3, sm: 0 },
-      mx: { xs: 'auto', sm: 0 }
-    }}>
+  <Box
+  sx={{
+    position: { xs: 'absolute', sm: 'absolute' },
+    top: 46,
+    left: 16,
+    mt: { xs: 2, sm: 3 },
+    mx: { xs: 2, sm: 0 },
+    zIndex: 1000,
+    width: { xs: 'auto', sm: 'auto' },
+    maxWidth: '250px',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    backdropFilter: 'blur(5px)',
+    border: '1px solid rgba(255, 255, 255, 0.3)',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  }}
+>
+
     <Typography
     sx={{
       fontSize: "1.25rem",

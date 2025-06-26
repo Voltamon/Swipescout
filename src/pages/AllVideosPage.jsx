@@ -20,6 +20,7 @@ import { bold } from '@cloudinary/url-gen/qualifiers/fontWeight';
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"></link>
 import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
 import NavigationPanel from "../components/NavigationPanel";
+import Header from '../components/Tmp/HeaderExplore';
 
 const AllVideosPage = () => {
   const { videos: localVideos, retryUpload, removeVideo } = useVideoContext();
@@ -176,12 +177,15 @@ const AllVideosPage = () => {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      pt: 5,
+      pt: 0,
       pb: 5,
+      mb:3,
       "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } }
     }}>
+        <Header/>
+        <br></br>
       <SwipeScoutWatermark />
-      <NavigationPanel navigate={navigate} user={user} />
+      <NavigationPanel navigate={navigate} user={user}  sx={{ mt: 20, }} />
 
       {uploadLimitReached && (
         <Alert severity="warning" sx={{ mb: 3, width: '100%', maxWidth: '1200px' }}>

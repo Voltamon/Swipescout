@@ -1,5 +1,6 @@
 // SwipeScoutWatermark.jsx
 import { Box, Typography } from '@mui/material';
+import { Home} from '@mui/icons-material';
 
 const SwipeScoutWatermark = () => (
   <Box sx={{
@@ -10,6 +11,17 @@ const SwipeScoutWatermark = () => (
     opacity: 0.3,
     pointerEvents: 'none'
   }}>
+    <Home sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          fontWeight: 'bold',
+          color: 'rgb(46, 111, 155)',
+          fontFamily: 'Arial, sans-serif',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+        }}
+        onClick={() => navigate('/')} />
     <Typography variant="h1" sx={{
       fontSize: '3rem',
       fontWeight: 'bold',
@@ -26,3 +38,4 @@ const SwipeScoutWatermark = () => (
 );
 
 export default SwipeScoutWatermark;
+ 
