@@ -134,7 +134,7 @@ const HomePage = () => {
                         opacity: 0.1
                     }
                 }}>
-                    <Container maxWidth="lg">
+                    <Container maxWidth="lg" >
                         <Grid container spacing={6} alignItems="center">
                             <Grid item xs={12} md={6}>
                                 <Typography variant="h2" component="h1" sx={{
@@ -171,7 +171,7 @@ const HomePage = () => {
                                     </Button>
                                     <Button
                                         component={Link}
-                                        to="/explore"
+                                        to="/videos/all"
                                         variant="outlined"
                                         size="large"
                                         sx={{
@@ -218,8 +218,9 @@ const HomePage = () => {
                                             p: 3,
                                             background: 'linear-gradient(to top, rgba(185, 229, 255, 0.8), transparent)',
                                             color: 'white'
-                                        }}>
+                                        }}><a href="#Howitworks">
                                             <Typography variant="h6" sx={{ color: "rgb(22, 73, 114)", cursor: "pointer" }}>See how it works →</Typography>
+                                        </a>
                                         </Box>
                                     </Box>
                                 </Grid>
@@ -236,7 +237,7 @@ const HomePage = () => {
       mb: 6,
       fontWeight: 700,
       color: "#333"
-    }}>
+    }} id="Howitworks">
       How SwipeScout Works
     </Typography>
 
@@ -393,7 +394,7 @@ const HomePage = () => {
                         <Box sx={{ textAlign: 'center', mt: 6 }}>
                             <Button
                                 component={Link}
-                                to="/explore"
+                                to="/videos/all"
                                 variant="contained"
                                 size="large"
                                 sx={{
