@@ -9,20 +9,18 @@ const NavigationPanel = ({ navigate, user }) => {
   return (
   <Box
   sx={{
-    position: { xs: 'absolute', sm: 'absolute' },
-    top: 46,
-    left: 16,
-    mt: { xs: 2, sm: 3 },
-    mx: { xs: 2, sm: 0 },
-    zIndex: 1000,
-    width: { xs: 'auto', sm: 'auto' },
-    maxWidth: '250px',
+    zIndex: 1, 
+    width: { xs: '100%', sm: '250px' }, // Full width on mobile, fixed width on larger
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: '8px',
-    padding: '12px 16px',
+    padding: { xs: '8px 12px', sm: '12px 16px' },
     backdropFilter: 'blur(5px)',
     border: '1px solid rgba(255, 255, 255, 0.3)',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: { xs: 'center', sm: 'flex-start' },
+    textAlign: { xs: 'center', sm: 'left' },
   }}
 >
 
@@ -67,7 +65,7 @@ const NavigationPanel = ({ navigate, user }) => {
         Sample Videos
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px' } }}>
           <Box sx={{ width: '4px', height: '24px', backgroundColor: 'primary.main', mr: 1, borderRadius: '2px' }} />
           <Typography variant="subtitle2" sx={{ cursor: 'pointer', py: '4px', px: 1, flexGrow: 1 }}
@@ -95,7 +93,7 @@ const NavigationPanel = ({ navigate, user }) => {
         Real Videos submitted
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px' } }}>
           <Box sx={{ width: '4px', height: '24px', backgroundColor: 'primary.main', mr: 1, borderRadius: '2px' }} />
           <Typography variant="subtitle2" sx={{ cursor: 'pointer', py: '4px', px: 1, flexGrow: 1 }}

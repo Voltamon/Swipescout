@@ -599,7 +599,7 @@ const mockVideos = [
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 {userSkills.map((skill, index) => (
-                  <SkillChip key={index} label={skill.name} sx={{ mb: 1, mr: 1 }} />
+                  <SkillChip key={index} label={profile?skill.name:skill} sx={{ mb: 1, mr: 1 }} />
                 ))}
               </Box>
             </Box>
