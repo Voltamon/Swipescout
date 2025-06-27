@@ -285,55 +285,51 @@ const JobseekerExplorePage = () => {
     </Box>
   );
 
-  return <Box sx={{ display: "flex" }}>
-      {/* Mobile Menu Icon */}
-      {/*{isMobile && (
-        <IconButton
-          color="#ffffff"
-          aria-label="open drawer"
-          onClick={toggleDrawer}
-          sx={{
-            position: "fixed",
-            top: 16,
-            left: 16,
-            zIndex: theme.zIndex.drawer + 1,
-            color: "#ffffff",
-          }}
-        >
-          <Menu />
-        </IconButton>
-      )}
-
-       Responsive Drawer 
-      <Drawer
-        variant={isMobile ? "temporary" : "permanent"}
-        open={isMobile ? mobileOpen : true}
-        onClose={toggleDrawer}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          width: isMobile ? drawerWidthMobile : drawerWidthDesktop,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: isMobile ? drawerWidthMobile : drawerWidthDesktop,
-            boxSizing: "border-box",
-            borderRight: "none",
-            bgcolor: theme.palette.background.paper,
-            display: "flex",
-            flexDirection: "column"
-          }
-        }}
-      >
-        {drawerContent}
-      </Drawer>*/}
-
+  return <Box sx={{
+    display: "flex",
+    flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on xs, row on sm+
+    minHeight: '100vh',
+    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+    backgroundSize: "auto",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "top right",
+  }}>
+      {/* SwipeScoutWatermark needs to be outside the main flex content to prevent it from affecting the layout */}
       <SwipeScoutWatermark />
 
-      {/* Navigation Panel */}
-      <NavigationPanel navigate={navigate} user={user} />
+      {/* Navigation Panel Wrapper Box */}
+      <Box sx={{
+        width: { xs: '100%', sm: '270px' }, // Full width on xs, fixed width on sm+
+        p: { xs: 2, sm: 2 }, // Apply padding on both mobile and desktop for consistency
+        flexShrink: 0, // Prevent shrinking of the sidebar on desktop
+        // Remove mt/mb here, let the parent container's layout or internal padding handle it
+      }}>
+        <NavigationPanel navigate={navigate} user={user} />
+      </Box>
 
       {/* Main Content */}
-      <Box component="main" sx={{ flexGrow: 1, p: 2, mt: 0, pl: 5, height: "100vh", background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`, backgroundSize: "auto", backgroundRepeat: "no-repeat", backgroundPosition: "top right", overflowY: "auto" }}>
-        <Box sx={{ display: "grid", ml: 31, gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 2 }}>
+      <Box component="main" sx={{
+        flexGrow: 1, // Occupy remaining space on desktop
+        p: 2,
+        mt: 0, // Reset any default margin-top
+        ml: { xs: 0, sm: 0 }, // REMOVE ml for desktop, flexbox handles spacing
+        minHeight: { xs: 'auto', sm: '100vh' },
+        overflowY: "auto",
+        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+        backgroundSize: "auto",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "top right",
+        // width: { xs: '100%', sm: 'auto' } // flexGrow will handle width on desktop
+      }}>
+        <Box sx={{
+          display: "grid",
+          // Remove ml: 31 here as it's causing the desktop offset
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: 2,
+          justifyContent: "center",
+          maxWidth: "1200px",
+          mx: "auto",
+        }}>
           {mockVideoResumes.map(video =>
             <PlayableVideoPreview
               key={video.id}

@@ -120,7 +120,7 @@ function App() {
 
         <Routes location={location} key={location.pathname}>
           {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/view-login2" element={<TempLoginPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/about" element={<About />} />
