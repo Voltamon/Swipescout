@@ -13,18 +13,20 @@ import { blue } from "@mui/material/colors";
 import { useAuth } from '../hooks/useAuth';
 
 
-const LayoutRoot = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexFlow:2,
-  flexDirection: 'column',
-  minHeight: '100vh',
-
+const LayoutRoot = styled(Box)(({ theme, isMobile }) => ({
+  display: "flex",
+  flexDirection: "column",
+  height: isMobile ? "100%" : "100vh",
+  maxHeight: isMobile ? "100%" : "100vh",
+  overflow:  "auto" //isMobile ?"hidden": Prevent double scrollbars
 }));
 
-const LayoutContent = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flex: '1 1 auto',
-  width: '100%',backgroundColor: "#efeeff",
+const LayoutContent = styled(Box)(({ theme, isMobile }) => ({
+  display: "flex",
+  flex: "1 1 auto",
+  width: "100%",
+  backgroundColor: "#efeeff",
+  paddingBottom: isMobile ? "56px" : 0 // Space for fixed nav
 }));
 
 const HeaderWrapper = styled(Box)(({ open, isMobile }) => ({
@@ -136,75 +138,32 @@ const roleGradients = {
     [isMobile, location.pathname, shouldHideSidebar] // Include shouldHideSidebar in dependencies
   );
 
-  return (
-    <LayoutRoot>
+  return <LayoutRoot isMobile={isMobile}>
       <CssBaseline />
       {/* Conditionally render MobileMenuButton based on shouldHideSidebar */}
-      {isMobile && !shouldHideSidebar && (
-        <MobileMenuButton
-          edge="start"
-          color="inherit"
-          onClick={handleSidebarToggle}
-        >
+    {isMobile && !shouldHideSidebar && <MobileMenuButton edge="start" color="inherit" onClick={handleSidebarToggle} sx={{ mt: -2,ml:-2 }}>
           <MenuIcon />
-        </MobileMenuButton>
-      )}
+        </MobileMenuButton>}
       {/* Conditionally render Header based on shouldHideSidebar */}
-      {!isMobile && !shouldHideSidebar  && (
-        <HeaderWrapper open={sidebarOpen} isMobile={isMobile}>
+      {!isMobile && !shouldHideSidebar && <HeaderWrapper open={sidebarOpen} isMobile={isMobile}>
           <Header onSidebarToggle={handleSidebarToggle} isSidebarVisible={!shouldHideSidebar} />
-        </HeaderWrapper>
-      )}
+        </HeaderWrapper>}
       <LayoutContent>
         {/* Conditionally render SidebarContainer based on shouldHideSidebar */}
-        {!shouldHideSidebar && (
-          <SidebarContainer open={sidebarOpen} isMobile={isMobile} >
-
-            {roleVar === 'employer' ? (
-              <Sidebar
-                open={sidebarOpen}
-                onClose={handleSidebarClose}
-                variant={isMobile ? 'temporary' : 'persistent'}
-                isMobile={isMobile}
-              />
-            ) : roleVar === 'job_seeker' ? (
-              <SidebarJobseeker
-                open={sidebarOpen}
-                onClose={handleSidebarClose}
-                variant={isMobile ? 'temporary' : 'persistent'}
-                isMobile={isMobile}
-              />
-            ) : roleVar === 'admin' ? (
-              <SidebarAdmin
-                open={sidebarOpen}
-                onClose={handleSidebarClose}
-                variant={isMobile ? 'temporary' : 'persistent'}
-                isMobile={isMobile}
-              />
-            ) : null}
-          </SidebarContainer>
-        )}
-        <MainContent open={sidebarOpen} isMobile={isMobile}
-          sx={{
-            background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
-            borderRadius: '8px 0 0 0', mt: isMobile ? -2 : 2 ,
-            boxShadow: '0 0 20px rgba(0,0,0,0.1)'
-          }}
-        >
+        {!shouldHideSidebar && <SidebarContainer open={sidebarOpen} isMobile={isMobile}>
+            {roleVar === "employer" ? <Sidebar open={sidebarOpen} onClose={handleSidebarClose} variant={isMobile ? "temporary" : "persistent"} isMobile={isMobile} /> : roleVar === "job_seeker" ? <SidebarJobseeker open={sidebarOpen} onClose={handleSidebarClose} variant={isMobile ? "temporary" : "persistent"} isMobile={isMobile} /> : roleVar === "admin" ? <SidebarAdmin open={sidebarOpen} onClose={handleSidebarClose} variant={isMobile ? "temporary" : "persistent"} isMobile={isMobile} /> : null}
+          </SidebarContainer>}
+        <MainContent open={sidebarOpen} isMobile={isMobile} sx={{ background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`, borderRadius: "8px 0 0 0", mt: isMobile ? 0 : 2, boxShadow: "0 0 20px rgba(0,0,0,0.1)" }}>
           <Outlet />
         </MainContent>
-
       </LayoutContent>
       {/* Conditionally render Footer based on shouldHideSidebar */}
-      {!isMobile && !shouldHideSidebar && (
-        <FooterWrapper open={sidebarOpen} isMobile={isMobile} >
-          <Footer ></Footer>
-        </FooterWrapper>
-      )}
+      {!isMobile && !shouldHideSidebar && <FooterWrapper open={sidebarOpen} isMobile={isMobile}>
+          <Footer />
+        </FooterWrapper>}
       {/* MobileNavigation is typically part of the main content or explicitly handled */}
-      {isMobile && !shouldHideSidebar && <MobileNavigation />} {/* Assuming MobileNavigation is only shown when sidebar is enabled on mobile */}
-    </LayoutRoot>
-  );
+      {isMobile && !shouldHideSidebar && <MobileNavigation sx={{ mt: "-10px" }} />} {/* Assuming MobileNavigation is only shown when sidebar is enabled on mobile */}
+    </LayoutRoot>;
 };
 
 export default Layout;

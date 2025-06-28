@@ -45,7 +45,7 @@ const MobileNavigation = () => {
         navigate('/notifications');
         break;
       case 4:
-        navigate('#');
+        navigate(role=='employer'?'/employer-profile':'Job-seeker-profile');
         break;
       default:
         navigate('#');
