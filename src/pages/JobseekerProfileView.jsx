@@ -416,7 +416,7 @@ const JobSeekerPublicProfile = () => {
       mb: 0,
       paddingBottom: 4,
     }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg"  sx={{ mt: isMobile ? 3 : 0 }}>
         {/* Profile Header */}
         <ProfileHeader>
           <ProfileInfo>

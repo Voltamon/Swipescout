@@ -444,7 +444,7 @@ const EmployerProfile = () => {
   
   return (
     <ProfileContainer>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{mt:isMobile?'6px':0}}>
         {/* Profile Header */}
         <ProfileHeader>
           <ProfileInfo>
