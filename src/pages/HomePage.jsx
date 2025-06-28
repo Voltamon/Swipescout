@@ -11,7 +11,7 @@ import {
     Avatar,
     Divider,
     useMediaQuery,
-    styled
+    styled, IconButton
 } from "@mui/material";
 import {
     PlayCircle,
@@ -25,6 +25,11 @@ import { Link } from "react-router-dom";
 import Header from "../components/Tmp/Header";
 import Footer from "../components/Tmp/Footer";
 import { Helmet } from "react-helmet";
+import { useState, useRef } from 'react';
+
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import VolumeUp from '@mui/icons-material/VolumeUp';
+import VolumeOff from '@mui/icons-material/VolumeOff';
 
 // Sample video thumbnails (replace with your actual images)
 // import videoResumeThumb from "../assets/video-resume-thumb.jpg";
@@ -32,16 +37,16 @@ import { Helmet } from "react-helmet";
 // import companyProfileThumb from "../assets/company-profile-thumb.jpg";
 
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '16px',
-  boxShadow: theme.shadows[4],
-  transition: 'all 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: theme.shadows[10],
-  },
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: '16px',
+    boxShadow: theme.shadows[4],
+    transition: 'all 0.3s ease-in-out',
+    '&:hover': {
+        transform: 'translateY(-8px)',
+        boxShadow: theme.shadows[10],
+    },
 }));
 
 const StyledVideoCard = styled(Card)(({ theme }) => ({
@@ -93,8 +98,106 @@ const testimonials = [
     }
 ];
 
+
+const StatusBorder = ({ status }) => (
+    <Box
+        sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 5, // Thickness of the border
+            backgroundColor: status === 'uploading' ? 'orange' : status === 'processing' ? 'blue' : 'transparent',
+            zIndex: 3,
+        }}
+    />
+);
+
+
+
+export const mockVideoResumes = [
+    {
+        id: 'emp-1',
+        video_title: "Corporate Solutions Inc. - Company Overview",
+        video_type: "Company Profile",
+        video_duration: 90, // in seconds
+        video_url: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935032/Employer/grfwutcixeecejrsqu7o.mp4',
+        status: 'completed', // Can be 'uploading', 'processing', 'completed', 'failed'
+    },
+    {
+        id: 'js-1',
+        video_title: "Full Stack Developer - Portfolio Showcase",
+        video_type: "Job Seeker",
+        video_duration: 120,
+        video_url: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935204/Jobseeker/wvepwzroiy6s942idqal.mp4',
+        status: 'completed',
+    },
+
+    {
+        id: 'emp-2',
+        video_title: "Tech Innovators Ltd. - Culture & Values",
+        video_type: "Company Profile",
+        video_duration: 60,
+        video_url: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1716307200/Employer/tech_innovators_culture.mp4', // Example URL
+        status: 'completed',
+    },
+
+];
+
+
 const HomePage = () => {
     const isMobile = useMediaQuery('(max-width:900px)');
+    const [hoveredVideo, setHoveredVideo] = useState(null);
+    const [isPlayVideo, setIsPlayVideo] = useState(null);
+    const [isMuted, setIsMuted] = useState(true);
+    const [playingVideoId, setPlayingVideoId] = useState(null); // New state to track currently playing video by click
+    const videoRefs = useRef({});
+
+    const handleVideoHover = (videoId, isHovering) => {
+        setHoveredVideo(isHovering ? videoId : null);
+        const videoElement = videoRefs.current[videoId];
+        if (videoElement) {
+            if (isHovering) {
+                videoElement.play().catch(error => console.error("Error playing video:", error));
+            } else {
+                videoElement.pause();
+                videoElement.currentTime = 0; // Reset video to start
+            }
+        }
+    };
+
+    const toggleMute = (e, videoId) => {
+        e.stopPropagation(); // Prevent card click event
+        setIsMuted(prev => !prev);
+        // Optionally, you might want to mute/unmute individual videos
+        // For now, it mutes/unmutes all videos if they play on hover.
+        // If you want per-video mute, you'd need a state for each video's mute status.
+    };
+
+
+
+    const handleVideoClick = (videoId) => {
+        const videoElement = videoRefs.current[videoId];
+        if (videoElement) {
+            if (playingVideoId === videoId) { // If this video is already playing due to a click
+                videoElement.pause();
+                videoElement.currentTime = 0; // Reset video
+                setPlayingVideoId(null); // Set to null as it's no longer playing from a click
+            } else { // If a different video is playing, or no video is playing
+                // Pause any previously playing video
+                if (playingVideoId && videoRefs.current[playingVideoId]) {
+                    videoRefs.current[playingVideoId].pause();
+                    videoRefs.current[playingVideoId].currentTime = 0;
+                }
+
+                // Play the clicked video
+                videoElement.play().catch(error => console.error("Error playing video:", error));
+                setPlayingVideoId(videoId); // Set this video as the actively playing one
+            }
+        }
+        console.log("Video clicked:", videoId);
+    };
+
 
     return (
         <>
@@ -219,8 +322,8 @@ const HomePage = () => {
                                             background: 'linear-gradient(to top, rgba(185, 229, 255, 0.8), transparent)',
                                             color: 'white'
                                         }}><a href="#Howitworks">
-                                            <Typography variant="h6" sx={{ color: "rgb(22, 73, 114)", cursor: "pointer" }}>See how it works →</Typography>
-                                        </a>
+                                                <Typography variant="h6" sx={{ color: "rgb(22, 73, 114)", cursor: "pointer" }}>See how it works →</Typography>
+                                            </a>
                                         </Box>
                                     </Box>
                                 </Grid>
@@ -230,86 +333,86 @@ const HomePage = () => {
                 </Box>
 
                 {/* How It Works Section */}
-             <Box sx={{ py: 8 }}>
-  <Container maxWidth="lg">
-    <Typography variant="h3" component="h2" sx={{
-      textAlign: "center",
-      mb: 6,
-      fontWeight: 700,
-      color: "#333"
-    }} id="Howitworks">
-      How SwipeScout Works
-    </Typography>
+                <Box sx={{ py: 8 }}>
+                    <Container maxWidth="lg">
+                        <Typography variant="h3" component="h2" sx={{
+                            textAlign: "center",
+                            mb: 6,
+                            fontWeight: 700,
+                            color: "#333"
+                        }} id="Howitworks">
+                            How SwipeScout Works
+                        </Typography>
 
-    <Grid container spacing={4} justifyContent="center">
-      {[
-        {
-          icon: <VideoCall color="primary" sx={{ fontSize: 40 }} />,
-          title: "1. Create Your Video Profile",
-          description: "Job seekers record a short video resume. Employers create video job postings or company profiles.",
-          bgColor: 'rgba(110, 142, 251, 0.1)'
-        },
-        {
-          icon: <People color="secondary" sx={{ fontSize: 40 }} />,
-          title: "2. Discover & Connect",
-          description: "Swipe through video profiles or use our smart matching to find perfect candidates or opportunities.",
-          bgColor: 'rgba(167, 119, 227, 0.1)'
-        },
-        {
-          icon: <TrendingUp sx={{ fontSize: 40, color: 'success.main' }} />,
-          title: "3. Grow Your Career",
-          description: "Build meaningful connections that lead to interviews, hires, and career growth.",
-          bgColor: 'rgba(103, 214, 168, 0.1)'
-        }
-      ].map((step, index) => (
-        <Grid item xs={12} sm={6} md={4} key={index} sx={{ display: 'flex' }}>
-          <StyledFeatureCard sx={{ 
-            width: '100%', // Ensure card takes full width of grid item
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <CardContent sx={{
-              flexGrow: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              p: 3 // Consistent padding
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 80,
-                height: 80,
-                bgcolor: step.bgColor,
-                borderRadius: '50%',
-                mb: 3,
-                mx: 'auto' // Center the icon box
-              }}>
-                {step.icon}
-              </Box>
-              <Typography variant="h5" component="h3" sx={{ 
-                mb: 2, 
-                fontWeight: 600,
-                textAlign: 'center' // Center align title
-              }}>
-                {step.title}
-              </Typography>
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="body1" sx={{ 
-                  color: '#666',
-                  textAlign: 'center' // Center align description
-                }}>
-                  {step.description}
-                </Typography>
-              </Box>
-            </CardContent>
-          </StyledFeatureCard>
-        </Grid>
-      ))}
-    </Grid>
-  </Container>
-</Box>
+                        <Grid container spacing={4} justifyContent="center">
+                            {[
+                                {
+                                    icon: <VideoCall color="primary" sx={{ fontSize: 40 }} />,
+                                    title: "1. Create Your Video Profile",
+                                    description: "Job seekers record a short video resume. Employers create video job postings or company profiles.",
+                                    bgColor: 'rgba(110, 142, 251, 0.1)'
+                                },
+                                {
+                                    icon: <People color="secondary" sx={{ fontSize: 40 }} />,
+                                    title: "2. Discover & Connect",
+                                    description: "Swipe through video profiles or use our smart matching to find perfect candidates or opportunities.",
+                                    bgColor: 'rgba(167, 119, 227, 0.1)'
+                                },
+                                {
+                                    icon: <TrendingUp sx={{ fontSize: 40, color: 'success.main' }} />,
+                                    title: "3. Grow Your Career",
+                                    description: "Build meaningful connections that lead to interviews, hires, and career growth.",
+                                    bgColor: 'rgba(103, 214, 168, 0.1)'
+                                }
+                            ].map((step, index) => (
+                                <Grid item xs={12} sm={6} md={4} key={index} sx={{ display: 'flex', width: '80%' }}>
+                                    <StyledFeatureCard sx={{
+                                        width: '100%', // Ensure card takes full width of grid item
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        <CardContent sx={{
+                                            flexGrow: 1,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            height: '100%',
+                                            p: 3 // Consistent padding
+                                        }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                width: 80,
+                                                height: 80,
+                                                bgcolor: step.bgColor,
+                                                borderRadius: '50%',
+                                                mb: 3,
+                                                mx: 'auto' // Center the icon box
+                                            }}>
+                                                {step.icon}
+                                            </Box>
+                                            <Typography variant="h5" component="h3" sx={{
+                                                mb: 2,
+                                                fontWeight: 600,
+                                                textAlign: 'center' // Center align title
+                                            }}>
+                                                {step.title}
+                                            </Typography>
+                                            <Box sx={{ flexGrow: 1 }}>
+                                                <Typography variant="body1" sx={{
+                                                    color: '#666',
+                                                    textAlign: 'center' // Center align description
+                                                }}>
+                                                    {step.description}
+                                                </Typography>
+                                            </Box>
+                                        </CardContent>
+                                    </StyledFeatureCard>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Container>
+                </Box>
 
                 {/* Video Showcase Section */}
                 <Box sx={{ py: 8, bgcolor: '#f8faff' }}>
@@ -323,72 +426,125 @@ const HomePage = () => {
                             See SwipeScout in Action
                         </Typography>
 
-                        <Grid container spacing={4}>
-                            <Grid item xs={12} md={4}>
-                                <StyledVideoCard>
-                                    <CardMedia
-                                        component="img"
-                                        height="240"
 
-                                        alt="Video Resume Example"
-                                    />
-                                    <Box className="play-overlay">
-                                        <PlayCircle sx={{ fontSize: 60, color: 'white' }} />
-                                    </Box>
-                                    <CardContent>
-                                        <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-                                            Video Resumes
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Showcase your personality and skills beyond paper resumes
-                                        </Typography>
-                                    </CardContent>
-                                </StyledVideoCard>
-                            </Grid>
+                        <Grid container spacing={3} sx={{ p: 2 }}>
+                            {mockVideoResumes.map((video) => (
+                                <Grid item key={video.id} xs={12} sm={6} md={6} lg={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Card
+                                        sx={{
+                                            width: '300px',
+                                            maxWidth: '100%',
+                                            borderRadius: 2,
+                                            boxShadow: 2,
+                                            transition: 'transform 0.2s ease-in-out',
+                                            '&:hover': {
+                                                transform: 'scale(1.02)',
+                                            },
+                                            position: 'relative',
+                                            overflow: 'hidden',
+                                            aspectRatio: "9/16",
+                                        }}
+                                        // If you want hover functionality, uncomment these lines:
+                                        // onMouseEnter={() => handleVideoHover(video.id, true)}
+                                        // onMouseLeave={() => handleVideoHover(video.id, false)}
+                                        onClick={() => handleVideoClick(video.id)}
+                                    >
+                                        {(video.status === 'uploading' || video.status === 'processing') && (
+                                            <StatusBorder status={video.status} />
+                                        )}
 
-                            <Grid item xs={12} md={4}>
-                                <StyledVideoCard>
-                                    <CardMedia
-                                        component="img"
-                                        height="240"
+                                        <CardMedia
+                                            component="div"
+                                            sx={{
+                                                position: 'relative',
+                                                width: '100%',
+                                                height: '100%',
+                                                backgroundColor: '#000',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {video.video_url && (
+                                                <video
+                                                    ref={el => videoRefs.current[video.id] = el}
+                                                    src={video.video_url}
+                                                    style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                        display: 'block'
+                                                    }}
+                                                    muted={isMuted}
+                                                    loop
+                                                    playsInline
+                                                    disablePictureInPicture
+                                                    controlsList="nodownload"
+                                                />
+                                            )}
 
-                                        alt="Video Job Posting Example"
-                                    />
-                                    <Box className="play-overlay">
-                                        <PlayCircle sx={{ fontSize: 60, color: 'white' }} />
-                                    </Box>
-                                    <CardContent>
-                                        <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-                                            Video Job Postings
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Employers showcase roles and company culture effectively
-                                        </Typography>
-                                    </CardContent>
-                                </StyledVideoCard>
-                            </Grid>
+                                            {/* Play icon overlay */}
+                                            <Box
+                                                className="play-icon-overlay"
+                                                sx={{
+                                                    position: "absolute",
+                                                    top: "50%",
+                                                    left: "50%",
+                                                    transform: "translate(-50%, -50%)",
+                                                    color: "#fff",
+                                                    bgcolor: "rgba(255, 64, 129, 0.7)",
+                                                    borderRadius: "50%",
+                                                    p: 2,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    // Play icon disappears if:
+                                                    // 1. The video is currently playing due to a click (playingVideoId matches video.id)
+                                                    // 2. The video is in 'uploading' or 'processing' status
+                                                    opacity: (playingVideoId === video.id || video.status === 'uploading' || video.status === 'processing') ? 0 : 1,
+                                                    transition: "opacity 0.3s",
+                                                }}
+                                            >
+                                                <PlayArrow fontSize="large" />
+                                            </Box>
 
-                            <Grid item xs={12} md={4}>
-                                <StyledVideoCard>
-                                    <CardMedia
-                                        component="img"
-                                        height="240"
+                                            <IconButton
+                                                onClick={(e) => toggleMute(e, video.id)}
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: 8,
+                                                    right: 8,
+                                                    zIndex: 2,
+                                                    backgroundColor: 'rgba(0,0,0,0.5)',
+                                                    color: 'white',
+                                                    // Mute button appears only if the video is currently playing due to a click
+                                                    opacity: playingVideoId === video.id ? 1 : 0,
+                                                    transition: "opacity 0.3s",
+                                                }}
+                                            >
+                                                {isMuted ? <VolumeOff /> : <VolumeUp />}
+                                            </IconButton>
 
-                                        alt="Company Profile Example"
-                                    />
-                                    <Box className="play-overlay">
-                                        <PlayCircle sx={{ fontSize: 60, color: 'white' }} />
-                                    </Box>
-                                    <CardContent>
-                                        <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-                                            Company Profiles
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Get to know companies through authentic video stories
-                                        </Typography>
-                                    </CardContent>
-                                </StyledVideoCard>
-                            </Grid>
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    p: 2,
+                                                    color: 'white',
+                                                    background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                                                    zIndex: 1,
+                                                }}
+                                            >
+                                                <Typography variant="subtitle1" noWrap sx={{ color: 'white' }}>
+                                                    {video.video_title || 'Untitled Video'}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'white' }}>
+                                                    {video.video_type || 'Uncategorized'} • {Math.round(video.video_duration || 0)}s
+                                                </Typography>
+                                            </Box>
+                                        </CardMedia>
+                                    </Card>
+                                </Grid>))}
                         </Grid>
 
                         <Box sx={{ textAlign: 'center', mt: 6 }}>
@@ -462,7 +618,7 @@ const HomePage = () => {
                 {/* CTA Section */}
                 <Box sx={{
                     py: 10,
-                      backgroundImage: `linear-gradient(
+                    backgroundImage: `linear-gradient(
     to bottom,
         rgba(53, 187, 221, 0.78) 0%,
       rgba(116, 215, 245, 0.8) 40%,
@@ -478,14 +634,14 @@ const HomePage = () => {
                     <Container maxWidth="md">
                         <Typography variant="h3" component="h2" sx={{
                             mb: 0,
-                            fontWeight: 700 ,color:"rgb(57, 54, 122)"
+                            fontWeight: 700, color: "rgb(57, 54, 122)"
                         }}>
                             Ready to Transform Your Recruitment?
                         </Typography>
                         <Typography variant="h5" component="p" sx={{
                             mb: 1,
                             fontWeight: 400,
-                            opacity: 0.9 ,color:"rgb(47, 51, 65)"
+                            opacity: 0.9, color: "rgb(47, 51, 65)"
                         }}>
                             Join thousands of professionals and companies finding better matches through video.
                         </Typography>
@@ -513,7 +669,7 @@ const HomePage = () => {
 
                 <Footer sx={{
                     py: 10,
-                     
+
                     backgroundBlendMode: 'overlay',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
