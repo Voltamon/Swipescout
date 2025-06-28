@@ -41,12 +41,14 @@ import {
 import { useSocket } from '../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns'; // Still useful for general relative time, but replaced by custom for messages
 import { enUS } from 'date-fns/locale';
+import { Weight } from 'lucide-react';
 
 // Styled components with beautiful design
 const ChatContainer = styled(Box)(({ theme }) => ({
   height: 'calc(100vh - 64px)',
   display: 'flex',
   flexDirection: 'column',
+  
   backgroundColor: '#f5f7fa', // Light background for the overall chat area
   [theme.breakpoints.down('md')]: {
     height: 'calc(100vh - 56px)',
@@ -81,7 +83,7 @@ const MessageArea = styled(Paper)(({ theme, showConversations }) => ({
   [theme.breakpoints.down('md')]: {
     display: showConversations ? 'none' : 'flex',
     height: 'calc(100vh - 56px)',
-    marginLeft: showConversations ? 0 : '15px', // Adjust margin for mobile when conversation is active
+    marginLeft: showConversations ? 0 : '0px', // Adjust margin for mobile when conversation is active
     transition: 'margin-left 0.3s ease',
   },
 }));
@@ -220,6 +222,7 @@ const Chat = () => {
   const [startingConversation, setStartingConversation] = useState(false);
   const [pendingMessages, setPendingMessages] = useState({}); // To track messages being sent
   const [failedMessages, setFailedMessages] = useState({}); // To track messages that failed to send
+  const [textToggel, setTextToggel] = useState('All Users'); 
 
   const isMobile = window.innerWidth < 960;
 
@@ -456,9 +459,7 @@ const Chat = () => {
 
     fetchMessages();
 
-    if (isMobile) {
-      setShowConversations(false); // Hide conversation list on mobile when message area is active
-    }
+  
   }, [activeConversation, isMobile, user?.id, socket]); // Dependencies for message fetching
 
   useEffect(() => {
@@ -492,6 +493,7 @@ const Chat = () => {
     // Update UI immediately with the temporary message
     setMessages(prev => [...prev, tempMessage]);
     setNewMessage(''); // Clear input field
+    setShowAllUsers(false);
 
     try {
       const response = await sendMessage(activeConversation.id, newMessage);
@@ -654,7 +656,7 @@ const Chat = () => {
     }
   
     return (
-      <List sx={{ overflow: 'auto', flex: 1, bgcolor: '#edf2f7' }}> {/* Background for All Users list */}
+      <List sx={{ overflow: 'auto', flex: 1, bgcolor: '#edf2f7', pl: isMobile ? 0 : 2,}}> {/* Background for All Users list */}
         {allUsers.length === 0 ? (
           <ListItem>
             <ListItemText primary="No users found" />
@@ -773,7 +775,7 @@ const Chat = () => {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        height: '100vh',
+        height: '100%',
         bgcolor: 'background.default'
       }}>
         <CircularProgress />
@@ -791,22 +793,32 @@ const Chat = () => {
             showConversations={showConversations}
             showAllUsers={showAllUsers}
           >
+          <Box sx={{ 
+            p: 2, 
+            borderBottom: '1px solid #e5e7eb',
+            bgcolor: 'background.paper'
+          }}>
             <Box sx={{ 
-              p: 2, 
-              borderBottom: '1px solid #e5e7eb',
-              bgcolor: 'background.paper' // White background for the header
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: 2,
+              ml: isMobile ? 0 : 6, 
             }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 {isMobile && !showConversations && (
                   <IconButton
-                    edge="start"
+                    
                     onClick={handleBackToConversations}
-                    sx={{ mr: 1, ml: -1 }}
+                    sx={{ 
+                      paddingLeft: 0,  
+                      marginRight: 2, 
+                      position: 'relative', 
+                      zIndex: 1, 
+                    }}
                   >
-                    <ArrowBackIcon />
+                    <ArrowBackIcon    />
                   </IconButton>
                 )}
-                <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
+                <Typography variant="h6" sx={{ ml:4,flexGrow: 1, fontWeight: 600 }}>
                   Messages
                 </Typography>
               </Box>
@@ -847,11 +859,15 @@ const Chat = () => {
                 }}>
                   {showAllUsers ? 'All Users' : 'Conversations'}
                 </Typography>
-                <Button 
+                <Typography 
                   variant="outlined" 
                   size="small"
+                 
                   onClick={() => {
                     setShowAllUsers(!showAllUsers);
+                    console.log("setShowAllUsers:::", showAllUsers)
+                    showAllUsers?setTextToggel("All Users"):setTextToggel("Conversations");
+                    console.log("text:::", textToggel)
                     if (!showAllUsers && allUsers.length === 0) {
                       fetchAllUsers(); // Fetch all users only when switching to that view
                     }
@@ -859,18 +875,21 @@ const Chat = () => {
                   sx={{
                     textTransform: 'none',
                     borderRadius: '12px',
-                    px: 2,
-                    py: 0.5,
-                    borderColor: '#e5e7eb',
-                    color: '#374151',
+                    px: 3,
+                    py: 0.4,
+                     bgcolor:'rgba(53, 84, 150, 0.1)',
+                  
+                    color: 'rgb(27, 57, 107)',
+                    border:'1px solid rgb(41, 91, 190)',
                     '&:hover': {
                       borderColor: '#3f51b5',
                       color: '#3f51b5'
                     }
                   }}
                 >
-                  {showAllUsers ? 'Conversations' : 'All Users'}
-                </Button>
+                  {(textToggel ? textToggel : textToggel)}
+                  
+                </Typography>
               </Box>
             </Box>
                                
@@ -915,8 +934,8 @@ const Chat = () => {
                               src={conversation.other_user?.photo_url}
                               sx={{ 
                                 bgcolor: '#3f51b5', 
-                                width: 40, 
-                                height: 40,
+                                width: isMobile?40:20, 
+                                height: isMobile?40:20,
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                               }}
                             >
@@ -998,9 +1017,9 @@ const Chat = () => {
                 }}>
                   {isMobile && (
                     <IconButton
-                      edge="start"
+                      edge="start" 
                       onClick={handleBackToConversations}
-                      sx={{ mr: 1 }}
+                      sx={{ ml: 4 ,mr:2 ,Weight:'bold', color:'rgb(16, 63, 70)'}}
                     >
                       <ArrowBackIcon />
                     </IconButton>
