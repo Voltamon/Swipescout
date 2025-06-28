@@ -61,12 +61,12 @@ import {
   Videocam as VideocamIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { 
-  getUserProfile, 
-  updateUserProfile, 
-  getUserSkills, 
-  addUserSkill, 
-  updateUserSkill, 
+import {
+  getUserProfile,
+  updateUserProfile,
+  getUserSkills,
+  addUserSkill,
+  updateUserSkill,
   deleteUserSkill,
   getUserExperiences,
   addUserExperience,
@@ -79,7 +79,7 @@ import {
   getUserVideos,
   deleteUserVideo,
   uploadProfileImage,
-  getSkills
+  getSkills,
 } from '../services/api';
 import dayjs from 'dayjs';
 
@@ -172,32 +172,32 @@ const EditJobSeekerProfile = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   // State for tabs
   const [tabValue, setTabValue] = useState(0);
-  
+
   // State for profile data
-const [profile, setProfile] = useState({
-  first_name: '',
-  Second_name: '',
-  last_name: '',
-  title: '',
-  location: '',
-  bio: '',
-  email: '',
-  phone: '',
-  mobile: '',
-  website: '',
-  profile_pic: '',
-  address: '',
-  preferred_job_title: '',
-  social: {
-    linkedin_url: '',
-    github: '',
-    twitter: ''
-  }
-});
-  
+  const [profile, setProfile] = useState({
+    first_name: '',
+    Second_name: '',
+    last_name: '',
+    title: '',
+    location: '',
+    bio: '',
+    email: '',
+    phone: '',
+    mobile: '',
+    website: '',
+    profile_pic: '',
+    address: '',
+    preferred_job_title: '',
+    social: {
+      linkedin_url: '',
+      github: '',
+      twitter: ''
+    }
+  });
+
   // State for skills
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
@@ -206,12 +206,12 @@ const [profile, setProfile] = useState({
   const [avatarPicture, setAvatarPicture] = useState('');
   const [avatarVersion, setAvatarVersion] = useState(0); // Cache busting
 
-  
+
   // State for experiences
   const [experiences, setExperiences] = useState([]);
   const [experienceDialogOpen, setExperienceDialogOpen] = useState(false);
   const [experienceForm, setExperienceForm] = useState({
-    company_name: '', 
+    company_name: '',
     position: '',
     location: '',
     start_date: '',
@@ -219,7 +219,7 @@ const [profile, setProfile] = useState({
     currently_working: false,
     description: ''
   });
-  
+
   // State for education
   const [education, setEducation] = useState([]);
   const [educationDialogOpen, setEducationDialogOpen] = useState(false);
@@ -232,10 +232,10 @@ const [profile, setProfile] = useState({
     endDate: '',
     description: ''
   });
-  
+
   // State for videos
   const [videos, setVideos] = useState([]);
-  
+
   // UI state
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -248,87 +248,121 @@ const [profile, setProfile] = useState({
   const fileInputRef = useRef(null);
 
   // Add this helper function somewhere in your component (outside the main function)
-const verifyImageAvailability = (url) => {
-  return new Promise((resolve, reject) => {
-    if (!url) reject(new Error('Empty URL'));
+  const verifyImageAvailability = (url) => {
+    return new Promise((resolve, reject) => {
+      if (!url) reject(new Error('Empty URL'));
 
-    const img = new Image();
-    let timer = setTimeout(() => {
-      img.onload = img.onerror = null;
-      reject(new Error('Image load timeout'));
-    }, 5000);
+      const img = new Image();
+      let timer = setTimeout(() => {
+        img.onload = img.onerror = null;
+        reject(new Error('Image load timeout'));
+      }, 5000);
 
-    img.onload = () => {
-      clearTimeout(timer);
-      if (img.width > 0 && img.height > 0) {
-        resolve();
-      } else {
-        reject(new Error('Zero dimensions'));
-      }
-    };
-    img.onerror = () => {
-      clearTimeout(timer);
-      reject(new Error('Failed to load'));
-    };
-    img.src = url;
-  });
-};
+      img.onload = () => {
+        clearTimeout(timer);
+        if (img.width > 0 && img.height > 0) {
+          resolve();
+        } else {
+          reject(new Error('Zero dimensions'));
+        }
+      };
+      img.onerror = () => {
+        clearTimeout(timer);
+        reject(new Error('Failed to load'));
+      };
+      img.src = url;
+    });
+  };
+
+  const createStarterProfile = async () => {
+    setSaving(true);
+    setProfile({
+      ...profile,
+      first_name: ''
+    });
+    await updateUserProfile(profile);
+    setSaving(false);
+  }
+
   // Fetch user data
   useEffect(() => {
+    let profileResponse;
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        
-        const [profileResponse, skillsResponse, availableSkillsResponse, 
-               experiencesResponse, educationResponse, videosResponse] = await Promise.all([
-          getUserProfile(),
-          getUserSkills(),
-          getSkills(),
-          getUserExperiences(),
-          getUserEducation(),
-          getUserVideos()
-        ]);
-        console.log(profileResponse.data);
-        // setProfile(profileResponse.data);
-        console.log("Profile::::::",profile);
+
+       
+       
+        try{
+        profileResponse = await getUserProfile();
+        } catch(error) {
+        if (error.status === 404) {
+          try {
+            await createStarterProfile();
+            profileResponse = await getUserProfile();
+            console.log('profile::::1111',profileResponse.data);
+            setProfile(profileResponse.data);
+            setSnackbar({
+              open: true,
+              message: 'Starter profile created..',
+              severity: 'success'
+            });
+          } catch (error) {
+            setSnackbar({
+              open: true,
+              message: 'Failed to create starter profile ..',
+              severity: 'error'
+            });
+          }
+        }     
+      }
+    
+        const [skillsResponse, availableSkillsResponse,
+          experiencesResponse, educationResponse, videosResponse] = await Promise.all([
+           
+            getUserSkills(),
+            getSkills(),
+            getUserExperiences(),
+            getUserEducation(),
+            getUserVideos()
+          ]);
+        console.log("Profile::::::3333",profileResponse.data);
+        setProfile(profileResponse.data);
+        console.log("Profile::::::4444", profileResponse.data);
         setSkills(skillsResponse.data.skills);
         setAvailableSkills(availableSkillsResponse.data.skills);
         setExperiences(experiencesResponse.data.experiences);
         setEducation(educationResponse.data.educations || []);
         setVideos(videosResponse.data.videos);
-       
+
         setAvatarVersion(0);
 
 
-const initialAvatarUrl = profileResponse.data.profile_pic 
-  ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}`
-  : '';
+        const initialAvatarUrl = profileResponse.data.profile_pic
+          ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}`
+          : '';
 
-// Verify the image exists before setting it
-try {
-  if (initialAvatarUrl) {
-    await verifyImageAvailability(initialAvatarUrl);
-  }
-  setAvatarPicture(initialAvatarUrl);
-} catch (error) {
-  console.error('Avatar image not available:', error);
-  setAvatarPicture('');
-}
+        // Verify the image exists before setting it
+        try {
+          if (initialAvatarUrl) {
+            await verifyImageAvailability(initialAvatarUrl);
+          }
+          setAvatarPicture(initialAvatarUrl);
+        } catch (error) {
+          console.error('Avatar image not available:', error);
+          setAvatarPicture('');
+        }
 
-
-setProfile(profileResponse.data);
+        setProfile(profileResponse.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        setSnackbar({
-          open: true,
-          message: 'Error loading profile data',
-          severity: 'error'
-        });
+      
+        
         setLoading(false);
       }
     };
-    
+
     fetchUserData();
   }, []);
 
@@ -336,40 +370,40 @@ setProfile(profileResponse.data);
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
-  
+
   // Handle profile form change
-const handleProfileChange = (e) => {
-  const { name, value } = e.target;
-  
-  if (name.includes('.')) {
-    const [parent, child] = name.split('.');
-    setProfile({
-      ...profile,
-      [parent]: {
-        ...profile[parent],
-        [child]: value
-      }
-    });
-  } else {
-    setProfile({
-      ...profile,
-      [name]: value
-    });
-  }
-};
+  const handleProfileChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setProfile({
+        ...profile,
+        [parent]: {
+          ...profile[parent],
+          [child]: value
+        }
+      });
+    } else {
+      setProfile({
+        ...profile,
+        [name]: value
+      });
+    }
+  };
 
   // Handle profile save
   const handleSaveProfile = async () => {
     try {
       setSaving(true);
       await updateUserProfile(profile);
-      console.log(profile);
+      console.log("profile::::22222",profile);
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
         severity: 'success'
       });
-      
+
       setSaving(false);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -381,83 +415,83 @@ const handleProfileChange = (e) => {
       setSaving(false);
     }
   };
-  
+
 
   // Handle avatar upload
-const handleAvatarUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  try {
-    setSaving(true);
-    
-    // 1. Show instant preview
-    const tempPreviewUrl = URL.createObjectURL(file);
-    setAvatarPicture(tempPreviewUrl);
+    try {
+      setSaving(true);
 
-    // 2. Upload to server
-    const response = await uploadProfileImage(file); 
+      // 1. Show instant preview
+      const tempPreviewUrl = URL.createObjectURL(file);
+      setAvatarPicture(tempPreviewUrl);
 
-    // 3. Server returns the FINAL URL (must be immediately accessible)
-    const serverUrl = `${VITE_API_BASE_URL}${response.data.path}?t=${Date.now()}`;
+      // 2. Upload to server
+      const response = await uploadProfileImage(file);
 
-    // 4. Verify the image is truly ready (with retries)
-    let loaded = false;
-    for (let i = 0; i < 3; i++) {
-      try {
-        await verifyImageAvailability(serverUrl);
-        loaded = true;
-        break;
-      } catch {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+      // 3. Server returns the FINAL URL (must be immediately accessible)
+      const serverUrl = `${VITE_API_BASE_URL}${response.data.path}?t=${Date.now()}`;
+
+      // 4. Verify the image is truly ready (with retries)
+      let loaded = false;
+      for (let i = 0; i < 3; i++) {
+        try {
+          await verifyImageAvailability(serverUrl);
+          loaded = true;
+          break;
+        } catch {
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+        }
       }
+
+      if (loaded) {
+        setProfile(prev => ({ ...prev, profile_pic: response.data.path }));
+        setAvatarPicture(serverUrl);
+        showSnackbar("Profile picture updated!", "success");
+      } else {
+        showSnackbar("Uploaded! Refresh to see changes.", "info");
+      }
+
+      // Clean up preview
+      URL.revokeObjectURL(tempPreviewUrl);
+
+    } catch (error) {
+      showSnackbar("Upload failed. Please try again.", "error");
+    } finally {
+      setSaving(false);
     }
+  };
 
-    if (loaded) {
-      setProfile(prev => ({ ...prev, profile_pic: response.data.path }));
-      setAvatarPicture(serverUrl);
-      showSnackbar("Profile picture updated!", "success");
-    } else {
-      showSnackbar("Uploaded! Refresh to see changes.", "info");
-    }
-
-    // Clean up preview
-    URL.revokeObjectURL(tempPreviewUrl);
-
-  } catch (error) {
-    showSnackbar("Upload failed. Please try again.", "error");
-  } finally {
-    setSaving(false);
-  }
-};
-  
   // Skill dialog handlers
   const handleOpenSkillDialog = () => {
     setSkillDialogOpen(true);
   };
-  
+
   const handleCloseSkillDialog = () => {
     setSkillDialogOpen(false);
     setSelectedSkill('');
   };
-  
+
   const handleSaveSkill = async () => {
     if (!selectedSkill) return;
-    
+
     try {
       setSaving(true);
       await addUserSkill({ skill_id: selectedSkill });
-      
+
       // Refresh skills
       const response = await getUserSkills();
       setSkills(response.data.skills);
-      
+
       setSnackbar({
         open: true,
         message: 'Skill added successfully',
         severity: 'success'
       });
-      
+
       handleCloseSkillDialog();
       setSaving(false);
     } catch (error) {
@@ -470,20 +504,20 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   const handleDeleteSkill = async (skill_id) => {
     try {
       setSaving(true);
       await deleteUserSkill(skill_id);
-      
+
       setSkills(skills.filter(skill => skill.skill_id !== skill_id));
-      
+
       setSnackbar({
         open: true,
         message: 'Skill deleted successfully',
         severity: 'success'
       });
-      
+
       setSaving(false);
     } catch (error) {
       console.error('Error deleting skill:', error);
@@ -495,12 +529,12 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   // Experience dialog handlers
   const handleOpenExperienceDialog = (experience = null) => {
     if (experience) {
       setExperienceForm({
-        id:experience.id,
+        id: experience.id,
         company_name: experience.company_name,
         position: experience.position,
         location: experience.location,
@@ -522,11 +556,11 @@ const handleAvatarUpload = async (e) => {
     }
     setExperienceDialogOpen(true);
   };
-  
+
   const handleCloseExperienceDialog = () => {
     setExperienceDialogOpen(false);
   };
-  
+
   const handleExperienceFormChange = (e) => {
     const { name, value, type, checked } = e.target;
     setExperienceForm({
@@ -534,33 +568,33 @@ const handleAvatarUpload = async (e) => {
       [name]: type === 'checkbox' ? checked : value
     });
   };
-  
+
   const handleSaveExperience = async () => {
     try {
       setSaving(true);
-      let edited=false;
+      let edited = false;
       if (experienceForm.id) {
-         
+
         // Update existing experience
         await updateUserExperience(experienceForm.id, experienceForm);
-        edited=true;
-      } else if(edited!=true) {
+        edited = true;
+      } else if (edited != true) {
         // Add new experience
         await addUserExperience(experienceForm);
       }
-      
+
       // Refresh experiences
       const response = await getUserExperiences();
       setExperiences(response.data.experiences);
-      
+
       setSnackbar({
         open: true,
         message: 'Experience saved successfully',
         severity: 'success'
       });
-      
+
       handleCloseExperienceDialog();
-       edited=false;
+      edited = false;
       setSaving(false);
     } catch (error) {
       console.error('Error saving experience:', error);
@@ -572,20 +606,20 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   const handleDeleteExperience = async (experienceId) => {
     try {
       setSaving(true);
       await deleteUserExperience(experienceId);
-      
+
       setExperiences(experiences.filter(exp => exp.id !== experienceId));
-      
+
       setSnackbar({
         open: true,
         message: 'Experience deleted successfully',
         severity: 'success'
       });
-      
+
       setSaving(false);
     } catch (error) {
       console.error('Error deleting experience:', error);
@@ -597,7 +631,7 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   // Education dialog handlers
   const handleOpenEducationDialog = (education = null) => {
     if (education) {
@@ -624,11 +658,11 @@ const handleAvatarUpload = async (e) => {
     }
     setEducationDialogOpen(true);
   };
-  
+
   const handleCloseEducationDialog = () => {
     setEducationDialogOpen(false);
   };
-  
+
   const handleEducationFormChange = (e) => {
     const { name, value } = e.target;
     setEducationForm({
@@ -636,11 +670,11 @@ const handleAvatarUpload = async (e) => {
       [name]: value
     });
   };
-  
+
   const handleSaveEducation = async () => {
     try {
       setSaving(true);
-      
+
       if (educationForm.id) {
         // Update existing education
         await updateUserEducation(educationForm.id, educationForm);
@@ -648,17 +682,17 @@ const handleAvatarUpload = async (e) => {
         // Add new education
         await addUserEducation(educationForm);
       }
-      
+
       // Refresh education
       const response = await getUserEducation();
       setEducation(response.data.educations || []);
-      
+
       setSnackbar({
         open: true,
         message: 'Education saved successfully',
         severity: 'success'
       });
-      
+
       handleCloseEducationDialog();
       setSaving(false);
     } catch (error) {
@@ -671,20 +705,20 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   const handleDeleteEducation = async (educationId) => {
     try {
       setSaving(true);
       await deleteUserEducation(educationId);
-      
+
       setEducation(education.filter(edu => edu.id !== educationId));
-      
+
       setSnackbar({
         open: true,
         message: 'Education deleted successfully',
         severity: 'success'
       });
-      
+
       setSaving(false);
     } catch (error) {
       console.error('Error deleting education:', error);
@@ -696,21 +730,21 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   // Video handlers
   const handleDeleteVideo = async (videoId) => {
     try {
       setSaving(true);
       await deleteUserVideo(videoId);
-      
+
       setVideos(videos.filter(video => video.id !== videoId));
-      
+
       setSnackbar({
         open: true,
         message: 'Video deleted successfully',
         severity: 'success'
       });
-      
+
       setSaving(false);
     } catch (error) {
       console.error('Error deleting video:', error);
@@ -722,21 +756,21 @@ const handleAvatarUpload = async (e) => {
       setSaving(false);
     }
   };
-  
+
   const handleUploadVideo = () => {
     navigate('/video-upload');
   };
-  
+
   const handleEditVideo = (videoId) => {
     navigate(`/edit-video/${videoId}`);
   };
-  
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'Present';
     return dayjs(dateString).format('MMM YYYY');
   };
-  
+
   // Close snackbar
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -761,7 +795,7 @@ const handleAvatarUpload = async (e) => {
             {saving ? 'Saving...' : 'Save Profile'}
           </Button>
         </Box>
-        
+
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
             <CircularProgress />
@@ -772,30 +806,30 @@ const handleAvatarUpload = async (e) => {
             <SectionPaper elevation={1}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box sx={{ position: 'relative' }}>
-<ProfileAvatar 
-  src={avatarPicture}
-  alt={`${profile.first_name} ${profile.last_name}`}
-  sx={{
-    '& .MuiAvatar-img': {
-      display: avatarPicture ? 'block' : 'none'
-    }
-  }}
-  imgProps={{
-    onError: (e) => {
-      e.target.style.display = 'none';
-      // Automatically retry after delay
-      if (avatarPicture && avatarPicture.startsWith(VITE_API_BASE_URL)) {
-        setTimeout(() => {
-          setAvatarPicture(`${avatarPicture.split('?')[0]}?retry=${Date.now()}`);
-        }, 2000);
-      }
-    }
-  }}
->
-  {!avatarPicture && `${profile.first_name?.charAt(0)}${profile.last_name?.charAt(0)}`}
-</ProfileAvatar>
-                    
-                
+                  <ProfileAvatar
+                    src={avatarPicture}
+                    alt={`${profile.first_name} ${profile.last_name}`}
+                    sx={{
+                      '& .MuiAvatar-img': {
+                        display: avatarPicture ? 'block' : 'none'
+                      }
+                    }}
+                    imgProps={{
+                      onError: (e) => {
+                        e.target.style.display = 'none';
+                        // Automatically retry after delay
+                        if (avatarPicture && avatarPicture.startsWith(VITE_API_BASE_URL)) {
+                          setTimeout(() => {
+                            setAvatarPicture(`${avatarPicture.split('?')[0]}?retry=${Date.now()}`);
+                          }, 2000);
+                        }
+                      }
+                    }}
+                  >
+                    {!avatarPicture && `${profile.first_name?.charAt(0)}${profile.last_name?.charAt(0)}`}
+                  </ProfileAvatar>
+
+
                   <input
                     accept="image/*"
                     style={{ display: 'none' }}
@@ -821,7 +855,7 @@ const handleAvatarUpload = async (e) => {
                 </Typography>
               </Box>
             </SectionPaper>
-            
+
             {/* Tabs Navigation */}
             <Paper sx={{ mb: 3, borderRadius: '16px', overflow: 'hidden' }}>
               <Tabs
@@ -845,130 +879,130 @@ const handleAvatarUpload = async (e) => {
                 <Tab icon={<BookIcon />} label="Education" />
                 <Tab icon={<VideocamIcon />} label="Videos" />
               </Tabs>
-              
+
               {/* Basic Info Tab */}
               <TabPanel value={tabValue} index={0}>
-              <Grid container spacing={3}>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      fullWidth
-      label="First Name"
-      name="first_name"
-      value={profile.first_name || ''}
-      onChange={handleProfileChange}
-      required
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <PersonIcon color="action" />
-          </InputAdornment>
-        ),
-      }}
-    />
-  </Grid>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      fullWidth
-      label="Second Name"
-      name="Second_name"
-      value={profile.Second_name || ''}
-      onChange={handleProfileChange}
-    />
-  </Grid>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      fullWidth
-      label="Last Name"
-      name="last_name"
-      value={profile.last_name || ''}
-      onChange={handleProfileChange}
-    />
-  </Grid>
-  <Grid item xs={12}>
-    <TextField
-      fullWidth
-      label="Professional Title"
-      name="title"
-      value={profile.title || ''}
-      onChange={handleProfileChange}
-      required
-    />
-  </Grid>
-  <Grid item xs={12}>
-    <TextField
-      fullWidth
-      label="Location"
-      name="location"
-      value={profile.location || ''}
-      onChange={handleProfileChange}
-      placeholder="City, Country"
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <LocationIcon color="action" />
-          </InputAdornment>
-        ),
-      }}
-    />
-  </Grid>
-  <Grid item xs={12}>
-    <TextField
-      fullWidth
-      label="Bio"
-      name="bio"
-      value={profile.bio || ''}
-      onChange={handleProfileChange}
-      multiline
-      rows={4}
-      placeholder="Tell employers about yourself, your skills, and your experience"
-    />
-  </Grid>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      fullWidth
-      label="Email"
-      name="email"
-      type="email"
-      value={profile.email || ''}
-      onChange={handleProfileChange}
-      required
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <EmailIcon color="action" />
-          </InputAdornment>
-        ),
-      }}
-    />
-  </Grid>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      fullWidth
-      label="Phone"
-      name="phone"
-      value={profile.phone || ''}
-      onChange={handleProfileChange}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <PhoneIcon color="action" />
-          </InputAdornment>
-        ),
-      }}
-    />
-  </Grid>
-  <Grid item xs={12} sm={6}>
-    <TextField
-      fullWidth
-      label="Mobile"
-      name="mobile"
-      value={profile.mobile || ''}
-      onChange={handleProfileChange}
-    />
-  </Grid>
-</Grid>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="First Name"
+                      name="first_name"
+                      value={profile.first_name || ''}
+                      onChange={handleProfileChange}
+                      required
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonIcon color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Second Name"
+                      name="Second_name"
+                      value={profile.Second_name || ''}
+                      onChange={handleProfileChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Last Name"
+                      name="last_name"
+                      value={profile.last_name || ''}
+                      onChange={handleProfileChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Professional Title"
+                      name="title"
+                      value={profile.title || ''}
+                      onChange={handleProfileChange}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Location"
+                      name="location"
+                      value={profile.location || ''}
+                      onChange={handleProfileChange}
+                      placeholder="City, Country"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LocationIcon color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Bio"
+                      name="bio"
+                      value={profile.bio || ''}
+                      onChange={handleProfileChange}
+                      multiline
+                      rows={4}
+                      placeholder="Tell employers about yourself, your skills, and your experience"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      name="email"
+                      type="email"
+                      value={profile.email || ''}
+                      onChange={handleProfileChange}
+                      required
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <EmailIcon color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Phone"
+                      name="phone"
+                      value={profile.phone || ''}
+                      onChange={handleProfileChange}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PhoneIcon color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Mobile"
+                      name="mobile"
+                      value={profile.mobile || ''}
+                      onChange={handleProfileChange}
+                    />
+                  </Grid>
+                </Grid>
               </TabPanel>
-              
+
               {/* Skills Tab */}
               <TabPanel value={tabValue} index={1}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -985,9 +1019,9 @@ const handleAvatarUpload = async (e) => {
                     Add Skill
                   </Button>
                 </Box>
-                
+
                 {skills.length === 0 ? (
-                  <Box sx={{ 
+                  <Box sx={{
                     border: '1px dashed',
                     borderColor: 'divider',
                     borderRadius: 2,
@@ -1011,7 +1045,7 @@ const handleAvatarUpload = async (e) => {
                   </Box>
                 )}
               </TabPanel>
-              
+
               {/* Experience Tab */}
               <TabPanel value={tabValue} index={2}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1028,9 +1062,9 @@ const handleAvatarUpload = async (e) => {
                     Add Experience
                   </Button>
                 </Box>
-                
+
                 {experiences.length === 0 ? (
-                  <Box sx={{ 
+                  <Box sx={{
                     border: '1px dashed',
                     borderColor: 'divider',
                     borderRadius: 2,
@@ -1067,13 +1101,13 @@ const handleAvatarUpload = async (e) => {
                               )}
                             </Box>
                             <Box>
-                              <IconButton 
+                              <IconButton
                                 onClick={() => handleOpenExperienceDialog(exp)}
                                 sx={{ color: 'primary.main' }}
                               >
                                 <EditIcon />
                               </IconButton>
-                              <IconButton 
+                              <IconButton
                                 onClick={() => handleDeleteExperience(exp.id)}
                                 sx={{ color: 'error.main' }}
                               >
@@ -1092,7 +1126,7 @@ const handleAvatarUpload = async (e) => {
                   </Box>
                 )}
               </TabPanel>
-              
+
               {/* Education Tab */}
               <TabPanel value={tabValue} index={3}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1109,9 +1143,9 @@ const handleAvatarUpload = async (e) => {
                     Add Education
                   </Button>
                 </Box>
-                
+
                 {education.length === 0 ? (
-                  <Box sx={{ 
+                  <Box sx={{
                     border: '1px dashed',
                     borderColor: 'divider',
                     borderRadius: 2,
@@ -1153,13 +1187,13 @@ const handleAvatarUpload = async (e) => {
                               )}
                             </Box>
                             <Box>
-                              <IconButton 
+                              <IconButton
                                 onClick={() => handleOpenEducationDialog(edu)}
                                 sx={{ color: 'primary.main' }}
                               >
                                 <EditIcon />
                               </IconButton>
-                              <IconButton 
+                              <IconButton
                                 onClick={() => handleDeleteEducation(edu.id)}
                                 sx={{ color: 'error.main' }}
                               >
@@ -1178,7 +1212,7 @@ const handleAvatarUpload = async (e) => {
                   </Box>
                 )}
               </TabPanel>
-              
+
               {/* Videos Tab */}
               <TabPanel value={tabValue} index={4}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1195,9 +1229,9 @@ const handleAvatarUpload = async (e) => {
                     Upload Video
                   </Button>
                 </Box>
-                
+
                 {videos.length === 0 ? (
-                  <Box sx={{ 
+                  <Box sx={{
                     border: '1px dashed',
                     borderColor: 'divider',
                     borderRadius: 2,
@@ -1274,7 +1308,7 @@ const handleAvatarUpload = async (e) => {
           </>
         )}
       </Container>
-      
+
       {/* Skill Dialog */}
       <Dialog open={skillDialogOpen} onClose={handleCloseSkillDialog}>
         <DialogTitle>Add New Skill</DialogTitle>
@@ -1299,8 +1333,8 @@ const handleAvatarUpload = async (e) => {
           <Button onClick={handleCloseSkillDialog} color="inherit">
             Cancel
           </Button>
-          <Button 
-            onClick={handleSaveSkill} 
+          <Button
+            onClick={handleSaveSkill}
             color="primary"
             disabled={!selectedSkill || saving}
           >
@@ -1308,10 +1342,10 @@ const handleAvatarUpload = async (e) => {
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Experience Dialog */}
-      <Dialog 
-        open={experienceDialogOpen} 
+      <Dialog
+        open={experienceDialogOpen}
         onClose={handleCloseExperienceDialog}
         fullWidth
         maxWidth="sm"
@@ -1410,8 +1444,8 @@ const handleAvatarUpload = async (e) => {
           <Button onClick={handleCloseExperienceDialog} color="inherit">
             Cancel
           </Button>
-          <Button 
-            onClick={handleSaveExperience} 
+          <Button
+            onClick={handleSaveExperience}
             color="primary"
             disabled={saving}
           >
@@ -1419,10 +1453,10 @@ const handleAvatarUpload = async (e) => {
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Education Dialog */}
-      <Dialog 
-        open={educationDialogOpen} 
+      <Dialog
+        open={educationDialogOpen}
         onClose={handleCloseEducationDialog}
         fullWidth
         maxWidth="sm"
@@ -1516,8 +1550,8 @@ const handleAvatarUpload = async (e) => {
           <Button onClick={handleCloseEducationDialog} color="inherit">
             Cancel
           </Button>
-          <Button 
-            onClick={handleSaveEducation} 
+          <Button
+            onClick={handleSaveEducation}
             color="primary"
             disabled={saving}
           >
@@ -1525,7 +1559,7 @@ const handleAvatarUpload = async (e) => {
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
@@ -1533,8 +1567,8 @@ const handleAvatarUpload = async (e) => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
           elevation={6}

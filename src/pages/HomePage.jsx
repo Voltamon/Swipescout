@@ -135,10 +135,10 @@ export const mockVideoResumes = [
 
     {
         id: 'emp-2',
-        video_title: "Tech Innovators Ltd. - Culture & Values",
+        video_title: "Designer and developer - Resume Showcase",
         video_type: "Company Profile",
         video_duration: 60,
-        video_url: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1716307200/Employer/tech_innovators_culture.mp4', // Example URL
+        video_url: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935196/Jobseeker/h5qg3cfiszmjefiquvrm.mp4', // Example URL
         status: 'completed',
     },
 

@@ -13,7 +13,7 @@ const NavigationPanel = ({ navigate, user }) => {
     width: { xs: '100%', sm: '250px' }, // Full width on mobile, fixed width on larger
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: '8px',
-    padding: { xs: '8px 12px', sm: '12px 16px' },
+    padding: { xs: '4px 6px', sm: '6px 16px' },
     backdropFilter: 'blur(5px)',
     border: '1px solid rgba(255, 255, 255, 0.3)',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',

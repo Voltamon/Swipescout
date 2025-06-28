@@ -829,7 +829,7 @@ const mockVideos = [
                         boxShadow: theme.shadows[4]
                       }
                     }}>
-                      <SkillChip label={skill.name} sx={{ mr: 1 }} />
+                      <SkillChip label={profile?skill.name:skill} sx={{ mr: 1 }} />
                       {skill.level && (
                         <Typography variant="caption" color="textSecondary">
                           {skill.level}

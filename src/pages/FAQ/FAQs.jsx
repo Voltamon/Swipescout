@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header3 from "../../components/Header3/Header3";
+import Header from "../../components/Tmp/Header";
 import Footer2 from "../../components/Footer2/Footer2";
 import { Helmet } from "react-helmet";
 
@@ -99,13 +99,11 @@ const FAQPage = () => {
   });
 
   return (
-    <Container
-      maxWidth="false"
-      sx={{
+   <Box sx={{
         background: "linear-gradient(135deg, rgb(185, 229, 255) 0%, rgb(162, 194, 241) 100%)", // Main background as requested
-        px: 0 ,width:'100%'
-      }}
-    >
+        p: 0 ,width:'100%' ,m:0
+      }} >
+    
       <Helmet>
         <title>SwipeScout FAQs | Answers to Common Questions</title>
         <meta name="description" content="Find answers to frequently asked questions about SwipeScout's video resume platform, job matching, and employer solutions." />
@@ -135,8 +133,8 @@ const FAQPage = () => {
             }
           `}
         </script>
-      </Helmet>
-      <Header3 />
+      </Helmet >
+      <Header width='120%' />
       <Container
         maxWidth="md"
         sx={{
@@ -286,7 +284,7 @@ const FAQPage = () => {
       <br />
       <br />
       <Footer2 />
-    </Container>
+    </Box>
   );
 };
 

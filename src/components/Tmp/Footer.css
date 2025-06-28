@@ -1,11 +1,11 @@
 .footer-container {
   background-image:
-     linear-gradient(to right, rgba(103, 184, 221, 0.9), rgba(48, 100, 143, 0.9)),
+     
      linear-gradient(
     to bottom,
-        rgba(7, 110, 114, 0.9) 20%,
-      rgba(39, 86, 100, 0.8) 40%,
-    rgba(53, 187, 221, 0.78) 100%
+        rgba(174, 223, 255, 0.9) 20%,
+      #4680b3 40%,
+    #a4c6f1 100%
   );
   color: #1e4568;
   padding: 20px;
