@@ -167,7 +167,7 @@ const AllVideosPage = () => {
         width: { xs: '100%', sm: '270px' }, // Full width on mobile, fixed width on desktop
         p: { xs: 2, sm: 2 }, // Consistent padding
         flexShrink: 0, // Prevent shrinking of the sidebar
-        mt: { xs: 0, sm: 3 } // Adjust top margin as needed
+        mt: { xs: 0, sm: -1 } // Adjust top margin as needed
       }}>
         <NavigationPanel navigate={navigate} user={user} />
       </Box>

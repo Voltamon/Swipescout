@@ -5,7 +5,7 @@ import { Home} from '@mui/icons-material';
 const SwipeScoutWatermark = () => (
   <Box sx={{
     position: 'absolute',
-    top: 20,
+    top: 37,
     right: 40,
     zIndex: 0,
     opacity: 0.3,

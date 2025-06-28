@@ -27,9 +27,9 @@ const Header = () => {
       </button>
 
       <nav className={`nav ${menuOpen ? "active" : ""}`}>
-        <Link className="nav-link" to="/About">
+        {/* <Link className="nav-link" to="/About">
           Categories..
-        </Link>
+        </Link> */}
         
 
       </nav>

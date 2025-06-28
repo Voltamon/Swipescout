@@ -96,7 +96,7 @@ const Header = ({ onSidebarToggle, isSidebarVisible }) => {
         
         <IconButton onClick={handleProfileClick}>
           <Avatar sx={{ marginLeft: 2 }} src={VITE_API_BASE_URL+user.photo_url}>
-          {VITE_API_BASE_URL+user.profile_pic}
+          
             {user?.displayName?.[0] || 'A'}
           </Avatar>
         </IconButton>
