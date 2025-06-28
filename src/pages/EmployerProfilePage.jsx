@@ -446,16 +446,16 @@ const EmployerProfile = () => {
       backgroundSize: 'auto',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'top right',
-      padding: theme.spacing(2),
+      padding: theme.spacing(0),
       height: '100%',
-      mt: 2,
+      mt: 0,
       mb: 0,
       paddingBottom: 4,
     }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" >
         {/* Profile Header */}
         <ProfileHeader>
-          <ProfileInfo>
+          <ProfileInfo sx={{ mt: isMobile ? 3 : 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <CompanyLogo src={VITE_API_BASE_URL+employerData.logo} alt={employerData.name} />
               <Box>

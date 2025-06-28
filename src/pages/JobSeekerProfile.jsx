@@ -557,7 +557,7 @@ const mockVideos = [
     mb: 0,
     paddingBottom: 4,
   }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg"  sx={{ mt: isMobile ? 2 : 0 }}>
         {/* Profile Header */}
         <ProfileHeader>
           <ProfileInfo>

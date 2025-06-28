@@ -413,7 +413,7 @@ const EmployerPublicProfile = () => {
       mb: 0,
       paddingBottom: 0,
     }}>
-      <Container maxWidth="lg" height="100%">
+      <Container maxWidth="lg" height="100%" sx={{mt:isMobile?'0px':0}}>
         {/* Profile Header */}
         <ProfileHeader>
           <ProfileInfo>
@@ -434,7 +434,7 @@ const EmployerPublicProfile = () => {
                 </Box>
               </Box>
             </Box>
-
+dsafadsf
             <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
               {profile.description}
             </Typography>
