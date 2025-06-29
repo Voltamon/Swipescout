@@ -50,6 +50,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
           // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
 
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
+    { text: 'Profile', icon: <AccountBoxIcon />, path: '/employer-profile' },
     
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
     // { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
@@ -61,7 +62,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
 
     // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
+    { text: 'Upload Video', icon: <VideocamIcon />, path: '/video-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
@@ -70,6 +71,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
 
     const jobseeker_menuItems = [
     { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
+    { text: 'Profile', icon: <HomeIcon />, path: '/Job-seeker-profile' },
     { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
     { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },

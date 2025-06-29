@@ -260,8 +260,11 @@ const [selectedCategory, setSelectedCategory] = useState('');
       setSaving(true);
       setProfile({
         ...profile,
-        name: ' '
+        name: ' ',
+        industry:' '
       });
+      console.log("profile::::::::::::::");
+      console.log(profile);
       await createEmployerProfile(profile);
       setSaving(false);
     }
@@ -296,8 +299,7 @@ const [selectedCategory, setSelectedCategory] = useState('');
                 }
               }     
             }
-      const [profileResponse, categoriesResponse, allCategoriesResponse] = await Promise.all([
-        
+      const [categoriesResponse, allCategoriesResponse] = await Promise.all([
         getEmployerCategories(),
         getCategories()
       ]);
