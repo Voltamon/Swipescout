@@ -45,6 +45,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences, getUserEducation } from '../services/api.js';
 
+
 // Enhanced styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,

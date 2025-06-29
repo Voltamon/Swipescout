@@ -31,7 +31,7 @@ import { useAuth } from "../hooks/useAuth";
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
-
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const expandedWidth = 200;
 const collapsedWidth = 72;
@@ -63,6 +63,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
           // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
 
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Profile', icon: <AccountBoxIcon />, path: '/Job-seeker-profile' },
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
         // { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
     { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
@@ -72,7 +73,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/job-search' },
     { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
     { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
+    { text: 'Upload Video', icon: <VideocamIcon />, path: '/video-upload' },
     { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
