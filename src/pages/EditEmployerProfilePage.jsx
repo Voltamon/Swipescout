@@ -254,6 +254,16 @@ const [selectedCategory, setSelectedCategory] = useState('');
   }
 };
 
+  
+    const createStarterProfile = async () => {
+      setSaving(true);
+      setProfile({
+        ...profile,
+        name: ''
+      });
+      await updateEmployerProfile(profile);
+      setSaving(false);
+    }
   // Fetch employer data
 // In your useEffect where you fetch data:
 useEffect(() => {
@@ -261,8 +271,31 @@ useEffect(() => {
     try {
       setLoading(true);
       
+      try{
+              profileResponse = await getEmployerProfile();
+              } catch(error) {
+              if (error.status === 404) {
+                try {
+                  await createStarterProfile();
+                  profileResponse = await getEmployerProfile();
+                  console.log('profile::::1111',profileResponse.data);
+                  setProfile(profileResponse.data);
+                  setSnackbar({
+                    open: true,
+                    message: 'Starter profile created..',
+                    severity: 'success'
+                  });
+                } catch (error) {
+                  setSnackbar({
+                    open: true,
+                    message: 'Failed to create starter profile ..',
+                    severity: 'error'
+                  });
+                }
+              }     
+            }
       const [profileResponse, categoriesResponse, allCategoriesResponse] = await Promise.all([
-        getEmployerProfile(),
+        
         getEmployerCategories(),
         getCategories()
       ]);
@@ -317,11 +350,7 @@ setAvailableCategories(filteredAvailableCategories);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching employer data:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error loading profile data',
-        severity: 'error'
-      });
+      
       setLoading(false);
     }
   };
