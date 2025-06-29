@@ -246,6 +246,11 @@ export const updateEmployerProfile = (companyData) => {
   return api.put(`/employer/employer-profile/`, companyData);
 };
 
+export const createEmployerProfile = (companyData) => {
+  console.log(companyData);
+  return api.post(`/employer/employer-profile/`, companyData);
+};
+
 export const uploadCompanyLogo = (formData) => {
   return api.post(`/employer/upload-logo/`, formData, {
     headers: {

@@ -64,7 +64,8 @@ import {
   getEmployerCategories,
   addEmployerCategory,
   deleteEmployerCategory,
-  getCategories
+  getCategories,
+  createEmployerProfile
 } from '../services/api';
 
 // Styled components
@@ -259,14 +260,15 @@ const [selectedCategory, setSelectedCategory] = useState('');
       setSaving(true);
       setProfile({
         ...profile,
-        name: ''
+        name: ' '
       });
-      await updateEmployerProfile(profile);
+      await createEmployerProfile(profile);
       setSaving(false);
     }
   // Fetch employer data
 // In your useEffect where you fetch data:
-useEffect(() => {
+  useEffect(() => {
+    let profileResponse;
   const fetchEmployerData = async () => {
     try {
       setLoading(true);
