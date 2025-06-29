@@ -34,6 +34,7 @@ export const VideoProvider = ({ children }) => {
 
                 if (data.status === 'completed') {
                   console.log(`[VideoContext] Video ${video.id} completed processing`);
+                  removeVideo(video.id);
                   return {
                     id: video.id,
                     updates: {
@@ -156,7 +157,7 @@ export const VideoProvider = ({ children }) => {
   const removeVideo = (videoId) => {
     setVideos(prev => {
       const videoToRemove = prev.find(v => v.id === videoId);
-      if (videoToRemove && videoToRemove.video_url?.startsWith('blob:')) {
+      if (videoToRemove ) { //&& videoToRemove.video_url?.startsWith('blob:')
         URL.revokeObjectURL(videoToRemove.video_url); // Revoke URL if it's a blob
       }
       console.log(`[VideoContext] Removing video with ID: ${videoId}`);
@@ -209,7 +210,7 @@ export const VideoProvider = ({ children }) => {
       // For server videos (or local videos that might have an ID but are stuck processing server-side)
       else {
         // Call a dedicated retry-processing API or re-trigger upload if needed
-        const response = await api.post(`/videos/${videoId}/retry-upload`); // Or retry-processing
+        // const response = await api.post(`/videos/${videoId}/retry-upload`); // Or retry-processing
         updateVideoStatus(videoId, {
           status: 'processing'
         });

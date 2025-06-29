@@ -85,6 +85,7 @@ const VideosPage = () => {
       } else {
         // If it's a server video, call the API to delete it
         await deleteVideo(videoToDelete.id);
+        removeVideo(videoToDelete.id);
         setSnackbar({
           open: true,
           message: 'Video deleted from server successfully.',
@@ -471,7 +472,7 @@ const VideosPage = () => {
                           </Button>
                         )}
                         
-                        {video.status !== 'processing' && (
+                        {video.status === 'processing' && 6==8 && (
                           <Button
                             variant="outlined"
                             color="warning"
@@ -489,14 +490,14 @@ const VideosPage = () => {
                       </Box>
                     )}
 
-                    {!video.isLocal && video.status === 'completed' && (
+                  {/*  {!video.isLocal && video.status === 'completed' && (
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <CheckCircle color="success" fontSize="small" sx={{ mr: 1 }} />
                         <Typography variant="caption" color="text.secondary">
                           Ready
                         </Typography>
                       </Box>
-                    )}
+                    )} */}
                   </CardContent>
                 </Card>
               </Grid>
