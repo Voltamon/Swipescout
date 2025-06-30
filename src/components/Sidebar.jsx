@@ -33,6 +33,7 @@ import { useAuth } from "../hooks/useAuth";
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 
 const expandedWidth = 200;
