@@ -56,13 +56,15 @@ const ProfileContainer = styled(Box)(({ theme }) => ({
 
 const ProfileHeader = styled(Box)(({ theme }) => ({
   position: 'relative',
+  
   marginBottom: theme.spacing(4),
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'column',alignItems: 'flex-start',
   gap: theme.spacing(3),
   [theme.breakpoints.up('md')]: {
     flexDirection: 'row',
-    gap: theme.spacing(4)
+    gap: theme.spacing(4),
+    alignItems: 'flex-start',
   }
 }));
 
@@ -72,22 +74,23 @@ const ProfileInfo = styled(Box)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.background.default,
   boxShadow: theme.shadows[1],
+   alignSelf: 'flex-start',
   [theme.breakpoints.up('md')]: {
     paddingRight: theme.spacing(4)
   }
 }));
 
 const MainVideoContainer = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: 300,
+
   borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
   position: 'relative',
+  alignSelf: 'flex-start',
   backgroundColor: theme.palette.grey[900],
   boxShadow: theme.shadows[4],
   [theme.breakpoints.up('md')]: {
-    width: 350,
-    height: 450,
+    width: 320,
+    height: 370,
     flexShrink: 0
   }
 }));
@@ -161,6 +164,7 @@ const VideoCard = styled(Card)(({ theme }) => ({
   flexDirection: 'column',
   borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
+  alignSelf: 'stretch',
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
     transform: 'translateY(-8px)',
@@ -177,6 +181,7 @@ const VideoCardMedia = styled(Box)(({ theme }) => ({
   position: 'relative',
   height: '300px', // Increased height
   backgroundColor: '#000', // Pure black background
+  
   overflow: 'hidden',
   '& video': {
     width: '100%',
@@ -452,9 +457,15 @@ const EmployerProfile = () => {
       mb: 0,
       paddingBottom: 4,
     }}>
-      <Container maxWidth="lg" >
+      <Container maxWidth="lg"  >
         {/* Profile Header */}
-        <ProfileHeader>
+        <ProfileHeader sx={{ 
+  alignItems: 'flex-start',
+  '& > *': {
+    
+    alignSelf: 'flex-start !important' // Force top alignment
+  }
+}}>
           <ProfileInfo sx={{ mt: isMobile ? 3 : 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <CompanyLogo src={VITE_API_BASE_URL+employerData.logo} alt={employerData.name} />
@@ -597,7 +608,7 @@ const EmployerProfile = () => {
 
           {/* Main Video */}
           {mainVideo?.video_url && (
-            <MainVideoContainer>
+            <MainVideoContainer sx={{ alignSelf: 'flex-start !important', mt:2 }}>
               <video
                 ref={mainVideoRef}
                 src={mainVideo.video_url}
