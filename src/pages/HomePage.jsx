@@ -241,8 +241,9 @@ const HomePage = () => {
                         <Grid container spacing={6} alignItems="center">
                             <Grid item xs={12} md={6}>
                                 <Typography variant="h2" component="h1" sx={{
-                                    fontWeight: 800,
-                                    mb: 3,
+                                    fontWeight: {xs:600,md:800},
+                                    mb: 3, fontSize: {xs:50,md:60},
+                                    width:400,
                                     lineHeight: 1.2
                                 }}>
                                     Revolutionizing Recruitment with Video
