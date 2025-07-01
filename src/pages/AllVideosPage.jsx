@@ -169,7 +169,7 @@ const AllVideosPage = () => {
         flexShrink: 0, // Prevent shrinking of the sidebar
         mt: { xs: 0, sm: -1 } // Adjust top margin as needed
       }}>
-        <NavigationPanel navigate={navigate} user={user} />
+        <NavigationPanel navigate={navigate}/>
       </Box>
 
       {/* Main Content Area (Video Grid and Alerts) */}

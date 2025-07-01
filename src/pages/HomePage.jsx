@@ -284,7 +284,7 @@ const HomePage = () => {
     // Only navigate if user explicitly logged in (clicked the button)
     if (explicitLogin && user && role && !authLoading) {
       const from = location.state?.from?.pathname || getDefaultRoute(role);
-      navigate(from, { replace: true });
+      navigate(from);
       setExplicitLogin(false); // Reset after navigation
     }
   }, [user, role, authLoading, explicitLogin, navigate, location.state]);
@@ -570,10 +570,10 @@ const HomePage = () => {
               </Grid>
 
               { (
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={6} marginTop={'-60px'}>
                   <Box
                     sx={{
-                      display: "flex",
+                      display: "flex", 
                       flexDirection: { xs: "column", md: "row" },
                       justifyContent: "space-between",
                                           alignItems: { xs: "flex-start", md: "flex-end" },
@@ -588,7 +588,10 @@ const HomePage = () => {
                     }}
                                   >
                                       
-                                      
+                           <a
+                          href="#Howitworks"
+                          style={{ textDecoration: "none" }}
+                        >           
                     <Box //------------------------------
                       sx={{
                         flex: 1, // ← makes it grow and fill available space
@@ -610,7 +613,7 @@ const HomePage = () => {
                           position: "absolute",
                           top: 0,
                           left: 0,
-                          width: "100%",
+                          width: "100%",cursor: "pointer",
                           height: "100%",
                           objectFit: "cover"
                         }
@@ -619,22 +622,20 @@ const HomePage = () => {
                       <video autoPlay loop muted playsInline>
                         <source src="/videos/hero-demo.mp4" type="video/mp4" />
                       </video>
+                      
                       <Box
                         sx={{
                           position: "absolute",
                           bottom: 0,
                           left: 0,
                           right: 0,
-                          p: 3,
+                          p: 3, 
 width: '400px',
                           background:
                             "linear-gradient(to top, rgba(185, 229, 255, 0.8), transparent)"
                         }}
                       >
-                        <a
-                          href="#Howitworks"
-                          style={{ textDecoration: "none" }}
-                        >
+                        
                           <Typography
                             variant="h6"
                             sx={{
@@ -647,14 +648,14 @@ width: '400px',
                           >
                             See how it works →
                           </Typography>
-                        </a>
-                      </Box>
-                                      </Box>
+                       
+                      </Box>    </Box></a>
+                                   
                                       
                                      
                                       {!isMobile &&(<Box  //----------------------------------------- separator
                       sx={{
-                        width: { xs: "0", md: "200px"}, // fixed width on desktop
+                        width: { xs: "0", md: "140px"}, // fixed width on desktop
 pl:'auto' ,
                       }}
                                       ></Box>)}
@@ -662,13 +663,13 @@ pl:'auto' ,
   
                     <Box // ---------------------- login form
                       sx={{
-                                              width: { xs: "340px", md:"380px"},
+                                              width: { xs: "340px", md:"420px"},
                           alignSelf:"end",
                         "@media (min-width: 900px)": {
                             width: "380px",
                             alignSelf:"end",
                         },
-                        bgcolor: "#f9f9f9",
+                        bgcolor: "#bae4fe",
                         p: 3,
                         borderRadius: "10px",
                         boxShadow: "0 0 15px rgba(0,0,0,0.1)"
@@ -729,7 +730,7 @@ pl:'auto' ,
                         />
                         <Link
                           to="/forgot-password"
-                          style={{ fontSize: "0.875rem" }}
+                          style={{ fontSize: "0.875rem" ,color:'rgb(22, 65, 158)'}}
                         >
                           Forgot Password?
                         </Link>
