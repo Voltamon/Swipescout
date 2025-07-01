@@ -123,13 +123,13 @@ export const AuthProvider = ({ children }) => {
         console.error('Firebase logout failed:', firebaseError);
       }
   
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       clearTokens();
       setUser(null);
       setRole(null);
-      navigate("/login");
+      navigate("/");
     }
   }, [apiUrl, navigate, auth]);
 
