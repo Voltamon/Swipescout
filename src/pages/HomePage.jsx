@@ -11,7 +11,8 @@ import {
     Avatar,
     Divider,
     useMediaQuery,
-    styled, IconButton
+    styled, IconButton,
+    Paper
 } from "@mui/material";
 import {
     PlayCircle,
@@ -30,6 +31,8 @@ import { useState, useRef } from 'react';
 import PlayArrow from '@mui/icons-material/PlayArrow';
 import VolumeUp from '@mui/icons-material/VolumeUp';
 import VolumeOff from '@mui/icons-material/VolumeOff';
+import { useAuth } from '../hooks/useAuth';
+import LoginForm from "../components/LoginForm";
 
 // Sample video thumbnails (replace with your actual images)
 // import videoResumeThumb from "../assets/video-resume-thumb.jpg";
@@ -152,6 +155,64 @@ const HomePage = () => {
     const [isMuted, setIsMuted] = useState(true);
     const [playingVideoId, setPlayingVideoId] = useState(null); // New state to track currently playing video by click
     const videoRefs = useRef({});
+      const {
+    loginByEmailAndPassword,
+    authenticateWithGoogle,
+    authenticateWithLinkedIn,
+    user,
+    role,
+  } = useAuth();
+  const [loading, setLoading] = useState({
+    email: false,
+    google: false,
+    linkedin: false,
+  });
+  const [error, setError] = useState("");
+
+  const handleEmailSignIn = async (email, password) => {
+    setLoading(prev => ({ ...prev, email: true }));
+    setError("");
+    try {
+      const result = await loginByEmailAndPassword(email, password);
+      if (result.error) {
+        setError(result.message || "Login failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoading(prev => ({ ...prev, email: false }));
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(prev => ({ ...prev, google: true }));
+    setError("");
+    try {
+      const result = await authenticateWithGoogle();
+      if (result.error) {
+        setError(result.message || "Google sign-in failed");
+      }
+    } catch (err) {
+      setError("Google sign-in failed");
+    } finally {
+      setLoading(prev => ({ ...prev, google: false }));
+    }
+  };
+
+  const handleLinkedInLogin = async () => {
+    setLoading(prev => ({ ...prev, linkedin: true }));
+    setError("");
+    try {
+      const result = await authenticateWithLinkedIn();
+      if (result.error) {
+        setError(result.message || "LinkedIn login failed");
+      }
+    } catch (err) {
+      setError("LinkedIn login failed");
+    } finally {
+      setLoading(prev => ({ ...prev, linkedin: false }));
+    }
+  };
 
     const handleVideoHover = (videoId, isHovering) => {
         setHoveredVideo(isHovering ? videoId : null);
@@ -248,6 +309,7 @@ const HomePage = () => {
                                 }}>
                                     Revolutionizing Recruitment with Video
                                 </Typography>
+                                     
                                 <Typography variant="h5" component="h2" sx={{
                                     mb: 4,
                                     fontWeight: 400,
@@ -292,43 +354,7 @@ const HomePage = () => {
                                     </Button>
                                 </Box>
                             </Grid>
-                            {!isMobile && (
-                                <Grid item xs={12} md={6}>
-                                    <Box sx={{
-                                        position: 'relative',
-                                        borderRadius: '16px',
-                                        overflow: 'hidden',
-                                        boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-                                        transform: 'perspective(1000px) rotateY(-10deg)',
-                                        '&:hover': {
-                                            transform: 'perspective(1000px) rotateY(-5deg)'
-                                        },
-                                        transition: 'transform 0.5s ease'
-                                    }}>
-                                        <video
-                                            autoPlay
-                                            loop
-                                            muted
-                                            playsInline
-                                            style={{ width: '100%', display: 'block' }}
-                                        >
-                                            <source src="/videos/hero-demo.mp4" type="video/mp4" />
-                                        </video>
-                                        <Box sx={{
-                                            position: 'absolute',
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                            p: 3,
-                                            background: 'linear-gradient(to top, rgba(185, 229, 255, 0.8), transparent)',
-                                            color: 'white'
-                                        }}><a href="#Howitworks">
-                                                <Typography variant="h6" sx={{ color: "rgb(22, 73, 114)", cursor: "pointer" }}>See how it works →</Typography>
-                                            </a>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                            )}
+                           
                         </Grid>
                     </Container>
                 </Box>
