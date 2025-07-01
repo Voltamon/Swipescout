@@ -341,23 +341,28 @@ const HomePage = () => {
   };
   const handleGoogleSignIn = async () => {
     setLoading((prev) => ({ ...prev, google: true }));
+   
     setError("");
+    setExplicitLogin(true);
     try {
       const result = await authenticateWithGoogle();
       if (result && result.error) {
         setError(result.message || "Google sign-in failed");
-      } else {
-        if (user && role) {
-          const from = location.state?.from?.pathname || getDefaultRoute(role);
-          navigate(from, { replace: true });
-        } else {
-          setError(
-            "Google sign-in successful, but could not determine user role for redirection."
-          );
-        }
-      }
+        setExplicitLogin(false);
+      } 
+    //   else {
+    //     if (user && role) {
+    //       const from = location.state?.from?.pathname || getDefaultRoute(role);
+    //       navigate(from, { replace: true });
+    //     } else {
+    //       setError(
+    //         "Google sign-in successful, but could not determine user role for redirection."
+    //       );
+    //     }
+    //   }
     } catch (err) {
       setError(err.message || "Google sign-in failed");
+      setExplicitLogin(false);
     } finally {
       setLoading((prev) => ({ ...prev, google: false }));
     }
@@ -366,22 +371,26 @@ const HomePage = () => {
   const handleLinkedInLogin = async () => {
     setLoading((prev) => ({ ...prev, linkedin: true }));
     setError("");
+    setExplicitLogin(true);
     try {
       const result = await authenticateWithLinkedIn();
       if (result && result.error) {
         setError(result.message || "LinkedIn login failed");
-      } else {
-        if (user && role) {
-          const from = location.state?.from?.pathname || getDefaultRoute(role);
-          navigate(from, { replace: true });
-        } else {
-          setError(
-            "LinkedIn login successful, but could not determine user role for redirection."
-          );
-        }
-      }
+        setExplicitLogin(false);
+      } 
+    //   else {
+    //     if (user && role) {
+    //       const from = location.state?.from?.pathname || getDefaultRoute(role);
+    //       navigate(from, { replace: true });
+    //     } else {
+    //       setError(
+    //         "LinkedIn login successful, but could not determine user role for redirection."
+    //       );
+    //     }
+    //   }
     } catch (err) {
       setError(err.message || "LinkedIn login failed");
+      setExplicitLogin(false);
     } finally {
       setLoading((prev) => ({ ...prev, linkedin: false }));
     }
