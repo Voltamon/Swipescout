@@ -1,10 +1,15 @@
 // NavigationPanel.jsx
 import { Box, Typography } from "@mui/material";
 import { Home} from '@mui/icons-material';
+import {useAuth} from '../hooks/useAuth' ;
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 
-
-const NavigationPanel = ({ navigate, user }) => {
-
+const NavigationPanel = ({ navigate }) => {
+const {role , user} =  useAuth();
+console.log("::::::::::::::::::");
+console.log(role , user);
 
   return (
   <Box
@@ -115,17 +120,26 @@ const NavigationPanel = ({ navigate, user }) => {
             Employers
           </Typography>
         </Box>
-        {!user && (
-          <Typography variant="subtitle2" sx={{ color: "black", cursor: 'pointer', py: '4px', px: 1, flexGrow: 1 }}
+        {!role && (
+          <Typography variant="subtitle2" sx={{ color: "rgb(1, 81, 128)", cursor: 'pointer', py: '4px', px: 1, flexGrow: 1 }}
             onClick={() => navigate('/login')}>
             Login
           </Typography>
         )}
-        {user && (
+        {role && (
           <Typography variant="subtitle2" sx={{ fontWeight:"bold",fontSize: "1rem" ,color: " rgb(53, 95, 134)", ml:-.5 , py: '4px', px: 1, flexGrow: 1 }}>
             Hi {user.display_name}
           </Typography>
-        )}
+        )}     
+         <Typography variant="subtitle2" sx={{ cursor: 'pointer', py: '2px', px: 1, flexGrow: 1 }}
+            onClick={() => {role=='employer'? navigate('/employer-dashboard'):navigate('/dashboard-jobseeker')} }>
+            <DashboardIcon  sx={{ color:"rgb(1, 81, 128)", mb:-1,p:.35 }}/> Dashboard
+          </Typography>  
+          
+           <Typography variant="subtitle2" sx={{ cursor: 'pointer', py: '2px', px: 1, flexGrow: 1 }}
+            onClick={() => navigate('/video-upload')}>
+            <VideocamIcon sx={{color:"rgb(1, 81, 128)", mb:-1 ,p:.3 }}/> Upload Video
+          </Typography>
 
         <Box
         sx={{

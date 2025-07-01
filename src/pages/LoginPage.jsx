@@ -172,7 +172,7 @@ const LoginPage = () => {
     console.log("logggg:",user);
     if (!authLoading && user && role) {
       const from = location.state?.from?.pathname || getDefaultRoute(role);
-      navigate(from, { replace: true });
+      navigate(from);
     }
   }, [user, role, authLoading, navigate, location.state]);
 
