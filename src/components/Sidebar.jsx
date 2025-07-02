@@ -34,7 +34,11 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-
+import AddCardIcon from '@mui/icons-material/AddCard';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import PlagiarismIcon from '@mui/icons-material/Plagiarism';
+import VideoFileIcon from '@mui/icons-material/VideoFile';
 
 const expandedWidth = 200;
 const collapsedWidth = 72;
@@ -58,12 +62,12 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
     { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
-    { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/candidate-search' },
-    { text: 'Post Job', icon: <JobsIcon />, path: '/Post-job-page' },
-    { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
+    { text: 'Detailed Search', icon: <PlagiarismIcon />, path: '/candidate-search' },
+    { text: 'Post Job', icon: <AddCardIcon />, path: '/Post-job-page' },
+    { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
 
     // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
-    { text: 'Upload Video', icon: <VideocamIcon />, path: '/video-upload' },
+    { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
     // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
