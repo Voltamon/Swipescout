@@ -32,6 +32,12 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AddCardIcon from '@mui/icons-material/AddCard';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import PlagiarismIcon from '@mui/icons-material/Plagiarism';
+import VideoFileIcon from '@mui/icons-material/VideoFile';
+import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
 
 const expandedWidth = 200;
 const collapsedWidth = 72;
@@ -66,14 +72,15 @@ const SidebarJobseeker = ({ open = true, onClose, variant ,isMobile}) => {
     { text: 'Profile', icon: <AccountBoxIcon />, path: '/Job-seeker-profile' },
     // { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
         // { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
-    { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
-    { text: 'Employers Jobs Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
-    { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
+      { text: 'My Videos', icon: <VideocamIcon />, path: '/videos' },
+      { text: 'Employers Jobs Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
+      { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
+      { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
+   
+    { text: 'Company Videos', icon: <ScreenSearchDesktopIcon />, path: '/company-videos' },
     { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
-    { text: 'Detailed Search', icon: <ManageSearchIcon />, path: '/job-search' },
-    { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
-    { text: 'Jobs List', icon: <JobsIcon />, path: '/jobs-listing-page' },
-    { text: 'Upload Video', icon: <VideocamIcon />, path: '/video-upload' },
+    { text: 'Detailed Search', icon: <PlagiarismIcon />, path: '/job-search' },
+    { text: 'Job Videos', icon: <VideoFileIcon />, path: '/job-videos' },
     { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
