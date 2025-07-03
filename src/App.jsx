@@ -116,14 +116,13 @@ function App() {
     );
   }
 
-  return (
-    <AnimatePresence mode="wait">
+  return <AnimatePresence mode="wait">
       <Suspense fallback={<LinearProgress />}>
         <VideoProvider>
           <Routes location={location} key={location.pathname}>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
-            
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
@@ -131,39 +130,18 @@ function App() {
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="/register-form" element={<RegisterForm />} />
             <Route path="/authpage" element={<AuthPage />} />
-            <Route
-              path="/auth/linkedin/callback"
-              element={<Linkedincallback />}
-            />
+            <Route path="/auth/linkedin/callback" element={<Linkedincallback />} />
             <Route path="/check-it" element={<CheckExplorePage />} />
-            <Route
-              path="employer-explore-public"
-              element={<EmployerExplorePublic />}
-            />
-            <Route
-              path="job-seeker-explore-public"
-              element={<JobSeekerExplorePublic />}
-            />
+            <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
+            <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
             {/* <Route path="/explore-layout" element={<ExploreLayout />}>
             </Route> */}
             <Route path="/video-feed/:vid?" element={<VideoFeed />} />
-            <Route
-              path="/jobseeker-video-feed/:vid?"
-              element={<JobseekerVideoFeed />}
-            />
+            <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route
-              path="/reset-password/:oobCode"
-              element={<ResetPasswordPage />}
-            />
-            <Route
-              path="/jobseeker-profile/:id"
-              element={<JobseekerProfileView />}
-            />
-            <Route
-              path="/employer-profile/:id"
-              element={<EmployerProfileView />}
-            />
+            <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
+            <Route path="/jobseeker-profile/:userId" element={<JobseekerProfileView />} />
+            <Route path="/employer-profile/:userId" element={<EmployerProfileView />} />
             <Route path="/videos/:pagetype" element={<AllVideosPage />} />
             <Route path="/video-player/:id" element={<VideoFeedViewer />} />
 
@@ -176,42 +154,24 @@ function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/settings" element={<Settings />} />
-          
+
               {/* Job Seeker Routes */}
-              <Route
-                path="/job-seeker/dashboard"
-                element={<JobSeekerDashboard_ />}
-              />
+              <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} />
               <Route path="/job-videos" element={<JobVideos />} />
               {/* Employer Routes */}
-              <Route
-                path="/employer/dashboard"
-                element={<EmployerDashboard_ />}
-              />
+              <Route path="/employer/dashboard" element={<EmployerDashboard_ />} />
               <Route path="/company-videos" element={<CompanyVideos />} />
               {/* <Route path="/login-form" element={<LoginForm />} /> */}
-              <Route
-                path="/dashboard-jobseeker"
-                element={<DashboardJobSeeker />}
-              />
+              <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} />
               <Route path="/job-search" element={<JobSearchPage />} />
-              <Route
-                path="/employer-dashboard"
-                element={<EmployerDashboard />}
-              />
-              <Route
-                path="/candidate-search"
-                element={<CandidateSearchPage />}
-              />
-              <Route
-                path="/candidate-profile"
-                element={<CandidateProfilePage />}
-              />
+              <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+              <Route path="/candidate-search" element={<CandidateSearchPage />} />
+              <Route path="/candidate-profile" element={<CandidateProfilePage />} />
               <Route path="/job-posting" element={<JobPostingForm />} />
               <Route path="/video-upload" element={<VideoUpload />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/inbox" element={<Inbox />} />
-              
+
               <Route path="/dashboard" element={<JobSeekerDashboard />} />
               <Route path="/search" element={<JobSearchPage />} />
               <Route path="/job/:id" element={<JobDetailsPage />} />
@@ -219,58 +179,30 @@ function App() {
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/feed-page" element={<FeedPage />} />
               <Route path="/Employer-explore" element={<EmployerExplore />} />
-              <Route
-                path="/Employer-explore-sidebar"
-                element={<EmployerExploreSidebar />}
-              />
-              <Route
-                path="/Job-seeker-explore"
-                element={<JobSeekerExplore />}
-              />
-              <Route
-                path="/jobseeker-explore-sidebar"
-                element={<JobseekerExploreSidebar />}
-              />
+              <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
+              <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
+              <Route path="/jobseeker-explore-sidebar" element={<JobseekerExploreSidebar />} />
               <Route path="/Settings-page" element={<SettingsPage />} />
               <Route path="/MyApplications-page" element={<MyApplications />} />
               <Route path="/notifications" element={<NotificationsPage />} />
-              
+
               <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
-              <Route
-                path="/Job-seekers-videos"
-                element={<JobSeekersVideosPage />}
-              />
-              <Route
-                path="/Job-seeker-profile"
-                element={<JobSeekerProfile />}
-              />
-              <Route
-                path="/employer-profile"
-                element={<EmployerProfilePage />}
-              />
-              <Route
-                path="/edit-JobSeeker-Profile"
-                element={<EditJobSeekerProfile />}
-              />
+              <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
+              <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
+              <Route path="/employer-profile" element={<EmployerProfilePage />} />
+              <Route path="/edit-JobSeeker-Profile" element={<EditJobSeekerProfile />} />
               <Route path="/Jobs-Listing-Page" element={<JobsListingPage />} />
               <Route path="/Post-job-page" element={<PostJobPage />} />
               <Route path="/videos" element={<VideosPage />} />
-              <Route
-                path="/MarketingVideos-page"
-                element={<MarketingVideos />}
-              />
+              <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
 
-              <Route
-                path="/edit-employer-profile"
-                element={<EditEmployerProfilePage />}
-              />
+              <Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} />
               <Route path="/edit-video/:id" element={<EditVideoPage />} />
             </Route>
           </Routes>
         </VideoProvider>
       </Suspense>
-    </AnimatePresence>
-  );
+    </AnimatePresence>;
 }
 
 export default App;

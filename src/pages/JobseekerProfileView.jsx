@@ -214,11 +214,12 @@ const ExperienceCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const JobSeekerPublicProfile = () => {
+const JobSeekerPublicProfile = ({userId:propUserId}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { id } = useParams(); // Get job seeker ID from URL params
+  const { userId  } = useParams(); // Get job seeker ID from URL params
   
+  const id = userId || propUserId; // Use propUserId if userId is not available in URL
   // State
   const [tabValue, setTabValue] = useState(0);
   const [profile, setProfile] = useState(null);

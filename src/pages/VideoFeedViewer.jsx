@@ -78,6 +78,7 @@ const ConnectButton = styled(Button)({
 // ProfileDialog component for displaying user profiles
 const ProfileDialog = ({ open, onClose, role, userId }) => {
   const navigate = useNavigate();
+  
 
   // Handles navigation to the full profile page
   const handleViewFullProfile = () => {
@@ -175,6 +176,7 @@ const VideoFeedViewer = () => {
 
   const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
+
   // Scroll to selected video on load
   useEffect(
     () => {
@@ -249,6 +251,7 @@ const VideoFeedViewer = () => {
     setLoadingMore(true); // Set loading state to true
     try {
       const res = await api.get(`/videos/all/?page=${page + 1}&limit=10`);
+      
       const newVideos = res.data.videos;
       if (!newVideos || newVideos.length === 0) {
         setHasMore(false); // No more videos to load
@@ -256,6 +259,7 @@ const VideoFeedViewer = () => {
         setVideos(prev => [...prev, ...newVideos]); // Append new videos to existing ones
         setPage(prev => prev + 1); // Increment page number
       }
+      console.log("Fetched more videos::::::::: ", videos);
     } catch (err) {
       console.error("Failed to fetch more videos", err);
     } finally {
@@ -296,6 +300,7 @@ const VideoFeedViewer = () => {
 
   // Opens the profile dialog
   const openProfileDialog = (role, userId) => {
+   
     setSelectedProfile({ role, userId });
     setProfileDialogOpen(true);
   };
@@ -318,9 +323,11 @@ const VideoFeedViewer = () => {
   };
 
   // Opens the current user's profile if authenticated
-  const openProfile = () => {
-    if (role === "employer" || role === "job_seeker") {
-      openProfileDialog(role, user.id);
+  const openProfile = (video) => {
+    if (video.user?.role === "employer" || video.user?.role === "job_seeker") {
+     
+      
+      openProfileDialog(video.user?.role, video.user?.id);
     }
   };
 
@@ -485,8 +492,8 @@ const VideoFeedViewer = () => {
               }}
             >
               <Avatar
-                onClick={openProfile}
-                src={VITE_API_BASE_URL+user.photo_url}
+                onClick={()=>openProfile(video)}
+                src={VITE_API_BASE_URL+video.user?.photo_url}
                 sx={{ width: 48, cursor: "pointer", height: 48, mb: 1 }}
               />
               <ActionButton onClick={toggleLike}>

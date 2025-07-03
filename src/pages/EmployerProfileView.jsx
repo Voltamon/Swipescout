@@ -188,10 +188,12 @@ const JobCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const EmployerPublicProfile = () => {
+const EmployerPublicProfile = ({userId:propUserId}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { id } = useParams();
+  const { userId } = useParams();
+
+  const id = userId || propUserId;
 
   // State
   const [tabValue, setTabValue] = useState(0);
