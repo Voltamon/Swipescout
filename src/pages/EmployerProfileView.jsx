@@ -434,7 +434,7 @@ const EmployerPublicProfile = () => {
                 </Box>
               </Box>
             </Box>
-dsafadsf
+
             <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
               {profile.description}
             </Typography>
