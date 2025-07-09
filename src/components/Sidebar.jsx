@@ -61,7 +61,7 @@ const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
     // { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
     { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
     { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
-    { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
+    // { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
     { text: 'Detailed Search', icon: <PlagiarismIcon />, path: '/candidate-search' },
     { text: 'Post Job', icon: <AddCardIcon />, path: '/Post-job-page' },
     { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
