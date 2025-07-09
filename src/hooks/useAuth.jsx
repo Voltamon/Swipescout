@@ -166,7 +166,8 @@ export const AuthProvider = ({ children }) => {
           '/jobseeker-profile/:id',
                 '/employer-profile/:id',
                 '/videos/:pagetype',
-                '/video-player/:id'
+        '/video-player/:id',
+                'videos/all'
         
       ];
       
