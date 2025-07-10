@@ -1,42 +1,56 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
+import React from 'react';
+import { Box, Typography, Link, IconButton } from '@mui/material';
+import { Facebook, Twitter, LinkedIn, Instagram } from '@mui/icons-material';
+import { styled } from '@mui/system';
 
-import "./Footer.css";
+const StyledFooter = styled(Box)({
+  background: 'linear-gradient(to bottom, #dbeafe 0%, #3b82f6 100%)',
+  color: '#4b5563',
+  padding: '64px 24px',
+  textAlign: 'center',
+});
+
+const FooterLink = styled(Link)({
+  color: '#ffffff',
+  textDecoration: 'none',
+  fontSize: '1rem',
+  fontWeight: 600,
+  transition: 'color 0.2s ease-in-out',
+  '&:hover': {
+    color: '#0056b3',
+  },
+});
+
+const SocialButton = styled(IconButton)({
+  color: '#ffffff',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.1)',
+    color: '#dbeafe',
+  },
+});
 
 const Footer = () => {
   return (
-    <footer className="footer-container">
-      <div className="footer-content">
-        <div>
-          <h3>SwipeScout</h3>
-          <p>Find your job/employees faster, better.</p>
-        </div>
+    <StyledFooter>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 3 }}>
+        <FooterLink href="#" underline="hover">About Us</FooterLink>
+        <FooterLink href="#" underline="hover">Contact Us</FooterLink>
+        <FooterLink href="#" underline="hover">Privacy Policy</FooterLink>
+        <FooterLink href="#" underline="hover">Terms and Conditions</FooterLink>
+      </Box>
 
-        <div className="footer-links">
-          <Link to="/About">About</Link>
-          <Link to="/FAQs">FAQs</Link>
-          <Link to="#">Contact Us</Link>
-        </div>
-      </div>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
+        <SocialButton href="#"><Facebook /></SocialButton>
+        <SocialButton href="#"><Twitter /></SocialButton>
+        <SocialButton href="#"><LinkedIn /></SocialButton>
+        <SocialButton href="#"><Instagram /></SocialButton>
+      </Box>
 
-      <div className="social-icons">
-        <a href="#">
-          <FaInstagram />
-        </a>
-        <a href="#">
-          <FaFacebookF />
-        </a>
-        <a href="#">
-          <FaTwitter />
-        </a>
-        <a href="#">
-          <FaYoutube />
-        </a>
-      </div>
-
-      <p className="copyright">© 2025 SwipeScout. All rights reserved</p>
-    </footer>
+      <Typography variant="body2" sx={{ color: '#dbeafe' }}>
+        © 2023 SwipeScout. All rights reserved.
+      </Typography>
+    </StyledFooter>
   );
 };
 
