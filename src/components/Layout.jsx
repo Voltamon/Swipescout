@@ -3,7 +3,7 @@ import { Box, useMediaQuery, useTheme, CssBaseline, IconButton  } from "@mui/mat
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
 import { Outlet, useLocation } from "react-router-dom";
-import Header from "../Headers/Header";
+import Header from "./Headers/Header";
 import Sidebar from "./Sidebar";
 import SidebarJobseeker from "./SidebarJobseeker";
 import SidebarAdmin from "./SidebarAdmin";
@@ -11,7 +11,8 @@ import MobileNavigation from "./MobileNavigation";
 import Footer from "./Headers/Footer";
 import { blue } from "@mui/material/colors";
 import { useAuth } from '../hooks/useAuth';
-
+// import Header from "./Header";
+// import Footer from "./Footer";
 
 const LayoutRoot = styled(Box)(({ theme, isMobile }) => ({
   display: "flex",
