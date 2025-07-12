@@ -87,7 +87,7 @@ const Header = () => {
           sx={{ bgcolor: '#dbeafe', cursor: 'pointer', color: '#3b82f6', ml: 2 }}
           onClick={handleMenuOpen}
         >
-          JD
+          u
         </Avatar>
 
         <Menu
