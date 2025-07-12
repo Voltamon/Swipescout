@@ -18,6 +18,15 @@ import {
   styled,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControlLabel,
+  Checkbox,
+  Grid, // Added Grid import
+  Card, // Added Card import
+  CardContent, // Added CardContent import
 } from "@mui/material";
 import {
   User as UserIcon,
@@ -27,7 +36,14 @@ import {
   Loader2 as LoaderIcon,
   AlertCircle as AlertCircleIcon,
 } from "lucide-react";
-import { CookieSharp, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  CookieSharp,
+  Visibility,
+  VisibilityOff,
+  VideoCall, // Added VideoCall icon import
+  People, // Added People icon import
+  TrendingUp, // Added TrendingUp icon import
+} from "@mui/icons-material";
 import { useAuth } from "../../hooks/useAuth.jsx";
 
 
@@ -168,6 +184,8 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentProvider, setCurrentProvider] = useState(null);
+  const [openHowItWorks, setOpenHowItWorks] = useState(false); // State for How It Works dialog
+  const [howItWorksAccepted, setHowItWorksAccepted] = useState(false); // State for checkbox
   const navigate = useNavigate();
 
   // Menu handlers
@@ -183,12 +201,29 @@ const RegisterForm = () => {
 
   const handleRoleSelect = (role) => {
     handleMenuClose();
+    // Before proceeding with signup, open "How It Works" dialog
+    setFormData((prev) => ({ ...prev, role })); // Temporarily set role
+    setOpenHowItWorks(true);
+  };
+
+  const handleHowItWorksClose = () => {
+    setOpenHowItWorks(false);
+    setHowItWorksAccepted(false); // Reset checkbox on close
+    setFormData((prev) => ({ ...prev, role: "" })); // Clear role if not accepted
+  };
+
+  const handleHowItWorksConfirm = () => {
+    setOpenHowItWorks(false);
+    // Proceed with signup after confirmation
     if (currentProvider === 'google') {
-      handleGoogleSignUp(role);
+      handleGoogleSignUp(formData.role);
     } else if (currentProvider === 'linkedin') {
-      handleLinkedInSignUp(role);
+      handleLinkedInSignUp(formData.role);
+    } else {
+      handleNormalSignup(); // For email/password signup
     }
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -226,7 +261,9 @@ const RegisterForm = () => {
   };
 
   const handleNormalSignup = async (e) => {
-    e.preventDefault();
+    // Only prevent default if event object exists
+    if (e) e.preventDefault();
+
     setLoading({ normal: true, google: false, linkedin: false });
     setError("");
 
@@ -246,18 +283,21 @@ const RegisterForm = () => {
       setLoading({ normal: false, google: false, linkedin: false });
       return;
     }
-    console.log("333333:");
-    console.log( formData.email, formData.password,
-      formData.fullName,
-      formData.role);
+    // No longer check howItWorksAccepted here, as the dialog handles it
+    // if (!howItWorksAccepted) {
+    //   setOpenHowItWorks(true); // Open dialog if not accepted
+    //   setLoading({ normal: false, google: false, linkedin: false });
+    //   return;
+    // }
+
     try {
       const result = await signupWithEmail(
         formData.email,
-        formData.password, 
+        formData.password,
         formData.fullName,
         formData.role
       );
-  
+
       if (result?.error) {
         setError(result.message || "Registration failed");
       } else {
@@ -280,13 +320,18 @@ const RegisterForm = () => {
       setError("Please select a role");
       return;
     }
-    
+    // No longer check howItWorksAccepted here, as the dialog handles it
+    // if (!howItWorksAccepted) {
+    //   setOpenHowItWorks(true);
+    //   return;
+    // }
+
     setLoading({ normal: false, google: true, linkedin: false });
     setError("");
 
     try {
       const result = await authenticateWithGoogle(role);
-      
+
       if (result.error) {
         setError(result.message || "Google signup failed");
       } else {
@@ -309,13 +354,18 @@ const RegisterForm = () => {
       setError("Please select a role");
       return;
     }
-    
+    // No longer check howItWorksAccepted here, as the dialog handles it
+    // if (!howItWorksAccepted) {
+    //   setOpenHowItWorks(true);
+    //   return;
+    // }
+
     setLoading({ normal: false, google: false, linkedin: true });
     setError("");
-    
+
     try {
       const result = await authenticateWithLinkedIn(role);
-      
+
       if (result.error) {
         setError(result.message || "LinkedIn signup failed");
       } else {
@@ -345,7 +395,11 @@ const RegisterForm = () => {
         <RegisterFormTitle variant="h5">Create Your Account</RegisterFormTitle>
         <RegisterFormSubtitle>Join our platform to find your perfect job match</RegisterFormSubtitle>
 
-        <Box component="form" onSubmit={handleNormalSignup}>
+        <Box component="form" onSubmit={(e) => {
+          e.preventDefault();
+          setCurrentProvider('email'); // Set provider for email signup
+          setOpenHowItWorks(true); // Always open dialog before normal signup attempt
+        }}>
           {/* Form fields remain the same */}
           <InputField
             label="Full Name"
@@ -431,6 +485,7 @@ const RegisterForm = () => {
             </Button>
           </Stack>
 
+          {/* The main RegisterButton is now only disabled by loading states */}
           <RegisterButton type="submit" disabled={loading.normal || authLoading}>
             {loading.normal ? (
               <>
@@ -496,12 +551,12 @@ const RegisterForm = () => {
         </Menu>
 
         {error && (
-          <Alert 
-            severity="error" 
-            sx={{ 
+          <Alert
+            severity="error"
+            sx={{
               mt: 2,
               display: 'flex',
-              alignItems: 'center' 
+              alignItems: 'center'
             }}
             onClose={() => setError("")}
           >
@@ -514,6 +569,130 @@ const RegisterForm = () => {
           Already have an account? Log in
         </LoginLink>
       </RegisterFormContainer>
+
+      {/* How SwipeScout Works Dialog */}
+      <Dialog
+        open={openHowItWorks}
+        onClose={handleHowItWorksClose}
+        aria-labelledby="how-it-works-dialog-title"
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle id="how-it-works-dialog-title" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+          How SwipeScout Works
+        </DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={4} justifyContent="center">
+            {[
+              {
+                icon: <VideoCall sx={{ fontSize: 40, color: "#3b82f6" }} />,
+                title: "1. Create Your Video Profile",
+                description:
+                  "Job seekers record a short video resume. Employers create video job postings or company profiles.",
+                bgColor: "rgba(59, 130, 246, 0.1)",
+              },
+              {
+                icon: <People sx={{ fontSize: 40, color: "#06b6d4" }} />,
+                title: "2. Discover & Connect",
+                description:
+                  "Swipe through video profiles or use our smart matching to find perfect candidates or opportunities.",
+                bgColor: "rgba(6, 182, 212, 0.1)",
+              },
+              {
+                icon: <TrendingUp sx={{ fontSize: 40, color: "#67e8f9" }} />,
+                title: "3. Grow Your Career",
+                description:
+                  "Build meaningful connections that lead to interviews, hires, and career growth.",
+                bgColor: "rgba(103, 232, 249, 0.1)",
+              },
+            ].map((step, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ height: "100%", display: "flex", flexDirection: "column", boxShadow: 'none' }}>
+                  <CardContent
+                    sx={{
+                      flexGrow: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                      p: 3,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: 80,
+                        height: 80,
+                        bgcolor: step.bgColor,
+                        borderRadius: "50%",
+                        mb: 3,
+                        mx: "auto",
+                      }}
+                    >
+                      {step.icon}
+                    </Box>
+                    <Typography
+                      variant="h5"
+                      component="h3"
+                      sx={{
+                        mb: 2,
+                        fontWeight: 600,
+                        textAlign: "center",
+                        color: "#1f2937",
+                      }}
+                    >
+                      {step.title}
+                    </Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: "#4b5563",
+                          textAlign: "center",
+                        }}
+                      >
+                        {step.description}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={howItWorksAccepted}
+                  onChange={(e) => setHowItWorksAccepted(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="I have read and understood how SwipeScout works."
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Button
+            onClick={handleHowItWorksConfirm}
+            disabled={!howItWorksAccepted}
+            variant="contained"
+            sx={{
+              bgcolor: "#3b82f6",
+              color: "#ffffff",
+              fontWeight: 600,
+              px: 4,
+              py: 1.5,
+              "&:hover": {
+                bgcolor: "#2563eb",
+              },
+            }}
+          >
+            Proceed to Sign Up
+          </Button>
+        </DialogActions>
+      </Dialog>
     </RegisterContainer>
   );
 };

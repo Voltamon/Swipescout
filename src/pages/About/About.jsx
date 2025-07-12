@@ -1,8 +1,8 @@
 import React from "react";
-import Header3 from "../../components/Header3/Header3";
+import Header from "../../components/Headers/Header";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import { Helmet } from "react-helmet";
-import Footer2 from "../../components/Footer2/Footer2";
+import Footer from "../../components/Headers/Footer";
 import {
   Box,
   Container,
@@ -99,7 +99,7 @@ const AboutUs = () => {
       pb: 8
     }}
   >
-      <Header3 />
+      <Header />
       <Container maxWidth="lg" sx={{ mt:3}}>
         {/* Hero Section */}
         <Box textAlign="center" mb={8}>
@@ -280,7 +280,7 @@ const AboutUs = () => {
           </Grid>
         </Box>
       </Container>
-      <Footer2 />
+      <Footer />
     </Box>;
     </>
   );

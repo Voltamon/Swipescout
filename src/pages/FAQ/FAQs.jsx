@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Header from "../../components/Tmp/Header";
-import Footer2 from "../../components/Footer2/Footer2";
+import Header from "../../components/Headers/Header";
+import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
 
 
@@ -283,7 +283,7 @@ const FAQPage = () => {
       </Container>
       <br />
       <br />
-      <Footer2 />
+      <Footer />
     </Box>
   );
 };

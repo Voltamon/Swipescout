@@ -20,7 +20,7 @@ import { bold } from '@cloudinary/url-gen/qualifiers/fontWeight';
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"></link>
 import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
 import NavigationPanel from "../components/NavigationPanel";
-import Header from '../components/Tmp/HeaderExplore';
+import Header from '../components/Headers/HeaderExplore';
 
 const AllVideosPage = () => {
   const { videos: localVideos, retryUpload, removeVideo } = useVideoContext();

@@ -4,7 +4,7 @@ import Header from '../../components/Header/Header';
 import JobCard from '../../components/JobCard/JobCard.jsx';
 import CandidateCard from '../../components/CandidateCard/CandidateCard';
 import NotificationItem from '../../components/NotificationItem/NotificationItem';
-import Footer from '../../components/Footer/Footer';
+import Footer from '../../components/Headers/Footer';
 // import { useStyles } from './EmployerDashboard.styles';
 
 const EmployerDashboard2 = () => {
