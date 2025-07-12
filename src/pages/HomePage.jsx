@@ -17,7 +17,7 @@ import {
   Alert,
   TextField,
   InputAdornment,
-  Stack
+  Stack,
 } from "@mui/material";
 import {
   PlayCircle,
@@ -25,15 +25,16 @@ import {
   People,
   VideoCall,
   TrendingUp,
-  CheckCircle,
+  Star, // Changed from CheckCircle to Star
   Visibility,
   VisibilityOff,
   Google as GoogleIcon,
-  LinkedIn as LinkedInIcon
+  LinkedIn as LinkedInIcon,
+  Fullscreen, // Added Fullscreen icon
 } from "@mui/icons-material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Header from "../components/Tmp/Header";
-import Footer from "../components/Tmp/Footer";
+import Header from "../components/Headers/Header";
+import Footer from "../components/Headers/Footer";
 import { Helmet } from "react-helmet";
 import { useState, useRef, useEffect } from "react";
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -42,13 +43,16 @@ import VolumeOff from "@mui/icons-material/VolumeOff";
 import { useAuth } from "../hooks/useAuth";
 import { AlertCircle as AlertCircleIcon } from "lucide-react";
 import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
+
+
+
 const LoginFormTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(1.25),
-  color: "#1f2937"
+  color: "#1f2937",
 }));
 const LoginFormSubtitle = styled(Typography)(({ theme }) => ({
   color: "#9ca3af",
-  marginBottom: theme.spacing(2.5)
+  marginBottom: theme.spacing(2.5),
 }));
 const InputField = styled(TextField)(({ theme }) => ({
   width: "100%",
@@ -56,23 +60,23 @@ const InputField = styled(TextField)(({ theme }) => ({
   borderRadius: "5px",
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#d1d5db"
+      borderColor: "#d1d5db",
     },
     "&:hover fieldset": {
-      borderColor: "#3b82f6"
+      borderColor: "#3b82f6",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#3b82f6"
+      borderColor: "#3b82f6",
     },
     "&.Mui-error fieldset": {
-      borderColor: "#dc2626"
-    }
+      borderColor: "#dc2626",
+    },
   },
   "& input": {
     padding: theme.spacing(1.5),
     backgroundColor: "#ffffff",
-    color: "#1f2937"
-  }
+    color: "#1f2937",
+  },
 }));
 const LoginButton = styled(Button)(({ theme }) => ({
   width: "100%",
@@ -85,14 +89,14 @@ const LoginButton = styled(Button)(({ theme }) => ({
   fontWeight: "bold",
   cursor: "pointer",
   "&:hover": {
-    backgroundColor: "#2563eb"
-  }
+    backgroundColor: "#2563eb",
+  },
 }));
 const SocialDivider = styled(Divider)(({ theme }) => ({
   margin: theme.spacing(2, 0),
   "& .MuiDivider-wrapper": {
-    color: "#9ca3af"
-  }
+    color: "#9ca3af",
+  },
 }));
 const SocialButton = styled(Button)(({ theme }) => ({
   flexGrow: 1,
@@ -102,8 +106,8 @@ const SocialButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   cursor: "pointer",
   "&:hover": {
-    transform: "scale(1.02)"
-  }
+    transform: "scale(1.02)",
+  },
 }));
 const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
   backgroundColor: "#f9fafb",
@@ -111,8 +115,8 @@ const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
   border: `1px solid #d1d5db`,
   "&:hover": {
     backgroundColor: "#f3f4f6",
-    borderColor: "#9ca3af"
-  }
+    borderColor: "#9ca3af",
+  },
 }));
 const LinkedInSignInButton = styled(SocialButton)(({ theme }) => ({
   backgroundColor: "#f9fafb",
@@ -120,8 +124,8 @@ const LinkedInSignInButton = styled(SocialButton)(({ theme }) => ({
   border: `1px solid #d1d5db`,
   "&:hover": {
     backgroundColor: "#f3f4f6",
-    borderColor: "#9ca3af"
-  }
+    borderColor: "#9ca3af",
+  },
 }));
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: "100%",
@@ -133,8 +137,8 @@ const StyledFeatureCard = styled(Card)(({ theme }) => ({
   transition: "all 0.3s ease-in-out",
   "&:hover": {
     transform: "translateY(-8px)",
-    boxShadow: theme.shadows[10]
-  }
+    boxShadow: theme.shadows[10],
+  },
 }));
 const StyledVideoCard = styled(Card)(({ theme }) => ({
   position: "relative",
@@ -144,7 +148,7 @@ const StyledVideoCard = styled(Card)(({ theme }) => ({
   transition: "all 0.3s ease",
   "&:hover": {
     transform: "scale(1.03)",
-    boxShadow: theme.shadows[6]
+    boxShadow: theme.shadows[6],
   },
   "& .play-overlay": {
     position: "absolute",
@@ -159,29 +163,43 @@ const StyledVideoCard = styled(Card)(({ theme }) => ({
     opacity: 0,
     transition: "opacity 0.3s ease",
     "&:hover": {
-      opacity: 1
-    }
-  }
+      opacity: 1,
+    },
+  },
 }));
 const testimonials = [
   {
     name: "Sarah Johnson",
     role: "Marketing Director",
-    quote: "Found our perfect candidate in just 3 days using video resumes!",
-    avatar: "/images/testimonials/sarah.jpg"
+    quote:
+      "SwipeScout completely transformed our hiring process. We used to spend weeks sifting through resumes, but with video profiles, we found our perfect candidate in just three days! The authenticity and insight you get from a video are unparalleled. Highly recommend!",
+    avatar: "https://placehold.co/60x60/dbeafe/3b82f6?text=SJ", // Placeholder image
+    rating: 5,
   },
   {
     name: "Michael Chen",
     role: "Software Engineer",
-    quote: "Landed my dream job by showcasing my skills through video.",
-    avatar: "/images/testimonials/michael.jpg"
+    quote:
+      "As a job seeker, SwipeScout gave me the unique opportunity to truly showcase my personality and skills beyond a traditional resume. I landed my dream job by demonstrating my passion and technical abilities through video. It's a game-changer for anyone looking to stand out.",
+    avatar: "https://placehold.co/60x60/dbeafe/3b82f6?text=MC", // Placeholder image
+    rating: 5,
   },
   {
     name: "TechStart Inc.",
     role: "HR Manager",
-    quote: "Our hiring process is now 40% faster with SwipeScout.",
-    avatar: "/images/testimonials/techstart.jpg"
-  }
+    quote:
+      "Implementing SwipeScout has made our recruitment incredibly efficient. Our hiring process is now 40% faster, and we're making much better cultural fits. The platform is intuitive, and the support has been fantastic. It's an essential tool for modern HR.",
+    avatar: "https://placehold.co/60x60/dbeafe/3b82f6?text=TI", // Placeholder image
+    rating: 4,
+  },
+  {
+    name: "Alex Rivera",
+    role: "Talent Acquisition Lead",
+    quote:
+      "SwipeScout helped us cut screening time in half while actually getting to know the person behind the resume. It’s now a core part of our hiring process.",
+    avatar: "https://placehold.co/60x60/dbeafe/3b82f6?text=AR", // Placeholder image
+    rating: 5, // Assuming a 5-star rating for this new testimonial
+  },
 ];
 const StatusBorder = ({ status }) => (
   <Box
@@ -197,7 +215,7 @@ const StatusBorder = ({ status }) => (
           : status === "processing"
           ? "#3b82f6"
           : "transparent",
-      zIndex: 3
+      zIndex: 3,
     }}
   />
 );
@@ -209,7 +227,7 @@ export const mockVideoResumes = [
     video_duration: 90,
     video_url:
       "https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935032/Employer/grfwutcixeecejrsqu7o.mp4",
-    status: "completed"
+    status: "completed",
   },
   {
     id: "js-1",
@@ -218,7 +236,7 @@ export const mockVideoResumes = [
     video_duration: 120,
     video_url:
       "https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935204/Jobseeker/wvepwzroiy6s942idqal.mp4",
-    status: "completed"
+    status: "completed",
   },
   {
     id: "emp-2",
@@ -227,8 +245,8 @@ export const mockVideoResumes = [
     video_duration: 60,
     video_url:
       "https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935196/Jobseeker/h5qg3cfiszmjefiquvrm.mp4",
-    status: "completed"
-  }
+    status: "completed",
+  },
 ];
 const HomePage = () => {
   const isMobile = useMediaQuery("(max-width:900px)");
@@ -240,25 +258,27 @@ const HomePage = () => {
   const [explicitLogin, setExplicitLogin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5173';
   const {
     loginByEmailAndPassword,
     authenticateWithGoogle,
     authenticateWithLinkedIn,
     user,
     role,
-    loading: authLoading
+    loading: authLoading,
   } = useAuth();
   const [loading, setLoading] = useState({
     email: false,
     google: false,
-    linkedin: false
+    linkedin: false,
   });
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+
   useEffect(() => {
     if (explicitLogin && user && role && !authLoading) {
       const from = location.state?.from?.pathname || getDefaultRoute(role);
@@ -266,6 +286,7 @@ const HomePage = () => {
       setExplicitLogin(false);
     }
   }, [user, role, authLoading, explicitLogin, navigate, location.state]);
+
   const getDefaultRoute = (userRole) => {
     switch (userRole) {
       case "job_seeker":
@@ -278,13 +299,15 @@ const HomePage = () => {
         return "/";
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
+
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
     setExplicitLogin(true);
@@ -307,6 +330,7 @@ const HomePage = () => {
       setLoading((prev) => ({ ...prev, email: false }));
     }
   };
+
   const handleGoogleSignIn = async () => {
     setLoading((prev) => ({ ...prev, google: true }));
     setError("");
@@ -324,6 +348,7 @@ const HomePage = () => {
       setLoading((prev) => ({ ...prev, google: false }));
     }
   };
+
   const handleLinkedInLogin = async () => {
     setLoading((prev) => ({ ...prev, linkedin: true }));
     setError("");
@@ -341,6 +366,7 @@ const HomePage = () => {
       setLoading((prev) => ({ ...prev, linkedin: false }));
     }
   };
+
   const handleVideoHover = (videoId, isHovering) => {
     setHoveredVideo(isHovering ? videoId : null);
     const videoElement = videoRefs.current[videoId];
@@ -355,10 +381,12 @@ const HomePage = () => {
       }
     }
   };
+
   const toggleMute = (e, videoId) => {
     e.stopPropagation();
     setIsMuted((prev) => !prev);
   };
+
   const handleVideoClick = (videoId) => {
     const videoElement = videoRefs.current[videoId];
     if (videoElement) {
@@ -379,6 +407,25 @@ const HomePage = () => {
     }
     console.log("Video clicked:", videoId);
   };
+
+  const handleFullscreen = (videoId) => {
+    const videoElement = videoRefs.current[videoId];
+    if (videoElement) {
+      if (videoElement.requestFullscreen) {
+        videoElement.requestFullscreen();
+      } else if (videoElement.mozRequestFullScreen) {
+        /* Firefox */
+        videoElement.mozRequestFullScreen();
+      } else if (videoElement.webkitRequestFullscreen) {
+        /* Chrome, Safari and Opera */
+        videoElement.webkitRequestFullscreen();
+      } else if (videoElement.msRequestFullscreen) {
+        /* IE/Edge */
+        videoElement.msRequestFullscreen();
+      }
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -407,17 +454,19 @@ const HomePage = () => {
         sx={{
           background: "#f9fafb",
           color: "#1f2937",
-          overflowX: "hidden"
+          overflowX: "hidden",
         }}
       >
         <Header />
+       
         <Box
           sx={{
-            background: "linear-gradient(to right, #3b82f6, #93c5fd)",
+            background: "#3b82f6", // Plain background color
             color: "#ffffff",
             py: 10,
             position: "relative",
             overflow: "hidden",
+            // Blurred background image
             "&:before": {
               content: '""',
               position: "absolute",
@@ -425,13 +474,15 @@ const HomePage = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              background:
-                "url(/backgrounds/hero-pattern.svg) center/cover no-repeat",
-              opacity: 0.1
-            }
+              backgroundImage:"url(/backgrounds/meeting_room2.jpg)", // Placeholder for meeting room image 
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(5px)", // Apply blur effect
+              opacity: 0.9, // Adjust opacity as needed
+              zIndex: 0,
+            },
           }}
-        >
-          <Container maxWidth="lg">
+        >  <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
             <Grid container spacing={6} alignItems="center">
               <Grid item xs={12} md={6}>
                 <Typography
@@ -446,7 +497,7 @@ const HomePage = () => {
                     MozOsxFontSmoothing: "grayscale",
                     textRendering: "optimizeLegibility",
                     fontFeatureSettings: '"liga", "kern"',
-                    color: "#ffffff"
+                    color: "#ffffff",
                   }}
                 >
                   Revolutionizing Recruitment with Video
@@ -458,7 +509,7 @@ const HomePage = () => {
                     mb: 4,
                     fontWeight: 400,
                     opacity: 0.9,
-                    color: "#dbeafe"
+                    color: "#dbeafe",
                   }}
                 >
                   Connect with opportunities through authentic video profiles.
@@ -470,7 +521,7 @@ const HomePage = () => {
                     display: "flex",
                     gap: 2,
                     flexWrap: "wrap",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                 >
                   <Button
@@ -484,8 +535,8 @@ const HomePage = () => {
                       fontWeight: 600,
                       px: 4,
                       "&:hover": {
-                        bgcolor: "rgba(255,255,255,0.9)"
-                      }
+                        bgcolor: "rgba(255,255,255,0.9)",
+                      },
                     }}
                   >
                     Get Started
@@ -501,18 +552,31 @@ const HomePage = () => {
                       fontWeight: 600,
                       px: 4,
                       "&:hover": {
-                        bgcolor: "rgba(255,255,255,0.2)"
-                      }
+                        bgcolor: "rgba(255,255,255,0.2)",
+                      },
                     }}
                   >
                     Explore Videos
                   </Button>
                 </Box>
               </Grid>
-          
-            </Grid>
-
-                <Grid item xs={12} md={6} marginTop={"-60px"}>
+              <Grid item xs={12} md={6} sx={{ position: "relative" }}>
+                {/* SwipeScout Logo */}
+                <Box
+                  component="img"
+                  src={`${VITE_BASE_URL}/public/logoT.png`} // Placeholder for SwipeScout logo
+                  alt="SwipeScout Logo"
+                  sx={{
+                    position: "absolute",
+                    top: -90, // Adjust position as needed
+                    right: -850,
+                    width: 80,
+                    height: 80,
+                    zIndex: 2,
+                    opacity: 0.46,
+                    display: { xs: "none", md: "block" }, // Only show on larger screens
+                  }}
+                />
                 <Box
                   sx={{
                     display: "flex",
@@ -525,38 +589,15 @@ const HomePage = () => {
                     "@media (min-width: 900px)": {
                       flexDirection: "row",
                       alignItems: "flex-end",
-                      justifyContent: "space-between"
-                    }
+                      justifyContent: "space-between",
+                    },
                   }}
                 >
-                 
-                
-                               <Box textAlign="center" mt={4} mb={6}  sx={{
-                pointer: "cursor"}}> <a href="#Howitworks" style={{ textDecoration: "none" , cursor: "pointer"}}>
-            <Typography
-              variant="h6"
-             
-              sx={{
-               
-                color: "#67e8f9",
-                cursor: "pointer",
-                "&:hover": {
-                  textDecoration: "underline",
-                  color: "#06b6d4"
-                }
-              }}
-            >
-             
-            </Typography> </a>
-          </Box>
-       
-                  
-                 
                   {!isMobile && (
                     <Box
                       sx={{
                         width: { xs: "0", md: "140px" },
-                        pl: "auto"
+                        pl: "auto",
                       }}
                     ></Box>
                   )}
@@ -566,12 +607,12 @@ const HomePage = () => {
                       alignSelf: "end",
                       "@media (min-width: 900px)": {
                         width: "380px",
-                        alignSelf: "end"
+                        alignSelf: "end",
                       },
                       bgcolor: "#dbeafe",
                       p: 3,
                       borderRadius: "10px",
-                      boxShadow: "0 0 15px rgba(0,0,0,0.1)"
+                      boxShadow: "0 0 15px rgba(0,0,0,0.1)",
                     }}
                   >
                     <LoginFormTitle
@@ -581,7 +622,7 @@ const HomePage = () => {
                         mb: 2,
                         fontWeight: bold,
                         color: "#1f2937",
-                        textAlign: "center"
+                        textAlign: "center",
                       }}
                     >
                       Log in to your account
@@ -621,7 +662,7 @@ const HomePage = () => {
                                 )}
                               </IconButton>
                             </InputAdornment>
-                          )
+                          ),
                         }}
                       />
                       <Link
@@ -663,7 +704,7 @@ const HomePage = () => {
                         startIcon={<LinkedInIcon />}
                         sx={{
                           flex: 1,
-                          py: 1.25
+                          py: 1.25,
                         }}
                       >
                         {loading.linkedin ? (
@@ -682,7 +723,7 @@ const HomePage = () => {
                           style={{
                             marginRight: "8px",
                             height: "20px",
-                            width: "20px"
+                            width: "20px",
                           }}
                         />
                         {error}
@@ -693,7 +734,7 @@ const HomePage = () => {
                       sx={{
                         mt: 2,
                         textAlign: "center",
-                        color: "#4b5563"
+                        color: "#4b5563",
                       }}
                     >
                       Don't have an account?{" "}
@@ -704,8 +745,8 @@ const HomePage = () => {
                           fontWeight: 600,
                           textDecoration: "none",
                           "&:hover": {
-                            textDecoration: "underline"
-                          }
+                            textDecoration: "underline",
+                          },
                         }}
                       >
                         Sign Up
@@ -714,116 +755,53 @@ const HomePage = () => {
                   </Box>
                 </Box>
               </Grid>
-          </Container>
-        </Box>
-        <Box sx={{ py: 8 }}>
-          <Container maxWidth="lg">
-            <Typography
-              variant="h3"
-              component="h2"
-              sx={{
-                textAlign: "center",
-                mb: 6,
-                fontWeight: 700,
-                color: "#1f2937"
-              }}
-              id="Howitworks"
-            >
-              How SwipeScout Works
-            </Typography>
-            <Grid container spacing={4} justifyContent="center">
-              {[
-                {
-                  icon: <VideoCall sx={{ fontSize: 40, color: "#3b82f6" }} />,
-                  title: "1. Create Your Video Profile",
-                  description:
-                    "Job seekers record a short video resume. Employers create video job postings or company profiles.",
-                  bgColor: "rgba(59, 130, 246, 0.1)"
-                },
-                {
-                  icon: <People sx={{ fontSize: 40, color: "#06b6d4" }} />,
-                  title: "2. Discover & Connect",
-                  description:
-                    "Swipe through video profiles or use our smart matching to find perfect candidates or opportunities.",
-                  bgColor: "rgba(6, 182, 212, 0.1)"
-                },
-                {
-                  icon: <TrendingUp sx={{ fontSize: 40, color: "#67e8f9" }} />,
-                  title: "3. Grow Your Career",
-                  description:
-                    "Build meaningful connections that lead to interviews, hires, and career growth.",
-                  bgColor: "rgba(103, 232, 249, 0.1)"
-                }
-              ].map((step, index) => (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  key={index}
-                  sx={{ display: "flex", width: "80%" }}
-                >
-                  <StyledFeatureCard
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column"
-                    }}
-                  >
-                    <CardContent
-                      sx={{
-                        flexGrow: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        height: "100%",
-                        p: 3
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: 80,
-                          height: 80,
-                          bgcolor: step.bgColor,
-                          borderRadius: "50%",
-                          mb: 3,
-                          mx: "auto"
-                        }}
-                      >
-                        {step.icon}
-                      </Box>
-                      <Typography
-                        variant="h5"
-                        component="h3"
-                        sx={{
-                          mb: 2,
-                          fontWeight: 600,
-                          textAlign: "center",
-                          color: "#1f2937"
-                        }}
-                      >
-                        {step.title}
-                      </Typography>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            color: "#4b5563",
-                            textAlign: "center"
-                          }}
-                        >
-                          {step.description}
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </StyledFeatureCard>
-                </Grid>
-              ))}
             </Grid>
           </Container>
         </Box>
+
+        {/* Founder Section */}
+        <Box sx={{ py: 8, bgcolor: "#ffffff" }}>
+          <Container maxWidth="md">
+            <Grid container spacing={4} alignItems="center">
+              <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
+                <Avatar
+                  src={`${VITE_BASE_URL}/public/images/tareq.jpg`} // Placeholder for owner's picture
+                  sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
+                />
+                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: "#1f2937" }}>
+                  Tareq Al-Sharif
+                </Typography>
+                <Typography variant="body2" color="#4b5563">
+                  Founder & CEO
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <Typography
+                  variant="h4"
+                  component="h2"
+                  sx={{
+                    mb: 3,
+                    fontWeight: 700,
+                    color: "#1f2937",
+                    textAlign: { xs: "center", md: "left" },
+                  }}
+                >
+                  A Message from Our Founder
+                </Typography>
+                <Typography variant="body1" sx={{ color: "#4b5563", textAlign: { xs: "center", md: "left" } }}>
+                  "Welcome to SwipeScout! I founded this platform with a vision to
+                  revolutionize how people connect in the professional world. I
+                  believe that true potential and personality are best conveyed
+                  through authentic human interaction, and video is the most
+                  powerful tool for that. Our mission is to make recruitment more
+                  personal, efficient, and enjoyable for everyone. Join us and
+                  experience the future of hiring."
+                </Typography>
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+
         <Box sx={{ py: 8, bgcolor: "#f3f4f6" }}>
           <Container maxWidth="lg">
             <Typography
@@ -833,7 +811,7 @@ const HomePage = () => {
                 textAlign: "center",
                 mb: 6,
                 fontWeight: 700,
-                color: "#1f2937"
+                color: "#1f2937",
               }}
             >
               See SwipeScout in Action
@@ -857,11 +835,11 @@ const HomePage = () => {
                       boxShadow: 2,
                       transition: "transform 0.2s ease-in-out",
                       "&:hover": {
-                        transform: "scale(1.02)"
+                        transform: "scale(1.02)",
                       },
                       position: "relative",
                       overflow: "hidden",
-                      aspectRatio: "9/16"
+                      aspectRatio: "9/16",
                     }}
                     onClick={() => handleVideoClick(video.id)}
                   >
@@ -876,7 +854,7 @@ const HomePage = () => {
                         width: "100%",
                         height: "100%",
                         backgroundColor: "#111827",
-                        cursor: "pointer"
+                        cursor: "pointer",
                       }}
                     >
                       {video.video_url && (
@@ -887,7 +865,7 @@ const HomePage = () => {
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
-                            display: "block"
+                            display: "block",
                           }}
                           muted={isMuted}
                           loop
@@ -916,7 +894,7 @@ const HomePage = () => {
                             video.status === "processing"
                               ? 0
                               : 1,
-                          transition: "opacity 0.3s"
+                          transition: "opacity 0.3s",
                         }}
                       >
                         <PlayArrow fontSize="large" />
@@ -931,10 +909,28 @@ const HomePage = () => {
                           backgroundColor: "rgba(0,0,0,0.5)",
                           color: "white",
                           opacity: playingVideoId === video.id ? 1 : 0,
-                          transition: "opacity 0.3s"
+                          transition: "opacity 0.3s",
                         }}
                       >
                         {isMuted ? <VolumeOff /> : <VolumeUp />}
+                      </IconButton>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent card click from firing
+                          handleFullscreen(video.id);
+                        }}
+                        sx={{
+                          position: "absolute",
+                          bottom: 8,
+                          right: 8,
+                          zIndex: 2,
+                          backgroundColor: "rgba(0,0,0,0.5)",
+                          color: "white",
+                          opacity: playingVideoId === video.id ? 1 : 0,
+                          transition: "opacity 0.3s",
+                        }}
+                      >
+                        <Fullscreen />
                       </IconButton>
                       <Box
                         sx={{
@@ -946,7 +942,7 @@ const HomePage = () => {
                           color: "white",
                           background:
                             "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
-                          zIndex: 1
+                          zIndex: 1,
                         }}
                       >
                         <Typography
@@ -979,8 +975,8 @@ const HomePage = () => {
                   px: 6,
                   py: 1.5,
                   "&:hover": {
-                    bgcolor: "#2563eb"
-                  }
+                    bgcolor: "#2563eb",
+                  },
                 }}
               >
                 Browse All Videos
@@ -997,7 +993,7 @@ const HomePage = () => {
                 textAlign: "center",
                 mb: 6,
                 fontWeight: 700,
-                color: "#1f2937"
+                color: "#1f2937",
               }}
             >
               What Our Users Say
@@ -1024,10 +1020,17 @@ const HomePage = () => {
                       "{testimonial.quote}"
                     </Typography>
                     <Box sx={{ mt: 2 }}>
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <CheckCircle
-                          key={star}
-                          sx={{ fontSize: 16, mr: 0.5, color: "#3b82f6" }}
+                      {[1, 2, 3, 4, 5].map((starIndex) => (
+                        <Star
+                          key={starIndex}
+                          sx={{
+                            fontSize: 16,
+                            mr: 0.5,
+                            color:
+                              starIndex <= testimonial.rating
+                                ? "#ffc107"
+                                : "#e0e0e0", // Gold for filled, grey for empty
+                          }}
                         />
                       ))}
                     </Box>
@@ -1039,10 +1042,11 @@ const HomePage = () => {
         </Box>
         <Box
           sx={{
-            py: 10,
-            background: "linear-gradient(to bottom,rgb(116, 168, 250) 0%, #dbeafe 100%)",
+            pt: 5,
+            background:
+              "linear-gradient(to bottom,rgb(116, 168, 250) 0%, #dbeafe 100%)",
             color: "#ffffff",
-            textAlign: "center"
+            textAlign: "center",
           }}
         >
           <Container maxWidth="md">
@@ -1052,7 +1056,7 @@ const HomePage = () => {
               sx={{
                 mb: 0,
                 fontWeight: 700,
-                color: "#111827"
+                color: "#111827",
               }}
             >
               Ready to Transform Your Recruitment?
@@ -1064,7 +1068,7 @@ const HomePage = () => {
                 mb: 1,
                 fontWeight: 400,
                 opacity: 0.9,
-                color: "#4b5563"
+                color: "#4b5563",
               }}
             >
               Join thousands of professionals and companies finding better
@@ -1083,8 +1087,8 @@ const HomePage = () => {
                 py: 1.5,
                 fontSize: "1.1rem",
                 "&:hover": {
-                  bgcolor: "rgba(255,255,255,0.9)"
-                }
+                  bgcolor: "rgba(255,255,255,0.9)",
+                },
               }}
             >
               Get Started Free

@@ -26,7 +26,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
 import NavigationPanel from "../components/NavigationPanel";
-import Header from '../components/Tmp/HeaderExplore';
+import Header from '../components/Headers/HeaderExplore';
 // --- Mock Data for Video Resumes (using Cloudinary URLs from previous example) ---
 
  const mockVideoResumes = [

@@ -10,7 +10,7 @@ import {
   CardContent,
   styled
 } from "@mui/material";
-import Header3 from "../../components/Header3/Header3";
+import Header from "../../components/Headers/Header";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import Feature from "../../components/Feature/Feature";
 import phoneImage from "../../assets/phone.png";
@@ -103,7 +103,7 @@ const LandingPage = () => {
       color: "#5D9BCF",
       overflowX: "hidden"
     }}> 
-      <Header3 />
+      <Header />
       <HeroSection />
       
       {/* Unique Features Section */}
