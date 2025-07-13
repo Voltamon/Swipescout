@@ -496,7 +496,7 @@ const HomePage = () => {
                 WebkitFontSmoothing: "antialiased",
                 MozOsxFontSmoothing: "grayscale",
                 textRendering: "optimizeLegibility",
-                background: "linear-gradient(160deg,rgb(99, 122, 165) 10%,rgb(102, 139, 199) 30%,rgb(87, 193, 235) 100%)",
+                background: "linear-gradient(160deg,rgb(255, 255, 255) 10%,rgb(226, 224, 224) 30%,rgb(255, 255, 255) 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
