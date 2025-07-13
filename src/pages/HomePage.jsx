@@ -461,7 +461,7 @@ const HomePage = () => {
        
         <Box
           sx={{
-            background: "#3b82f6", // Plain background color
+           
             color: "#ffffff",
             py: 10,
             position: "relative",
@@ -484,82 +484,112 @@ const HomePage = () => {
           }}
         >  <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
             <Grid container spacing={6} alignItems="center">
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h2"
-                  component="h1"
-                  sx={{
-                    fontWeight: { xs: 600, md: 800 },
-                    mb: 3,
-                    fontSize: { xs: 40, md: 60 },
-                    lineHeight: 1.2,
-                    WebkitFontSmoothing: "antialiased",
-                    MozOsxFontSmoothing: "grayscale",
-                    textRendering: "optimizeLegibility",
-                    fontFeatureSettings: '"liga", "kern"',
-                    color: "#ffffff",
-                  }}
-                >
-                  Revolutionizing Recruitment with Video
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="h2"
-                  sx={{
-                    mb: 4,
-                    fontWeight: 400,
-                    opacity: 0.9,
-                    color: "#dbeafe",
-                  }}
-                >
-                  Connect with opportunities through authentic video profiles.
-                  Whether you're hiring or looking for your next role,
-                  SwipeScout makes it personal.
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    component={Link}
-                    to="/register-form"
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      bgcolor: "#ffffff",
-                      color: "#3b82f6",
-                      fontWeight: 600,
-                      px: 4,
-                      "&:hover": {
-                        bgcolor: "rgba(255,255,255,0.9)",
-                      },
-                    }}
-                  >
-                    Get Started
-                  </Button>
-                  <Button
-                    component={Link}
-                    to="/videos/all"
-                    variant="outlined"
-                    size="large"
-                    sx={{
-                      borderColor: "#ffffff",
-                      color: "#ffffff",
-                      fontWeight: 600,
-                      px: 4,
-                      "&:hover": {
-                        bgcolor: "rgba(255,255,255,0.2)",
-                      },
-                    }}
-                  >
-                    Explore Videos
-                  </Button>
-                </Box>
-              </Grid>
+            <Grid item xs={12} md={6}>
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontWeight: { xs: 600, md: 800 },
+                mb: 3,
+                fontSize: { xs: 40, md: 60 },
+                lineHeight: 1.2,
+                WebkitFontSmoothing: "antialiased",
+                MozOsxFontSmoothing: "grayscale",
+                textRendering: "optimizeLegibility",
+                background: "linear-gradient(160deg,rgb(99, 122, 165) 10%,rgb(102, 139, 199) 30%,rgb(87, 193, 235) 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                textFillColor: "transparent",
+                border: "2.5px solidrgb(194, 210, 236)",
+                borderRadius: "16px",
+                px: 4,
+                py: 2,
+                display: "inline-block",
+                boxShadow: "0 4px 24px 0 rgba(59,130,246,0.10)",
+                letterSpacing: 1,
+                textShadow: "0 2px 8px rgba(35,57,93,0.10)",
+                textAlign: "center",
+                mx: "auto",
+                bgcolor: "rgba(255,255,255,0.7)",
+                backdropFilter: "blur(2px)",
+              }}
+            >
+              Revolutionizing Recruitment with Video
+            </Typography>
+            <Typography
+              variant="h5"
+              component="h2"
+              sx={{
+                mb: 4,
+                fontWeight: 500,
+                fontSize: { xs: 20, md: 26 },
+                background: "linear-gradient(90deg,rgb(38, 57, 92) 0%,rgb(27, 48, 83)%,rgb(85, 120, 160) 60%,rgb(84, 123, 168) 65%,rgb(27, 59, 95) 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                textFillColor: "transparent",
+                border: "2px solid #60a5fa",
+                borderRadius: "12px",
+                px: 3,
+                py: 1.5,
+                display: "inline-block",
+                boxShadow: "0 2px 12px 0 rgba(96,165,250,0.10)",
+                letterSpacing: 0.5,
+                textShadow: "0 1px 4px rgba(35,57,93,0.08)",
+                textAlign: "center",
+                mx: "auto",
+                bgcolor: "rgba(222, 239, 255, 0.7)",
+                backdropFilter: "blur(2px)",
+              }}
+            >
+              Connect with opportunities through authentic video profiles. Whether you're hiring or looking for your next role, SwipeScout makes it personal.
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                component={Link}
+                to="/register-form"
+                variant="contained"
+                size="large"
+                sx={{
+                  bgcolor: "#1a237e", // Matching dark blue
+                  color: "#ffffff",
+                  fontWeight: 600,
+                  px: 4,
+                  "&:hover": {
+                    bgcolor: "#0d1538", // Even darker on hover
+                  },
+                }}
+              >
+                Get Started
+              </Button>
+              <Button
+                component={Link}
+                to="/videos/all"
+                variant="outlined"
+                size="large"
+                sx={{
+                  borderColor: "#1a237e", // Matching dark blue
+                  color: "rgb(221, 227, 238)", // Matching dark blue
+                  fontWeight: 600,
+                  px: 4,
+                  "&:hover": {
+                    bgcolor: "rgba(26, 35, 126, 0.08)", // Subtle hover effect
+                    borderColor: "#0d1538",
+                  },
+                }}
+              >
+                Explore Videos
+              </Button>
+            </Box>
+          </Grid>
               <Grid item xs={12} md={6} sx={{ position: "relative" }}>
                 {/* SwipeScout Logo */}
                 <Box
@@ -569,11 +599,11 @@ const HomePage = () => {
                   sx={{
                     position: "absolute",
                     top: -90, // Adjust position as needed
-                    right: -850,
-                    width: 80,
-                    height: 80,
+                    right: -750,
+                    width: 70,
+                    height: 70,
                     zIndex: 2,
-                    opacity: 0.46,
+                    opacity: 0.36,
                     display: { xs: "none", md: "block" }, // Only show on larger screens
                   }}
                 />
@@ -596,7 +626,7 @@ const HomePage = () => {
                   {!isMobile && (
                     <Box
                       sx={{
-                        width: { xs: "0", md: "140px" },
+                        width: { xs: "0", md: "640px" },
                         pl: "auto",
                       }}
                     ></Box>
@@ -604,12 +634,15 @@ const HomePage = () => {
                   <Box
                     sx={{
                       width: { xs: "340px", md: "420px" },
-                      alignSelf: "end",
+                      alignSelf: "center",
+                      mx: "auto",
                       "@media (min-width: 900px)": {
                         width: "380px",
-                        alignSelf: "end",
+                        alignSelf: "center",
+                        
                       },
                       bgcolor: "#dbeafe",
+                     
                       p: 3,
                       borderRadius: "10px",
                       boxShadow: "0 0 15px rgba(0,0,0,0.1)",
@@ -762,20 +795,20 @@ const HomePage = () => {
         {/* Founder Section */}
         <Box sx={{ py: 8, bgcolor: "#ffffff" }}>
           <Container maxWidth="md">
-            <Grid container spacing={4} alignItems="center">
+            <Grid container spacing={4} justifyContent="center" alignItems="center">
               <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
                 <Avatar
-                  src={`${VITE_BASE_URL}/public/images/tareq.jpg`} // Placeholder for owner's picture
+                  src={`${VITE_BASE_URL}/public/images/tareq.jpg`}
                   sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
                 />
-                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: "#1f2937" }}>
+                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: "#1f2937", textAlign: "center" }}>
                   Tareq Al-Sharif
                 </Typography>
-                <Typography variant="body2" color="#4b5563">
+                <Typography variant="body2" color="#4b5563" sx={{ textAlign: "center" }}>
                   Founder & CEO
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={8} sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h4"
                   component="h2"
@@ -783,19 +816,19 @@ const HomePage = () => {
                     mb: 3,
                     fontWeight: 700,
                     color: "#1f2937",
-                    textAlign: { xs: "center", md: "left" },
+                    textAlign: "center",
                   }}
                 >
                   A Message from Our Founder
                 </Typography>
-                <Typography variant="body1" sx={{ color: "#4b5563", textAlign: { xs: "center", md: "left" } }}>
-                  "Welcome to SwipeScout! I founded this platform with a vision to
+                <Typography variant="body1" sx={{ color: "#4b5563", textAlign: "center" }}>
+                  Welcome to SwipeScout! I founded this platform with a vision to
                   revolutionize how people connect in the professional world. I
                   believe that true potential and personality are best conveyed
                   through authentic human interaction, and video is the most
                   powerful tool for that. Our mission is to make recruitment more
                   personal, efficient, and enjoyable for everyone. Join us and
-                  experience the future of hiring."
+                  experience the future of hiring.
                 </Typography>
               </Grid>
             </Grid>
