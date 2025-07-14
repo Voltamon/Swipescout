@@ -18,7 +18,8 @@ import { LuArrowLeftRight } from "react-icons/lu";
 import { Helmet } from "react-helmet";
 
 import FAQAccordion from "../../components/FAQAccordion/FAQAccordion";
-import Footer2 from "../../components/Footer2/Footer2";
+// import Footer2 from "../../components/Footer2/Footer2";
+import Footer from "../../components/headers/Footer";
 
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -272,7 +273,7 @@ const LandingPage = () => {
       </Box>
 
       
-      <Footer2 />
+      <Footer />
     </Box>
     </>);
 };

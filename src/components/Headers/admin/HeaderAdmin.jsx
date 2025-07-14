@@ -15,7 +15,7 @@ import {
   Person,
   ExitToApp
 } from "@mui/icons-material";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function roleProfileNav(role) {

@@ -1,45 +1,46 @@
-import React from 'react';
-import { Box, useMediaQuery, useTheme, CssBaseline } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { Outlet } from 'react-router-dom';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import MobileNavigation from './MobileNavigation';
+import React from "react";
+import { Box, useMediaQuery, useTheme, CssBaseline } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Outlet } from "react-router-dom";
+import Header from "./Headers/admin/HeaderAdmin";
+import Sidebar from "./Sidebar";
+import MobileNavigation from "./MobileNavigation";
 
 const LayoutRoot = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: '100vh',
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh"
 }));
 
 const LayoutContent = styled(Box)(({ theme, open, isMobile }) => ({
-  display: 'flex',
-  flex: '1 1 auto',
+  display: "flex",
+  flex: "1 1 auto",
   paddingTop: 56,
-  [theme.breakpoints.up('sm')]: {
-    paddingTop: 64,
-  },
+  [theme.breakpoints.up("sm")]: {
+    paddingTop: 64
+  }
 }));
 
 const MainContent = styled(Box)(({ theme, open, isMobile }) => ({
-  flex: '1 1 auto',
-  width: '100%',
-  transition: theme.transitions.create('margin', {
+  flex: "1 1 auto",
+  width: "100%",
+  transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
+    duration: theme.transitions.duration.leavingScreen
   }),
-  ...(open && !isMobile && {
+  ...(open &&
+  !isMobile && {
     marginRight: 240,
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
+      duration: theme.transitions.duration.enteringScreen
+    })
+  })
 }));
 
 const Layout = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [sidebarOpen, setSidebarOpen] = React.useState(!isMobile);
 
   const handleSidebarToggle = () => {
@@ -52,19 +53,22 @@ const Layout = () => {
     }
   };
 
-  React.useEffect(() => {
-    setSidebarOpen(!isMobile);
-  }, [isMobile]);
+  React.useEffect(
+    () => {
+      setSidebarOpen(!isMobile);
+    },
+    [isMobile]
+  );
 
   return (
     <LayoutRoot>
       <CssBaseline />
       <Header onSidebarToggle={handleSidebarToggle} />
       <LayoutContent open={sidebarOpen} isMobile={isMobile}>
-        <Sidebar 
-          open={sidebarOpen} 
-          onClose={handleSidebarClose} 
-          variant={isMobile ? 'temporary' : 'persistent'} 
+        <Sidebar
+          open={sidebarOpen}
+          onClose={handleSidebarClose}
+          variant={isMobile ? "temporary" : "persistent"}
         />
         <MainContent open={sidebarOpen} isMobile={isMobile}>
           <Outlet />

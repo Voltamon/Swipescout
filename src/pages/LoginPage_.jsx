@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../components/Headers/admin/HeaderAdmin";
+import Footer from "../components/Headers/admin/FooterAdmin";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom"; // If using React Router
-
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -23,29 +22,29 @@ const LoginPage = () => {
     }));
   };
 
-const handleSubmit = async e => {
-  e.preventDefault();
-  setError(null);
-  setIsSubmitting(true);
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
 
-  // Basic validation
-  if (!formData.email || !formData.password) {
-    setError("Please fill in all fields");
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError("Please fill in all fields");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const result = await login(formData.email, formData.password);
+
+    if (result.error) {
+      setError(result.message || "Login failed. Please try again.");
+    } else {
+      // Redirect on success
+      navigate("/post-job"); // or use navigate if using React Router
+    }
+
     setIsSubmitting(false);
-    return;
-  }
-
-  const result = await login(formData.email, formData.password);
-
-  if (result.error) {
-    setError(result.message || "Login failed. Please try again.");
-  } else {
-    // Redirect on success
-    navigate("/post-job"); // or use navigate if using React Router
-  }
-
-  setIsSubmitting(false);
-};
+  };
   return (
     <div>
       <Header />
