@@ -19,7 +19,7 @@ import { Helmet } from "react-helmet";
 
 import FAQAccordion from "../../components/FAQAccordion/FAQAccordion";
 // import Footer2 from "../../components/Footer2/Footer2";
-import Footer from "../../components/headers/Footer";
+import Footer from "../../components/Headers/Footer";
 
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: '100%',
