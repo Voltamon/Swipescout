@@ -188,7 +188,7 @@ const EmployerExplorePublic = () => {
             }}
             sx={{
               justifyContent: "center",
-              py: 2,
+              py: 0,
               cursor: "pointer",
               "&.Mui-selected": {
                 borderLeft: `3px solid ${theme.palette.primary.main}`
