@@ -17,11 +17,11 @@ import {
   Alert,
   TextField,
   InputAdornment,
-  Stack,
+  Stack
 } from "@mui/material";
 import {
   PlayCircle,
-  Work,
+  Work, 
   People,
   VideoCall,
   TrendingUp,
@@ -29,9 +29,11 @@ import {
   Visibility,
   VisibilityOff,
   Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,
+  LinkedIn as LinkedInIcon,CheckCircle,
   Fullscreen, // Added Fullscreen icon
 } from "@mui/icons-material";
+
+
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Headers/Header";
 import Footer from "../components/Headers/Footer";
@@ -493,10 +495,11 @@ const HomePage = () => {
                 mb: 3,
                 fontSize: { xs: 40, md: 60 },
                 lineHeight: 1.2,
+                fontFamily: '"Montserrat", "Roboto", "Arial", sans-serif', // Add this line
                 WebkitFontSmoothing: "antialiased",
                 MozOsxFontSmoothing: "grayscale",
                 textRendering: "optimizeLegibility",
-                background: "linear-gradient(160deg,rgb(255, 255, 255) 10%,rgb(226, 224, 224) 30%,rgb(255, 255, 255) 100%)",
+                background: "linear-gradient(170deg,rgba(1, 58, 68, 0.8) 10%,rgb(96, 159, 196) 30%,rgb(255, 255, 255) 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -511,7 +514,7 @@ const HomePage = () => {
                 textShadow: "0 2px 8px rgba(35,57,93,0.10)",
                 textAlign: "center",
                 mx: "auto",
-                bgcolor: "rgba(255,255,255,0.7)",
+                bgcolor: "rgba(255, 255, 255, 0.99)",
                 backdropFilter: "blur(2px)",
               }}
             >
@@ -529,7 +532,7 @@ const HomePage = () => {
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
                 textFillColor: "transparent",
-                border: "2px solid #60a5fa",
+                border: "0px solid rgb(162, 198, 255)",
                 borderRadius: "12px",
                 px: 3,
                 py: 1.5,
@@ -539,7 +542,7 @@ const HomePage = () => {
                 textShadow: "0 1px 4px rgba(35,57,93,0.08)",
                 textAlign: "center",
                 mx: "auto",
-                bgcolor: "rgba(222, 239, 255, 0.7)",
+                bgcolor: "rgba(31, 48, 78, 0.7)",
                 backdropFilter: "blur(2px)",
               }}
             >
@@ -560,9 +563,10 @@ const HomePage = () => {
                 size="large"
                 sx={{
                   bgcolor: "#1a237e", // Matching dark blue
-                  color: "#ffffff",
+                  color: "rgb(33, 99, 80)",
                   fontWeight: 600,
                   px: 4,
+                   background: 'linear-gradient(90deg,rgb(255, 243, 137) 15%,rgb(182, 50, 50) 100%)',
                   "&:hover": {
                     bgcolor: "#0d1538", // Even darker on hover
                   },
@@ -577,7 +581,7 @@ const HomePage = () => {
                 size="large"
                 sx={{
                   borderColor: "#1a237e", // Matching dark blue
-                  color: "rgb(221, 227, 238)", // Matching dark blue
+                  color: "rgb(24, 66, 145)", // Matching dark blue  background: 'linear-gradient(90deg, #f59e0b 15%, #ef4444 100%)',
                   fontWeight: 600,
                   px: 4,
                   "&:hover": {
@@ -1074,60 +1078,131 @@ const HomePage = () => {
           </Container>
         </Box>
         <Box
-          sx={{
-            pt: 5,
-            background:
-              "linear-gradient(to bottom,rgb(116, 168, 250) 0%, #dbeafe 100%)",
-            color: "#ffffff",
-            textAlign: "center",
-          }}
-        >
-          <Container maxWidth="md">
-            <Typography
-              variant="h3"
-              component="h2"
+        sx={{
+          pt: 8,
+          pb: 8,
+          background: "linear-gradient(170deg, rgba(144, 199, 209, 0.9) 0%, rgba(96, 159, 196, 0.95) 100%)",
+          color: "#ffffff",
+          textAlign: "center",
+          position: 'relative',
+          overflow: 'hidden',
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, #f59e0b 0%, #ef4444 100%)',
+          }
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h3"
+            component="h2"
+            sx={{
+              mb: 2,
+              fontWeight: 800,
+              color: "#f8fafc",
+              textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              position: 'relative',
+              display: 'inline-block',
+              '&:after': {
+                content: '""',
+                position: 'absolute',
+                bottom: -8,
+                left: '25%',
+                width: '50%',
+                height: '3px',
+                background: '#fbbf24',
+                borderRadius: '3px'
+              }
+            }}
+          >
+            Ready to Transform Your Recruitment?
+          </Typography>
+          <Typography
+            variant="h5"
+            component="p"
+            sx={{
+              mb: 4,
+              fontWeight: 500,
+              color: "#e2e8f0",
+              maxWidth: '700px',
+              mx: 'auto',
+              lineHeight: 1.6
+            }}
+          >
+            Join thousands of professionals and companies finding better matches through video.
+          </Typography>
+          <Button
+            component={Link}
+            to="/register-form"
+            variant="contained"
+            size="large"
+            sx={{
+              background: 'linear-gradient(180deg, #f59e0b 0%, #ef4444 100%)',
+              color: 'white',
+              fontWeight: 700,
+              px: 6,
+              py: 2,
+              fontSize: '1.1rem',
+              borderRadius: '8px',
+              boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              position: 'relative',
+              overflow: 'hidden',
+              '&:hover': {
+                background: 'linear-gradient(90deg, #f59e0b 15%, #ef4444 100%)',
+                boxShadow: '0 6px 20px rgba(239, 68, 68, 0.6)',
+                transform: 'translateY(-2px)',
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+              },
+              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}
+          >
+            Get Started Free
+            <Box 
+              component="span" 
               sx={{
-                mb: 0,
-                fontWeight: 700,
-                color: "#111827",
+                ml: 1,
+                animation: 'pulse 2s infinite',
+                display: 'inline-block'
               }}
             >
-              Ready to Transform Your Recruitment?
+              →
+            </Box>
+          </Button>
+          
+          <Box 
+            sx={{
+              mt: 4,
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 3,
+              flexWrap: 'wrap'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: '#dbeafe', display: 'flex', alignItems: 'center' }}>
+              <CheckCircle sx={{ color: '#4ade80', mr: 1, fontSize: '1rem' }} />
+              No credit card required to start
             </Typography>
-            <Typography
-              variant="h5"
-              component="p"
-              sx={{
-                mb: 1,
-                fontWeight: 400,
-                opacity: 0.9,
-                color: "#4b5563",
-              }}
-            >
-              Join thousands of professionals and companies finding better
-              matches through video.
+            <Typography variant="caption" sx={{ color: '#dbeafe', display: 'flex', alignItems: 'center' }}>
+              <TrendingUp sx={{ color: '#60a5fa', mr: 1, fontSize: '1rem' }} />
+              30-second signup
             </Typography>
-            <Button
-              component={Link}
-              to="/register-form"
-              variant="contained"
-              size="large"
-              sx={{
-                bgcolor: "#ffffff",
-                color: "#3b82f6",
-                fontWeight: 600,
-                px: 6,
-                py: 1.5,
-                fontSize: "1.1rem",
-                "&:hover": {
-                  bgcolor: "rgba(255,255,255,0.9)",
-                },
-              }}
-            >
-              Get Started Free
-            </Button>
-          </Container>
+            <Typography variant="caption" sx={{ color: '#dbeafe', display: 'flex', alignItems: 'center' }}>
+              <People sx={{ color: '#f59e0b', mr: 1, fontSize: '1rem' }} />
+              Free forever plan
+            </Typography>
+          </Box>
+        </Container>
         </Box>
+        <br></br>
         <Footer />
       </Box>
     </>

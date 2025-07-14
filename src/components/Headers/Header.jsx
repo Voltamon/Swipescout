@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Box, Button, Avatar, Menu, MenuItem } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { PlayCircle, Work, People, VideoCall, TrendingUp, CheckCircle, Visibility, VisibilityOff, Google as GoogleIcon, LinkedIn as LinkedInIcon } from "@mui/icons-material";
 
-// Define VITE_BASE_URL
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5173';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  // Updated background to a brighter gradient with a slight difference
-  background: 'linear-gradient(to right, rgba(96, 165, 250, 0.9), rgba(66, 133, 244, 0.9))', // Brighter blue gradient
+  background: 'linear-gradient(170deg, rgba(1, 58, 68, 0.9) 0%, rgba(96, 159, 196, 0.95) 50%, rgba(255, 255, 255, 0.9) 100%)',
   backdropFilter: 'blur(8px)',
   boxShadow: 'none',
   padding: theme.spacing(1, 0),
@@ -30,13 +27,20 @@ const Logo = styled(Typography)(({ theme }) => ({
   '& span': {
     color: '#dbeafe',
   },
+  '& .tagline': {
+    fontSize: '0.7rem',
+    marginLeft: theme.spacing(1),
+    color: '#fbbf24',
+    verticalAlign: 'middle',
+  }
 }));
 
 const NavButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.common.white,
-  fontWeight: '600',
+  color:'rgb(255, 255, 255)',
+  fontWeight: '600', 
   '&:hover': {
     backgroundColor: 'rgba(255,255,255,0.2)',
+    color:'rgb(255, 250, 183)',
   },
 }));
 
@@ -55,24 +59,22 @@ const Header = () => {
   return (
     <StyledAppBar position="sticky">
       <StyledToolbar>
-        {/* Logo in the left corner */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box
             component="img"
-            src={`${VITE_BASE_URL}/public/logoT.png`} // Updated logo path to logoT.png
+            src={`${VITE_BASE_URL}/public/logoT.png`}
             alt="SwipeScout Logo"
-            sx={{
-              height: 40, // Adjust height as needed
-              mr: 1, // Margin right for spacing
-            }}
+            sx={{ height: 40, mr: 1 }}
           />
           <Logo variant="h6" component={Link} to="/" sx={{ textDecoration: 'none' }}>
             Swipe<span>scout</span>
+            <Typography component="span" className='tagline'>
+              Your next career starts here
+            </Typography>
           </Logo>
         </Box>
 
-        {/* Navigation buttons aligned to the right */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, ml: 'auto' }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex'  }, gap: 2, ml: 'auto' }}>
           <NavButton component={Link} to="/">Home</NavButton>
           <NavButton component={Link} to="/about">About Us</NavButton>
           <NavButton component={Link} to="#">Contact</NavButton>
@@ -97,7 +99,7 @@ const Header = () => {
             '&:hover': {
               bgcolor: 'rgba(255,255,255,0.9)',
             },
-            ml: 2, // Add margin to separate from nav buttons
+            ml: 2,
           }}
         >
           Login
