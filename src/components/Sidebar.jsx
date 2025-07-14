@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import {
   Drawer,
   List,
@@ -23,330 +23,255 @@ import {
   Assessment as AnalyticsIcon,
   Settings as SettingsIcon,
   Help as HelpIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  Dashboard as DashboardIcon,
+  ManageSearch as ManageSearchIcon,
+  VideoLibrary as VideoLibraryIcon,
+  Videocam as VideocamIcon,
+  VideoCameraFront as VideoCameraFrontIcon,
+  AccountBox as AccountBoxIcon,
+  AddCard as AddCardIcon,
+  ListAlt as ListAltIcon,
+  VideoCall as VideoCallIcon,
+  Plagiarism as PlagiarismIcon,
+  VideoFile as VideoFileIcon,
 } from '@mui/icons-material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../hooks/useAuth";
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import AddCardIcon from '@mui/icons-material/AddCard';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
-import PlagiarismIcon from '@mui/icons-material/Plagiarism';
-import VideoFileIcon from '@mui/icons-material/VideoFile';
 
-const expandedWidth = 200;
+const expandedWidth = 240; // Slightly wider for better readability
 const collapsedWidth = 72;
 
-const Sidebar = ({ open = true, onClose, variant ,isMobile}) => {
+const Sidebar = ({ open = true, onClose, variant, isMobile }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, role , logout } = useAuth();
-  
+  const { user, logout } = useAuth();
+
   const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const employer_menuItems = [
-          // { text: 'Home Page', icon: <HomeIcon />, path: '/' },
-
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     { text: 'Profile', icon: <AccountBoxIcon />, path: '/employer-profile' },
-    
-    // { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    // { text: 'About Swipescoute', icon: <VideoCameraFrontIcon  />, path: '/MarketingVideos-page' },
-    { text: 'My Videos', icon: <VideocamIcon  />, path: '/videos' },
-    { text: 'Resums Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
-    // { text: 'Find Candidates', icon: <SearchIcon />, path: '/Employer-explore' },
+    { text: 'My Videos', icon: <VideocamIcon />, path: '/videos' },
+    { text: 'Resumes Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Detailed Search', icon: <PlagiarismIcon />, path: '/candidate-search' },
     { text: 'Post Job', icon: <AddCardIcon />, path: '/Post-job-page' },
     { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
-
-    // { text: 'Candidate Profile', icon: <SearchIcon />, path: '/candidate-profile' },
     { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
-    // { text: 'Applicants', icon: <CandidatesIcon />, path: '/applicants' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
   ];
 
-
-    const jobseeker_menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
-    { text: 'Profile', icon: <HomeIcon />, path: '/Job-seeker-profile' },
-    { text: 'Video Feed', icon: <HomeIcon />, path: '/jobseeker-video-feed' },
-    { text: 'Explore', icon: <HomeIcon />, path: '/jobseeker-explore-sidebar' },
-    { text: 'Company Videos', icon: <SearchIcon />, path: '/company-videos' },
-    { text: 'Find Jobs', icon: <SearchIcon />, path: '/Job-seeker-explore' },
-    { text: 'Detailed Search', icon: <SearchIcon />, path: '/job-search' },
-    { text: 'Job Videos', icon: <JobsIcon />, path: '/job-videos' },
-    { text: 'Job Details', icon: <SearchIcon />, path: '/job/1' },
-    { text: 'Upload Video', icon: <SearchIcon />, path: '/video-upload' },
-    { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
-    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
-    { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
-  ];
-
-const admin_menuItems = [
-    { text: 'Dashboard', icon: <HomeIcon />, path: '/admin-dashboard' },
-    { text: 'Video Feed', icon: <HomeIcon />, path: '/video-feed' },
-    { text: 'Explore', icon: <HomeIcon />, path: '/Employer-explore-sidebar' },
-    { text: 'Messages', icon: <MessagesIcon />, path: '/inbox' },
-
-  ];
-
-
-
-const menuItems = employer_menuItems;
-// React.useMemo(() => {
-//   if (user?.role === 'employer') return employer_menuItems;
-//   if (user?.role === 'job_seeker') return jobseeker_menuItems;
-//   if (user?.role === 'admin') return admin_menuItems;
-//   return [];
-// }, [user?.role]);
-
-// const roleGradients = {
-//   employer: 'linear-gradient(135deg, #4a6bff 0%, #6a8bff 100%)',
-//   'job_seeker': 'linear-gradient(90deg,rgba(200, 221, 247, 0.86) 50%,rgb(255, 255, 255) 100%)',
-//   admin: 'linear-gradient(135deg, #dd4f6b 0%, #b73a56 100%)',
-//   default: 'linear-gradient(135deg, #6b4fdd 0%, #563ab7 100%)'
-// };
-const roleStyles = {
-  employer: {
-    background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
-    '& .MuiListItem-root': {
-      color: 'rgb(39, 56, 83)', // Base text color
-      '&.Mui-selected': {
-        color: '#ffffff', // Brighter when selected
-      },
-    },
-    // ... other employer styles
-  },
-  job_seeker: {
-   background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2_j.png')`,
-    '& .MuiListItem-root': {
-      color: 'rgb(39, 56, 83)', // Base text color
-      '&.Mui-selected': {
-        color: '#ffffff', // Brighter when selected
-      },
-    // ... other job seeker styles
-    }
-  },
-  admin: {
-   background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2_a.png')`,
-    '& .MuiListItem-root': {
-      color: 'rgb(39, 56, 83)', // Base text color
-      '&.Mui-selected': {
-        color: '#ffffff', // Brighter when selected
-      },
-    // ... other admin styles
-    }
-  }
-}
   const secondaryItems = [
-    { text: 'Logout', icon: <LogoutIcon />, path: '#' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-    // { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
+    { text: 'Help Center', icon: <HelpIcon />, path: '/help' },
+    { text: 'Logout', icon: <LogoutIcon />, path: '#' },
   ];
 
   const isActive = (path) => location.pathname.startsWith(path);
 
-    // const {  refreshAuthToken } = useAuth();
+  // Dynamic background based on role for a more modern look
+  const roleBackground = {
+    employer: `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
+    // Add other roles if this sidebar were to be used for them
+  };
 
-  // Optional: Refresh token when this route is accessed
-  // useEffect(() => {
-  //   refreshAuthToken(); // Optional: only if you want it to refresh every time user visits a protected page
-  // }, [refreshAuthToken]);
-
-
-  return (<>  {(open || !isMobile) && (
+  return (
     <Drawer
-      variant="permanent" // or "persistent"
+      variant={variant} // "permanent" or "temporary"
       open={open}
-     sx={{
-    width: open ? expandedWidth : collapsedWidth,
-    flexShrink: 0,
-    '& .MuiDrawer-paper': {
-      width: open ? expandedWidth : collapsedWidth,
-      transition: 'width 0.3s ease-in-out',
-      overflowX: 'hidden',              
-      overflowY: 'auto',               
-      boxSizing: 'border-box',
-      scrollbarWidth: 'none',           // Firefox
-      '&::-webkit-scrollbar': {
-        width: 0,                       // Chrome, Safari
-        height: 0,                      // Prevents horizontal scrollbar too
-      },
-      ...(roleStyles['employer' ] || {}),
-    },
-  }}
-    >
-  
-      <Toolbar />
-      <Box sx={{ overflow: 'auto' }}>
-<Box sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2 }}>
-  <IconButton
-      onClick={()=>navigate("/candidate-profile")} // Correctly call the navigate function
-      aria-label="view candidate profile" // Crucial for accessibility
-      // sx={{ marginLeft: 2 }} // You can apply spacing here if needed,
-                               // or use typical flexbox spacing in a Toolbar
-    >
-                {console.log("user:::",user?.photo_url)}
-                 <Avatar src={VITE_API_BASE_URL+user?.photo_url || user?.photoUrl} sx={{ 
-    width: 50, 
-    height: 50, 
-    mr: open ? 2 : 0,
-    border: '2px solid',
-    borderColor: 'primary.main'
-  }}>
-    {user?.name?.charAt(0)||user?.display_name?.charAt(0)||'U'}
-  </Avatar> </IconButton> 
-  {open && (
-    <Box>
-      <Typography variant="subtitle1" sx={{ color: 'textw.primary !important' }}>
-        {user?.name ||user?.displayName||user?.display_name}
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'textw.secondary' }}>
-        {user?.role || user?.role?.replace('_', ' ') || 'Employer'} 
-      </Typography>
-    </Box>
-  )}
-</Box>
-        <Divider />
-
-<Divider />
-
-<List>
-  {menuItems.map((item) => (
-    <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
-      <ListItem
-        button
-        key={item.text}
-        onClick={() => {
-          navigate(item.path);
-          if (variant === 'temporary') onClose();
-        }}
-        sx={{
-          // Layout
-          justifyContent: open ? 'initial' : 'center',
-          px: open ? 2 : 1,
-          my: 0.5,
-          borderRadius: '8px',
-          
-          // Background Colors
-          bgcolor: isActive(item.path) 
-            ? 'rgba(0, 0, 0, 0.1)'  // Slightly darker when active
-            : 'transparent',
-          
-          // Text Colors
-          color: isActive(item.path) 
-            ? 'black'  // Darker text for active items
-            : 'rgba(0, 0, 0, 0.7)',  // Semi-transparent black for inactive
-          
-          // Hover Effects
-          '&:hover': {
-            bgcolor: 'rgba(0, 0, 0, 0.05)',
-            color: 'black',
-          },
-          
-          // Animation
-          transition: 'all 0.2s ease-in-out',
-        }}
-      >
-        {(open || !isMobile) && (
-          <ListItemIcon
-            sx={{
-              // Icon Colors
-              color: isActive(item.path) 
-                ? 'black' 
-                : 'rgba(0, 0, 0, 0.7)',
-              minWidth: open ? 40 : 'auto',
-              justifyContent: 'center',
-            }}
-          >
-            {item.icon}
-          </ListItemIcon>
-        )}
-
-        {open && (
-          <ListItemText
-            primary={item.text}
-            primaryTypographyProps={{
-              fontWeight: isActive(item.path) ? 600 : 500,
-            }}
-            sx={{
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          />
-        )}
-      </ListItem>
-    </Tooltip>
-  ))}
-</List>
-
-<Divider />
-
-<List>
-  {secondaryItems.map((item) => (
-    <ListItem
-      button
-      key={item.text}
-      onClick={() => { if(item.text==="Logout")
-        logout(); else
-        navigate(item.path);
-        if (variant === 'temporary') onClose();
-      }}
+      onClose={onClose} // For temporary drawer on mobile
       sx={{
-        // Same styling as main menu items
-        justifyContent: open ? 'initial' : 'center',
-        px: open ? 2 : 1,
-        my: 0.5,
-        borderRadius: '8px',
-        bgcolor: isActive(item.path) 
-          ? 'rgba(0, 0, 0, 0.1)'
-          : 'transparent',
-        color: isActive(item.path) 
-          ? 'black'
-          : 'rgba(0, 0, 0, 0.7)',
-        '&:hover': {
-          bgcolor: 'rgba(0, 0, 0, 0.05)',
-          color: 'black',
+        width: open ? expandedWidth : collapsedWidth,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: open ? expandedWidth : collapsedWidth,
+          boxSizing: 'border-box',
+          transition: 'width 0.3s ease-in-out',
+          overflowX: 'hidden',
+          overflowY: 'auto', // Enable scrolling for sidebar content
+          scrollbarWidth: 'none', // Firefox
+          '&::-webkit-scrollbar': {
+            width: 0, // Chrome, Safari
+            height: 0,
+          },
+          borderRadius: '0 16px 16px 0', // Rounded corners on the right side
+          boxShadow: theme.shadows[4], // More prominent shadow
+          background: roleBackground.employer, // Apply gradient background
+          color: theme.palette.primary.contrastText, // White text for contrast
         },
-        transition: 'all 0.2s ease-in-out',
       }}
     >
-      {(open || !isMobile) && (
-        <ListItemIcon
-          sx={{
-            color: isActive(item.path) 
-              ? 'black'
-              : 'rgba(0, 0, 0, 0.7)',
-            minWidth: open ? 40 : 'auto',
-            justifyContent: 'center',
-          }}
-        >
-          {item.icon}
-        </ListItemIcon>
-      )}
-      
-      { (open )&&(
-        <ListItemText
-          primary={item.text}
-          primaryTypographyProps={{
-            fontWeight: isActive(item.path) ? 600 : 500,
-          }}
-        />
-      )}
-    </ListItem>
-  ))}
-</List>
+      <Toolbar sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: open ? 'flex-start' : 'center',
+        px: open ? 2 : 1,
+        minHeight: '64px !important', // Ensure consistent height
+        borderBottom: `1px solid ${theme.palette.primary.dark}`, // Subtle border
+      }}>
+        {open ? (
+          <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.primary.contrastText }}>
+            Employer Panel
+          </Typography>
+        ) : (
+          <Business sx={{ color: theme.palette.primary.contrastText }} /> // Icon for collapsed state
+        )}
+      </Toolbar>
+
+      <Box sx={{ overflow: 'auto', flexGrow: 1, py: 2 }}>
+        {/* User Profile Section */}
+        <Box sx={{ p: open ? 2 : 1, display: 'flex', flexDirection: open ? 'row' : 'column', alignItems: 'center', mb: 2 }}>
+          <IconButton
+            onClick={() => navigate("/employer-profile")}
+            aria-label="view employer profile"
+            sx={{ p: 0 }}
+          >
+            <Avatar
+              src={user?.photo_url ? VITE_API_BASE_URL + user.photo_url : user?.photoUrl || ''}
+              alt={user?.name?.charAt(0) || user?.display_name?.charAt(0) || 'U'}
+              sx={{
+                width: open ? 60 : 40,
+                height: open ? 60 : 40,
+                mr: open ? 2 : 0,
+                border: `3px solid ${theme.palette.secondary.main}`, // Accent border color
+                boxShadow: theme.shadows[3],
+                transition: 'all 0.3s ease-in-out',
+              }}
+            >
+              {user?.name?.charAt(0) || user?.display_name?.charAt(0) || 'U'}
+            </Avatar>
+          </IconButton>
+          {open && (
+            <Box sx={{ textAlign: 'left' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: theme.palette.primary.contrastText }}>
+                {user?.name || user?.displayName || user?.display_name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText + 'B3' }}> {/* Slightly transparent white */}
+                {user?.role?.replace('_', ' ') || 'Employer'}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+
+        <Divider sx={{ my: 1, borderColor: theme.palette.primary.dark }} />
+
+        {/* Main Menu Items */}
+        <List>
+          {employer_menuItems.map((item) => (
+            <Tooltip key={item.text} title={!open ? item.text : ''} placement="right">
+              <ListItem
+                button
+                onClick={() => {
+                  navigate(item.path);
+                  if (variant === 'temporary') onClose();
+                }}
+                sx={{
+                  justifyContent: open ? 'initial' : 'center',
+                  px: open ? 2 : 1,
+                  my: 0.5,
+                  borderRadius: theme.shape.borderRadius, // Apply global border radius
+                  bgcolor: isActive(item.path)
+                    ? 'rgba(255, 255, 255, 0.2)' // Light background for active
+                    : 'transparent',
+                  color: isActive(item.path)
+                    ? theme.palette.primary.contrastText // White text for active
+                    : theme.palette.primary.contrastText + 'CC', // Slightly transparent white for inactive
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.1)', // Lighter hover background
+                    color: theme.palette.primary.contrastText,
+                  },
+                  transition: 'all 0.2s ease-in-out',
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: isActive(item.path)
+                      ? theme.palette.primary.contrastText
+                      : theme.palette.primary.contrastText + 'CC',
+                    minWidth: open ? 40 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{
+                      fontWeight: isActive(item.path) ? 700 : 500, // Bold active text
+                    }}
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  />
+                )}
+              </ListItem>
+            </Tooltip>
+          ))}
+        </List>
+
+        <Divider sx={{ my: 1, borderColor: theme.palette.primary.dark }} />
+
+        {/* Secondary Menu Items */}
+        <List>
+          {secondaryItems.map((item) => (
+            <ListItem
+              button
+              key={item.text}
+              onClick={() => {
+                if (item.text === "Logout")
+                  logout();
+                else
+                  navigate(item.path);
+                if (variant === 'temporary') onClose();
+              }}
+              sx={{
+                justifyContent: open ? 'initial' : 'center',
+                px: open ? 2 : 1,
+                my: 0.5,
+                borderRadius: theme.shape.borderRadius,
+                bgcolor: isActive(item.path)
+                  ? 'rgba(255, 255, 255, 0.2)'
+                  : 'transparent',
+                color: isActive(item.path)
+                  ? theme.palette.primary.contrastText
+                  : theme.palette.primary.contrastText + 'CC',
+                '&:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                  color: theme.palette.primary.contrastText,
+                },
+                transition: 'all 0.2s ease-in-out',
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: isActive(item.path)
+                    ? theme.palette.primary.contrastText
+                    : theme.palette.primary.contrastText + 'CC',
+                  minWidth: open ? 40 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              {open && (
+                <ListItemText
+                  primary={item.text}
+                  primaryTypographyProps={{
+                    fontWeight: isActive(item.path) ? 700 : 500,
+                  }}
+                />
+              )}
+            </ListItem>
+          ))}
+        </List>
       </Box>
-    </Drawer> )} </>
+    </Drawer>
   );
 };
 
