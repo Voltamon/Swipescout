@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Typography, Link, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Link,
+  IconButton,
+  useTheme,
+  useMediaQuery
+} from "@mui/material";
 import {
   Facebook,
   Twitter,
@@ -11,35 +18,46 @@ import {
 } from "@mui/icons-material";
 import { styled } from "@mui/system";
 
-const StyledFooter = styled(Box)({
-  background:
-    "linear-gradient(170deg, rgba(1, 58, 68, 0.9) 0%, rgba(96, 159, 196, 0.85) 70%)",
-  color: "#e2e8f0",
-  padding: "64px 24px",
-  textAlign: "center"
-});
+const StyledFooter = styled(Box)(({ theme }) => ({
+  background: theme.palette.primary.dark, // Dark primary color for footer
+  color: theme.palette.primary.contrastText, // White text
+  padding: theme.spacing(6, 3), // Generous padding
+  textAlign: "center",
+  borderRadius: theme.shape.borderRadius, // Apply global border radius
+  boxShadow: theme.shadows[4], // More prominent shadow
+  margin: theme.spacing(2), // Add margin for a floating effect
+  width: `calc(100% - ${theme.spacing(4)})`, // Account for margin
+  left: "50%",
+  transform: "translateX(-50%)", // Center the footer
+  position: "relative" // Ensure position for pseudo-elements if any
+}));
 
-const FooterLink = styled(Link)({
-  color: "#f8fafc",
+const FooterLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.primary.contrastText, // White links
   textDecoration: "none",
   fontSize: "1rem",
   fontWeight: 600,
   transition: "color 0.2s ease-in-out",
   "&:hover": {
-    color: "#fbbf24"
+    color: theme.palette.secondary.light // Light secondary on hover
   }
-});
+}));
 
-const SocialButton = styled(IconButton)({
-  color: "#f8fafc",
+const SocialButton = styled(IconButton)(({ theme }) => ({
+  color: theme.palette.primary.contrastText, // White icons
   transition: "transform 0.2s ease-in-out",
   "&:hover": {
     transform: "scale(1.1)",
-    color: "#fbbf24"
-  }
-});
+    color: theme.palette.secondary.light // Light secondary on hover
+  },
+  backgroundColor: "rgba(255,255,255,0.1)", // Subtle background
+  borderRadius: theme.shape.borderRadius // Rounded buttons
+}));
 
 const Footer = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <StyledFooter>
       <Box
@@ -48,7 +66,7 @@ const Footer = () => {
           display: "flex",
           justifyContent: "center",
           flexWrap: "wrap",
-          gap: 3
+          gap: { xs: 2, md: 3 } // Responsive gap
         }}
       >
         <FooterLink href="/about" underline="hover">
@@ -78,7 +96,10 @@ const Footer = () => {
       </Box>
 
       <Box sx={{ mb: 4 }}>
-        <Typography variant="body1" sx={{ color: "#dbeafe", mb: 3 }}>
+        <Typography
+          variant="body1"
+          sx={{ color: theme.palette.primary.contrastText + "CC", mb: 3 }}
+        >
           Join our community of professionals
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
@@ -101,35 +122,59 @@ const Footer = () => {
         sx={{
           display: "flex",
           justifyContent: "center",
-          gap: 4,
+          gap: { xs: 2, md: 4 }, // Responsive gap
           mb: 4,
           flexWrap: "wrap"
         }}
       >
         <Typography
           variant="caption"
-          sx={{ color: "#dbeafe", display: "flex", alignItems: "center" }}
+          sx={{
+            color: theme.palette.primary.contrastText + "CC",
+            display: "flex",
+            alignItems: "center"
+          }}
         >
-          <CheckCircle sx={{ color: "#4ade80", mr: 1, fontSize: "1rem" }} />
+          <CheckCircle
+            sx={{ color: theme.palette.success.main, mr: 1, fontSize: "1rem" }}
+          />{" "}
+          {/* Green for success */}
           Verified Companies
         </Typography>
         <Typography
           variant="caption"
-          sx={{ color: "#dbeafe", display: "flex", alignItems: "center" }}
+          sx={{
+            color: theme.palette.primary.contrastText + "CC",
+            display: "flex",
+            alignItems: "center"
+          }}
         >
-          <TrendingUp sx={{ color: "#60a5fa", mr: 1, fontSize: "1rem" }} />
+          <TrendingUp
+            sx={{ color: theme.palette.info.main, mr: 1, fontSize: "1rem" }}
+          />{" "}
+          {/* Blue for info */}
           87% Success Rate
         </Typography>
         <Typography
           variant="caption"
-          sx={{ color: "#dbeafe", display: "flex", alignItems: "center" }}
+          sx={{
+            color: theme.palette.primary.contrastText + "CC",
+            display: "flex",
+            alignItems: "center"
+          }}
         >
-          <People sx={{ color: "#f59e0b", mr: 1, fontSize: "1rem" }} />
+          <People
+            sx={{ color: theme.palette.warning.main, mr: 1, fontSize: "1rem" }}
+          />{" "}
+          {/* Orange for warning/attention */}
           24/7 Support
         </Typography>
       </Box>
 
-      <Typography variant="body2" sx={{ color: "#dbeafe" }}>
+      <Typography
+        variant="body2"
+        sx={{ color: theme.palette.primary.contrastText + "CC" }}
+      >
         © {new Date().getFullYear()} SwipeScout. All rights reserved.
       </Typography>
     </StyledFooter>
