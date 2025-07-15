@@ -17,26 +17,28 @@ import {
   Alert,
   TextField,
   InputAdornment,
-  Stack
+  Stack,
+  useTheme
 } from "@mui/material";
 import {
   PlayCircle,
-  Work, 
+  Work,
   People,
   VideoCall,
   TrendingUp,
-  Star, // Changed from CheckCircle to Star
+  Star,
   Visibility,
   VisibilityOff,
   Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,CheckCircle,
-  Fullscreen, // Added Fullscreen icon
+  LinkedIn as LinkedInIcon,
+  CheckCircle,
+  Fullscreen,
 } from "@mui/icons-material";
 
 
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Header from "../components/Headers/Header";
-import Footer from "../components/Headers/Footer";
+import Header from "../components/Headers/Header"; // Updated Header path
+import Footer from "../components/Headers/Footer"; // Updated Footer path
 import { Helmet } from "react-helmet";
 import { useState, useRef, useEffect } from "react";
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -50,54 +52,54 @@ import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
 
 const LoginFormTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(1.25),
-  color: "#1f2937",
+  color: theme.palette.text.primary, // Use theme color
 }));
 const LoginFormSubtitle = styled(Typography)(({ theme }) => ({
-  color: "#9ca3af",
+  color: theme.palette.text.secondary, // Use theme color
   marginBottom: theme.spacing(2.5),
 }));
 const InputField = styled(TextField)(({ theme }) => ({
   width: "100%",
   margin: theme.spacing(1, 0),
-  borderRadius: "5px",
+  borderRadius: theme.shape.borderRadius, // Use theme border radius
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#d1d5db",
+      borderColor: theme.palette.divider, // Use theme color
     },
     "&:hover fieldset": {
-      borderColor: "#3b82f6",
+      borderColor: theme.palette.primary.main, // Use theme color
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#3b82f6",
+      borderColor: theme.palette.primary.main, // Use theme color
     },
     "&.Mui-error fieldset": {
-      borderColor: "#dc2626",
+      borderColor: theme.palette.error.main, // Use theme color
     },
   },
   "& input": {
     padding: theme.spacing(1.5),
-    backgroundColor: "#ffffff",
-    color: "#1f2937",
+    backgroundColor: theme.palette.background.paper, // Use theme color
+    color: theme.palette.text.primary, // Use theme color
   },
 }));
 const LoginButton = styled(Button)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(1.5),
   marginTop: theme.spacing(2),
-  backgroundColor: "#3b82f6",
-  color: "white",
+  backgroundColor: theme.palette.primary.main, // Use theme color
+  color: theme.palette.primary.contrastText, // Use theme color
   border: "none",
   borderRadius: "25px",
   fontWeight: "bold",
   cursor: "pointer",
   "&:hover": {
-    backgroundColor: "#2563eb",
+    backgroundColor: theme.palette.primary.dark, // Use theme color
   },
 }));
 const SocialDivider = styled(Divider)(({ theme }) => ({
   margin: theme.spacing(2, 0),
   "& .MuiDivider-wrapper": {
-    color: "#9ca3af",
+    color: theme.palette.text.secondary, // Use theme color
   },
 }));
 const SocialButton = styled(Button)(({ theme }) => ({
@@ -112,30 +114,30 @@ const SocialButton = styled(Button)(({ theme }) => ({
   },
 }));
 const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
-  backgroundColor: "#f9fafb",
-  color: "#4b5563",
-  border: `1px solid #d1d5db`,
+  backgroundColor: theme.palette.background.paper, // Use theme color
+  color: theme.palette.text.secondary, // Use theme color
+  border: `1px solid ${theme.palette.divider}`, // Use theme color
   "&:hover": {
-    backgroundColor: "#f3f4f6",
-    borderColor: "#9ca3af",
+    backgroundColor: theme.palette.action.hover, // Use theme color
+    borderColor: theme.palette.grey[400], // Use theme color
   },
 }));
 const LinkedInSignInButton = styled(SocialButton)(({ theme }) => ({
-  backgroundColor: "#f9fafb",
-  color: "#4b5563",
-  border: `1px solid #d1d5db`,
+  backgroundColor: theme.palette.background.paper, // Use theme color
+  color: theme.palette.text.secondary, // Use theme color
+  border: `1px solid ${theme.palette.divider}`, // Use theme color
   "&:hover": {
-    backgroundColor: "#f3f4f6",
-    borderColor: "#9ca3af",
+    backgroundColor: theme.palette.action.hover, // Use theme color
+    borderColor: theme.palette.grey[400], // Use theme color
   },
 }));
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
   flexDirection: "column",
-  borderRadius: "16px",
+  borderRadius: theme.shape.borderRadius * 2, // More rounded
   boxShadow: theme.shadows[4],
-  backgroundColor: "#ffffff",
+  backgroundColor: theme.palette.background.paper, // Use theme color
   transition: "all 0.3s ease-in-out",
   "&:hover": {
     transform: "translateY(-8px)",
@@ -144,7 +146,7 @@ const StyledFeatureCard = styled(Card)(({ theme }) => ({
 }));
 const StyledVideoCard = styled(Card)(({ theme }) => ({
   position: "relative",
-  borderRadius: "12px",
+  borderRadius: theme.shape.borderRadius * 1.5, // More rounded
   overflow: "hidden",
   boxShadow: theme.shadows[3],
   transition: "all 0.3s ease",
@@ -251,7 +253,8 @@ export const mockVideoResumes = [
   },
 ];
 const HomePage = () => {
-  const isMobile = useMediaQuery("(max-width:900px)");
+  const theme = useTheme(); // Access theme
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Use theme breakpoint
   const [hoveredVideo, setHoveredVideo] = useState(null);
   const [isPlayVideo, setIsPlayVideo] = useState(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -454,18 +457,22 @@ const HomePage = () => {
       </Helmet>
       <Box
         sx={{
-          background: "#f9fafb",
-          color: "#1f2937",
+          background: theme.palette.background.default, // Use theme background
+          color: theme.palette.text.primary, // Use theme text color
           overflowX: "hidden",
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh', // Ensure page takes full viewport height
         }}
       >
         <Header />
-       
+
+        {/* Hero Section */}
         <Box
           sx={{
-           
-            color: "#ffffff",
-            py: 10,
+            background: theme.palette.primary.main, // Use primary color for hero background
+            color: theme.palette.primary.contrastText, // White text
+            py: { xs: 8, md: 12 },
             position: "relative",
             overflow: "hidden",
             // Blurred background image
@@ -476,320 +483,283 @@ const HomePage = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundImage:"url(/backgrounds/meeting_room2.jpg)", // Placeholder for meeting room image 
+              backgroundImage: `url(${VITE_BASE_URL}/public/backgrounds/meeting_room2.jpg)`, // Placeholder for meeting room image
               backgroundSize: "cover",
               backgroundPosition: "center",
               filter: "blur(5px)", // Apply blur effect
-              opacity: 0.9, // Adjust opacity as needed
+              opacity: 0.8, // Adjust opacity as needed
               zIndex: 0,
             },
+            flexGrow: 1, // Allow hero section to grow and push footer down
+            display: 'flex',
+            alignItems: 'center', // Center content vertically
           }}
-        >  <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+        >
+          <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
             <Grid container spacing={6} alignItems="center">
-            <Grid item xs={12} md={6}>
-            <Typography
-              variant="h2"
-              component="h1"
-              sx={{
-                fontWeight: { xs: 600, md: 800 },
-                mb: 3,
-                fontSize: { xs: 40, md: 60 },
-                lineHeight: 1.2,
-                fontFamily: '"Montserrat", "Roboto", "Arial", sans-serif', // Add this line
-                WebkitFontSmoothing: "antialiased",
-                MozOsxFontSmoothing: "grayscale",
-                textRendering: "optimizeLegibility",
-                background: "linear-gradient(170deg,rgba(1, 58, 68, 0.8) 10%,rgb(96, 159, 196) 30%,rgb(255, 255, 255) 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                textFillColor: "transparent",
-                border: "2.5px solidrgb(194, 210, 236)",
-                borderRadius: "16px",
-                px: 4,
-                py: 2,
-                display: "inline-block",
-                boxShadow: "0 4px 24px 0 rgba(59,130,246,0.10)",
-                letterSpacing: 1,
-                textShadow: "0 2px 8px rgba(35,57,93,0.10)",
-                textAlign: "center",
-                mx: "auto",
-                bgcolor: "rgba(255, 255, 255, 0.99)",
-                backdropFilter: "blur(2px)",
-              }}
-            >
-              Revolutionizing Recruitment with Video
-            </Typography>
-            <Typography
-              variant="h5"
-              component="h2"
-              sx={{
-                mb: 4,
-                fontWeight: 500,
-                fontSize: { xs: 20, md: 26 },
-                background: "linear-gradient(90deg,rgb(38, 57, 92) 0%,rgb(27, 48, 83)%,rgb(85, 120, 160) 60%,rgb(84, 123, 168) 65%,rgb(27, 59, 95) 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                textFillColor: "transparent",
-                border: "0px solid rgb(162, 198, 255)",
-                borderRadius: "12px",
-                px: 3,
-                py: 1.5,
-                display: "inline-block",
-                boxShadow: "0 2px 12px 0 rgba(96,165,250,0.10)",
-                letterSpacing: 0.5,
-                textShadow: "0 1px 4px rgba(35,57,93,0.08)",
-                textAlign: "center",
-                mx: "auto",
-                bgcolor: "rgba(31, 48, 78, 0.7)",
-                backdropFilter: "blur(2px)",
-              }}
-            >
-              Connect with opportunities through authentic video profiles. Whether you're hiring or looking for your next role, SwipeScout makes it personal.
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 2,
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                component={Link}
-                to="/register-form"
-                variant="contained"
-                size="large"
-                sx={{
-                  bgcolor: "#1a237e", // Matching dark blue
-                  color: "rgb(33, 99, 80)",
-                  fontWeight: 600,
-                  px: 4,
-                   background: 'linear-gradient(90deg,rgb(255, 243, 137) 15%,rgb(182, 50, 50) 100%)',
-                  "&:hover": {
-                    bgcolor: "#0d1538", // Even darker on hover
-                  },
-                }}
-              >
-                Get Started
-              </Button>
-              <Button
-                component={Link}
-                to="/videos/all"
-                variant="outlined"
-                size="large"
-                sx={{
-                  borderColor: "#1a237e", // Matching dark blue
-                  color: "rgb(24, 66, 145)", // Matching dark blue  background: 'linear-gradient(90deg, #f59e0b 15%, #ef4444 100%)',
-                  fontWeight: 600,
-                  px: 4,
-                  "&:hover": {
-                    bgcolor: "rgba(26, 35, 126, 0.08)", // Subtle hover effect
-                    borderColor: "#0d1538",
-                  },
-                }}
-              >
-                Explore Videos
-              </Button>
-            </Box>
-          </Grid>
-              <Grid item xs={12} md={6} sx={{ position: "relative" }}>
-                {/* SwipeScout Logo */}
-                <Box
-                  component="img"
-                  src={`${VITE_BASE_URL}/public/logoT.png`} // Placeholder for SwipeScout logo
-                  alt="SwipeScout Logo"
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h2"
+                  component="h1"
                   sx={{
-                    position: "absolute",
-                    top: -90, // Adjust position as needed
-                    right: -750,
-                    width: 70,
-                    height: 70,
-                    zIndex: 2,
-                    opacity: 0.36,
-                    display: { xs: "none", md: "block" }, // Only show on larger screens
+                    fontWeight: { xs: 600, md: 800 },
+                    mb: 3,
+                    fontSize: { xs: 40, md: 60 },
+                    lineHeight: 1.2,
+                    fontFamily: '"Inter", "Roboto", "Arial", sans-serif', // Use Inter font
+                    WebkitFontSmoothing: "antialiased",
+                    MozOsxFontSmoothing: "grayscale",
+                    textRendering: "optimizeLegibility",
+                    background: `linear-gradient(170deg, ${theme.palette.primary.light} 10%, ${theme.palette.secondary.main} 30%, ${theme.palette.primary.contrastText} 100%)`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    textFillColor: "transparent",
+                    border: `2.5px solid ${theme.palette.divider}`, // Use theme color
+                    borderRadius: theme.shape.borderRadius * 2, // More rounded
+                    px: 4,
+                    py: 2,
+                    display: "inline-block",
+                    boxShadow: theme.shadows[4], // Subtle shadow
+                    letterSpacing: 1,
+                    textShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    textAlign: "center",
+                    mx: "auto",
+                    bgcolor: 'rgba(255,255,255,0.1)', // Subtle transparent background
+                    backdropFilter: "blur(5px)", // Stronger blur
                   }}
-                />
+                >
+                  Revolutionizing Recruitment with Video
+                </Typography>
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  sx={{
+                    mb: 4,
+                    fontWeight: 500,
+                    fontSize: { xs: 20, md: 26 },
+                    background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 60%, ${theme.palette.primary.light} 100%)`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    textFillColor: "transparent",
+                    border: `0px solid ${theme.palette.divider}`,
+                    borderRadius: theme.shape.borderRadius * 1.5,
+                    px: 3,
+                    py: 1.5,
+                    display: "inline-block",
+                    boxShadow: theme.shadows[2],
+                    letterSpacing: 0.5,
+                    textShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                    textAlign: "center",
+                    mx: "auto",
+                    bgcolor: 'rgba(0,0,0,0.2)', // Subtle transparent background
+                    backdropFilter: "blur(2px)",
+                  }}
+                >
+                  Connect with opportunities through authentic video profiles. Whether you're hiring or looking for your next role, SwipeScout makes it personal.
+                </Typography>
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: { xs: "column", md: "row" },
-                    justifyContent: "space-between",
-                    alignItems: { xs: "flex-start", md: "flex-end" },
-                    gap: 4,
-                    height: "100%",
-                    minHeight: "500px",
-                    "@media (min-width: 900px)": {
-                      flexDirection: "row",
-                      alignItems: "flex-end",
-                      justifyContent: "space-between",
-                    },
+                    gap: 2,
+                    flexWrap: "wrap",
+                    alignItems: "center",
                   }}
                 >
-                  {!isMobile && (
-                    <Box
-                      sx={{
-                        width: { xs: "0", md: "640px" },
-                        pl: "auto",
-                      }}
-                    ></Box>
-                  )}
-                  <Box
+                  <Button
+                    component={Link}
+                    to="/register-form"
+                    variant="contained"
+                    size="large"
                     sx={{
-                      width: { xs: "340px", md: "420px" },
-                      alignSelf: "center",
-                      mx: "auto",
-                      "@media (min-width: 900px)": {
-                        width: "380px",
-                        alignSelf: "center",
-                        
+                      bgcolor: theme.palette.secondary.main, // Use secondary color
+                      color: theme.palette.secondary.contrastText, // Dark text
+                      fontWeight: 600,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: theme.shape.borderRadius,
+                      boxShadow: theme.shadows[3],
+                      '&:hover': {
+                        bgcolor: theme.palette.secondary.dark, // Darker secondary on hover
+                        boxShadow: theme.shadows[5],
                       },
-                      bgcolor: "#dbeafe",
-                     
-                      p: 3,
-                      borderRadius: "10px",
-                      boxShadow: "0 0 15px rgba(0,0,0,0.1)",
                     }}
                   >
-                    <LoginFormTitle
-                      variant="h5"
-                      component="h4"
-                      sx={{
-                        mb: 2,
-                        fontWeight: bold,
-                        color: "#1f2937",
-                        textAlign: "center",
+                    Get Started
+                  </Button>
+                  <Button
+                    component={Link}
+                    to="/videos/all"
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      borderColor: theme.palette.primary.contrastText, // White border
+                      color: theme.palette.primary.contrastText, // White text
+                      fontWeight: 600,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: theme.shape.borderRadius,
+                      '&:hover': {
+                        bgcolor: 'rgba(255,255,255,0.1)', // Subtle white hover
+                        borderColor: theme.palette.primary.contrastText,
+                      },
+                    }}
+                  >
+                    Explore Videos
+                  </Button>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={6} sx={{ position: "relative" }}>
+                {/* Login Form */}
+                <Box
+                  sx={{
+                    width: { xs: "90%", sm: "380px", md: "420px" }, // Responsive width
+                    alignSelf: "center",
+                    mx: "auto",
+                    bgcolor: theme.palette.background.paper, // Use theme color
+                    p: { xs: 2, sm: 3 },
+                    borderRadius: theme.shape.borderRadius * 2, // More rounded
+                    boxShadow: theme.shadows[6], // Stronger shadow for form
+                  }}
+                >
+                  <LoginFormTitle
+                    variant="h5"
+                    component="h4"
+                    sx={{
+                      mb: 2,
+                      fontWeight: bold,
+                      color: theme.palette.text.primary,
+                      textAlign: "center",
+                    }}
+                  >
+                    Log in to your account
+                  </LoginFormTitle>
+                  <Box component="form" onSubmit={handleEmailSignIn}>
+                    <InputField
+                      label="Enter your email address"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      variant="outlined"
+                      size="small"
+                    />
+                    <InputField
+                      label="Enter your password"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      variant="outlined"
+                      size="small"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                              size="small"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff sx={{ color: theme.palette.text.secondary }} />
+                              ) : (
+                                <Visibility sx={{ color: theme.palette.text.secondary }} />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
                       }}
+                    />
+                    <Link
+                      to="/forgot-password"
+                      style={{ fontSize: "0.875rem", color: theme.palette.primary.main }}
                     >
-                      Log in to your account
-                    </LoginFormTitle>
-                    <Box component="form" onSubmit={handleEmailSignIn}>
-                      <InputField
-                        label="Enter your email address"
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        size="small"
-                      />
-                      <InputField
-                        label="Enter your password"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        size="small"
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowPassword(!showPassword)}
-                                edge="end"
-                                size="small"
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff sx={{ color: "#4b5563" }} />
-                                ) : (
-                                  <Visibility sx={{ color: "#4b5563" }} />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      <Link
-                        to="/forgot-password"
-                        style={{ fontSize: "0.875rem", color: "#3b82f6" }}
-                      >
-                        Forgot Password?
-                      </Link>
-                      <LoginButton type="submit" disabled={loading.email}>
-                        {loading.email ? (
-                          <CircularProgress size={24} color="inherit" />
-                        ) : (
-                          "Log In"
-                        )}
-                      </LoginButton>
-                    </Box>
-                    <SocialDivider>
-                      <Typography variant="body2" sx={{ color: "#9ca3af" }}>
-                        Or log in with
-                      </Typography>
-                    </SocialDivider>
-                    <Stack direction="row" spacing={1} justifyContent="center">
-                      <GoogleSignInButton
-                        variant="contained"
-                        onClick={handleGoogleSignIn}
-                        disabled={loading.google}
-                        startIcon={<GoogleIcon />}
-                      >
-                        {loading.google ? (
-                          <CircularProgress size={24} color="inherit" />
-                        ) : (
-                          "Google"
-                        )}
-                      </GoogleSignInButton>
-                      <LinkedInSignInButton
-                        variant="outlined"
-                        onClick={handleLinkedInLogin}
-                        disabled={loading.linkedin}
-                        startIcon={<LinkedInIcon />}
-                        sx={{
-                          flex: 1,
-                          py: 1.25,
-                        }}
-                      >
-                        {loading.linkedin ? (
-                          <CircularProgress size={24} />
-                        ) : (
-                          "LinkedIn"
-                        )}
-                      </LinkedInSignInButton>
-                    </Stack>
-                    {error && (
-                      <Alert
-                        severity="error"
-                        sx={{ mt: 2, display: "flex", alignItems: "center" }}
-                      >
-                        <AlertCircleIcon
-                          style={{
-                            marginRight: "8px",
-                            height: "20px",
-                            width: "20px",
-                          }}
-                        />
-                        {error}
-                      </Alert>
-                    )}
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mt: 2,
-                        textAlign: "center",
-                        color: "#4b5563",
-                      }}
-                    >
-                      Don't have an account?{" "}
-                      <Link
-                        to="/register-form"
-                        style={{
-                          color: "#3b82f6",
-                          fontWeight: 600,
-                          textDecoration: "none",
-                          "&:hover": {
-                            textDecoration: "underline",
-                          },
-                        }}
-                      >
-                        Sign Up
-                      </Link>
-                    </Typography>
+                      Forgot Password?
+                    </Link>
+                    <LoginButton type="submit" disabled={loading.email}>
+                      {loading.email ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Log In"
+                      )}
+                    </LoginButton>
                   </Box>
+                  <SocialDivider>
+                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                      Or log in with
+                    </Typography>
+                  </SocialDivider>
+                  <Stack direction="row" spacing={1} justifyContent="center">
+                    <GoogleSignInButton
+                      variant="contained"
+                      onClick={handleGoogleSignIn}
+                      disabled={loading.google}
+                      startIcon={<GoogleIcon />}
+                    >
+                      {loading.google ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Google"
+                      )}
+                    </GoogleSignInButton>
+                    <LinkedInSignInButton
+                      variant="outlined"
+                      onClick={handleLinkedInLogin}
+                      disabled={loading.linkedin}
+                      startIcon={<LinkedInIcon />}
+                      sx={{
+                        flex: 1,
+                        py: 1.25,
+                      }}
+                    >
+                      {loading.linkedin ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        "LinkedIn"
+                      )}
+                    </LinkedInSignInButton>
+                  </Stack>
+                  {error && (
+                    <Alert
+                      severity="error"
+                      sx={{ mt: 2, display: "flex", alignItems: "center" }}
+                    >
+                      <AlertCircleIcon
+                        style={{
+                          marginRight: "8px",
+                          height: "20px",
+                          width: "20px",
+                        }}
+                      />
+                      {error}
+                    </Alert>
+                  )}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 2,
+                      textAlign: "center",
+                      color: theme.palette.text.secondary,
+                    }}
+                  >
+                    Don't have an account?{" "}
+                    <Link
+                      to="/register-form"
+                      style={{
+                        color: theme.palette.primary.main,
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      Sign Up
+                    </Link>
+                  </Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -797,18 +767,18 @@ const HomePage = () => {
         </Box>
 
         {/* Founder Section */}
-        <Box sx={{ py: 8, bgcolor: "#ffffff" }}>
+        <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: theme.palette.background.paper }}>
           <Container maxWidth="md">
             <Grid container spacing={4} justifyContent="center" alignItems="center">
               <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
                 <Avatar
-                  src={`${VITE_BASE_URL}/public/images/tareq.jpg`}
-                  sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
+                  src={`${VITE_BASE_URL}/public/images/tareq.jpg`} // Assuming this path is correct
+                  sx={{ width: 150, height: 150, mx: "auto", mb: 2, boxShadow: theme.shadows[3] }}
                 />
-                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: "#1f2937", textAlign: "center" }}>
+                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: theme.palette.text.primary, textAlign: "center" }}>
                   Tareq Al-Sharif
                 </Typography>
-                <Typography variant="body2" color="#4b5563" sx={{ textAlign: "center" }}>
+                <Typography variant="body2" color={theme.palette.text.secondary} sx={{ textAlign: "center" }}>
                   Founder & CEO
                 </Typography>
               </Grid>
@@ -819,13 +789,13 @@ const HomePage = () => {
                   sx={{
                     mb: 3,
                     fontWeight: 700,
-                    color: "#1f2937",
+                    color: theme.palette.text.primary,
                     textAlign: "center",
                   }}
                 >
                   A Message from Our Founder
                 </Typography>
-                <Typography variant="body1" sx={{ color: "#4b5563", textAlign: "center" }}>
+                <Typography variant="body1" sx={{ color: theme.palette.text.secondary, textAlign: "center" }}>
                   Welcome to SwipeScout! I founded this platform with a vision to
                   revolutionize how people connect in the professional world. I
                   believe that true potential and personality are best conveyed
@@ -839,7 +809,8 @@ const HomePage = () => {
           </Container>
         </Box>
 
-        <Box sx={{ py: 8, bgcolor: "#f3f4f6" }}>
+        {/* See SwipeScout in Action Section */}
+        <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: theme.palette.grey[100] }}>
           <Container maxWidth="lg">
             <Typography
               variant="h3"
@@ -848,7 +819,7 @@ const HomePage = () => {
                 textAlign: "center",
                 mb: 6,
                 fontWeight: 700,
-                color: "#1f2937",
+                color: theme.palette.text.primary,
               }}
             >
               See SwipeScout in Action
@@ -868,8 +839,8 @@ const HomePage = () => {
                     sx={{
                       width: "300px",
                       maxWidth: "100%",
-                      borderRadius: 2,
-                      boxShadow: 2,
+                      borderRadius: theme.shape.borderRadius * 1.5, // More rounded
+                      boxShadow: theme.shadows[3],
                       transition: "transform 0.2s ease-in-out",
                       "&:hover": {
                         transform: "scale(1.02)",
@@ -890,7 +861,7 @@ const HomePage = () => {
                         position: "relative",
                         width: "100%",
                         height: "100%",
-                        backgroundColor: "#111827",
+                        backgroundColor: theme.palette.grey[900], // Dark background for video area
                         cursor: "pointer",
                       }}
                     >
@@ -918,8 +889,8 @@ const HomePage = () => {
                           top: "50%",
                           left: "50%",
                           transform: "translate(-50%, -50%)",
-                          color: "#ffffff",
-                          bgcolor: "rgba(0,0,0,0.7)",
+                          color: theme.palette.primary.contrastText,
+                          bgcolor: 'rgba(0,0,0,0.7)',
                           borderRadius: "50%",
                           p: 2,
                           display: "flex",
@@ -943,8 +914,8 @@ const HomePage = () => {
                           top: 8,
                           right: 8,
                           zIndex: 2,
-                          backgroundColor: "rgba(0,0,0,0.5)",
-                          color: "white",
+                          backgroundColor: 'rgba(0,0,0,0.5)',
+                          color: theme.palette.primary.contrastText,
                           opacity: playingVideoId === video.id ? 1 : 0,
                           transition: "opacity 0.3s",
                         }}
@@ -953,7 +924,7 @@ const HomePage = () => {
                       </IconButton>
                       <IconButton
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click from firing
+                          e.stopPropagation();
                           handleFullscreen(video.id);
                         }}
                         sx={{
@@ -961,8 +932,8 @@ const HomePage = () => {
                           bottom: 8,
                           right: 8,
                           zIndex: 2,
-                          backgroundColor: "rgba(0,0,0,0.5)",
-                          color: "white",
+                          backgroundColor: 'rgba(0,0,0,0.5)',
+                          color: theme.palette.primary.contrastText,
                           opacity: playingVideoId === video.id ? 1 : 0,
                           transition: "opacity 0.3s",
                         }}
@@ -976,7 +947,7 @@ const HomePage = () => {
                           left: 0,
                           right: 0,
                           p: 2,
-                          color: "white",
+                          color: theme.palette.primary.contrastText,
                           background:
                             "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
                           zIndex: 1,
@@ -985,11 +956,11 @@ const HomePage = () => {
                         <Typography
                           variant="subtitle1"
                           noWrap
-                          sx={{ color: "#ffffff" }}
+                          sx={{ color: theme.palette.primary.contrastText }}
                         >
                           {video.video_title || "Untitled Video"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "#d1d5db" }}>
+                        <Typography variant="body2" sx={{ color: theme.palette.grey[300] }}>
                           {video.video_type || "Uncategorized"} •{" "}
                           {Math.round(video.video_duration || 0)}s
                         </Typography>
@@ -1006,13 +977,15 @@ const HomePage = () => {
                 variant="contained"
                 size="large"
                 sx={{
-                  bgcolor: "#3b82f6",
-                  color: "#ffffff",
+                  bgcolor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
                   fontWeight: 600,
                   px: 6,
                   py: 1.5,
-                  "&:hover": {
-                    bgcolor: "#2563eb",
+                  borderRadius: theme.shape.borderRadius,
+                  boxShadow: theme.shadows[3],
+                  '&:hover': {
+                    bgcolor: theme.palette.primary.dark,
                   },
                 }}
               >
@@ -1021,7 +994,8 @@ const HomePage = () => {
             </Box>
           </Container>
         </Box>
-        <Box sx={{ py: 8, bgcolor: "#f9fafb" }}>
+        {/* Testimonials Section */}
+        <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: theme.palette.background.default }}>
           <Container maxWidth="lg">
             <Typography
               variant="h3"
@@ -1030,7 +1004,7 @@ const HomePage = () => {
                 textAlign: "center",
                 mb: 6,
                 fontWeight: 700,
-                color: "#1f2937",
+                color: theme.palette.text.primary,
               }}
             >
               What Our Users Say
@@ -1038,22 +1012,28 @@ const HomePage = () => {
             <Grid container spacing={4}>
               {testimonials.map((testimonial, index) => (
                 <Grid item xs={12} md={4} key={index}>
-                  <Card sx={{ height: "100%", p: 3, boxShadow: 3 }}>
+                  <Card sx={{
+                    height: "100%",
+                    p: 3,
+                    boxShadow: theme.shadows[3],
+                    borderRadius: theme.shape.borderRadius * 1.5,
+                    backgroundColor: theme.palette.background.paper,
+                  }}>
                     <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                       <Avatar
                         src={testimonial.avatar}
-                        sx={{ width: 60, height: 60, mr: 2 }}
+                        sx={{ width: 60, height: 60, mr: 2, boxShadow: theme.shadows[1] }}
                       />
                       <Box>
-                        <Typography variant="h6" component="h3">
+                        <Typography variant="h6" component="h3" sx={{ color: theme.palette.text.primary }}>
                           {testimonial.name}
                         </Typography>
-                        <Typography variant="body2" color="#4b5563">
+                        <Typography variant="body2" color={theme.palette.text.secondary}>
                           {testimonial.role}
                         </Typography>
                       </Box>
                     </Box>
-                    <Typography variant="body1" sx={{ fontStyle: "italic" }}>
+                    <Typography variant="body1" sx={{ fontStyle: "italic", color: theme.palette.text.primary }}>
                       "{testimonial.quote}"
                     </Typography>
                     <Box sx={{ mt: 2 }}>
@@ -1065,8 +1045,8 @@ const HomePage = () => {
                             mr: 0.5,
                             color:
                               starIndex <= testimonial.rating
-                                ? "#ffc107"
-                                : "#e0e0e0", // Gold for filled, grey for empty
+                                ? theme.palette.warning.main // Use warning color for stars
+                                : theme.palette.grey[300], // Light grey for empty
                           }}
                         />
                       ))}
@@ -1077,132 +1057,129 @@ const HomePage = () => {
             </Grid>
           </Container>
         </Box>
+        {/* Call to Action Section */}
         <Box
-        sx={{
-          pt: 8,
-          pb: 8,
-          background: "linear-gradient(170deg, rgba(144, 199, 209, 0.9) 0%, rgba(96, 159, 196, 0.95) 100%)",
-          color: "#ffffff",
-          textAlign: "center",
-          position: 'relative',
-          overflow: 'hidden',
-          '&:before': {
-            content: '""',
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '2px',
-            background: 'linear-gradient(90deg, #f59e0b 0%, #ef4444 100%)',
-          }
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography
-            variant="h3"
-            component="h2"
-            sx={{
-              mb: 2,
-              fontWeight: 800,
-              color: "#f8fafc",
-              textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              position: 'relative',
-              display: 'inline-block',
-              '&:after': {
-                content: '""',
-                position: 'absolute',
-                bottom: -8,
-                left: '25%',
-                width: '50%',
-                height: '3px',
-                background: '#fbbf24',
-                borderRadius: '3px'
-              }
-            }}
-          >
-            Ready to Transform Your Recruitment?
-          </Typography>
-          <Typography
-            variant="h5"
-            component="p"
-            sx={{
-              mb: 4,
-              fontWeight: 500,
-              color: "#e2e8f0",
-              maxWidth: '700px',
-              mx: 'auto',
-              lineHeight: 1.6
-            }}
-          >
-            Join thousands of professionals and companies finding better matches through video.
-          </Typography>
-          <Button
-            component={Link}
-            to="/register-form"
-            variant="contained"
-            size="large"
-            sx={{
-              background: 'linear-gradient(180deg, #f59e0b 0%, #ef4444 100%)',
-              color: 'white',
-              fontWeight: 700,
-              px: 6,
-              py: 2,
-              fontSize: '1.1rem',
-              borderRadius: '8px',
-              boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              position: 'relative',
-              overflow: 'hidden',
-              '&:hover': {
-                background: 'linear-gradient(90deg, #f59e0b 15%, #ef4444 100%)',
-                boxShadow: '0 6px 20px rgba(239, 68, 68, 0.6)',
-                transform: 'translateY(-2px)',
-              },
-              '&:active': {
-                transform: 'translateY(0)',
-              },
-              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            }}
-          >
-            Get Started Free
-            <Box 
-              component="span" 
+          sx={{
+            pt: { xs: 6, md: 8 },
+            pb: { xs: 6, md: 8 },
+            background: `linear-gradient(170deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`, // Gradient background
+            color: theme.palette.primary.contrastText,
+            textAlign: "center",
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: theme.shape.borderRadius, // Apply global border radius
+            boxShadow: theme.shadows[4], // Subtle shadow
+            margin: theme.spacing(2), // Add margin for a floating effect
+            width: `calc(100% - ${theme.spacing(4)})`, // Account for margin
+            left: '50%',
+            transform: 'translateX(-50%)', // Center the section
+          }}
+        >
+          <Container maxWidth="md">
+            <Typography
+              variant="h3"
+              component="h2"
               sx={{
-                ml: 1,
-                animation: 'pulse 2s infinite',
-                display: 'inline-block'
+                mb: 2,
+                fontWeight: 800,
+                color: theme.palette.primary.contrastText,
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                position: 'relative',
+                display: 'inline-block',
+                '&:after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: -8,
+                  left: '25%',
+                  width: '50%',
+                  height: '3px',
+                  background: theme.palette.secondary.main, // Secondary color for underline
+                  borderRadius: '3px'
+                }
               }}
             >
-              →
+              Ready to Transform Your Recruitment?
+            </Typography>
+            <Typography
+              variant="h5"
+              component="p"
+              sx={{
+                mb: 4,
+                fontWeight: 500,
+                color: theme.palette.primary.contrastText + 'CC',
+                maxWidth: '700px',
+                mx: 'auto',
+                lineHeight: 1.6
+              }}
+            >
+              Join thousands of professionals and companies finding better matches through video.
+            </Typography>
+            <Button
+              component={Link}
+              to="/register-form"
+              variant="contained"
+              size="large"
+              sx={{
+                background: theme.palette.secondary.main, // Secondary color for button
+                color: theme.palette.secondary.contrastText, // Dark text
+                fontWeight: 700,
+                px: 6,
+                py: 2,
+                fontSize: '1.1rem',
+                borderRadius: theme.shape.borderRadius,
+                boxShadow: theme.shadows[4],
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                position: 'relative',
+                overflow: 'hidden',
+                '&:hover': {
+                  background: theme.palette.secondary.dark,
+                  boxShadow: theme.shadows[6],
+                  transform: 'translateY(-2px)',
+                },
+                '&:active': {
+                  transform: 'translateY(0)',
+                },
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}
+            >
+              Get Started Free
+              <Box
+                component="span"
+                sx={{
+                  ml: 1,
+                  animation: 'pulse 2s infinite',
+                  display: 'inline-block'
+                }}
+              >
+                →
+              </Box>
+            </Button>
+
+            <Box
+              sx={{
+                mt: 4,
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 3,
+                flexWrap: 'wrap'
+              }}
+            >
+              <Typography variant="caption" sx={{ color: theme.palette.primary.contrastText + 'CC', display: 'flex', alignItems: 'center' }}>
+                <CheckCircle sx={{ color: theme.palette.success.light, mr: 1, fontSize: '1rem' }} />
+                No credit card required to start
+              </Typography>
+              <Typography variant="caption" sx={{ color: theme.palette.primary.contrastText + 'CC', display: 'flex', alignItems: 'center' }}>
+                <TrendingUp sx={{ color: theme.palette.info.light, mr: 1, fontSize: '1rem' }} />
+                30-second signup
+              </Typography>
+              <Typography variant="caption" sx={{ color: theme.palette.primary.contrastText + 'CC', display: 'flex', alignItems: 'center' }}>
+                <People sx={{ color: theme.palette.warning.light, mr: 1, fontSize: '1rem' }} />
+                Free forever plan
+              </Typography>
             </Box>
-          </Button>
-          
-          <Box 
-            sx={{
-              mt: 4,
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 3,
-              flexWrap: 'wrap'
-            }}
-          >
-            <Typography variant="caption" sx={{ color: '#dbeafe', display: 'flex', alignItems: 'center' }}>
-              <CheckCircle sx={{ color: '#4ade80', mr: 1, fontSize: '1rem' }} />
-              No credit card required to start
-            </Typography>
-            <Typography variant="caption" sx={{ color: '#dbeafe', display: 'flex', alignItems: 'center' }}>
-              <TrendingUp sx={{ color: '#60a5fa', mr: 1, fontSize: '1rem' }} />
-              30-second signup
-            </Typography>
-            <Typography variant="caption" sx={{ color: '#dbeafe', display: 'flex', alignItems: 'center' }}>
-              <People sx={{ color: '#f59e0b', mr: 1, fontSize: '1rem' }} />
-              Free forever plan
-            </Typography>
-          </Box>
-        </Container>
+          </Container>
         </Box>
-        <br></br>
         <Footer />
       </Box>
     </>
