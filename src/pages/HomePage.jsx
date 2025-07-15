@@ -251,7 +251,7 @@ export const mockVideoResumes = [
     status: "completed",
   },
 ];
-const HomePage = () => { // Corrected: Removed `=> {` from here
+const HomePage = () => {
   const theme = useTheme(); // Access theme
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Use theme breakpoint
   const [hoveredVideo, setHoveredVideo] = useState(null);
@@ -509,7 +509,7 @@ const HomePage = () => { // Corrected: Removed `=> {` from here
                     WebkitFontSmoothing: "antialiased",
                     MozOsxFontSmoothing: "grayscale",
                     textRendering: "optimizeLegibility",
-                    background: `linear-gradient(170deg, ${theme.palette.primary.light} 10%, ${theme.palette.secondary.main} 30%, ${theme.palette.primary.contrastText} 100%)`,
+                    background: `linear-gradient(170deg,rgb(255, 255, 255)  10%, rgb(255, 32, 32) 30%, ${theme.palette.primary.contrastText} 100%)`,
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -538,7 +538,7 @@ const HomePage = () => { // Corrected: Removed `=> {` from here
                     fontWeight: 500,
                     fontSize: { xs: 18, md: 24 }, // Slightly reduced font size for subtitle
                     lineHeight: 1.5, // Added line height for readability
-                    background: `linear-gradient(90deg, #FFF9C4 0%, #FFD54F 60%, #FBC02D 100%)`, // Soft → Medium → Rich Yellow
+                    background: `linear-gradient(90deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 60%, ${theme.palette.warning.dark} 100%)`, // Yellow gradient
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -772,7 +772,7 @@ const HomePage = () => { // Corrected: Removed `=> {` from here
             <Grid container spacing={4} justifyContent="center" alignItems="center">
               <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
                 <Avatar
-                  src={`${VITE_BASE_URL}/public/images/tareq.jpg`} // Assuming this path is correct
+                  src={`/images/tareq.jpg`} // Corrected image path
                   sx={{ width: 150, height: 150, mx: "auto", mb: 2, boxShadow: theme.shadows[3] }}
                 />
                 <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: theme.palette.text.primary, textAlign: "center" }}>
@@ -1069,10 +1069,10 @@ const HomePage = () => { // Corrected: Removed `=> {` from here
             overflow: 'hidden',
             borderRadius: theme.shape.borderRadius, // Apply global border radius
             boxShadow: theme.shadows[4], // Subtle shadow
-            margin: theme.spacing(2), // Add margin for a floating effect
-            width: `calc(100% - ${theme.spacing(4)})`, // Account for margin
-            left: '50%',
-            transform: 'translateX(-50%)', // Center the section
+            // Adjusted for full width with internal spacing
+            width: '98%',
+            mx: 'auto', // Center the section
+            px: { xs: 2, md: 4 }, // Add horizontal padding
           }}
         >
           <Container maxWidth="md">
@@ -1180,6 +1180,7 @@ const HomePage = () => { // Corrected: Removed `=> {` from here
             </Box>
           </Container>
         </Box>
+        <Box sx={{ mt: 1, bgcolor: theme.palette.background.default, py: 2 }}></  Box>
         <Footer />
       </Box>
     </>
