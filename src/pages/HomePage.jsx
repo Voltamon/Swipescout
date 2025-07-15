@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
 import {
   Box,
   Container,
@@ -40,7 +40,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Headers/Header"; // Updated Header path
 import Footer from "../components/Headers/Footer"; // Updated Footer path
 import { Helmet } from "react-helmet";
-import { useState, useRef, useEffect } from "react";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import VolumeUp from "@mui/icons-material/VolumeUp";
 import VolumeOff from "@mui/icons-material/VolumeOff";
@@ -252,7 +251,7 @@ export const mockVideoResumes = [
     status: "completed",
   },
 ];
-const HomePage = () => {
+const HomePage = () => { // Corrected: Removed `=> {` from here
   const theme = useTheme(); // Access theme
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Use theme breakpoint
   const [hoveredVideo, setHoveredVideo] = useState(null);
@@ -499,12 +498,12 @@ const HomePage = () => {
             <Grid container spacing={6} alignItems="center">
               <Grid item xs={12} md={6}>
                 <Typography
-                  variant="h2"
+                  variant="h3" // Changed from h2 to h3
                   component="h1"
                   sx={{
                     fontWeight: { xs: 600, md: 800 },
                     mb: 3,
-                    fontSize: { xs: 40, md: 60 },
+                    fontSize: { xs: 32, md: 48 }, // Adjusted font size
                     lineHeight: 1.2,
                     fontFamily: '"Inter", "Roboto", "Arial", sans-serif', // Use Inter font
                     WebkitFontSmoothing: "antialiased",
@@ -537,8 +536,9 @@ const HomePage = () => {
                   sx={{
                     mb: 4,
                     fontWeight: 500,
-                    fontSize: { xs: 20, md: 26 },
-                    background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 60%, ${theme.palette.primary.light} 100%)`,
+                    fontSize: { xs: 18, md: 24 }, // Slightly reduced font size for subtitle
+                    lineHeight: 1.5, // Added line height for readability
+                    background: `linear-gradient(90deg, #FFF9C4 0%, #FFD54F 60%, #FBC02D 100%)`, // Soft → Medium → Rich Yellow
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -550,10 +550,10 @@ const HomePage = () => {
                     display: "inline-block",
                     boxShadow: theme.shadows[2],
                     letterSpacing: 0.5,
-                    textShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                    textShadow: '0 1px 4px rgba(0,0,0,0.2)', // Darker text shadow for contrast
                     textAlign: "center",
                     mx: "auto",
-                    bgcolor: 'rgba(0,0,0,0.2)', // Subtle transparent background
+                    bgcolor: 'rgba(0,0,0,0.5)', // Increased opacity for better contrast
                     backdropFilter: "blur(2px)",
                   }}
                 >
