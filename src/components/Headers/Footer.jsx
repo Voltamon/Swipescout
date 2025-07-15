@@ -26,8 +26,8 @@ const StyledFooter = styled(Box)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius, // Apply global border radius
   boxShadow: theme.shadows[4], // More prominent shadow
   margin: theme.spacing(2), // Add margin for a floating effect
-  width: `calc(100% - ${theme.spacing(4)})`, // Account for margin
-  left: "50%",
+  width: `calc(100% - ${theme.spacing(5)})`, // Account for margin
+  left: "49%",
   transform: "translateX(-50%)", // Center the footer
   position: "relative" // Ensure position for pseudo-elements if any
 }));

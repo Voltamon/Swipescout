@@ -11,11 +11,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   boxShadow: theme.shadows[2], // Subtle shadow
   padding: theme.spacing(1, 0), // Vertical padding
   borderRadius: theme.shape.borderRadius, // Apply global border radius
-  margin: theme.spacing(2), // Add margin for a floating effect
-  width: `calc(100% - ${theme.spacing(4)})`, // Account for margin
-  left: '50%',
-  transform: 'translateX(-50%)', // Center the header
-  top: theme.spacing(2), // Position from top
+  // Removed fixed positioning and width calculations for full width responsiveness
+  width: '100%', // Ensure it takes full width
+  position: 'sticky', // Keep it sticky
+  top: 0,
   zIndex: theme.zIndex.appBar, // Ensure it's above other content
 }));
 
