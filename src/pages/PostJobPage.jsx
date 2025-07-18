@@ -52,7 +52,7 @@ import IconButton from '@mui/material/IconButton';
 
 
 const PageContainer = styled(Box)(({ theme }) => ({
-  background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
+  bgcolor: 'background.jobseeker',
   minHeight: '100vh',
   paddingTop: theme.spacing(3),
   paddingBottom: theme.spacing(4),
@@ -832,8 +832,8 @@ const renderVideoUploadDialog = () => (
 
   return (
     <PageContainer>
-      <Container maxWidth="lg">
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Container maxWidth="lg" sx={{ bgcolor: 'rgb(221, 235, 253)' , borderRadius: 1 ,padding: 1 }}>
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center'  }}>
           <Typography variant="h4" component="h1">
             Post a New Job
           </Typography>

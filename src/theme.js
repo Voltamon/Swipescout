@@ -102,6 +102,7 @@ const theme2 = createTheme({
     },
     background: {
       default: '#f5f7fa',     // Light gray background
+      jobseeker: '#f5f7fa',     // Light gray background
       paper: '#ffffff',       // White for cards/paper
     },
     action: {

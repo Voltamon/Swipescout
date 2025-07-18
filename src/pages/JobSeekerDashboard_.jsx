@@ -205,10 +205,7 @@ const JobSeekerDashboard = () => {
 
     return (
         <DashboardContainer maxWidth="lg" sx={{ mt: 4 ,
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
+    bgcolor: 'background.jobseeker',
     padding: theme.spacing(2),
     
     

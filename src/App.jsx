@@ -161,16 +161,16 @@ function App() {
               <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} /> {/*  this analytics page */}
               <Route path="/job-videos" element={<JobVideos />} />
               {/* Employer Routes */}
-              <Route path="/employer/dashboard" element={<EmployerDashboard_ />} />
+              <Route path="/employer/dashboard" element={<EmployerDashboard_ />} /> {/* -- Employer /> */}
               <Route path="/company-videos" element={<CompanyVideos />} />
               {/* <Route path="/login-form" element={<LoginForm />} /> */}
               {/* <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} /> */}
               <Route path="/job-search" element={<JobSearchPage />} />
-              <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+              <Route path="/employer-dashboard" element={<EmployerDashboard />} />  {/* -- Employer /> */}
               <Route path="/candidate-search" element={<CandidateSearchPage />} />
               <Route path="/candidate-profile" element={<CandidateProfilePage />} />
               <Route path="/job-posting" element={<JobPostingForm />} />
-              <Route path="/video-upload" element={<VideoUpload />} />
+              <Route path="/video-upload" element={<VideoUpload />} />  {/* -- Employer and jobseeker /> */}
               <Route path="/profile" element={<Profile />} />
               <Route path="/inbox" element={<Inbox />} />
 
