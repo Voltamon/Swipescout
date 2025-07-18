@@ -70,7 +70,7 @@ const Header = ({ onSidebarToggle, isSidebarVisible }) => {
         borderRadius: theme.shape.borderRadius, // Apply global border radius
         backgroundColor: theme.palette.background.paper, // Use paper background
         boxShadow: theme.shadows[1], // Subtle shadow
-        mb: isMobile ? 0 : theme.spacing(2), // Margin bottom for spacing with main content
+        mb: isMobile ? 0 : theme.spacing(-1), // Margin bottom for spacing with main content
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

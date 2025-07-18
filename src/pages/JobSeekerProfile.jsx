@@ -70,7 +70,7 @@ const ProfileInfo = styled(Box)(({ theme }) => ({
   flex: 1,
   padding: theme.spacing(3),
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: 'rgb(255, 255, 255)',
   boxShadow: theme.shadows[1],
   [theme.breakpoints.up('md')]: {
     paddingRight: theme.spacing(4),
@@ -546,15 +546,12 @@ const mockVideos = [
 
   return (
     <ProfileContainer  sx={{
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
+    bgcolor: 'background.jobseeker',
     padding: 0,
     minHeight: '100vh',
     height: '100%', 
     mt: 0,
-    pt: 2, 
+    pt: 4, 
     mb: 0,
     paddingBottom: 4,
   }}>

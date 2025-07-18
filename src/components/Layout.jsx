@@ -12,9 +12,9 @@ import Header from "./Headers/admin/HeaderAdmin";
 import { useAuth } from '../hooks/useAuth';
 
 // Define sidebar widths for consistent calculations
-const expandedSidebarWidth = 240;
+const expandedSidebarWidth = 250;
 const collapsedSidebarWidth = 72;
-const headerHeight = 56; // Standard AppBar height
+const headerHeight = 26; // Standard AppBar height
 
 // Styled components for layout structure
 const LayoutRoot = styled(Box)(({ theme, isMobile }) => ({

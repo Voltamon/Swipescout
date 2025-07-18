@@ -67,11 +67,7 @@ export default function EmployerDashboard() {
 
     return (
 <Box sx={{
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    padding: theme.spacing(2),
+    bgcolor: 'background.default',
     height: '100%',
     mt: 0,
     mb: 0,

@@ -24,14 +24,9 @@ export default function CandidateSearchPage() {
 
   return (
     <Box sx={{
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    backgroundopacity: 0.9,
-    padding: theme.spacing(2),
+    bgcolor: 'background.default',
     height: '100vh',
-    mt: 2,
+    mt: 0,
     mb: 0,
     pl: 10,
     paddingBottom: 4,

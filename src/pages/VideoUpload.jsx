@@ -1032,7 +1032,7 @@ const startRecording = async () => {
   
   return (
     <Box sx={{ 
-      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
+      bgcolor: 'background.jobseeker',
       minHeight: "100vh",
       py: 3 ,pt: {
       xs: 20,  

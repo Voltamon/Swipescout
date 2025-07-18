@@ -217,12 +217,9 @@ const VideosPage = () => {
 
   return (
     <Container maxWidth={false} sx={{
-      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'top right',
+      bgcolor: 'background.jobseeker',
       padding: 0,
-      minHeight: 'calc(100vh - 64px)', // Adjust for header
+      minHeight: 'calc(100vh - 24px)', // Adjust for header
       mt: 0,
       pt: 2,
       pb: 4,

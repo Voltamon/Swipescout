@@ -16,7 +16,7 @@ import {
   Divider,
   CircularProgress,
   InputAdornment,
-  Tooltip
+  Tooltip , alpha
 } from '@mui/material';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -78,7 +78,7 @@ const MessageArea = styled(Paper)(({ theme, showConversations }) => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: '#f5f7fa', // Light background for message area
+  backgroundColor: 'rgb(167, 191, 226)', // Light background for message area
   position: 'relative',
   [theme.breakpoints.down('md')]: {
     display: showConversations ? 'none' : 'flex',
@@ -108,39 +108,73 @@ const MessageList = styled(Box)(({ theme }) => ({
 const MessageItem = styled(Box)(({ theme, isOwn }) => ({
   display: 'flex',
   flexDirection: isOwn ? 'row-reverse' : 'row',
-  marginBottom: theme.spacing(2),
+  marginBottom: theme.spacing(1.5), // Slightly reduced margin for a tighter feel
   width: '100%',
   alignItems: 'flex-end',
-  transition: 'all 0.2s ease', // Smooth transition for item changes
+  // Removed transition from here as bubble itself handles its transitions
 }));
 
+// MessageBubble controls the background, border, and text color
 const MessageBubble = styled(Box)(({ theme, isOwn, isPending, hasError }) => ({
-  maxWidth: '80%',
-  minWidth: '120px', // Ensure readability for short messages
-  padding: '12px 16px',
-  borderRadius: isOwn ? '18px 4px 18px 18px' : '4px 18px 18px 18px', // Modern rounded corners
-  // Enhanced contrast and visual feedback for message states
-  backgroundColor: isPending 
-    ? (isOwn ? 'rgba(63, 81, 181, 0.7)' : 'rgba(255, 255, 255, 0.7)') // Lighter for pending
-    : hasError
-    ? (isOwn ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255, 255, 255, 0.8)') // Reddish for error
-    : (isOwn ? '#3f51b5' : '#ffffff'), // Primary blue for own, white for others
-  color: isOwn ? '#ffffff' : '#374151', // White text on blue, dark grey on white
+  maxWidth: '75%', // Slightly reduced max-width for better multi-line readability
+  minWidth: '250px', // Allow it to shrink below 120px for very short messages
+  padding: '10px 14px', // Slightly adjusted padding
+  borderRadius: isOwn ? '20px 4px 20px 20px' : '4px 20px 20px 20px', // More rounded corners, distinctive sent/received
   wordBreak: 'break-word',
-  display: 'inline-block',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.05)', // Subtle shadow
+  display: 'inline-block', // Keep inline-block for fitting content
+  position: 'relative', // For potential future absolute positioning of indicators
+  transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', // Smooth transition for all properties
+  
+  // Background Colors
+  backgroundColor: isOwn
+    ? (isPending ? alpha('rgb(145, 207, 187)', 0.7) : (hasError ? theme.palette.error.dark : 'rgb(107, 161, 185)'))
+    : (isPending ? alpha(theme.palette.grey[200], 0.7) : (hasError ? theme.palette.error.light : 'rgb(84, 179, 147)')),
+  
+  // Text Colors
+  color: isOwn 
+    ? 'rgb(12, 55, 73)' // White for own messages
+    : (hasError ? theme.palette.error.contrastText : 'rgb(13, 57, 77)'), // Darker text for received, contrast for error
+  
+  // Box Shadow
+  boxShadow: isPending || hasError
+    ? '0 0 8px rgba(0,0,0,0.1)' // More subtle shadow for pending/error
+    : theme.shadows[3], // Slightly elevated shadow for normal messages
+  
+  // Margins to align bubbles
   marginLeft: isOwn ? 'auto' : theme.spacing(1),
   marginRight: isOwn ? theme.spacing(1) : 'auto',
-  border: isOwn ? 'none' : '1px solid #e5e7eb', // Border for received messages
-  opacity: isPending || hasError ? 0.8 : 1, // Slightly transparent for pending/error
+  
+  // Border for received messages (optional, can be removed if a strong shadow is enough)
+  border: isOwn ? 'none' : `1px solid ${theme.palette.grey[300]}`,
+  
+  // Opacity for pending/error states
+  opacity: isPending ? 0.7 : (hasError ? 0.9 : 1),
+
+  // Hover Effect
   '&:hover': {
-    boxShadow: '0 3px 6px rgba(0,0,0,0.1)', // Slight lift on hover
+    boxShadow: isPending || hasError 
+      ? '0 0 10px rgba(0,0,0,0.15)' 
+      : theme.shadows[6], // More pronounced shadow on hover
+    transform: 'translateY(-2px)', // Subtle lift on hover
   },
+
+  // Specific styles for error messages
+  ...(hasError && {
+    border: `1px solid ${theme.palette.error.main}`,
+    animation: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both', // Subtle shake animation for errors
+    transformOrigin: '50% 100%',
+    '@keyframes shake': {
+      '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+      '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+      '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+      '40%, 60%': { transform: 'translate3d(4px, 0, 0)' },
+    },
+  }),
 }));
 
 const MessageTime = styled(Typography)(({ isOwn }) => ({
   fontSize: '0.65rem', // Smaller font size for message time
-  color: isOwn ? 'rgba(255,255,255,0.7)' : '#6b7280', // Consistent color, slightly transparent for own
+  color: isOwn ? 'rgba(22, 22, 73, 0.7)' : 'rgba(22, 22, 73, 0.7)', // Consistent color, slightly transparent for own
   marginTop: '4px',
   textAlign: isOwn ? 'right' : 'left',
   paddingLeft: isOwn ? 0 : '8px',
@@ -1146,7 +1180,7 @@ const Chat = () => {
                       );
                     })
                   )}
-                  <div ref={messagesEndRef} /> {/* Scroll target */}
+                  
                   
                   {otherUserTyping && ( // Display typing indicator
                     <Typography 
@@ -1161,6 +1195,8 @@ const Chat = () => {
                       {activeConversation.other_user?.display_name} is typing...
                     </Typography>
                   )}
+                      <div ref={messagesEndRef} />
+
                 </MessageList>
 
                 {/* Message Input */}

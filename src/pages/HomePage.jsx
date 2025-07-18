@@ -509,7 +509,7 @@ const HomePage = () => {
                     WebkitFontSmoothing: "antialiased",
                     MozOsxFontSmoothing: "grayscale",
                     textRendering: "optimizeLegibility",
-                    background: `linear-gradient(170deg,rgb(255, 255, 255)  10%, rgb(255, 32, 32) 30%, ${theme.palette.primary.contrastText} 100%)`,
+                    background: `linear-gradient(170deg,rgb(39, 76, 156)  20%, rgb(243, 87, 87) 60%, ${theme.palette.primary.contrastText} 100%)`,
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -538,7 +538,7 @@ const HomePage = () => {
                     fontWeight: 500,
                     fontSize: { xs: 18, md: 24 }, // Slightly reduced font size for subtitle
                     lineHeight: 1.5, // Added line height for readability
-                    background: `linear-gradient(90deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 60%, ${theme.palette.warning.dark} 100%)`, // Yellow gradient
+                    background: `linear-gradient(90deg,rgb(252, 255, 180) 0%, rgb(245, 240, 167) 60%, ${theme.palette.warning.dark} 100%)`, // Yellow gradient
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -606,7 +606,7 @@ const HomePage = () => {
                       },
                     }}
                   >
-                    Explore Videos
+                    Demo
                   </Button>
                 </Box>
               </Grid>
