@@ -20,13 +20,15 @@ import {
   Settings,
   VideoLibrary,
   Menu,
-  PlayArrow
+  PlayArrow,
+  Padding
 } from "@mui/icons-material";
 import { useAuth } from '../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
 import NavigationPanel from "../components/NavigationPanel";
 import Header from '../components/Headers/HeaderExplore';
+
 // --- Mock Data for Video Resumes (using Cloudinary URLs from previous example) ---
 
  const mockVideoResumes = [
@@ -153,20 +155,18 @@ const EmployerExplorePublic = () => {
   const { user } = useAuth();
 
 
-  return (
+  return ( <><Header sx={{ mb: '20px', }} />
     <Box
       sx={{
         display: "flex",
         flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on xs, row on sm+
         minHeight: '100vh',
-        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-        backgroundSize: "auto",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "top right",
+        
         
       }}
     >
-      <SwipeScoutWatermark />
+     
+      <SwipeScoutWatermark  />
 
       {/* Navigation Panel Wrapper Box */}
       <Box sx={{
@@ -214,7 +214,7 @@ const EmployerExplorePublic = () => {
         </Box>
       </Box>
     </Box>
-    
+    </>
   );
 };
 

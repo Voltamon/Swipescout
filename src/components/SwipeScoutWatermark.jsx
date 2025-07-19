@@ -5,27 +5,17 @@ import { Home} from '@mui/icons-material';
 const SwipeScoutWatermark = () => (
   <Box sx={{
     position: 'absolute',
-    top: 37,
+    top: 67,
     right: 40,
     zIndex: 0,
     opacity: 0.3,
     pointerEvents: 'none'
   }}>
-    <Home sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          fontWeight: 'bold',
-          color: 'rgb(46, 111, 155)',
-          fontFamily: 'Arial, sans-serif',
-          textTransform: 'uppercase',
-          cursor: 'pointer',
-        }}
-        onClick={() => navigate('/')} />
+    
     <Typography variant="h1" sx={{
       fontSize: '3rem',
       fontWeight: 'bold',
-      color: 'rgb(45, 114, 192)',
+      color: 'rgb(108, 171, 248)',
       lineHeight: 1,
       textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
       fontFamily: 'Arial, sans-serif',
