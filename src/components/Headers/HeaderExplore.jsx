@@ -1,48 +1,90 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import {
-  FaInstagram,
-  FaYoutube,
-  FaTwitter,
-  FaDribbble,
-  FaBars,
-  FaTimes
-} from "react-icons/fa";
-import "./Header.css";
-import { Box } from "@mui/material";
+  Box,
+  IconButton,
+  Button,
+  useTheme,
+  useMediaQuery,
+  Typography
+} from "@mui/material";
+import {
+  LightMode,
+  DarkMode,
+  Upload,
+  Search
+} from "@mui/icons-material";
+import { useAuth } from "../../hooks/useAuth";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { role } = useAuth();
 
-  return <><header className="header" sx={{mb:6 ,width:'100%'}}>
-      <div className="logo" onClick={() => navigate("/home-page")}>
-        <img src={logo} alt="Logo" />
-        <p style={{ cursor: "pointer" }}>SwipeScout</p>
-      </div>
+  return (
+    <Box sx={{
+      width: '100%',
+      backdropFilter: 'blur(10px)',
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+      py: 1,
+      px: 2,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000
+    }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1, 
+            cursor: 'pointer' 
+          }}
+          onClick={() => navigate('/')}
+        >
+          <img src={logo} alt="Logo" style={{ height: '40px' }} />
+          <Typography variant="h6" sx={{ 
+            fontWeight: 700,
+            background: 'linear-gradient(90deg, #3f51b5, #2196f3)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            SwipeScout
+          </Typography>
+        </Box>
+      </Box>
 
-      <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-        {menuOpen ? <FaTimes /> : <FaBars />}
-      </button>
-
-      <nav className={`nav ${menuOpen ? "active" : ""}`}>
-        {/* <Link className="nav-link" to="/About">
-          Categories..
-        </Link> */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        {!isMobile && (
+          <Button
+            variant="contained"
+            startIcon={<Upload />}
+            onClick={() => navigate(role === 'employer' ? '/post-job' : '/video-upload')}
+            sx={{
+              borderRadius: '20px',
+              textTransform: 'none',
+              fontWeight: 600,
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)'
+            }}
+          >
+            {role === 'employer' ? 'Post a Job' : 'Upload Video'}
+          </Button>
+        )}
         
-
-      </nav>
-
-      <div className="social-icons">
-        <a href="#">
-          
-       
-        </a>
-      </div>
-    </header>
-    <br/>
-    </> ;
+        <IconButton>
+          {theme.palette.mode === 'dark' ? <LightMode /> : <DarkMode />}
+        </IconButton>
+      </Box>
+    </Box>
+  );
 };
 
 export default Header;
