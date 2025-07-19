@@ -155,56 +155,45 @@ const EmployerExplorePublic = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const drawerContent = (
-    <Box
-      sx={{
-        background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        pt: 2,
-        "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } }
-      }}
-    >
+  const drawerContent = <Box sx={{
+  //backgroundclr
+        height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", pt: 2, "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } } }}>
       <Avatar src="/employer-logo.png" sx={{ width: isMobile ? 36 : 48, height: isMobile ? 36 : 48, mb: 3, border: `2px solid ${theme.palette.text.primary}` }} />
 
       <List sx={{ width: "100%" }}>
-        {[
-          { icon: <Home fontSize={isMobile ? "small" : "medium"} />, value: "home" },
-          { icon: <Search fontSize={isMobile ? "small" : "medium"} />, value: "search" },
-          { icon: <Group fontSize={isMobile ? "small" : "medium"} />, value: "candidates" },
-          { icon: <Bookmark fontSize={isMobile ? "small" : "medium"} />, value: "saved" },
-          { icon: <VideoLibrary fontSize={isMobile ? "small" : "medium"} />, value: "video-resumes" }
-        ].map(item => (
-          <ListItem
-            key={item.value}
-            component="div"
-            selected={activeTab === item.value}
-            onClick={() => {
-              setActiveTab(item.value);
-              if (isMobile) setMobileOpen(false);
-              if (item.value === "home") navigate("/");
-            }}
-            sx={{
-              justifyContent: "center",
-              py: 0,
-              cursor: "pointer",
-              "&.Mui-selected": {
-                borderLeft: `3px solid ${theme.palette.primary.main}`
-              }
-            }}
-          >
-            <ListItemIcon
+        {[{ icon: <Home fontSize={isMobile ? "small" : "medium"} />, value: "home" }, { icon: <Search fontSize={isMobile ? "small" : "medium"} />, value: "search" }, { icon: <Group fontSize={isMobile ? "small" : "medium"} />, value: "candidates" }, { icon: <Bookmark fontSize={isMobile ? "small" : "medium"} />, value: "saved" }, { icon: <VideoLibrary fontSize={isMobile ? "small" : "medium"} />, value: "video-resumes" }].map(
+          item =>
+            <ListItem
+              key={item.value}
+              component="div"
+              selected={activeTab === item.value}
+              onClick={() => {
+                setActiveTab(item.value);
+                if (isMobile) setMobileOpen(false);
+                if (item.value === "home") navigate("/");
+              }}
               sx={{
-                minWidth: "auto",
-                color: activeTab === item.value ? theme.palette.primary.main : theme.palette.text.primary
+                justifyContent: "center",
+                py: 0,
+                cursor: "pointer",
+                "&.Mui-selected": {
+                  borderLeft: `3px solid ${theme.palette.primary.main}`
+                }
               }}
             >
-              {item.icon}
-            </ListItemIcon>
-          </ListItem>
-        ))}
+              <ListItemIcon
+                sx={{
+                  minWidth: "auto",
+                  color:
+                    activeTab === item.value
+                      ? theme.palette.primary.main
+                      : theme.palette.text.primary
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+            </ListItem>
+        )}
       </List>
 
       <Box sx={{ mt: "auto", pb: 2, display: "flex", justifyContent: "center" }}>
@@ -212,8 +201,7 @@ const EmployerExplorePublic = () => {
           <Settings fontSize={isMobile ? "small" : "medium"} />
         </IconButton>
       </Box>
-    </Box>
-  );
+    </Box>;
 
   return (
     <Box sx={{ display: "flex" }}>

@@ -23,18 +23,8 @@ import { BusinessCenter, LocationOn, Search } from "@mui/icons-material"
 export default function JobSearchPage() {
   const theme = useTheme()
 
-  return (
-    <Box sx={{ flexGrow: 1, 
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    padding: theme.spacing(2),
-    mt: 2,
-    mb: 0,
-    paddingBottom: 4,
- }}>
-
+  return <Box sx={{ flexGrow: 1, //backgroundclr
+        backgroundSize: "auto", backgroundRepeat: "no-repeat", backgroundPosition: "top right", padding: theme.spacing(2), mt: 2, mb: 0, paddingBottom: 4 }}>
       {/* Main Content */}
       <Container maxWidth="lg" sx={{ mt: 0, mb: 8 }}>
         {/* Job Search Section */}
@@ -47,16 +37,7 @@ export default function JobSearchPage() {
             {/* Search Bar */}
             <Box sx={{ display: "flex", mb: 3 }}>
               <TextField fullWidth placeholder="Search for jobs..." variant="outlined" size="medium" sx={{ mr: 1 }} />
-              <Button
-                variant="contained"
-                sx={{
-                  bgcolor: "#3366ff",
-                  minWidth: "56px",
-                  "&:hover": {
-                    bgcolor: "#2952cc",
-                  },
-                }}
-              >
+              <Button variant="contained" sx={{ bgcolor: "#3366ff", minWidth: "56px", "&:hover": { bgcolor: "#2952cc" } }}>
                 <Search />
               </Button>
             </Box>
@@ -88,22 +69,18 @@ export default function JobSearchPage() {
                   Job Type
                 </Typography>
                 <Box>
-                  <FormControlLabel
-                    control={<Checkbox size="small" />}
-                    label={<Typography variant="body2">Full-Time</Typography>}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox size="small" />}
-                    label={<Typography variant="body2">Part-Time</Typography>}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox size="small" />}
-                    label={<Typography variant="body2">Contract</Typography>}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox size="small" />}
-                    label={<Typography variant="body2">Freelance</Typography>}
-                  />
+                  <FormControlLabel control={<Checkbox size="small" />} label={<Typography variant="body2">
+                        Full-Time
+                      </Typography>} />
+                  <FormControlLabel control={<Checkbox size="small" />} label={<Typography variant="body2">
+                        Part-Time
+                      </Typography>} />
+                  <FormControlLabel control={<Checkbox size="small" />} label={<Typography variant="body2">
+                        Contract
+                      </Typography>} />
+                  <FormControlLabel control={<Checkbox size="small" />} label={<Typography variant="body2">
+                        Freelance
+                      </Typography>} />
                 </Box>
               </Grid>
 
@@ -124,18 +101,7 @@ export default function JobSearchPage() {
             </Grid>
 
             {/* Apply Filters Button */}
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{
-                bgcolor: "#ffa000",
-                color: "white",
-                py: 1.5,
-                "&:hover": {
-                  bgcolor: "#ff8f00",
-                },
-              }}
-            >
+            <Button fullWidth variant="contained" sx={{ bgcolor: "#ffa000", color: "white", py: 1.5, "&:hover": { bgcolor: "#ff8f00" } }}>
               Apply Filters
             </Button>
           </CardContent>
@@ -174,34 +140,12 @@ export default function JobSearchPage() {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e3f2fd",
-                      color: "#2196f3",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d0e8fd",
-                        border: "none",
-                      },
-                    }}
-                  >
+                  <Button size="small" variant="outlined" sx={{ bgcolor: "#e3f2fd", color: "#2196f3", border: "none", borderRadius: "16px", "&:hover": { bgcolor: "#d0e8fd", border: "none" } }}>
                     Full-Time
                   </Button>
                 </Box>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#3366ff",
-                    "&:hover": {
-                      bgcolor: "#2952cc",
-                    },
-                  }}
-                >
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#3366ff", "&:hover": { bgcolor: "#2952cc" } }}>
                   View Details
                 </Button>
               </CardContent>
@@ -235,34 +179,12 @@ export default function JobSearchPage() {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e3f2fd",
-                      color: "#2196f3",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d0e8fd",
-                        border: "none",
-                      },
-                    }}
-                  >
+                  <Button size="small" variant="outlined" sx={{ bgcolor: "#e3f2fd", color: "#2196f3", border: "none", borderRadius: "16px", "&:hover": { bgcolor: "#d0e8fd", border: "none" } }}>
                     Full-Time
                   </Button>
                 </Box>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#3366ff",
-                    "&:hover": {
-                      bgcolor: "#2952cc",
-                    },
-                  }}
-                >
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#3366ff", "&:hover": { bgcolor: "#2952cc" } }}>
                   View Details
                 </Button>
               </CardContent>
@@ -296,34 +218,12 @@ export default function JobSearchPage() {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e3f2fd",
-                      color: "#2196f3",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d0e8fd",
-                        border: "none",
-                      },
-                    }}
-                  >
+                  <Button size="small" variant="outlined" sx={{ bgcolor: "#e3f2fd", color: "#2196f3", border: "none", borderRadius: "16px", "&:hover": { bgcolor: "#d0e8fd", border: "none" } }}>
                     Full-Time
                   </Button>
                 </Box>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#3366ff",
-                    "&:hover": {
-                      bgcolor: "#2952cc",
-                    },
-                  }}
-                >
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#3366ff", "&:hover": { bgcolor: "#2952cc" } }}>
                   View Details
                 </Button>
               </CardContent>
@@ -357,34 +257,12 @@ export default function JobSearchPage() {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e3f2fd",
-                      color: "#2196f3",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d0e8fd",
-                        border: "none",
-                      },
-                    }}
-                  >
+                  <Button size="small" variant="outlined" sx={{ bgcolor: "#e3f2fd", color: "#2196f3", border: "none", borderRadius: "16px", "&:hover": { bgcolor: "#d0e8fd", border: "none" } }}>
                     Full-Time
                   </Button>
                 </Box>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#3366ff",
-                    "&:hover": {
-                      bgcolor: "#2952cc",
-                    },
-                  }}
-                >
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#3366ff", "&:hover": { bgcolor: "#2952cc" } }}>
                   View Details
                 </Button>
               </CardContent>
@@ -418,34 +296,12 @@ export default function JobSearchPage() {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e3f2fd",
-                      color: "#2196f3",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d0e8fd",
-                        border: "none",
-                      },
-                    }}
-                  >
+                  <Button size="small" variant="outlined" sx={{ bgcolor: "#e3f2fd", color: "#2196f3", border: "none", borderRadius: "16px", "&:hover": { bgcolor: "#d0e8fd", border: "none" } }}>
                     Full-Time
                   </Button>
                 </Box>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#3366ff",
-                    "&:hover": {
-                      bgcolor: "#2952cc",
-                    },
-                  }}
-                >
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#3366ff", "&:hover": { bgcolor: "#2952cc" } }}>
                   View Details
                 </Button>
               </CardContent>
@@ -479,34 +335,12 @@ export default function JobSearchPage() {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      bgcolor: "#e3f2fd",
-                      color: "#2196f3",
-                      border: "none",
-                      borderRadius: "16px",
-                      "&:hover": {
-                        bgcolor: "#d0e8fd",
-                        border: "none",
-                      },
-                    }}
-                  >
+                  <Button size="small" variant="outlined" sx={{ bgcolor: "#e3f2fd", color: "#2196f3", border: "none", borderRadius: "16px", "&:hover": { bgcolor: "#d0e8fd", border: "none" } }}>
                     Full-Time
                   </Button>
                 </Box>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#3366ff",
-                    "&:hover": {
-                      bgcolor: "#2952cc",
-                    },
-                  }}
-                >
+                <Button fullWidth variant="contained" sx={{ bgcolor: "#3366ff", "&:hover": { bgcolor: "#2952cc" } }}>
                   View Details
                 </Button>
               </CardContent>
@@ -515,16 +349,7 @@ export default function JobSearchPage() {
         </Grid>
 
         {/* Accessibility Buttons - Fixed on the right side */}
-        <Box
-          sx={{
-            position: "fixed",
-            right: 20,
-            bottom: 100,
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-          }}
-        >
+        <Box sx={{ position: "fixed", right: 20, bottom: 100, display: "flex", flexDirection: "column", gap: 1 }}>
           <Avatar sx={{ bgcolor: "#212121" }}>
             <Typography variant="body2">A</Typography>
           </Avatar>
@@ -536,8 +361,7 @@ export default function JobSearchPage() {
           </Avatar>
         </Box>
       </Container>
-    </Box>
-  )
+    </Box>;
 }
 
       {/* Navigation Bar */}

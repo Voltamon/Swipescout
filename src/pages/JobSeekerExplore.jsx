@@ -147,19 +147,9 @@ const JobSeekerExplore = () => {
 
     const theme = useTheme(); // Get current theme
 
-  return (
-    <Box sx={{ p: 3,
-      
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: 'auto',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'top right',
-    padding: theme.spacing(2),
-    height: '100vh',
-    mt: 2,
-    mb: 0,
-    paddingBottom: 4,
-     }}>
+  return <Box sx={{ p: 3,
+        //backgroundclr
+        backgroundSize: "auto", backgroundRepeat: "no-repeat", backgroundPosition: "top right", padding: theme.spacing(2), height: "100vh", mt: 2, mb: 0, paddingBottom: 4 }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Explore Jobs
@@ -169,22 +159,10 @@ const JobSeekerExplore = () => {
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <TextField
-          placeholder="Search jobs, companies, or skills"
-          variant="outlined"
-          size="small"
-          sx={{ width: '50%' }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+        <TextField placeholder="Search jobs, companies, or skills" variant="outlined" size="small" sx={{ width: "50%" }} InputProps={{ startAdornment: <InputAdornment position="start">
                 <Search />
-              </InputAdornment>
-            ),
-          }}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+              </InputAdornment> }} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
         <Button variant="outlined" startIcon={<FilterList />}>
           Filters
         </Button>
@@ -198,179 +176,187 @@ const JobSeekerExplore = () => {
       </Tabs>
 
       <Grid container spacing={3}>
-        {filteredVideos.map((video) => (
+        {filteredVideos.map(video =>
           <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
             <VideoCard onClick={() => handleVideoClick(video)}>
               <VideoPlayer
-                ref={(el) => (videoRefs.current[video.id] = el)}
+                ref={el => (videoRefs.current[video.id] = el)}
                 src={video.videoUrl}
                 loop
                 muted
                 playsInline
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
               />
-              
-              {playingVideo !== video.id && (
+
+              {playingVideo !== video.id &&
                 <IconButton
                   sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    color: '#fff',
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0,0,0,0.7)',
-                    },
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    color: "#fff",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    "&:hover": {
+                      backgroundColor: "rgba(0,0,0,0.7)"
+                    }
                   }}
-                  onClick={(e) => togglePlay(video.id, e)}
+                  onClick={e => togglePlay(video.id, e)}
                 >
                   <PlayArrow fontSize="large" />
-                </IconButton>
-              )}
-              
+                </IconButton>}
+
               <VideoOverlay>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                >
                   <Box>
                     <Typography variant="subtitle1" fontWeight="bold">
                       {video.jobTitle}
                     </Typography>
-                    <Typography variant="body2">{video.company}</Typography>
+                    <Typography variant="body2">
+                      {video.company}
+                    </Typography>
                   </Box>
-                  <Avatar src={video.logoUrl} sx={{ width: 40, height: 40 }} />
+                  <Avatar
+                    src={video.logoUrl}
+                    sx={{ width: 40, height: 40 }}
+                  />
                 </Box>
-                
+
                 <Stack direction="row" spacing={1} sx={{ mt: 1, mb: 1 }}>
-                  {video.tags.slice(0, 2).map((tag, index) => (
+                  {video.tags.slice(0, 2).map((tag, index) =>
                     <Chip
                       key={index}
                       label={tag}
                       size="small"
                       sx={{
-                        backgroundColor: 'rgba(255,255,255,0.2)',
-                        color: '#fff',
-                        backdropFilter: 'blur(10px)',
+                        backgroundColor: "rgba(255,255,255,0.2)",
+                        color: "#fff",
+                        backdropFilter: "blur(10px)"
                       }}
                     />
-                  ))}
+                  )}
                 </Stack>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+
+                <Box
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Box sx={{ display: "flex", gap: 1 }}>
                     <IconButton
                       size="small"
-                      onClick={(e) => toggleLike(video.id, e)}
-                      sx={{ color: video.liked ? '#ff4081' : '#fff' }}
+                      onClick={e => toggleLike(video.id, e)}
+                      sx={{ color: video.liked ? "#ff4081" : "#fff" }}
                     >
                       {video.liked ? <Favorite /> : <FavoriteBorder />}
                     </IconButton>
                     <IconButton
                       size="small"
-                      onClick={(e) => toggleSave(video.id, e)}
-                      sx={{ color: video.saved ? '#ffc107' : '#fff' }}
+                      onClick={e => toggleSave(video.id, e)}
+                      sx={{ color: video.saved ? "#ffc107" : "#fff" }}
                     >
                       {video.saved ? <Bookmark /> : <BookmarkBorder />}
                     </IconButton>
                   </Box>
-                  <Typography variant="caption">{video.posted}</Typography>
+                  <Typography variant="caption">
+                    {video.posted}
+                  </Typography>
                 </Box>
               </VideoOverlay>
             </VideoCard>
           </Grid>
-        ))}
+        )}
       </Grid>
 
       {/* Job Details Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="h6">Job Details</Typography>
           <IconButton onClick={() => setOpenDialog(false)}>
             <Close />
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          {selectedVideo && (
-            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+          {selectedVideo && <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 3 }}>
               <Box sx={{ flex: 1 }}>
-                <VideoPlayer
-                  autoPlay
-                  controls
-                  src={selectedVideo.videoUrl}
-                  style={{ width: '100%', borderRadius: '8px' }}
-                />
+                <VideoPlayer autoPlay controls src={selectedVideo.videoUrl} style={{ width: "100%", borderRadius: "8px" }} />
               </Box>
               <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <Avatar src={selectedVideo.logoUrl} sx={{ width: 64, height: 64, mr: 2 }} />
                   <Box>
                     <Typography variant="h5" fontWeight="bold">
                       {selectedVideo.jobTitle}
                     </Typography>
-                    <Typography variant="subtitle1">{selectedVideo.company}</Typography>
+                    <Typography variant="subtitle1">
+                      {selectedVideo.company}
+                    </Typography>
                   </Box>
                 </Box>
-                
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                  {selectedVideo.tags.map((tag, index) => (
-                    <Chip key={index} label={tag} color="primary" variant="outlined" />
-                  ))}
+
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
+                  {selectedVideo.tags.map((tag, index) =>
+                    <Chip
+                      key={index}
+                      label={tag}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  )}
                 </Box>
-                
+
                 <Typography variant="body1" paragraph>
                   {selectedVideo.description}
                 </Typography>
-                
+
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                   <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <LocationOn color="primary" />
-                      <Typography>{selectedVideo.location}</Typography>
+                      <Typography>
+                        {selectedVideo.location}
+                      </Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <AttachMoney color="primary" />
-                      <Typography>{selectedVideo.salary}</Typography>
+                      <Typography>
+                        {selectedVideo.salary}
+                      </Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <Work color="primary" />
-                      <Typography>{selectedVideo.employmentType}</Typography>
+                      <Typography>
+                        {selectedVideo.employmentType}
+                      </Typography>
                     </Box>
                   </Grid>
                   <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <Schedule color="primary" />
-                      <Typography>{selectedVideo.posted}</Typography>
+                      <Typography>
+                        {selectedVideo.posted}
+                      </Typography>
                     </Box>
                   </Grid>
                 </Grid>
-                
-                <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    fullWidth
-                  >
+
+                <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+                  <Button variant="contained" color="primary" size="large" fullWidth>
                     Apply Now
                   </Button>
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    fullWidth
-                  >
+                  <Button variant="outlined" size="large" fullWidth>
                     Save for Later
                   </Button>
                 </Box>
               </Box>
-            </Box>
-          )}
+            </Box>}
         </DialogContent>
       </Dialog>
-    </Box>
-  );
+    </Box>;
 };
 
 export default JobSeekerExplore;
