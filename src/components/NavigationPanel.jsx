@@ -1,296 +1,310 @@
 // NavigationPanel.jsx
-import { Box, Typography, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import {
   Home,
   Videocam,
   VideoCameraFront,
   Dashboard,
   Person,
-  Work
+  Work,
+  PlayCircleOutline,
+  Business
 } from "@mui/icons-material";
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const NavigationPanel = ({ navigate }) => {
   const { role, user } = useAuth();
-  const isEmployer = role === 'employer';
 
   return (
     <Box
       sx={{
-        width: { xs: '100%', sm: '280px' },
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderRadius: '16px',
-        p: 2,
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
-        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.1)',
+        width: '260px', // Increased from 220px
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '12px',
+        p: 2, // Increased from 1.5
+        border: '1px solid rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)', // Slightly stronger shadow
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
-        marginLeft: { sm: 'auto' }, // Push panel to the right
-        marginRight: { sm: '20px' } // Add right margin
+        marginLeft: 'auto',
+        marginRight: '16px'
       }}
     >
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: 700,
-          background: 'linear-gradient(90deg, #3f51b5, #2196f3)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          mb: 1,
-          fontFamily: "'Poppins', sans-serif",
-          textTransform: 'uppercase',
-          letterSpacing: '0.8px',
-          position: 'relative',
-          pb: 1,
-          '&:after': {
-            content: '""',
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            width: '100%',
-            height: '2px',
-            background: 'linear-gradient(90deg, rgba(9,67,143,0.8) 0%, rgba(255,255,255,0) 80%)',
-            borderRadius: '2px'
-          }
-        }}
-      >
-        SwipeScout
-      </Typography>
+      {/* Header */}
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, px: 1 }}> {/* Increased mb */}
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 700,
+            color: '#1976d2',
+            fontFamily: "'Poppins', sans-serif",
+            fontSize: '1.2rem' // Slightly larger
+          }}
+        >
+          SwipeScout
+        </Typography>
+      </Box>
 
+      {/* User Info */}
       {user && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 1.5, // Increased gap
+          mb: 2, // Increased mb
+          px: 1,
+          py: 1, // Increased py
+          backgroundColor: 'rgba(25, 118, 210, 0.05)',
+          borderRadius: '8px'
+        }}>
           <Box sx={{
-            width: 40,
-            height: 40,
+            width: 36, // Increased from 32
+            height: 36,
             borderRadius: '50%',
-            backgroundColor: '#2196f3',
+            backgroundColor: '#1976d2',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: 'white',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            fontSize: '0.95rem' // Slightly larger
           }}>
             {user.display_name?.charAt(0) || 'U'}
           </Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.9rem' }}> {/* Slightly larger */}
             {user.display_name || 'User'}
           </Typography>
         </Box>
       )}
 
-      {/* Demo Videos Section */}
-      <Typography sx={{
-        fontWeight: 'bold',
-        color: 'rgb(46, 111, 155)',
-        fontFamily: 'Arial, sans-serif',
-        textTransform: 'uppercase',
-        letterSpacing: '1px',
-        pt: 1
+      <Divider sx={{ my: 1.5 }} /> {/* Increased my */}
+
+      {/* Sample Videos Section */}
+      <Typography variant="caption" sx={{ 
+        fontWeight: 600,
+        color: '#555',
+        px: 1,
+        mb: 1, // Increased mb
+        display: 'block',
+        fontSize: '0.75rem' // Slightly larger
       }}>
-        Sample Videos
+        SAMPLE VIDEOS
       </Typography>
 
-      <List sx={{ width: '100%' }}>
-        <ListItem
-          button
+      <List dense sx={{ py: 0.5 }}> {/* Increased py */}
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/job-seeker-explore-public')}
           sx={{
-            borderRadius: '12px',
-            mb: 1,
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5, // Increased px
+            py: 0.75, // Increased py
+            mb: 0.75, // Increased mb
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <Person />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}> {/* Increased minWidth */}
+            <Person fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="Jobseekers Demo"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="Jobseekers" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }} // Slightly larger
           />
         </ListItem>
 
-        <ListItem
-          button
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/employer-explore-public')}
           sx={{
-            borderRadius: '12px',
-            mb: 1,
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5,
+            py: 0.75,
+            mb: 0.75,
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <Work />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+            <Business fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="Employers Demo"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="Employers" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
           />
         </ListItem>
       </List>
+
+      <Divider sx={{ my: 1.5 }} />
 
       {/* Real Videos Section */}
-      <Typography sx={{
-        fontWeight: 'bold',
-        color: 'rgb(39, 111, 121)',
-        fontFamily: 'Arial, sans-serif',
-        textTransform: 'uppercase',
-        letterSpacing: '1px',
-        mt: 1
+      <Typography variant="caption" sx={{ 
+        fontWeight: 600,
+        color: '#555',
+        px: 1,
+        mb: 1,
+        display: 'block',
+        fontSize: '0.75rem'
       }}>
-        Real Videos
+        RESUMES
       </Typography>
 
-      <List sx={{ width: '100%' }}>
-        <ListItem
-          button
+      <List dense sx={{ py: 0.5 }}>
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/videos/all')}
           sx={{
-            borderRadius: '12px',
-            mb: 1,
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5,
+            py: 0.75,
+            mb: 0.75,
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <Videocam />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+            <PlayCircleOutline fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="All Videos"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="All" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
           />
         </ListItem>
 
-        <ListItem
-          button
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/videos/jobseekers')}
           sx={{
-            borderRadius: '12px',
-            mb: 1,
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5,
+            py: 0.75,
+            
+            mb: 0.75,
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <Person />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+            <Person fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="Jobseekers"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="Jobseekers" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
           />
         </ListItem>
 
-        <ListItem
-          button
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/videos/employers')}
           sx={{
-            borderRadius: '12px',
-            mb: 1,
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5,
+            py: 0.75,
+            mb: 0.75,
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <Work />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+            <Business fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="Employers"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="Employers" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
           />
         </ListItem>
       </List>
 
-      {/* User Specific Links */}
-      <List sx={{ width: '100%', mt: 'auto' }}>
+      <Divider sx={{ my: 1.5 }} />
+
+      {/* User Actions */}
+      <List dense sx={{ py: 0.5 }}>
         {!role && (
-          <ListItem
-            button
+          <ListItem 
+            button 
+            dense
             onClick={() => navigate('/login')}
             sx={{
-              borderRadius: '12px',
-              mb: 1,
-              '&:hover': {
-                backgroundColor: 'rgba(33, 150, 243, 0.1)'
-              }
+              borderRadius: '6px',
+              px: 1.5,
+              py: 0.75,
+              mb: 0.75,
+              '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
             }}
           >
-            <ListItemText
-              primary="Login"
+            <ListItemText 
+              primary="Login" 
               primaryTypographyProps={{ 
+                fontSize: '0.9rem',
                 fontWeight: 500,
-                color: 'rgb(1, 81, 128)'
+                color: '#1976d2'
               }}
             />
           </ListItem>
         )}
 
         {role && (
-          <ListItem
-            button
-            onClick={() => isEmployer ? navigate('/employer-dashboard') : navigate('/dashboard-jobseeker')}
+          <ListItem 
+            button 
+            dense
+            onClick={() => role === 'employer' ? navigate('/employer-dashboard') : navigate('/dashboard-jobseeker')}
             sx={{
-              borderRadius: '12px',
-              mb: 1,
-              '&:hover': {
-                backgroundColor: 'rgba(33, 150, 243, 0.1)'
-              }
+              borderRadius: '6px',
+              px: 1.5,
+              py: 0.75,
+              mb: 0.75,
+              '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
             }}
           >
-            <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-              <Dashboard />
+            <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+              <Dashboard fontSize="small" />
             </ListItemIcon>
-            <ListItemText
-              primary="Dashboard"
-              primaryTypographyProps={{ fontWeight: 500 }}
+            <ListItemText 
+              primary="Dashboard" 
+              primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
             />
           </ListItem>
         )}
 
-        <ListItem
-          button
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/video-upload')}
           sx={{
-            borderRadius: '12px',
-            mb: 1,
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5,
+            py: 0.75,
+            mb: 0.75,
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <VideoCameraFront />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+            <VideoCameraFront fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="Upload Video"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="Upload Video" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
           />
         </ListItem>
 
-        <ListItem
-          button
+        <ListItem 
+          button 
+          dense
           onClick={() => navigate('/')}
           sx={{
-            borderRadius: '12px',
-            '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)'
-            }
+            borderRadius: '6px',
+            px: 1.5,
+            py: 0.75,
+            '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.08)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: '#2196f3' }}>
-            <Home />
+          <ListItemIcon sx={{ minWidth: 36, color: '#555' }}>
+            <Home fontSize="small" />
           </ListItemIcon>
-          <ListItemText
-            primary="Home"
-            primaryTypographyProps={{ fontWeight: 500 }}
+          <ListItemText 
+            primary="Home" 
+            primaryTypographyProps={{ fontSize: '0.9rem', fontWeight: 500 }}
           />
         </ListItem>
       </List>

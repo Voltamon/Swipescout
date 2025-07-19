@@ -25,6 +25,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
 import NavigationPanel from "../components/NavigationPanel";
+import Header from '../components/Headers/HeaderExplore';
 
 
 // --- Mock Data for Video Resumes (using Cloudinary URLs from previous example) ---
@@ -125,6 +126,7 @@ const PlayableVideoPreview = ({ title, experience, videoUrl, onClick }) => {
   };
 
   return (
+  
     <Box
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
@@ -224,9 +226,10 @@ const JobseekerExplorePage = () => {
   };
 
   const drawerContent = (
+    
     <Box
       sx={{
-        background: `linear-gradient(115deg,rgba(156, 187, 253, 0.73) 10%,rgba(178, 209, 224, 0.73) 60%), url('/backgrounds/bkg2.png')`,
+       
         height: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -285,15 +288,13 @@ const JobseekerExplorePage = () => {
     </Box>
   );
 
-  return <Box sx={{
+  return <> <Header  /><Box sx={{
     display: "flex",
     flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on xs, row on sm+
     minHeight: '100vh',
-    background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-    backgroundSize: "auto",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "top right",
+
   }}>
+   
       {/* SwipeScoutWatermark needs to be outside the main flex content to prevent it from affecting the layout */}
       <SwipeScoutWatermark />
 
@@ -315,10 +316,7 @@ const JobseekerExplorePage = () => {
         ml: { xs: 0, sm: 0 }, // REMOVE ml for desktop, flexbox handles spacing
         minHeight: { xs: 'auto', sm: '100vh' },
         overflowY: "auto",
-        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-        backgroundSize: "auto",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "top right",
+    
         // width: { xs: '100%', sm: 'auto' } // flexGrow will handle width on desktop
       }}>
         <Box sx={{
@@ -341,7 +339,8 @@ const JobseekerExplorePage = () => {
           )}
         </Box>
       </Box>
-    </Box>;
+  </Box>;
+  </>;
 };
 
 export default JobseekerExplorePage;

@@ -1,4 +1,4 @@
-// AllVideosPage.jsx (updated imports and styles)
+// AllVideosPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useVideoContext } from '../context/VideoContext';
 import { styled } from "@mui/material/styles";
@@ -10,200 +10,17 @@ import {
   DialogActions, Tooltip, useMediaQuery, useTheme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Error, CloudUpload, Replay, Delete, PlayArrow, Home } from '@mui/icons-material';
+import { CheckCircle, Error, CloudUpload, Replay, Delete, PlayArrow ,Home} from '@mui/icons-material';
 import api, { deleteVideo, getAllVideos, getEmployerPublicVideos, getJobSeekersVideos } from '../services/api';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
-import { VolumeUp, VolumeOff, Favorite, Share, Comment, MoreVert } from '@mui/icons-material';
+import { VolumeUp, VolumeOff } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { bold } from '@cloudinary/url-gen/qualifiers/fontWeight';
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet"></link>
+import SwipeScoutWatermark from "../components/SwipeScoutWatermark";
 import NavigationPanel from "../components/NavigationPanel";
 import Header from '../components/Headers/HeaderExplore';
-
-const VideoCard = ({ video, isHovered, onClick, onHover, toggleMute, isMuted }) => {
-  const videoRef = useRef(null);
-  const { role } = useAuth();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  useEffect(() => {
-    if (videoRef.current) {
-      if (isHovered) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.play().catch(e => console.log('Autoplay prevented:', e));
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [isHovered]);
-
-  return (
-    <Card
-      sx={{
-        width: '100%',
-        height: '100%',
-        borderRadius: 2,
-        overflow: 'hidden',
-        position: 'relative',
-        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-        transition: 'transform 0.3s ease',
-        '&:hover': {
-          transform: 'scale(1.02)'
-        }
-      }}
-      onClick={onClick}
-      onMouseEnter={() => onHover(true)}
-      onMouseLeave={() => onHover(false)}
-    >
-      {/* Video Player */}
-      <CardMedia
-        component="div"
-        sx={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#000',
-          cursor: 'pointer'
-        }}
-      >
-        {video.video_url && (
-          <video
-            ref={videoRef}
-            src={video.video_url}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block'
-            }}
-            muted={isMuted}
-            loop
-            playsInline
-            disablePictureInPicture
-            controlsList="nodownload"
-          />
-        )}
-
-        {/* Video Overlay */}
-        <Box sx={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          p: 2,
-          background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-          zIndex: 1,
-        }}>
-          <Typography variant="h6" sx={{ color: 'white', fontWeight: 600 }}>
-            {video.video_title || 'Untitled Video'}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>
-            {video.video_type || 'Uncategorized'} • {Math.round(video.video_duration || 0)}s
-          </Typography>
-        </Box>
-
-        {/* Video Actions */}
-        <Box sx={{
-          position: 'absolute',
-          right: 8,
-          bottom: 80,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          zIndex: 2
-        }}>
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleMute();
-            }}
-            sx={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.7)'
-              }
-            }}
-          >
-            {isMuted ? <VolumeOff /> : <VolumeUp />}
-          </IconButton>
-
-          <IconButton
-            sx={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.7)'
-              }
-            }}
-          >
-            <Favorite />
-          </IconButton>
-
-          <IconButton
-            sx={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.7)'
-              }
-            }}
-          >
-            <Comment />
-          </IconButton>
-
-          <IconButton
-            sx={{
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.7)'
-              }
-            }}
-          >
-            <Share />
-          </IconButton>
-        </Box>
-
-        {/* Apply Button */}
-        {role === 'jobseeker' && video.video_type === 'job' && (
-          <Button
-            variant="contained"
-            sx={{
-              position: 'absolute',
-              bottom: 16,
-              left: 16,
-              zIndex: 2,
-              borderRadius: '20px',
-              fontWeight: 600,
-              background: 'linear-gradient(45deg, #FF5252 30%, #FF8A80 90%)',
-              boxShadow: '0 3px 5px 2px rgba(255, 138, 128, .3)'
-            }}
-          >
-            Apply Now
-          </Button>
-        )}
-
-        {role === 'employer' && video.video_type === 'resume' && (
-          <Button
-            variant="contained"
-            sx={{
-              position: 'absolute',
-              bottom: 16,
-              left: 16,
-              zIndex: 2,
-              borderRadius: '20px',
-              fontWeight: 600,
-              background: 'linear-gradient(45deg, #4CAF50 30%, #81C784 90%)',
-              boxShadow: '0 3px 5px 2px rgba(129, 199, 132, .3)'
-            }}
-          >
-            Contact Candidate
-          </Button>
-        )}
-      </CardMedia>
-    </Card>
-  );
-};
 
 const AllVideosPage = () => {
   const { videos: localVideos, retryUpload, removeVideo } = useVideoContext();
@@ -327,110 +144,229 @@ const AllVideosPage = () => {
     },
   }));
 
-  return (
-    <Box sx={{
-      background: theme => theme.palette.background.default,
-      minHeight: "100vh",
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      <Header />
-      
-      <Box sx={{
+  return (<Box sx={{
+        
+        minHeight: "100vh",
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: "top right",}} > <Header />
+    <Box
+      sx={{
         display: "flex",
-        flexDirection: { xs: 'column', sm: 'row' },
-        flex: 1,
-        pt: { xs: 0, sm: 2 }
+        flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on xs, row on sm+
+        alignItems: { xs: 'center', sm: 'flex-start' }, // Center on xs, align to start on sm+
+        width: "100%",
+        "& .MuiListItem-root": { color: "rgb(39, 56, 83)", "&.Mui-selected": { color: "#ffffff" } }
+      }}
+    >
+      
+
+      <SwipeScoutWatermark />
+
+      {/* NavigationPanel Wrapper - acts as sidebar on sm+ */}
+      <Box sx={{
+        width: { xs: '100%', sm: '270px' }, // Full width on mobile, fixed width on desktop
+        p: { xs: 2, sm: 2 }, // Consistent padding
+        flexShrink: 0, // Prevent shrinking of the sidebar
+        mt: { xs: 0, sm: -1 } // Adjust top margin as needed
       }}>
-        {/* Navigation Panel */}
-        <Box sx={{
-          width: { xs: '100%', sm: '280px' },
-          p: { xs: 1, sm: 2 },
-          display: { xs: 'none', sm: 'block' }
-        }}>
-          <NavigationPanel navigate={navigate} />
-        </Box>
-
-        {/* Main Content */}
-        <Box sx={{
-          flex: 1,
-          p: { xs: 1, sm: 2 },
-          maxWidth: { sm: 'calc(100% - 280px)' }
-        }}>
-          {loading && page === 1 ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-              <CircularProgress size={60} />
-            </Box>
-          ) : filteredVideos.length === 0 ? (
-            <Box sx={{ 
-              textAlign: 'center', 
-              mt: 10,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2
-            }}>
-              <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                No videos found
-              </Typography>
-              <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                Be the first to upload your {pagetype === 'jobseekers' ? 'resume video' : 'company profile'}
-              </Typography>
-              <Button 
-                variant="contained"
-                onClick={() => navigate('/video-upload')}
-                sx={{
-                  borderRadius: '20px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  px: 4,
-                  py: 1.5
-                }}
-              >
-                Upload Video
-              </Button>
-            </Box>
-          ) : (
-            <>
-              <Grid container spacing={2}>
-                {filteredVideos.map((video) => (
-                  <Grid item key={video.id} xs={12} sm={6} md={4} lg={4}>
-                    <VideoCard
-                      video={video}
-                      isHovered={hoveredVideo === video.id}
-                      onClick={() => handleVideoClick(video)}
-                      onHover={(isHovering) => handleVideoHover(video.id, isHovering)}
-                      toggleMute={() => toggleMute(video.id)}
-                      isMuted={isMuted}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-
-              {totalPages > 1 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
-                  <Pagination
-                    count={totalPages}
-                    page={page}
-                    onChange={handlePageChange}
-                    color="primary"
-                    sx={{
-                      '& .MuiPaginationItem-root': {
-                        color: 'text.primary',
-                        '&.Mui-selected': {
-                          backgroundColor: 'primary.main',
-                          color: 'white'
-                        },
-                      },
-                    }}
-                  />
-                </Box>
-              )}
-            </>
-          )}
-        </Box>
+        <NavigationPanel navigate={navigate}/>
       </Box>
-    </Box>
+
+      {/* Main Content Area (Video Grid and Alerts) */}
+      <Box sx={{
+        flexGrow: 1, // Occupy remaining space on desktop
+        width: { xs: '100%', sm: 'auto' }, // Full width on mobile, auto-width for flexGrow on desktop
+        maxWidth: { xs: '100%', sm: '1200px' }, // Max width for content within flexGrow
+        px: 2,
+        mt: { xs: 0, sm: 3 }, // Adjust top margin as needed
+        ml: { xs: 0, sm: 0 }, // No left margin needed for flex layout
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        {uploadLimitReached && (
+          <Alert severity="warning" sx={{ mb: 3, width: '100%' }}>
+            You have reached your daily upload limit. Please try again tomorrow.
+          </Alert>
+        )}
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 3, width: '100%' }}>
+            {error}
+          </Alert>
+        )}
+
+        {loading && page === 1 ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : filteredVideos.length === 0 ? (
+          <Box sx={{ 
+                        textAlign: 'center', 
+                        mt: 10,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 2
+                      }}>
+                        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                          No videos found
+                        </Typography>
+                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                          Be the first to upload your {pagetype === 'jobseekers' ? 'resume video' : 'company profile'}
+                        </Typography>
+                        <Button 
+                          variant="contained"
+                          onClick={() => navigate('/video-upload')}
+                          sx={{
+                            borderRadius: '20px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            px: 4,
+                            py: 1.5
+                          }}
+                        >
+                          Upload Video
+                        </Button>
+                      </Box>
+        ) : (
+          <>
+            <Grid container spacing={3} justifyContent={{ xs: 'center', sm: 'flex-start' }}>
+              {filteredVideos.map((video) => (
+                <Grid item key={video.id} xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <Card
+                    sx={{
+                      width: '300px',
+                      maxWidth: '100%',
+                      borderRadius: 2,
+                      boxShadow: 2,
+                      transition: 'transform 0.2s ease-in-out',
+                      '&:hover': {
+                        transform: 'scale(1.02)',
+                      },
+                      position: 'relative',
+                      overflow: 'hidden',
+                      aspectRatio: "9/16",
+                    }}
+                    onMouseEnter={() => handleVideoHover(video.id, true)}
+                    onMouseLeave={() => handleVideoHover(video.id, false)}
+                    onClick={() => handleVideoClick(video)}
+                  >
+                    {(video.status === 'uploading' || video.status === 'processing') && (
+                      <StatusBorder status={video.status} />
+                    )}
+
+                    <CardMedia
+                      component="div"
+                      sx={{
+                        position: 'relative',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: '#000',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {video.video_url && (
+                        <video
+                          ref={el => videoRefs.current[video.id] = el}
+                          src={video.video_url}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block'
+                          }}
+                          muted={isMuted}
+                          loop
+                          playsInline
+                          disablePictureInPicture
+                          controlsList="nodownload"
+                        />
+                      )}
+
+                      <Box
+                        className="play-icon-overlay"
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: "#fff",
+                          bgcolor: "rgba(255, 64, 129, 0.7)",
+                          borderRadius: "50%",
+                          p: 2,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          opacity: hoveredVideo === video.id ? 0 : 1,
+                          transition: "opacity 0.3s",
+                        }}
+                      >
+                        <PlayArrow fontSize="large" />
+                      </Box>
+
+                      <IconButton
+                        onClick={(e) => toggleMute(e, video.id)}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          zIndex: 2,
+                          backgroundColor: 'rgba(0,0,0,0.5)',
+                          color: 'white'
+                        }}
+                      >
+                        {isMuted ? <VolumeOff /> : <VolumeUp />}
+                      </IconButton>
+
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          p: 2,
+                          color: 'white',
+                          background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                          zIndex: 1,
+                        }}
+                      >
+                        <Typography variant="subtitle1" noWrap sx={{ color: 'white' }}>
+                          {video.video_title || 'Untitled Video'}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'white' }}>
+                          {video.video_type || 'Uncategorized'} • {Math.round(video.video_duration || 0)}s
+                        </Typography>
+                      </Box>
+                    </CardMedia>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+
+            {totalPages > 1 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Pagination
+                  count={totalPages}
+                  page={page}
+                  onChange={handlePageChange}
+                  color="primary"
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      color: 'white',
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                    },
+                    '& .Mui-selected': {
+                      backgroundColor: 'rgba(255,255,255,0.4)',
+                    },
+                  }}
+                />
+              </Box>
+            )}
+          </>
+        )}
+      </Box>
+    </Box></Box>
   );
 };
 
