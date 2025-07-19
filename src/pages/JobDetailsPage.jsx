@@ -45,7 +45,7 @@ import FeedIcon from '@mui/icons-material/Feed';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({
-  background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%)`,
+  //backgroundclr 
   minHeight: "100vh",
   paddingTop: theme.spacing(3),
   paddingBottom: theme.spacing(4),

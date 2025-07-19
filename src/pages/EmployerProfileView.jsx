@@ -359,10 +359,7 @@ const EmployerPublicProfile = ({userId:propUserId}) => {
   if (loading) {
     return (
       <ProfileContainer sx={{
-        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-        backgroundSize: 'auto',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'top right',
+        //backgroundclr 
         padding: theme.spacing(2),
         height: '100vh',
         mt: 2,
@@ -381,10 +378,7 @@ const EmployerPublicProfile = ({userId:propUserId}) => {
   if (!profile) {
     return (
       <ProfileContainer sx={{
-        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-        backgroundSize: 'auto',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'top right',
+        //backgroundclr 
         padding: theme.spacing(2),
         height: '100vh',
         mt: 2,
@@ -405,10 +399,7 @@ const EmployerPublicProfile = ({userId:propUserId}) => {
 
   return (
     <ProfileContainer sx={{
-      background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'repeat-y',
-      backgroundPosition: 'top right',
+      //backgroundclr 
       padding: theme.spacing(2),
       minHeight: '100vh',
       pt: 5,

@@ -173,7 +173,7 @@ const navigate = useNavigate();
     <Box sx={{ pb: 7, 
         display: "flex",
         flexDirection: "column",
-        background: `linear-gradient(135deg, rgba(178, 209, 224, 0.5) 30%, rgba(111, 156, 253, 0.5) 90%), url('/backgrounds/bkg1.png')`,
+        //backgroundclr 
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'top right',
