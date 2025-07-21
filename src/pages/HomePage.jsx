@@ -16,8 +16,8 @@ import {
   CircularProgress,
   Alert,
   TextField,
-  InputAdornment,
-  Stack,
+  InputAdornment, Zoom,Slide,Paper,
+  Stack,Fade,Chip,
   useTheme
 } from "@mui/material";
 import {
@@ -48,6 +48,53 @@ import { AlertCircle as AlertCircleIcon } from "lucide-react";
 import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
 
 
+const stats = [
+    { number: "50K+", label: "Active Users", icon: <People /> },
+    { number: "15K+", label: "Successful Hires", icon: <Work /> },
+    { number: "2.5M+", label: "Video Views", icon: <PlayCircle /> },
+    { number: "95%", label: "Satisfaction Rate", icon: <Star /> }
+];
+
+const VideoShowcase = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    borderRadius: '24px',
+    overflow: 'hidden',
+    boxShadow: '0 30px 60px rgba(0, 0, 0, 0.2)',
+    transform: 'perspective(1000px) rotateY(-8deg) rotateX(5deg)',
+    transition: 'all 0.6s ease',
+    '&:hover': {
+        transform: 'perspective(1000px) rotateY(-4deg) rotateX(2deg) scale(1.05)'
+    }
+}));
+
+const FloatingCard = styled(Card)(({ theme }) => ({
+    position: 'relative',
+    zIndex: 2,
+    backdropFilter: 'blur(20px)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: '24px',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 30px 80px rgba(0, 0, 0, 0.15)'
+    }
+}));
+
+
+const StatsCard = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(3),
+    textAlign: 'center',
+    borderRadius: '16px',
+    background: 'linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%)',
+    border: '1px solid rgba(102, 126, 234, 0.1)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 15px 30px rgba(102, 126, 234, 0.1)'
+    }
+}));
 
 const LoginFormTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(1.25),
@@ -495,6 +542,297 @@ const HomePage = () => {
           }}
         >
           <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+            <Grid container spacing={6} alignItems="center" sx={{ minHeight: '100vh' }}>
+                                        <Grid item xs={12} lg={7}>
+                                            <Fade in timeout={1000}>
+                                                <Box>
+                                                    <Chip
+                                                        label="🚀 AI-Powered Recruitment Platform"
+                                                        sx={{
+                                                            mb: 3,
+                                                            bgcolor: 'rgba(255, 255, 255, 0.2)',
+                                                            color: 'white',
+                                                            backdropFilter: 'blur(10px)',
+                                                            border: '1px solid rgba(255, 255, 255, 0.3)'
+                                                        }}
+                                                    />
+                                                    <Typography
+                                                        variant="h1"
+                                                        sx={{
+                                                            fontWeight: 800,
+                                                            mb: 3,
+                                                            fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
+                                                            lineHeight: 1.1,
+                                                            color: 'white',
+                                                            textShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                                                        }}
+                                                    >
+                                                        The Future of
+                                                        <Box component="span" sx={{ 
+                                                            background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                                                            WebkitBackgroundClip: 'text',
+                                                            WebkitTextFillColor: 'transparent',
+                                                            display: 'block'
+                                                        }}>
+                                                            Video Recruitment
+                                                        </Box>
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="h5"
+                                                        sx={{
+                                                            mb: 4,
+                                                            color: 'rgba(255, 255, 255, 0.9)',
+                                                            fontWeight: 400,
+                                                            maxWidth: '600px'
+                                                        }}
+                                                    >
+                                                        Connect talent with opportunities through AI-powered video matching. 
+                                                        Experience recruitment that's personal, efficient, and revolutionary.
+                                                    </Typography>
+                                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ mb: 4 }}>
+                                                        <Button
+                                                            component={Link}
+                                                            to="/register-form"
+                                                            variant="contained"
+                                                            size="large"
+                                                            sx={{
+                                                                bgcolor: 'white',
+                                                                color: '#667eea',
+                                                                fontWeight: 700,
+                                                                px: 4,
+                                                                py: 2,
+                                                                borderRadius: '50px',
+                                                                fontSize: '1.1rem',
+                                                                boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                                                                '&:hover': {
+                                                                    bgcolor: 'rgba(255,255,255,0.95)',
+                                                                    transform: 'translateY(-2px)',
+                                                                    boxShadow: '0 15px 40px rgba(0,0,0,0.3)'
+                                                                }
+                                                            }}
+                                                        >
+                                                            Start Free Trial
+                                                        </Button>
+                                                        <Button
+                                                            component={Link}
+                                                            to="/videos/all"
+                                                            variant="outlined"
+                                                            size="large"
+                                                            sx={{
+                                                                borderColor: 'white',
+                                                                color: 'white',
+                                                                fontWeight: 600,
+                                                                px: 4,
+                                                                py: 2,
+                                                                borderRadius: '50px',
+                                                                fontSize: '1.1rem',
+                                                                backdropFilter: 'blur(10px)',
+                                                                '&:hover': {
+                                                                    bgcolor: 'rgba(255,255,255,0.1)',
+                                                                    transform: 'translateY(-2px)'
+                                                                }
+                                                            }}
+                                                        >
+                                                            Watch Demo
+                                                        </Button>
+                                                    </Stack>
+                                                    
+                                                    {/* Stats Row */}
+                                                    <Grid container spacing={3} sx={{ mt: 2 }}>
+                                                        {stats.slice(0, 3).map((stat, index) => (
+                                                            <Grid item xs={4} key={index}>
+                                                                <Zoom in timeout={1000 + index * 200}>
+                                                                    <Box sx={{ textAlign: 'center' }}>
+                                                                        <Typography
+                                                                            variant="h4"
+                                                                            sx={{
+                                                                                fontWeight: 800,
+                                                                                color: 'white',
+                                                                                mb: 0.5
+                                                                            }}
+                                                                        >
+                                                                            {stat.number}
+                                                                        </Typography>
+                                                                        <Typography
+                                                                            variant="body2"
+                                                                            sx={{
+                                                                                color: 'rgba(255, 255, 255, 0.8)',
+                                                                                fontWeight: 500
+                                                                            }}
+                                                                        >
+                                                                            {stat.label}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                </Zoom>
+                                                            </Grid>
+                                                        ))}
+                                                    </Grid>
+                                                </Box>
+                                            </Fade>
+                                        </Grid>
+            
+                                        <Grid item xs={12} lg={5}>
+                                            <Slide direction="left" in timeout={1200}>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                                    {/* Video Showcase */}
+                                                    <VideoShowcase>
+                                                        <video
+                                                            autoPlay
+                                                            loop
+                                                            muted
+                                                            playsInline
+                                                            style={{
+                                                                width: '100%',
+                                                                height: '300px',
+                                                                objectFit: 'cover'
+                                                            }}
+                                                        >
+                                                            <source src="/videos/hero-demo.mp4" type="video/mp4" />
+                                                        </video>
+                                                        <Box
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                bottom: 0,
+                                                                left: 0,
+                                                                right: 0,
+                                                                p: 3,
+                                                                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                                                                color: 'white'
+                                                            }}
+                                                        >
+                                                            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                                                See SwipeScout in Action
+                                                            </Typography>
+                                                            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                                                                Watch how video recruitment transforms hiring
+                                                            </Typography>
+                                                        </Box>
+                                                    </VideoShowcase>
+            
+                                                    {/* Login Form */}
+                                                    <FloatingCard sx={{ p: 4 }}>
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                mb: 3,
+                                                                fontWeight: 700,
+                                                                textAlign: 'center',
+                                                                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent'
+                                                            }}
+                                                        >
+                                                            Welcome Back
+                                                        </Typography>
+            
+                                                        <Box component="form" onSubmit={handleEmailSignIn}>
+                                                            <TextField
+                                                                fullWidth
+                                                                label="Email Address"
+                                                                type="email"
+                                                                name="email"
+                                                                value={formData.email}
+                                                                onChange={handleChange}
+                                                                required
+                                                                sx={{ mb: 2 }}
+                                                            />
+                                                            <TextField
+                                                                fullWidth
+                                                                label="Password"
+                                                                type={showPassword ? "text" : "password"}
+                                                                name="password"
+                                                                value={formData.password}
+                                                                onChange={handleChange}
+                                                                required
+                                                                sx={{ mb: 2 }}
+                                                                InputProps={{
+                                                                    endAdornment: (
+                                                                        <InputAdornment position="end">
+                                                                            <IconButton
+                                                                                onClick={() => setShowPassword(!showPassword)}
+                                                                                edge="end"
+                                                                            >
+                                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                                            </IconButton>
+                                                                        </InputAdornment>
+                                                                    )
+                                                                }}
+                                                            />
+                                                            
+                                                            <Button
+                                                                type="submit"
+                                                                fullWidth
+                                                                variant="contained"
+                                                                size="large"
+                                                                disabled={loading.email}
+                                                                sx={{
+                                                                    mb: 2,
+                                                                    py: 1.5,
+                                                                    borderRadius: '12px',
+                                                                    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                                    fontWeight: 600
+                                                                }}
+                                                            >
+                                                                {loading.email ? <CircularProgress size={24} /> : "Sign In"}
+                                                            </Button>
+                                                        </Box>
+            
+                                                        <Divider sx={{ my: 2 }}>
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                Or continue with
+                                                            </Typography>
+                                                        </Divider>
+            
+                                                        <Stack direction="row" spacing={2}>
+                                                            <Button
+                                                                fullWidth
+                                                                variant="outlined"
+                                                                onClick={handleGoogleSignIn}
+                                                                disabled={loading.google}
+                                                                startIcon={<GoogleIcon />}
+                                                                sx={{ py: 1.5, borderRadius: '12px' }}
+                                                            >
+                                                                {loading.google ? <CircularProgress size={20} /> : "Google"}
+                                                            </Button>
+                                                            <Button
+                                                                fullWidth
+                                                                variant="outlined"
+                                                                onClick={handleLinkedInLogin}
+                                                                disabled={loading.linkedin}
+                                                                startIcon={<LinkedInIcon />}
+                                                                sx={{ py: 1.5, borderRadius: '12px' }}
+                                                            >
+                                                                {loading.linkedin ? <CircularProgress size={20} /> : "LinkedIn"}
+                                                            </Button>
+                                                        </Stack>
+            
+                                                        {error && (
+                                                            <Alert severity="error" sx={{ mt: 2 }}>
+                                                                {error}
+                                                            </Alert>
+                                                        )}
+            
+                                                        <Typography
+                                                            variant="body2"
+                                                            sx={{ mt: 3, textAlign: 'center', color: 'text.secondary' }}
+                                                        >
+                                                            Don't have an account?{" "}
+                                                            <Link
+                                                                to="/register-form"
+                                                                style={{
+                                                                    color: '#667eea',
+                                                                    fontWeight: 600,
+                                                                    textDecoration: 'none'
+                                                                }}
+                                                            >
+                                                                Sign Up Free
+                                                            </Link>
+                                                        </Typography>
+                                                    </FloatingCard>
+                                                </Box>
+                                            </Slide>
+                                        </Grid>
+                                    </Grid>
             <Grid container spacing={6} alignItems="center">
               <Grid item xs={12} md={6}>
                 <Typography
