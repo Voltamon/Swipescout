@@ -31,27 +31,33 @@ const AboutUs = () => {
 
   const teamMembers = [
     {
-      name: "Team Member",
+      name: "Raj Singah",
       role: "CEO & Founder",
       bio:
         "10+ years in HR tech. Passionate about connecting talent with opportunity.",
       avatar: "/images/team/alex.jpg"
     },
     {
-      name: "Team Member",
+      name: "Varshal Dubey",
       role: "CTO",
       bio: "Tech visionary with expertise in AI-driven recruitment solutions.",
       avatar: "/images/team/samira.jpg"
     },
     {
-      name: "Team Member",
+      name: "Tareq Alsharif",
       role: "Head of Design",
       bio:
         "Creates intuitive user experiences that make job hunting enjoyable.",
       avatar: "/images/team/jamie.jpg"
     },
     {
-      name: "Team Member",
+      name: "Obaid Nieroukh",
+      role: "Growth Manager",
+      bio: "Builds partnerships that help SwipeScout reach more candidates.",
+      avatar: "/images/team/miguel.jpg"
+    },
+    {
+      name: "Bahri Ayzabar",
       role: "Growth Manager",
       bio: "Builds partnerships that help SwipeScout reach more candidates.",
       avatar: "/images/team/miguel.jpg"

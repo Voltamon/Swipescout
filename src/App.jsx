@@ -90,6 +90,8 @@ import EmployerProfileView from "./pages/EmployerProfileView";
 import AllVideosPage from "./pages/AllVideosPage";
 import HomePage from "./pages/HomePage";
 import HowItWorksPage from "./pages/HowItWorks";
+import Home3 from "./pages/Home3";
+import Home2 from "./pages/Home2";
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -136,6 +138,8 @@ function App() {
             <Route path="/check-it" element={<CheckExplorePage />} />
             <Route path="employer-explore-public" element={<EmployerExplorePublic />} />
             <Route path="job-seeker-explore-public" element={<JobSeekerExplorePublic />} />
+            <Route path="tmp" element={<Home3 />} />
+            <Route path="tmp2" element={<Home2 />} />
             {/* <Route path="/explore-layout" element={<ExploreLayout />}>
             </Route> */}
             <Route path="/video-feed/:vid?" element={<VideoFeed />} />
