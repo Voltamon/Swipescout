@@ -17,7 +17,10 @@ import {
   Alert,
   TextField,
   InputAdornment,
-  Stack,
+  Stack,Paper,
+  Fade,
+  Zoom,
+  Slide,Chip,
   useTheme
 } from "@mui/material";
 import {
@@ -497,68 +500,45 @@ const HomePage = () => {
           <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
             <Grid container spacing={6} alignItems="center">
               <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h3" // Changed from h2 to h3
-                  component="h1"
-                  sx={{
-                    fontWeight: { xs: 600, md: 800 },
-                    mb: 3,
-                    fontSize: { xs: 32, md: 48 }, // Adjusted font size
-                    lineHeight: 1.2,
-                    fontFamily: '"Inter", "Roboto", "Arial", sans-serif', // Use Inter font
-                    WebkitFontSmoothing: "antialiased",
-                    MozOsxFontSmoothing: "grayscale",
-                    textRendering: "optimizeLegibility",
-                    background: `linear-gradient(170deg,rgb(39, 76, 156)  20%, rgb(243, 87, 87) 60%, ${theme.palette.primary.contrastText} 100%)`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    textFillColor: "transparent",
-                    border: `2.5px solid ${theme.palette.divider}`, // Use theme color
-                    borderRadius: theme.shape.borderRadius * 2, // More rounded
-                    px: 4,
-                    py: 2,
-                    display: "inline-block",
-                    boxShadow: theme.shadows[4], // Subtle shadow
-                    letterSpacing: 1,
-                    textShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                    textAlign: "center",
-                    mx: "auto",
-                    bgcolor: 'rgba(255,255,255,0.1)', // Subtle transparent background
-                    backdropFilter: "blur(5px)", // Stronger blur
-                  }}
-                >
-                  Revolutionizing Recruitment with Video
-                </Typography>
-                <Typography
-                  variant="h5"
-                  component="h2"
-                  sx={{
-                    mb: 4,
-                    fontWeight: 500,
-                    fontSize: { xs: 18, md: 24 }, // Slightly reduced font size for subtitle
-                    lineHeight: 1.5, // Added line height for readability
-                    background: `linear-gradient(90deg,rgb(252, 255, 180) 0%, rgb(245, 240, 167) 60%, ${theme.palette.warning.dark} 100%)`, // Yellow gradient
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    textFillColor: "transparent",
-                    border: `0px solid ${theme.palette.divider}`,
-                    borderRadius: theme.shape.borderRadius * 1.5,
-                    px: 3,
-                    py: 1.5,
-                    display: "inline-block",
-                    boxShadow: theme.shadows[2],
-                    letterSpacing: 0.5,
-                    textShadow: '0 1px 4px rgba(0,0,0,0.2)', // Darker text shadow for contrast
-                    textAlign: "center",
-                    mx: "auto",
-                    bgcolor: 'rgba(0,0,0,0.5)', // Increased opacity for better contrast
-                    backdropFilter: "blur(2px)",
-                  }}
-                >
-                  Connect with opportunities through authentic video profiles. Whether you're hiring or looking for your next role, SwipeScout makes it personal.
-                </Typography>
+                  <Chip sx={{ backgroundColor: 'rgba(66, 81, 107, 0.2)', color: 'white' , mt:-6,
+                                                             backdropFilter: 'blur(10px)',
+                                                             border: '1px solid rgba(255, 255, 255, 0.3) '}}
+                                                         label="🚀 AI-Powered Recruitment Platform"
+                                                        
+                                                     />
+                                                     <Typography
+                                                         variant="h1"
+                                                         sx={{
+                                                             fontWeight: 800,
+                                                             mb: 3,
+                                                             fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
+                                                             lineHeight: 1.1,
+                                                             color: 'white',
+                                                             textShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                                                         }}
+                                                     >
+                                                         The Future of
+                                                         <Box component="span" sx={{ 
+                                                             background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                                                             WebkitBackgroundClip: 'text',
+                                                             WebkitTextFillColor: 'transparent',
+                                                             display: 'block'
+                                                         }}>
+                                                             Video Recruitment
+                                                         </Box>
+                                                     </Typography>
+                                                     <Typography
+                                                         variant="h5"
+                                                         sx={{
+                                                             mb: 4,
+                                                             color: 'rgba(255, 255, 255, 0.9)',
+                                                             fontWeight: 400,
+                                                             maxWidth: '600px'
+                                                         }}
+                                                     >
+                                                         Connect talent with opportunities through AI-powered video matching. 
+                                                         Experience recruitment that's personal, efficient, and revolutionary.
+                                                     </Typography>
                 <Box
                   sx={{
                     display: "flex",
