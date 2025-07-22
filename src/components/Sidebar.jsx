@@ -52,16 +52,16 @@ const Sidebar = ({ open = true, onClose, variant, isMobile }) => {
   const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const employer_menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
-    { text: 'Profile', icon: <AccountBoxIcon />, path: '/employer-profile' },
+    // { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     { text: 'My Videos', icon: <VideocamIcon />, path: '/videos' },
+    { text: 'Profile', icon: <AccountBoxIcon />, path: '/employer-profile' },
     { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
-    { text: 'Search', icon: <PlagiarismIcon />, path: '/candidate-search' },
+    { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
     { text: 'Post Job', icon: <AddCardIcon />, path: '/Post-job-page' },
     { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
-    { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
+    { text: 'Search', icon: <PlagiarismIcon />, path: '/candidate-search' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
-    { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
+    // { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
   ];
 
   const secondaryItems = [

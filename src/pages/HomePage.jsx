@@ -51,6 +51,53 @@ import { AlertCircle as AlertCircleIcon } from "lucide-react";
 import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
 
 
+const stats = [
+    { number: "50K+", label: "Active Users", icon: <People /> },
+    { number: "15K+", label: "Successful Hires", icon: <Work /> },
+    { number: "2.5M+", label: "Video Views", icon: <PlayCircle /> },
+    { number: "95%", label: "Satisfaction Rate", icon: <Star /> }
+];
+
+const VideoShowcase = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    borderRadius: '24px',
+    overflow: 'hidden',
+    boxShadow: '0 30px 60px rgba(0, 0, 0, 0.2)',
+    transform: 'perspective(1000px) rotateY(-8deg) rotateX(5deg)',
+    transition: 'all 0.6s ease',
+    '&:hover': {
+        transform: 'perspective(1000px) rotateY(-4deg) rotateX(2deg) scale(1.05)'
+    }
+}));
+
+const FloatingCard = styled(Card)(({ theme }) => ({
+    position: 'relative',
+    zIndex: 2,
+    backdropFilter: 'blur(20px)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: '24px',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 30px 80px rgba(0, 0, 0, 0.15)'
+    }
+}));
+
+
+const StatsCard = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(3),
+    textAlign: 'center',
+    borderRadius: '16px',
+    background: 'linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%)',
+    border: '1px solid rgba(102, 126, 234, 0.1)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 15px 30px rgba(102, 126, 234, 0.1)'
+    }
+}));
 
 const LoginFormTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(1.25),
