@@ -291,10 +291,10 @@ const EditJobSeekerProfile = () => {
       try {
         setLoading(true);
 
-       
-       
         try{
         profileResponse = await getUserProfile();
+        console.log('profile::::0000',profileResponse.data);
+        setProfile(profileResponse.data);
         } catch(error) {
         if (error.status === 404) {
           try {
@@ -329,11 +329,11 @@ const EditJobSeekerProfile = () => {
         console.log("Profile::::::3333",profileResponse.data);
         setProfile(profileResponse.data);
         console.log("Profile::::::4444", profileResponse.data);
-        setSkills(skillsResponse.data.skills);
-        setAvailableSkills(availableSkillsResponse.data.skills);
-        setExperiences(experiencesResponse.data.experiences);
+        setSkills(skillsResponse.data.skills || []);
+        setAvailableSkills(availableSkillsResponse.data.skills || []);
+        setExperiences(experiencesResponse.data.experiences || []);
         setEducation(educationResponse.data.educations || []);
-        setVideos(videosResponse.data.videos);
+        setVideos(videosResponse.data.videos || []);
 
         setAvatarVersion(0);
 
@@ -396,8 +396,8 @@ const EditJobSeekerProfile = () => {
   const handleSaveProfile = async () => {
     try {
       setSaving(true);
-      await updateUserProfile(profile);
       console.log("profile::::22222",profile);
+      await updateUserProfile(profile);
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
@@ -483,7 +483,7 @@ const EditJobSeekerProfile = () => {
       await addUserSkill({ skill_id: selectedSkill });
 
       // Refresh skills
-      const response = await getUserSkills();
+      const response = await getUserSkills() || [];
       setSkills(response.data.skills);
 
       setSnackbar({
@@ -584,7 +584,7 @@ const EditJobSeekerProfile = () => {
       }
 
       // Refresh experiences
-      const response = await getUserExperiences();
+      const response = await getUserExperiences() || [];
       setExperiences(response.data.experiences);
 
       setSnackbar({
@@ -684,7 +684,7 @@ const EditJobSeekerProfile = () => {
       }
 
       // Refresh education
-      const response = await getUserEducation();
+      const response = await getUserEducation() || [];
       setEducation(response.data.educations || []);
 
       setSnackbar({
