@@ -2,7 +2,7 @@
 
 // Get the authentication token from storage (localStorage/sessionStorage)
 const getAuthToken = () => {
-    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    return localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
   };
   
   // Get the authorization header with the bearer token

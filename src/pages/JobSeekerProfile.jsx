@@ -251,17 +251,24 @@ const JobSeekerProfile = () => {
         setLoading(true);
         
         const profileResponse = await getUserProfile();
+        console.log("profileResponse :::::::::::::::::");
+        console.log(profileResponse.data);
         setProfile(profileResponse.data);
         
-        const skillsResponse = await getUserSkills();
+        try {
+        const skillsResponse = await getUserSkills() || [];
         setSkills(skillsResponse.data.skills);
+        } catch (error) {
+          console.error('Error fetching user skills:', error);
+          setSkills([]); // Fallback to empty array if error occurs
+        }
         
-        const experiencesResponse = await getUserExperiences();
-        const educationResponse = await getUserEducation();
+        const experiencesResponse = await getUserExperiences() || [];
+        const educationResponse = await getUserEducation() || [];
         setExperiences(experiencesResponse.data.experiences);
         setEducation(educationResponse.data.educations);
         
-        const videosResponse = await getUserVideos();
+        const videosResponse = await getUserVideos() || [];
         console.log("videosResponse");
         console.log(videosResponse.data.videos);
         setVideos(videosResponse.data.videos);
@@ -560,10 +567,10 @@ const mockVideos = [
         <ProfileHeader>
           <ProfileInfo>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <ProfileAvatar src={VITE_API_BASE_URL+userData.profile_pic} alt={userData.name} />
+              <ProfileAvatar src={VITE_API_BASE_URL+userData.profile_pic} alt={userData.first_name} />
               <Box>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-                  {userData.name}
+                  {userData.first_name+' '+userData.Second_name +' ' + userData.last_name}
                 </Typography>
                 <Typography variant="h6" color="primary" fontWeight="medium">
                   {userData.title}
