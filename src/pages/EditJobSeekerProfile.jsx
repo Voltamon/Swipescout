@@ -433,7 +433,7 @@ const EditJobSeekerProfile = () => {
       const response = await uploadProfileImage(file);
 
       // 3. Server returns the FINAL URL (must be immediately accessible)
-      const serverUrl = `${VITE_API_BASE_URL}${response.data.path}?t=${Date.now()}`;
+      const serverUrl = `${VITE_API_BASE_URL}${response.data.logo_url}?t=${Date.now()}`;
 
       // 4. Verify the image is truly ready (with retries)
       let loaded = false;
@@ -448,7 +448,7 @@ const EditJobSeekerProfile = () => {
       }
 
       if (loaded) {
-        setProfile(prev => ({ ...prev, profile_pic: response.data.path }));
+        setProfile(prev => ({ ...prev, profile_pic: response.data.logo_url }));
         setAvatarPicture(serverUrl);
         showSnackbar("Profile picture updated!", "success");
       } else {
