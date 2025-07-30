@@ -101,9 +101,19 @@ const mockVideoResumes = [
     title: "UI/UX Designer",
     experience: "3 years",
     videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1747935193/Jobseeker/ds9oofsbwgtntxt3zgxx.mp4'
+  },{
+    id: '13',
+    title: "Researcher Scientist",
+    experience: "4 years",
+    videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1753904924/resumNew1_l9d2yd.mp4'
+  },{
+    id: '14',
+    title: "Python Developer",
+    experience: "8 years",
+    videoUrl: 'https://res.cloudinary.com/djfvfxrsh/video/upload/v1753904919/resumNew2_fo1wsy.mp4'
   }
 ];
-
+ 
 // --- Playable Video Preview Component ---
 const PlayableVideoPreview = ({ title, experience, videoUrl, onClick }) => {
   const theme = useTheme();
