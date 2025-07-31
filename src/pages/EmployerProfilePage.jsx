@@ -400,22 +400,22 @@ const EmployerProfile = () => {
 
   // Mock profile fallback
   const mockProfile = {
-    name: 'A SAMPLE Profile data / Start Edit Yours instead',
-    industry: 'Information Technology',
-    size: '50-200 employees',
-    founded: 2010,
-    location: 'San Francisco, CA',
-    description: 'Tech Innovations Inc. is a leading technology company specializing in innovative software solutions...',
-    email: 'careers@techinnovations.com',
-    phone: '+1 (415) 555-1234',
-    website: 'www.techinnovations.com',
-    logo: 'https://via.placeholder.com/100',
-    categories: ['Software Development', 'Cloud Computing', 'AI & Machine Learning'],
-    social: {
-      linkedin: 'linkedin.com/company/techinnovations',
-      facebook: 'facebook.com/techinnovations',
-      twitter: 'twitter.com/techinnovations'
-    }
+    // name: 'A SAMPLE Profile data / Start Edit Yours instead',
+    // industry: 'Information Technology',
+    // size: '50-200 employees',
+    // founded: 2010,
+    // location: 'San Francisco, CA',
+    // description: 'Tech Innovations Inc. is a leading technology company specializing in innovative software solutions...',
+    // email: 'careers@techinnovations.com',
+    // phone: '+1 (415) 555-1234',
+    // website: 'www.techinnovations.com',
+    // logo: 'https://via.placeholder.com/100',
+    // categories: ['Software Development', 'Cloud Computing', 'AI & Machine Learning'],
+    // social: {
+    //   linkedin: 'linkedin.com/company/techinnovations',
+    //   facebook: 'facebook.com/techinnovations',
+    //   twitter: 'twitter.com/techinnovations'
+    // }
   };
 
   const employerData = profile || mockProfile;
@@ -464,7 +464,8 @@ const EmployerProfile = () => {
               <CompanyLogo src={VITE_API_BASE_URL+employerData.logo} alt={employerData.name} />
               <Box>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-                  {employerData.name}
+                  {employerData.name || ' '}
+                  
                 </Typography>
                 <Typography variant="h6" color="primary" fontWeight="medium">
                   {employerData.industry}
