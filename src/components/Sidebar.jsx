@@ -52,10 +52,10 @@ const Sidebar = ({ open = true, onClose, variant, isMobile }) => {
   const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const employer_menuItems = [
-    // { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/employer-dashboard' },
     { text: 'My Videos', icon: <VideocamIcon />, path: '/videos' },
     { text: 'Profile', icon: <AccountBoxIcon />, path: '/employer-profile' },
-    { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
+    // { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
     { text: 'Post Job', icon: <AddCardIcon />, path: '/Post-job-page' },
     { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
