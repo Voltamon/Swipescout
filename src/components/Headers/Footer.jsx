@@ -72,10 +72,10 @@ const Footer = () => {
         <FooterLink href="/about" underline="hover">
           About Us
         </FooterLink>
-        <FooterLink href="#" underline="hover">
+        <FooterLink href="/customer-support" underline="hover">
           Customer Support
         </FooterLink>
-        <FooterLink href="#" underline="hover">
+        <FooterLink href="/contact" underline="hover">
           Contact
         </FooterLink>
         <FooterLink href="/how-it-works" underline="hover">

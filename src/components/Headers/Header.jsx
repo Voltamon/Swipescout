@@ -89,11 +89,11 @@ const Header = () => {
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, ml: 'auto' }}>
           <NavButton component={Link} to="/">Home</NavButton>
           <NavButton component={Link} to="/about">About Us</NavButton>
-          <NavButton component={Link} to="#">Contact</NavButton>
+          <NavButton component={Link} to="/contact">Contact</NavButton>
           <NavButton component={Link} to="/how-it-works">How SwipeScout Works</NavButton>
           <NavButton component={Link} to="/FAQs">FAQ</NavButton>
           <NavButton component={Link} to="#">Credits</NavButton>
-          <NavButton component={Link} to="#">Customer Support</NavButton>
+          <NavButton component={Link} to="/customer-support">Customer Support</NavButton>
         </Box>
 
         {/* Login Button and Avatar Menu */}
