@@ -7,6 +7,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
+import { Help } from "@mui/icons-material";
 
 // Pages
 import ExploreJobs from "./pages/ExploreJobs";
@@ -92,7 +93,9 @@ import HomePage from "./pages/HomePage";
 import HowItWorksPage from "./pages/HowItWorks";
 import Home3 from "./pages/Home3";
 import Home2 from "./pages/Home2";
-import { Help } from "@mui/icons-material";
+import HelpPageLinks from "./pages/HelpPageLinks";
+import CustomerSupportPage from "./pages/CustomerSupportPage";
+import ContactPage from "./pages/ContactPage";
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -130,7 +133,9 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
-            {/* <Route path="/help" element={<HelpPages />} /> */}
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/customer-support" element={<CustomerSupportPage />} />
+            
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/home-page" element={<HomePage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
@@ -203,6 +208,7 @@ function App() {
               <Route path="/Post-job-page" element={<PostJobPage />} />
               <Route path="/videos" element={<VideosPage />} />
               <Route path="/MarketingVideos-page" element={<MarketingVideos />} />
+              <Route path="/help" element={<HelpPageLinks />} />
 
               <Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} />
               <Route path="/edit-video/:id" element={<EditVideoPage />} />

@@ -63,14 +63,14 @@ const AboutUs = () => {
   ];
 
   const stats = [
-    { value: "10K+", label: "Jobs Posted", icon: <Groups fontSize="large" /> },
+    { value: "+", label: "Jobs Posted", icon: <Groups fontSize="large" /> },
     {
-      value: "50K+",
+      value: "+",
       label: "Candidates Hired",
       icon: <Diversity3 fontSize="large" />
     },
     {
-      value: "500+",
+      value: "+",
       label: "Partner Companies",
       icon: <Handshake fontSize="large" />
     },
