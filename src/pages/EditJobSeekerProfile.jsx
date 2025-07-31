@@ -447,7 +447,7 @@ const EditJobSeekerProfile = () => {
         }
       }
 
-      if (loaded) {
+      if (loaded) { 
         setProfile(prev => ({ ...prev, profile_pic: response.data.logo_url }));
         setAvatarPicture(serverUrl);
         showSnackbar("Profile picture updated!", "success");

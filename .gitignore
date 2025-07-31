@@ -25,3 +25,4 @@ build
 *.sw?
 .env
 public/videos/*.*
+.continue 
