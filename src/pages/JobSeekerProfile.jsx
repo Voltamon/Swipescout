@@ -394,140 +394,140 @@ const JobSeekerProfile = () => {
 
     // Mock data for demonstration
 const mockProfile = {
-  id: '1',
-  name: 'A SAMPLE Profile data / Start Edit Yours instead',
-  title: 'Frontend Developer',
-  location: 'Riyadh, Saudi Arabia',
-  bio: 'Frontend developer with 5 years of experience in web application development using React and Angular. Specializing in UI design and user experience improvement.',
-  email: 'ahmed@example.com',
-  phone: '+966 50 123 4567',
-  website: 'www.ahmeddev.com',
-  avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-  mainVideo: 'https://www.w3schools.com/html/mov_bbb.mp4',
-  social: {
-    linkedin: 'linkedin.com/in/ahmed',
-    github: 'github.com/ahmed',
-    twitter: 'twitter.com/ahmed'
-  }
+  // id: '1',
+  // name: 'A SAMPLE Profile data / Start Edit Yours instead',
+  // title: 'Frontend Developer',
+  // location: 'Riyadh, Saudi Arabia',
+  // bio: 'Frontend developer with 5 years of experience in web application development using React and Angular. Specializing in UI design and user experience improvement.',
+  // email: 'ahmed@example.com',
+  // phone: '+966 50 123 4567',
+  // website: 'www.ahmeddev.com',
+  // avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+  // mainVideo: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  // social: {
+  //   linkedin: 'linkedin.com/in/ahmed',
+  //   github: 'github.com/ahmed',
+  //   twitter: 'twitter.com/ahmed'
+  // }
 };
 
 const mockSkills = [
-  'React', 'Angular', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3',
-  'Material UI', 'Redux', 'Node.js', 'Express', 'MongoDB', 'Git',
-  'Responsive Design', 'UI/UX', 'RESTful APIs', 'GraphQL'
+  // 'React', 'Angular', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3',
+  // 'Material UI', 'Redux', 'Node.js', 'Express', 'MongoDB', 'Git',
+  // 'Responsive Design', 'UI/UX', 'RESTful APIs', 'GraphQL'
 ];
 
 const mockExperiences = [
-  {
-    id: '1',
-    company: 'Advanced Technology Company',
-    position: 'Senior Frontend Developer',
-    startDate: '2020-01',
-    endDate: null,
-    current: true,
-    description: 'Developed user interfaces for web applications using React and TypeScript. Designed and implemented application architecture and managed application state using Redux. Collaborated with a team of developers to improve application performance and user experience.',
-    location: 'Riyadh'
-  },
-  {
-    id: '2',
-    company: 'Global Software Company',
-    position: 'Frontend Developer',
-    startDate: '2018-03',
-    endDate: '2019-12',
-    current: false,
-    description: 'Developed user interfaces for web applications using Angular. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive web applications.',
-    location: 'Jeddah'
-  },
-  {
-    id: '3',
-    company: 'Digital Solutions Company',
-    position: 'Web Developer',
-    startDate: '2016-06',
-    endDate: '2018-02',
-    current: false,
-    description: 'Developed websites using HTML, CSS, and JavaScript. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive websites.',
-    location: 'Dammam'
-  }
+  // {
+  //   id: '1',
+  //   company: 'Advanced Technology Company',
+  //   position: 'Senior Frontend Developer',
+  //   startDate: '2020-01',
+  //   endDate: null,
+  //   current: true,
+  //   description: 'Developed user interfaces for web applications using React and TypeScript. Designed and implemented application architecture and managed application state using Redux. Collaborated with a team of developers to improve application performance and user experience.',
+  //   location: 'Riyadh'
+  // },
+  // {
+  //   id: '2',
+  //   company: 'Global Software Company',
+  //   position: 'Frontend Developer',
+  //   startDate: '2018-03',
+  //   endDate: '2019-12',
+  //   current: false,
+  //   description: 'Developed user interfaces for web applications using Angular. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive web applications.',
+  //   location: 'Jeddah'
+  // },
+  // {
+  //   id: '3',
+  //   company: 'Digital Solutions Company',
+  //   position: 'Web Developer',
+  //   startDate: '2016-06',
+  //   endDate: '2018-02',
+  //   current: false,
+  //   description: 'Developed websites using HTML, CSS, and JavaScript. Implemented user designs and improved user experience. Collaborated with a team of developers to build interactive websites.',
+  //   location: 'Dammam'
+  // }
 ];
 
 const mockEducation = [
-  {
-    id: '1',
-    institution: 'King Saud University',
-    degree: 'Bachelor of Computer Science',
-    field: 'Computer Science',
-    startDate: '2012-09',
-    endDate: '2016-05',
-    description: 'Specialized in software development and software engineering. Graduation project: Developed a web application for project management.',
-    location: 'Riyadh'
-  },
-  {
-    id: '2',
-    institution: 'Programming Academy',
-    degree: 'Advanced Web Development Certificate',
-    field: 'Web Development',
-    startDate: '2016-06',
-    endDate: '2016-08',
-    description: 'Intensive course in web development using the latest technologies.',
-    location: 'Riyadh'
-  }
+  // {
+  //   id: '1',
+  //   institution: 'King Saud University',
+  //   degree: 'Bachelor of Computer Science',
+  //   field: 'Computer Science',
+  //   startDate: '2012-09',
+  //   endDate: '2016-05',
+  //   description: 'Specialized in software development and software engineering. Graduation project: Developed a web application for project management.',
+  //   location: 'Riyadh'
+  // },
+  // {
+  //   id: '2',
+  //   institution: 'Programming Academy',
+  //   degree: 'Advanced Web Development Certificate',
+  //   field: 'Web Development',
+  //   startDate: '2016-06',
+  //   endDate: '2016-08',
+  //   description: 'Intensive course in web development using the latest technologies.',
+  //   location: 'Riyadh'
+  // }
 ];
 
 const mockVideos = [
-  {
-    id: '1',
-    title: 'Introduction to Myself',
-    thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 30,
-    type: 'intro',
-    views: 120
-  },
-  {
-    id: '2',
-    title: 'My React Skills',
-    thumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 45,
-    type: 'skills',
-    views: 85
-  },
-  {
-    id: '3',
-    title: 'My Previous Experiences',
-    thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 40,
-    type: 'experience',
-    views: 67
-  },
-  {
-    id: '4',
-    title: 'My Previous Projects',
-    thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 35,
-    type: 'portfolio',
-    views: 92
-  },
-  {
-    id: '5',
-    title: 'Why I am a Good Fit for the Job',
-    thumbnail: 'https://i.ytimg.com/vi/RgKAFK5djSk/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 42,
-    type: 'outro',
-    views: 105
-  },
-  {
-    id: '6',
-    title: 'My Angular Skills',
-    thumbnail: 'https://i.ytimg.com/vi/fRh_vgS2dFE/maxresdefault.jpg',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    duration: 38,
-    type: 'skills',
-    views: 73
-  }
+  // {
+  //   id: '1',
+  //   title: 'Introduction to Myself',
+  //   thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+  //   url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //   duration: 30,
+  //   type: 'intro',
+  //   views: 120
+  // },
+  // {
+  //   id: '2',
+  //   title: 'My React Skills',
+  //   thumbnail: 'https://i.ytimg.com/vi/LDZX4ooRsWs/maxresdefault.jpg',
+  //   url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //   duration: 45,
+  //   type: 'skills',
+  //   views: 85
+  // },
+  // {
+  //   id: '3',
+  //   title: 'My Previous Experiences',
+  //   thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
+  //   url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //   duration: 40,
+  //   type: 'experience',
+  //   views: 67
+  // },
+  // {
+  //   id: '4',
+  //   title: 'My Previous Projects',
+  //   thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg',
+  //   url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //   duration: 35,
+  //   type: 'portfolio',
+  //   views: 92
+  // },
+  // {
+  //   id: '5',
+  //   title: 'Why I am a Good Fit for the Job',
+  //   thumbnail: 'https://i.ytimg.com/vi/RgKAFK5djSk/maxresdefault.jpg',
+  //   url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //   duration: 42,
+  //   type: 'outro',
+  //   views: 105
+  // },
+  // {
+  //   id: '6',
+  //   title: 'My Angular Skills',
+  //   thumbnail: 'https://i.ytimg.com/vi/fRh_vgS2dFE/maxresdefault.jpg',
+  //   url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //   duration: 38,
+  //   type: 'skills',
+  //   views: 73
+  // }
 ];
 
   
@@ -570,7 +570,7 @@ const mockVideos = [
               <ProfileAvatar src={VITE_API_BASE_URL+userData.profile_pic} alt={userData.first_name} />
               <Box>
                 <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-                  {userData.first_name+' '+userData.Second_name +' ' + userData.last_name}
+                  {(userData.first_name || '') + ' ' + (userData.Second_name || '') + ' ' + (userData.last_name || '')}
                 </Typography>
                 <Typography variant="h6" color="primary" fontWeight="medium">
                   {userData.title}
