@@ -51,7 +51,7 @@ const SidebarJobseeker = ({ open = true, onClose, variant, isMobile }) => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Profile', icon: <AccountBoxIcon />, path: '/Job-seeker-profile' },
     { text: 'My Videos', icon: <VideocamIcon />, path: '/videos' },
-    { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
+    // { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
     // { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
     { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
     // { text: 'Company Videos', icon: <ScreenSearchDesktopIcon />, path: '/company-videos' },

@@ -1,0 +1,23 @@
+name: Local MCP for DeepSeek
+version: 0.0.1
+schema: v1
+
+mcpServers:
+  - name: DeepSeek LM Studio
+    command: curl
+    args:
+      - -X
+      - POST
+      - http://192.168.0.110:1234/v1/chat/completions
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - |
+          {
+            "model": "deepseek-coder-6.7b-instruct:2",
+            "messages": [{"role": "user", "content": "Hello"}],
+            "temperature": 0.7,
+            "stream": false,
+            "max_tokens": 1024
+          }
+    env: {}
