@@ -92,6 +92,8 @@ import HomePage from "./pages/HomePage";
 import HowItWorksPage from "./pages/HowItWorks";
 import Home3 from "./pages/Home3";
 import Home2 from "./pages/Home2";
+import HelpPages from "./pages/HelpPages";
+import { Help } from "@mui/icons-material";
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -129,6 +131,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
+            <Route path="/help" element={<HelpPages />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/home-page" element={<HomePage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />

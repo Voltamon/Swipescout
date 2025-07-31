@@ -48,15 +48,15 @@ const SidebarJobseeker = ({ open = true, onClose, variant, isMobile }) => {
   const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const jobseeker_menuItems = [
-    // { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Profile', icon: <AccountBoxIcon />, path: '/Job-seeker-profile' },
     { text: 'My Videos', icon: <VideocamIcon />, path: '/videos' },
     { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/Employer-explore-sidebar' },
-    { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
+    // { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
     { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
     // { text: 'Company Videos', icon: <ScreenSearchDesktopIcon />, path: '/company-videos' },
     // { text: 'Jobs Search', icon: <PlagiarismIcon />, path: '/job-search' },
-    { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
+    // { text: 'My Applications', icon: <CandidatesIcon />, path: '/MyApplications-page' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     // { text: 'Analytics', icon: <AnalyticsIcon />, path: '/job-seeker/dashboard' },
   ];
