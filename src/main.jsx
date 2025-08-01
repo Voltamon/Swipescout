@@ -6,10 +6,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from "./hooks/useAuth"; 
 import App from './App.jsx'; // Adjust the path as necessary
 import './index.css';
-import theme2 from './theme.js'; // Assuming you have a theme.js file
+import themeDL from './theme.js'; // Assuming you have a theme.js file
+
 
 // Create theme (keep your existing theme config)
-const theme = createTheme(theme2);
+// const theme = createTheme(themeDL);
 
 // Get root element
 const container = document.getElementById('root');
@@ -20,7 +21,7 @@ const root = createRoot(container); // Modern React 18+ syntax
 // Render app
 root.render(
   <BrowserRouter>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themeDL('dark')} >
       <CssBaseline />
       <AuthProvider>
         <App />

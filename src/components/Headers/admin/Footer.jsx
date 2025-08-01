@@ -12,6 +12,7 @@ import {
   Twitter,
   LinkedIn,
   Instagram,
+  GitHub
 } from "@mui/icons-material";
 
 const Footer = () => {
@@ -19,70 +20,144 @@ const Footer = () => {
   const bottomLinks = [
     { text: "Privacy Policy", href: "/privacy-policy" },
     { text: "Terms of Service", href: "/terms" },
-    { text: "Help", href: "/help" },
+    { text: "Help Center", href: "/help" },
   ];
 
+  const socialIcons = [
+    { icon: Facebook, url: "https://facebook.com" },
+    { icon: Twitter, url: "https://twitter.com" },
+    { icon: LinkedIn, url: "https://linkedin.com" },
+    { icon: Instagram, url: "https://instagram.com" },
+    { icon: GitHub, url: "https://github.com" },
+  ];
+  
+  // Safely access theme properties with a fallback
+  const borderColor = theme.palette.border?.primary || theme.palette.divider || '#e5e7eb';
+  const iconColor = theme.palette.icon?.primary || 
+                   (theme.palette.mode === 'light' ? '#4f46e5' : '#a78bfa');
+  const footerBg = theme.palette.background?.footer || 
+                  (theme.palette.mode === 'light' ? '#f9fafb' : '#1d202e');
+  const primaryTextColor = theme.palette.text?.primary || 
+                          (theme.palette.mode === 'light' ? '#2a3e50' : '#e9e9f4');
+  const secondaryTextColor = theme.palette.text?.secondary || 
+                            (theme.palette.mode === 'light' ? '#6b7280' : '#d1d5db');
+  
   return (
     <Box
       component="footer"
       sx={{
-        background: theme.palette.background.paper,
-        color: theme.palette.text.primary,
-        py: 3,
-        px: 2,
-        borderTop: `1px solid ${theme.palette.divider}`,
-        mt: theme.spacing(2),
-        width: '100%',
+        backgroundColor: footerBg,
+        color: primaryTextColor,
+        py: 4,
+        borderTop: `1px solid ${borderColor}`,
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box
           sx={{
-            mx: 'auto',
-            width: '100%',
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
+            flexDirection: { xs: 'column', md: 'row' },
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: 2,
-            px: { xs: 1, sm: 3 },
+            gap: 3,
           }}
         >
-          {/* Brand and Social Icons */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', sm: 'flex-start' }, gap: 1 }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
-              Swip<span style={{ color: theme.palette.primary.main }}>scout</span>
+          {/* Brand and description */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: { xs: 'center', md: 'flex-start' },
+            gap: 1
+          }}>
+            <Typography
+              variant="h6"
+              sx={{ 
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              Swip<span style={{ 
+                color: iconColor,
+                marginLeft: '2px'
+              }}>scout</span>
             </Typography>
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, textAlign: { xs: 'center', sm: 'left' } }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: secondaryTextColor,
+                textAlign: { xs: 'center', md: 'left' },
+                maxWidth: 300
+              }}
+            >
               Revolutionizing recruitment through video connections.
             </Typography>
-
-            <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-              {[Facebook, Twitter, LinkedIn, Instagram].map((Icon, index) => (
-                <IconButton key={index} sx={{ color: theme.palette.text.primary }}>
-                  <Icon fontSize="small" />
-                </IconButton>
-              ))}
-            </Box>
           </Box>
 
-          {/* Copyright and Bottom Links */}
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: { xs: 1, sm: 3 } }}>
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+          {/* Social icons */}
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 1,
+            order: { xs: 2, md: 1 }
+          }}>
+            {socialIcons.map(({ icon: Icon, url }, index) => (
+              <IconButton
+                key={index}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: iconColor,
+                  backgroundColor: theme.palette.mode === 'light' 
+                    ? 'rgba(0,0,0,0.05)' 
+                    : 'rgba(255,255,255,0.05)',
+                  '&:hover': {
+                    backgroundColor: theme.palette.mode === 'light'
+                      ? 'rgba(79, 70, 229, 0.1)'
+                      : 'rgba(167, 139, 250, 0.1)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <Icon fontSize="small" />
+              </IconButton>
+            ))}
+          </Box>
+
+          {/* Copyright and links */}
+          <Box sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: { xs: 'center', md: 'flex-end' },
+            gap: 1,
+            order: { xs: 1, md: 2 }
+          }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: secondaryTextColor,
+                textAlign: { xs: 'center', md: 'right' }
+              }}
+            >
               © {new Date().getFullYear()} Swipscout. All rights reserved.
             </Typography>
-            <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 3 } }}>
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2,
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }}>
               {bottomLinks.map((link) => (
                 <Link
                   key={link.text}
                   href={link.href}
+                  underline="none"
                   sx={{
-                    color: theme.palette.text.secondary,
-                    textDecoration: 'none',
+                    color: secondaryTextColor,
                     '&:hover': {
-                      color: theme.palette.primary.main,
-                      textDecoration: 'underline',
+                      color: iconColor,
                     },
+                    transition: 'color 0.2s ease',
                   }}
                 >
                   {link.text}

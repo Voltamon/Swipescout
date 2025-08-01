@@ -8,7 +8,8 @@ import {
   CssBaseline, 
   IconButton,
   useMediaQuery,
-  styled,Typography
+  styled,
+  Typography
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
@@ -20,17 +21,18 @@ import {
   Plagiarism as PlagiarismIcon,
   Settings as SettingsIcon,
 } from "@mui/icons-material";
+
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Header from '../components/Headers/admin/Header';
 import Footer from '../components/Headers/admin/Footer';
 import { useAuth } from '../hooks/useAuth';
 
-// Styled components
+// Updated FloatingPanel component with text
 const FloatingPanel = styled(Paper)(({ theme }) => ({
   position: 'fixed',
-  top: `calc(${theme.spacing(2)} + 15px)`,
+  top: `calc(${theme.spacing(2)} + 65px)`,
   left: theme.spacing(2),
-  padding: theme.spacing(1),
+  padding: theme.spacing(1.5),
   borderRadius: theme.shape.borderRadius,
   zIndex: 1000,
   display: 'flex',
@@ -44,6 +46,27 @@ const FloatingPanel = styled(Paper)(({ theme }) => ({
     left: theme.spacing(2),
     right: 'auto',
     flexDirection: 'row',
+  },
+}));
+
+const FloatingButton = styled(IconButton)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: theme.spacing(0.5),
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+  '& .MuiTypography-caption': {
+    fontSize: '0.7rem',
+    color: theme.palette.text.primary,
+  },
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'row',
+    gap: theme.spacing(1),
+    '& .MuiTypography-caption': {
+      fontSize: '0.8rem',
+    },
   },
 }));
 
@@ -233,20 +256,40 @@ const EmployerDashboard = () => {
       <Box sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
-        <FloatingPanel>
-          <IconButton color="primary" onClick={() => handlePageChange('dashboard')} aria-label="Dashboard">
-            <DashboardIcon />
-          </IconButton>
-          <IconButton color="primary" onClick={() => handlePageChange('jobs')} aria-label="Jobs">
-            <ListAltIcon />
-          </IconButton>
-          <IconButton color="primary" onClick={() => handlePageChange('videos')} aria-label="Videos">
-            <VideocamIcon />
-          </IconButton>
-          <IconButton color="primary" onClick={() => handlePageChange('settings')} aria-label="Settings">
-            <SettingsIcon />
-          </IconButton>
-        </FloatingPanel>
+<FloatingPanel>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('dashboard')} 
+    aria-label="Dashboard"
+  >
+    <DashboardIcon />
+    <Typography variant="caption">Dashboard</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('jobs')} 
+    aria-label="Jobs"
+  >
+    <ListAltIcon />
+    <Typography variant="caption">Jobs</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('videos')} 
+    aria-label="Videos"
+  >
+    <VideocamIcon />
+    <Typography variant="caption">Videos</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('settings')} 
+    aria-label="Settings"
+  >
+    <SettingsIcon />
+    <Typography variant="caption">Settings</Typography>
+  </FloatingButton>
+</FloatingPanel>
 
         <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>
           <Container maxWidth="lg">
