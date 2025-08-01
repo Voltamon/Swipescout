@@ -8,7 +8,8 @@ import {
   CssBaseline, 
   IconButton,
   useMediaQuery,
-  styled,Typography 
+  styled,
+  Typography 
 } from "@mui/material";
 import {
   Work as WorkIcon,
@@ -20,17 +21,21 @@ import {
   Assessment as AnalyticsIcon,
   Settings as SettingsIcon,
 } from "@mui/icons-material";
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Header from '../components/Headers/admin/Header';
 import Footer from '../components/Headers/admin/Footer';
 import { useAuth } from '../hooks/useAuth';
 
 // Styled components
+// Updated FloatingPanel component with text
 const FloatingPanel = styled(Paper)(({ theme }) => ({
   position: 'fixed',
   top: `calc(${theme.spacing(2)} + 65px)`,
   left: theme.spacing(2),
-  padding: theme.spacing(1),
+  padding: theme.spacing(1.5),
   borderRadius: theme.shape.borderRadius,
   zIndex: 1000,
   display: 'flex',
@@ -44,6 +49,27 @@ const FloatingPanel = styled(Paper)(({ theme }) => ({
     left: theme.spacing(2),
     right: 'auto',
     flexDirection: 'row',
+  },
+}));
+
+const FloatingButton = styled(IconButton)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: theme.spacing(0.5),
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+  '& .MuiTypography-caption': {
+    fontSize: '0.7rem',
+    color: theme.palette.text.primary,
+  },
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'row',
+    gap: theme.spacing(1),
+    '& .MuiTypography-caption': {
+      fontSize: '0.8rem',
+    },
   },
 }));
 
@@ -242,39 +268,85 @@ const JobSeekerDashboard = () => {
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
         {/* Floating Navigation Panel - Different for job seeker and employer */}
-        {role === 'job_seeker' && (
-          <FloatingPanel>
-            <IconButton color="primary" onClick={() => handlePageChange('dashboard')} aria-label="Dashboard">
-              <WorkIcon />
-            </IconButton>
-            <IconButton color="primary" onClick={() => handlePageChange('videos')} aria-label="Videos">
-              <VideoLibraryIcon />
-            </IconButton>
-            <IconButton color="primary" onClick={() => handlePageChange('applications')} aria-label="Applications">
-              <ListAltIcon />
-            </IconButton>
-            <IconButton color="primary" onClick={() => handlePageChange('analytics')} aria-label="Analytics">
-              <AnalyticsIcon />
-            </IconButton>
-          </FloatingPanel>
-        )}
+        {role === 'job_seeker' && ( <>
+            <FloatingPanel>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('dashboard')} 
+    aria-label="Dashboard"
+  >
+    <WorkIcon />
+    <Typography variant="caption">Jobs</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('videos')} 
+    aria-label="Videos"
+  >
+    <VideoLibraryIcon />
+    <Typography variant="caption">Videos</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('applications')} 
+    aria-label="Applications"
+  >
+    <ListAltIcon />
+    <Typography variant="caption">Applications</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('analytics')} 
+    aria-label="Analytics"
+  >
+    <AnalyticsIcon />
+    <Typography variant="caption">Analytics</Typography>
+  </FloatingButton>
+</FloatingPanel>
 
-        {role === 'employer' && (
-          <FloatingPanel>
-            <IconButton color="primary" onClick={() => handlePageChange('dashboard')} aria-label="Dashboard">
-              <BusinessIcon />
-            </IconButton>
-            <IconButton color="primary" onClick={() => handlePageChange('videos')} aria-label="Videos">
-              <VideoLibraryIcon />
-            </IconButton>
-            <IconButton color="primary" onClick={() => handlePageChange('applications')} aria-label="Candidates">
-              <PersonSearchIcon />
-            </IconButton>
-            <IconButton color="primary" onClick={() => handlePageChange('settings')} aria-label="Settings">
-              <SettingsIcon />
-            </IconButton>
-          </FloatingPanel>
-        )}
+
+
+       </> )}
+
+        {role === 'employer' && ( <>
+
+
+
+<FloatingPanel>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('dashboard')} 
+    aria-label="Dashboard"
+  >
+    <DashboardIcon />
+    <Typography variant="caption">Dashboard</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('jobs')} 
+    aria-label="Jobs"
+  >
+    <ListAltIcon />
+    <Typography variant="caption">Jobs</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('videos')} 
+    aria-label="Videos"
+  >
+    <VideocamIcon />
+    <Typography variant="caption">Videos</Typography>
+  </FloatingButton>
+  <FloatingButton 
+    color="primary" 
+    onClick={() => handlePageChange('settings')} 
+    aria-label="Settings"
+  >
+    <SettingsIcon />
+    <Typography variant="caption">Settings</Typography>
+  </FloatingButton>
+</FloatingPanel>
+       </> )}
 
         {/* Main Content Area */}
         <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>

@@ -161,4 +161,127 @@ const theme2 = createTheme({
 });
 
 
-export default theme2;
+const themeDL = (mode = 'dark') => {
+  // Static palette values that won't change between light/dark modes
+  const staticPalette = {
+    primary: {
+      main: '#1976d2',      // Blue - primary color
+      contrastText: '#ffffff', // White text on primary
+    },
+    secondary: {
+      main: '#dc004e',      // Pink - secondary color
+    },
+    text: {
+      disabled: '#7a849a',  // Gray - disabled text
+    },
+    action: {
+      selected: 'rgba(25, 118, 210, 0.08)', // Light blue selection
+      hover: 'rgba(25, 118, 210, 0.04)',    // Very subtle hover
+    }
+  };
+
+  // Dynamic values that change between light/dark modes
+  const dynamicPalette = {
+    mode,
+    text: {
+      primary: mode === 'light' ? '#2a3e50' : '#e9e9f4', // Dark blue-gray / Light gray
+      secondary: mode === 'light' ? '#4a6572' : '#b5b6cf', // Medium blue-gray / Light gray
+    },
+    background: {
+      default: mode === 'light' ? '#f5f7fa' : '#12121e', // Light gray / Dark blue-black
+      paper: mode === 'light' ? '#ffffff' : '#1d202e',   // White / Dark blue-gray
+      jobseeker: mode === 'light' ? '#f5f7fa' : '#12121e',
+      header: mode === 'light' ? '#ffffff' : '#1d202e',
+      sidebar: mode === 'light' ? '#ffffff' : '#1d202e',
+      innerSection: mode === 'light' ? '#f3f4f6' : '#2d3142',
+      listItem: mode === 'light' ? '#e5e7eb' : '#4b5563',
+      videoPlayer: mode === 'light' ? '#e5e7eb' : '#111827',
+      footer: mode === 'light' ? '#ffffff' : '#1d202e',
+    },
+    border: {
+      primary: mode === 'light' ? '#e5e7eb' : '#4b5563', // Light gray / Dark gray
+      blue: mode === 'light' ? '#1e40af' : '#818cf8',   // Dark blue / Light blue
+    },
+    icon: {
+      primary: mode === 'light' ? '#4f46e5' : '#a78bfa', // Indigo / Purple
+    },
+    button: {
+      main: '#2563eb',      // Blue - main button color
+      hover: '#1d4ed8',     // Darker blue - button hover
+      disabled: mode === 'light' ? '#d1d5db' : '#6b7280', // Light gray / Dark gray
+    }
+  };
+
+  return createTheme({
+    palette: {
+      ...staticPalette,     // Static values first
+      ...dynamicPalette,    // Dynamic values override where needed
+    },
+    typography: {
+      allVariants: {
+        color: mode === 'light' ? '#2a3e50' : '#e9e9f4', // Text color
+        fontWeight: 'normal',
+        textShadow: 'none',
+        letterSpacing: '0.3px',
+      },
+      fontFamily: 'Inter, sans-serif',
+    },
+    components: {
+      MuiListItem: {
+        styleOverrides: {
+          root: {
+            '&.MuiButtonBase-root': {
+              borderRadius: '8px',
+              margin: '4px 8px',
+              color: 'inherit',
+              '&.Mui-selected': {
+                backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                color: '#1976d2',
+                '& .MuiListItemIcon-root': {
+                  color: '#1976d2',
+                }
+              },
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              },
+            },
+          },
+        },
+      },
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            minWidth: '36px',
+            color: 'inherit',
+          },
+        },
+      },
+      MuiListItemText: {
+        styleOverrides: {
+          primary: {
+            fontWeight: 'inherit',
+            color: 'inherit',
+          },
+        },
+      },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#ffffff', // Always white in light mode
+            color: '#2a3e50',         // Always dark blue-gray text
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#ffffff', // Always white in light mode
+            color: '#2a3e50',          // Always dark blue-gray text
+          },
+        },
+      },
+    },
+  });
+};
+
+export default themeDL;

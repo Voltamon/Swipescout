@@ -8,7 +8,8 @@ import {
   Toolbar,
   Avatar,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Badge
 } from "@mui/material";
 import {
   Brightness4 as DarkModeIcon,
@@ -20,69 +21,197 @@ import {
   VideoCall as VideoCallIcon,
 } from "@mui/icons-material";
 import { useAuth } from '../../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Header = ({ darkMode, setDarkMode }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { user, logout, role } = useAuth();
+  const navigate = useNavigate();
+
+  // Safe access to theme properties with fallbacks
+  const borderColor = theme.palette.border?.primary || theme.palette.divider || '#e5e7eb';
+  const iconColor = theme.palette.icon?.primary ||
+                   (theme.palette.mode === 'light' ? '#4f46e5' : '#a78bfa');
+  const headerBg = theme.palette.background?.header ||
+                  (theme.palette.mode === 'light' ? '#ffffff' : '#1d202e');
+  const textColor = theme.palette.text?.primary ||
+                   (theme.palette.mode === 'light' ? '#2a3e50' : '#e9e9f4');
+  const hoverBg = theme.palette.action?.hover ||
+                 (theme.palette.mode === 'light' ? 'rgba(25, 118, 210, 0.04)' : 'rgba(167, 139, 250, 0.04)');
 
   const handleProfileClick = () => {
-    const path = roleProfileNav(role);
-    console.log('Navigating with role:', role, 'to:', path);
-    // navigate(path);
+    const path = role === 'job_seeker' ? '/job-seeker-profile' :
+                 role === 'employer' ? '/employer-profile' :
+                 role === 'admin' ? '/admin-profile' : '/';
+    navigate(path);
   };
 
   const handleLogout = () => {
     logout();
-    // navigate("/login");
+    navigate("/login");
   };
 
   return (
-    <AppBar position="static" sx={{ boxShadow: 'none', bgcolor: 'background.paper' }}>
-      <Container maxWidth="lg">
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        backgroundColor: headerBg,
+        borderBottom: `1px solid ${borderColor}`,
+        color: textColor,
+        py: 1
+      }}
+    >
+      <Container maxWidth="xl">
+        <Toolbar
+          disableGutters
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            minHeight: '64px !important'
+          }}
+        >
           {/* Left section: App title */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
-              Swip<span style={{ color: theme.palette.primary.main }}>scout</span>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8
+              }
+            }}
+            onClick={() => navigate('/')}
+          >
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                fontWeight: 700,
+                color: textColor,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              Swip<span style={{
+                color: iconColor,
+                marginLeft: '2px'
+              }}>scout</span>
             </Typography>
           </Box>
 
           {/* Right section: Navigation icons and User Avatar */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: isMobile ? 0.5 : 2 }}>
+          <Box sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: isMobile ? 0.5 : 2
+          }}>
             {/* Dark/Light Mode Toggle Icon */}
-            <IconButton color="inherit" onClick={() => setDarkMode(!darkMode)} sx={{ color: theme.palette.text.primary }}>
+            <IconButton
+              color="inherit"
+              onClick={() => setDarkMode(!darkMode)}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
 
-            <IconButton color="inherit" onClick={() => navigate("/")} sx={{ color: theme.palette.text.primary }}>
+            <IconButton
+              color="inherit"
+              onClick={() => navigate("/")}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
               <Home />
             </IconButton>
-            <IconButton color="inherit" onClick={() => navigate("/chat")} sx={{ color: theme.palette.text.primary }}>
-              <Chat />
+
+            <IconButton
+              color="inherit"
+              onClick={() => navigate("/chat")}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
+              <Badge badgeContent={4} color="secondary">
+                <Chat />
+              </Badge>
             </IconButton>
-            <IconButton color="inherit" onClick={() => navigate("/notifications")} sx={{ color: theme.palette.text.primary }}>
-              <NotificationsIcon />
+
+            <IconButton
+              color="inherit"
+              onClick={() => navigate("/notifications")}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
+              <Badge badgeContent={3} color="secondary">
+                <NotificationsIcon />
+              </Badge>
             </IconButton>
-            <IconButton color="inherit" onClick={() => navigate("/video-upload")} sx={{ color: theme.palette.text.primary }}>
+
+            <IconButton
+              color="inherit"
+              onClick={() => navigate("/video-upload")}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
               <VideoCallIcon />
             </IconButton>
 
-            <IconButton onClick={handleProfileClick} sx={{ p: 0 }}>
+            <IconButton
+              onClick={handleProfileClick}
+              sx={{
+                p: 0,
+                ml: 1,
+                '&:hover': {
+                  opacity: 0.8
+                }
+              }}
+            >
               <Avatar
-                src={user?.photo_url ? VITE_API_BASE_URL + user.photo_url : user?.photoUrl || ''}
+                src={user?.photo_url ? `${import.meta.env.VITE_API_BASE_URL}${user.photo_url}` : user?.photoUrl || ''}
                 alt={user?.displayName?.[0] || user?.name?.[0] || 'U'}
                 sx={{
                   width: 40,
                   height: 40,
-                  border: `2px solid ${theme.palette.text.primary}`,
-                  boxShadow: theme.shadows[2],
+                  border: `2px solid ${iconColor}`,
                 }}
               >
                 {user?.displayName?.[0] || user?.name?.[0] || 'U'}
               </Avatar>
             </IconButton>
-            <IconButton color="inherit" onClick={handleLogout} sx={{ color: theme.palette.text.primary }}>
+
+            <IconButton
+              color="inherit"
+              onClick={handleLogout}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
               <ExitToApp />
             </IconButton>
           </Box>
