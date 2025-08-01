@@ -58,7 +58,7 @@ const Sidebar = ({ open = true, onClose, variant, isMobile }) => {
     // { text: 'Demo Videos', icon: <VideoLibraryIcon />, path: '/jobseeker-explore-sidebar' },
     { text: 'Upload Video', icon: <VideoCallIcon />, path: '/video-upload' },
     { text: 'Post Job', icon: <AddCardIcon />, path: '/Post-job-page' },
-    { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
+    // { text: 'Jobs List', icon: <ListAltIcon />, path: '/jobs-listing-page' },
     { text: 'Search', icon: <PlagiarismIcon />, path: '/candidate-search' },
     { text: 'Messages', icon: <MessagesIcon />, path: '/chat' },
     // { text: 'Analytics', icon: <AnalyticsIcon />, path: '/employer/dashboard' },
@@ -149,9 +149,10 @@ const Sidebar = ({ open = true, onClose, variant, isMobile }) => {
               <Typography variant="subtitle1" sx={{ fontWeight: 600, color: theme.palette.primary.contrastText }}>
                 {user?.name || user?.displayName || user?.display_name}
               </Typography>
-              <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText + 'B3' }}> {/* Slightly transparent white */}
+              {/* <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText + 'B3' }}>
                 {user?.role?.replace('_', ' ') || 'Employer'}
-              </Typography>
+              </Typography> 
+              */}
             </Box>
           )}
         </Box>
