@@ -86,7 +86,7 @@ const theme22 = createTheme({
   // ... other theme configurations (typography, etc.)
 });
 
-const theme2 = createTheme({
+export const theme2 = createTheme({
   palette: {
     primary: {
       main: '#1976d2',
