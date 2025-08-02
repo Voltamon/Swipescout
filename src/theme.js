@@ -164,20 +164,77 @@ export const theme2 = createTheme({
 const themeDL = (mode = 'dark') => {
   // Static palette values that won't change between light/dark modes
   const staticPalette = {
+
     primary: {
-      main: '#1976d2',      // Blue - primary color
-      contrastText: '#ffffff', // White text on primary
+      main: '#1976d2',
+      contrastText: '#ffffff', // Text color when on primary background
     },
     secondary: {
-      main: '#dc004e',      // Pink - secondary color
+      main: '#dc004e',
     },
-    text: {
-      disabled: '#7a849a',  // Gray - disabled text
+    text: { // Correct property name (not 'textw')
+      primary: '#2a3e50',    // Darker blue-gray
+      secondary: '#4a6572',   // Medium blue-gray
+      disabled: '#7a849a',   
+    },
+    background: {
+      default: '#f5f7fa',     // Light gray background
+      jobseeker: '#f5f7fa',     // Light gray background
+      paper: '#ffffff',       // White for cards/paper
     },
     action: {
       selected: 'rgba(25, 118, 210, 0.08)', // Light blue selection
       hover: 'rgba(25, 118, 210, 0.04)',    // Very subtle hover
-    }
+    },
+  typography: {
+    allVariants: {
+      color: '#2a3e50', // Darker text for better readability
+      fontWeight: 'normal', // Inherit font weight
+      textShadow: 'none', // Removed for cleaner text
+      letterSpacing: '0.3px', // Slightly tighter
+    },
+  },
+  components: {
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          '&.MuiButtonBase-root': {
+            borderRadius: '8px',
+            margin: '4px 8px',
+            color: 'inherit', // Inherits from parent
+            '&.Mui-selected': {
+              backgroundColor: 'rgba(25, 118, 210, 0.12)',
+              color: '#1976d2',
+              '& .MuiListItemIcon-root': {
+                color: '#1976d2',
+              }
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(25, 118, 210, 0.08)',
+            },
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: '36px',
+          color: 'inherit', // Will follow text color
+        },
+      },
+    },
+    MuiListItemText: {
+      styleOverrides: {
+        primary: {
+          fontWeight: 'inherit',
+          color: 'inherit',
+        },
+      },
+    },
+    // Other component overrides remain the same...
+  },
+
   };
 
   // Dynamic values that change between light/dark modes
