@@ -1,6 +1,6 @@
 // JobseekerTabs.jsx
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo ,useEffect } from 'react';
 import { Box, CssBaseline } from "@mui/material";
 // import { ThemeProvider } from "@mui/material/styles";
 
@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const JobseekerTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentPage, setCurrentPage] = useState('uploadViedos');
   const [dashboardTab, setDashboardTab] = useState(0);
   const [videoTab, setVideoTab] = useState(0);
   const { role } = useAuth();
@@ -37,6 +37,31 @@ const JobseekerTabs = () => {
     setVideoTab(newValue);
   }, []);
 
+    // useEffect to read URL parameter on component mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initialPage = params.get('page');
+    const initialTab = params.get('tab');
+
+    if (initialPage) {
+      setCurrentPage(initialPage);
+    }
+    
+    // Logic to set the correct sub-tab based on the 'tab' parameter
+    if (initialPage === 'dashboard' && initialTab) {
+      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(initialTab);
+      if (tabIndex !== -1) {
+        setDashboardTab(tabIndex);
+      }
+    } else if (initialPage === 'videos' && initialTab) {
+      const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(initialTab);
+      if (tabIndex !== -1) {
+        setVideoTab(tabIndex);
+      }
+    }
+
+  }, []);
+
     const theme = useMemo(() =>
     createTheme({
       palette: {
@@ -51,7 +76,11 @@ const JobseekerTabs = () => {
         background: {
           default: darkMode ? '#12121e' : '#f9fafb',
           paper: darkMode ? '#1d202e' : '#ffffff',
+          paper2: darkMode ? '#5a67a0ff' : '#ffffff',
+          hover: darkMode ? '#232b52ff' : '#d6dcf8ff',
+          selected: darkMode ? '#afbcfaff' : '#3f4b81ff',
         },
+         divider: darkMode ? '#1d202e ' : '#f9fafb',
         text: {
           primary: darkMode ? '#e9e9f4' : '#111827',
           secondary: darkMode ? '#b5b6cf' : '#374151',

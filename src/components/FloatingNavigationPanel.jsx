@@ -9,6 +9,14 @@ import {
   ListAlt as ListAltIcon,
   Assessment as AnalyticsIcon,
   Settings as SettingsIcon,
+  Message as MessagesIcon,
+  People as CandidatesIcon,
+ 
+  Help as HelpIcon,
+  Logout as LogoutIcon,
+  
+
+  AccountBox as AccountBoxIcon,
 } from "@mui/icons-material";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -61,15 +69,16 @@ const FloatingNavigationPanel = ({ role, onPageChange }) => {
   const jobSeekerButtons = useMemo(() => [
     { label: 'Videos', icon: <VideoLibraryIcon />, page: 'videos' },
     { label: 'Jobs', icon: <WorkIcon />, page: 'dashboard' },
-    { label: 'Applications', icon: <ListAltIcon />, page: 'applications' },
-    { label: 'Analytics', icon: <AnalyticsIcon />, page: 'analytics' },
+    { label: 'Profile', icon: <AccountBoxIcon />, page: 'jobseekerprofile' },
+    { label: 'Messeges', icon: <MessagesIcon />, page: 'messeges' },
   ], []);
 
   const employerButtons = useMemo(() => [
     { label: 'Dashboard', icon: <DashboardIcon />, page: 'dashboard' },
     { label: 'Jobs', icon: <ListAltIcon />, page: 'jobs' },
     { label: 'Videos', icon: <VideocamIcon />, page: 'videos' },
-    { label: 'Settings', icon: <SettingsIcon />, page: 'settings' },
+    { label: 'Profile', icon: <AccountBoxIcon />, page: 'employerprofile' },
+    { label: 'Messeges', icon: <MessagesIcon />, page: 'messeges' },
   ], []);
 
   const buttons = role === 'job_seeker' ? jobSeekerButtons : employerButtons;

@@ -49,7 +49,7 @@ const ChatContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   
-  backgroundColor: '#f5f7fa', // Light background for the overall chat area
+  backgroundColor: 'primary.background', // Light background for the overall chat area
   [theme.breakpoints.down('md')]: {
     height: 'calc(100vh - 56px)',
   },
@@ -61,9 +61,9 @@ const ConversationList = styled(Paper)(({ theme, showConversations, showAllUsers
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
-  borderRight: `1px solid ${theme.palette.divider}`,
+  borderRight: `10px solid ${theme.palette.divider}`,
   // Different background for "All Users" vs. "Conversations"
-  backgroundColor: showAllUsers ? '#edf2f7' : '#ffffff',
+  backgroundColor: showAllUsers ? '#edf2f7' : '#819cb8ff',
   [theme.breakpoints.down('md')]: {
     display: showConversations ? 'flex' : 'none',
     position: 'absolute',
@@ -78,7 +78,7 @@ const MessageArea = styled(Paper)(({ theme, showConversations }) => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: 'rgb(167, 191, 226)', // Light background for message area
+  backgroundColor: `background.paper2`, // Light background for message area
   position: 'relative',
   [theme.breakpoints.down('md')]: {
     display: showConversations ? 'none' : 'flex',
@@ -690,7 +690,7 @@ const Chat = () => {
     }
   
     return (
-      <List sx={{ overflow: 'auto', flex: 1, bgcolor: '#edf2f7', pl: isMobile ? 0 : 2,}}> {/* Background for All Users list */}
+      <List sx={{ overflow: 'auto', flex: 1, bgcolor: `background.paper2` , pl: isMobile ? 0 : 2,}}> {/* Background for All Users list */}
         {allUsers.length === 0 ? (
           <ListItem>
             <ListItemText primary="No users found" />
@@ -731,8 +731,8 @@ const Chat = () => {
                     }}
                     disabled={startingConversation}
                     sx={{
-                      '&:hover': { backgroundColor: '#e2e8f0' }, // Hover effect
-                      '&.Mui-selected': { backgroundColor: '#cbd5e0' } // Selected state
+                      '&:hover': { backgroundColor: `background.hover` }, // Hover effect
+                      '&.Mui-selected': { backgroundColor: `background.selected`} // Selected state
                     }}
                   >
                     {startingConversation && existingConv?.other_user?.id === userItem.id ? (
@@ -869,7 +869,7 @@ const Chat = () => {
                   ),
                   sx: {
                     borderRadius: '12px',
-                    bgcolor: '#f3f4f6' // Light grey background for search input
+                    bgcolor: '#1b3363ff' // Light grey background for search input
                   }
                 }}
                 size="small"
@@ -913,7 +913,7 @@ const Chat = () => {
                     py: 0.4,
                      bgcolor:'rgba(53, 84, 150, 0.1)',
                   
-                    color: 'rgb(27, 57, 107)',
+                    color: 'primary.contrastText',
                     border:'1px solid rgb(41, 91, 190)',
                     '&:hover': {
                       borderColor: '#3f51b5',
@@ -951,7 +951,7 @@ const Chat = () => {
                           if (isMobile) setShowConversations(false); // Hide list on mobile when selected
                         }}
                         sx={{
-                          '&:hover': { bgcolor: '#f3f4f6' }, // Hover effect
+                          '&:hover': { bgcolor: '#324b7cff' }, // Hover effect
                           '&.Mui-selected': {
                             bgcolor: '#e5e7eb', // Selected background
                             '&:hover': { bgcolor: '#e5e7eb' }
@@ -1040,7 +1040,7 @@ const Chat = () => {
                 {/* Conversation Header */}
                 <Box sx={{
                   p: 2,
-                  borderBottom: '1px solid #e5e7eb',
+                  borderBottom: '1px solid #7e93bdff',
                   display: 'flex',
                   alignItems: 'center',
                   bgcolor: 'background.paper',
