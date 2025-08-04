@@ -10,7 +10,8 @@ import JobseekerExploreSidebar from "./JobseekerExploreSidebar";
 import TabPanel from '../components/TabPanel';
 import VideoUpload from './VideoUpload';
 import VideosPage from './VideosPage';
-
+import Chat from './Chat';
+import JobSeekerProfile from "./JobSeekerProfile";
 
 const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange, onVideoTabChange }) => {
   const pageContent = useMemo(() => {
@@ -59,11 +60,11 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
     );
 
     // Content for other static pages
-    const ApplicationsPageContent = () => (
-      <Typography variant="h5" sx={{ p: 3 }}>My Applications</Typography>
+    const MessegesPageContent = () => (
+      <Chat/>
     );
-    const AnalyticsPageContent = () => (
-      <Typography variant="h5" sx={{ p: 3 }}>Analytics Dashboard</Typography>
+    const JSProfilePageContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}><JobSeekerProfile/></Typography>
     );
     const SettingsPageContent = () => (
       <Typography variant="h5" sx={{ p: 3 }}>Settings</Typography>
@@ -87,15 +88,15 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
         return <DashboardPageContent />;
       case 'videos':
         return <VideosPageContent />;
-      case 'applications':
-        return <ApplicationsPageContent />;
-      case 'analytics':
-        return <AnalyticsPageContent />;
+      case 'messeges':
+        return <MessegesPageContent />;
+      case 'jobseekerprofile':
+        return <JSProfilePageContent />;
       case 'settings':
         return <SettingsPageContent />;
       case 'jobs':
         return <JobsPageContent />;
-      case 'videos':
+      case 'videosE':
         return <EmployerViewsContent />;
       case 'dashboard':
         return <EmployerDashboardContent />;
