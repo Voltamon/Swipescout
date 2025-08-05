@@ -138,7 +138,7 @@ const Header = ({ darkMode, setDarkMode }) => {
 
             <IconButton
               color="inherit"
-              onClick={() => navigate("/chat")}
+              onClick={() => navigate('/jobseeker-tabs?page=messeges')}
               sx={{
                 color: iconColor,
                 '&:hover': {
