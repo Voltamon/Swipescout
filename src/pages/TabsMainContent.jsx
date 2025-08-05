@@ -14,13 +14,14 @@ import JobSeekerProfile from "./JobSeekerProfile";
 import JobseekerExploreSidebar from "./JobseekerExploreSidebar";
 import EmployerVideosPage from "./EmployerVideosPage";
 import EditJobSeekerProfile from "./EditJobSeekerProfile";
+import JobsListingPage from "./JobsListingPage";
 
 const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange, onVideoTabChange, setVideoTab }) => {
   // Define a configuration for the Dashboard tabs
   const dashboardTabsConfig = [
     { label: "Explore", content: <Typography variant="body1" sx={{ p: 3 }}><EmployerVideosPage /></Typography> },
     { label: "Detailed Search", content: <Typography variant="body1" sx={{ p: 3 }}>Use advanced filters to find the perfect job.</Typography> },
-    { label: "Job Listings", content: <Typography variant="body1" sx={{ p: 3 }}>View a list of all available job listings.</Typography> },
+    { label: "Job Listings", content: <Typography variant="body1" sx={{ p: 3 }}><JobsListingPage/></Typography> },
   ];
 
   // Define a configuration for the Videos tabs
