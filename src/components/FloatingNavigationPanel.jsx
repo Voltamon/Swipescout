@@ -68,7 +68,7 @@ const FloatingButton = styled(IconButton)(({ theme }) => ({
 const FloatingNavigationPanel = ({ role, onPageChange }) => {
   const jobSeekerButtons = useMemo(() => [
     { label: 'Videos', icon: <VideoLibraryIcon />, page: 'videos' },
-    { label: 'Jobs', icon: <WorkIcon />, page: 'dashboard' },
+    { label: 'Employers', icon: <WorkIcon />, page: 'dashboard' },
     { label: 'Profile', icon: <AccountBoxIcon />, page: 'jobseekerprofile' },
     { label: 'Messeges', icon: <MessagesIcon />, page: 'messeges' },
   ], []);

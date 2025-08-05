@@ -13,6 +13,8 @@ import MainContent from './TabsMainContent';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // Import the mock auth hook and theme config
 // import { createCustomTheme } from '../theme';
+import { BrowserRouter, useSearchParams } from 'react-router-dom';
+
 
 const JobseekerTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
@@ -20,47 +22,55 @@ const JobseekerTabs = () => {
   const [dashboardTab, setDashboardTab] = useState(0);
   const [videoTab, setVideoTab] = useState(0);
   const { role } = useAuth();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  
   // Create the theme based on dark mode state
 //   const theme = useMemo(() => createCustomTheme(darkMode), [darkMode]);
 
   // Memoized handlers to prevent unnecessary re-renders of child components
-  const handlePageChange = useCallback((page) => {
-    setCurrentPage(page);
-  }, []);
+   useEffect(() => {
+    const page = searchParams.get('page');
+    const tab = searchParams.get('tab');
 
-  const handleDashboardTabChange = useCallback((event, newValue) => {
-    setDashboardTab(newValue);
-  }, []);
-
-  const handleVideoTabChange = useCallback((event, newValue) => {
-    setVideoTab(newValue);
-  }, []);
-
-    // useEffect to read URL parameter on component mount
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const initialPage = params.get('page');
-    const initialTab = params.get('tab');
-
-    if (initialPage) {
-      setCurrentPage(initialPage);
+    if (page) {
+      setCurrentPage(page);
     }
     
     // Logic to set the correct sub-tab based on the 'tab' parameter
-    if (initialPage === 'dashboard' && initialTab) {
-      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(initialTab);
+    if (page === 'dashboard' && tab) {
+      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
       if (tabIndex !== -1) {
         setDashboardTab(tabIndex);
       }
-    } else if (initialPage === 'videos' && initialTab) {
-      const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(initialTab);
+    } else if (page === 'videos' && tab) {
+      const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(tab);
       if (tabIndex !== -1) {
         setVideoTab(tabIndex);
       }
     }
+  }, [searchParams]);
 
-  }, []);
+  // Create the theme based on dark mode state
+  // const theme = useMemo(() => createCustomTheme(darkMode), [darkMode]);
+
+  // Memoized handlers to prevent unnecessary re-renders of child components
+  const handlePageChange = useCallback((page) => {
+    setCurrentPage(page);
+    setSearchParams({ page }); // Update the URL parameter
+  }, [setSearchParams]);
+
+  const handleDashboardTabChange = useCallback((event, newValue) => {
+    setDashboardTab(newValue);
+    const newTabName = ['explore', 'detailed-search', 'job-listings'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+
+  const handleVideoTabChange = useCallback((event, newValue) => {
+    setVideoTab(newValue);
+    const newTabName = ['upload-video', 'my-videos', 'example-videos'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+
 
     const theme = useMemo(() =>
     createTheme({
@@ -140,6 +150,7 @@ const JobseekerTabs = () => {
           videoTab={videoTab}
           onDashboardTabChange={handleDashboardTabChange}
           onVideoTabChange={handleVideoTabChange}
+          setVideoTab={setVideoTab} 
         />
 
         <Footer />

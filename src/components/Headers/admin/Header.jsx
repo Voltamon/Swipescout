@@ -41,9 +41,9 @@ const Header = ({ darkMode, setDarkMode }) => {
                  (theme.palette.mode === 'light' ? 'rgba(25, 118, 210, 0.04)' : 'rgba(167, 139, 250, 0.04)');
 
   const handleProfileClick = () => {
-    const path = role === 'job_seeker' ? '/job-seeker-profile' :
-                 role === 'employer' ? '/employer-profile' :
-                 role === 'admin' ? '/admin-profile' : '/';
+    const path = role === 'job_seeker' ? '/jobseeker-tabs?page=jobseekerprofile' :
+                 role === 'employer' ? '/jobseeker-tabs?page=employerprofile' :
+                 role === 'admin' ? '/employer-tabs?page=adminprofile' : '/';
     navigate(path);
   };
 
@@ -151,7 +151,7 @@ const Header = ({ darkMode, setDarkMode }) => {
               </Badge>
             </IconButton>
 
-            <IconButton
+            {/* <IconButton
               color="inherit"
               onClick={() => navigate("/notifications")}
               sx={{
@@ -164,11 +164,11 @@ const Header = ({ darkMode, setDarkMode }) => {
               <Badge badgeContent={3} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
-
+            </IconButton> */}
+     
             <IconButton
               color="inherit"
-              onClick={() => navigate("/video-upload")}
+              onClick={() => navigate('/jobseeker-tabs?page=videos&tab=upload-video')}
               sx={{
                 color: iconColor,
                 '&:hover': {
