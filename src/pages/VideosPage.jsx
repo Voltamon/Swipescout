@@ -15,7 +15,7 @@ import api, { deleteVideo } from '../services/api'; // Ensure deleteVideo is imp
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { VolumeUp, VolumeOff } from '@mui/icons-material';
 
-const VideosPage = () => {
+const VideosPage = ({setVideoTab}) => {
   // Destructure removeVideo from useVideoContext
   const { videos: localVideos, retryUpload, removeVideo } = useVideoContext(); 
   const [serverVideos, setServerVideos] = useState([]);
@@ -145,8 +145,13 @@ const VideosPage = () => {
       alert('You have reached your daily upload limit. Please try again tomorrow.');
       return;
     }
-    navigate('/video-upload');
+     navigate('/jobseeker-tabs?page=videos&tab=upload-video');
+        // setVideoTab(1); 
+
+  //navigate('/video-upload');
   };
+
+
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -225,7 +230,7 @@ const VideosPage = () => {
       pb: 4,
     }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'rgba(29, 99, 139, 0.6)', fontFamily: 'arial' }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary', fontFamily: 'arial' }}>
           My Videos
         </Typography>
         <Button 

@@ -758,7 +758,8 @@ const EditJobSeekerProfile = () => {
   };
 
   const handleUploadVideo = () => {
-    navigate('/video-upload');
+    // navigate('/video-upload');
+    navigate('/jobseeker-tabs?page=videos&tab=upload-video');
   };
 
   const handleEditVideo = (videoId) => {
