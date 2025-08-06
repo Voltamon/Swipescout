@@ -1,0 +1,139 @@
+// components/MainContent.jsx
+// This component renders the main content area, including tabs and content
+// for each "page" of the application.
+
+import React, { useMemo } from 'react';
+import { Box, Container, Tabs, Tab, Typography } from "@mui/material";
+
+// Import the TabPanel component
+import TabPanel from '../components/TabPanel';
+import VideoUpload from './VideoUpload';
+import VideosPage from './VideosPage';
+import Chat from './Chat';
+import EmployerProfile from "./EmployerProfilePage";
+import EmployerExploreSidebar from "./EmployerExploreSidebar";
+import JobSeekersVideosPage from "./JobSeekerExplorePublic";
+import EditEmployerProfile from "./EditEmployerProfilePage";
+import JobsListingPage from "./CandidateSearchPage";
+import AllVideosPage from "./AllVideosPage";
+
+const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange, onVideoTabChange, setVideoTab }) => {
+  // Define a configuration for the Dashboard tabs
+  const dashboardTabsConfig = [
+    { label: "Explore", content: <Typography variant="body1" sx={{ p: 3 }}><AllVideosPage pagetype = 'employers' /></Typography> },
+    { label: "Detailed Search", content: <Typography variant="body1" sx={{ p: 3 }}>Use advanced filters to find the perfect job.</Typography> },
+    { label: "Candidates", content: <Typography variant="body1" sx={{ p: 3 }}>Candidate list</Typography> },
+  ];
+
+  // Define a configuration for the Videos tabs
+  const videosTabsConfig = [
+    { label: "Upload Video", content: <Typography variant="body1" sx={{ p: 3 }}><VideoUpload setVideoTab={setVideoTab} /></Typography> },
+    { label: "My Videos", content: <Typography variant="body1" sx={{ p: 3 }}><VideosPage setVideoTab={setVideoTab}/></Typography> },
+    { label: "Example Videos", content: <Typography variant="body1" sx={{ p: 3 }}><EmployerExploreSidebar/></Typography> },
+  ];
+
+  const pageContent = useMemo(() => {
+    // Component to render the dashboard tabs and content
+    const DashboardPageContent = () => (
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={dashboardTab} onChange={onDashboardTabChange} variant="fullWidth">
+            {dashboardTabsConfig.map((tab, index) => (
+              // Use a unique key for each tab
+              <Tab key={index} label={tab.label} />
+            ))}
+          </Tabs>
+        </Box>
+        {dashboardTabsConfig.map((tab, index) => (
+          // Use a unique key for each TabPanel
+          <TabPanel key={index} value={dashboardTab} index={index}>
+            {tab.content}
+          </TabPanel>
+        ))}
+      </Box>
+    );
+
+    // Component to render the videos tabs and content
+    const VideosPageContent = () => (
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={videoTab} onChange={onVideoTabChange} variant="fullWidth">
+            {videosTabsConfig.map((tab, index) => (
+              // Use a unique key for each tab
+              <Tab key={index} label={tab.label} />
+            ))}
+          </Tabs>
+        </Box>
+        {videosTabsConfig.map((tab, index) => (
+          // Use a unique key for each TabPanel
+          <TabPanel key={index} value={videoTab} index={index}>
+            {tab.content}
+          </TabPanel>
+        ))}
+      </Box>
+    );
+
+    // Content for other static pages
+    const MessegesPageContent = () => (
+      <Chat/>
+    );
+    const JSProfilePageContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}><EmployerProfile/></Typography>
+    );
+
+
+    const EditJSProfilePageContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}><EditEmployerProfile/></Typography>
+    );
+    const SettingsPageContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}>Settings</Typography>
+    );
+    const JobsPageContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}>Jobs for Employers</Typography>
+    );
+    const EmployerDashboardContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}>Employer Dashboard</Typography>
+    );
+    const EmployerViewsContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}>Videos for Employers</Typography>
+    );
+    const DefaultContent = () => (
+      <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Dashboard!</Typography>
+    );
+
+
+    // Render the correct component based on the current page
+    switch (currentPage) {
+      case 'dashboard':
+        return <DashboardPageContent />;
+      case 'videos':
+        return <VideosPageContent setVideoTab={setVideoTab} />; // Pass the prop down here
+      case 'messeges':
+        return <MessegesPageContent />;
+      case 'jobseekerprofile':
+        return <JSProfilePageContent />;
+      case 'editjobseekerprofile':
+        return <EditJSProfilePageContent />;
+      case 'settings':
+        return <SettingsPageContent />;
+      case 'jobs':
+        return <JobsPageContent />;
+      case 'videosE':
+        return <EmployerViewsContent />;
+      case 'dashboardE': // Correcting the case for employer dashboard
+        return <EmployerDashboardContent />;
+      default:
+        return <DefaultContent />;
+    }
+  }, [currentPage, dashboardTab, videoTab, onDashboardTabChange, onVideoTabChange, setVideoTab]);
+
+  return (
+    <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>
+      <Container maxWidth="lg">
+        {pageContent}
+      </Container>
+    </Box>
+  );
+};
+
+export default MainContent;
