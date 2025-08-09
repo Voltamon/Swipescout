@@ -9,17 +9,18 @@ import Header from '../components/Headers/admin/Header';
 import Footer from '../components/Headers/admin/Footer';
 import { useAuth } from '../hooks/useAuth';
 import FloatingNavigationPanel from '../components/FloatingNavigationPanel';
-import MainContent from './TabsMainContent';
+import MainContent from './TabsMainContentEmployer';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // Import the mock auth hook and theme config
 // import { createCustomTheme } from '../theme';
 import { BrowserRouter, useSearchParams } from 'react-router-dom';
 
 
-const EmployerTabs = () => {
+const EmployersTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [currentPage, setCurrentPage] = useState('uploadViedos');
   const [dashboardTab, setDashboardTab] = useState(0);
+  const [candidatesTab, setCandidatesTab] = useState(0);
   const [videoTab, setVideoTab] = useState(0);
   const { role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,11 +39,18 @@ const EmployerTabs = () => {
     
     // Logic to set the correct sub-tab based on the 'tab' parameter
     if (page === 'dashboard' && tab) {
-      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      const tabIndex = ['Overview', 'Analytics'].indexOf(tab);
       if (tabIndex !== -1) {
         setDashboardTab(tabIndex);
       }
-    } else if (page === 'videos' && tab) {
+    } 
+    else if (page === 'candidates' && tab) {
+      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      if (tabIndex !== -1) {
+        setCandidatesTab(tabIndex);
+      }
+    }
+    else if (page === 'videos' && tab) {
       const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(tab);
       if (tabIndex !== -1) {
         setVideoTab(tabIndex);
@@ -61,6 +69,12 @@ const EmployerTabs = () => {
 
   const handleDashboardTabChange = useCallback((event, newValue) => {
     setDashboardTab(newValue);
+    const newTabName = ['overview', 'analytics'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+  
+  const handleCandidatesTabChange = useCallback((event, newValue) => {
+    setCandidatesTab(newValue);
     const newTabName = ['explore', 'detailed-search', 'job-listings'][newValue];
     setSearchParams({ page: currentPage, tab: newTabName });
   }, [setSearchParams, currentPage]);
@@ -147,8 +161,10 @@ const EmployerTabs = () => {
         <MainContent
           currentPage={currentPage}
           dashboardTab={dashboardTab}
+          candidatesTab={candidatesTab}
           videoTab={videoTab}
           onDashboardTabChange={handleDashboardTabChange}
+          onCandidatesTabChange={handleCandidatesTabChange}
           onVideoTabChange={handleVideoTabChange}
           setVideoTab={setVideoTab} 
         />
@@ -159,4 +175,4 @@ const EmployerTabs = () => {
   );
 };
 
-export default EmployerTabs;
+export default EmployersTabs;

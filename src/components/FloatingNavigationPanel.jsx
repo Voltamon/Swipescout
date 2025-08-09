@@ -67,6 +67,7 @@ const FloatingButton = styled(IconButton)(({ theme }) => ({
 
 const FloatingNavigationPanel = ({ role, onPageChange }) => {
   const jobSeekerButtons = useMemo(() => [
+    { label: 'Dashboard', icon: <DashboardIcon />, page: 'dashboard' },
     { label: 'Videos', icon: <VideoLibraryIcon />, page: 'videos' },
     { label: 'Employers', icon: <WorkIcon />, page: 'dashboard' },
     { label: 'Profile', icon: <AccountBoxIcon />, page: 'jobseekerprofile' },
@@ -75,7 +76,7 @@ const FloatingNavigationPanel = ({ role, onPageChange }) => {
 
   const employerButtons = useMemo(() => [
     { label: 'Dashboard', icon: <DashboardIcon />, page: 'dashboard' },
-    { label: 'Jobs', icon: <ListAltIcon />, page: 'jobs' },
+    { label: 'Candidates', icon: <ListAltIcon />, page: 'candidates' },
     { label: 'Videos', icon: <VideocamIcon />, page: 'videos' },
     { label: 'Profile', icon: <AccountBoxIcon />, page: 'employerprofile' },
     { label: 'Messeges', icon: <MessagesIcon />, page: 'messeges' },
