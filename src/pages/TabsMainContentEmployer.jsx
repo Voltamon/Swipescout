@@ -15,6 +15,8 @@ import EmployerExploreSidebar from "./EmployerExploreSidebar";
 import EditEmployerProfile from "./EditEmployerProfilePage";
 import PostJob from "./PostJobPage";
 import AllVideosPage from "./AllVideosPage";
+import JobseekerVideosPage from "./JobSeekersPuplicVideosPage";
+
 
 const MainContent = ({ 
   currentPage, 
@@ -26,16 +28,16 @@ const MainContent = ({
 }) => {
   // Define a configuration for the Dashboard tabs
   const dashboardTabsConfig = [
-    { label: "Overview", content: <AllVideosPage pagetype='employers' /> },
+    { label: "Overview", content: 'Overview here' },
     { label: "Analytics", content: <Typography variant="body1" sx={{ p: 3 }}>Analytics Here</Typography> },
     
   ];
 
   // Define a configuration for the Candidates tabs
   const candidatesTabsConfig = [
-    { label: "Explore", content: <AllVideosPage pagetype='employers' /> },
-    { label: "Detailed Search", content: <Typography variant="body1" sx={{ p: 3 }}>Use advanced filters to find the perfect job.</Typography> },
-    { label: "Candidates", content: <Typography variant="body1" sx={{ p: 3 }}>Candidate list</Typography> },
+    { label: "Explore Talent", content: <JobseekerVideosPage /> },
+    { label: "Filter Candidates", content: <Typography variant="body1" sx={{ p: 3 }}>Use advanced filters to find the perfect job.</Typography> },
+    { label: "Saved Candidates", content: <Typography variant="body1" sx={{ p: 3 }}>Candidate list</Typography> },
   ];
 
   // Define a configuration for the Videos tabs
@@ -109,7 +111,7 @@ const MainContent = ({
     const PostJobPageContent = () => <PostJob />;
     const SettingsPageContent = () => <Typography variant="h5" sx={{ p: 3 }}>Settings</Typography>;
     const OvervieDashboardPageContent = () => <Typography variant="h5" sx={{ p: 3 }}>Dashboard</Typography>;
-    const DefaultContent = () => <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Dashboard!</Typography>;
+    const DefaultContent = () => <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Account!</Typography>;
 
     // Render the correct component based on the current page
     switch (currentPage) {

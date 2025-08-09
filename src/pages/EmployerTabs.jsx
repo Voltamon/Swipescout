@@ -114,7 +114,7 @@ const EmployersTabs = () => {
         fontFamily: 'Inter, sans-serif',
       },
       shape: {
-        borderRadius: 12,
+        borderRadius: 6,
       },
       components: {
         MuiButton: {

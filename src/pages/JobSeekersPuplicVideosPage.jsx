@@ -41,7 +41,7 @@ const AllVideosPage = () => {
   let { pagetype } = useParams();
     const { user } = useAuth();
     
-  pagetype='employers'; // Hardcoded for now, can be dynamic based on user role
+  pagetype='jobseekers'; // Hardcoded for now, can be dynamic based on user role
 
   const VIDEOS_PER_PAGE = 9;
 
@@ -202,7 +202,7 @@ const AllVideosPage = () => {
                           No videos found
                         </Typography>
                         <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                          wating Employers Videos
+                          wating Jobseekers Videos
                         </Typography>
                         
                       </Box>

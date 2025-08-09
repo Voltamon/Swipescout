@@ -178,8 +178,8 @@ const LoginPage = () => {
 
   const getDefaultRoute = (role) => {
     switch (role) {
-      case 'job_seeker': return '/videos'; //dashboard
-      case 'employer': return '/videos'; //employer-dashboard
+      case 'job_seeker': return '/jobseeker-tabs'; //dashboard
+      case 'employer': return '/employer-tabs'; //employer-dashboard
       case 'admin': return '/admin-dashboard';
       default: return '/login';
     }

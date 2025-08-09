@@ -617,7 +617,7 @@ const HomePage = () => {
                   </Button>
                   <Button
                     component={Link}
-                    to="/videos/all"
+                    to="/job-seeker-explore-public"
                     variant="outlined"
                     size="large"
                     sx={{
@@ -633,7 +633,7 @@ const HomePage = () => {
                       },
                     }}
                   >
-                    Demo
+                    Watch
                   </Button>
                 </Box>
               </Grid>
