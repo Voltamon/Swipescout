@@ -633,7 +633,7 @@ const HomePage = () => {
                       },
                     }}
                   >
-                    Watch
+                    Explore
                   </Button>
                 </Box>
               </Grid>
