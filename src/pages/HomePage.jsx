@@ -617,7 +617,7 @@ const HomePage = () => {
                   </Button>
                   <Button
                     component={Link}
-                    to="/job-seeker-explore-public"
+                    to="/videos/all"
                     variant="outlined"
                     size="large"
                     sx={{
