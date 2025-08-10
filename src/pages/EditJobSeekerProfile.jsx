@@ -758,11 +758,12 @@ const EditJobSeekerProfile = () => {
   };
 
   const handleUploadVideo = () => {
-    navigate('/video-upload');
+    // navigate('/video-upload');
+    navigate('/jobseeker-tabs?page=videos&tab=upload-video');
   };
 
   const handleEditVideo = (videoId) => {
-    navigate(`/edit-video/${videoId}`);
+    navigate(`/jobseeker-tabs?page=edit-video/${videoId}`);
   };
 
   // Format date for display
