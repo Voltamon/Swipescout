@@ -633,7 +633,7 @@ const HomePage = () => {
                       },
                     }}
                   >
-                    Demo
+                    Explore
                   </Button>
                 </Box>
               </Grid>
