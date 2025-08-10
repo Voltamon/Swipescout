@@ -484,7 +484,12 @@ const EmployerProfile = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<EditIcon />}
-                onClick={() => navigate('/edit-employer-profile')}
+                onClick={() => {
+                  // navigate('/edit-employer-profile');
+                  // navigate('/employer-tabs?page=videos&tab=upload-video');
+                  navigate('/employer-tabs?page=editemployererprofile');
+                 }
+                }
                 sx={{ boxShadow: 2 }}
               >
                 Edit Profile
@@ -493,7 +498,12 @@ const EmployerProfile = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<WorkIcon />}
-                onClick={() => navigate('/Post-job-page')}
+                onClick={() => {
+                  //navigate('/Post-job-page')                  
+
+                  navigate('/employer-tabs?page=postjob');
+                }
+                }
                 sx={{ boxShadow: 1 }}
               >
                 Post Job

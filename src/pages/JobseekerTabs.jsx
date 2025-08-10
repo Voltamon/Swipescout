@@ -20,6 +20,7 @@ const JobseekerTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [currentPage, setCurrentPage] = useState('uploadViedos');
   const [dashboardTab, setDashboardTab] = useState(0);
+  const [employerTab, setEmployerTab] = useState(0);
   const [videoTab, setVideoTab] = useState(0);
   const { role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,9 +39,14 @@ const JobseekerTabs = () => {
     
     // Logic to set the correct sub-tab based on the 'tab' parameter
     if (page === 'dashboard' && tab) {
-      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      const tabIndex = ['overviwe', 'analytics'].indexOf(tab);
       if (tabIndex !== -1) {
         setDashboardTab(tabIndex);
+      }
+    } else if (page === 'employer' && tab) {
+      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      if (tabIndex !== -1) {
+        setEmployerTab(tabIndex);
       }
     } else if (page === 'videos' && tab) {
       const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(tab);
@@ -61,6 +67,12 @@ const JobseekerTabs = () => {
 
   const handleDashboardTabChange = useCallback((event, newValue) => {
     setDashboardTab(newValue);
+    const newTabName = ['overviwe', 'analytics'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+
+  const handleEmployerTabChange = useCallback((event, newValue) => {
+    setEmployerTab(newValue);
     const newTabName = ['explore', 'detailed-search', 'job-listings'][newValue];
     setSearchParams({ page: currentPage, tab: newTabName });
   }, [setSearchParams, currentPage]);
@@ -147,8 +159,10 @@ const JobseekerTabs = () => {
         <MainContent
           currentPage={currentPage}
           dashboardTab={dashboardTab}
+          employerTab={employerTab}
           videoTab={videoTab}
           onDashboardTabChange={handleDashboardTabChange}
+          onEmployerTabChange={handleEmployerTabChange}
           onVideoTabChange={handleVideoTabChange}
           setVideoTab={setVideoTab} 
         />

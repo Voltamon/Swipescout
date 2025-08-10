@@ -763,7 +763,7 @@ const EditJobSeekerProfile = () => {
   };
 
   const handleEditVideo = (videoId) => {
-    navigate(`/edit-video/${videoId}`);
+    navigate(`/jobseeker-tabs?page=edit-video/${videoId}`);
   };
 
   // Format date for display
