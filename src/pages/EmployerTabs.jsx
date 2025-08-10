@@ -20,6 +20,7 @@ const EmployersTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [currentPage, setCurrentPage] = useState('uploadViedos');
   const [dashboardTab, setDashboardTab] = useState(0);
+  const [candidatesTab, setCandidatesTab] = useState(0);
   const [videoTab, setVideoTab] = useState(0);
   const { role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,11 +39,18 @@ const EmployersTabs = () => {
     
     // Logic to set the correct sub-tab based on the 'tab' parameter
     if (page === 'dashboard' && tab) {
-      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      const tabIndex = ['Overview', 'Analytics'].indexOf(tab);
       if (tabIndex !== -1) {
         setDashboardTab(tabIndex);
       }
-    } else if (page === 'videos' && tab) {
+    } 
+    else if (page === 'candidates' && tab) {
+      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      if (tabIndex !== -1) {
+        setCandidatesTab(tabIndex);
+      }
+    }
+    else if (page === 'videos' && tab) {
       const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(tab);
       if (tabIndex !== -1) {
         setVideoTab(tabIndex);
@@ -61,6 +69,12 @@ const EmployersTabs = () => {
 
   const handleDashboardTabChange = useCallback((event, newValue) => {
     setDashboardTab(newValue);
+    const newTabName = ['overview', 'analytics'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+  
+  const handleCandidatesTabChange = useCallback((event, newValue) => {
+    setCandidatesTab(newValue);
     const newTabName = ['explore', 'detailed-search', 'job-listings'][newValue];
     setSearchParams({ page: currentPage, tab: newTabName });
   }, [setSearchParams, currentPage]);
@@ -100,7 +114,7 @@ const EmployersTabs = () => {
         fontFamily: 'Inter, sans-serif',
       },
       shape: {
-        borderRadius: 12,
+        borderRadius: 6,
       },
       components: {
         MuiButton: {
@@ -147,8 +161,10 @@ const EmployersTabs = () => {
         <MainContent
           currentPage={currentPage}
           dashboardTab={dashboardTab}
+          candidatesTab={candidatesTab}
           videoTab={videoTab}
           onDashboardTabChange={handleDashboardTabChange}
+          onCandidatesTabChange={handleCandidatesTabChange}
           onVideoTabChange={handleVideoTabChange}
           setVideoTab={setVideoTab} 
         />

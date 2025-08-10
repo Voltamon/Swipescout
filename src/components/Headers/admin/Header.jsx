@@ -42,8 +42,8 @@ const Header = ({ darkMode, setDarkMode }) => {
 
   const handleProfileClick = () => {
     const path = role === 'job_seeker' ? '/jobseeker-tabs?page=jobseekerprofile' :
-                 role === 'employer' ? '/jobseeker-tabs?page=employerprofile' :
-                 role === 'admin' ? '/employer-tabs?page=adminprofile' : '/';
+                 role === 'employer' ? '/employer-tabs?page=employerprofile' :
+                 role === 'admin' ? '/admin-tabs?page=adminprofile' : '/';
     navigate(path);
   };
 
@@ -112,7 +112,7 @@ const Header = ({ darkMode, setDarkMode }) => {
             {/* Dark/Light Mode Toggle Icon */}
             <IconButton
               color="inherit"
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={() => setDarkMode(!darkMode) }
               sx={{
                 color: iconColor,
                 '&:hover': {
@@ -138,7 +138,13 @@ const Header = ({ darkMode, setDarkMode }) => {
 
             <IconButton
               color="inherit"
-              onClick={() => navigate('/jobseeker-tabs?page=messeges')}
+              onClick={() => {
+                //navigate('/jobseeker-tabs?page=messeges')
+                    const path = role === 'job_seeker' ? '/jobseeker-tabs?page=messeges' :
+                 role === 'employer' ? '/employer-tabs?page=messeges' :
+                 role === 'admin' ? '/admin-tabs?page=messeges' : '/';
+    navigate(path);
+              }}
               sx={{
                 color: iconColor,
                 '&:hover': {
@@ -168,7 +174,15 @@ const Header = ({ darkMode, setDarkMode }) => {
      
             <IconButton
               color="inherit"
-              onClick={() => navigate('/jobseeker-tabs?page=videos&tab=upload-video')}
+              onClick={() =>
+                {
+                 //navigate('/jobseeker-tabs?page=videos&tab=upload-video')}
+                 const path = role === 'job_seeker' ? '/jobseeker-tabs?page=videos&tab=upload-video' :
+                 role === 'employer' ? '/employer-tabs?page=videos&tab=upload-video' :
+                 role === 'admin' ? '/admin-tabs?page=videos&tab=upload-video' : '/';
+                 navigate(path);
+                }
+              }
               sx={{
                 color: iconColor,
                 '&:hover': {

@@ -16,9 +16,17 @@ import EmployerVideosPage from "./EmployerVideosPage";
 import EditJobSeekerProfile from "./EditJobSeekerProfile";
 import JobsListingPage from "./JobsListingPage";
 
-const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange, onVideoTabChange, setVideoTab }) => {
+const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashboardTabChange, onEmployerTabChange, onVideoTabChange, setVideoTab }) => {
   // Define a configuration for the Dashboard tabs
-  const dashboardTabsConfig = [
+
+    const dashboardTabsConfig = [
+    { label: "Overview", content: 'Overview Here' },
+    { label: "Analytics", content: <Typography variant="body1" sx={{ p: 3 }}>Analytics Here</Typography> },
+    
+  ];
+
+
+  const employersTabsConfig = [
     { label: "Explore", content: <Typography variant="body1" sx={{ p: 3 }}><EmployerVideosPage /></Typography> },
     { label: "Detailed Search", content: <Typography variant="body1" sx={{ p: 3 }}>Use advanced filters to find the perfect job.</Typography> },
     { label: "Job Listings", content: <Typography variant="body1" sx={{ p: 3 }}><JobsListingPage/></Typography> },
@@ -33,7 +41,26 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
 
   const pageContent = useMemo(() => {
     // Component to render the dashboard tabs and content
-    const DashboardPageContent = () => (
+    const EmployersPageContent = () => (
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={employerTab} onChange={onEmployerTabChange} variant="fullWidth">
+            {employersTabsConfig.map((tab, index) => (
+              // Use a unique key for each tab
+              <Tab key={index} label={tab.label} />
+            ))}
+          </Tabs>
+        </Box>
+        {employersTabsConfig.map((tab, index) => (
+          // Use a unique key for each TabPanel
+          <TabPanel key={index} value={employerTab} index={index}>
+            {tab.content}
+          </TabPanel>
+        ))}
+      </Box>
+    );
+
+      const DashboardPageContent = () => (
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={dashboardTab} onChange={onDashboardTabChange} variant="fullWidth">
@@ -80,7 +107,6 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
       <Typography variant="h5" sx={{ p: 3 }}><JobSeekerProfile/></Typography>
     );
 
-
     const EditJSProfilePageContent = () => (
       <Typography variant="h5" sx={{ p: 3 }}><EditJobSeekerProfile/></Typography>
     );
@@ -97,7 +123,7 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
       <Typography variant="h5" sx={{ p: 3 }}>Videos for Employers</Typography>
     );
     const DefaultContent = () => (
-      <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Dashboard!</Typography>
+      <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Account!</Typography>
     );
 
 
@@ -105,6 +131,8 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
     switch (currentPage) {
       case 'dashboard':
         return <DashboardPageContent />;
+      case 'employers':
+        return <EmployersPageContent />;
       case 'videos':
         return <VideosPageContent setVideoTab={setVideoTab} />; // Pass the prop down here
       case 'messeges':
@@ -124,7 +152,7 @@ const MainContent = ({ currentPage, dashboardTab, videoTab, onDashboardTabChange
       default:
         return <DefaultContent />;
     }
-  }, [currentPage, dashboardTab, videoTab, onDashboardTabChange, onVideoTabChange, setVideoTab]);
+  }, [currentPage, employerTab, dashboardTab, videoTab, onEmployerTabChange, onDashboardTabChange, onVideoTabChange, setVideoTab]);
 
   return (
     <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>
