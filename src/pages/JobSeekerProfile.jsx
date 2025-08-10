@@ -70,7 +70,7 @@ const ProfileInfo = styled(Box)(({ theme }) => ({
   flex: 1,
   padding: theme.spacing(3),
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: 'rgb(255, 255, 255)',
+  backgroundColor: 'background.jobseeker',
   boxShadow: theme.shadows[1],
   [theme.breakpoints.up('md')]: {
     paddingRight: theme.spacing(4),
@@ -378,7 +378,8 @@ const JobSeekerProfile = () => {
   };
   
   const handleEditProfile = () => {
-    navigate('/edit-JobSeeker-Profile');
+    // navigate('/edit-JobSeeker-Profile');
+     navigate('/jobseeker-tabs?page=editjobseekerprofile');
   };
   
   // Format date
@@ -711,7 +712,7 @@ const mockVideos = [
         </ProfileHeader>
 
         {/* Tabs Section */}
-        <Paper sx={{ mb: 4, borderRadius: theme.shape.borderRadius, overflow: 'hidden', boxShadow: theme.shadows[3] }}>
+        <Paper sx={{ mb: 4, borderRadius:2, overflow: 'hidden', boxShadow: theme.shadows[3] }}>
           <Tabs
             value={tabValue}
             onChange={handleTabChange}

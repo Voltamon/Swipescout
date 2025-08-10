@@ -1,104 +1,92 @@
-import React, { useState, useMemo } from 'react';
-import { 
-  Box, 
-  Container, 
-  Tabs, 
-  Tab, 
-  Paper, 
-  CssBaseline, 
-  IconButton,
-  useMediaQuery,
-  styled,
-  Typography
-} from "@mui/material";
-import {
-  Dashboard as DashboardIcon,
-  Videocam as VideocamIcon,
-  AccountBox as AccountBoxIcon,
-  VideoCall as VideoCallIcon,
-  AddCard as AddCardIcon,
-  ListAlt as ListAltIcon,
-  Plagiarism as PlagiarismIcon,
-  Settings as SettingsIcon,
-} from "@mui/icons-material";
+// JobseekerTabs.jsx
 
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React, { useState, useCallback, useMemo ,useEffect } from 'react';
+import { Box, CssBaseline } from "@mui/material";
+// import { ThemeProvider } from "@mui/material/styles";
+
+// Import components from their new, separate files
 import Header from '../components/Headers/admin/Header';
 import Footer from '../components/Headers/admin/Footer';
 import { useAuth } from '../hooks/useAuth';
+import FloatingNavigationPanel from '../components/FloatingNavigationPanel';
+import MainContent from './TabsMainContentEmployer';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+// Import the mock auth hook and theme config
+// import { createCustomTheme } from '../theme';
+import { BrowserRouter, useSearchParams } from 'react-router-dom';
 
-// Updated FloatingPanel component with text
-const FloatingPanel = styled(Paper)(({ theme }) => ({
-  position: 'fixed',
-  top: `calc(${theme.spacing(2)} + 65px)`,
-  left: theme.spacing(2),
-  padding: theme.spacing(1.5),
-  borderRadius: theme.shape.borderRadius,
-  zIndex: 1000,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(1),
-  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(29, 32, 46, 0.7)' : 'rgba(255, 255, 255, 0.7)',
-  backdropFilter: 'blur(10px)',
-  [theme.breakpoints.down('sm')]: {
-    top: 'auto',
-    bottom: theme.spacing(2),
-    left: theme.spacing(2),
-    right: 'auto',
-    flexDirection: 'row',
-  },
-}));
 
-const FloatingButton = styled(IconButton)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: theme.spacing(0.5),
-  padding: theme.spacing(1),
-  borderRadius: theme.shape.borderRadius,
-  '& .MuiTypography-caption': {
-    fontSize: '0.7rem',
-    color: theme.palette.text.primary,
-  },
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'row',
-    gap: theme.spacing(1),
-    '& .MuiTypography-caption': {
-      fontSize: '0.8rem',
-    },
-  },
-}));
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-const EmployerDashboard = () => {
+const EmployersTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentPage, setCurrentPage] = useState('uploadViedos');
   const [dashboardTab, setDashboardTab] = useState(0);
-  const [jobsTab, setJobsTab] = useState(0);
-  const { user } = useAuth();
-  const isMobile = useMediaQuery('(max-width:600px)');
+  const [candidatesTab, setCandidatesTab] = useState(0);
+  const [videoTab, setVideoTab] = useState(0);
+  const { role } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Create the theme based on dark mode state
+//   const theme = useMemo(() => createCustomTheme(darkMode), [darkMode]);
 
-  const theme = useMemo(() =>
+  // Memoized handlers to prevent unnecessary re-renders of child components
+   useEffect(() => {
+    const page = searchParams.get('page');
+    const tab = searchParams.get('tab');
+
+    if (page) {
+      setCurrentPage(page);
+    }
+    
+    // Logic to set the correct sub-tab based on the 'tab' parameter
+    if (page === 'dashboard' && tab) {
+      const tabIndex = ['Overview', 'Analytics'].indexOf(tab);
+      if (tabIndex !== -1) {
+        setDashboardTab(tabIndex);
+      }
+    } 
+    else if (page === 'candidates' && tab) {
+      const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
+      if (tabIndex !== -1) {
+        setCandidatesTab(tabIndex);
+      }
+    }
+    else if (page === 'videos' && tab) {
+      const tabIndex = ['upload-video', 'my-videos', 'example-videos'].indexOf(tab);
+      if (tabIndex !== -1) {
+        setVideoTab(tabIndex);
+      }
+    }
+  }, [searchParams]);
+
+  // Create the theme based on dark mode state
+  // const theme = useMemo(() => createCustomTheme(darkMode), [darkMode]);
+
+  // Memoized handlers to prevent unnecessary re-renders of child components
+  const handlePageChange = useCallback((page) => {
+    setCurrentPage(page);
+    setSearchParams({ page }); // Update the URL parameter
+  }, [setSearchParams]);
+
+  const handleDashboardTabChange = useCallback((event, newValue) => {
+    setDashboardTab(newValue);
+    const newTabName = ['overview', 'analytics'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+  
+  const handleCandidatesTabChange = useCallback((event, newValue) => {
+    setCandidatesTab(newValue);
+    const newTabName = ['explore', 'detailed-search', 'job-listings'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+
+  const handleVideoTabChange = useCallback((event, newValue) => {
+    setVideoTab(newValue);
+    const newTabName = ['upload-video', 'my-videos', 'example-videos'][newValue];
+    setSearchParams({ page: currentPage, tab: newTabName });
+  }, [setSearchParams, currentPage]);
+
+
+    const theme = useMemo(() =>
     createTheme({
       palette: {
         mode: darkMode ? 'dark' : 'light',
@@ -112,7 +100,11 @@ const EmployerDashboard = () => {
         background: {
           default: darkMode ? '#12121e' : '#f9fafb',
           paper: darkMode ? '#1d202e' : '#ffffff',
+          paper2: darkMode ? '#5a67a0ff' : '#ffffff',
+          hover: darkMode ? '#232b52ff' : '#d6dcf8ff',
+          selected: darkMode ? '#afbcfaff' : '#3f4b81ff',
         },
+         divider: darkMode ? '#1d202e ' : '#f9fafb',
         text: {
           primary: darkMode ? '#e9e9f4' : '#111827',
           secondary: darkMode ? '#b5b6cf' : '#374151',
@@ -122,7 +114,7 @@ const EmployerDashboard = () => {
         fontFamily: 'Inter, sans-serif',
       },
       shape: {
-        borderRadius: 12,
+        borderRadius: 6,
       },
       components: {
         MuiButton: {
@@ -152,150 +144,30 @@ const EmployerDashboard = () => {
     [darkMode],
   );
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleDashboardTabChange = (event, newValue) => {
-    setDashboardTab(newValue);
-  };
-
-  const handleJobsTabChange = (event, newValue) => {
-    setJobsTab(newValue);
-  };
-
-  // Content for different tabs
-  const DashboardTabContent = () => (
-    <Typography variant="body1" sx={{ p: 3 }}>
-      {dashboardTab === 0 && "Company overview and analytics."}
-      {dashboardTab === 1 && "Recent candidate activity."}
-      {dashboardTab === 2 && "Video performance metrics."}
-    </Typography>
-  );
-
-  const JobsTabContent = () => (
-    <Typography variant="body1" sx={{ p: 3 }}>
-      {jobsTab === 0 && "Create new job postings."}
-      {jobsTab === 1 && "Manage your job listings."}
-      {jobsTab === 2 && "Search for candidates."}
-    </Typography>
-  );
-
-  const VideosContent = () => (
-    <Typography variant="h5" sx={{ p: 3 }}>
-      My Videos
-    </Typography>
-  );
-
-  const SettingsContent = () => (
-    <Typography variant="h5" sx={{ p: 3 }}>
-      Settings
-    </Typography>
-  );
-
-  const renderPageContent = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return (
-          <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={dashboardTab} onChange={handleDashboardTabChange} variant="fullWidth">
-                <Tab label="Overview" />
-                <Tab label="Activity" />
-                <Tab label="Analytics" />
-              </Tabs>
-            </Box>
-            <TabPanel value={dashboardTab} index={0}>
-              <DashboardTabContent />
-            </TabPanel>
-            <TabPanel value={dashboardTab} index={1}>
-              <DashboardTabContent />
-            </TabPanel>
-            <TabPanel value={dashboardTab} index={2}>
-              <DashboardTabContent />
-            </TabPanel>
-          </Box>
-        );
-      case 'jobs':
-        return (
-          <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={jobsTab} onChange={handleJobsTabChange} variant="fullWidth">
-                <Tab label="Post Job" />
-                <Tab label="Jobs List" />
-                <Tab label="Search Candidates" />
-              </Tabs>
-            </Box>
-            <TabPanel value={jobsTab} index={0}>
-              <JobsTabContent />
-            </TabPanel>
-            <TabPanel value={jobsTab} index={1}>
-              <JobsTabContent />
-            </TabPanel>
-            <TabPanel value={jobsTab} index={2}>
-              <JobsTabContent />
-            </TabPanel>
-          </Box>
-        );
-      case 'videos':
-        return <VideosContent />;
-      case 'settings':
-        return <SettingsContent />;
-      default:
-        return (
-          <Typography variant="h5" sx={{ p: 3 }}>
-            Welcome to your Employer Dashboard!
-          </Typography>
-        );
-    }
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+      <Box sx={{
+        flexGrow: 1,
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: 'background.default',
+      }}>
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
-<FloatingPanel>
-  <FloatingButton 
-    color="primary" 
-    onClick={() => handlePageChange('dashboard')} 
-    aria-label="Dashboard"
-  >
-    <DashboardIcon />
-    <Typography variant="caption">Dashboard</Typography>
-  </FloatingButton>
-  <FloatingButton 
-    color="primary" 
-    onClick={() => handlePageChange('jobs')} 
-    aria-label="Jobs"
-  >
-    <ListAltIcon />
-    <Typography variant="caption">Jobs</Typography>
-  </FloatingButton>
-  <FloatingButton 
-    color="primary" 
-    onClick={() => handlePageChange('videos')} 
-    aria-label="Videos"
-  >
-    <VideocamIcon />
-    <Typography variant="caption">Videos</Typography>
-  </FloatingButton>
-  <FloatingButton 
-    color="primary" 
-    onClick={() => handlePageChange('settings')} 
-    aria-label="Settings"
-  >
-    <SettingsIcon />
-    <Typography variant="caption">Settings</Typography>
-  </FloatingButton>
-</FloatingPanel>
+        <FloatingNavigationPanel role={role} onPageChange={handlePageChange} />
 
-        <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>
-          <Container maxWidth="lg">
-            {renderPageContent()}
-          </Container>
-        </Box>
+        <MainContent
+          currentPage={currentPage}
+          dashboardTab={dashboardTab}
+          candidatesTab={candidatesTab}
+          videoTab={videoTab}
+          onDashboardTabChange={handleDashboardTabChange}
+          onCandidatesTabChange={handleCandidatesTabChange}
+          onVideoTabChange={handleVideoTabChange}
+          setVideoTab={setVideoTab} 
+        />
 
         <Footer />
       </Box>
@@ -303,4 +175,4 @@ const EmployerDashboard = () => {
   );
 };
 
-export default EmployerDashboard;
+export default EmployersTabs;

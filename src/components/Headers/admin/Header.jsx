@@ -41,9 +41,9 @@ const Header = ({ darkMode, setDarkMode }) => {
                  (theme.palette.mode === 'light' ? 'rgba(25, 118, 210, 0.04)' : 'rgba(167, 139, 250, 0.04)');
 
   const handleProfileClick = () => {
-    const path = role === 'job_seeker' ? '/job-seeker-profile' :
-                 role === 'employer' ? '/employer-profile' :
-                 role === 'admin' ? '/admin-profile' : '/';
+    const path = role === 'job_seeker' ? '/jobseeker-tabs?page=jobseekerprofile' :
+                 role === 'employer' ? '/employer-tabs?page=employerprofile' :
+                 role === 'admin' ? '/admin-tabs?page=adminprofile' : '/';
     navigate(path);
   };
 
@@ -112,7 +112,7 @@ const Header = ({ darkMode, setDarkMode }) => {
             {/* Dark/Light Mode Toggle Icon */}
             <IconButton
               color="inherit"
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={() => setDarkMode(!darkMode) }
               sx={{
                 color: iconColor,
                 '&:hover': {
@@ -138,7 +138,13 @@ const Header = ({ darkMode, setDarkMode }) => {
 
             <IconButton
               color="inherit"
-              onClick={() => navigate("/chat")}
+              onClick={() => {
+                //navigate('/jobseeker-tabs?page=messeges')
+                    const path = role === 'job_seeker' ? '/jobseeker-tabs?page=messeges' :
+                 role === 'employer' ? '/employer-tabs?page=messeges' :
+                 role === 'admin' ? '/admin-tabs?page=messeges' : '/';
+    navigate(path);
+              }}
               sx={{
                 color: iconColor,
                 '&:hover': {
@@ -151,7 +157,7 @@ const Header = ({ darkMode, setDarkMode }) => {
               </Badge>
             </IconButton>
 
-            <IconButton
+            {/* <IconButton
               color="inherit"
               onClick={() => navigate("/notifications")}
               sx={{
@@ -164,11 +170,19 @@ const Header = ({ darkMode, setDarkMode }) => {
               <Badge badgeContent={3} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
-
+            </IconButton> */}
+     
             <IconButton
               color="inherit"
-              onClick={() => navigate("/video-upload")}
+              onClick={() =>
+                {
+                 //navigate('/jobseeker-tabs?page=videos&tab=upload-video')}
+                 const path = role === 'job_seeker' ? '/jobseeker-tabs?page=videos&tab=upload-video' :
+                 role === 'employer' ? '/employer-tabs?page=videos&tab=upload-video' :
+                 role === 'admin' ? '/admin-tabs?page=videos&tab=upload-video' : '/';
+                 navigate(path);
+                }
+              }
               sx={{
                 color: iconColor,
                 '&:hover': {
