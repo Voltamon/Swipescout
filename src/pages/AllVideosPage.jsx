@@ -13,6 +13,7 @@ import {
   ArrowUpward, ArrowDownward, Home, Close, MoreVert,
   Send, Comment, Repeat
 } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getAllVideos, getEmployerPublicVideos, getJobSeekersVideos } from '../services/api';
@@ -174,7 +175,7 @@ const TopBar = styled(Box)(({ theme }) => ({
   color: 'white',
 }));
 
-const AllVideosPage = () => {
+const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
   const { videos: localVideos } = useVideoContext();
   const [serverVideos, setServerVideos] = useState([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -189,7 +190,9 @@ const AllVideosPage = () => {
   const containerRef = useRef(null);
   const videoRefs = useRef({});
   const navigate = useNavigate();
-  const { pagetype } = useParams();
+  // const { pagetype } = useParams();
+  const { pagetype: urlPagetype } = useParams();
+  const pagetype = propPagetype || urlPagetype;
   const { user } = useAuth();
   const theme = useTheme();
 
@@ -460,9 +463,18 @@ const AllVideosPage = () => {
       {/* Top Bar */}
       <TopBar>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <IconButton onClick={() => navigate('/')} sx={{ color: 'white' }}>
-            <Home />
-          </IconButton>
+          {onClose ? (
+            // Render Close icon when the onClose prop is provided
+            <IconButton onClick={onClose} sx={{ color: 'white' }}>
+              <CloseIcon  />
+            </IconButton>
+          ) : (
+            // Render Home icon and navigate when onClose is not provided
+            <IconButton onClick={() => navigate('/')} sx={{ color: 'white' }}>
+              <Home />
+            </IconButton>
+          )}
+          
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             {pagetype === 'all' ? 'All Videos' : 
              pagetype === 'jobseekers' ? 'Job Seekers' : 'Employers'}
