@@ -97,9 +97,8 @@ import HelpPageLinks from "./pages/HelpPageLinks";
 import CustomerSupportPage from "./pages/CustomerSupportPage";
 import ContactPage from "./pages/ContactPage";
 // import VideoTabs from "./pages/VideoTabs";
-import JobseekerTabs from "./pages/JobseekerTabs";
-import EmployerVideosPage from "./pages/EmployerVideosPage";
 import EmployerTabs from "./pages/EmployerTabs";
+import JobseekerTabs from "./pages/JobseekerTabs";
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -161,10 +160,9 @@ function App() {
             <Route path="/employer-profile/:userId" element={<EmployerProfileView />} />
             <Route path="/videos/:pagetype" element={<AllVideosPage />} />
             <Route path="/video-player/:id" element={<VideoFeedViewer />} />
-              {/* <Route path="/video-tabs" element={<VideoTabs />} /> */}
+                        {/* <Route path="/video-tabs" element={<VideoTabs />} /> */}
               <Route path="/employer-tabs" element={<EmployerTabs />} />
               <Route path="/jobseeker-tabs" element={<JobseekerTabs />} />
-              <Route path="/employer-videos" element={<EmployerVideosPage />} />
 
             {/* Private Routes */}
 
