@@ -501,7 +501,8 @@ const EmployerProfile = () => {
                 onClick={() => {
                   //navigate('/Post-job-page')                  
 
-                  navigate('/employer-tabs?page=postjob');
+                  //navigate('/employer-tabs?page=postjob');
+                  navigate('/employer-tabs?page=editemployererprofile');
                 }
                 }
                 sx={{ boxShadow: 1 }}

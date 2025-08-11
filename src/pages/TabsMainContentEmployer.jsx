@@ -2,7 +2,7 @@
 // This component renders the main content area, including tabs and content
 // for each "page" of the application.
 
-import React, { useMemo } from 'react';
+import React, { useMemo ,useState ,useEffect  } from 'react';
 import { Box, Container, Tabs, Tab, Typography } from "@mui/material";
 
 // Import the TabPanel component and other page components
@@ -20,12 +20,26 @@ import JobseekerVideosPage from "./JobSeekersPuplicVideosPage";
 
 const MainContent = ({ 
   currentPage, 
-  dashboardTab: candidateTab, 
+  dashboardTab, candidateTab, 
   videoTab, 
-  onDashboardTabChange: onCandidatesTabChange, 
+  onDashboardTabChange, onCandidatesTabChange, 
   onVideoTabChange, 
   setVideoTab 
 }) => {
+
+      const [showVideos, setShowVideos] = useState(false);
+
+  const handleOpenVideos = () => setShowVideos(true);
+  const handleCloseVideos = () => setShowVideos(false);
+
+     useEffect(() => {
+        if (currentPage === 'candidates' && candidateTab === 0) {
+            setShowVideos(true);
+        } else {
+            setShowVideos(false);
+        }
+    }, [currentPage, candidateTab]);
+
   // Define a configuration for the Dashboard tabs
   const dashboardTabsConfig = [
     { label: "Overview", content: 'Overview here' },
@@ -35,7 +49,8 @@ const MainContent = ({
 
   // Define a configuration for the Candidates tabs
   const candidatesTabsConfig = [
-    { label: "Explore Talent", content: <JobseekerVideosPage /> },
+        { label: "Explore", content: <Typography variant="body1" sx={{ p: 3 }}>   Employers Viedos Explore here... <button onClick={handleOpenVideos}>Show</button>
+</Typography> },
     { label: "Filter Candidates", content: <Typography variant="body1" sx={{ p: 3 }}>Use advanced filters to find the perfect job.</Typography> },
     { label: "Saved Candidates", content: <Typography variant="body1" sx={{ p: 3 }}>Candidate list</Typography> },
   ];
@@ -147,7 +162,31 @@ const MainContent = ({
       <Container maxWidth="lg">
         {pageContent}
       </Container>
-    </Box>
+    
+    {showVideos && (
+        <Box
+          sx={{
+            // This Box acts as the container for your video player
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100vw', // Example width
+            height: '100vh', // Example height
+            border: '2px solid white',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.7)',
+            zIndex: 9999,
+          }}
+        >
+          <AllVideosPage
+            pagetype="jobseekers"
+            onClose={handleCloseVideos}
+          />
+        </Box>
+      )}
+      </Box>
   );
 };
 

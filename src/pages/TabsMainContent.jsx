@@ -193,7 +193,7 @@ const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashb
           }}
         >
           <AllVideosPage
-            pagetype="jobseekers"
+            pagetype="employers"
             onClose={handleCloseVideos}
           />
         </Box>
