@@ -96,7 +96,7 @@ const Header = ({ darkMode, setDarkMode }) => {
                 alignItems: 'center'
               }}
             >
-              Swip<span style={{
+              Swipe<span style={{
                 color: iconColor,
                 marginLeft: '2px'
               }}>scout</span>

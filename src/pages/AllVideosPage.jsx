@@ -7,8 +7,8 @@ import {
   CircularProgress, Avatar, Chip, Tooltip, useTheme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { 
-  PlayArrow, Pause, VolumeOff, VolumeUp, Share, Favorite, 
+import {
+  PlayArrow, Pause, VolumeOff, VolumeUp, Share, Favorite,
   FavoriteBorder, Bookmark, BookmarkBorder, PersonAdd,
   ArrowUpward, ArrowDownward, Home, Close, MoreVert,
   Send, Comment, Repeat
@@ -37,7 +37,7 @@ const SAMPLE_VIDEOS = [
     views_count: 1200
   },
   {
-    id: 'sample-2', 
+    id: 'sample-2',
     video_title: 'Marketing Manager Position',
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     video_type: 'Job Seeker',
@@ -63,7 +63,7 @@ const SAMPLE_VIDEOS = [
       profile_image: null,
       role: 'employer'
     },
-    hashtags: '#Hiring #TechJobs #Innovation',
+    hashttags: '#Hiring #TechJobs #Innovation',
     isSample: true,
     likes_count: 312,
     views_count: 1500
@@ -124,6 +124,8 @@ const VideoInfo = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   color: 'white',
   zIndex: 2,
+  // Stronger text shadow for better legibility
+  textShadow: '2px 2px 8px rgba(0,0,0,0.9), 1px 1px 2px rgba(255,255,255,0.3)',
 }));
 
 const ActionButtons = styled(Box)(({ theme }) => ({
@@ -136,16 +138,18 @@ const ActionButtons = styled(Box)(({ theme }) => ({
   zIndex: 2,
 }));
 
+// Updated ActionButton style for better visibility
 const ActionButton = styled(IconButton)(({ theme }) => ({
-  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  backgroundColor: 'rgba(0, 0, 0, 0.4)',
   color: 'white',
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(255, 255, 255, 0.1)',
   width: 56,
   height: 56,
   '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     transform: 'scale(1.1)',
+    borderColor: 'rgba(255, 255, 255, 0.8)',
   },
   transition: 'all 0.2s ease-in-out',
 }));
@@ -154,7 +158,7 @@ const NavigationButtons = styled(Box)(({ theme }) => ({
   position: 'fixed',
   right: theme.spacing(2),
   top: '50%',
-  transform: 'translateY(-50%)',
+  transform: 'translate(-8px, -69%)',
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
@@ -173,7 +177,22 @@ const TopBar = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)',
   zIndex: 10,
   color: 'white',
+  // Stronger text shadow for better legibility
+  textShadow: '2px 2px 8px rgba(0,0,0,0.9), 1px 1px 2px rgba(255,255,255,0.3)',
 }));
+
+// Updated StyledIconButton style for better visibility
+const StyledIconButton = styled(IconButton)({
+  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  color: 'white',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(10px)',
+  '&:disabled': { opacity: 0.3, color: 'rgba(255, 255, 255, 0.5)' },
+  '&:hover': {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+});
 
 const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
   const { videos: localVideos } = useVideoContext();
@@ -208,7 +227,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
       } else if (pagetype === 'employers') {
         response = await getEmployerPublicVideos(1, 50);
       }
-      
+
       const fetchedVideos = response.data.videos || [];
       setServerVideos(fetchedVideos);
       setError(null);
@@ -239,11 +258,11 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
       } else if (pagetype === 'employers') {
         filteredSamples = SAMPLE_VIDEOS.filter(v => v.user.role === 'employer');
       }
-      
+
       // Mix real videos with samples
       return [...realVideos, ...filteredSamples];
     }
-    
+
     return realVideos;
   }, [serverVideos, pagetype]);
 
@@ -251,13 +270,13 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
   const goToVideo = useCallback((index) => {
     if (index >= 0 && index < allVideos.length) {
       setCurrentVideoIndex(index);
-      
+
       // Pause current video
       const currentVideo = videoRefs.current[allVideos[currentVideoIndex]?.id];
       if (currentVideo) {
         currentVideo.pause();
       }
-      
+
       // Play new video after a short delay
       setTimeout(() => {
         const newVideo = videoRefs.current[allVideos[index]?.id];
@@ -398,44 +417,44 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         height: '100vh',
         backgroundColor: '#000',
         color: 'white'
       }}>
         <CircularProgress color="primary" size={60} />
-        <Typography variant="h6" sx={{ ml: 2 }}>Loading videos...</Typography>
+        <Typography variant="h6" sx={{ ml: 2, textShadow: '2px 2px 8px rgba(0,0,0,0.9)', fontWeight: 'bold' }}>Loading videos...</Typography>
       </Box>
     );
   }
 
   if (error || allVideos.length === 0) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
+      <Box sx={{
+        display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center', 
-        alignItems: 'center', 
+        justifyContent: 'center',
+        alignItems: 'center',
         height: '100vh',
         backgroundColor: '#000',
         color: 'white',
         textAlign: 'center',
         p: 3
       }}>
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
           {error ? 'Oops!' : 'No Videos Yet'}
         </Typography>
-        <Typography variant="body1" sx={{ mb: 4, opacity: 0.8 }}>
+        <Typography variant="body1" sx={{ mb: 4, opacity: 0.8, textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
           {error || 'Be the first to share your story'}
         </Typography>
-        <Fab 
-          color="primary" 
+        <Fab
+          color="primary"
           variant="extended"
           onClick={() => navigate('/video-upload')}
-          sx={{ 
+          sx={{
             borderRadius: '25px',
             px: 4,
             py: 1.5,
@@ -453,7 +472,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
   const currentVideo = allVideos[currentVideoIndex];
 
   return (
-    <Box sx={{ 
+    <Box sx={{
       position: 'relative',
       width: '100vw',
       height: '100vh',
@@ -474,24 +493,24 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
               <Home />
             </IconButton>
           )}
-          
+
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            {pagetype === 'all' ? 'All Videos' : 
+            {pagetype === 'all' ? 'All Videos' :
              pagetype === 'jobseekers' ? 'Job Seekers' : 'Employers'}
           </Typography>
           {currentVideo?.isSample && (
-            <Chip 
-              label="Sample" 
-              size="small" 
-              sx={{ 
+            <Chip
+              label="Sample"
+              size="small"
+              sx={{
                 backgroundColor: 'rgba(255, 193, 7, 0.8)',
                 color: 'black',
                 fontWeight: 'bold'
-              }} 
+              }}
             />
           )}
         </Box>
-        <Typography variant="body2" sx={{ opacity: 0.8 }}>
+        <Typography variant="body2" sx={{ opacity: 0.8, fontWeight: 'bold' }}>
           {currentVideoIndex + 1} / {allVideos.length}
         </Typography>
       </TopBar>
@@ -509,48 +528,49 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
               onClick={togglePlayPause}
             />
             <VideoOverlay />
-            
+
             {/* Video Info */}
             <VideoInfo>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Avatar 
+                <Avatar
                   src={currentVideo.user?.profile_image}
-                  sx={{ width: 48, height: 48, mr: 2 }}
+                  sx={{ width: 48, height: 48, mr: 2, border: '2px solid white' }}
                 >
                   {currentVideo.user?.display_name?.charAt(0) || 'U'}
                 </Avatar>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                     @{currentVideo.user?.display_name || 'Unknown User'}
                   </Typography>
-                  <Chip 
+                  <Chip
                     label={currentVideo.user?.role || currentVideo.video_type}
                     size="small"
-                    sx={{ 
-                      backgroundColor: currentVideo.user?.role === 'employer' ? 
+                    sx={{
+                      backgroundColor: currentVideo.user?.role === 'employer' ?
                         'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)',
-                      color: 'white'
+                      color: 'white',
+                      fontWeight: 'bold'
                     }}
                   />
                 </Box>
               </Box>
-              
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+
+              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
                 {currentVideo.video_title}
               </Typography>
-              
+
               <Typography variant="body1" sx={{ mb: 2, opacity: 0.9 }}>
                 {currentVideo.hashtags}
               </Typography>
-              
+
               <Box sx={{ display: 'flex', gap: 3, opacity: 0.8 }}>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                   👁 {currentVideo.views_count || 0} views
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                   ❤️ {currentVideo.likes_count || 0} likes
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                   ⏱ {Math.round(currentVideo.video_duration || 0)}s
                 </Typography>
               </Box>
@@ -560,34 +580,34 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
             <ActionButtons>
               <Tooltip title={likedVideos.has(currentVideo.id) ? "Unlike" : "Like"} placement="left">
                 <ActionButton onClick={() => handleLike(currentVideo.id)}>
-                  {likedVideos.has(currentVideo.id) ? 
-                    <Favorite sx={{ color: '#ff4458' }} /> : 
+                  {likedVideos.has(currentVideo.id) ?
+                    <Favorite sx={{ color: '#ff4458' }} /> :
                     <FavoriteBorder />
                   }
                 </ActionButton>
               </Tooltip>
-              
+
               <Tooltip title="Comment" placement="left">
                 <ActionButton>
                   <Comment />
                 </ActionButton>
               </Tooltip>
-              
+
               <Tooltip title={savedVideos.has(currentVideo.id) ? "Unsave" : "Save"} placement="left">
                 <ActionButton onClick={() => handleSave(currentVideo.id)}>
-                  {savedVideos.has(currentVideo.id) ? 
-                    <Bookmark sx={{ color: '#ffc107' }} /> : 
+                  {savedVideos.has(currentVideo.id) ?
+                    <Bookmark sx={{ color: '#ffc107' }} /> :
                     <BookmarkBorder />
                   }
                 </ActionButton>
               </Tooltip>
-              
+
               <Tooltip title="Share" placement="left">
                 <ActionButton onClick={() => handleShare(currentVideo)}>
                   <Share />
                 </ActionButton>
               </Tooltip>
-              
+
               <Tooltip title="Connect" placement="left">
                 <ActionButton onClick={() => handleConnect(currentVideo)}>
                   <PersonAdd />
@@ -601,59 +621,41 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
       {/* Navigation Buttons */}
       <NavigationButtons>
         <Tooltip title="Previous video (↑)" placement="left">
-          <IconButton 
+          <StyledIconButton
             onClick={() => goToVideo(currentVideoIndex - 1)}
             disabled={currentVideoIndex === 0}
-            sx={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              backdropFilter: 'blur(10px)',
-              '&:disabled': { opacity: 0.3 }
-            }}
+
           >
             <ArrowUpward />
-          </IconButton>
+          </StyledIconButton>
         </Tooltip>
-        
+
         <Tooltip title={isPlaying ? "Pause (Space)" : "Play (Space)"} placement="left">
-          <IconButton 
+          <StyledIconButton
             onClick={togglePlayPause}
-            sx={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              backdropFilter: 'blur(10px)'
-            }}
+
           >
             {isPlaying ? <Pause /> : <PlayArrow />}
-          </IconButton>
+          </StyledIconButton>
         </Tooltip>
-        
+
         <Tooltip title={isMuted ? "Unmute (M)" : "Mute (M)"} placement="left">
-          <IconButton 
+          <StyledIconButton
             onClick={toggleMute}
-            sx={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              backdropFilter: 'blur(10px)'
-            }}
+
           >
             {isMuted ? <VolumeOff /> : <VolumeUp />}
-          </IconButton>
+          </StyledIconButton>
         </Tooltip>
-        
+
         <Tooltip title="Next video (↓)" placement="left">
-          <IconButton 
+          <StyledIconButton
             onClick={() => goToVideo(currentVideoIndex + 1)}
             disabled={currentVideoIndex === allVideos.length - 1}
-            sx={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              backdropFilter: 'blur(10px)',
-              '&:disabled': { opacity: 0.3 }
-            }}
+
           >
             <ArrowDownward />
-          </IconButton>
+          </StyledIconButton>
         </Tooltip>
       </NavigationButtons>
 
@@ -664,8 +666,8 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >
@@ -677,4 +679,3 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
 };
 
 export default AllVideosPage;
-

@@ -20,7 +20,7 @@ const EmployersTabs = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [currentPage, setCurrentPage] = useState('uploadViedos');
   const [dashboardTab, setDashboardTab] = useState(0);
-  const [candidatesTab, setCandidatesTab] = useState(0);
+  const [candidateTab, setCandidateTab] = useState(0);
   const [videoTab, setVideoTab] = useState(0);
   const { role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -47,7 +47,7 @@ const EmployersTabs = () => {
     else if (page === 'candidates' && tab) {
       const tabIndex = ['explore', 'detailed-search', 'job-listings'].indexOf(tab);
       if (tabIndex !== -1) {
-        setCandidatesTab(tabIndex);
+        setCandidateTab(tabIndex);
       }
     }
     else if (page === 'videos' && tab) {
@@ -73,8 +73,8 @@ const EmployersTabs = () => {
     setSearchParams({ page: currentPage, tab: newTabName });
   }, [setSearchParams, currentPage]);
   
-  const handleCandidatesTabChange = useCallback((event, newValue) => {
-    setCandidatesTab(newValue);
+  const handleCandidateTabChange = useCallback((event, newValue) => {
+    setCandidateTab(newValue);
     const newTabName = ['explore', 'detailed-search', 'job-listings'][newValue];
     setSearchParams({ page: currentPage, tab: newTabName });
   }, [setSearchParams, currentPage]);
@@ -161,10 +161,10 @@ const EmployersTabs = () => {
         <MainContent
           currentPage={currentPage}
           dashboardTab={dashboardTab}
-          candidatesTab={candidatesTab}
+          candidateTab={candidateTab}
           videoTab={videoTab}
           onDashboardTabChange={handleDashboardTabChange}
-          onCandidatesTabChange={handleCandidatesTabChange}
+          onCandidateTabChange={handleCandidateTabChange}
           onVideoTabChange={handleVideoTabChange}
           setVideoTab={setVideoTab} 
         />
