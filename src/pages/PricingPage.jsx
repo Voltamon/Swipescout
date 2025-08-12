@@ -65,7 +65,7 @@ const pricingPlans = [
       "Unlimited video resumes",
       "Unlimited applications",
       "Career coaching access",
-      "Interview preparation",
+       "Interview preparation",
       "Skill assessments",
       "Direct recruiter contact",
     ],
@@ -105,7 +105,7 @@ const professionalServices = [
     icon: <StarBorderIcon sx={{ fontSize: 40, color: "#ff9800" }} />,
   },
   {
-    title: "Interview Prep",
+    title: "Full Interview Prep and Coaching",
     price: "$149.99",
     description: "Complete preparation package for your next big interview.",
     icon: <DiamondIcon sx={{ fontSize: 40, color: "#2196f3" }} />,
