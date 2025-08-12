@@ -29,7 +29,7 @@ const pricingPlans = [
     price: "Free",
     description: "Perfect for individuals starting their job search.",
     features: [
-      "1 video resume",
+      "2 video resume",
       "Apply to 10 jobs/month",
       "Basic profile & messaging",
       "Community support",
