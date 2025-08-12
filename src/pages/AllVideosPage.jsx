@@ -163,6 +163,9 @@ const NavigationButtons = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   gap: theme.spacing(1),
   zIndex: 10,
+  [theme.breakpoints.down('sm')]: {
+    transform: 'translate(-8px, -144%)',
+  },
 }));
 
 const TopBar = styled(Box)(({ theme }) => ({
