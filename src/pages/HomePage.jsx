@@ -6,8 +6,9 @@ import {
   Typography,
   Button,
   Card,
-  CardContent,
+  
   CardMedia,
+  CardContent,
   Avatar,
   Divider,
   useMediaQuery,
@@ -36,6 +37,7 @@ import {
   LinkedIn as LinkedInIcon,
   CheckCircle,
   Fullscreen,
+  MonetizationOn as MonetizationOnIcon,
 } from "@mui/icons-material";
 
 
@@ -84,6 +86,7 @@ const FloatingCard = styled(Card)(({ theme }) => ({
         boxShadow: '0 30px 80px rgba(0, 0, 0, 0.15)'
     }
 }));
+
 
 
 const StatsCard = styled(Paper)(({ theme }) => ({
@@ -1021,6 +1024,82 @@ const HomePage = () => {
             </Box>
           </Container>
         </Box>
+
+         {/* Premium Features Section */}
+        <Box sx={{ background: theme.palette.background.paper, py: 8 }}>
+          <Container maxWidth="lg">
+            <Typography
+              variant="h3"
+              component="h2"
+              align="center"
+              gutterBottom
+              sx={{ fontWeight: 'bold', mb: 6, color: theme.palette.text.primary }}
+            >
+              Unlock More with Premium Features
+            </Typography>
+            <Grid container spacing={4} alignItems="stretch">
+              <Grid item xs={12} md={4}>
+                <StyledFeatureCard elevation={3}>
+                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    <MonetizationOnIcon sx={{ fontSize: 60, color: theme.palette.success.main, mb: 2 }} />
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
+                      Advanced Analytics
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Gain deeper insights into your profile views, video performance, and application success rates.
+                    </Typography>
+                  </CardContent>
+                </StyledFeatureCard>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <StyledFeatureCard elevation={3}>
+                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    <VideoCall sx={{ fontSize: 60, color: theme.palette.info.main, mb: 2 }} />
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
+                      Enhanced Video Tools
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Access professional video editing features, longer video uploads, and premium templates.
+                    </Typography>
+                  </CardContent>
+                </StyledFeatureCard>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <StyledFeatureCard elevation={3}>
+                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    <TrendingUp sx={{ fontSize: 60, color: theme.palette.warning.main, mb: 2 }} />
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
+                      Priority Matching
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Get prioritized in our matching algorithm and connect with exclusive job opportunities or top candidates faster.
+                    </Typography>
+                  </CardContent>
+                </StyledFeatureCard>
+              </Grid>
+            </Grid>
+            <Box sx={{ textAlign: 'center', mt: 6 }}>
+              <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  bgcolor: theme.palette.success.main,
+                  color: 'white',
+                  '&:hover': { bgcolor: theme.palette.success.dark },
+                  py: 1.5,
+                  px: 5,
+                  borderRadius: '30px',
+                  fontWeight: 'bold',
+                }}
+                component={Link}
+                to="/pricing"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                View Pricing Plans
+              </Button>
+            </Box>
+          </Container>
+        </Box>
         {/* Testimonials Section */}
         <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: theme.palette.background.default }}>
           <Container maxWidth="lg">
@@ -1084,6 +1163,9 @@ const HomePage = () => {
             </Grid>
           </Container>
         </Box>
+
+        
+
         {/* Call to Action Section */}
         <Box
           sx={{
