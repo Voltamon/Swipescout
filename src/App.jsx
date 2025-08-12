@@ -99,6 +99,7 @@ import ContactPage from "./pages/ContactPage";
 // import VideoTabs from "./pages/VideoTabs";
 import EmployerTabs from "./pages/EmployerTabs";
 import JobseekerTabs from "./pages/JobseekerTabs";
+import JobseekerDashboard from "./pages/Job_seeker_dashboard";
 
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
@@ -138,6 +139,7 @@ function App() {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
+            <Route path="/Jobseeker-Dash" element={<JobseekerDashboard />} />
             
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/home-page" element={<HomePage />} />
