@@ -1,218 +1,271 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
   Typography,
-  Tabs,
-  Tab,
   Button,
-  Chip,
-  Badge,
-  IconButton,
+  Card,
+  CardContent,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Container,
+  Grid,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  LayoutDashboard,
-  Briefcase,
-  Video,
-  MessageSquareText,
-  User,
-  Settings,
-  LogOut,
-  Menu,
-  Bell,
-  TrendingUp,
-  Calendar,
-  Search,
-} from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from 'react-router-dom';
 
-// Demo data for Analytics
-const viewsData = [
-  { day: "Mon", views: 320 },
-  { day: "Tue", views: 450 },
-  { day: "Wed", views: 380 },
-  { day: "Thu", views: 520 },
-  { day: "Fri", views: 610 },
-  { day: "Sat", views: 480 },
-  { day: "Sun", views: 700 },
+// Mock data for video job feed with professional video examples
+const mockJobVideos = [
+  {
+    id: 1,
+    title: "Senior Frontend Developer",
+    company: "Google",
+    location: "Remote",
+    salary: "$120K - $150K",
+    videoUrl: "https://www.youtube.com/embed/Sz4U-4ZbukM?autoplay=1&mute=1", // Corporate Overview Video
+    description: "Join our dynamic team to build cutting-edge web applications using React and TypeScript. We are looking for passionate developers who thrive in a fast-paced environment.",
+  },
+  {
+    id: 2,
+    title: "Data Scientist",
+    company: "Netflix",
+    location: "Los Angeles, CA",
+    salary: "$130K - $150K",
+    videoUrl: "https://www.youtube.com/embed/z2fQciTa7SM?autoplay=1&mute=1", // Corporate Video Examples
+    description: "Analyze large datasets to extract actionable insights and build predictive models. Experience with Python, R, and machine learning frameworks is a plus.",
+  },
+  {
+    id: 3,
+    title: "UX Designer",
+    company: "Adobe",
+    location: "San Jose, CA",
+    salary: "$100K - $130K",
+    videoUrl: "https://www.youtube.com/embed/h1W-Suf2ao0?autoplay=1&mute=1", // Corporate Overview by Top Brands
+    description: "Design intuitive and engaging user experiences for our next generation of creative tools. A strong portfolio demonstrating your design process is required.",
+  },
+  {
+    id: 4,
+    title: "Product Manager",
+    company: "Spotify",
+    location: "New York, NY",
+    salary: "$110K - $140K",
+    videoUrl: "https://www.youtube.com/embed/uTE5MKwUz0A?autoplay=1&mute=1", // Construction Company Corporate Video
+    description: "Lead the development of new features for our music streaming platform. You'll work closely with engineering, design, and marketing teams to bring products to life.",
+  },
 ];
 
-const engagementData = [
-  { label: "Views", value: 3200 },
-  { label: "Watch Time", value: 1450 },
-  { label: "Completions", value: 890 },
-];
+// VideoCard component for the swipeable feed
+const VideoCard = ({ job, theme, isMobile }) => (
+  <Card
+    sx={{
+      borderRadius: theme.shape.borderRadius * 2, // More rounded for video cards
+      boxShadow: theme.shadows[4], // Stronger shadow
+      transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+      '&:hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: theme.shadows[6],
+      },
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%', // Ensure cards take full height in grid
+      backgroundColor: theme.palette.background.paper,
+      overflow: 'hidden', // Hide overflow for rounded corners
+    }}
+  >
+    <Box sx={{ position: 'relative', width: '100%', paddingTop: '56.25%' /* 16:9 Aspect Ratio */ }}>
+      <iframe
+        src={job.videoUrl}
+        title={job.title}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: theme.shape.borderRadius * 2 }}
+      ></iframe>
+    </Box>
+    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 600, mb: 0.5, color: theme.palette.text.primary }}>
+          {job.title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          {job.company} • {job.location} • {job.salary}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: '0.875rem' }}>
+          {job.description.substring(0, isMobile ? 80 : 120)}... {/* Truncate description */}
+        </Typography>
+      </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          mt: 'auto', // Push button to the bottom
+          borderRadius: theme.shape.borderRadius,
+          fontWeight: 600,
+          py: 1,
+          px: 2,
+          boxShadow: theme.shadows[2],
+          '&:hover': {
+            boxShadow: theme.shadows[4],
+            transform: 'translateY(-1px)',
+          },
+        }}
+      >
+        Apply Now
+      </Button>
+    </CardContent>
+  </Card>
+);
 
-const funnelData = [
-  { name: "Profile Views", value: 1200 },
-  { name: "Video Plays", value: 950 },
-  { name: "Saves", value: 260 },
-  { name: "Contacted", value: 80 },
-];
 
-const COLORS = ["#8B5CF6", "#22D3EE", "#F59E0B", "#10B981"];
+function JobSeekerDashboard() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-function SidebarItem({ icon: Icon, label, active }) {
+  // Mock user data for display
+  const userName = user?.displayName || user?.name || "Job Seeker";
+  const userRole = user?.role?.replace('_', ' ') || "Job Seeker";
+
   return (
-    <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all select-none hover:bg-white/5 ${
-        active ? "bg-white/10 border border-white/10" : ""
-      }`}
+    <Box
+      sx={{
+        padding: theme.spacing(isMobile ? 1 : 3),
+        borderRadius: theme.shape.borderRadius,
+        minHeight: '100%', // Ensure it takes full height of MainContent
+        display: 'flex',
+        flexDirection: 'column',
+        gap: theme.spacing(3), // Spacing between sections
+      }}
     >
-      <Icon className="h-5 w-5 opacity-90" />
-      <span className="text-sm font-medium tracking-wide">{label}</span>
-    </div>
-  );
-}
-
-function KeyNumber({ label, value, hint }) {
-  return (
-    <Card className="bg-white/5 border-white/10">
-      <CardHeader className="pb-2">
-        <Typography
-          variant="caption"
-          sx={{ textTransform: "uppercase", letterSpacing: "0.05em", color: "rgba(255,255,255,0.7)" }}
-        >
-          {label}
+      <Container maxWidth="lg" sx={{ py: 2 }}>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: theme.palette.text.primary, mb: 3 }}>
+          Welcome back, {userName}!
         </Typography>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          {value}
-        </Typography>
-        {hint ? (
-          <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", mt: 1 }}>
-            {hint}
-          </Typography>
-        ) : null}
-      </CardContent>
-    </Card>
-  );
-}
 
-export default function JobSeekerDashboard() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [tabValue, setTabValue] = useState("overview");
-
-  return (
-    <div className="min-h-screen bg-[#0b0c12] text-white">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside
-          className={`fixed z-30 h-screen w-72 shrink-0 border-r border-white/10 bg-[#0b0c12]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0b0c12]/80 p-4 flex flex-col gap-4 transition-transform md:translate-x-0 ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-          }`}
-        >
-          <div className="flex items-center justify-between px-2">
-            <div>
-              <div className="text-sm font-semibold">Tareq Alsharif</div>
-              <div className="text-xs text-white/70">Job Seeker</div>
-            </div>
-            <Chip
-              label="Beta"
-              size="small"
-              sx={{ backgroundColor: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.1)" }}
+        {/* Profile Completion */}
+        <Card sx={{ mb: 4, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[2] }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              Profile Completion
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={80}
+              sx={{
+                mb: 2,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: theme.palette.grey[300],
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: theme.palette.primary.main,
+                  borderRadius: 4,
+                },
+              }}
             />
-          </div>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              80% Complete
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate('/Job-seeker-profile')}
+              sx={{ borderRadius: theme.shape.borderRadius, fontWeight: 600 }}
+            >
+              Complete Profile
+            </Button>
+          </CardContent>
+        </Card>
 
-          <div className="h-px bg-white/10 my-2" />
-
-          <nav className="flex flex-col gap-1">
-            <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
-            <SidebarItem icon={Briefcase} label="Find Jobs" />
-            <SidebarItem icon={Video} label="My Videos" />
-            <SidebarItem icon={MessageSquareText} label="Messages" />
-            <SidebarItem icon={User} label="Profile" />
-          </nav>
-
-          <div className="mt-auto">
-            <div className="h-px bg-white/10 mb-2" />
-            <nav className="flex flex-col gap-1">
-              <SidebarItem icon={Settings} label="Settings" />
-              <SidebarItem icon={LogOut} label="Logout" />
-            </nav>
-          </div>
-        </aside>
-
-        {/* Main */}
-        <main className="md:ml-72 w-full">
-          {/* Top bar */}
-          <div className="sticky top-0 z-20 border-b border-white/10 bg-[#0b0c12]/85 backdrop-blur">
-            <div className="flex items-center gap-3 p-3">
+        {/* Swipeable Video Job Feed */}
+        <Card sx={{ mb: 4, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[2] }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              Recommended Video Jobs
+            </Typography>
+            <Grid container spacing={isMobile ? 1 : 3}>
+              {mockJobVideos.map((job) => (
+                <Grid item xs={12} sm={6} md={4} key={job.id}>
+                  <VideoCard job={job} theme={theme} isMobile={isMobile} />
+                </Grid>
+              ))}
+            </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
               <Button
-                variant="text"
-                sx={{ minWidth: "auto", padding: "6px" }}
-                className="md:hidden"
-                onClick={() => setMobileOpen((v) => !v)}
+                variant="outlined"
+                color="primary"
+                onClick={() => navigate('/jobseeker-video-feed')}
+                sx={{ borderRadius: theme.shape.borderRadius, fontWeight: 600 }}
               >
-                <Menu className="h-5 w-5" />
+                Explore More Videos
               </Button>
-              <div className="flex items-center gap-2 px-1 text-sm text-white/80">
-                <Search className="h-4 w-4" />
-                Quick search
-              </div>
-              <div className="ml-auto flex items-center gap-2 pr-1">
-                <IconButton color="inherit">
-                  <Badge badgeContent={3} color="primary">
-                    <Bell className="h-5 w-5" />
-                  </Badge>
-                </IconButton>
-              </div>
-            </div>
-          </div>
+            </Box>
+          </CardContent>
+        </Card>
 
-          {/* Content */}
-          <div className="px-5 py-6 max-w-7xl mx-auto">
-            <div className="mb-5 flex items-center justify-between">
-              <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
-              <div className="hidden md:flex gap-2">
-                <Button variant="contained" sx={{ backgroundColor: "#7c3aed", "&:hover": { backgroundColor: "#6d28d9" } }}>
-                  Start the search
-                </Button>
-                <Button variant="outlined" sx={{ borderColor: "rgba(255,255,255,0.15)", color: "white" }}>
-                  Upload video
-                </Button>
-              </div>
-            </div>
+        {/* Recent Applications */}
+        <Card sx={{ mb: 4, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[2] }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              Recent Applications
+            </Typography>
+            <List>
+              <ListItem sx={{ borderRadius: theme.shape.borderRadius, mb: 1, '&:hover': { bgcolor: theme.palette.action.hover } }}>
+                <ListItemText
+                  primary={<Typography variant="body1" sx={{ fontWeight: 500 }}>UI Designer at Adobe</Typography>}
+                  secondary="Applied 2 days ago • In Review"
+                  primaryTypographyProps={{ color: theme.palette.text.primary }}
+                  secondaryTypographyProps={{ color: theme.palette.text.secondary }}
+                />
+              </ListItem>
+              <ListItem sx={{ borderRadius: theme.shape.borderRadius, mb: 1, '&:hover': { bgcolor: theme.palette.action.hover } }}>
+                <ListItemText
+                  primary={<Typography variant="body1" sx={{ fontWeight: 500 }}>Product Manager at Spotify</Typography>}
+                  secondary="Applied 5 days ago • Interview Scheduled"
+                  primaryTypographyProps={{ color: theme.palette.text.primary }}
+                  secondaryTypographyProps={{ color: theme.palette.text.secondary }}
+                />
+              </ListItem>
+              <ListItem sx={{ borderRadius: theme.shape.borderRadius, '&:hover': { bgcolor: theme.palette.action.hover } }}>
+                <ListItemText
+                  primary={<Typography variant="body1" sx={{ fontWeight: 500 }}>Frontend Developer at Netflix</Typography>}
+                  secondary="Applied 1 week ago • Rejected"
+                  primaryTypographyProps={{ color: theme.palette.text.primary }}
+                  secondaryTypographyProps={{ color: theme.palette.text.secondary }}
+                />
+              </ListItem>
+            </List>
+          </CardContent>
+        </Card>
 
-            {/* Tabs */}
-            <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-              <Tab value="overview" label="Overview" />
-              <Tab value="analytics" label="Analytics" />
-            </Tabs>
-
-            {/* Overview */}
-            {tabValue === "overview" && (
-              <div className="mt-5">
-                {/* ... same content from your overview section ... */}
-              </div>
-            )}
-
-            {/* Analytics */}
-            {tabValue === "analytics" && (
-              <div className="mt-5">
-                {/* ... same content from your analytics section ... */}
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
-    </div>
+        {/* Notifications */}
+        <Card sx={{ borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[2] }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              Notifications
+            </Typography>
+            <List>
+              <ListItem sx={{ borderRadius: theme.shape.borderRadius, mb: 1, '&:hover': { bgcolor: theme.palette.action.hover } }}>
+                <ListItemText
+                  primary={<Typography variant="body1" sx={{ fontWeight: 500 }}>Your application for Software Engineer has been reviewed.</Typography>}
+                  primaryTypographyProps={{ color: theme.palette.text.primary }}
+                />
+              </ListItem>
+              <ListItem sx={{ borderRadius: theme.shape.borderRadius, '&:hover': { bgcolor: theme.palette.action.hover } }}>
+                <ListItemText
+                  primary={<Typography variant="body1" sx={{ fontWeight: 500 }}>New job recommendation: Senior UX Designer at Google.</Typography>}
+                  primaryTypographyProps={{ color: theme.palette.text.primary }}
+                />
+              </ListItem>
+            </List>
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
   );
 }
+ 
+export default JobSeekerDashboard;
