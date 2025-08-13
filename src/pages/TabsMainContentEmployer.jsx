@@ -16,20 +16,20 @@ import EditEmployerProfile from "./EditEmployerProfilePage";
 import PostJob from "./PostJobPage";
 import AllVideosPage from "./AllVideosPage";
 import JobseekerVideosPage from "./JobSeekersPuplicVideosPage";
-
+import EmployerDashboard_ from "./EmployerDashboard_";
 
 const MainContent = ({ 
   currentPage, 
   dashboardTab, candidateTab, 
   videoTab, 
-  onDashboardTabChange, onCandidatesTabChange, 
+  onDashboardTabChange, onCandidateTabChange, 
   onVideoTabChange, 
   setVideoTab 
 }) => {
 
       const [showVideos, setShowVideos] = useState(false);
 
-  const handleOpenVideos = () => setShowVideos(true);
+  const handleOpenVideos = () => {setIsMaximized(false); setShowVideos(true); }
   const handleCloseVideos = () => setShowVideos(false);
 
      useEffect(() => {
@@ -85,7 +85,7 @@ const MainContent = ({
     const CandidatesPageContent = () => (
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={candidateTab} onChange={onCandidatesTabChange} variant="fullWidth">
+          <Tabs value={candidateTab} onChange={onCandidateTabChange} variant="fullWidth">
             {candidatesTabsConfig.map((tab, index) => (
               <Tab key={index} label={tab.label} />
             ))}
@@ -126,12 +126,12 @@ const MainContent = ({
     const PostJobPageContent = () => <PostJob />;
     const SettingsPageContent = () => <Typography variant="h5" sx={{ p: 3 }}>Settings</Typography>;
     const OvervieDashboardPageContent = () => <Typography variant="h5" sx={{ p: 3 }}>Dashboard</Typography>;
-    const DefaultContent = () => <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Account!</Typography>;
+    const DefaultContent = () => <Typography variant="h5" sx={{ p: 3 }}><EmployerDashboard_ /></Typography>;
 
     // Render the correct component based on the current page
     switch (currentPage) {
       case 'dashboard':
-        return <DashboardPageContent />;
+        return <EmployerDashboard_ />;
       case 'videos':
         return <VideosPageContent />;
       case 'messeges': // Corrected 'messeges' to 'messages'
@@ -155,7 +155,7 @@ const MainContent = ({
       default:
         return <DefaultContent />;
     }
-  }, [currentPage, candidateTab, videoTab, onCandidatesTabChange, onVideoTabChange, setVideoTab]);
+  }, [currentPage, candidateTab, videoTab, onCandidateTabChange, onVideoTabChange, setVideoTab]);
 
   return (
     <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>

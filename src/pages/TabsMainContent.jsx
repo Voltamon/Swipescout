@@ -3,7 +3,9 @@
 // for each "page" of the application.
 
 import React, { useMemo , useState , useEffect } from 'react';
-import { Box, Container, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Container, Tabs, Tab, Typography ,IconButton } from "@mui/material";
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 
 // Import the TabPanel component
 import TabPanel from '../components/TabPanel';
@@ -16,13 +18,21 @@ import EmployerVideosPage from "./EmployerVideosPage";
 import EditJobSeekerProfile from "./EditJobSeekerProfile";
 import JobsListingPage from "./JobsListingPage";
 import AllVideosPage from "./AllVideosPage";
+import JobSeekerDashboard_ from "./JobSeekerDashboard_";
+
 
 const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashboardTabChange, onEmployerTabChange, onVideoTabChange, setVideoTab }) => {
   // Define a configuration for the Dashboard tabs
 
     const [showVideos, setShowVideos] = useState(false);
+      const [isMaximized, setIsMaximized] = useState(false);
 
-  const handleOpenVideos = () => setShowVideos(true);
+
+  const handleToggleMaximize = () => {
+    setIsMaximized(!isMaximized);
+  };
+
+  const handleOpenVideos = () => {setIsMaximized(false); setShowVideos(true); }
   const handleCloseVideos = () => setShowVideos(false);
   
     const dashboardTabsConfig = [
@@ -139,14 +149,14 @@ const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashb
       <Typography variant="h5" sx={{ p: 3 }}>Videos for Employers</Typography>
     );
     const DefaultContent = () => (
-      <Typography variant="h5" sx={{ p: 3 }}>Welcome to your Account!</Typography>
+      <Typography variant="h5" sx={{ p: 3 }}><JobSeekerDashboard_/></Typography>
     );
 
 
     // Render the correct component based on the current page
     switch (currentPage) {
       case 'dashboard':
-        return <DashboardPageContent />;
+        return <JobSeekerDashboard_ />;
       case 'employers':
         return <EmployersPageContent />;
       case 'videos':
@@ -166,7 +176,7 @@ const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashb
       case 'dashboardE': // Correcting the case for employer dashboard
         return <EmployerDashboardContent />;
       default:
-        return <DefaultContent />;
+        return <JobSeekerDashboard_ />;
     }
   }, [currentPage, employerTab, dashboardTab, videoTab, onEmployerTabChange, onDashboardTabChange, onVideoTabChange, setVideoTab]);
 
@@ -176,27 +186,45 @@ const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashb
         {pageContent}
       </Container>
        {showVideos && (
+        
         <Box
-          sx={{
-            // This Box acts as the container for your video player
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '100vw', // Example width
-            height: '100vh', // Example height
-            border: '2px solid white',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.7)',
-            zIndex: 9999,
-          }}
-        >
-          <AllVideosPage
-            pagetype="employers"
-            onClose={handleCloseVideos}
-          />
-        </Box>
+      sx={{
+        // Conditional styles for the maximized state
+        width: isMaximized ? '100vw' : '80vw',
+        height: isMaximized ? '100vh' : '80vh',
+        borderRadius: isMaximized ? '12' : '2',
+        top: isMaximized ? '0' : '57%',
+        left: isMaximized ? '0' : '50%',
+        transform: isMaximized ? 'none' : 'translate(-50%, -50%)',
+        
+        // Base styles for the container
+        position: 'fixed',
+        border: '2px solid white',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px 0 rgba(0,0,0,0.7)',
+        zIndex: 9999,
+        transition: 'all 0.3s ease-in-out', // Smooth transition for visual effect
+      }}
+    >
+      {/* Maximize/Minimize Icon Button */}
+      <IconButton
+        onClick={handleToggleMaximize}
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 48,
+          color: 'white',
+          zIndex: 10000,
+        }}
+      >
+        {isMaximized ? <FullscreenExitIcon /> : <FullscreenIcon />}
+      </IconButton>
+      
+      <AllVideosPage
+        pagetype="employers"
+        onClose={handleCloseVideos}
+      />
+    </Box>
       )}
     </Box>
   );
