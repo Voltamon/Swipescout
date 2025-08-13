@@ -168,7 +168,9 @@ export const AuthProvider = ({ children }) => {
                 '/videos/:pagetype',
         '/video-player/:id',
                 '/videos/all' ,
-                '/how-it-works'
+                '/how-it-works',
+                '/pricing',
+                '/contact'
         
       ];
       
