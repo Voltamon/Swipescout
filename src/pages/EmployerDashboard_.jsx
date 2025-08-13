@@ -149,6 +149,7 @@ const EmployerDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [tabValue, setTabValue] = useState(0);
 
+
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
@@ -247,7 +248,7 @@ const EmployerDashboard = () => {
     return (
         <DashboardContainer maxWidth="lg" sx={{ mt: 3}}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h4">Analytics Page</Typography>
+                <Typography variant="h4">{'Welcome '+ user.display_name + ' to Your Dashboard' }  </Typography>
 
                 <Box>
                     <Button
