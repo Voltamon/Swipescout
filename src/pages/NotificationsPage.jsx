@@ -6,7 +6,7 @@ import {
   Stack,
   Paper,
 } from "@mui/material";
-import Header2 from "../components/Header2";
+
 import JobCard from "../components/JobCard"; // Optional if you plan to use it later
 
 const appliedJobs = [

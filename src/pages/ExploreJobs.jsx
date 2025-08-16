@@ -1,5 +1,4 @@
 import React from "react";
-import Header2 from "../components/Header2";
 import SearchBar from "../components/SearchBar";
 import JobCard from "../components/JobCard";
 
@@ -38,7 +37,7 @@ const jobs = [
 const ExploreJobs = () => {
   return (
     <div>
-      <header2 />
+     
       <SearchBar />
       <div className="job-listings">
         {jobs.map((job, index) => <JobCard key={index} job={job} />)}
