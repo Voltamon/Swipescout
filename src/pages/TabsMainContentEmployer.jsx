@@ -3,7 +3,9 @@
 // for each "page" of the application.
 
 import React, { useMemo ,useState ,useEffect  } from 'react';
-import { Box, Container, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Container, Tabs, Tab, Typography, IconButton } from "@mui/material";
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 
 // Import the TabPanel component and other page components
 import TabPanel from '../components/TabPanel';
@@ -32,6 +34,15 @@ const MainContent = ({
   const handleOpenVideos = () => {setIsMaximized(false); setShowVideos(true); }
   const handleCloseVideos = () => setShowVideos(false);
 
+  const [isMaximized, setIsMaximized] = useState(false);
+  
+  
+    const handleToggleMaximize = () => {
+      setIsMaximized(!isMaximized);
+    };
+  
+
+  
      useEffect(() => {
         if (currentPage === 'candidates' && candidateTab === 0) {
             setShowVideos(true);
@@ -163,29 +174,50 @@ const MainContent = ({
         {pageContent}
       </Container>
     
-    {showVideos && (
-        <Box
-          sx={{
-            // This Box acts as the container for your video player
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '100vw', // Example width
-            height: '100vh', // Example height
-            border: '2px solid white',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.7)',
-            zIndex: 9999,
-          }}
-        >
-          <AllVideosPage
-            pagetype="jobseekers"
-            onClose={handleCloseVideos}
-          />
-        </Box>
+
+
+         {showVideos && (
+              
+              <Box
+            sx={{
+              // Conditional styles for the maximized state
+              width: isMaximized ? '100vw' : '80vw',
+              height: isMaximized ? '100vh' : '80vh',
+              borderRadius: isMaximized ? '12' : '2',
+              top: isMaximized ? '0' : '57%',
+              left: isMaximized ? '0' : '50%',
+              transform: isMaximized ? 'none' : 'translate(-50%, -50%)',
+              
+              // Base styles for the container
+              position: 'fixed',
+              border: '2px solid white',
+              overflow: 'hidden',
+              boxShadow: '0 8px 32px 0 rgba(0,0,0,0.7)',
+              zIndex: 9999,
+              transition: 'all 0.3s ease-in-out', // Smooth transition for visual effect
+            }}
+          >
+            {/* Maximize/Minimize Icon Button */}
+            <IconButton
+              onClick={handleToggleMaximize}
+              sx={{
+                position: 'absolute',
+                top: 16,
+                right: 48,
+                color: 'white',
+                zIndex: 10000,
+              }}
+            >
+              {isMaximized ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            </IconButton>
+            
+            <AllVideosPage
+              pagetype="jobseekers"
+              onClose={handleCloseVideos}
+            />
+          </Box>
       )}
+      
       </Box>
   );
 };
