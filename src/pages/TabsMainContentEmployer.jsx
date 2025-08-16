@@ -17,7 +17,6 @@ import EmployerExploreSidebar from "./EmployerExploreSidebar";
 import EditEmployerProfile from "./EditEmployerProfilePage";
 import PostJob from "./PostJobPage";
 import AllVideosPage from "./AllVideosPage";
-import JobseekerVideosPage from "./JobSeekersPuplicVideosPage";
 import EmployerDashboard_ from "./EmployerDashboard_";
 
 const MainContent = ({ 

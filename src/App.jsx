@@ -9,7 +9,6 @@ import MyApplications from "./pages/MyApplications";
 import SignupPage from "./pages/SignupPage";
 
 import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
-import LoginForm from "./pages/LoginForm/LoginForm.jsx";
 
 import DashboardJobSeeker from "./pages/DashboardJobSeeker.jsx";
 import JobSearchPage from "./pages/JobSearchPage";
@@ -76,7 +75,7 @@ import EmployerProfileView from "./pages/EmployerProfileView";
 import AllVideosPage from "./pages/AllVideosPage";
 import HomePage from "./pages/HomePage";
 import HowItWorksPage from "./pages/HowItWorks";
-import Home3 from "./pages/HomePage4"; 
+
 import Pricing from "./pages/PricingPage";
 import HelpPageLinks from "./pages/HelpPageLinks";
 import CustomerSupportPage from "./pages/CustomerSupportPage";
@@ -127,8 +126,7 @@ function App() {
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route path="/register-form" element={<RegisterForm />} />
             <Route path="/auth/linkedin/callback" element={<Linkedincallback />} />
-            <Route path="tmp" element={<Home3 />} />
-            {/* <Route path="tmp" element={<Home3 />} /> */}
+     
             <Route path="pricing" element={<Pricing />} />
             {/* <Route path="tmp2" element={<Home2 />} /> */}
             {/* <Route path="/explore-layout" element={<ExploreLayout />}>
