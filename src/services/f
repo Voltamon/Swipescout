@@ -1,9 +1,0 @@
-getAllCategories: async () => {
-  const response = await api.get('/categories');
-  return response.data;
-},
-
-deleteEmployerVideo: async (videoId) => {
-  const response = await api.delete(`/employer/company/videos/${videoId}`);
-  return response.data;
-},
