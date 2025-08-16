@@ -1,6 +1,5 @@
 import React from "react";
-import Header from "../components/Headers/admin/HeaderAdmin";
-import Footer from "../components/Headers/admin/FooterAdmin";
+
 import RoleCard from "../components/RoleCard";
 
 const SignupPage = () => {

@@ -14,7 +14,7 @@ import VideosPage from './VideosPage';
 import Chat from './Chat';
 import JobSeekerProfile from "./JobSeekerProfile";
 import JobseekerExploreSidebar from "./JobseekerExploreSidebar";
-import EmployerVideosPage from "./EmployerVideosPage";
+
 import EditJobSeekerProfile from "./EditJobSeekerProfile";
 import JobsListingPage from "./JobsListingPage";
 import AllVideosPage from "./AllVideosPage";
