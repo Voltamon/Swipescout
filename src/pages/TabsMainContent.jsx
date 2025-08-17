@@ -18,7 +18,7 @@ import JobseekerExploreSidebar from "./JobseekerExploreSidebar";
 import EditJobSeekerProfile from "./EditJobSeekerProfile";
 import JobsListingPage from "./JobsListingPage";
 import AllVideosPage from "./AllVideosPage";
-import JobSeekerDashboard_ from "./JobSeekerDashboard_";
+import JobSeekerDashboard_ from "./JobSeekerDashboard";
 
 
 const MainContent = ({ currentPage, dashboardTab, employerTab, videoTab, onDashboardTabChange, onEmployerTabChange, onVideoTabChange, setVideoTab }) => {

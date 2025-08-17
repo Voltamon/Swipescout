@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL;
 // Job Seeker Functions
 export const getJobSeekerDashboardStats = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/job-seeker/dashboard/stats`, {
+    const response = await axios.get(`${API_BASE_URL}/jobseeker-dashboard/stats`, {
       headers: getAuthHeader()
     });
     return response.data;
@@ -34,7 +34,7 @@ export const getJobRecommendations = async () => {
 // Employer Functions
 export const getEmployerDashboardStats = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/employer/dashboard/stats`, {
+    const response = await axios.get(`${API_BASE_URL}/employer-dashboard/stats`, {
       headers: getAuthHeader()
     });
     return response.data;
