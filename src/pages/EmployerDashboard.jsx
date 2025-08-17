@@ -1,442 +1,732 @@
-"use client"
+import React, { useState, useEffect } from 'react';
 import {
-    AppBar,
-    Avatar,
     Box,
-    Button,
-    Card,
-    CardContent,
     Container,
     Grid,
-    Toolbar,
+    Paper,
     Typography,
-    useTheme,
-    Menu,
-    MenuItem,
-    ListItemIcon,
-    ListItemText,
-    IconButton,
-    Drawer,
+    Card,
+    CardContent,
+    Button,
     List,
     ListItem,
-    ListItemButton,
+    ListItemIcon,
+    ListItemText,
     Divider,
-    useMediaQuery,
-} from "@mui/material"
-import { LocationOn, ArrowForward, People, ExpandMore, VideoCall, Menu as MenuIcon, Close } from "@mui/icons-material";
-import { useState } from "react";
+    Avatar,
+    Chip,
+    CircularProgress,
+    IconButton,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tabs,
+    Tab
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import {
+    Visibility as VisibilityIcon,
+    PersonSearch as PersonSearchIcon,
+    Work as WorkIcon,
+    Message as MessageIcon,
+    Notifications as NotificationsIcon,
+    TrendingUp as TrendingUpIcon,
+    PlayCircleOutline as PlayCircleOutlineIcon,
+    Add as AddIcon,
+    ArrowForward as ArrowForwardIcon,
+    Business as BusinessIcon,
+    People as PeopleIcon,
+    Assessment as AssessmentIcon
+} from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
+import {
+    getEmployerDashboardStats,
+    getRecentActivities,
+    getCandidateRecommendations,
+    getJobPostings
+} from '../services/dashboardService';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    ArcElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
 
-export default function EmployerDashboard() {
-    const theme = useTheme()
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-    const { user } = useAuth();
+// Register ChartJS components
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    ArcElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
-    // Connect dropdown state
-    const [anchorEl, setAnchorEl] = useState(null)
-    const open = Boolean(anchorEl)
+const DashboardContainer = styled(Container)(({ theme }) => ({
+    padding: theme.spacing(3),
+    backgroundColor: theme.palette.background.default,
+    minHeight: 'calc(100vh - 56px)',
+}));
 
-    // Mobile drawer state
-    const [drawerOpen, setDrawerOpen] = useState(false)
+const StatsCard = styled(Card)(({ theme }) => ({
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    transition: 'transform 0.2s',
+    '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: theme.shadows[4],
+    },
+}));
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget)
-    }
+const StatsCardContent = styled(CardContent)(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    flex: 1,
+}));
 
-    const handleClose = () => {
-        setAnchorEl(null)
-    }
+const StatsIcon = styled(Box)(({ theme, color }) => ({
+    width: 60,
+    height: 60,
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing(2),
+    backgroundColor: theme.palette[color].light,
+    color: theme.palette[color].main,
+}));
 
-    const toggleDrawer = (open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return
-        }
-        setDrawerOpen(open)
-    }
+const ActivityItem = styled(ListItem)(({ theme }) => ({
+    padding: theme.spacing(1.5),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    '&:last-child': {
+        borderBottom: 'none',
+    },
+}));
 
-    // Available people for meetings
-    const availablePeople = [
-        { name: "Alice Smith", status: "Available now" },
-        { name: "Michael Johnson", status: "Available in 30 min" },
-        { name: "Sarah Williams", status: "Available now" },
-        { name: "David Brown", status: "Available tomorrow" },
-    ]
-
-    // Navigation items
-    const navItems = ["Home", "Jobs", "Candidates", "Profile", "Logout"]
+const TabPanel = (props) => {
+    const { children, value, index, ...other } = props;
 
     return (
-<Box sx={{
-    bgcolor: 'background.default',
-    height: '100%',
-    mt: 0,
-    mb: 0,
-    paddingBottom: 4,
-  }}>
-    
-            {/* Mobile Navigation Drawer */}
-            <Drawer
-                anchor="right"
-                open={drawerOpen}
-                onClose={toggleDrawer(false)}
-                sx={{
-                    '& .MuiDrawer-paper': {
-                        width: 280,
-                        boxSizing: 'border-box',
-                        background: theme.palette.background.paper, // Use theme's paper background
-                        color: theme.palette.text.primary,
-                    },
-                }}
-            >
-                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                    <IconButton onClick={toggleDrawer(false)} color="inherit">
-                        <Close />
-                    </IconButton>
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    {children}
                 </Box>
-                <Divider />
-                <Box sx={{ p: 2 }}>
-                    <List>
-                        {navItems.map((item) => (
-                            <ListItem key={item} disablePadding>
-                                <ListItemButton sx={{ borderRadius: 1 }}>
-                                    <Typography variant="body1" color="inherit">{item}</Typography>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Box>
-            </Drawer>
+            )}
+        </div>
+    );
+};
 
-            {/* Main Content */}
-            <Container maxWidth="lg" sx={{ mt: 2, mb: 0 }}>
-                {/* Welcome Message and Connect Button */}
-                <Box sx={{
-                    display: "flex",
-                    flexDirection: isMobile ? 'column' : 'row',
-                    alignItems: isMobile ? "flex-start" : "center",
-                    justifyContent: "space-between",
-                    mb: 4,
-                    gap: isMobile ? 2 : 0
-                }}>
-                    <Typography
-                        variant="h4"
-                        component="h1"
-                        sx={{
-                            fontWeight: "bold",
-                            color: theme.palette.text.primary, // Use primary text color from theme
-                            fontSize: isMobile ? '1.75rem' : '2.125rem',
-                            mt: 2,
-                        }}
+const EmployerDashboard = () => {
+    const { user } = useAuth();
+    const [stats, setStats] = useState(null);
+    const [activities, setActivities] = useState([]);
+    const [recommendations, setRecommendations] = useState([]);
+    const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [tabValue, setTabValue] = useState(0);
+
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                setLoading(true);
+
+                // Fetch dashboard statistics
+                const statsResponse = await getEmployerDashboardStats();
+                setStats(statsResponse.data.stats);
+
+                // Fetch recent activities
+                const activitiesResponse = await getRecentActivities();
+                setActivities(activitiesResponse.data.activities);
+
+                // Fetch candidate recommendations
+                const recommendationsResponse = await getCandidateRecommendations();
+                setRecommendations(recommendationsResponse.data.recommendations);
+
+                // Fetch job postings
+                const jobsResponse = await getJobPostings();
+                setJobs(jobsResponse.data.jobs);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
+
+    // Views chart data
+    const viewsChartData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        datasets: [
+            {
+                label: 'Job Views',
+                data: stats?.job_views_chart || [120, 190, 150, 250, 220, 300],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+            },
+        ],
+    };
+
+    // Applicants chart data
+    const applicantsChartData = {
+        labels: stats?.job_titles || ['Frontend Developer', 'Backend Developer', 'UI/UX Designer', 'Project Manager', 'Digital Marketer'],
+        datasets: [
+            {
+                label: 'Number of Applicants',
+                data: stats?.applicants_per_job || [25, 18, 12, 8, 15],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    // Applicant sources chart data
+    const applicantSourcesChartData = {
+        labels: ['Direct Search', 'Referrals', 'Social Media', 'Job Boards', 'Other'],
+        datasets: [
+            {
+                data: stats?.applicant_sources || [35, 25, 20, 15, 5],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 56px)' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    return (
+        <DashboardContainer maxWidth="lg" sx={{ mt: 3}}>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h4">{'Welcome '+ user.display_name + ' to Your Dashboard' }  </Typography>
+
+                <Box>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<AddIcon />}
+                        sx={{ mr: 1 }}
                     >
-                        Welcome back, John Doe!
-                    </Typography>
+                        Post New Job
+                    </Button>
 
                     <Button
-                        color="primary"
-                        variant="contained"
-                        endIcon={<ExpandMore />}
-                        onClick={handleClick}
-                        sx={{
-                            fontWeight: 500,
-                            backgroundColor: theme.palette.primary.main, // Use primary color from theme
-                            '&:hover': {
-                                backgroundColor: theme.palette.primary.dark,
-                            }
-                        }}
+                        variant="outlined"
+                        startIcon={<BusinessIcon />}
                     >
-                        Connect
+                        Update Company Profile
                     </Button>
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        PaperProps={{
-                            elevation: 3,
-                            sx: {
-                                width: 250,
-                                maxHeight: 300,
-                                mt: 1,
-                                bgcolor: theme.palette.background.paper,
-                                color: theme.palette.text.primary,
-                            }
-                        }}
-                    >
-                        <Typography variant="subtitle2" sx={{ px: 2, py: 1, fontWeight: 'bold', color: theme.palette.text.secondary }}>
-                            Available for Meeting
-                        </Typography>
-                        {availablePeople.map((person, index) => (
-                            <MenuItem key={index} onClick={handleClose} sx={{ py: 1.5 }}>
-                                <ListItemIcon>
-                                    <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.light, color: theme.palette.primary.dark, fontSize: '0.875rem' }}>
-                                        {person.name.split(' ').map(n => n[0]).join('')}
-                                    </Avatar>
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={person.name}
-                                    secondary={person.status}
-                                    primaryTypographyProps={{ fontWeight: 500, color: theme.palette.text.primary }}
-                                    secondaryTypographyProps={{ fontSize: '0.75rem', color: theme.palette.text.secondary }}
-                                />
-                                <VideoCall fontSize="small" sx={{ color: theme.palette.primary.main }} />
-                            </MenuItem>
-                        ))}
-                    </Menu>
                 </Box>
+            </Box>
 
-                {/* Posted Jobs */}
-                <Typography variant="h5" component="h2" sx={{ color: theme.palette.primary.main, fontWeight: "bold", mb: 3 }}>
-                    Posted Jobs
-                </Typography>
-
-                <Grid container spacing={3} sx={{ mb: 5 }}>
-                    {/* Job Card 1 */}
-                    <Grid item xs={12} md={4}>
-                        <Card sx={{ height: "100%", boxShadow: 3, borderRadius: 2 }}>
-                            <CardContent>
-                                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2, color: theme.palette.text.primary }}>
-                                    Senior Frontend Developer
-                                </Typography>
-
-                                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                                    <People fontSize="small" sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        24 Applications
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                                    <LocationOn fontSize="small" sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        San Francisco, CA
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 3 }}>
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{
-                                            bgcolor: theme.palette.success.light,
-                                            color: theme.palette.success.dark,
-                                            borderColor: 'transparent',
-                                            borderRadius: "16px",
-                                            "&:hover": {
-                                                bgcolor: theme.palette.success.main,
-                                                color: theme.palette.common.white,
-                                                borderColor: 'transparent',
-                                            },
-                                        }}
-                                    >
-                                        Open
-                                    </Button>
-
-                                    <Button size="small" endIcon={<ArrowForward />} sx={{ color: theme.palette.primary.main }}>
-                                        View Details
-                                    </Button>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Job Card 2 */}
-                    <Grid item xs={12} md={4}>
-                        <Card sx={{ height: "100%", boxShadow: 3, borderRadius: 2 }}>
-                            <CardContent>
-                                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2, color: theme.palette.text.primary }}>
-                                    UX/UI Designer
-                                </Typography>
-
-                                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                                    <People fontSize="small" sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        18 Applications
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                                    <LocationOn fontSize="small" sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        Remote
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 3 }}>
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{
-                                            bgcolor: theme.palette.info.light,
-                                            color: theme.palette.info.dark,
-                                            borderColor: 'transparent',
-                                            borderRadius: "16px",
-                                            "&:hover": {
-                                                bgcolor: theme.palette.info.main,
-                                                color: theme.palette.common.white,
-                                                borderColor: 'transparent',
-                                            },
-                                        }}
-                                    >
-                                        Filled
-                                    </Button>
-
-                                    <Button size="small" endIcon={<ArrowForward />} sx={{ color: theme.palette.primary.main }}>
-                                        View Details
-                                    </Button>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Job Card 3 */}
-                    <Grid item xs={12} md={4}>
-                        <Card sx={{ height: "100%", boxShadow: 3, borderRadius: 2 }}>
-                            <CardContent>
-                                <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 2, color: theme.palette.text.primary }}>
-                                    Backend Engineer
-                                </Typography>
-
-                                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                                    <People fontSize="small" sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        32 Applications
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                                    <LocationOn fontSize="small" sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                        New York, NY
-                                    </Typography>
-                                </Box>
-
-                                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 3 }}>
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{
-                                            bgcolor: theme.palette.success.light,
-                                            color: theme.palette.success.dark,
-                                            borderColor: 'transparent',
-                                            borderRadius: "16px",
-                                            "&:hover": {
-                                                bgcolor: theme.palette.success.main,
-                                                color: theme.palette.common.white,
-                                                borderColor: 'transparent',
-                                            },
-                                        }}
-                                    >
-                                        Open
-                                    </Button>
-
-                                    <Button size="small" endIcon={<ArrowForward />} sx={{ color: theme.palette.primary.main }}>
-                                        View Details
-                                    </Button>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+            {/* Statistics Cards */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid item xs={12} sm={6} md={3}>
+                    <StatsCard>
+                        <StatsCardContent>
+                            <StatsIcon color="primary">
+                                <VisibilityIcon fontSize="large" />
+                            </StatsIcon>
+                            <Typography variant="h4" gutterBottom>
+                                {stats?.total_job_views || 0}
+                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">
+                                Job Views
+                            </Typography>
+                        </StatsCardContent>
+                    </StatsCard>
                 </Grid>
 
-                {/* Shortlisted Candidates */}
-                <Typography variant="h5" component="h2" sx={{ color: theme.palette.primary.main, fontWeight: "bold", mb: 3 }}>
-                    Shortlisted Candidates
-                </Typography>
-
-                <Grid container spacing={3} sx={{ mb: 5 }}>
-                    {/* Candidate Card 1 */}
-                    <Grid item xs={12} md={6}>
-                        <Card sx={{ height: "100%", boxShadow: 3, borderRadius: 2 }}>
-                            <CardContent sx={{ display: "flex", alignItems: "flex-start" }}>
-                                <Avatar
-                                    sx={{
-                                        bgcolor: theme.palette.primary.light,
-                                        color: theme.palette.primary.dark,
-                                        width: 50,
-                                        height: 50,
-                                        mr: 2,
-                                    }}
-                                >
-                                    AS
-                                </Avatar>
-
-                                <Box sx={{ flexGrow: 1 }}>
-                                    <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1, color: theme.palette.text.primary }}>
-                                        Alice Smith
-                                    </Typography>
-
-                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                        Senior Frontend Developer
-                                    </Typography>
-
-                                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                                        Interview Scheduled
-                                    </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Candidate Card 2 */}
-                    <Grid item xs={12} md={6}>
-                        <Card sx={{ height: "100%", boxShadow: 3, borderRadius: 2 }}>
-                            <CardContent sx={{ display: "flex", alignItems: "flex-start" }}>
-                                <Avatar
-                                    sx={{
-                                        bgcolor: theme.palette.primary.light,
-                                        color: theme.palette.primary.dark,
-                                        width: 50,
-                                        height: 50,
-                                        mr: 2,
-                                    }}
-                                >
-                                    MJ
-                                </Avatar>
-
-                                <Box sx={{ flexGrow: 1 }}>
-                                    <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1, color: theme.palette.text.primary }}>
-                                        Michael Johnson
-                                    </Typography>
-
-                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                        Backend Engineer
-                                    </Typography>
-
-                                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                                        Hired
-                                    </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <StatsCard>
+                        <StatsCardContent>
+                            <StatsIcon color="success">
+                                <PersonSearchIcon fontSize="large" />
+                            </StatsIcon>
+                            <Typography variant="h4" gutterBottom>
+                                {stats?.total_applicants || 0}
+                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">
+                                Applicants
+                            </Typography>
+                        </StatsCardContent>
+                    </StatsCard>
                 </Grid>
 
-                {/* Notifications */}
-                <Typography variant="h5" component="h2" sx={{ color: theme.palette.primary.main, fontWeight: "bold", mb: 3 }}>
-                    Notifications
+                <Grid item xs={12} sm={6} md={3}>
+                    <StatsCard>
+                        <StatsCardContent>
+                            <StatsIcon color="warning">
+                                <WorkIcon fontSize="large" />
+                            </StatsIcon>
+                            <Typography variant="h4" gutterBottom>
+                                {stats?.active_jobs || 0}
+                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">
+                                Active Jobs
+                            </Typography>
+                        </StatsCardContent>
+                    </StatsCard>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={3}>
+                    <StatsCard>
+                        <StatsCardContent>
+                            <StatsIcon color="info">
+                                <MessageIcon fontSize="large" />
+                            </StatsIcon>
+                            <Typography variant="h4" gutterBottom>
+                                {stats?.unread_messages || 0}
+                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">
+                                Unread Messages
+                            </Typography>
+                        </StatsCardContent>
+                    </StatsCard>
+                </Grid>
+            </Grid>
+
+            {/* Charts and Recommendations */}
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={8}>
+                    <Paper sx={{ mb: 3 }}>
+                        <Tabs
+                            value={tabValue}
+                            onChange={handleTabChange}
+                            indicatorColor="primary"
+                            textColor="primary"
+                            centered
+                        >
+                            <Tab label="Overview" />
+                            <Tab label="Active Jobs" />
+                            <Tab label="Applicants" />
+                        </Tabs>
+
+                        <TabPanel value={tabValue} index={0}>
+                            <Box sx={{ height: 300, mb: 4 }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Job Views
+                                </Typography>
+                                <Line
+                                    data={viewsChartData}
+                                    options={{
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                position: 'top',
+                                            },
+                                        },
+                                    }}
+                                />
+                            </Box>
+
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} sm={6}>
+                                    <Box sx={{ height: 250 }}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Applicants Per Job
+                                        </Typography>
+                                        <Bar
+                                            data={applicantsChartData}
+                                            options={{
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: {
+                                                        display: false,
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                    </Box>
+                                </Grid>
+
+                                <Grid item xs={12} sm={6}>
+                                    <Box sx={{ height: 250 }}>
+                                        <Typography variant="h6" gutterBottom>
+                                            Applicant Sources
+                                        </Typography>
+                                        <Doughnut
+                                            data={applicantSourcesChartData}
+                                            options={{
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                            }}
+                                        />
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                        </TabPanel>
+
+                        <TabPanel value={tabValue} index={1}>
+                            <Typography variant="h6" gutterBottom>
+                                Active Jobs
+                            </Typography>
+
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Job Title</TableCell>
+                                            <TableCell>Posted Date</TableCell>
+                                            <TableCell>Views</TableCell>
+                                            <TableCell>Applicants</TableCell>
+                                            <TableCell>Status</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {jobs.map((job) => (
+                                            <TableRow key={job.id}>
+                                                <TableCell>{job.title}</TableCell>
+                                                <TableCell>{new Date(job.created_at).toLocaleDateString('en-US')}</TableCell>
+                                                <TableCell>{job.views}</TableCell>
+                                                <TableCell>{job.applicants_count}</TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={job.status === 'active' ? 'Active' : 'Closed'}
+                                                        color={job.status === 'active' ? 'success' : 'default'}
+                                                        size="small"
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button size="small" color="primary">
+                                                        View
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+
+                            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    endIcon={<ArrowForwardIcon />}
+                                >
+                                    View All Jobs
+                                </Button>
+                            </Box>
+                        </TabPanel>
+
+                        <TabPanel value={tabValue} index={2}>
+                            <Typography variant="h6" gutterBottom>
+                                Latest Applicants
+                            </Typography>
+
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Candidate</TableCell>
+                                            <TableCell>Job</TableCell>
+                                            <TableCell>Applied Date</TableCell>
+                                            <TableCell>Match Percentage</TableCell>
+                                            <TableCell>Status</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {recommendations.slice(0, 5).map((candidate) => (
+                                            <TableRow key={candidate.id}>
+                                                <TableCell>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                        <Avatar src={candidate.photo_url} sx={{ mr: 1, width: 32, height: 32 }} />
+                                                        {candidate.name}
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell>{candidate.job_title}</TableCell>
+                                                <TableCell>{new Date(candidate.applied_at).toLocaleDateString('en-US')}</TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={candidate.match_percentage + '%'}
+                                                        color={
+                                                            candidate.match_percentage > 80 ? 'success' :
+                                                                candidate.match_percentage > 60 ? 'primary' : 'default'
+                                                        }
+                                                        size="small"
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={
+                                                            candidate.status === 'new' ? 'New' :
+                                                                candidate.status === 'reviewed' ? 'Reviewed' :
+                                                                    candidate.status === 'interview' ? 'Interview' : 'Rejected'
+                                                        }
+                                                        color={
+                                                            candidate.status === 'new' ? 'info' :
+                                                                candidate.status === 'reviewed' ? 'primary' :
+                                                                    candidate.status === 'interview' ? 'success' : 'error'
+                                                        }
+                                                        size="small"
+                                                    />
+                                                </TableCell>
+                                            <TableCell>
+                                            <Button size="small" color="primary">
+                                            View
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        endIcon={<ArrowForwardIcon />}
+                    >
+                        View All Applicants
+                    </Button>
+                </Box>
+            </TabPanel>
+        </Paper>
+    </Grid>
+
+    <Grid item xs={12} md={4}>
+        <Paper sx={{ mb: 3 }}>
+            <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6">
+                    Recent Activities
                 </Typography>
+                <IconButton size="small">
+                    <NotificationsIcon />
+                </IconButton>
+            </Box>
 
-                <Card sx={{ mb: 2, boxShadow: 2, borderRadius: 2 }}>
-                    <CardContent>
-                        <Typography variant="body1" sx={{ mb: 1, color: theme.palette.text.primary }}>
-                            New application for Senior Frontend Developer position.
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            hours ago
-                        </Typography>
-                    </CardContent>
-                </Card>
+            <List sx={{ maxHeight: 300, overflow: 'auto' }}>
+                {activities.length === 0 ? (
+                    <ListItem>
+                        <ListItemText
+                            primary="No recent activities"
+                            secondary="Your activities will appear here as you interact with the application"
+                        />
+                    </ListItem>
+                ) : (
+                    activities.map((activity, index) => (
+                        <ActivityItem key={index}>
+                            <ListItemIcon>
+                                {activity.type === 'view' && <VisibilityIcon color="primary" />}
+                                {activity.type === 'application' && <PersonSearchIcon color="success" />}
+                                {activity.type === 'job' && <WorkIcon color="warning" />}
+                                {activity.type === 'message' && <MessageIcon color="info" />}
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={activity.title}
+                                secondary={activity.time}
+                            />
+                        </ActivityItem>
+                    ))
+                )}
+            </List>
+        </Paper>
 
-                <Card sx={{ boxShadow: 2, borderRadius: 2 }}>
-                    <CardContent>
-                        <Typography variant="body1" sx={{ mb: 1, color: theme.palette.text.primary }}>
-                            Michael Johnson accepted your offer for Backend Engineer.
+        <Paper>
+            <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6">
+                    Recommended Candidates
+                </Typography>
+                <Button
+                    endIcon={<ArrowForwardIcon />}
+                    size="small"
+                >
+                    View All
+                </Button>
+            </Box>
+
+            <List sx={{ maxHeight: 350, overflow: 'auto' }}>
+                {recommendations.length === 0 ? (
+                    <ListItem>
+                        <ListItemText
+                            primary="No recommendations currently"
+                            secondary="Recommendations will appear here based on your posted jobs"
+                        />
+                    </ListItem>
+                ) : (
+                    recommendations.map((candidate, index) => (
+                        <React.Fragment key={candidate.id}>
+                            <ListItem
+                                button
+                                sx={{ py: 2 }}
+                            >
+                                <Avatar
+                                    src={candidate.photo_url}
+                                    sx={{ mr: 2 }}
+                                />
+                                <ListItemText
+                                    primary={candidate.name}
+                                    secondary={
+                                        <React.Fragment>
+                                            <Typography variant="body2" component="span">
+                                                {candidate.job_title}
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                                                <WorkIcon fontSize="small" sx={{ mr: 0.5, fontSize: 16 }} />
+                                                <Typography variant="body2" component="span" color="textSecondary">
+                                                    {candidate.experience} years of experience
+                                                </Typography>
+                                            </Box>
+                                        </React.Fragment>
+                                    }
+                                />
+                                <Box>
+                                    <Chip
+                                        label={candidate.match_percentage + '%'}
+                                        size="small"
+                                        color={
+                                            candidate.match_percentage > 80 ? 'success' :
+                                                candidate.match_percentage > 60 ? 'primary' : 'default'
+                                        }
+                                    />
+                                </Box>
+                            </ListItem>
+                            {index < recommendations.length - 1 && <Divider />}
+                        </React.Fragment>
+                    ))
+                )}
+            </List>
+        </Paper>
+    </Grid>
+</Grid>
+
+{/* Tips and Improvements Section */}
+<Paper sx={{ p: 3, mt: 3 }}>
+    <Typography variant="h6" gutterBottom>
+        Tips to Attract More Qualified Candidates
+    </Typography>
+
+    <Grid container spacing={2} sx={{ mt: 1 }}>
+        <Grid item xs={12} sm={4}>
+            <Card>
+                <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <PlayCircleOutlineIcon color="primary" sx={{ mr: 1 }} />
+                        <Typography variant="subtitle1">
+                            Add a Video to Your Job Posting
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            1 day ago
+                    </Box>
+                    <Typography variant="body2" color="textSecondary">
+                        Jobs with videos receive 34% more applications than traditional text-based job posts.
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        Add Video
+                    </Button>
+                </CardContent>
+            </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+            <Card>
+                <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <BusinessIcon color="primary" sx={{ mr: 1 }} />
+                        <Typography variant="subtitle1">
+                            Complete Your Company Profile
                         </Typography>
-                    </CardContent>
-                </Card>
-            </Container><br></br>
-        </Box>
-    )
-}
+                    </Box>
+                    <Typography variant="body2" color="textSecondary">
+                        Companies with complete profiles attract higher quality candidates and increase acceptance rates.
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        Update Profile
+                    </Button>
+                </CardContent>
+            </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+            <Card>
+                <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <AssessmentIcon color="primary" sx={{ mr: 1 }} />
+                        <Typography variant="subtitle1">
+                            Analyze Job Performance
+                        </Typography>
+                    </Box>
+                    <Typography variant="body2" color="textSecondary">
+                        Review your job performance analytics to improve visibility and application rates for future postings.
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        View Analytics
+                    </Button>
+                </CardContent>
+            </Card>
+        </Grid>
+    </Grid>
+</Paper>
+</DashboardContainer>
+);
+};
+
+export default EmployerDashboard;

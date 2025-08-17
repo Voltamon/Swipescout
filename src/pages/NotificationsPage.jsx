@@ -43,35 +43,10 @@ const NotificationsPage = () => {
     >
 
       <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2 }}>
-        My Applications
+        Notifications
       </Typography>
 
-      <Stack spacing={3} alignItems="center">
-        {appliedJobs.map((job, index) => (
-          <Paper
-            key={index}
-            elevation={3}
-            sx={{
-              width: "100%",
-              maxWidth: 600,
-              padding: 3,
-              backgroundColor: "rgba(255,255,255,0.8)",
-              borderRadius: 2,
-            }}
-          >
-            <Typography variant="h6">{job.title}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              {job.company} – {job.location}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {job.salary} • Posted {job.posted}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              <strong>Status:</strong> {job.status}
-            </Typography>
-          </Paper>
-        ))}
-      </Stack>
+
     </Box>
   );
 };

@@ -158,7 +158,7 @@ export const AuthProvider = ({ children }) => {
         '/auth/linkedin/callback',
         '/check-it',
         '/employer-explore-public',
-        '/job-seeker-explore-public',
+        '/Explore-jobs-public',
         '/video-feed/:vid',
          '/jobseeker-video-feed/:vid',
        '/forgot-password',

@@ -13,11 +13,11 @@ import VideoUpload from './VideoUpload';
 import VideosPage from './VideosPage';
 import Chat from './Chat';
 import EmployerProfile from "./EmployerProfilePage";
-import EmployerExploreSidebar from "./EmployerExploreSidebar";
+import EmployerViedoExamples from "./EmployerViedoExamples";
 import EditEmployerProfile from "./EditEmployerProfilePage";
 import PostJob from "./PostJobPage";
 import AllVideosPage from "./AllVideosPage";
-import EmployerDashboard_ from "./EmployerDashboard_";
+import EmployerDashboard from "./EmployerDashboard";
 
 const MainContent = ({ 
   currentPage, 
@@ -69,7 +69,7 @@ const MainContent = ({
   const videosTabsConfig = [
     { label: "Upload Video", content: <VideoUpload setVideoTab={setVideoTab} /> },
     { label: "My Videos", content: <VideosPage setVideoTab={setVideoTab} /> },
-    { label: "Example Videos", content: <EmployerExploreSidebar /> },
+    { label: "Example Videos", content: <EmployerViedoExamples /> },
   ];
 
   const pageContent = useMemo(() => {
@@ -136,12 +136,12 @@ const MainContent = ({
     const PostJobPageContent = () => <PostJob />;
     const SettingsPageContent = () => <Typography variant="h5" sx={{ p: 3 }}>Settings</Typography>;
     const OvervieDashboardPageContent = () => <Typography variant="h5" sx={{ p: 3 }}>Dashboard</Typography>;
-    const DefaultContent = () => <Typography variant="h5" sx={{ p: 3 }}><EmployerDashboard_ /></Typography>;
+    const DefaultContent = () => <Typography variant="h5" sx={{ p: 3 }}><EmployerDashboard /></Typography>;
 
     // Render the correct component based on the current page
     switch (currentPage) {
       case 'dashboard':
-        return <EmployerDashboard_ />;
+        return <EmployerDashboard />;
       case 'videos':
         return <VideosPageContent />;
       case 'messeges': // Corrected 'messeges' to 'messages'

@@ -12,23 +12,19 @@ import RegisterForm from "./pages/RegisterForm/RegisterForm.jsx";
 
 import DashboardJobSeeker from "./pages/DashboardJobSeeker.jsx";
 import JobSearchPage from "./pages/JobSearchPage";
-import EmployerDashboard from "./pages/EmployerDashboard";
 import CandidateSearchPage from "./pages/CandidateSearchPage";
-import CandidateProfilePage from "./pages/CandidateProfilePage";
+
 import JobPostingForm from "./pages/JobPostingForm";
 import VideoUpload from "./pages/VideoUpload";
-import Profile from "./pages/Profile";
-import Inbox from "./pages/Inbox.jsx";
 
-import JobSeekerDashboard from "./pages/JobSeekerDashboard";
+
 import JobDetailsPage from "./pages/JobDetailsPage";
 
 import AdminDashboard from "./pages/adminDashboard";
 import FeedPage from "./pages/FeedPage";
-import EmployerExplore from "./pages/EmployerExplore";
-import JobSeekerExplore from "./pages/JobSeekerExplore";
-import SettingsPage from "./pages/SettingsPage";
-import EmployerExploreSidebar from "./pages/EmployerExploreSidebar";
+import TalentExplore from "./pages/TalentExplore";
+
+import EmployerViedoExamples from "./pages/EmployerViedoExamples";
 import JobseekerExploreSidebar from "./pages/JobseekerExploreSidebar";
 import About from "./pages/About/About";
 import FAQs from "./pages/FAQ/FAQs";
@@ -39,8 +35,8 @@ import Chat from "./pages/Chat";
 import JobVideos from "./pages/JobVideos";
 import CompanyVideos from "./pages/CompanyVideos";
 import Settings from "./pages/Settings";
-import JobSeekerDashboard_ from "./pages/JobSeekerDashboard_";
-import EmployerDashboard_ from "./pages/EmployerDashboard_";
+import JobSeekerDashboard from "./pages/JobSeekerDashboard";
+import EmployerDashboard from "./pages/EmployerDashboard";
 import LoginPage from "./pages/LoginPage";
 import UnauthorizedPage from "./pages/Unauthorized";
 import Linkedincallback from "./pages/Linkedincallback";
@@ -57,7 +53,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 
 
 // import {SocketProvider} from './hooks/useAuth';
-import JobSeekersVideosPage from "./pages/JobSeekersVideosPage";
+
 import JobSeekerProfile from "./pages/JobSeekerProfile";
 import EditJobSeekerProfile from "./pages/EditJobSeekerProfile";
 import EmployerProfilePage from "./pages/EmployerProfilePage";
@@ -131,12 +127,12 @@ function App() {
             {/* <Route path="tmp2" element={<Home2 />} /> */}
             {/* <Route path="/explore-layout" element={<ExploreLayout />}>
             </Route> */}
-            <Route path="/video-feed/:vid?" element={<VideoFeed />} />
-            <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
             <Route path="/jobseeker-profile/:userId" element={<JobseekerProfileView />} />
             <Route path="/employer-profile/:userId" element={<EmployerProfileView />} />
+            <Route path="/video-feed/:vid?" element={<VideoFeed />} />
+            <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
             <Route path="/videos/:pagetype" element={<AllVideosPage />} />
             <Route path="/video-player/:id" element={<VideoFeedViewer />} />
             {/* <Route path="/video-tabs" element={<VideoTabs />} /> */}
@@ -146,45 +142,41 @@ function App() {
             {/* Private Routes */}
 
             <Route element={<ProtectedRoute />}>
-              {/*  <Route path="/" element={<Navigate to={user?.role === 'employer' ? '/employer/dashboard' : '/feed'} />} /> */}
-              {/* Common Routes */}
+        
               
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/settings" element={<Settings />} />
 
               {/* Job Seeker Routes */}
-              <Route path="/job-seeker/dashboard" element={<JobSeekerDashboard_ />} /> {/*  this analytics page */}
+              <Route path="/jobseeker-dashboard" element={<JobSeekerDashboard />} /> {/*  this analytics page */}
               <Route path="/job-videos" element={<JobVideos />} />
               {/* Employer Routes */}
-              <Route path="/employer/dashboard" element={<EmployerDashboard_ />} /> {/* -- Employer /> */}
+              <Route path="/employer-dashboard" element={<EmployerDashboard />} /> {/* -- Employer /> */}
               <Route path="/company-videos" element={<CompanyVideos />} />
               {/* <Route path="/login-form" element={<LoginForm />} /> */}
               {/* <Route path="/dashboard-jobseeker" element={<DashboardJobSeeker />} /> */}
-              <Route path="/job-search" element={<JobSearchPage />} />
-              <Route path="/employer-dashboard" element={<EmployerDashboard />} />  {/* -- Employer /> */}
+              
               <Route path="/candidate-search" element={<CandidateSearchPage />} />
-              <Route path="/candidate-profile" element={<CandidateProfilePage />} />
+              <Route path="/Telent-explore" element={<TalentExplore />} />
+              <Route path="/job-search" element={<JobSearchPage />} />
+              <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
+              
               <Route path="/job-posting" element={<JobPostingForm />} />
               <Route path="/video-upload" element={<VideoUpload />} />  {/* -- Employer and jobseeker /> */}
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/inbox" element={<Inbox />} />
-
-              <Route path="/dashboard" element={<JobSeekerDashboard />} />
-              <Route path="/search" element={<JobSearchPage />} />
+            
+              
               <Route path="/job/:id" element={<JobDetailsPage />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/feed-page" element={<FeedPage />} />
-              <Route path="/Employer-explore" element={<EmployerExplore />} />
-              <Route path="/Employer-explore-sidebar" element={<EmployerExploreSidebar />} />
-              <Route path="/Job-seeker-explore" element={<JobSeekerExplore />} />
-              <Route path="/jobseeker-explore-sidebar" element={<JobseekerExploreSidebar />} />
-              <Route path="/Settings-page" element={<SettingsPage />} />
+              <Route path="/Employer-explore-sidebar" element={<EmployerViedoExamples />} /> {/* Example Videos  */}
+              <Route path="/Explore-jobs" element={<ExploreJobs />} />
+              <Route path="/jobseeker-explore-sidebar" element={<JobseekerExploreSidebar />} />   {/* Example Videos  */}
+          
               <Route path="/MyApplications-page" element={<MyApplications />} />
               <Route path="/notifications" element={<NotificationsPage />} />
 
-              <Route path="/CompanyVideos-page" element={<CompanyVideos />} />
-              <Route path="/Job-seekers-videos" element={<JobSeekersVideosPage />} />
+              
               <Route path="/Job-seeker-profile" element={<JobSeekerProfile />} />
               <Route path="/employer-profile" element={<EmployerProfilePage />} />
               <Route path="/edit-JobSeeker-Profile" element={<EditJobSeekerProfile />} />
