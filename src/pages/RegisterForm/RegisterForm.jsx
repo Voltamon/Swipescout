@@ -244,12 +244,13 @@ const RegisterForm = () => {
       return;
     }
 
+
     switch (role.toLowerCase()) {
       case "job_seeker":
-        navigate("/dashboard");
+        navigate("/jobseeker-tabs");
         break;
       case "employer":
-        navigate("/employer-dashboard");
+        navigate("/employer-tabs");
         break;
       case "admin":
         navigate("/admin-dashboard");

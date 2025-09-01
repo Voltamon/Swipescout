@@ -87,7 +87,7 @@ export default function ContactPage() {
                 For general questions or inquiries, please send us an email.
               </Typography>
               <Link
-                href="mailto:info@swipescout.xyz"
+                href="mailto:support@swipescout.xyz"
                 sx={{
                   textDecoration: "none",
                   fontWeight: "bold",
@@ -97,7 +97,7 @@ export default function ContactPage() {
                   }
                 }}
               >
-                info@swipescout.xyz
+                support@swipescout.xyz
               </Link>
             </CardContent>
           </Card>
