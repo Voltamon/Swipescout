@@ -184,6 +184,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentProvider, setCurrentProvider] = useState(null);
+  const [providerForMenu, setProviderForMenu] = useState(null);
   const [openHowItWorks, setOpenHowItWorks] = useState(false); // State for How It Works dialog
   const [howItWorksAccepted, setHowItWorksAccepted] = useState(false); // State for checkbox
   const navigate = useNavigate();
@@ -191,18 +192,20 @@ const RegisterForm = () => {
   // Menu handlers
   const handleMenuOpen = (event, provider) => {
     setAnchorEl(event.currentTarget);
-    setCurrentProvider(provider);
+    setProviderForMenu(provider);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setProviderForMenu(null);
     setCurrentProvider(null);
   };
 
-  const handleRoleSelect = (role) => {
+  // Accept provider as argument
+  const handleRoleSelect = (role, provider) => {
     handleMenuClose();
-    // Before proceeding with signup, open "How It Works" dialog
-    setFormData((prev) => ({ ...prev, role })); // Temporarily set role
+    setFormData((prev) => ({ ...prev, role }));
+    setCurrentProvider(provider); // Set provider here
     setOpenHowItWorks(true);
   };
 
@@ -541,11 +544,11 @@ const RegisterForm = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={() => handleRoleSelect('job_seeker')}>
+          <MenuItem onClick={() => handleRoleSelect('job_seeker', providerForMenu)}>
             <UserIcon className="mr-2 h-4 w-4" />
             Sign up as Job Seeker
           </MenuItem>
-          <MenuItem onClick={() => handleRoleSelect('employer')}>
+          <MenuItem onClick={() => handleRoleSelect('employer', providerForMenu)}>
             <BriefcaseIcon className="mr-2 h-4 w-4" />
             Sign up as Employer
           </MenuItem>
@@ -583,6 +586,7 @@ const RegisterForm = () => {
           How SwipeScout Works
         </DialogTitle>
         <DialogContent dividers>
+         
           <Grid container spacing={4} justifyContent="center">
             {[
               {
@@ -675,6 +679,32 @@ const RegisterForm = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
+            {/* Only one checkbox, or if you want two, both controlled by same state */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={howItWorksAccepted}
+                  onChange={(e) => setHowItWorksAccepted(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="I have read and understood how SwipeScout works."
+            />
+            {/* If you want a second checkbox, just duplicate this block, but use the same state */}
+            {/* 
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={howItWorksAccepted}
+                  onChange={(e) => setHowItWorksAccepted(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="I have read and understood how SwipeScout works."
+            />
+            */}
+          </Box>
           <Button
             onClick={handleHowItWorksConfirm}
             disabled={!howItWorksAccepted}
@@ -696,6 +726,6 @@ const RegisterForm = () => {
       </Dialog>
     </RegisterContainer>
   );
-};
+};RegisterForm;
 
 export default RegisterForm;
