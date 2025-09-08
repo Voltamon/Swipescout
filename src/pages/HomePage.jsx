@@ -347,9 +347,9 @@ const HomePage = () => {
   const getDefaultRoute = (userRole) => {
     switch (userRole) {
       case "job_seeker":
-        return "/dashboard";
+        return "/jobseeker-tabs";
       case "employer":
-        return "/employer-dashboard";
+        return "/employer-tabs";
       case "admin":
         return "/admin-dashboard";
       default:
