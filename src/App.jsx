@@ -70,6 +70,7 @@ import JobseekerProfileView from "./pages/JobseekerProfileView";
 import EmployerProfileView from "./pages/EmployerProfileView";
 import AllVideosPage from "./pages/AllVideosPage";
 import HomePage from "./pages/HomePage";
+import HomePage_A from "./pages/HomePage_act";
 import HowItWorksPage from "./pages/HowItWorks";
 
 import Pricing from "./pages/PricingPage";
@@ -117,6 +118,7 @@ function App() {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
+            <Route path="/page-near-future" element={<HomePage_A />} />
             
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
