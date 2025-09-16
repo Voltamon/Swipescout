@@ -170,7 +170,8 @@ export const AuthProvider = ({ children }) => {
                 '/videos/all' ,
                 '/how-it-works',
                 '/pricing',
-                '/contact'
+                '/contact',
+                '/page-near-future'
         
       ];
       
