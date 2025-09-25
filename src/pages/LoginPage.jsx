@@ -33,111 +33,192 @@ const LoginContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   minHeight: '100vh',
   padding: theme.spacing(3),
-  backgroundColor: theme.palette.background.default,
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  position: 'relative',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+    animation: 'float 20s ease-in-out infinite',
+  },
+  '@keyframes float': {
+    '0%, 100%': { transform: 'translateY(0px)' },
+    '50%': { transform: 'translateY(-20px)' },
+  },
 }));
 
 const LoginFormContainer = styled(Paper)(({ theme }) => ({
-  width: 400,
-  padding: theme.spacing(3),
-  boxShadow: '0 0 15px rgba(0,0,0,0.1)',
-  borderRadius: '10px',
-  backgroundColor: '#f9f9f9',
+  width: 420,
+  padding: theme.spacing(4),
+  boxShadow: '0 20px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.05)',
+  borderRadius: '20px',
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  position: 'relative',
+  zIndex: 1,
+  animation: 'slideUp 0.6s ease-out',
+  '@keyframes slideUp': {
+    '0%': { 
+      opacity: 0, 
+      transform: 'translateY(30px) scale(0.95)' 
+    },
+    '100%': { 
+      opacity: 1, 
+      transform: 'translateY(0) scale(1)' 
+    },
+  },
   [theme.breakpoints.down('sm')]: {
     width: '90%',
+    padding: theme.spacing(3),
   },
 }));
 
 const LoginFormTitle = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(1.25),
+  marginBottom: theme.spacing(1),
+  fontWeight: 700,
+  fontSize: '2rem',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  backgroundClip: 'text',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  textAlign: 'center',
 }));
 
 const LoginFormSubtitle = styled(Typography)(({ theme }) => ({
-  color: '#888',
-  marginBottom: theme.spacing(2.5),
+  color: '#6b7280',
+  marginBottom: theme.spacing(3),
+  textAlign: 'center',
+  fontSize: '1rem',
+  fontWeight: 400,
 }));
 
 const InputField = styled(TextField)(({ theme }) => ({
   width: '100%',
-  margin: theme.spacing(1, 0),
-  borderRadius: '5px',
+  margin: theme.spacing(1.5, 0),
   '& .MuiOutlinedInput-root': {
+    borderRadius: '12px',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    transition: 'all 0.3s ease',
     '& fieldset': {
-      borderColor: theme.palette.mode === 'light' ? '#e0e0e0' : theme.palette.grey[700],
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      borderWidth: '2px',
     },
     '&:hover fieldset': {
-      borderColor: theme.palette.primary.main,
+      borderColor: '#667eea',
+      boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)',
     },
     '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
+      borderColor: '#667eea',
+      boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)',
     },
+  },
+  '& .MuiInputLabel-root': {
+    color: '#6b7280',
+    fontWeight: 500,
+  },
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: '#667eea',
   },
   '& input': {
     padding: theme.spacing(1.5),
-    backgroundColor: theme.palette.mode === 'light' ? '#fff' : theme.palette.grey[900],
+    fontSize: '1rem',
   },
 }));
 
 const LoginButton = styled(Button)(({ theme }) => ({
   width: '100%',
-  padding: theme.spacing(1.5),
+  padding: theme.spacing(1.75),
   marginTop: theme.spacing(2),
-  backgroundColor: '#5c6bc0',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   color: 'white',
   border: 'none',
-  borderRadius: '25px',
-  fontWeight: 'bold',
+  borderRadius: '12px',
+  fontWeight: 600,
+  fontSize: '1rem',
+  textTransform: 'none',
   cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
   '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
+    transform: 'translateY(-2px)',
+    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+  },
+  '&:active': {
+    transform: 'translateY(0)',
+  },
+  '&:disabled': {
+    background: '#e5e7eb',
+    color: '#9ca3af',
+    boxShadow: 'none',
+    transform: 'none',
   },
 }));
 
 const SocialDivider = styled(Divider)(({ theme }) => ({
-  margin: theme.spacing(2, 0),
+  margin: theme.spacing(3, 0),
+  '&::before, &::after': {
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
   '& .MuiDivider-wrapper': {
-    color: '#888',
+    color: '#6b7280',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    padding: theme.spacing(0, 2),
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
   },
 }));
 
 const SocialButton = styled(Button)(({ theme }) => ({
   flexGrow: 1,
   margin: theme.spacing(0, 0.5),
-  padding: theme.spacing(1.25),
-  border: 'none',
-  borderRadius: '20px',
-  cursor: 'pointer',
+  padding: theme.spacing(1.5),
+  borderRadius: '12px',
+  textTransform: 'none',
+  fontWeight: 500,
+  fontSize: '0.875rem',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-1px)',
+  },
 }));
 
 const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
   backgroundColor: '#fff',
-  color: '#DB4437',
-  border: `1px solid #DB4437`,
+  color: '#db4437',
+  border: '2px solid #db4437',
   '&:hover': {
-    backgroundColor: '#fbe3e1',
-  },
-  '&:active': {
-    backgroundColor: 'rgb(235, 216, 164) !important',
-  },
-  '&.Mui-focusVisible': {
-    outline: '2px solid #1976d2',
-    backgroundColor: 'rgb(235, 216, 164) !important',
+    backgroundColor: '#fef2f2',
+    borderColor: '#dc2626',
+    boxShadow: '0 4px 12px rgba(219, 68, 55, 0.2)',
   },
 }));
 
 const LinkedInSignInButton = styled(SocialButton)(({ theme }) => ({
-  backgroundColor: 'rgb(255, 255, 255)',
+  backgroundColor: '#0077b5',
   color: 'white',
-  outline: '2px solid #1976d2',
+  border: '2px solid #0077b5',
   '&:hover': {
-    backgroundColor: 'rgb(183, 215, 248)',
+    backgroundColor: '#005885',
+    borderColor: '#005885',
+    boxShadow: '0 4px 12px rgba(0, 119, 181, 0.3)',
   },
 }));
 
 const SignupLink = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
-  marginTop: theme.spacing(2.5),
-  color: '#888',
+  marginTop: theme.spacing(3),
+  color: '#6b7280',
   cursor: 'pointer',
+  fontSize: '0.875rem',
+  transition: 'color 0.3s ease',
+  '&:hover': {
+    color: '#667eea',
+  },
 }));
 
 const LoginPage = () => {
@@ -291,7 +372,24 @@ const LoginPage = () => {
               ),
             }}
           />
-          <Link to="/forgot-password">Forgot Password?</Link>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+            <Link 
+              to="/forgot-password" 
+              style={{
+                color: '#667eea',
+                fontSize: '0.875rem',
+                textDecoration: 'none',
+                fontWeight: 500,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  textDecoration: 'underline',
+                  color: '#5a67d8',
+                }
+              }}
+            >
+              Forgot Password?
+            </Link>
+          </Box>
           <LoginButton type="submit" disabled={loading.email}>
             {loading.email ? <CircularProgress size={24} color="inherit" /> : "Log In"}
           </LoginButton>

@@ -93,6 +93,9 @@ const Footer = () => {
         <FooterLink href="#" underline="hover">
           Terms and Conditions
         </FooterLink>
+        <FooterLink href="#" underline="hover">
+          Cookie Policy
+        </FooterLink>
       </Box>
 
       <Box sx={{ mb: 4 }}>

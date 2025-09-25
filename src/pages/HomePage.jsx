@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   Card,
-  
   CardMedia,
   CardContent,
   Avatar,
@@ -16,12 +15,12 @@ import {
   IconButton,
   CircularProgress,
   Alert,
-  TextField,
-  InputAdornment,
-  Stack,Paper,
+  Stack,
+  Paper,
   Fade,
   Zoom,
-  Slide,Chip,
+  Slide,
+  Chip,
   useTheme
 } from "@mui/material";
 import {
@@ -31,10 +30,6 @@ import {
   VideoCall,
   TrendingUp,
   Star,
-  Visibility,
-  VisibilityOff,
-  Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,
   CheckCircle,
   Fullscreen,
   MonetizationOn as MonetizationOnIcon,
@@ -44,12 +39,12 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Headers/Header"; // Updated Header path
 import Footer from "../components/Headers/Footer"; // Updated Footer path
+import Hero from "../components/hero/hero"; // Hero component
 import { Helmet } from "react-helmet";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import VolumeUp from "@mui/icons-material/VolumeUp";
 import VolumeOff from "@mui/icons-material/VolumeOff";
 import { useAuth } from "../hooks/useAuth";
-import { AlertCircle as AlertCircleIcon } from "lucide-react";
 import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
 
 
@@ -102,87 +97,6 @@ const StatsCard = styled(Paper)(({ theme }) => ({
     }
 }));
 
-const LoginFormTitle = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(1.25),
-  color: theme.palette.text.primary, // Use theme color
-}));
-const LoginFormSubtitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.secondary, // Use theme color
-  marginBottom: theme.spacing(2.5),
-}));
-const InputField = styled(TextField)(({ theme }) => ({
-  width: "100%",
-  margin: theme.spacing(1, 0),
-  borderRadius: theme.shape.borderRadius, // Use theme border radius
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: theme.palette.divider, // Use theme color
-    },
-    "&:hover fieldset": {
-      borderColor: theme.palette.primary.main, // Use theme color
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main, // Use theme color
-    },
-    "&.Mui-error fieldset": {
-      borderColor: theme.palette.error.main, // Use theme color
-    },
-  },
-  "& input": {
-    padding: theme.spacing(1.5),
-    backgroundColor: theme.palette.background.paper, // Use theme color
-    color: theme.palette.text.primary, // Use theme color
-  },
-}));
-const LoginButton = styled(Button)(({ theme }) => ({
-  width: "100%",
-  padding: theme.spacing(1.5),
-  marginTop: theme.spacing(2),
-  backgroundColor: theme.palette.primary.main, // Use theme color
-  color: theme.palette.primary.contrastText, // Use theme color
-  border: "none",
-  borderRadius: "25px",
-  fontWeight: "bold",
-  cursor: "pointer",
-  "&:hover": {
-    backgroundColor: theme.palette.primary.dark, // Use theme color
-  },
-}));
-const SocialDivider = styled(Divider)(({ theme }) => ({
-  margin: theme.spacing(2, 0),
-  "& .MuiDivider-wrapper": {
-    color: theme.palette.text.secondary, // Use theme color
-  },
-}));
-const SocialButton = styled(Button)(({ theme }) => ({
-  flexGrow: 1,
-  margin: theme.spacing(0, 0.5),
-  padding: theme.spacing(1.25),
-  border: "none",
-  borderRadius: "20px",
-  cursor: "pointer",
-  "&:hover": {
-    transform: "scale(1.02)",
-  },
-}));
-const GoogleSignInButton = styled(SocialButton)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper, // Use theme color
-  color: theme.palette.text.secondary, // Use theme color
-  border: `1px solid ${theme.palette.divider}`, // Use theme color
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover, // Use theme color
-    borderColor: theme.palette.grey[400], // Use theme color
-  },
-}));
-const LinkedInSignInButton = styled(SocialButton)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper, // Use theme color
-  color: theme.palette.text.secondary, // Use theme color
-  border: `1px solid ${theme.palette.divider}`, // Use theme color
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover, // Use theme color
-    borderColor: theme.palette.grey[400], // Use theme color
-  },
-}));
 const StyledFeatureCard = styled(Card)(({ theme }) => ({
   height: "100%",
   display: "flex",
@@ -324,17 +238,6 @@ const HomePage = () => {
     role,
     loading: authLoading,
   } = useAuth();
-  const [loading, setLoading] = useState({
-    email: false,
-    google: false,
-    linkedin: false,
-  });
-  const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (explicitLogin && user && role && !authLoading) {
@@ -357,72 +260,6 @@ const HomePage = () => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleEmailSignIn = async (e) => {
-    e.preventDefault();
-    setExplicitLogin(true);
-    setLoading((prev) => ({ ...prev, email: true }));
-    setError("");
-    try {
-      const result = await loginByEmailAndPassword(
-        formData.email,
-        formData.password
-      );
-      if (result && result.error) {
-        setError(result.message || "Login failed. Please try again.");
-        setExplicitLogin(false);
-        return;
-      }
-    } catch (err) {
-      setError(err.message || "Login failed. Please try again.");
-      setExplicitLogin(false);
-    } finally {
-      setLoading((prev) => ({ ...prev, email: false }));
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setLoading((prev) => ({ ...prev, google: true }));
-    setError("");
-    setExplicitLogin(true);
-    try {
-      const result = await authenticateWithGoogle();
-      if (result && result.error) {
-        setError(result.message || "Google sign-in failed");
-        setExplicitLogin(false);
-      }
-    } catch (err) {
-      setError(err.message || "Google sign-in failed");
-      setExplicitLogin(false);
-    } finally {
-      setLoading((prev) => ({ ...prev, google: false }));
-    }
-  };
-
-  const handleLinkedInLogin = async () => {
-    setLoading((prev) => ({ ...prev, linkedin: true }));
-    setError("");
-    setExplicitLogin(true);
-    try {
-      const result = await authenticateWithLinkedIn();
-      if (result && result.error) {
-        setError(result.message || "LinkedIn login failed");
-        setExplicitLogin(false);
-      }
-    } catch (err) {
-      setError(err.message || "LinkedIn login failed");
-      setExplicitLogin(false);
-    } finally {
-      setLoading((prev) => ({ ...prev, linkedin: false }));
-    }
-  };
 
   const handleVideoHover = (videoId, isHovering) => {
     setHoveredVideo(isHovering ? videoId : null);
@@ -520,281 +357,7 @@ const HomePage = () => {
         <Header />
 
         {/* Hero Section */}
-        <Box
-          sx={{
-            background: theme.palette.primary.main, // Use primary color for hero background
-            color: theme.palette.primary.contrastText, // White text
-            py: { xs: 8, md: 12 },
-            position: "relative",
-            overflow: "hidden",
-            // Blurred background image
-            "&:before": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundImage: `url(${VITE_BASE_URL}/public/backgrounds/meeting_room2.jpg)`, // Placeholder for meeting room image
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "blur(5px)", // Apply blur effect
-              opacity: 0.8, // Adjust opacity as needed
-              zIndex: 0,
-            },
-            flexGrow: 1, // Allow hero section to grow and push footer down
-            display: 'flex',
-            alignItems: 'center', // Center content vertically
-          }}
-        >
-          <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
-            <Grid container spacing={6} alignItems="center">
-              <Grid item xs={12} md={6}>
-                  <Chip sx={{ backgroundColor: 'rgba(66, 81, 107, 0.2)', color: 'white' , mt:-6,
-                                                             backdropFilter: 'blur(10px)',
-                                                             border: '1px solid rgba(255, 255, 255, 0.3) '}}
-                                                         label="🚀 AI-Powered Recruitment Platform"
-                                                        
-                                                     />
-                                                     <Typography
-                                                         variant="h1"
-                                                         sx={{
-                                                             fontWeight: 800,
-                                                             mb: 3,
-                                                             fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
-                                                             lineHeight: 1.1,
-                                                             color: 'white',
-                                                             textShadow: '0 4px 20px rgba(0,0,0,0.3)'
-                                                         }}
-                                                     >
-                                                         The Future of
-                                                         <Box component="span" sx={{ 
-                                                             background: 'linear-gradient(45deg, #FFD700, #FFA500)',
-                                                             WebkitBackgroundClip: 'text',
-                                                             WebkitTextFillColor: 'transparent',
-                                                             display: 'block'
-                                                         }}>
-                                                             Video Recruitment
-                                                         </Box>
-                                                     </Typography>
-                                                     <Typography
-                                                         variant="h5"
-                                                         sx={{
-                                                             mb: 4,
-                                                             color: 'rgba(255, 255, 255, 0.9)',
-                                                             fontWeight: 400,
-                                                             maxWidth: '600px'
-                                                         }}
-                                                     >
-                                                         Connect talent with opportunities through AI-powered video matching. 
-                                                         Experience recruitment that's personal, efficient, and revolutionary.
-                                                     </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    component={Link}
-                    to="/register-form"
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      bgcolor: theme.palette.secondary.main, // Use secondary color
-                      color: theme.palette.secondary.contrastText, // Dark text
-                      fontWeight: 600,
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: theme.shape.borderRadius,
-                      boxShadow: theme.shadows[3],
-                      '&:hover': {
-                        bgcolor: theme.palette.secondary.dark, // Darker secondary on hover
-                        boxShadow: theme.shadows[5],
-                      },
-                    }}
-                  >
-                    Get Started
-                  </Button>
-                  <Button
-                    component={Link}
-                    to="/videos/all"
-                    variant="outlined"
-                    size="large"
-                    sx={{
-                      borderColor: theme.palette.primary.contrastText, // White border
-                      color: theme.palette.primary.contrastText, // White text
-                      fontWeight: 600,
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: theme.shape.borderRadius,
-                      '&:hover': {
-                        bgcolor: 'rgba(255,255,255,0.1)', // Subtle white hover
-                        borderColor: theme.palette.primary.contrastText,
-                      },
-                    }}
-                  >
-                    Explore
-                  </Button>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6} sx={{ position: "relative" }}>
-                {/* Login Form */}
-                <Box
-                  sx={{
-                    width: { xs: "90%", sm: "380px", md: "420px" }, // Responsive width
-                    alignSelf: "center",
-                    mx: "auto",
-                    bgcolor: theme.palette.background.paper, // Use theme color
-                    p: { xs: 2, sm: 3 },
-                    borderRadius: theme.shape.borderRadius * 2, // More rounded
-                    boxShadow: theme.shadows[6], // Stronger shadow for form
-                  }}
-                >
-                  <LoginFormTitle
-                    variant="h5"
-                    component="h4"
-                    sx={{
-                      mb: 2,
-                      fontWeight: bold,
-                      color: theme.palette.text.primary,
-                      textAlign: "center",
-                    }}
-                  >
-                    Log in to your account
-                  </LoginFormTitle>
-                  <Box component="form" onSubmit={handleEmailSignIn}>
-                    <InputField
-                      label="Enter your email address"
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      variant="outlined"
-                      size="small"
-                    />
-                    <InputField
-                      label="Enter your password"
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                      variant="outlined"
-                      size="small"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                              size="small"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff sx={{ color: theme.palette.text.secondary }} />
-                              ) : (
-                                <Visibility sx={{ color: theme.palette.text.secondary }} />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <Link
-                      to="/forgot-password"
-                      style={{ fontSize: "0.875rem", color: theme.palette.primary.main }}
-                    >
-                      Forgot Password?
-                    </Link>
-                    <LoginButton type="submit" disabled={loading.email}>
-                      {loading.email ? (
-                        <CircularProgress size={24} color="inherit" />
-                      ) : (
-                        "Log In"
-                      )}
-                    </LoginButton>
-                  </Box>
-                  <SocialDivider>
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                      Or log in with
-                    </Typography>
-                  </SocialDivider>
-                  <Stack direction="row" spacing={1} justifyContent="center">
-                    <GoogleSignInButton
-                      variant="contained"
-                      onClick={handleGoogleSignIn}
-                      disabled={loading.google}
-                      startIcon={<GoogleIcon />}
-                    >
-                      {loading.google ? (
-                        <CircularProgress size={24} color="inherit" />
-                      ) : (
-                        "Google"
-                      )}
-                    </GoogleSignInButton>
-                    <LinkedInSignInButton
-                      variant="outlined"
-                      onClick={handleLinkedInLogin}
-                      disabled={loading.linkedin}
-                      startIcon={<LinkedInIcon />}
-                      sx={{
-                        flex: 1,
-                        py: 1.25,
-                      }}
-                    >
-                      {loading.linkedin ? (
-                        <CircularProgress size={24} />
-                      ) : (
-                        "LinkedIn"
-                      )}
-                    </LinkedInSignInButton>
-                  </Stack>
-                  {error && (
-                    <Alert
-                      severity="error"
-                      sx={{ mt: 2, display: "flex", alignItems: "center" }}
-                    >
-                      <AlertCircleIcon
-                        style={{
-                          marginRight: "8px",
-                          height: "20px",
-                          width: "20px",
-                        }}
-                      />
-                      {error}
-                    </Alert>
-                  )}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      mt: 2,
-                      textAlign: "center",
-                      color: theme.palette.text.secondary,
-                    }}
-                  >
-                    Don't have an account?{" "}
-                    <Link
-                      to="/register-form"
-                      style={{
-                        color: theme.palette.primary.main,
-                        fontWeight: 600,
-                        textDecoration: "none",
-                        "&:hover": {
-                          textDecoration: "underline",
-                        },
-                      }}
-                    >
-                      Sign Up
-                    </Link>
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
+        <Hero />
 
         {/* Founder Section */}
         <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: theme.palette.background.paper }}>
