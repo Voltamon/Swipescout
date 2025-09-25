@@ -69,7 +69,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import JobseekerProfileView from "./pages/JobseekerProfileView";
 import EmployerProfileView from "./pages/EmployerProfileView";
 import AllVideosPage from "./pages/AllVideosPage";
-import HomePage from "./pages/HomePage";
+
 import HowItWorksPage from "./pages/HowItWorks";
 
 import Pricing from "./pages/PricingPage";
@@ -78,7 +78,7 @@ import CustomerSupportPage from "./pages/CustomerSupportPage";
 import ContactPage from "./pages/ContactPage";
 import EmployerTabs from "./pages/EmployerTabs";
 import JobseekerTabs from "./pages/JobseekerTabs";
-
+import Home from "./pages/home/home.jsx";
 // Initialize once (put this in a separate config file)
 const cld = new Cloudinary({
   cloud: {
@@ -110,7 +110,7 @@ function App() {
         <VideoProvider>
           <Routes location={location} key={location.pathname}>
             {/* Public Routes */}
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Home />} />
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<About />} />

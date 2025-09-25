@@ -2,6 +2,15 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme3 = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200, // Change this value to whatever you want
+      xl: 1536,
+    },
+  },
   palette: {
     primary: {
       main: '#2563EB',
