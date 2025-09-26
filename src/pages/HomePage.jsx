@@ -92,6 +92,7 @@ const HomePage = () => {
         opacity: 0.15;
         backdrop-filter: blur(4px);
         animation: shapeFloat 6s ease-in-out infinite;
+        pointer-events: none;
       }
 
       @keyframes shapeFloat {
@@ -107,6 +108,19 @@ const HomePage = () => {
       @keyframes countdownPulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.02); }
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 600px) {
+        /* Hide heavy decorative shapes on very small screens for clarity & perf */
+        .swipescout-shape { display: none !important; }
+
+        /* Slightly tighten the background blur on small screens */
+        #swipescout-bg-animated { filter: blur(6px); }
+      }
+      /* Respect users who prefer reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .swipescout-shape, #swipescout-bg-animated, .countdown-box { animation: none !important; transition: none !important; }
       }
     `;
     document.head.appendChild(style);
@@ -166,7 +180,7 @@ const HomePage = () => {
         }}
       >
         {/* Many decorative shapes (stable positions) */}
-        {shapes.map((s, i) => (
+  {shapes.map((s) => (
           <Box
             key={s.id}
             className="swipescout-shape"
@@ -174,8 +188,9 @@ const HomePage = () => {
               position: "absolute",
               left: s.left,
               top: s.top,
-              width: s.w,
-              height: s.h,
+              /* cap shape size to avoid overflow on small screens */
+              width: `min(${s.w}px, 28vw)`,
+              height: `min(${s.h}px, 28vw)`,
               backgroundColor: s.color,
               opacity: Number(s.opacity),
               borderRadius: "50%",
@@ -190,11 +205,11 @@ const HomePage = () => {
           />
         ))}
 
-        <Container maxWidth="sm">
+  <Container maxWidth="md">
           <Paper
             elevation={24}
             sx={{
-              p: 4,
+              p: { xs: 2, sm: 3, md: 4 },
               borderRadius: 4,
               textAlign: "center",
               background: "rgba(255, 255, 255, 0.92)",
@@ -215,10 +230,10 @@ const HomePage = () => {
               },
             }}
           >
-            <Typography variant="h3" fontWeight={700} mb={2}>
+            <Typography variant="h3" fontWeight={700} mb={2} sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.4rem' } }}>
               🚀 SwipeScout is Coming Soon!
             </Typography>
-            <Typography variant="h6" color="text.secondary" mb={3}>
+            <Typography variant="h6" color="text.secondary" mb={3} sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
               The next-generation video recruitment platform is almost here.<br />
               Enter your email to join our waitlist and be the first to know when we launch!
             </Typography>
@@ -227,24 +242,31 @@ const HomePage = () => {
               <Typography variant="h5" fontWeight={600} color="primary" gutterBottom>
                 Launching In:
               </Typography>
-              <Box sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
-                {["days", "hours", "minutes", "seconds"].map((unit, i) => (
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+                { ["days", "hours", "minutes", "seconds"].map((unit, i) => (
                   <Box
                     key={unit}
                     className="countdown-box"
                     sx={{
-                      px: 3,
-                      py: 2,
-                      backgroundColor: "rgba(255, 255, 255, 0.9)",
+                      px: { xs: 1.5, sm: 3 },
+                      py: { xs: 1, sm: 2 },
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
                       borderRadius: 2,
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                      animationDelay: `${i * 0.2}s`,
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                      animationDelay: `${i * 0.15}s`,
+                      minWidth: 64,
+                      flex: '0 1 72px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 1,
                     }}
                   >
-                    <Typography variant="h3" fontWeight={700} color="primary">
+                    <Typography variant="h3" fontWeight={700} color="primary" sx={{ fontSize: { xs: '1.1rem', sm: '1.6rem', md: '2rem' } }}>
                       {timeLeft[unit]}
                     </Typography>
-                    <Typography variant="subtitle2" color="text.secondary">
+                    <Typography variant="subtitle2" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.85rem' } }}>
                       {unit.charAt(0).toUpperCase() + unit.slice(1)}
                     </Typography>
                   </Box>
