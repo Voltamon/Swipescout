@@ -111,14 +111,14 @@ function App() {
         <VideoProvider>
           <Routes location={location} key={location.pathname}>
             {/* Public Routes */}
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage_A />} />
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
-            <Route path="/page-near-future" element={<HomePage_A />} />
+            <Route path="/page-near-future" element={<HomePage />} />
             
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
