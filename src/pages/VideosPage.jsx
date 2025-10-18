@@ -441,56 +441,52 @@ const VideosPage = ({setVideoTab}) => {
 
                   {/* CardContent - Status information */}
                   <CardContent sx={{ pt: 1, pb: 1 }}>
-                    {video.isLocal && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <CloudSyncIcon/>
-                        {video.status === 'uploading' && (
-                          <>
-                            <Typography variant="caption" color="text.secondary">
-                              Uploading... {video.progress}%
-                            </Typography>
-                            <LinearProgress
-                              variant="determinate"
-                              value={video.progress}
-                              color="error"
-                              sx={{ width: '60%' }}
-                            />
-                          </>
-                        )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      {/* Show cloud sync only while uploading or processing as local */}
+                      {video.isLocal && (video.status === 'uploading' || video.status === 'processing') && (
+                        <>
+                          <CloudSyncIcon/>
+                          {video.status === 'uploading' && (
+                            <>
+                              <Typography variant="caption" color="text.secondary">
+                                Uploading... {video.progress}%
+                              </Typography>
+                              <LinearProgress
+                                variant="determinate"
+                                value={video.progress}
+                                color="error"
+                                sx={{ width: '60%' }}
+                              />
+                            </>
+                          )}
+                        </>
+                      )}
 
-                        {video.status === 'failed' && (
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            size="small"
-                            startIcon={<Replay />}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRetry(video);
-                            }}
-                            sx={{ mt: 1 }}
-                          >
-                            Retry Upload
-                          </Button>
-                        )}
-                        
-                        {video.status === 'processing' && 6==8 && (
-                          <Button
-                            variant="outlined"
-                            color="warning"
-                            size="small"
-                            startIcon={<Replay />}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRetry(video);
-                            }}
-                            sx={{ mt: 1 }}
-                          >
-                            Retry Processing
-                          </Button>
-                        )}
-                      </Box>
-                    )}
+                      {/* Show retry button for failed or local failed uploads */}
+                      {video.isLocal && video.status === 'failed' && (
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          startIcon={<Replay />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRetry(video);
+                          }}
+                          sx={{ mt: 1 }}
+                        >
+                          Retry Upload
+                        </Button>
+                      )}
+
+                      {/* If not local and completed, show check mark */}
+                      {!video.isLocal && video.status === 'completed' && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <CheckCircle color="success" />
+                          <Typography variant="caption" color="text.secondary">Ready</Typography>
+                        </Box>
+                      )}
+                    </Box>
 
                   {/*  {!video.isLocal && video.status === 'completed' && (
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>

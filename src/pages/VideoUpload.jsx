@@ -357,7 +357,7 @@ const handleSubmit = async () => {
     // Call onComplete here to signal to the parent (PostJobPage) that the upload process has been initiated
     // and the dialog can be closed.
         if (!newjobid ) { //&& !embedded
-      navigate('/videos'); 
+      navigate('/jobseeker-tabs?page=videos&tab=my-videos'); 
     }
     if (onComplete) {
       onComplete(serverUploadId); 
