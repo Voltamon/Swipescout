@@ -587,10 +587,22 @@ export const AuthProvider = ({ children }) => {
 			try {
 				// Process any pending redirect result BEFORE running normal auth checks
 				await processRedirectResultIfAny();
-				await checkAuth();
+				// Run a silent auth check during initialization so missing tokens
+				// (expected for anonymous visitors) don't trigger noisy errors or
+				// immediate navigations. We still re-run a full check when needed.
+				try {
+					await checkAuth({ silent: true });
+				} catch (err) {
+					// These are expected cases on first load when the user is not logged in
+					if (err && (err.message === 'No tokens available' || err.message === 'Refresh token expired')) {
+						// ignore silently
+					} else {
+						console.error('Initial auth check failed (unexpected):', err);
+					}
+				}
 				refreshInterval = setInterval(checkTokenRefresh, 30000); // Check every 30 seconds
 			} catch (error) {
-				console.error("Initial auth check failed:", error);
+				console.error("Initial auth flow failed:", error);
 			}
 		};
 

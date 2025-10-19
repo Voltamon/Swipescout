@@ -489,14 +489,7 @@ const VideosPage = ({setVideoTab}) => {
                       )}
                     </Box>
 
-                  {/*  {!video.isLocal && video.status === 'completed' && (
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <CheckCircle color="success" fontSize="small" sx={{ mr: 1 }} />
-                        <Typography variant="caption" color="text.secondary">
-                          Ready
-                        </Typography>
-                      </Box>
-                    )} */}
+                    )}
                   </CardContent>
                 </Card>
               </Grid>
