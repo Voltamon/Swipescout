@@ -155,7 +155,7 @@ function App() {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
-            <Route path="/page-near-future" element={<HomePage />} />
+            
             
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
