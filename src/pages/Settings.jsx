@@ -36,7 +36,8 @@ import LanguageIcon from '@mui/icons-material/Language';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HelpIcon from '@mui/icons-material/Help';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 import { getUserSettings, updateUserSettings } from '../services/userService';
 
 const SettingsContainer = styled(Container)(({ theme }) => ({
@@ -332,8 +333,8 @@ const Settings = () => {
 
                                 <SettingsContent>
                                     <AvatarUpload>
-                                        <LargeAvatar src={user?.photo_url}>
-                                            {!user?.photo_url && user?.name?.charAt(0)}
+                                        <LargeAvatar src={user?.photoUrl}>
+                                            {!user?.photoUrl && user?.name?.charAt(0)}
                                         </LargeAvatar>
                                         <Button variant="outlined" component="label">
                                             Change Photo

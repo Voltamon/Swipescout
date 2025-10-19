@@ -18,9 +18,19 @@ import {
     CircularProgress,
     IconButton,
     LinearProgress,
-    useTheme
+    useTheme,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles'; // <--- added import
+import { useNavigate } from 'react-router-dom';
 import {
     Visibility as VisibilityIcon,
     ThumbUp as ThumbUpIcon,
@@ -33,18 +43,15 @@ import {
     ArrowForward as ArrowForwardIcon,
     LocationOn as LocationOnIcon
 } from '@mui/icons-material';
-import { useAuth } from '../hooks/useAuth';
-import {
-    getJobSeekerDashboardStats,
-    getRecentActivities,
-    getJobRecommendations
-} from '../services/dashboardService';
+import { useAuth } from '../contexts/AuthContext';
+import { getJobSeekerDashboardStats, getRecentActivities, getJobRecommendations } from '../services/dashboardService';
+import { getSwipeStats, getVideoEngagement, addUserSkill, getSkills, createSkill } from '../services/api';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
-    PointElement,
+    PointElement, 
     LineElement,
     BarElement,
     ArcElement,
@@ -113,10 +120,21 @@ const ActivityItem = styled(ListItem)(({ theme }) => ({
 
 const JobSeekerDashboard = () => {
     const { user } = useAuth();
+    const navigate = useNavigate(); // <--- existing
+    const theme = useTheme(); // <--- moved here (before any early returns / JSX)
     const [stats, setStats] = useState(null);
     const [activities, setActivities] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
+    const [swipeStats, setSwipeStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [openAddSkillDialog, setOpenAddSkillDialog] = useState(false);
+    const [viewAllOpen, setViewAllOpen] = useState(false);
+    const [viewAllPage, setViewAllPage] = useState(1);
+    const itemsPerPage = 6;
+    const [newSkillName, setNewSkillName] = useState("");
+    const [newSkillLevel, setNewSkillLevel] = useState("Intermediate");
+    const [newSkillYears, setNewSkillYears] = useState(0);
+    const [addingSkill, setAddingSkill] = useState(false);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -125,15 +143,43 @@ const JobSeekerDashboard = () => {
 
                 // Fetch dashboard statistics
                 const statsResponse = await getJobSeekerDashboardStats();
-                setStats(statsResponse.data.stats);
+                // service returns response.data — accept multiple shapes defensively
+                const statsPayload = statsResponse?.stats ?? statsResponse?.data ?? statsResponse;
+                setStats(statsPayload || {});
 
-                // Fetch recent activities
-                const activitiesResponse = await getRecentActivities();
-                setActivities(activitiesResponse.data.activities);
+                // Fetch aggregated video engagement (likes/shares/saves) for Job Engagement visualization
+                try {
+                    const videoEngResp = await getVideoEngagement();
+                    const videoEngPayload = videoEngResp?.data?.stats ?? videoEngResp?.stats ?? videoEngResp?.data ?? videoEngResp;
+                    // Normalized to { likes, shares, saves, likesPct, sharesPct, savesPct }
+                    setSwipeStats({ videoEngagement: videoEngPayload?.stats ? videoEngPayload.stats : videoEngPayload });
+                } catch (e) {
+                    console.warn('Failed to fetch video engagement stats:', e);
+                    // fall back to old swipe stats if available
+                    try {
+                        const swipeResp = await getSwipeStats();
+                        const swipePayload = swipeResp?.stats ?? swipeResp?.data ?? swipeResp;
+                        setSwipeStats(swipePayload || null);
+                    } catch (err) {
+                        setSwipeStats(null);
+                    }
+                }
+
+                // Fetch recent activities (ask backend for jobseeker activities)
+                const activitiesResponse = await getRecentActivities('jobseeker');
+                const activitiesPayload = activitiesResponse?.activities ?? activitiesResponse?.data ?? activitiesResponse;
+                const rawActivities = Array.isArray(activitiesPayload) ? activitiesPayload : (activitiesPayload?.activities || []);
+                const normalized = rawActivities.map(a => ({
+                    type: a.type || a.event_type || a.action || a.activityType || 'activity',
+                    title: a.title || a.message || a.description || a.action || (a.type ? `${a.type} event` : 'Activity'),
+                    time: a.time || a.created_at || a.date || a.timestamp || ''
+                }));
+                setActivities(normalized);
 
                 // Fetch job recommendations
                 const recommendationsResponse = await getJobRecommendations();
-                setRecommendations(recommendationsResponse.data.recommendations);
+                const recsPayload = recommendationsResponse?.recommendations ?? recommendationsResponse?.data ?? recommendationsResponse;
+                setRecommendations(Array.isArray(recsPayload) ? recsPayload : (recsPayload?.recommendations || []));
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             } finally {
@@ -144,53 +190,149 @@ const JobSeekerDashboard = () => {
         fetchDashboardData();
     }, []);
 
-    // Activity chart data
+    // Activity chart data — derive from multiple possible shapes
+    const activityLabels = stats?.profile_views_chart?.labels
+        ?? stats?.profileViewsChart?.labels
+        ?? (stats?.profile_views_daily?.map(d => d.date))
+        ?? ['Week 1','Week 2','Week 3','Week 4'];
+
+    const activityData = stats?.profile_views_chart?.data
+        ?? stats?.profileViewsChart?.data
+        ?? (stats?.profile_views_daily?.map(d => d.views))
+        ?? (Array.isArray(stats?.profile_views) ? stats.profile_views : null)
+        ?? [12,19,15,25,22,30];
+
     const activityChartData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels: activityLabels,
         datasets: [
             {
                 label: 'Profile Views',
-                data: stats?.profile_views_chart || [12, 19, 15, 25, 22, 30],
+                data: activityData,
                 borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                backgroundColor: 'rgba(75, 192, 192, 0.12)',
                 tension: 0.4,
-            },
-        ],
+            }
+        ]
     };
 
-    // Swipe statistics chart data
+    // Job Engagement chart data (video engagement: likes / shares / saves)
+    const videoEng = swipeStats?.videoEngagement ?? stats?.video_engagement ?? stats?.videoEngagement ?? null;
+    const likes = videoEng?.likes ?? videoEng?.likesPct ?? 0;
+    const shares = videoEng?.shares ?? videoEng?.sharesPct ?? 0;
+    const saves = videoEng?.saves ?? videoEng?.savesPct ?? 0;
+
+    // If backend returned absolute numbers, compute relative percentages for the chart
+    let chartValues = [likes, shares, saves];
+    if (videoEng && typeof videoEng.likes === 'number' && typeof videoEng.shares === 'number' && typeof videoEng.saves === 'number') {
+        const total = (videoEng.likes + videoEng.shares + videoEng.saves) || 1;
+        chartValues = [
+            Math.round((videoEng.likes / total) * 100),
+            Math.round((videoEng.shares / total) * 100),
+            Math.round((videoEng.saves / total) * 100)
+        ];
+    } else if (videoEng && typeof videoEng.likesPct === 'number') {
+        chartValues = [videoEng.likesPct, videoEng.sharesPct, videoEng.savesPct];
+    } else if (!videoEng) {
+        chartValues = [60,25,15]; // fallback
+    }
+
     const swipeChartData = {
-        labels: ['Like', 'Pass', 'Reject'],
+        labels: ['Likes', 'Shares', 'Saves'],
         datasets: [
             {
-                data: stats?.swipe_stats || [65, 20, 15],
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(255, 99, 132, 0.6)',
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 99, 132, 1)',
-                ],
-                borderWidth: 1,
-            },
-        ],
+                data: chartValues,
+                backgroundColor: ['rgba(75,192,192,0.6)', 'rgba(255,206,86,0.6)', 'rgba(153,102,255,0.6)'],
+                borderColor: ['rgba(75,192,192,1)', 'rgba(255,206,86,1)', 'rgba(153,102,255,1)'],
+                borderWidth: 1
+            }
+        ]
     };
 
-    // Skills chart data
+    const skillsSource = stats?.skills_chart ?? stats?.skillsChart ?? [];
     const skillsChartData = {
-        labels: stats?.skills_chart?.map(skill => skill.name) || ['React', 'JavaScript', 'Node.js', 'HTML', 'CSS'],
+        labels: (skillsSource || []).map(s => s.name) || ['React','JavaScript'],
         datasets: [
             {
                 label: 'Skill Level',
-                data: stats?.skills_chart?.map(skill => skill.level) || [85, 90, 75, 95, 80],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-            },
-        ],
+                data: (skillsSource || []).map(s => s.level) || [85,90],
+                backgroundColor: 'rgba(54,162,235,0.6)',
+                borderColor: 'rgba(54,162,235,1)',
+                borderWidth: 1
+            }
+        ]
+    };
+
+    // Add Skill handlers
+    const handleOpenAddSkill = () => {
+        setNewSkillName("");
+        setNewSkillLevel("Intermediate");
+        setNewSkillYears(0);
+        setOpenAddSkillDialog(true);
+    };
+
+    const handleCloseAddSkill = () => {
+        setOpenAddSkillDialog(false);
+    };
+
+    const handleConfirmAddSkill = async () => {
+        if (!newSkillName.trim()) return;
+        setAddingSkill(true);
+        try {
+            // Ensure the skill exists in global skills table: try search first
+            let skillId = null;
+            try {
+                const searchRes = await getSkills(newSkillName);
+                const found = (searchRes?.data?.skills || searchRes?.skills || []).find(s => s.name?.toLowerCase() === newSkillName.trim().toLowerCase());
+                if (found) skillId = found.id;
+            } catch (e) {
+                // ignore search errors and try to create
+            }
+
+            // If skill not found, create it using general skills endpoint
+            if (!skillId) {
+                try {
+                    const createRes = await createSkill({ name: newSkillName });
+                    skillId = createRes?.data?.skill?.id || createRes?.skill?.id;
+                } catch (err) {
+                    // If create returns 400 (already exists), try fetching again
+                    try {
+                        const retry = await getSkills(newSkillName);
+                        const found2 = (retry?.data?.skills || retry?.skills || []).find(s => s.name?.toLowerCase() === newSkillName.trim().toLowerCase());
+                        if (found2) skillId = found2.id;
+                    } catch (e2) {
+                        console.error('Failed to create or find skill:', e2);
+                    }
+                }
+            }
+
+            if (!skillId) {
+                throw new Error('Unable to resolve skill id for: ' + newSkillName);
+            }
+
+            // Call job-seeker addSkill endpoint which expects { skill_id, level, years_experience }
+            const payload = {
+                skill_id: skillId,
+                level: newSkillLevel,
+                years_experience: Number(newSkillYears || 0)
+            };
+
+            await addUserSkill(payload);
+
+            // refresh dashboard/stats
+            const statsResponse = await getJobSeekerDashboardStats();
+            const statsPayload = statsResponse?.stats ?? statsResponse?.data ?? statsResponse;
+            setStats(statsPayload || {});
+        } catch (e) {
+            console.error('Add skill error:', e);
+        } finally {
+            setAddingSkill(false);
+            setOpenAddSkillDialog(false);
+        }
+    };
+
+    // Navigate to video upload tab
+    const handleUploadVideoClick = () => {
+        navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
     };
 
     if (loading) {
@@ -200,15 +342,11 @@ const JobSeekerDashboard = () => {
             </Box>
         );
     }
-  const theme = useTheme();
-
 
     return (
         <DashboardContainer maxWidth="lg" sx={{ mt: 4 ,
     bgcolor: 'background.jobseeker',
     padding: theme.spacing(2),
-    
-    
     mb: 0,
     paddingBottom: 4,
 }}>
@@ -221,6 +359,7 @@ const JobSeekerDashboard = () => {
                         color="primary"
                         startIcon={<PlayCircleOutlineIcon />}
                         sx={{ mr: 1 }}
+                        onClick={handleUploadVideoClick} // <--- navigate to tab
                     >
                         Upload Video CV
                     </Button>
@@ -228,6 +367,7 @@ const JobSeekerDashboard = () => {
                     <Button
                         variant="outlined"
                         startIcon={<AddIcon />}
+                        onClick={handleOpenAddSkill} // <--- open dialog
                     >
                         Add Skills
                     </Button>
@@ -243,7 +383,7 @@ const JobSeekerDashboard = () => {
                                 <VisibilityIcon fontSize="large" />
                             </StatsIcon>
                             <Typography variant="h4" gutterBottom>
-                                {stats?.profile_views || 0}
+                                {stats?.profile_views ?? stats?.profileViews ?? 0}
                             </Typography>
                             <Typography variant="subtitle1" color="textSecondary">
                                 Profile Views
@@ -328,7 +468,7 @@ const JobSeekerDashboard = () => {
                         <Grid item xs={12} sm={6}>
                             <Paper sx={{ p: 3 }}>
                                 <Typography variant="h6" gutterBottom>
-                                    Swipe Statistics
+                                    Job Engagement
                                 </Typography>
                                 <Box sx={{ height: 250 }}>
                                     <Doughnut
@@ -379,7 +519,7 @@ const JobSeekerDashboard = () => {
                         </Box>
 
                         <List sx={{ maxHeight: 300, overflow: 'auto' }}>
-                            {activities.length === 0 ? (
+                            { (activities?.length ?? 0) === 0 ? (
                                 <ListItem>
                                     <ListItemText
                                         primary="No recent activities"
@@ -413,6 +553,7 @@ const JobSeekerDashboard = () => {
                             <Button
                                 endIcon={<ArrowForwardIcon />}
                                 size="small"
+                                onClick={() => setViewAllOpen(true)}
                             >
                                 View All
                             </Button>
@@ -491,11 +632,11 @@ const JobSeekerDashboard = () => {
                                 </Typography>
                                 <LinearProgress
                                     variant="determinate"
-                                    value={stats?.profile_completion || 75}
+                                    value={stats?.profile_completion || 0}
                                     sx={{ mt: 2 }}
                                 />
                                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, textAlign: 'right' }}>
-                                    {stats?.profile_completion || 75}% Complete
+                            {typeof stats?.profile_completion === 'number' ? `${stats.profile_completion}% Complete` : `${stats?.profile_completion ?? 0}% Complete`}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -518,6 +659,7 @@ const JobSeekerDashboard = () => {
                                     color="primary"
                                     fullWidth
                                     sx={{ mt: 2 }}
+                                    onClick={handleUploadVideoClick}
                                 >
                                     Upload Video
                                 </Button>
@@ -538,20 +680,97 @@ const JobSeekerDashboard = () => {
                                 Add the most in-demand skills in your field to increase your visibility.
                             </Typography>
                             <Button
-                                variant="outlined"
-                                color="primary"
-                                fullWidth
-                                sx={{ mt: 2 }}
-                            >
-                                Add Skills
-                            </Button>
+                                    variant="outlined"
+                                    color="primary"
+                                    fullWidth
+                                    sx={{ mt: 2 }}
+                                    onClick={handleOpenAddSkill}
+                                >
+                                    Add Skills
+                                </Button>
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
         </Paper>
+
+        {/* Add Skill Dialog */}
+        <Dialog open={openAddSkillDialog} onClose={handleCloseAddSkill} maxWidth="sm" fullWidth>
+            <DialogTitle>Add a Skill</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label="Skill name"
+                    value={newSkillName}
+                    onChange={(e) => setNewSkillName(e.target.value)}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                />
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Level</InputLabel>
+                    <Select
+                        value={newSkillLevel}
+                        label="Level"
+                        onChange={(e) => setNewSkillLevel(e.target.value)}
+                    >
+                        <MenuItem value="Beginner">Beginner</MenuItem>
+                        <MenuItem value="Intermediate">Intermediate</MenuItem>
+                        <MenuItem value="Advanced">Advanced</MenuItem>
+                        <MenuItem value="Expert">Expert</MenuItem>
+                    </Select>
+                </FormControl>
+                <TextField
+                    label="Years of experience"
+                    type="number"
+                    value={newSkillYears}
+                    onChange={(e) => setNewSkillYears(e.target.value)}
+                    fullWidth
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseAddSkill} disabled={addingSkill}>Cancel</Button>
+                <Button onClick={handleConfirmAddSkill} variant="contained" disabled={addingSkill}>
+                    {addingSkill ? <CircularProgress size={20} /> : "Add Skill"}
+                </Button>
+            </DialogActions>
+        </Dialog>
+        {/* View All Recommendations Dialog */}
+        <Dialog open={viewAllOpen} onClose={() => setViewAllOpen(false)} maxWidth="md" fullWidth>
+            <DialogTitle>Recommended Jobs</DialogTitle>
+            <DialogContent>
+                <List>
+                    {recommendations.length === 0 ? (
+                        <ListItem>
+                            <ListItemText primary="No recommendations" secondary="There are no recommendations to show right now." />
+                        </ListItem>
+                    ) : (
+                        (recommendations.slice((viewAllPage - 1) * itemsPerPage, viewAllPage * itemsPerPage)).map((job) => (
+                            <ListItem key={job.id} sx={{ py: 1.5 }}>
+                                <Avatar src={job.company?.logo_url} sx={{ mr: 2 }} />
+                                <ListItemText
+                                    primary={job.title}
+                                    secondary={job.company?.name + (job.location ? ` • ${job.location}` : '')}
+                                />
+                                <Chip label={job.match_percentage ? `${job.match_percentage}%` : job.score ? Math.round(job.score) + '%' : '—'} size="small" color="primary" />
+                            </ListItem>
+                        ))
+                    )}
+                </List>
+            </DialogContent>
+            <DialogActions sx={{ justifyContent: 'space-between', px: 3 }}> 
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Button onClick={() => setViewAllPage(p => Math.max(1, p - 1))} disabled={viewAllPage === 1}>Previous</Button>
+                    <Typography variant="body2">Page {viewAllPage} of {Math.max(1, Math.ceil(recommendations.length / itemsPerPage))}</Typography>
+                    <Button onClick={() => setViewAllPage(p => Math.min(Math.ceil(recommendations.length / itemsPerPage), p + 1))} disabled={viewAllPage >= Math.ceil(recommendations.length / itemsPerPage)}>Next</Button>
+                </Box>
+                <Button onClick={() => setViewAllOpen(false)}>Close</Button>
+            </DialogActions>
+        </Dialog>
     </DashboardContainer>
 );
 };
 
 export default JobSeekerDashboard;
+
+
+
+

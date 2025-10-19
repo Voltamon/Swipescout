@@ -1,31 +1,26 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client'; // Updated import
-import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { AuthProvider } from "./hooks/useAuth"; 
-import App from './App.jsx'; // Adjust the path as necessary
-import './index.css';
-import themeDL from './theme.js'; // Assuming you have a theme.js file
-
-
-// Create theme (keep your existing theme config)
-// const theme = createTheme(themeDL);
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import App from "./App.jsx"; // explicitly import .jsx to avoid Vite resolving App.js
+import "./index.css";
 
 // Get root element
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 
 // Create root
 const root = createRoot(container); // Modern React 18+ syntax
 
 // Render app
 root.render(
-  <BrowserRouter>
-    <ThemeProvider theme={themeDL('light')} >
-      <CssBaseline />
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </ThemeProvider>
+  <BrowserRouter
+    future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    }}
+  >
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </BrowserRouter>
 );

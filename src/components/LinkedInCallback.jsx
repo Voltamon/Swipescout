@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect , useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 
 export default function LinkedInCallback() {

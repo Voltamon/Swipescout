@@ -1,6 +1,6 @@
 // VideosPage.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { useVideoContext } from '../context/VideoContext'; // Correct import
+import React, { useContext, useState, useEffect, useRef  } from 'react';
+import { useVideoContext } from '../contexts/VideoContext'; // Correct import
 import { styled } from "@mui/material/styles";
 import {
   Container, Grid, Card, CardMedia, CardContent,
@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Error, CloudUpload, Replay, Delete } from '@mui/icons-material';
 import api, { deleteVideo } from '../services/api'; // Ensure deleteVideo is imported from your API service
+import { toast } from 'react-toastify';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { VolumeUp, VolumeOff } from '@mui/icons-material';
 
@@ -75,7 +76,7 @@ const VideosPage = ({setVideoTab}) => {
     try {
       if (videoToDelete.isLocal) {
         // If it's a local video (e.g., failed upload, or still uploading)
-        // We directly remove it from the local context/localStorage
+        // We directly remove it from the local contexts/AuthContextlocalStorage
         removeVideo(videoToDelete.id);
         setSnackbar({
           open: true,
@@ -142,10 +143,10 @@ const VideosPage = ({setVideoTab}) => {
   const handleUploadClick = async () => {
     const limitReached = await checkUploadLimit();
     if (limitReached) {
-      alert('You have reached your daily upload limit. Please try again tomorrow.');
+      toast.info('You have reached your daily upload limit. Please try again tomorrow.');
       return;
     }
-     navigate('/jobseeker-tabs?page=videos&tab=upload-video');
+     navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
         // setVideoTab(1); 
 
   //navigate('/video-upload');
@@ -318,10 +319,10 @@ const VideosPage = ({setVideoTab}) => {
             cursor: 'pointer'
           }}
         >
-                    {video.video_url && (
+                    { (video.video_url || video.videoUrl || video.video_url) && (
                       <video
                         ref={el => videoRefs.current[video.id] = el}
-                        src={video.video_url}
+                        src={video.video_url || video.videoUrl || video.videoUrl}
                         style={{
                           position: 'absolute',
                           top: 0,
@@ -393,12 +394,12 @@ const VideosPage = ({setVideoTab}) => {
                       }}
                     >
                       <Typography variant="subtitle1" noWrap  sx={{   color:'white',}}>
-                        {video.video_title || 'Untitled Video'}
+                        {video.video_title || video.videoTitle || video.title || 'Untitled Video'}
                       </Typography>
 
                       <Typography variant="body2" sx={{   color:'white',}}>
-                        {video.video_type || 'Uncategorized'} •{' '}
-                        {Math.round(video.video_duration || 0)}s
+                        {(video.category || video.video_category || video.catagory || video.video_type || 'Uncategorized')} •{' '}
+                        {Math.round((video.video_duration || video.videoDuration || 0))}s
                       </Typography>
 
                       {video.hashtags && (
@@ -441,26 +442,26 @@ const VideosPage = ({setVideoTab}) => {
 
                   {/* CardContent - Status information */}
                   <CardContent sx={{ pt: 1, pb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      {/* Show cloud sync only while uploading or processing as local */}
-                      {video.isLocal && (video.status === 'uploading' || video.status === 'processing') && (
-                        <>
-                          <CloudSyncIcon/>
-                          {video.status === 'uploading' && (
-                            <>
-                              <Typography variant="caption" color="text.secondary">
-                                Uploading... {video.progress}%
-                              </Typography>
-                              <LinearProgress
-                                variant="determinate"
-                                value={video.progress}
-                                color="error"
-                                sx={{ width: '60%' }}
-                              />
-                            </>
-                          )}
-                        </>
-                      )}
+                    {video.isLocal && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        {video.status === 'completed' ? (
+                          <CheckCircle color="success" />
+                        ) : (
+                          <CloudSyncIcon />
+                        )}
+                        {video.status === 'uploading' && (
+                          <>
+                            <Typography variant="caption" color="text.secondary">
+                              Uploading... {video.progress}%
+                            </Typography>
+                            <LinearProgress
+                              variant="determinate"
+                              value={video.progress}
+                              color="error"
+                              sx={{ width: '60%' }}
+                            />
+                          </>
+                        )}
 
                       {/* Show retry button for failed or local failed uploads */}
                       {video.isLocal && video.status === 'failed' && (

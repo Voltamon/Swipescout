@@ -1,7 +1,8 @@
 // src/components/ProtectedRoute.tsx
 import { ReactNode, useEffect } from 'react';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 
 
 interface User {

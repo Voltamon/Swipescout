@@ -26,7 +26,7 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useVideoContext } from '../context/VideoContext';
+import { useVideoContext } from '../contexts/VideoContext';
 
 // Styled components with improved styles
 const VideoContainer = styled('div')({

@@ -19,19 +19,50 @@ import {
     useTheme,
     TextField,
     InputAdornment,
-    Avatar
+    Avatar,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Snackbar,
+    Alert,
+    Menu,
+    MenuItem,
+    Container
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import SearchIcon from '@mui/icons-material/Search';
-import BusinessIcon from '@mui/icons-material/Business';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PeopleIcon from '@mui/icons-material/People';
-import LanguageIcon from '@mui/icons-material/Language';
-import CategoryIcon from '@mui/icons-material/Category';
-import { useAuth } from '../hooks/useAuth';
-// import { getCompanyVideos } from '../services/companyService'; // Assuming this service exists
+import {
+    PlayArrow,
+    FilterList,
+    Search,
+    Business,
+    LocationOn,
+    People,
+    Language,
+    Category,
+    Favorite,
+    FavoriteBorder,
+    Share,
+    Bookmark,
+    BookmarkBorder,
+    Comment,
+    Visibility,
+    MoreVert,
+    Handshake as Connect
+} from '@mui/icons-material';
+import { 
+    getEmployerPublicVideos, 
+    likeVideo, 
+    unlikeVideo, 
+    saveVideo, 
+    unsaveVideo,
+    shareVideo,
+    addVideoComment,
+    getVideoComments,
+    connectWithCandidate
+} from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 
 const CompanyVideosContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -39,32 +70,14 @@ const CompanyVideosContainer = styled(Box)(({ theme }) => ({
     minHeight: 'calc(100vh - 56px)',
 }));
 
-const SidebarButton = styled(Button)(({ theme, active }) => ({
-    justifyContent: 'flex-start',
-    textAlign: 'left',
-    padding: theme.spacing(1.5, 3),
-    borderRadius: 0,
-    borderLeft: active ? `4px solid ${theme.palette.primary.main}` : 'none',
-    backgroundColor: active ? theme.palette.action.selected : 'transparent',
-    '&:hover': {
-        backgroundColor: theme.palette.action.hover,
-    },
-}));
-
 const VideoCard = styled(Card)(({ theme }) => ({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    transition: 'transform 0.2s',
+    position: 'relative',
+    cursor: 'pointer',
+    transition: 'transform 0.2s, box-shadow 0.2s',
     '&:hover': {
         transform: 'translateY(-4px)',
-        boxShadow: theme.shadows[6],
+        boxShadow: theme.shadows[8],
     },
-}));
-
-const VideoCardMedia = styled(CardMedia)(({ theme }) => ({
-    paddingTop: '56.25%', // 16:9 aspect ratio
-    position: 'relative',
 }));
 
 const PlayButton = styled(IconButton)(({ theme }) => ({
@@ -72,600 +85,604 @@ const PlayButton = styled(IconButton)(({ theme }) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     color: 'white',
     '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
     },
 }));
 
-const FilterDrawer = styled(Drawer)(({ theme }) => ({
-    '& .MuiDrawer-paper': {
-        width: 280,
-        padding: theme.spacing(2),
-    },
-}));
+export default function CompanyVideos() {
+    const theme = useTheme();
+    const { user } = useAuth();
+    const [videos, setVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedLocation, setSelectedLocation] = useState('all');
+    const [selectedCompanySize, setSelectedCompanySize] = useState('all');
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedVideo, setSelectedVideo] = useState(null);
+    const [videoDialog, setVideoDialog] = useState(false);
+    const [commentDialog, setCommentDialog] = useState({ open: false, video: null });
+    const [newComment, setNewComment] = useState('');
+    const [comments, setComments] = useState([]);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [menuVideo, setMenuVideo] = useState(null);
+    const [likedVideos, setLikedVideos] = useState(new Set());
+    const [savedVideos, setSavedVideos] = useState(new Set());
 
-const IndustryChip = styled(Chip)(({ theme }) => ({
-    margin: theme.spacing(0.5),
-}));
+    const categories = [
+        { value: 'all', label: 'All Categories' },
+        { value: 'technology', label: 'Technology' },
+        { value: 'finance', label: 'Finance' },
+        { value: 'healthcare', label: 'Healthcare' },
+        { value: 'education', label: 'Education' },
+        { value: 'retail', label: 'Retail' },
+        { value: 'manufacturing', label: 'Manufacturing' }
+    ];
 
-const CompanyVideos = () => {
-  const { user } = useAuth();
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeIndustry, setActiveIndustry] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [industries, setIndustries] = useState([
-    { id: "all", name: "All Companies", icon: <BusinessIcon /> },
-    { id: "tech", name: "Information Technology", icon: <BusinessIcon /> },
-    { id: "finance", name: "Finance and Banking", icon: <BusinessIcon /> },
-    { id: "healthcare", name: "Healthcare", icon: <BusinessIcon /> },
-    { id: "education", name: "Education", icon: <BusinessIcon /> },
-    { id: "retail", name: "Retail", icon: <BusinessIcon /> }
-  ]);
+    const locations = [
+        { value: 'all', label: 'All Locations' },
+        { value: 'remote', label: 'Remote' },
+        { value: 'new-york', label: 'New York' },
+        { value: 'san-francisco', label: 'San Francisco' },
+        { value: 'london', label: 'London' },
+        { value: 'toronto', label: 'Toronto' }
+    ];
 
-  useEffect(
-    () => {
-      const fetchCompanyVideos = async () => {
+    const companySizes = [
+        { value: 'all', label: 'All Company Sizes' },
+        { value: 'startup', label: 'Startup (1-50)' },
+        { value: 'medium', label: 'Medium (51-500)' },
+        { value: 'large', label: 'Large (500+)' }
+    ];
+
+    useEffect(() => {
+        fetchVideos();
+    }, [selectedCategory, selectedLocation, selectedCompanySize, searchTerm]);
+
+    const fetchVideos = async () => {
+        setLoading(true);
         try {
-          setLoading(true);
-          // const response = await getCompanyVideos({
-          //   industry: activeIndustry !== 'all' ? activeIndustry : undefined,
-          //   search: searchQuery || undefined
-          // });
-          // setVideos(response.data.videos);
-
-          // Placeholder data for demonstration
-          setVideos([
-            {
-              id: "1",
-              title: "Life at Tech Innovations",
-              company: {
-                id: "c1",
-                name: "Tech Innovations Inc.",
-                logo_url: "/placeholder-logo.png",
-                location: "New York, USA",
-                industry: "Information Technology",
-                size: "100-500",
-                website: "techinnovations.com",
-                description: "A great place to work!"
-              },
-              thumbnail_url: "/placeholder-thumbnail.jpg",
-              video_url: "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-              id: "2",
-              title: "Working at Global Marketing",
-              company: {
-                id: "c2",
-                name: "Global Marketing Ltd.",
-                logo_url: "/placeholder-logo.png",
-                location: "London, UK",
-                industry: "Marketing",
-                size: "50-200",
-                website: "globalmarketing.co.uk",
-                description: "Join our dynamic team."
-              },
-              thumbnail_url: "/placeholder-thumbnail.jpg",
-              video_url: "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-              id: "3",
-              title: "Inside Creative Solutions",
-              company: {
-                id: "c3",
-                name: "Creative Solutions Co.",
-                logo_url: "/placeholder-logo.png",
-                location: "San Francisco, USA",
-                industry: "Design",
-                size: "20-100",
-                website: "creativesolutions.io",
-                description: "Innovate with us."
-              },
-              thumbnail_url: "/placeholder-thumbnail.jpg",
-              video_url: "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-              id: "4",
-              title: "Careers at Alpha Finance",
-              company: {
-                id: "c4",
-                name: "Alpha Finance Group",
-                logo_url: "/placeholder-logo.png",
-                location: "Chicago, USA",
-                industry: "Finance",
-                size: "500+",
-                website: "alphafinance.com",
-                description: "Build your financial career."
-              },
-              thumbnail_url: "/placeholder-thumbnail.jpg",
-              video_url: "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-              id: "5",
-              title: "Our Culture at People First",
-              company: {
-                id: "c5",
-                name: "People First Corp.",
-                logo_url: "/placeholder-logo.png",
-                location: "Berlin, Germany",
-                industry: "Human Resources",
-                size: "100-300",
-                website: "peoplefirst.de",
-                description: "People are our priority."
-              },
-              thumbnail_url: "/placeholder-thumbnail.jpg",
-              video_url: "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-              id: "6",
-              title: "A Day at Web Wizards",
-              company: {
-                id: "c6",
-                name: "Web Wizards Inc.",
-                logo_url: "/placeholder-logo.png",
-                location: "Los Angeles, USA",
-                industry: "Information Technology",
-                size: "50-150",
-                website: "webwizards.com",
-                description: "Crafting the web, one line at a time."
-              },
-              thumbnail_url: "/placeholder-thumbnail.jpg",
-              video_url: "https://www.w3schools.com/html/mov_bbb.mp4"
-            }
-          ]);
+            const response = await getEmployerPublicVideos(1, 20);
+            setVideos(response.data.videos || []);
         } catch (error) {
-          console.error("Error fetching company videos:", error);
+            console.error('Error fetching company videos:', error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to load company videos',
+                severity: 'error'
+            });
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
+    };
 
-      fetchCompanyVideos();
-    },
-    [activeIndustry, searchQuery]
-  );
+    const handleVideoClick = (video) => {
+        setSelectedVideo(video);
+        setVideoDialog(true);
+    };
 
-  const handleIndustryClick = industryId => {
-    setActiveIndustry(industryId);
-  };
+    const handleLike = async (videoId, event) => {
+        event.stopPropagation();
+        try {
+            if (likedVideos.has(videoId)) {
+                await unlikeVideo(videoId);
+                setLikedVideos(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(videoId);
+                    return newSet;
+                });
+            } else {
+                await likeVideo(videoId);
+                setLikedVideos(prev => new Set(prev).add(videoId));
+            }
+        } catch (error) {
+            console.error('Error liking video:', error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to like video',
+                severity: 'error'
+            });
+        }
+    };
 
-  const handleSearchChange = event => {
-    setSearchQuery(event.target.value);
-  };
+    const handleSave = async (videoId, event) => {
+        event.stopPropagation();
+        try {
+            if (savedVideos.has(videoId)) {
+                await unsaveVideo(videoId);
+                setSavedVideos(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(videoId);
+                    return newSet;
+                });
+                setSnackbar({
+                    open: true,
+                    message: 'Video removed from saved list',
+                    severity: 'info'
+                });
+            } else {
+                await saveVideo(videoId);
+                setSavedVideos(prev => new Set(prev).add(videoId));
+                setSnackbar({
+                    open: true,
+                    message: 'Video saved successfully',
+                    severity: 'success'
+                });
+            }
+        } catch (error) {
+            console.error('Error saving video:', error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to save video',
+                severity: 'error'
+            });
+        }
+    };
 
-  const handleVideoClick = video => {
-    setSelectedVideo(video);
-  };
+    const handleShare = async (video, event) => {
+        event.stopPropagation();
+        try {
+            await navigator.share({
+                title: video.title,
+                text: `Check out this company video from ${video.company}`,
+                url: window.location.href
+            });
+        } catch (error) {
+            // Fallback to copying to clipboard
+            navigator.clipboard.writeText(window.location.href);
+            setSnackbar({
+                open: true,
+                message: 'Link copied to clipboard',
+                severity: 'success'
+            });
+        }
+    };
 
-  const handleCloseVideo = () => {
-    setSelectedVideo(null);
-  };
+    const handleComment = async (video) => {
+        setCommentDialog({ open: true, video });
+        try {
+            const response = await getVideoComments(video.id);
+            setComments(response.data || []);
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        }
+    };
 
-  const toggleFilterDrawer = () => {
-    setFilterDrawerOpen(!filterDrawerOpen);
-  };
+    const handleAddComment = async () => {
+        if (!newComment.trim()) return;
+        
+        try {
+            await addVideoComment(commentDialog.video.id, newComment);
+            setNewComment('');
+            // Refresh comments
+            const response = await getVideoComments(commentDialog.video.id);
+            setComments(response.data || []);
+            setSnackbar({
+                open: true,
+                message: 'Comment added successfully',
+                severity: 'success'
+            });
+        } catch (error) {
+            console.error('Error adding comment:', error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to add comment',
+                severity: 'error'
+            });
+        }
+    };
 
-  const filteredVideos = videos.filter(
-    video =>
-      video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      video.company.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-    const theme = useTheme(); // Get current theme
-  
+    const handleConnect = async (video) => {
+        try {
+            await connectWithCandidate(video.userId, `Hi! I'm interested in learning more about ${video.company}. Your company video was very impressive!`);
+            setSnackbar({
+                open: true,
+                message: 'Connection request sent successfully',
+                severity: 'success'
+            });
+        } catch (error) {
+            console.error('Error connecting:', error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to send connection request',
+                severity: 'error'
+            });
+        }
+    };
 
-  return (
-    <CompanyVideosContainer sx={{  
-      bgcolor: 'background.jobseeker',
-    padding: theme.spacing(2),
-    
-    mt: 0,
-    paddingBottom: 4,
-}}>
-      <Box
-        sx={{
-          display: "flex",
-          mb: 3,
-          justifyContent: "space-between",
-          alignItems: "center",
-          
-   
-        }}
-      >
-        <Typography variant="h4">Company Videos</Typography>
+    const filteredVideos = videos.filter(video => {
+        const matchesSearch = video.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            video.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            video.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === 'all' || video.category === selectedCategory;
+        const matchesLocation = selectedLocation === 'all' || video.location === selectedLocation;
+        const matchesSize = selectedCompanySize === 'all' || video.companySize === selectedCompanySize;
+        
+        return matchesSearch && matchesCategory && matchesLocation && matchesSize;
+    });
 
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <TextField
-            placeholder="Search for companies..."
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              )
-            }}
-          />
-
-          <Button
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-            onClick={toggleFilterDrawer}
-          >
-            Filter
-          </Button>
-        </Box>
-      </Box>
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Industries
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              <List disablePadding>
-                {industries.map(industry =>
-                  <ListItem key={industry.id} disablePadding disableGutters>
-                    <SidebarButton
-                      fullWidth
-                      active={activeIndustry === industry.id}
-                      onClick={() => handleIndustryClick(industry.id)}
-                      startIcon={industry.icon}
+    const FilterSidebar = () => (
+        <Box sx={{ width: 280, p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+                Filters
+            </Typography>
+            
+            <Box mb={3}>
+                <Typography variant="subtitle2" gutterBottom>
+                    Category
+                </Typography>
+                {categories.map((category) => (
+                    <Button
+                        key={category.value}
+                        fullWidth
+                        variant={selectedCategory === category.value ? 'contained' : 'text'}
+                        onClick={() => setSelectedCategory(category.value)}
+                        sx={{ justifyContent: 'flex-start', mb: 0.5 }}
                     >
-                      {industry.name}
-                    </SidebarButton>
-                  </ListItem>
-                )}
-              </List>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Popular Companies
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-                <IndustryChip
-                  label="Telecom Company"
-                  onClick={() => setSearchQuery("Telecom Company")}
-                />
-                <IndustryChip
-                  label="Riyadh Bank"
-                  onClick={() => setSearchQuery("Riyadh Bank")}
-                />
-                <IndustryChip
-                  label="Aramco"
-                  onClick={() => setSearchQuery("Aramco")}
-                />
-                <IndustryChip
-                  label="Microsoft"
-                  onClick={() => setSearchQuery("Microsoft")}
-                />
-                <IndustryChip
-                  label="Google"
-                  onClick={() => setSearchQuery("Google")}
-                />
-                <IndustryChip
-                  label="Amazon"
-                  onClick={() => setSearchQuery("Amazon")}
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={9}>
-          {loading
-            ? <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
-                <CircularProgress />
-              </Box>
-            : filteredVideos.length === 0
-              ? <Box sx={{ textAlign: "center", p: 5 }}>
-                  <Typography variant="h6" color="textSecondary">
-                    No company videos found
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    sx={{ mt: 1 }}
-                  >
-                    Try changing your search or filter criteria
-                  </Typography>
-                </Box>
-              : <Grid container spacing={3}>
-                  {filteredVideos.map(video =>
-                    <Grid item xs={12} sm={6} md={4} key={video.id}>
-                      <VideoCard onClick={() => handleVideoClick(video)}>
-                        <VideoCardMedia
-                          image={
-                            video.thumbnail_url || "/placeholder-thumbnail.jpg"
-                          }
-                          title={video.title}
-                        >
-                          <PlayButton aria-label="play">
-                            <PlayArrowIcon fontSize="large" />
-                          </PlayButton>
-                        </VideoCardMedia>
-                        <CardContent>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: 1
-                            }}
-                          >
-                            <Avatar
-                              src={video.company.logo_url}
-                              sx={{ width: 32, height: 32, mr: 1 }}
-                            />
-                            <Typography variant="h6" noWrap>
-                              {video.company.name}
-                            </Typography>
-                          </Box>
-
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            noWrap
-                          >
-                            {video.title}
-                          </Typography>
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mt: 1
-                            }}
-                          >
-                            <LocationOnIcon
-                              fontSize="small"
-                              color="action"
-                              sx={{ mr: 0.5 }}
-                            />
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              noWrap
-                            >
-                              {video.company.location || "Not specified"}
-                            </Typography>
-                          </Box>
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mt: 1
-                            }}
-                          >
-                            <BusinessIcon
-                              fontSize="small"
-                              color="action"
-                              sx={{ mr: 0.5 }}
-                            />
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              noWrap
-                            >
-                              {video.company.industry || "Not specified"}
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </VideoCard>
-                    </Grid>
-                  )}
-                </Grid>}
-        </Grid>
-      </Grid>
-
-      {/* Video Player Modal */}
-      {selectedVideo &&
-        <Box
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.9)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            p: 3
-          }}
-          onClick={handleCloseVideo}
-        >
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: 900,
-              maxHeight: "80vh",
-              position: "relative",
-              backgroundColor: "black",
-              borderRadius: 1,
-              overflow: "hidden"
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <Box
-              component="video"
-              sx={{
-                width: "100%",
-                maxHeight: "70vh"
-              }}
-              controls
-              autoPlay
-              src={selectedVideo.video_url}
-            />
-
-            <Box sx={{ p: 2, backgroundColor: "white" }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <Avatar
-                  src={selectedVideo.company.logo_url}
-                  sx={{ width: 40, height: 40, mr: 1 }}
-                />
-                <Box>
-                  <Typography variant="h6">
-                    {selectedVideo.company.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {selectedVideo.title}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <LocationOnIcon
-                      fontSize="small"
-                      color="action"
-                      sx={{ mr: 0.5 }}
-                    />
-                    <Typography variant="body2">
-                      {selectedVideo.company.location || "Not specified"}
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <BusinessIcon
-                      fontSize="small"
-                      color="action"
-                      sx={{ mr: 0.5 }}
-                    />
-                    <Typography variant="body2">
-                      {selectedVideo.company.industry || "Not specified"}
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <PeopleIcon
-                      fontSize="small"
-                      color="action"
-                      sx={{ mr: 0.5 }}
-                    />
-                    <Typography variant="body2">
-                      {selectedVideo.company.size || "Not specified"}
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <LanguageIcon
-                      fontSize="small"
-                      color="action"
-                      sx={{ mr: 0.5 }}
-                    />
-                    <Typography variant="body2">
-                      {selectedVideo.company.website || "Not specified"}
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-
-              {selectedVideo.company.description &&
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2">
-                    {selectedVideo.company.description}
-                  </Typography>
-                </Box>}
-
-              <Box sx={{ mt: 2 }}>
-                <Button variant="contained" color="primary" fullWidth>
-                  View Company Jobs
-                </Button>
-              </Box>
+                        {category.label}
+                    </Button>
+                ))}
             </Box>
-          </Box>
-        </Box>}
 
-      {/* Filter Drawer */}
-      <FilterDrawer
-        anchor="right"
-        open={filterDrawerOpen}
-        onClose={toggleFilterDrawer}
-      >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h6" gutterBottom>
-            Filter Companies
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
+            <Box mb={3}>
+                <Typography variant="subtitle2" gutterBottom>
+                    Location
+                </Typography>
+                {locations.map((location) => (
+                    <Button
+                        key={location.value}
+                        fullWidth
+                        variant={selectedLocation === location.value ? 'contained' : 'text'}
+                        onClick={() => setSelectedLocation(location.value)}
+                        sx={{ justifyContent: 'flex-start', mb: 0.5 }}
+                    >
+                        {location.label}
+                    </Button>
+                ))}
+            </Box>
 
-          <Typography variant="subtitle2" gutterBottom>
-            Company Size
-          </Typography>
-          <List>
-            <ListItem button>
-              <ListItemText primary="Startup (1-50)" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Small (51-200)" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Medium (201-1000)" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Large (1000+)" />
-            </ListItem>
-          </List>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography variant="subtitle2" gutterBottom>
-            Location
-          </Typography>
-          <List>
-            <ListItem button>
-              <ListItemText primary="Riyadh" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Jeddah" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Dammam" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Other" />
-            </ListItem>
-          </List>
-
-          <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-            <Button variant="outlined" onClick={toggleFilterDrawer}>
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={toggleFilterDrawer}
-            >
-              Apply
-            </Button>
-          </Box>
+            <Box mb={3}>
+                <Typography variant="subtitle2" gutterBottom>
+                    Company Size
+                </Typography>
+                {companySizes.map((size) => (
+                    <Button
+                        key={size.value}
+                        fullWidth
+                        variant={selectedCompanySize === size.value ? 'contained' : 'text'}
+                        onClick={() => setSelectedCompanySize(size.value)}
+                        sx={{ justifyContent: 'flex-start', mb: 0.5 }}
+                    >
+                        {size.label}
+                    </Button>
+                ))}
+            </Box>
         </Box>
-      </FilterDrawer>
-    </CompanyVideosContainer>
-  );
-};
+    );
 
-export default CompanyVideos;
+    return (
+        <Container maxWidth="xl">
+            <CompanyVideosContainer>
+                {/* Header */}
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+                    <Typography variant="h4" fontWeight="bold">
+                        Company Videos
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        startIcon={<FilterList />}
+                        onClick={() => setDrawerOpen(true)}
+                    >
+                        Filters
+                    </Button>
+                </Box>
+
+                {/* Search */}
+                <TextField
+                    fullWidth
+                    placeholder="Search companies, videos, or descriptions..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        ),
+                    }}
+                    sx={{ mb: 4 }}
+                />
+
+                {/* Videos Grid */}
+                {loading ? (
+                    <Box display="flex" justifyContent="center" py={8}>
+                        <CircularProgress size={60} />
+                    </Box>
+                ) : (
+                    <Grid container spacing={3}>
+                        {filteredVideos.map((video) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
+                                <VideoCard onClick={() => handleVideoClick(video)}>
+                                    <Box position="relative">
+                                        <CardMedia
+                                            component="img"
+                                            height="200"
+                                            image={video.thumbnail || '/placeholder-video.jpg'}
+                                            alt={video.title}
+                                        />
+                                        <PlayButton>
+                                            <PlayArrow fontSize="large" />
+                                        </PlayButton>
+                                        
+                                        {/* Video Actions */}
+                                        <Box
+                                            position="absolute"
+                                            top={8}
+                                            right={8}
+                                            display="flex"
+                                            flexDirection="column"
+                                            gap={1}
+                                        >
+                                            <IconButton
+                                                size="small"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setAnchorEl(e.currentTarget);
+                                                    setMenuVideo(video);
+                                                }}
+                                                sx={{ 
+                                                    backgroundColor: 'rgba(0,0,0,0.5)', 
+                                                    color: 'white',
+                                                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' }
+                                                }}
+                                            >
+                                                <MoreVert />
+                                            </IconButton>
+                                        </Box>
+
+                                        {/* Video Stats */}
+                                        <Box
+                                            position="absolute"
+                                            bottom={8}
+                                            left={8}
+                                            display="flex"
+                                            gap={1}
+                                        >
+                                            <Chip
+                                                size="small"
+                                                label={`${video.views || 0} views`}
+                                                sx={{ 
+                                                    backgroundColor: 'rgba(0,0,0,0.7)', 
+                                                    color: 'white',
+                                                    fontSize: '0.75rem'
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                    
+                                    <CardContent>
+                                        <Box display="flex" alignItems="center" mb={1}>
+                                            <Avatar
+                                                src={video.companyLogo}
+                                                sx={{ width: 32, height: 32, mr: 1 }}
+                                            >
+                                                {video.company?.[0]}
+                                            </Avatar>
+                                            <Typography variant="h6" noWrap>
+                                                {video.company}
+                                            </Typography>
+                                        </Box>
+                                        
+                                        <Typography variant="body1" fontWeight="medium" gutterBottom>
+                                            {video.title}
+                                        </Typography>
+                                        
+                                        <Typography 
+                                            variant="body2" 
+                                            color="text.secondary" 
+                                            sx={{ 
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden'
+                                            }}
+                                        >
+                                            {video.description}
+                                        </Typography>
+
+                                        {video.location && (
+                                            <Box display="flex" alignItems="center" mt={1}>
+                                                <LocationOn sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
+                                                <Typography variant="caption" color="text.secondary">
+                                                    {video.location}
+                                                </Typography>
+                                            </Box>
+                                        )}
+
+                                        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+                                            <Box display="flex" gap={1}>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={(e) => handleLike(video.id, e)}
+                                                    color={likedVideos.has(video.id) ? "error" : "default"}
+                                                >
+                                                    {likedVideos.has(video.id) ? <Favorite /> : <FavoriteBorder />}
+                                                </IconButton>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={(e) => handleSave(video.id, e)}
+                                                    color={savedVideos.has(video.id) ? "primary" : "default"}
+                                                >
+                                                    {savedVideos.has(video.id) ? <Bookmark /> : <BookmarkBorder />}
+                                                </IconButton>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleComment(video);
+                                                    }}
+                                                >
+                                                    <Comment />
+                                                </IconButton>
+                                            </Box>
+                                            
+                                            <Button
+                                                size="small"
+                                                variant="contained"
+                                                startIcon={<Connect />}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleConnect(video);
+                                                }}
+                                            >
+                                                Connect
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </VideoCard>
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
+
+                {/* Filter Drawer */}
+                <Drawer
+                    anchor="right"
+                    open={drawerOpen}
+                    onClose={() => setDrawerOpen(false)}
+                >
+                    <FilterSidebar />
+                </Drawer>
+
+                {/* Video Dialog */}
+                <Dialog
+                    open={videoDialog}
+                    onClose={() => setVideoDialog(false)}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    {selectedVideo && (
+                        <>
+                            <DialogContent sx={{ p: 0 }}>
+                                <video
+                                    width="100%"
+                                    height="400"
+                                    controls
+                                    autoPlay
+                                    src={selectedVideo.videoUrl}
+                                />
+                                <Box p={3}>
+                                    <Typography variant="h5" gutterBottom>
+                                        {selectedVideo.title}
+                                    </Typography>
+                                    <Typography variant="body1" color="text.secondary" gutterBottom>
+                                        {selectedVideo.company}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        {selectedVideo.description}
+                                    </Typography>
+                                </Box>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => setVideoDialog(false)}>
+                                    Close
+                                </Button>
+                                <Button variant="contained" onClick={() => handleConnect(selectedVideo)}>
+                                    Connect with Company
+                                </Button>
+                            </DialogActions>
+                        </>
+                    )}
+                </Dialog>
+
+                {/* Comment Dialog */}
+                <Dialog
+                    open={commentDialog.open}
+                    onClose={() => setCommentDialog({ open: false, video: null })}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle>
+                        Comments - {commentDialog.video?.title}
+                    </DialogTitle>
+                    <DialogContent>
+                        <Box mb={2}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={3}
+                                placeholder="Add a comment..."
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                            />
+                            <Button
+                                variant="contained"
+                                onClick={handleAddComment}
+                                sx={{ mt: 1 }}
+                                disabled={!newComment.trim()}
+                            >
+                                Add Comment
+                            </Button>
+                        </Box>
+                        
+                        <Divider sx={{ my: 2 }} />
+                        
+                        <List>
+                            {comments.map((comment, index) => (
+                                <ListItem key={index} alignItems="flex-start">
+                                    <Avatar sx={{ mr: 2 }}>
+                                        {comment.author?.[0]}
+                                    </Avatar>
+                                    <ListItemText
+                                        primary={comment.author}
+                                        secondary={comment.text}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setCommentDialog({ open: false, video: null })}>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Action Menu */}
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={() => setAnchorEl(null)}
+                >
+                    <MenuItem onClick={(e) => handleShare(menuVideo, e)}>
+                        <ListItemIcon><Share /></ListItemIcon>
+                        <ListItemText>Share</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={() => window.open(`/company/${menuVideo?.companyId}`, '_blank')}>
+                        <ListItemIcon><Visibility /></ListItemIcon>
+                        <ListItemText>View Company Profile</ListItemText>
+                    </MenuItem>
+                </Menu>
+
+                {/* Snackbar */}
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={6000}
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                >
+                    <Alert 
+                        onClose={() => setSnackbar({ ...snackbar, open: false })} 
+                        severity={snackbar.severity}
+                    >
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
+            </CompanyVideosContainer>
+        </Container>
+    );
+}
+

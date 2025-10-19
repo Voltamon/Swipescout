@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from "react";
 import {
   Box,
   Container,
@@ -14,6 +14,7 @@ import {
 import { Email as EmailIcon } from "@mui/icons-material";
 import Header from "../components/Headers/Header";
 import Footer from "../components/Headers/Footer";
+import { useTranslation } from 'react-i18next';
 
 // Custom Discord icon as an inline SVG
 const DiscordIcon = () => (
@@ -33,6 +34,7 @@ const DiscordIcon = () => (
 );
 
 export default function ContactPage() {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -52,11 +54,11 @@ export default function ContactPage() {
           color: "#3366ff",
         }}
       >
-        Contact Us
+        {t('contact.title')}
       </Typography>
 
       <Typography variant="body1" sx={{ mb: 4, color: "text.secondary" }}>
-        We would love to hear from you. You can reach out to us using the options below.
+        {t('contact.description')}
       </Typography>
 <br></br>
       <Grid container spacing={4}>
@@ -81,13 +83,13 @@ export default function ContactPage() {
             <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <EmailIcon sx={{ fontSize: 60, color: "#3366ff", mb: 2 }} />
               <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-                Email Us Directly
+                {t('contact.email.title')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                For general questions or inquiries, please send us an email.
+                {t('contact.email.description')}
               </Typography>
               <Link
-                href="mailto:support@swipescout.xyz"
+                href="mailto:info@swipescout.xyz"
                 sx={{
                   textDecoration: "none",
                   fontWeight: "bold",
@@ -97,7 +99,7 @@ export default function ContactPage() {
                   }
                 }}
               >
-                support@swipescout.xyz
+                info@swipescout.xyz
               </Link>
             </CardContent>
           </Card>
@@ -126,10 +128,10 @@ export default function ContactPage() {
                 <DiscordIcon />
               </Box>
               <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-                Join Our Discord Community
+                {t('contact.discord.title')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Connect with us and the community for real-time support.
+                {t('contact.discord.description')}
               </Typography>
               <Button
                 variant="contained"
@@ -145,7 +147,7 @@ export default function ContactPage() {
                   },
                 }}
               >
-                Join Discord
+                {t('contact.discord.button')}
               </Button>
 
               
