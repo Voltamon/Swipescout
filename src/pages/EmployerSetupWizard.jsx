@@ -65,7 +65,8 @@ import {
   TrendingUp as TrendingUpIcon
 } from "@mui/icons-material";
 // Mocking external dependencies for standalone execution
-// import { useAuth } from "../hooks/useAuth";
+// import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 // import { useNavigate } from "react-router-dom";
 // import {
 //   getEmployerProfile,

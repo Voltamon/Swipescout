@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
+  Dialog,
   Container,
   Grid,
   Typography,
@@ -44,6 +45,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { getUserProfile, getUserVideos, getUserSkills, getUserExperiences, getUserEducation } from '../services/api.js';
+import EditJobSeekerProfile from './EditJobSeekerProfile';
 
 
 // Enhanced styled components
@@ -180,19 +182,7 @@ const VideoCard = styled(Card)(({ theme }) => ({
 
 const VideoCardMedia = styled(Box)(({ theme }) => ({
   position: 'relative',
-  paddingTop: '56.25%', // 16:9 aspect ratio
-  backgroundColor: theme.palette.grey[800],
-  '&:after': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(0,0,0,0.2)',
-    opacity: 0,
-    transition: 'opacity 0.3s ease'
-  }
+  paddingTop: '56.25%' // 16:9 aspect ratio
 }));
 
 const VideoPlayButton = styled(IconButton)(({ theme }) => ({
@@ -239,6 +229,7 @@ const JobSeekerProfile = () => {
   });
   
   const [videoStates, setVideoStates] = useState({});
+  const [editOpen, setEditOpen] = useState(false);
   
   // Refs
   const mainVideoRef = useRef(null);
@@ -340,7 +331,7 @@ const JobSeekerProfile = () => {
         videoRef.pause();
       } else {
         videoRef.play();
-      }
+      } 
       setVideoStates(prev => ({
         ...prev,
         [videoId]: {
@@ -378,8 +369,16 @@ const JobSeekerProfile = () => {
   };
   
   const handleEditProfile = () => {
-    // navigate('/edit-JobSeeker-Profile');
-     navigate('/jobseeker-tabs?page=editjobseekerprofile');
+    setEditOpen(true);
+  };
+
+  const handleCloseEdit = () => {
+    setEditOpen(false);
+  };
+
+  const handleProfileSaved = (updatedProfile) => {
+    if (updatedProfile) setProfile(updatedProfile);
+    setEditOpen(false);
   };
   
   // Format date
@@ -1040,6 +1039,10 @@ const mockVideos = [
             </Grid>
           </Box>
         )}
+        {/* Edit Profile Dialog */}
+        <Dialog open={editOpen} onClose={handleCloseEdit} maxWidth="md" fullWidth>
+          <EditJobSeekerProfile initialProfile={profile} onClose={handleCloseEdit} onSaved={handleProfileSaved} />
+        </Dialog>
       </Container>
     </ProfileContainer>
   );

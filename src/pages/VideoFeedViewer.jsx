@@ -25,7 +25,8 @@ import {
   MoreVert
 } from "@mui/icons-material";
 import api from "../services/api";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 import JobseekerProfileView from "./JobseekerProfileView";
 import EmployerProfileView from "./EmployerProfileView";
 import { Dialog, DialogContent } from "@mui/material";
@@ -373,7 +374,7 @@ const VideoFeedViewer = () => {
         >
           <video
             ref={el => (videoRefs.current[video.id] = el)}
-            src={video.video_url}
+            src={video.videoUrl}
             style={{
               width: "100%",
               height: "100%",
@@ -493,7 +494,7 @@ const VideoFeedViewer = () => {
             >
               <Avatar
                 onClick={()=>openProfile(video)}
-                src={VITE_API_BASE_URL+video.user?.photo_url}
+                src={VITE_API_BASE_URL+video.user?.photoUrl}
                 sx={{ width: 48, cursor: "pointer", height: 48, mb: 1 }}
               />
               <ActionButton onClick={toggleLike}>

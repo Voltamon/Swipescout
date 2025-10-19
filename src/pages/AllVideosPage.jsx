@@ -1,33 +1,56 @@
-// AllVideosPage.jsx - TikTok Style Vertical Video Feed
+// AllVideosPage.jsx - Enhanced TikTok Style Vertical Video Feed
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useVideoContext } from '../context/VideoContext';
+import { useVideoContext } from '../contexts/VideoContext';
 import { styled } from "@mui/material/styles";
 import {
   Box, Typography, IconButton, Fab, Snackbar, Alert,
-  CircularProgress, Avatar, Chip, Tooltip, useTheme
+  CircularProgress, Avatar, Chip, Tooltip, useTheme,
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  Button, TextField, List, ListItem, ListItemText,
+  ListItemAvatar, Divider, Menu, MenuItem, Paper,
+  Stack, Grid, Drawer, FormControl, InputLabel,
+  Select, Slider, useMediaQuery, Fade, Backdrop
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   PlayArrow, Pause, VolumeOff, VolumeUp, Share, Favorite,
   FavoriteBorder, Bookmark, BookmarkBorder, PersonAdd,
   ArrowUpward, ArrowDownward, Home, Close, MoreVert,
-  Send, Comment, Repeat
+  Send, Comment, Repeat, FilterList, Search,
+  Work, Business, School, LocationOn, SkipNext,
+  SkipPrevious, Fullscreen, FullscreenExit,
+  WhatsApp, Twitter, LinkedIn, Facebook,
+  Link as LinkIcon, Report, Block, Download,
+  Visibility, AccessTime, Settings, Tune,
+  PersonSearch, Explore
 } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { getAllVideos, getEmployerPublicVideos, getJobSeekersVideos } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
+import { 
+  getAllVideos, 
+  getEmployerPublicVideos, 
+  getJobSeekersVideos,
+  likeVideo,
+  saveVideo,
+  connectWithUser,
+  addVideoComment,
+  getVideoComments,
+  searchVideos
+} from '../services/api';
 
-// Sample videos data for when there are few real videos
-const SAMPLE_VIDEOS = [
+// Sample videos data generator function (will be called after t is available)
+const getSampleVideos = (t) => [
   {
-    id: 'sample-1',
-    video_title: 'Software Engineer Resume',
+    id: '2b1f4b8e-9f3c-4d2a-9c6b-1a2d3e4f5a61',
+    video_title: t('sampleVideos.softwareEngineerResume'),
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    video_type: 'Job Seeker',
+    video_type: t('sampleVideos.jobSeeker'),
     video_duration: 30,
     user: {
-      display_name: 'Ahmed Hassan',
+      displayName: t('sampleVideos.ahmedHassan'),
       profile_image: null,
       role: 'jobseeker'
     },
@@ -37,13 +60,13 @@ const SAMPLE_VIDEOS = [
     views_count: 1200
   },
   {
-    id: 'sample-2',
-    video_title: 'Marketing Manager Position',
+    id: '3c2e5a9d-6b4f-4e1a-8d7c-2b3a4f6e7d82',
+    video_title: t('sampleVideos.marketingManagerPosition'),
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    video_type: 'Job Seeker',
+    video_type: t('sampleVideos.jobSeeker'),
     video_duration: 25,
     user: {
-      display_name: 'Sara Ahmed',
+      displayName: t('sampleVideos.saraAhmed'),
       profile_image: null,
       role: 'jobseeker'
     },
@@ -53,29 +76,29 @@ const SAMPLE_VIDEOS = [
     views_count: 890
   },
   {
-    id: 'sample-3',
-    video_title: 'Tech Company Hiring',
+    id: '4d3f6b0a-7c5e-4f2b-9e8a-3c4b5a6d8e93',
+    video_title: t('sampleVideos.techCompanyHiring'),
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    video_type: 'Employer',
+    video_type: t('sampleVideos.employer'),
     video_duration: 35,
     user: {
-      display_name: 'TechCorp Solutions',
+      displayName: t('sampleVideos.techCorpSolutions'),
       profile_image: null,
       role: 'employer'
     },
-    hashttags: '#Hiring #TechJobs #Innovation',
+    hashtags: '#Hiring #TechJobs #Innovation',
     isSample: true,
     likes_count: 312,
     views_count: 1500
   },
   {
-    id: 'sample-4',
-    video_title: 'Data Scientist Resume',
+    id: '5e4a7c1b-8d6f-4a3c-0f9b-4d5c6b7a9f04',
+    video_title: t('sampleVideos.dataScientistResume'),
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    video_type: 'Job Seeker',
+    video_type: t('sampleVideos.jobSeeker'),
     video_duration: 28,
     user: {
-      display_name: 'Omar Khaled',
+      displayName: t('sampleVideos.omarKhaled'),
       profile_image: null,
       role: 'jobseeker'
     },
@@ -197,7 +220,16 @@ const StyledIconButton = styled(IconButton)({
   },
 });
 
-const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
+const AllVideosPage = ({ 
+  pagetype: propPagetype, 
+  onClose,
+  context = 'general', // general, my-videos, saved-videos, liked-videos, candidate-videos, company-videos, jobseeker-feed, analytics
+  filterType = null,
+  showSidebar = true,
+  showHeader = true,
+  fullScreen = false 
+}) => {
+  const { t } = useTranslation();
   const { videos: localVideos } = useVideoContext();
   const [serverVideos, setServerVideos] = useState([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -212,23 +244,89 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
   const containerRef = useRef(null);
   const videoRefs = useRef({});
   const navigate = useNavigate();
-  // const { pagetype } = useParams();
+  const location = useLocation();
   const { pagetype: urlPagetype } = useParams();
   const pagetype = propPagetype || urlPagetype;
   const { user } = useAuth();
   const theme = useTheme();
 
-  // Fetch videos from server
+  // Get context from navigation state (from VideoGridPage)
+  const navigationContext = location.state?.context;
+  const contextVideos = location.state?.videos;
+  const initialVideoId = location.state?.videoId;
+
+  // Fetch videos from server based on context
   const fetchServerVideos = async () => {
     try {
       setLoading(true);
       let response;
-      if (pagetype === 'all') {
-        response = await getAllVideos(1, 50); // Get more videos for better experience
-      } else if (pagetype === 'jobseekers') {
-        response = await getJobSeekersVideos(1, 50);
-      } else if (pagetype === 'employers') {
-        response = await getEmployerPublicVideos(1, 50);
+      
+      // If we have context from VideoGridPage, use those videos
+      if (contextVideos && contextVideos.length > 0) {
+        setServerVideos(contextVideos);
+        
+        // Set initial video index if specified
+        if (initialVideoId) {
+          const initialIndex = contextVideos.findIndex(video => video.id === initialVideoId);
+          if (initialIndex !== -1) {
+            setCurrentVideoIndex(initialIndex);
+          }
+        }
+        
+        setLoading(false);
+        return;
+      }
+
+      // If we have navigation context, fetch videos with those filters
+      if (navigationContext) {
+        const params = {
+          category: navigationContext.category,
+          subcategory: navigationContext.subcategory,
+          search: navigationContext.search,
+          sort: navigationContext.sort,
+          page: 1,
+          limit: 50,
+        };
+        response = await searchVideos(params);
+      } else {
+        // Determine API call based on context
+        switch (context) {
+          case 'my-videos':
+            // Fetch user's own videos
+            response = await getAllVideos(1, 50, { userId: user?.id });
+            break;
+          case 'saved-videos':
+            // Fetch saved videos (would need API endpoint)
+            response = await getAllVideos(1, 50, { saved: true });
+            break;
+          case 'liked-videos':
+            // Fetch liked videos (would need API endpoint)
+            response = await getAllVideos(1, 50, { liked: true });
+            break;
+          case 'candidate-videos':
+            response = await getJobSeekersVideos(1, 50);
+            break;
+          case 'company-videos':
+            response = await getEmployerPublicVideos(1, 50);
+            break;
+          case 'jobseeker-feed':
+            response = await getJobSeekersVideos(1, 50);
+            break;
+          case 'analytics':
+            response = await getAllVideos(1, 50, { analytics: true });
+            break;
+          default:
+            // Use pagetype for backward compatibility
+            if (propPagetype === 'all' || urlPagetype === 'all') {
+              response = await getAllVideos(1, 50);
+            } else if (propPagetype === 'jobseekers' || urlPagetype === 'jobseekers') {
+              response = await getJobSeekersVideos(1, 50);
+            } else if (propPagetype === 'employers' || urlPagetype === 'employers') {
+              response = await getEmployerPublicVideos(1, 50);
+            } else {
+              response = await getAllVideos(1, 50);
+            }
+        }
       }
 
       const fetchedVideos = response.data.videos || [];
@@ -244,7 +342,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
 
   useEffect(() => {
     fetchServerVideos();
-  }, [pagetype]);
+  }, [pagetype, context]);
 
   // Combine real videos with sample videos based on count
   const allVideos = React.useMemo(() => {
@@ -254,12 +352,15 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
 
     // Show sample videos if we have fewer than 5 real videos
     if (realVideos.length < 5) {
+      // Get sample videos with translations
+      const sampleVideos = getSampleVideos(t);
+      
       // Filter sample videos based on page type
-      let filteredSamples = SAMPLE_VIDEOS;
+      let filteredSamples = sampleVideos;
       if (pagetype === 'jobseekers') {
-        filteredSamples = SAMPLE_VIDEOS.filter(v => v.user.role === 'jobseeker');
+        filteredSamples = sampleVideos.filter(v => v.user.role === 'jobseeker');
       } else if (pagetype === 'employers') {
-        filteredSamples = SAMPLE_VIDEOS.filter(v => v.user.role === 'employer');
+        filteredSamples = sampleVideos.filter(v => v.user.role === 'employer');
       }
 
       // Mix real videos with samples
@@ -267,7 +368,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
     }
 
     return realVideos;
-  }, [serverVideos, pagetype]);
+  }, [serverVideos, pagetype, t]);
 
   // Handle video navigation
   const goToVideo = useCallback((index) => {
@@ -373,10 +474,10 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
       const newSet = new Set(prev);
       if (newSet.has(videoId)) {
         newSet.delete(videoId);
-        setSnackbar({ open: true, message: 'Removed from likes', severity: 'info' });
+        setSnackbar({ open: true, message: t("videos.removedFromLikes"), severity: "info" });
       } else {
         newSet.add(videoId);
-        setSnackbar({ open: true, message: 'Added to likes', severity: 'success' });
+        setSnackbar({ open: true, message: t("videos.addedToLikes"), severity: "success" });
       }
       return newSet;
     });
@@ -387,10 +488,10 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
       const newSet = new Set(prev);
       if (newSet.has(videoId)) {
         newSet.delete(videoId);
-        setSnackbar({ open: true, message: 'Removed from saved', severity: 'info' });
+        setSnackbar({ open: true, message: t("videos.removedFromSaved"), severity: "info" });
       } else {
         newSet.add(videoId);
-        setSnackbar({ open: true, message: 'Saved to collection', severity: 'success' });
+        setSnackbar({ open: true, message: t("videos.savedToCollection"), severity: "success" });
       }
       return newSet;
     });
@@ -400,22 +501,22 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
     if (navigator.share) {
       navigator.share({
         title: video.video_title,
-        text: `Check out this video: ${video.video_title}`,
+        text: t("videos.checkOutThisVideo", { videoTitle: video.video_title }),
         url: window.location.href,
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      setSnackbar({ open: true, message: 'Link copied to clipboard', severity: 'success' });
+      setSnackbar({ open: true, message: t("videos.linkCopied"), severity: "success" });
     }
   };
 
   const handleConnect = (video) => {
     if (video.isSample) {
-      setSnackbar({ open: true, message: 'This is a sample video', severity: 'info' });
+      setSnackbar({ open: true, message: t("videos.sampleVideoMessage"), severity: "info" });
       return;
     }
     // Navigate to user profile or send connection request
-    setSnackbar({ open: true, message: 'Connection request sent', severity: 'success' });
+    setSnackbar({ open: true, message: t("videos.connectionRequestSent"), severity: "success" });
   };
 
   if (loading) {
@@ -429,7 +530,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
         color: 'white'
       }}>
         <CircularProgress color="primary" size={60} />
-        <Typography variant="h6" sx={{ ml: 2, textShadow: '2px 2px 8px rgba(0,0,0,0.9)', fontWeight: 'bold' }}>Loading videos...</Typography>
+        <Typography variant="h6" sx={{ ml: 2, textShadow: '2px 2px 8px rgba(0,0,0,0.9)', fontWeight: 'bold' }}>{t('videos.loadingVideos')}</Typography>
       </Box>
     );
   }
@@ -448,10 +549,10 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
         p: 3
       }}>
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
-          {error ? 'Oops!' : 'No Videos Yet'}
+          {error ? t('videos.oops') : t('videos.noVideosYet')}
         </Typography>
         <Typography variant="body1" sx={{ mb: 4, opacity: 0.8, textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
-          {error || 'Be the first to share your story'}
+          {error || t('videos.beTheFirstToShare')}
         </Typography>
         <Fab
           color="primary"
@@ -466,7 +567,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
           }}
         >
           <PlayArrow sx={{ mr: 1 }} />
-          Upload Video
+          {t('videos.uploadVideo')}
         </Fab>
       </Box>
     );
@@ -539,7 +640,7 @@ const AllVideosPage = ({ pagetype: propPagetype , onClose }) => {
                   src={currentVideo.user?.profile_image}
                   sx={{ width: 48, height: 48, mr: 2, border: '2px solid white' }}
                 >
-                  {currentVideo.user?.display_name?.charAt(0) || 'U'}
+                  {currentVideo.user?.displayName?.charAt(0) || 'U'}
                 </Avatar>
                 <Box>
                   <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>

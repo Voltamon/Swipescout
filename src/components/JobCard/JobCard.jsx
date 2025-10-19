@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Card, Typography, Box, Chip } from '@mui/material';
 import { People, LocationOn } from '@mui/icons-material';
 import { useStyles } from './JobCard.styles';

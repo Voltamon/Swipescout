@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Header from "../../components/Headers/Header";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import { Helmet } from "react-helmet";
@@ -24,59 +24,61 @@ import {
   Email,
   Phone
 } from "@mui/icons-material";
+import { useTranslation } from 'react-i18next';
 
 const AboutUs = () => {
+  const { t } = useTranslation();
 //   const theme = useTheme();
 //   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const teamMembers = [
     {
       name: "Raj Singah",
-      role: "Business Managment Insights",
-      bio: "+ Python experience ",
+      role: t('about.team.raj.role'),
+      bio: t('about.team.raj.bio'),
       avatar: "/images/raj_sin.jpg"
     },
     {
       name: "Varshal Dubey",
-      role: "Operations & Strategy",
-      bio: "Markiting & generalist ",
+      role: t('about.team.varshal.role'),
+      bio: t('about.team.varshal.bio'),
       avatar: "/images/varsha_dub.jpg"
     },
     {
       name: "Tareq Alsharif",
-      role: "Founder & CEO",
-      bio: "Vision Product & Growth",
+      role: t('about.team.tareq.role'),
+      bio: t('about.team.tareq.bio'),
       avatar: "/images/tareq.jpg"
     },
     {
       name: "Obaid Nieroukh",
-      role: "Co-founder & CTO",
-      bio: "20+ yrs dev & Systems Architect",
+      role: t('about.team.obaid.role'),
+      bio: t('about.team.obaid.bio'),
       avatar: "/images/obaid.jpg"
     },
     {
       name: "Bahri Ayzabar",
-      role: "UI/UX Designer",
-      bio: "Full Stack Dev. & interface lead",
+      role: t('about.team.bahri.role'),
+      bio: t('about.team.bahri.bio'),
       avatar: "/images/bahr_ayzaba.jpg"
     }
   ];
 
   const stats = [
-    { value: "+", label: "Jobs Posted", icon: <Groups fontSize="large" /> },
+    { value: "+", label: t('about.stats.jobsPosted'), icon: <Groups fontSize="large" /> },
     {
       value: "+",
-      label: "Candidates Hired",
+      label: t('about.stats.candidatesHired'),
       icon: <Diversity3 fontSize="large" />
     },
     {
       value: "+",
-      label: "Partner Companies",
+      label: t('about.stats.partnerCompanies'),
       icon: <Handshake fontSize="large" />
     },
     {
       value: "95%",
-      label: "Satisfaction Rate",
+      label: t('about.stats.satisfactionRate'),
       icon: <EmojiObjects fontSize="large" />
     }
   ];
@@ -84,11 +86,11 @@ const AboutUs = () => {
   return (
  <>
   <Helmet>
-    <title>About SwipeScout | Our Mission and Team</title>
-    <meta name="description" content="Learn about SwipeScout's mission to revolutionize recruitment with video resumes and our dedicated team of professionals." />
-    <meta name="keywords" content="about SwipeScout, company mission, recruitment technology, hiring platform team" />
-    <meta property="og:title" content="About SwipeScout | Our Mission and Team" />
-    <meta property="og:description" content="Discover how SwipeScout is changing the way people find jobs and companies find talent through innovative technology." />
+    <title>{t('about.meta.title')}</title>
+    <meta name="description" content={t('about.meta.description')} />
+    <meta name="keywords" content={t('about.meta.keywords')} />
+    <meta property="og:title" content={t('about.meta.title')} />
+    <meta property="og:description" content={t('about.meta.ogDescription')} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.swipescout.xyz/about" />
     <link rel="canonical" href="https://www.swipescout.xyz/about" />
@@ -108,13 +110,13 @@ const AboutUs = () => {
         {/* Hero Section */}
         <Box textAlign="center" mb={8}>
           <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#0D47A1" }}> {/* Darker, strong blue */}
-            About SwipeScout
+            {t('about.hero.title')}
           </Typography>
           <Typography variant="h5" component="h2" sx={{ color: "#1565C0" }} gutterBottom> {/* Slightly lighter dark blue */}
-            Revolutionizing the way people find jobs and companies find talent
+            {t('about.hero.subtitle')}
           </Typography>
           <Typography variant="body1" maxWidth="md" mx="auto" sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-            Founded in 2025, SwipeScout combines the efficiency of modern technology with the human touch needed in recruitment. Our platform bridges the gap between talented professionals and innovative companies through intuitive video profiles and smart matching algorithms.
+            {t('about.hero.description')}
           </Typography>
         </Box>
 
@@ -124,13 +126,13 @@ const AboutUs = () => {
         <Grid container spacing={6} alignItems="center" mb={8}>
           <Grid item xs={12} md={6}>
             <Typography variant="h4" gutterBottom sx={{ color: "#0D47A1" }}> {/* Darker, strong blue */}
-              Our Mission
+              {t('about.mission.title')}
             </Typography>
             <Typography variant="body1" paragraph sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-              To make job searching as engaging and effective as social networking, while giving employers better tools to discover authentic talent.
+              {t('about.mission.description1')}
             </Typography>
             <Typography variant="body1" paragraph sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-              We believe the traditional resume is outdated. Video profiles allow candidates to showcase their personality, communication skills, and passion in ways paper never could.
+              {t('about.mission.description2')}
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -183,10 +185,10 @@ const AboutUs = () => {
         {/* Team Section */}
  <Box mb={8} sx={{ width: '100%', px: { xs: 2, sm: 3 } }}>
   <Typography variant="h4" align="center" gutterBottom sx={{ color: "#0D47A1", mb: 3 }}> {/* Darker, strong blue */}
-    Meet Our Team
+    {t('about.team.title')}
   </Typography>
   <Typography variant="body1" align="center" maxWidth="md" mx="auto" mb={6} sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-    Passionate professionals dedicated to transforming the recruitment experience
+    {t('about.team.description')}
   </Typography>
 
   <Grid container spacing={4} justifyContent="center" sx={{ margin: '0 auto', maxWidth: '1200px' }}>
