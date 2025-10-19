@@ -60,7 +60,8 @@ import {
     Language as LanguageIcon,
     Star as StarIcon
 } from '@mui/icons-material';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     getUserProfile,

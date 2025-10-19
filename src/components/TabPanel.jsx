@@ -1,7 +1,7 @@
 // components/TabPanel.jsx
 // A reusable component to handle the content rendering for tabs.
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box } from "@mui/material";
 
 function TabPanel(props) {

@@ -46,7 +46,8 @@ import {
   VolumeUp as VolumeUpIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import {useAuth} from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 import { getAllJobs, getJobById, getEmployerProfile, getCategories ,getAllJobsPosted } from '../services/api';
 
 // Styled components

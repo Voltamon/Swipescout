@@ -29,7 +29,7 @@ import {
   DoneAll as DoneAllIcon, // For read
   Refresh as RefreshIcon // For retry failed message
 } from '@mui/icons-material';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import {
   getConversations,
   getMessages,
@@ -285,13 +285,63 @@ const Chat = () => {
     try {
       setUsersLoading(true);
       const response = await getAllUsers();
-      setAllUsers(response.data.users || []);
+      // Normalize backend user fields (displayName/photoUrl -> display_name/photo_url)
+      const users = (response.data.users || []).map(u => ({
+        id: u.id,
+        display_name: u.display_name || u.displayName || u.displayName || u.displayName,
+        photo_url: u.photo_url || u.photoUrl || u.photoURL || u.photo_url,
+        role: u.role,
+        // copy other fields if present
+        ...u
+      }));
+      setAllUsers(users);
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
       setUsersLoading(false);
     }
   };
+
+  // Helpers to normalize server responses (camelCase -> snake_case) used by the UI
+  const normalizeUser = (u) => ({
+    ...u,
+    display_name: u.display_name || u.displayName || u.displayName || u.displayName,
+    photo_url: u.photo_url || u.photoUrl || u.photoURL || u.photo_url,
+  });
+
+  const normalizeMessage = (m) => ({
+    ...m,
+    id: m.id,
+    content: m.content || m.text || m.body,
+    sender_id: m.sender_id || m.senderId || m.sender || (m.sender && m.sender.id),
+    receiver_id: m.receiver_id || m.receiverId || m.receiver || (m.receiver && m.receiver.id),
+    conversation_id: m.conversation_id || m.conversationId || m.conversation_id,
+    created_at: (() => {
+      const raw = m.created_at || m.createdAt || m.createdAt || m.created_at;
+      if (!raw) return raw;
+      try {
+        // If it's a Date object
+        if (raw instanceof Date) return raw.toISOString();
+        // If it's a number (timestamp)
+        if (typeof raw === 'number') return new Date(raw).toISOString();
+        // Assume string
+        return String(raw);
+      } catch (e) {
+        return String(raw);
+      }
+    })(),
+    read: typeof m.read === 'boolean' ? m.read : !!m.read,
+  });
+
+  const normalizeConversation = (c) => ({
+    ...c,
+    id: c.id,
+    other_user: c.other_user ? normalizeUser(c.other_user) : (c.otherUser ? normalizeUser(c.otherUser) : null),
+    last_message: c.last_message ? normalizeMessage(c.last_message) : (c.lastMessage ? normalizeMessage(c.lastMessage) : null),
+    unread_count: c.unread_count ?? c.unreadCount ?? 0,
+    created_at: c.created_at || c.createdAt || c.created_at,
+    updated_at: c.updated_at || c.updatedAt || c.updated_at,
+  });
 
   const handleTyping = (data) => {
     if (
@@ -348,7 +398,8 @@ const Chat = () => {
       try {
         setLoading(prev => ({ ...prev, conversations: true }));
         const response = await getConversations();
-        setConversations(response.data.conversations || []);
+        const convs = (response.data.conversations || []).map(normalizeConversation);
+        setConversations(convs);
       } catch (error) {
         console.error('Error fetching conversations:', error);
       } finally {
@@ -391,35 +442,36 @@ const Chat = () => {
   useEffect(() => {
     if (!socket || !user?.id) return;
 
-    // Listen for user online/offline status
-    socket.on('user_online', (userId) => {
-      setOnlineUsers(prev => new Set(prev).add(userId));
-    });
-
-    socket.on('user_offline', (userId) => {
+    // Listen for user online/offline status (server emits user_status_update)
+    socket.on('user_status_update', ({ userId: uid, isOnline }) => {
       setOnlineUsers(prev => {
         const updated = new Set(prev);
-        updated.delete(userId);
+        if (isOnline) updated.add(uid);
+        else updated.delete(uid);
         return updated;
       });
     });
 
     const handleNewMessage = (message) => {
-      // If the new message is for the currently active conversation
-      if (activeConversation && message.conversation_id === activeConversation.id) {
-        setMessages(prev => [...prev, message]); // Add to messages displayed
-        markAsRead(message.id); // Mark as read via API
-        socket.emit('mark_as_read', { messageId: message.id, senderId: message.sender_id }); // Emit read event
+      const normalizedMessage = normalizeMessage(message);
+      const convId = normalizedMessage.conversation_id;
+      const senderId = normalizedMessage.sender_id;
+      const receiverId = normalizedMessage.receiver_id;
+
+      if (activeConversation && convId === activeConversation.id) {
+        setMessages(prev => [...prev, normalizedMessage]); // Add to messages displayed
+        markAsRead(normalizedMessage.id); // Mark as read via API
+        socket.emit('mark_as_read', { messageId: normalizedMessage.id, readerId: String(user.id), senderId: String(senderId) }); // Emit read event
       }
 
       setConversations(prev => {
         const updated = [...prev];
-        const index = updated.findIndex(c => c.id === message.conversation_id);
+  const index = updated.findIndex(c => c.id === convId);
 
         if (index !== -1) {
-          const conversation = { ...updated[index], last_message: message };
+          const conversation = { ...updated[index], last_message: normalizeMessage(message) };
 
-          if (activeConversation?.id !== message.conversation_id) {
+          if (activeConversation?.id !== convId) {
             conversation.unread_count = (conversation.unread_count || 0) + 1; // Increment unread if not active
           } else {
             conversation.unread_count = 0; // Reset unread if active
@@ -441,7 +493,7 @@ const Chat = () => {
     };
 
     // Attach socket listeners
-    socket.on('new_message', handleNewMessage);
+  socket.on('new_message', handleNewMessage);
     socket.on('message_read', handleMessageRead);
     socket.on('typing', handleTyping);
 
@@ -463,7 +515,8 @@ const Chat = () => {
         setLoading(prev => ({ ...prev, messages: true }));
         const response = await getMessages(activeConversation.id);
         const fetchedMessages = response.data.messages || [];
-        setMessages(fetchedMessages);
+  const msgs = fetchedMessages.map(normalizeMessage);
+  setMessages(msgs);
 
         // Mark all newly fetched unread messages as read when conversation is opened
         const unreadMessagesInActiveConv = fetchedMessages.filter(
@@ -471,8 +524,9 @@ const Chat = () => {
         );
         if (unreadMessagesInActiveConv.length > 0) {
           unreadMessagesInActiveConv.forEach(async (msg) => {
-            await markAsRead(msg.id); // Call API to mark as read
-            socket.emit('mark_as_read', { messageId: msg.id, senderId: msg.sender_id }); // Notify other users
+            const norm = normalizeMessage(msg);
+            await markAsRead(norm.id); // Call API to mark as read
+            socket.emit('mark_as_read', { messageId: norm.id, readerId: String(user.id), senderId: String(norm.sender_id) }); // Notify other users
           });
         }
 
@@ -531,7 +585,7 @@ const Chat = () => {
 
     try {
       const response = await sendMessage(activeConversation.id, newMessage);
-      const sentMessage = response.data.message;
+  const sentMessage = normalizeMessage(response.data.message);
 
       // Clear typing timeout if message was sent while typing
       if (typingTimeoutRef.current) {
@@ -619,8 +673,8 @@ const Chat = () => {
       );
 
       // Retry sending the message
-      const response = await sendMessage(activeConversation.id, failedMsg.content);
-      const sentMessage = response.data.message;
+  const response = await sendMessage(activeConversation.id, failedMsg.content);
+  const sentMessage = normalizeMessage(response.data.message);
 
       // Replace pending message with successful message
       setPendingMessages(prev => {
@@ -718,7 +772,7 @@ const Chat = () => {
                             userItem.id, 
                             `Hi ${userItem.display_name}, \nI'd like to connect with you!`
                           );
-                          const newConv = response.data.conversation;
+                          const newConv = normalizeConversation(response.data.conversation);
                           setConversations(prev => [newConv, ...prev]); // Add new conversation
                           setActiveConversation(newConv);
                           setShowConversations(false);
@@ -1263,4 +1317,5 @@ const Chat = () => {
 };
 
 export default Chat;
+// No code changes required in this frontend file for CORS fix.
 

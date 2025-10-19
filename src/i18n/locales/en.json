@@ -1,0 +1,1074 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "upload": "Upload",
+    "download": "Download",
+    "share": "Share",
+    "like": "Like",
+    "comment": "Comment",
+    "view": "View",
+    "apply": "Apply",
+    "connect": "Connect",
+    "message": "Message",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "open": "Open",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm"
+  },
+  "home": {
+    "hero": {
+      "title": "Swipe Your Way to Success",
+      "subtitle": "Discover opportunities through video. Connect with talent through stories."
+    },
+    "search": {
+      "placeholder": "Search for jobs, companies, or skills..."
+    },
+    "quickActions": {
+      "findJobs": "Find Jobs",
+      "findTalent": "Find Talent",
+      "exploreVideos": "Explore Videos"
+    },
+    "stats": {
+      "activeUsers": "Active Users",
+      "successfulHires": "Successful Hires",
+      "videoViews": "Video Views",
+      "satisfactionRate": "Satisfaction Rate"
+    },
+    "testimonials": {
+      "sarah": {
+        "name": "Sarah Johnson",
+        "role": "Marketing Director",
+        "quote": "SwipeScout completely transformed our hiring process. We found the perfect candidate in just three days!"
+      },
+      "michael": {
+        "name": "Michael Chen",
+        "role": "Software Engineer",
+        "quote": "As a job seeker, SwipeScout gave me the opportunity to showcase my personality and skills beyond the traditional resume."
+      },
+      "techstart": {
+        "name": "TechStart Inc.",
+        "role": "HR Manager",
+        "quote": "Our hiring process is now 40% faster, and we're achieving much better cultural fit. It's an essential tool for modern HR."
+      }
+    },
+    "loginForm": {
+      "title": "Start Your Journey",
+      "subtitle": "Sign in to access a world of opportunities",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "signInButton": "Sign In",
+      "signingInButton": "Signing In...",
+      "orContinueWith": "Or continue with",
+      "googleButton": "Google",
+      "linkedinButton": "LinkedIn",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up now",
+      "welcomeBack": "Welcome back, {{user}}!",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "howItWorks": {
+      "title": "How SwipeScout Works",
+      "createProfilesTitle": "Create Engaging Video Profiles",
+      "createProfilesText": "Create video resumes or company profiles that showcase your skills and culture better than traditional text",
+      "swipeMatchTitle": "Swipe and Match",
+      "swipeMatchText": "Browse opportunities or talent through a modern app-like experience with AI-powered smart matching",
+      "connectSucceedTitle": "Connect and Succeed",
+      "connectSucceedText": "Connect directly with the right companies or candidates and start your journey to professional success"
+    },
+    "videoPreview": {
+      "title": "Experience the Future of Hiring",
+      "exploreTitle": "Explore Video Library",
+      "exploreText": "Click to watch real videos from candidates and companies"
+    },
+    "testimonialsSection": {
+      "title": "What Our Users Say"
+    }
+  },
+  "videos": {
+    "loadingVideos": "Loading videos...",
+    "oops": "Oops!",
+    "noVideosYet": "No videos yet",
+    "beTheFirstToShare": "Be the first to share your story",
+    "uploadVideo": "Upload video",
+    "addedToLikes": "Added to likes",
+    "removedFromLikes": "Removed from likes",
+    "savedToCollection": "Saved to collection",
+    "removedFromSaved": "Removed from saved",
+    "linkCopied": "Link copied",
+    "checkOutThisVideo": "Check out this video: {{videoTitle}}",
+    "sampleVideoMessage": "This is a sample video for demonstration",
+    "connectionRequestSent": "Connection request sent"
+  },
+  "sampleVideos": {
+    "softwareEngineerResume": "Software Engineer - Video Resume",
+    "marketingManagerPosition": "Marketing Manager Position",
+    "techCompanyHiring": "Tech Company - We're Hiring!",
+    "dataScientistResume": "Data Scientist - Portfolio",
+    "jobSeeker": "Job Seeker",
+    "employer": "Employer",
+    "ahmedHassan": "Ahmed Hassan",
+    "saraAhmed": "Sara Ahmed",
+    "techCorpSolutions": "TechCorp Solutions",
+    "omarKhaled": "Omar Khaled"
+  },
+  "navigation": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "candidates": "Candidates",
+    "videos": "Videos",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "help": "Help",
+    "about": "About",
+    "contact": "Contact",
+    "pricing": "Pricing",
+    "features": "Features"
+  },
+  "header": {
+    "findJobs": "Find Jobs",
+    "findTalent": "Find Talent",
+    "exploreVideos": "Explore Videos",
+    "profileSettings": "Profile Settings",
+    "account": "Account",
+    "helpCenter": "Help Center",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "welcome": "Welcome",
+    "languageSelector": "Language"
+  },
+  "homepage": {
+    "title": "SwipeScout - The Future of Video Recruitment",
+    "subtitle": "Connecting talent with opportunities through engaging video profiles",
+    "heroDescription": "Discover your next career opportunity or find the perfect candidate through our innovative video-first platform.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "findJobs": "Find Jobs",
+    "findTalent": "Find Talent",
+    "exploreVideos": "Explore Videos",
+    "howItWorks": "How SwipeScout Works",
+    "seeInAction": "See SwipeScout in Action",
+    "experienceFuture": "Experience the Future of Hiring",
+    "experienceDescription": "Watch real professionals showcase their skills and see how companies present their culture - all in an engaging video format.",
+    "watchDemo": "Watch Demo",
+    "startSwiping": "Start Swiping",
+    "testimonials": "User Testimonials",
+    "readyToStart": "Ready to start your journey?",
+    "joinThousands": "Join thousands of professionals and companies already using SwipeScout",
+    "signUpFree": "Sign Up Free",
+    "features": {
+      "videoProfiles": "Video Profiles",
+      "videoProfilesDesc": "Showcase your personality and skills through engaging video resumes",
+      "smartMatching": "Smart Matching",
+      "smartMatchingDesc": "AI-powered matching connects you with the right opportunities",
+      "realTimeChat": "Real-time Chat",
+      "realTimeChatDesc": "Connect instantly with potential employers or candidates"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "userType": "User Type",
+    "jobSeeker": "Job Seeker",
+    "employer": "Employer",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "signInWith": "Sign in with",
+    "signUpWith": "Sign up with",
+    "termsAndConditions": "I agree to the Terms and Conditions and Privacy Policy",
+    "loginSuccess": "Login successful!",
+    "registerSuccess": "Registration successful!",
+    "loginError": "Login failed. Please check your credentials.",
+    "registerError": "Registration failed. Please try again."
+  },
+  "jobSeeker": {
+    "dashboard": "Dashboard",
+    "findJobs": "Find Jobs",
+    "myVideos": "My Videos",
+    "interviews": "Interviews",
+    "resumeBuilder": "Resume Builder",
+    "savedVideos": "Saved Videos",
+    "likedVideos": "Liked Videos",
+    "applications": "Applications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "uploadVideo": "Upload Video",
+    "editVideo": "Edit Video",
+    "videoResume": "Video Resume",
+    "skills": "Skills",
+    "experience": "Experience",
+    "education": "Education",
+    "jobPreferences": "Job Preferences",
+    "searchJobs": "Search Jobs",
+    "jobTitle": "Job Title",
+    "location": "Location",
+    "salary": "Salary",
+    "jobType": "Job Type",
+    "experienceLevel": "Experience Level",
+    "industry": "Industry",
+    "applyNow": "Apply Now",
+    "viewJob": "View Job",
+    "saveJob": "Save Job"
+  },
+  "employer": {
+    "dashboard": "Dashboard",
+    "findCandidates": "Find Candidates",
+    "myJobs": "My Jobs",
+    "companyVideos": "Company Videos",
+    "analytics": "Analytics",
+    "applications": "Applications",
+    "interviews": "Interviews",
+    "messages": "Messages",
+    "profile": "Company Profile",
+    "settings": "Settings",
+    "postJob": "Post Job",
+    "editJob": "Edit Job",
+    "viewApplications": "View Applications",
+    "searchCandidates": "Search Candidates",
+    "candidateName": "Candidate Name",
+    "candidateSkills": "Skills",
+    "candidateExperience": "Experience",
+    "candidateEducation": "Education",
+    "connectWithCandidate": "Connect with Candidate",
+    "viewProfile": "View Profile",
+    "scheduleInterview": "Schedule Interview",
+    "companyName": "Company Name",
+    "companyDescription": "Company Description",
+    "companySize": "Company Size",
+    "companyIndustry": "Company Industry"
+  },
+  "search": {
+    "searchJobs": "Search Jobs",
+    "searchCandidates": "Search Candidates",
+    "searchVideos": "Search Videos",
+    "searchResults": "Search Results",
+    "noResults": "No results found",
+    "refineSearch": "Refine Search",
+    "clearFilters": "Clear Filters",
+    "sortBy": "Sort By",
+    "relevance": "Relevance",
+    "date": "Date",
+    "salary": "Salary",
+    "experience": "Experience",
+    "location": "Location",
+    "remote": "Remote",
+    "onSite": "On-site",
+    "hybrid": "Hybrid",
+    "fullTime": "Full-time",
+    "partTime": "Part-time",
+    "contract": "Contract",
+    "freelance": "Freelance",
+    "internship": "Internship",
+    "entryLevel": "Entry Level",
+    "midLevel": "Mid Level",
+    "seniorLevel": "Senior Level",
+    "executive": "Executive"
+  },
+  "notifications": {
+    "notifications": "Notifications",
+    "markAsRead": "Mark as Read",
+    "markAllAsRead": "Mark All as Read",
+    "deleteNotification": "Delete Notification",
+    "notificationSettings": "Notification Settings",
+    "emailNotifications": "Email Notifications",
+    "pushNotifications": "Push Notifications",
+    "smsNotifications": "SMS Notifications",
+    "jobAlerts": "Job Alerts",
+    "applicationUpdates": "Application Updates",
+    "messageNotifications": "Message Notifications",
+    "interviewReminders": "Interview Reminders",
+    "profileViews": "Profile Views",
+    "newMatches": "New Matches",
+    "systemUpdates": "System Updates",
+    "marketingEmails": "Marketing Emails",
+    "quietHours": "Quiet Hours",
+    "frequency": "Frequency",
+    "immediately": "Immediately",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "never": "Never"
+  },
+  "pricing": {
+    "choosePlan": "Choose Your Plan",
+    "features": "Whether you're looking for your dream job or the perfect candidate, we have the right plan for you.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "year": "year",
+    "month": "month",
+    "savePercent": "Save {{percent}}%",
+    "mostPopular": "Most Popular",
+    "tabs": {
+      "jobSeekerPlans": "Job Seeker Plans",
+      "employerPlans": "Employer Plans"
+    },
+    "trustedBy": "Trusted by thousands of professionals",
+    "securePayments": "Secure Payments",
+    "support247": "24/7 Support",
+    "moneyBackGuarantee": "Money-back Guarantee",
+    "purchaseService": "Purchase Service",
+    "currentSubscription": {
+      "title": "Current Subscription",
+      "plan": "Plan",
+      "active": "Active",
+      "inactive": "Inactive",
+      "expires": "Expires"
+    },
+    "confirmSubscription": {
+      "title": "Confirm Subscription",
+      "plan": "Plan",
+      "button": "Confirm Subscription"
+    },
+    "jobSeekerPlans": {
+      "basic": {
+        "title": "Basic",
+        "price": "Free",
+        "description": "Perfect for individuals starting their job search.",
+        "features": {
+          "0": "Create 1 video resume",
+          "1": "Apply to 10 jobs/month",
+          "2": "Basic profile & messaging",
+          "3": "Community support",
+          "4": "Basic job search filters"
+        },
+        "buttonText": "Start Free"
+      },
+      "professional": {
+        "title": "Professional",
+        "price": "$9.99",
+        "description": "Ideal for active job seekers.",
+        "features": {
+          "0": "Create up to 5 video resumes",
+          "1": "Apply to 50 jobs/month",
+          "2": "Advanced analytics & profile views",
+          "3": "Priority support",
+          "4": "AI-powered job matching",
+          "5": "Video editing tools",
+          "6": "Enhanced profile visibility"
+        },
+        "buttonText": "Choose Professional"
+      },
+      "premium": {
+        "title": "Premium",
+        "price": "$19.99",
+        "description": "For serious job seekers.",
+        "features": {
+          "0": "Unlimited video resumes",
+          "1": "Unlimited job applications",
+          "2": "Career coaching access",
+          "3": "Interview preparation sessions",
+          "4": "Skill assessments & certifications",
+          "5": "Direct recruiter messaging",
+          "6": "LinkedIn profile optimization",
+          "7": "Resume optimization tools"
+        },
+        "buttonText": "Choose Premium"
+      }
+    },
+    "featureList": "Professional Services",
+    "jobAlerts": "Boost your job search with these services.",
+    "jobSeekerServices": {
+      "careerCoaching": {
+        "title": "Career Coaching Session",
+        "price": "$99.99",
+        "description": "1-hour expert session to guide your career path and strategy.",
+        "duration": "1 hour",
+        "features": {
+          "0": "Personalized career assessment",
+          "1": "Goal setting and action planning",
+          "2": "Industry insights and trends",
+          "3": "Networking strategies"
+        }
+      },
+      "resumeReview": {
+        "title": "Professional Resume Review",
+        "price": "$49.99",
+        "description": "Expert optimization of your resume for maximum impact.",
+        "duration": "3-5 business days",
+        "features": {
+          "0": "Comprehensive resume analysis",
+          "1": "ATS optimization",
+          "2": "Industry-specific recommendations",
+          "3": "Before/after comparison"
+        }
+      },
+      "interviewPrep": {
+        "title": "Interview Preparation Package",
+        "price": "$149.99",
+        "description": "Complete preparation package for your next big interview.",
+        "duration": "2 weeks",
+        "features": {
+          "0": "Mock interview sessions",
+          "1": "Question bank and answers",
+          "2": "Body language coaching",
+          "3": "Follow-up strategies"
+        }
+      },
+      "linkedinOptimization": {
+        "title": "LinkedIn Profile Optimization",
+        "price": "$79.99",
+        "description": "Professional LinkedIn profile makeover to attract recruiters.",
+        "duration": "5-7 business days",
+        "features": {
+          "0": "Profile headline optimization",
+          "1": "Summary and experience sections",
+          "2": "Keyword optimization",
+          "3": "Professional photo guidance"
+        }
+      }
+    },
+    "employerPlans": {
+      "starter": {
+        "title": "Starter",
+        "price": "$29.99",
+        "description": "Perfect for small businesses and startups.",
+        "features": {
+          "0": "Post up to 3 jobs",
+          "1": "Access to candidate database",
+          "2": "Basic candidate search filters",
+          "3": "Company profile creation",
+          "4": "Basic analytics",
+          "5": "Email support"
+        },
+        "buttonText": "Start Hiring"
+      },
+      "business": {
+        "title": "Business",
+        "price": "$79.99",
+        "description": "Ideal for growing companies.",
+        "features": {
+          "0": "Unlimited job postings",
+          "1": "Advanced candidate search & filters",
+          "2": "Boosted job visibility",
+          "3": "Advanced candidate analytics",
+          "4": "Video interview scheduling",
+          "5": "Priority customer support",
+          "6": "Team collaboration tools",
+          "7": "Applicant tracking system"
+        },
+        "buttonText": "Choose Business"
+      },
+      "enterprise": {
+        "title": "Enterprise",
+        "price": "$199.99",
+        "description": "For large organizations.",
+        "features": {
+          "0": "Everything in Business",
+          "1": "Dedicated account manager",
+          "2": "Custom integrations & API access",
+          "3": "White-label solutions",
+          "4": "Advanced reporting & analytics",
+          "5": "Priority job placement",
+          "6": "Custom branding",
+          "7": "24/7 phone support",
+          "8": "Training & onboarding"
+        },
+        "buttonText": "Contact Sales"
+      }
+    },
+    "employerServices": {
+      "recruitmentConsulting": {
+        "title": "Recruitment Strategy Consulting",
+        "price": "$299.99",
+        "description": "Expert consultation to optimize your hiring process.",
+        "duration": "2 hours",
+        "features": {
+          "0": "Hiring process audit",
+          "1": "Job description optimization",
+          "2": "Candidate sourcing strategies",
+          "3": "Interview process design"
+        }
+      },
+      "employerBranding": {
+        "title": "Employer Branding Package",
+        "price": "$499.99",
+        "description": "Build an attractive employer brand to attract top talent.",
+        "duration": "2-3 weeks",
+        "features": {
+          "0": "Company culture assessment",
+          "1": "Employer value proposition",
+          "2": "Social media strategy",
+          "3": "Content creation guidelines"
+        }
+      },
+      "teamTraining": {
+        "title": "Hiring Team Training",
+        "price": "$799.99",
+        "description": "Train your team on modern recruitment best practices.",
+        "duration": "1 day workshop",
+        "features": {
+          "0": "Video interview techniques",
+          "1": "Bias-free hiring practices",
+          "2": "Candidate experience optimization",
+          "3": "Technology platform training"
+        }
+      }
+    },
+    "contactSales": "Contact our sales team for more information."
+  },
+  "profile": {
+    "profile": "Profile",
+    "editProfile": "Edit Profile",
+    "viewProfile": "View Profile",
+    "profilePicture": "Profile Picture",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "location": "Location",
+    "bio": "Bio",
+    "skills": "Skills",
+    "experience": "Experience",
+    "education": "Education",
+    "portfolio": "Portfolio",
+    "socialMedia": "Social Media",
+    "resume": "Resume",
+    "videoResume": "Video Resume",
+    "uploadVideo": "Upload Video",
+    "editVideo": "Edit Video",
+    "deleteVideo": "Delete Video",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password"
+  },
+  "settings": {
+    "settings": "Settings",
+    "generalSettings": "General Settings",
+    "accountSettings": "Account Settings",
+    "notificationSettings": "Notification Settings",
+    "privacySettings": "Privacy Settings",
+    "theme": "Theme",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "dateFormat": "Date Format",
+    "timeFormat": "Time Format",
+    "currency": "Currency",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "deleteAccount": "Delete Account"
+  },
+  "messages": {
+    "messages": "Messages",
+    "inbox": "Inbox",
+    "sent": "Sent",
+    "compose": "Compose",
+    "newMessage": "New Message",
+    "to": "To",
+    "subject": "Subject",
+    "messageContent": "Message Content",
+    "sendMessage": "Send Message",
+    "readMessage": "Read Message",
+    "reply": "Reply",
+    "forward": "Forward",
+    "deleteMessage": "Delete Message",
+    "markAsRead": "Mark as Read",
+    "markAsUnread": "Mark as Unread"
+  },
+  "errors": {
+    "genericError": "An error occurred. Please try again.",
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "notFound": "Page not found.",
+    "unauthorized": "You are not authorized to access this page.",
+    "forbidden": "Access forbidden.",
+    "validationError": "Please check your inputs and try again.",
+    "fileUploadError": "File upload failed. Please try again.",
+    "videoUploadError": "Video upload failed. Please try again.",
+    "loginRequired": "Please log in to continue.",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "rateLimitExceeded": "Too many requests. Please try again later.",
+    "maintenanceMode": "System is currently under maintenance. Please try again later."
+  },
+  "success": {
+    "profileUpdated": "Profile updated successfully!",
+    "videoUploaded": "Video uploaded successfully!",
+    "applicationSubmitted": "Application submitted successfully!",
+    "messagesSent": "Message sent successfully!",
+    "interviewScheduled": "Interview scheduled successfully!",
+    "settingsSaved": "Settings saved successfully!",
+    "passwordChanged": "Password changed successfully!",
+    "accountDeleted": "Account deleted successfully!",
+    "dataExported": "Data exported successfully!",
+    "subscriptionUpdated": "Subscription updated successfully!",
+    "paymentProcessed": "Payment processed successfully!"
+  },
+  "footer": {
+    "company": "Company",
+    "aboutUs": "About Us",
+    "howItWorks": "How It Works",
+    "faq": "FAQ",
+    "contactUs": "Contact Us",
+    "customerSupport": "Customer Support",
+    "credits": "Credits",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "communityGuidelines": "Community Guidelines",
+    "copyrightIpTerms": "Copyright & IP Terms",
+    "eula": "EULA",
+    "connect": "Connect",
+    "joinCommunity": "Join our community of professionals",
+    "verifiedCompanies": "Verified Companies",
+    "successRate": "87% Success Rate",
+    "support24_7": "24/7 Support",
+    "copyright": "© {{year}} SwipeScout. All rights reserved.",
+    "trustedBy": "Trusted by thousands of professionals",
+    "securePayments": "Secure Payments",
+    "support247": "24/7 Support",
+    "moneyBackGuarantee": "Money-back Guarantee"
+  },
+  "about": {
+    "meta": {
+      "title": "About SwipeScout | Our Mission and Team",
+      "description": "Learn about SwipeScout's mission to revolutionize recruitment with video resumes and our dedicated team of professionals.",
+      "keywords": "about SwipeScout, company mission, recruitment technology, hiring platform team",
+      "ogDescription": "Discover how SwipeScout is changing the way people find jobs and companies find talent through innovative technology."
+    },
+    "hero": {
+      "title": "About SwipeScout",
+      "subtitle": "Revolutionizing the way people find jobs and companies find talent",
+      "description": "Founded in 2025, SwipeScout combines the efficiency of modern technology with the human touch needed in recruitment. Our platform bridges the gap between talented professionals and innovative companies through intuitive video profiles and smart matching algorithms."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description1": "To make job searching as engaging and effective as social networking, while giving employers better tools to discover authentic talent.",
+      "description2": "We believe the traditional resume is outdated. Video profiles allow candidates to showcase their personality, communication skills, and passion in ways paper never could."
+    },
+    "stats": {
+      "jobsPosted": "Jobs Posted",
+      "candidatesHired": "Candidates Hired",
+      "partnerCompanies": "Partner Companies",
+      "satisfactionRate": "Satisfaction Rate"
+    },
+    "team": {
+      "title": "Meet Our Team",
+      "description": "Passionate professionals dedicated to transforming the recruitment experience",
+      "raj": {
+        "role": "Business Management Insights",
+        "bio": "+ Python experience"
+      },
+      "varshal": {
+        "role": "Operations & Strategy",
+        "bio": "Marketing & generalist"
+      },
+      "tareq": {
+        "role": "Founder & CEO",
+        "bio": "Vision Product & Growth"
+      },
+      "obaid": {
+        "role": "Co-founder & CTO",
+        "bio": "20+ yrs dev & Systems Architect"
+      },
+      "bahri": {
+        "role": "UI/UX Designer",
+        "bio": "Full Stack Dev. & interface lead"
+      }
+    }
+  },
+  "faq": {
+    "categories": {
+      "all": "All FAQs",
+      "general": "General",
+      "jobSeekers": "Job Seekers",
+      "employers": "Employers",
+      "technical": "Technical"
+    },
+    "questions": {
+      "whatIsSwipeScout": {
+        "question": "What is SwipeScout?",
+        "answer": "SwipeScout is a modern recruitment platform that connects job seekers with employers through video profiles and AI-powered matching. We make hiring more personal and efficient."
+      },
+      "createVideoResume": {
+        "question": "How do I create a video resume?",
+        "answer": "Navigate to your profile and click \"Create Video Resume\". You can record directly or upload a 45-second video showcasing your skills and personality."
+      },
+      "videoVisibility": {
+        "question": "Is my video resume publicly visible?",
+        "answer": "You control visibility in Settings. Choose between public, only to employers you apply to, or private until you activate it."
+      },
+      "jobPostingCost": {
+        "question": "How much does it cost to post jobs?",
+        "answer": "We offer free basic listings. Premium plans with advanced features start at $99/month. Volume discounts available for enterprise clients."
+      },
+      "videoFormats": {
+        "question": "What video formats are supported?",
+        "answer": "We support MP4, MOV, and WebM formats up to 100MB. Recommended resolution is 1080p (1920x1080) for optimal quality."
+      },
+      "uploadFailing": {
+        "question": "Why is my video upload failing?",
+        "answer": "Check file size (<100MB), format, and internet connection. If issues persist, try compressing your video or contact support."
+      },
+      "howMatching": {
+        "question": "How does matching work?",
+        "answer": "Our AI analyzes job requirements and candidate profiles to suggest the best matches. Employers and candidates can then connect directly."
+      },
+      "searchCandidates": {
+        "question": "Can I search candidates by skills?",
+        "answer": "Yes! Use our advanced search filters to find candidates by skills, experience level, location, and more."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "We would love to hear from you. You can reach out to us using the options below.",
+    "email": {
+      "title": "Email Us Directly",
+      "description": "For general questions or inquiries, please send us an email."
+    },
+    "discord": {
+      "title": "Join Our Discord Community",
+      "description": "Connect with us and the community for real-time support.",
+      "button": "Join Discord"
+    }
+  },
+  "jobseekerTabs": {
+    "categories": {
+      "dashboard": "Dashboard",
+      "jobSearch": "Job Search",
+      "profileContent": "Profile & Content",
+      "savedLiked": "Saved & Liked",
+      "activities": "Activities",
+      "communication": "Communication",
+      "videoManagement": "Video Management"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "analytics": "Analytics",
+      "findJobs": "Find Jobs",
+      "videoFeed": "Video Feed",
+      "myProfile": "My Profile",
+      "resumeBuilder": "Resume Builder",
+      "myVideos": "My Videos",
+      "savedVideos": "Saved Videos",
+      "likedVideos": "Liked Videos",
+      "interviews": "Interviews",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "notificationSettings": "Notification Settings",
+      "chat": "Chat",
+      "videoUpload": "Video Upload",
+      "videoEditor": "Video Editor"
+    },
+    "descriptions": {
+      "overview": "Your job seeker dashboard overview",
+      "analytics": "View analytics and insights",
+      "findJobs": "Search for job opportunities",
+      "videoFeed": "Browse job-related videos",
+      "myProfile": "Manage your profile",
+      "resumeBuilder": "Build your resume",
+      "myVideos": "Your uploaded videos",
+      "savedVideos": "Your saved videos",
+      "likedVideos": "Videos you liked",
+      "interviews": "Manage interviews",
+      "notifications": "Check notifications",
+      "settings": "Account settings",
+      "notificationSettings": "Manage notification settings",
+      "chat": "Chat with employers and support",
+      "videoUpload": "Upload new videos to your account",
+      "videoEditor": "Edit your uploaded videos"
+    }
+  },
+  "employerTabs": {
+    "categories": {
+      "dashboard": "Dashboard",
+      "talentAcquisition": "Talent Acquisition",
+      "jobManagement": "Job Management",
+      "companyContent": "Company Content",
+      "managementSettings": "Management & Settings",
+      "communication": "Communication",
+      "videoManagement": "Video Management"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "analytics": "Analytics",
+      "findCandidates": "Find Candidates",
+      "candidateVideos": "Candidate Videos",
+      "postNewJob": "Post New Job",
+      "myJobListings": "My Job Listings",
+      "companyProfile": "Company Profile",
+      "companyVideos": "Company Videos",
+      "videoEditor": "Video Editor",
+      "notifications": "Notifications",
+      "settings": "Settings",
+      "chat": "Chat",
+      "helpSupport": "Help & Support",
+      "videoUpload": "Video Upload"
+    },
+    "descriptions": {
+      "overview": "Your employer dashboard overview",
+      "analytics": "View analytics and reports",
+      "findCandidates": "Search and discover candidates",
+      "candidateVideos": "Browse candidate video profiles",
+      "postNewJob": "Create and post new job openings",
+      "myJobListings": "View and manage your job listings",
+      "companyProfile": "Edit and view your company profile",
+      "companyVideos": "Manage your company videos",
+      "videoEditor": "Edit your company videos",
+      "notifications": "Manage notification settings",
+      "settings": "Configure your account and company settings",
+      "chat": "Chat with candidates and team",
+      "helpSupport": "Get help and support",
+      "videoUpload": "Upload new videos to your account"
+    }
+  },
+  "legal": {
+    "backToHome": "Back to Home",
+    "downloadPDF": "Download PDF",
+    "lastUpdated": "Last updated",
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "introduction": {
+        "title": "Introduction",
+        "content": "SwipeScout (\"we,\" \"our,\" or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our video recruitment platform and related services."
+      },
+      "informationWeCollect": {
+        "title": "Information We Collect",
+        "personalInfo": {
+          "title": "Personal Information",
+          "accountInfo": "Account Information: Name, email address, phone number, profile picture"
+        }
+      }
+    },
+    "termsOfService": {
+      "title": "Terms of Service",
+      "introduction": {
+        "title": "Introduction",
+        "content": "Welcome to SwipeScout! These Terms of Service govern your use of our website and services."
+      },
+      "userObligations": {
+        "title": "User Obligations",
+        "content": "As a user, you agree to provide accurate information, maintain the security of your account, and use the service in compliance with applicable laws."
+      },
+      "intellectualProperty": {
+        "title": "Intellectual Property",
+        "content": "All content and materials on the SwipeScout platform are owned by SwipeScout or our licensors and are protected by intellectual property laws."
+      },
+      "termination": {
+        "title": "Termination",
+        "content": "We may suspend or terminate your access to the service at any time, with or without cause, and with or without notice."
+      }
+    },
+    "cookiePolicy": {
+      "title": "Cookie Policy",
+      "introduction": {
+        "title": "Introduction",
+        "content": "SwipeScout uses cookies to enhance your experience on our platform. This Cookie Policy explains what cookies are, how we use them, and your choices regarding cookies."
+      },
+      "whatAreCookies": {
+        "title": "What Are Cookies?",
+        "content": "Cookies are small text files that are used to store small pieces of information. They are stored on your device when the website is loaded on your browser."
+      },
+      "howSwipeScoutUsesCookies": {
+        "title": "How SwipeScout Uses Cookies",
+        "content": "When you use and access the Service, we may place a number of cookies files in your web browser. We use cookies for the following purposes: Authentication, Security, Performance, and Analytics."
+      },
+      "yourChoices": {
+        "title": "Your Choices Regarding Cookies",
+        "content": "If you prefer to avoid the use of cookies on the Service, you must first disable the use of cookies in your browser and then delete the cookies saved in your browser associated with this service."
+      }
+    },
+    "communityGuidelines": {
+      "title": "Community Guidelines",
+      "introduction": {
+        "title": "Introduction",
+        "content": "At SwipeScout, we are committed to maintaining a respectful and inclusive community. These Community Guidelines outline the standards of behavior expected from all users."
+      },
+      "acceptableUse": {
+        "title": "Acceptable Use",
+        "content": "You agree to use the Service only for purposes that are legal and in accordance with these Community Guidelines. You must not use the Service in any way that could damage, disable, overburden, or impair the Service."
+      },
+      "userConduct": {
+        "title": "User Conduct",
+        "content": "You are solely responsible for your interactions with other users of the Service. We reserve the right to monitor disputes between you and other users and to terminate your account if you violate these guidelines."
+      }
+    },
+    "copyrightAndIPTerms": {
+      "title": "Copyright & IP Terms",
+      "introduction": {
+        "title": "Introduction",
+        "content": "SwipeScout respects intellectual property rights and expects users to do the same. This section outlines our policies regarding copyright and intellectual property."
+      },
+      "userGeneratedContent": {
+        "title": "User-Generated Content",
+        "content": "You retain ownership of the content you create and share on SwipeScout. However, by using our service, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, and display such content."
+      },
+      "reportingInfringements": {
+        "title": "Reporting Infringements",
+        "content": "If you believe that your copyright or intellectual property rights have been violated, please contact us immediately with the relevant details."
+      }
+    },
+    "eula": {
+      "title": "End User License Agreement (EULA)",
+      "introduction": {
+        "title": "Introduction",
+        "content": "This End User License Agreement (\"EULA\") is a legal agreement between you and SwipeScout regarding your use of our software and services."
+      },
+      "licenseGrant": {
+        "title": "License Grant",
+        "content": "Subject to your compliance with this EULA, SwipeScout grants you a limited, non-exclusive, non-transferable license to use the software and services for your personal or internal business purposes."
+      },
+      "restrictions": {
+        "title": "Restrictions",
+        "content": "You may not: (a) modify, adapt, or create derivative works based on the software; (b) reverse engineer, decompile, or disassemble the software; (c) distribute, sell, or lease the software to any third party."
+      },
+      "termination": {
+        "title": "Termination",
+        "content": "This EULA is effective until terminated by either party. You may terminate it at any time by discontinuing use of the software and services and deleting all copies in your possession. SwipeScout may terminate it if you breach any terms of this EULA."
+      }
+    }
+  },
+  "templates": {
+    "title": "Interview Templates",
+    "subtitle": "Create and manage interview templates for your hiring process",
+    "createNew": "Create New Template",
+    "createFirst": "Create Your First Template",
+    "noTemplates": "No Templates Found",
+    "noTemplatesDescription": "You haven't created any interview templates yet. Start by creating your first template.",
+    "searchPlaceholder": "Search templates...",
+    "allCategories": "All Categories",
+    "categories": {
+      "general": "General",
+      "technical": "Technical",
+      "behavioral": "Behavioral",
+      "custom": "Custom"
+    },
+    "status": {
+      "active": "Active",
+      "draft": "Draft",
+      "archived": "Archived"
+    },
+    "questions": "Questions",
+    "questionsCount": "questions",
+    "responses": "Responses",
+    "minutes": "min",
+    "seconds": "sec",
+    "preview": "Preview",
+    "duplicate": "Duplicate",
+    "confirmDelete": "Are you sure you want to delete this template?",
+    "basicInfo": "Basic Information",
+    "templateTitle": "Template Title",
+    "titlePlaceholder": "Enter template title...",
+    "category": "Category",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the purpose of this template...",
+    "settings": "Settings",
+    "timeLimit": "Time Limit",
+    "allowRetakes": "Allow Retakes",
+    "makePublic": "Make Public",
+    "addQuestion": "Add Question",
+    "questionText": "Question Text",
+    "questionPlaceholder": "Enter your question...",
+    "questionType": "Question Type",
+    "textQuestion": "Text Question",
+    "videoQuestion": "Video Question",
+    "required": "Required",
+    "question": "Question",
+    "type": "Type",
+    "create": "Create Template",
+    "update": "Update Template",
+    "editTemplate": "Edit Template"
+  },
+  "interview": {
+    "templateNotFound": "Template Not Found",
+    "backToTemplates": "Back to Templates",
+    "questions": "Questions",
+    "questionsToAnswer": "questions to answer",
+    "minutes": "Minutes",
+    "totalTime": "total time limit",
+    "videoResponses": "Video Responses",
+    "recordYourAnswers": "Record your answers",
+    "instructions": "Instructions",
+    "instruction1": "Read each question carefully before responding",
+    "instruction2": "You can record video responses or type text answers",
+    "instruction3": "Make sure you have good lighting and audio quality",
+    "instruction4": "You can retake recordings if needed",
+    "startInterview": "Start Interview",
+    "question": "Question",
+    "of": "of",
+    "progress": "Progress",
+    "textQuestion": "Text",
+    "videoQuestion": "Video",
+    "timeLimit": "Time Limit",
+    "seconds": "seconds",
+    "yourAnswer": "Your Answer",
+    "typeYourAnswer": "Type your answer here...",
+    "previous": "Previous",
+    "nextQuestion": "Next Question",
+    "submitInterview": "Submit Interview",
+    "recordYourResponse": "Record Your Response",
+    "recordingInstructions": "Click start to begin recording your video response",
+    "startRecording": "Start Recording",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "preview": "Preview",
+    "hidePreview": "Hide Preview",
+    "retake": "Retake",
+    "recordingComplete": "Recording Complete",
+    "duration": "Duration"
+  },
+  "analysis": {
+    "interviewAnalysis": "Interview Analysis",
+    "responseNotFound": "Response Not Found",
+    "backToTemplates": "Back to Templates",
+    "status": {
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "submitted": "Submitted",
+      "reviewed": "Reviewed"
+    },
+    "transcribed": "Transcribed",
+    "startTranscription": "Start Transcription",
+    "generateAnalysis": "Generate Analysis",
+    "transcriptionProgress": "Transcription Progress",
+    "analysisProgress": "Analysis Progress",
+    "overallPerformance": "Overall Performance",
+    "overallScore": "Overall Score",
+    "communicationScore": "Communication Score",
+    "technicalScore": "Technical Score",
+    "completenessScore": "Completeness Score",
+    "strengths": "Strengths",
+    "areasForImprovement": "Areas for Improvement",
+    "recommendations": "Recommendations",
+    "questionByQuestion": "Question-by-Question Analysis",
+    "question": "Question",
+    "videoNotSupported": "Your browser does not support video playback",
+    "transcript": "Transcript",
+    "textResponse": "Text Response",
+    "aiAnalysis": "AI Analysis",
+    "communicationQuality": "Communication Quality",
+    "keywordsFound": "Keywords Found",
+    "improvementSuggestions": "Improvement Suggestions"
+  }
+}
+

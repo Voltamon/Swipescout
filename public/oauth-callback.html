@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>OAuth Callback</title>
+  </head>
+  <body>
+    <script>
+      (function() {
+        // Parse search/hash for token or code
+        const params = new URLSearchParams(window.location.search || window.location.hash.replace(/^#/, '?'));
+        const payload = {};
+        for (const [k, v] of params.entries()) payload[k] = v;
+
+        try {
+          // Post message to opener (only same-origin expected)
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({ type: 'OAUTH_COMPLETE', payload }, window.location.origin);
+            // Try to close the popup
+            window.close();
+            // If window.close() is blocked, show a small message to the user
+            setTimeout(() => {
+              document.body.innerText = 'Authentication complete. You can close this window.';
+            }, 500);
+          } else {
+            document.body.innerText = 'Authentication complete. Please return to the original window.';
+          }
+        } catch (e) {
+          console.error('oauth-callback postMessage failed', e);
+          document.body.innerText = 'Authentication complete. Please return to the original window.';
+        }
+      })();
+    </script>
+  </body>
+</html>

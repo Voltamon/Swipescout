@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   Typography,
@@ -46,11 +46,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom"; // Add useParams
 import { uploadVideo, saveVideoMetadata } from '../services/videoService';
 import { v4 as uuidv4 } from 'uuid';
-import { useVideoContext } from '../context/VideoContext';
+import { useVideoContext } from '../contexts/VideoContext';
 import { 
   checkUploadStatus, 
 
 } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 // Styled components (keep the same as before)
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -141,7 +142,7 @@ const VideoUpload = ({newjobid, onComplete, onStatusChange, embedded}) => {
   const [uploadStatus, setUploadStatus] = useState(null);
   // Destructure addLocalVideo and updateVideoStatus from context
   const { addLocalVideo, updateVideoStatus } = useVideoContext();
-
+  const { user, role } = useAuth();
   
   // Refs
   const videoRef = useRef(null);
@@ -167,6 +168,8 @@ const VideoUpload = ({newjobid, onComplete, onStatusChange, embedded}) => {
   const [videoTitle, setVideoTitle] = useState('');
   const [videoPosition, setVideoPosition] = useState('main');
   const [videoType, setVideoType] = useState('intro');
+  const [category, setCategory] = useState('');
+  const [source, setSource] = useState('');
   const [hashtags, setHashtags] = useState([]);
   const [newHashtag, setNewHashtag] = useState('');
   
@@ -308,6 +311,8 @@ const handleSubmit = async () => {
     formData.append('title', videoTitle);
     formData.append('jobId', newjobid || ''); // Use newjobid prop
     formData.append('hashtags', hashtags.join(','));
+  formData.append('category', category || '');
+  formData.append('source', source || '');
     formData.append('videoType', videoType);
     formData.append('video_position', videoPosition);
     formData.append('videoDuration', videoRef.current?.duration?.toFixed(0) || '30');
@@ -325,6 +330,8 @@ const handleSubmit = async () => {
       hashtags: hashtags.join(','),
       job_id: newjobid || null,
       video_duration: videoRef.current?.duration || 0,
+      category: category || null,
+      source: source || null,
       progress: 0,
       status: 'uploading',
       isLocal: true,
@@ -357,7 +364,10 @@ const handleSubmit = async () => {
     // Call onComplete here to signal to the parent (PostJobPage) that the upload process has been initiated
     // and the dialog can be closed.
         if (!newjobid ) { //&& !embedded
-      navigate('/jobseeker-tabs?page=videos&tab=my-videos'); 
+          if(role=='job_seeker')
+      navigate('/jobseeker-tabs?group=profileContent&tab=my-videos'); 
+    else if(role=='employer') 
+      navigate('/employer-tabs?group=profileContent&tab=my-videos');
     }
     if (onComplete) {
       onComplete(serverUploadId); 
@@ -763,6 +773,27 @@ const startRecording = async () => {
             onChange={(e) => setVideoTitle(e.target.value)}
             required
             placeholder="e.g., My Professional Introduction"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Category"
+            variant="outlined"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="e.g., Engineering, Design"
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Source / Page"
+            variant="outlined"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            placeholder="e.g., Profile, Job Post"
           />
         </Grid>
         

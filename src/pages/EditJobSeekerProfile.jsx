@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Container,
@@ -168,7 +168,7 @@ const TabPanel = (props) => {
   );
 };
 
-const EditJobSeekerProfile = () => {
+const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSaved = () => {} }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -276,95 +276,83 @@ const EditJobSeekerProfile = () => {
 
   const createStarterProfile = async () => {
     setSaving(true);
-    setProfile({
-      ...profile,
-      first_name: ''
-    });
-    await updateUserProfile(profile);
-    setSaving(false);
+    const starterProfile = { first_name: '' };
+    try {
+      const resp = await updateUserProfile(starterProfile);
+      // update local state with server response if provided, otherwise use starterProfile
+      const newProfile = resp?.data || starterProfile;
+      setProfile(newProfile);
+      setSaving(false);
+      return newProfile;
+    } catch (err) {
+      setSaving(false);
+      throw err;
+    }
   }
 
-  // Fetch user data
+  // Fetch user data (or use initialProfile passed by parent)
   useEffect(() => {
-    let profileResponse;
     const fetchUserData = async () => {
+      if (initialProfile) {
+        setProfile(initialProfile);
+        setAvatarPicture(initialProfile.profile_pic ? `${VITE_API_BASE_URL}${initialProfile.profile_pic}?t=${Date.now()}` : '');
+        setLoading(false);
+        return;
+      }
+
+      let profileResponse;
       try {
         setLoading(true);
-
-        try{
-        profileResponse = await getUserProfile();
-        console.log('profile::::0000',profileResponse.data);
-        setProfile(profileResponse.data);
-        } catch(error) {
-        if (error.status === 404) {
-          try {
-            await createStarterProfile();
-            profileResponse = await getUserProfile();
-            console.log('profile::::1111',profileResponse.data);
-            setProfile(profileResponse.data);
-            setSnackbar({
-              open: true,
-              message: 'Starter profile created..',
-              severity: 'success'
-            });
-          } catch (error) {
-            setSnackbar({
-              open: true,
-              message: 'Failed to create starter profile ..',
-              severity: 'error'
-            });
+        try {
+          profileResponse = await getUserProfile();
+        } catch (error) {
+          if (error?.status === 404) {
+            try {
+              await createStarterProfile();
+              profileResponse = await getUserProfile();
+              setSnackbar({ open: true, message: 'Starter profile created..', severity: 'success' });
+            } catch (err) {
+              setSnackbar({ open: true, message: 'Failed to create starter profile ..', severity: 'error' });
+            }
+          } else {
+            throw error;
           }
-        }     
-      }
-    
-        const [skillsResponse, availableSkillsResponse,
-          experiencesResponse, educationResponse, videosResponse] = await Promise.all([
-           
-            getUserSkills(),
-            getSkills(),
-            getUserExperiences(),
-            getUserEducation(),
-            getUserVideos()
-          ]);
-        console.log("Profile::::::3333",profileResponse.data);
+        }
+
+        const [skillsResponse, availableSkillsResponse, experiencesResponse, educationResponse, videosResponse] = await Promise.all([
+          getUserSkills(),
+          getSkills(),
+          getUserExperiences(),
+          getUserEducation(),
+          getUserVideos()
+        ]);
+
         setProfile(profileResponse.data);
-        console.log("Profile::::::4444", profileResponse.data);
-        setSkills(skillsResponse.data.skills || []);
-        setAvailableSkills(availableSkillsResponse.data.skills || []);
-        setExperiences(experiencesResponse.data.experiences || []);
-        setEducation(educationResponse.data.educations || []);
-        setVideos(videosResponse.data.videos || []);
+        setSkills(skillsResponse.data?.skills || []);
+        setAvailableSkills(availableSkillsResponse.data?.skills || []);
+        setExperiences(experiencesResponse.data?.experiences || []);
+        setEducation(educationResponse.data?.educations || []);
+        setVideos(videosResponse.data?.videos || []);
 
         setAvatarVersion(0);
-
-
-        const initialAvatarUrl = profileResponse.data.profile_pic
-          ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}`
-          : '';
-
-        // Verify the image exists before setting it
+        const initialAvatarUrl = profileResponse.data?.profile_pic ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}` : '';
         try {
-          if (initialAvatarUrl) {
-            await verifyImageAvailability(initialAvatarUrl);
-          }
+          if (initialAvatarUrl) await verifyImageAvailability(initialAvatarUrl);
           setAvatarPicture(initialAvatarUrl);
-        } catch (error) {
-          console.error('Avatar image not available:', error);
+        } catch (err) {
+          console.error('Avatar image not available:', err);
           setAvatarPicture('');
         }
 
-        setProfile(profileResponse.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
-      
-        
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [initialProfile]);
 
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -397,14 +385,30 @@ const EditJobSeekerProfile = () => {
     try {
       setSaving(true);
       console.log("profile::::22222",profile);
-      await updateUserProfile(profile);
+      const response = await updateUserProfile(profile);
+      let updatedProfile = response?.data || response;
+      // Normalize backend picture field to frontend expected field
+      if (updatedProfile && updatedProfile.profile_picture_url && !updatedProfile.profile_pic) {
+        updatedProfile = { ...updatedProfile, profile_pic: updatedProfile.profile_picture_url };
+      }
+
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
         severity: 'success'
       });
 
+      // Update local state and inform parent so the profile page refreshes
       setSaving(false);
+      setProfile(updatedProfile);
+      try {
+        onSaved && onSaved(updatedProfile);
+      } catch (e) {
+        // ignore callback errors
+      }
+      try {
+        onClose && onClose();
+      } catch (e) {}
     } catch (error) {
       console.error('Error updating profile:', error);
       setSnackbar({
@@ -447,8 +451,9 @@ const EditJobSeekerProfile = () => {
         }
       }
 
-      if (loaded) { 
-        setProfile(prev => ({ ...prev, profile_pic: response.data.logo_url }));
+      if (loaded) {
+        const newPic = response.data?.profile?.profile_pic || response.data.logo_url;
+        if (newPic) setProfile(prev => ({ ...prev, profile_pic: newPic }));
         setAvatarPicture(serverUrl);
         showSnackbar("Profile picture updated!", "success");
       } else {
@@ -759,7 +764,7 @@ const EditJobSeekerProfile = () => {
 
   const handleUploadVideo = () => {
     // navigate('/video-upload');
-    navigate('/jobseeker-tabs?page=videos&tab=upload-video');
+    navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
   };
 
   const handleEditVideo = (videoId) => {

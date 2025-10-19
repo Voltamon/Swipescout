@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Typography,
   Link,
   IconButton,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Grid
 } from "@mui/material";
 import {
   Facebook,
@@ -17,114 +18,126 @@ import {
   People
 } from "@mui/icons-material";
 import { styled } from "@mui/system";
+import { useTranslation } from 'react-i18next';
+import { Link as RouterLink } from 'react-router-dom'; // Import Router Link
 
 const StyledFooter = styled(Box)(({ theme }) => ({
-  background: theme.palette.primary.dark, // Dark primary color for footer
-  color: theme.palette.primary.contrastText, // White text
-  padding: theme.spacing(6, 3), // Generous padding
+  background: theme.palette.primary.dark,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(6, 3),
   textAlign: "center",
-  borderRadius: theme.shape.borderRadius, // Apply global border radius
-  boxShadow: theme.shadows[4], // More prominent shadow
-  margin: theme.spacing(2), // Add margin for a floating effect
-  width: `calc(100% - ${theme.spacing(5)})`, // Account for margin
-  left: "49%",
-  transform: "translateX(-50%)", // Center the footer
-  position: "relative" // Ensure position for pseudo-elements if any
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[4],
+  margin: theme.spacing(2),
+  width: `calc(100% - ${theme.spacing(4)})`,
+  left: "50%",
+  transform: "translateX(-50%)",
+  position: "relative",
+  [theme.breakpoints.down("sm")]: {
+    width: `calc(100% - ${theme.spacing(2)})`,
+    margin: theme.spacing(1),
+  },
 }));
 
-const FooterLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.primary.contrastText, // White links
+// Update FooterLink to use RouterLink
+const FooterLink = styled(RouterLink)(({ theme }) => ({
+  color: theme.palette.primary.contrastText,
   textDecoration: "none",
   fontSize: "1rem",
   fontWeight: 600,
   transition: "color 0.2s ease-in-out",
   "&:hover": {
-    color: theme.palette.secondary.light // Light secondary on hover
-  }
+    color: theme.palette.secondary.light,
+  },
 }));
 
 const SocialButton = styled(IconButton)(({ theme }) => ({
-  color: theme.palette.primary.contrastText, // White icons
+  color: theme.palette.primary.contrastText,
   transition: "transform 0.2s ease-in-out",
   "&:hover": {
     transform: "scale(1.1)",
-    color: theme.palette.secondary.light // Light secondary on hover
+    color: theme.palette.secondary.light,
   },
-  backgroundColor: "rgba(255,255,255,0.1)", // Subtle background
-  borderRadius: theme.shape.borderRadius // Rounded buttons
+  backgroundColor: "rgba(255,255,255,0.1)",
+  borderRadius: theme.shape.borderRadius,
 }));
 
 const Footer = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { t } = useTranslation();
 
   return (
     <StyledFooter>
+      <Grid container spacing={isMobile ? 2 : 4} justifyContent="center" sx={{ mb: 4 }}>
+        {/* Company Column */}
+        <Grid item xs={12} sm={4} md={3}>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: theme.palette.secondary.light }}>
+            {t('footer.company')}
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <FooterLink to="/about">{t('footer.aboutUs')}</FooterLink>
+            <FooterLink to="/how-it-works">{t('footer.howItWorks')}</FooterLink>
+            <FooterLink to="/FAQs">{t('footer.faq')}</FooterLink>
+            <FooterLink to="/contact">{t('footer.contactUs')}</FooterLink>
+            <FooterLink to="/customer-support">{t('footer.customerSupport')}</FooterLink>
+            <FooterLink to="/credits">{t('footer.credits')}</FooterLink>
+          </Box>
+        </Grid>
+
+        {/* Legal Column (Cluely-style) */}
+        <Grid item xs={12} sm={4} md={3}>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: theme.palette.secondary.light }}>
+            {t('footer.legal')}
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <FooterLink to="/privacy-policy">{t('footer.privacyPolicy')}</FooterLink>
+            <FooterLink to="/terms-of-service">{t('footer.termsOfService')}</FooterLink>
+            <FooterLink to="/cookie-policy">{t('footer.cookiePolicy')}</FooterLink>
+            <FooterLink to="/community-guidelines">{t('footer.communityGuidelines')}</FooterLink>
+            <FooterLink to="/copyright-ip-terms">{t('footer.copyrightIpTerms')}</FooterLink>
+            <FooterLink to="/eula">{t('footer.eula')}</FooterLink>
+          </Box>
+        </Grid>
+
+        {/* Connect Column */}
+        <Grid item xs={12} sm={4} md={3}>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: theme.palette.secondary.light }}>
+            {t('footer.connect')}
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-start", gap: 2, mt: 1 }}>
+            <SocialButton href="#" aria-label="Facebook">
+              <Facebook />
+            </SocialButton>
+            <SocialButton href="#" aria-label="Twitter">
+              <Twitter />
+            </SocialButton>
+            <SocialButton href="#" aria-label="LinkedIn">
+              <LinkedIn />
+            </SocialButton>
+            <SocialButton href="#" aria-label="Instagram">
+              <Instagram />
+            </SocialButton>
+          </Box>
+          <Typography
+            variant="body1"
+            sx={{ color: theme.palette.primary.contrastText + "CC", mt: 3 }}
+          >
+            {t('footer.joinCommunity')}
+          </Typography>
+        </Grid>
+      </Grid>
+
       <Box
         sx={{
-          mb: 4,
           display: "flex",
           justifyContent: "center",
+          gap: { xs: 2, md: 4 },
+          mb: 4,
           flexWrap: "wrap",
-          gap: { xs: 2, md: 3 } // Responsive gap
-        }}
-      >
-        <FooterLink href="/about" underline="hover">
-          About Us
-        </FooterLink>
-        <FooterLink href="/customer-support" underline="hover">
-          Customer Support
-        </FooterLink>
-        <FooterLink href="/contact" underline="hover">
-          Contact
-        </FooterLink>
-        <FooterLink href="/how-it-works" underline="hover">
-          How SwipeScout Works
-        </FooterLink>
-        <FooterLink href="/FAQs" underline="hover">
-          FAQ
-        </FooterLink>
-        <FooterLink href="#" underline="hover">
-          Credits
-        </FooterLink>
-        <FooterLink href="#" underline="hover">
-          Privacy Policy
-        </FooterLink>
-        <FooterLink href="#" underline="hover">
-          Terms and Conditions
-        </FooterLink>
-      </Box>
-
-      <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="body1"
-          sx={{ color: theme.palette.primary.contrastText + "CC", mb: 3 }}
-        >
-          Join our community of professionals
-        </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-          <SocialButton href="#">
-            <Facebook />
-          </SocialButton>
-          <SocialButton href="#">
-            <Twitter />
-          </SocialButton>
-          <SocialButton href="#">
-            <LinkedIn />
-          </SocialButton>
-          <SocialButton href="#">
-            <Instagram />
-          </SocialButton>
-        </Box>
-      </Box>
-
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: { xs: 2, md: 4 }, // Responsive gap
-          mb: 4,
-          flexWrap: "wrap"
+          borderTop: `1px solid ${theme.palette.primary.light}40`,
+          pt: 4,
+          mt: 4,
         }}
       >
         <Typography
@@ -137,9 +150,8 @@ const Footer = () => {
         >
           <CheckCircle
             sx={{ color: theme.palette.success.main, mr: 1, fontSize: "1rem" }}
-          />{" "}
-          {/* Green for success */}
-          Verified Companies
+          />
+          {t('footer.verifiedCompanies')}
         </Typography>
         <Typography
           variant="caption"
@@ -151,9 +163,8 @@ const Footer = () => {
         >
           <TrendingUp
             sx={{ color: theme.palette.info.main, mr: 1, fontSize: "1rem" }}
-          />{" "}
-          {/* Blue for info */}
-          87% Success Rate
+          />
+          {t('footer.successRate')}
         </Typography>
         <Typography
           variant="caption"
@@ -165,9 +176,8 @@ const Footer = () => {
         >
           <People
             sx={{ color: theme.palette.warning.main, mr: 1, fontSize: "1rem" }}
-          />{" "}
-          {/* Orange for warning/attention */}
-          24/7 Support
+          />
+          {t('footer.support24_7')}
         </Typography>
       </Box>
 
@@ -175,7 +185,7 @@ const Footer = () => {
         variant="body2"
         sx={{ color: theme.palette.primary.contrastText + "CC" }}
       >
-        © {new Date().getFullYear()} SwipeScout. All rights reserved.
+        {t('footer.copyright', { year: new Date().getFullYear() })}
       </Typography>
     </StyledFooter>
   );

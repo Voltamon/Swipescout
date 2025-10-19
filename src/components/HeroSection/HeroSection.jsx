@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography, Button, useMediaQuery, useTheme } from "@mui/material";
 import phoneImage from "../../assets/phone.png";
 
