@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box, Container, Grid, Typography, Card, CardContent } from '@mui/material';
 import { VideoCall, People, TrendingUp } from '@mui/icons-material';
 import Header from '../components/Headers/Header'; // Updated import path

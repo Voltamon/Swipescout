@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState  } from 'react';
 import {
   AppBar,
   Box,
@@ -9,7 +9,11 @@ import {
   Avatar,
   useTheme,
   useMediaQuery,
-  Badge
+  Badge,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText
 } from "@mui/material";
 import {
   Brightness4 as DarkModeIcon,
@@ -19,15 +23,39 @@ import {
   ExitToApp,
   Notifications as NotificationsIcon,
   VideoCall as VideoCallIcon,
+  Language as LanguageIcon,
+  CloudUpload
 } from "@mui/icons-material";
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Header = ({ darkMode, setDarkMode }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { user, logout, role } = useAuth();
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const [languageAnchorEl, setLanguageAnchorEl] = useState(null);
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' }
+  ];
+
+  const handleLanguageMenuOpen = (event) => {
+    setLanguageAnchorEl(event.currentTarget);
+  };
+
+  const handleLanguageMenuClose = () => {
+    setLanguageAnchorEl(null);
+  };
+
+  const handleLanguageChange = (languageCode) => {
+    i18n.changeLanguage(languageCode);
+    handleLanguageMenuClose();
+  };
 
   // Safe access to theme properties with fallbacks
   const borderColor = theme.palette.border?.primary || theme.palette.divider || '#e5e7eb';
@@ -123,6 +151,20 @@ const Header = ({ darkMode, setDarkMode }) => {
               {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
 
+            {/* Language Toggle Icon */}
+            <IconButton
+              color="inherit"
+              onClick={handleLanguageMenuOpen}
+              sx={{
+                color: iconColor,
+                '&:hover': {
+                  backgroundColor: hoverBg
+                }
+              }}
+            >
+              <LanguageIcon />
+            </IconButton>
+
             <IconButton
               color="inherit"
               onClick={() => navigate("/")}
@@ -177,9 +219,9 @@ const Header = ({ darkMode, setDarkMode }) => {
               onClick={() =>
                 {
                  //navigate('/jobseeker-tabs?page=videos&tab=upload-video')}
-                 const path = role === 'job_seeker' ? '/jobseeker-tabs?page=videos&tab=upload-video' :
-                 role === 'employer' ? '/employer-tabs?page=videos&tab=upload-video' :
-                 role === 'admin' ? '/admin-tabs?page=videos&tab=upload-video' : '/';
+                 const path = role === 'job_seeker' ? '/jobseeker-tabs?group=profileContent&tab=video-upload' :
+                 role === 'employer' ? '/employer-tabs?group=profileContent&tab=upload-video' :
+                 role === 'admin' ? '/admin-tabs?group=profileContent&tab=upload-video' : '/';
                  navigate(path);
                 }
               }
@@ -193,6 +235,15 @@ const Header = ({ darkMode, setDarkMode }) => {
               <VideoCallIcon />
             </IconButton>
 
+            {/* New Video Upload Button */}
+            <IconButton
+              color="inherit"
+              onClick={() => navigate('/video-upload')}
+              sx={{ ml: 1 }}
+            >
+              <CloudUpload />
+            </IconButton>
+
             <IconButton
               onClick={handleProfileClick}
               sx={{
@@ -204,7 +255,7 @@ const Header = ({ darkMode, setDarkMode }) => {
               }}
             >
               <Avatar
-                src={user?.photo_url ? `${import.meta.env.VITE_API_BASE_URL}${user.photo_url}` : user?.photoUrl || ''}
+                src={user?.photoUrl ? `${import.meta.env.VITE_API_BASE_URL}${user.photoUrl}` : user?.photoUrl || ''}
                 alt={user?.displayName?.[0] || user?.name?.[0] || 'U'}
                 sx={{
                   width: 40,
@@ -231,6 +282,34 @@ const Header = ({ darkMode, setDarkMode }) => {
           </Box>
         </Toolbar>
       </Container>
+
+      {/* Language Selection Menu */}
+      <Menu
+        anchorEl={languageAnchorEl}
+        open={Boolean(languageAnchorEl)}
+        onClose={handleLanguageMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        {languages.map((language) => (
+          <MenuItem
+            key={language.code}
+            onClick={() => handleLanguageChange(language.code)}
+            selected={i18n.language === language.code}
+          >
+            <ListItemIcon>
+              <span style={{ fontSize: '1.2em' }}>{language.flag}</span>
+            </ListItemIcon>
+            <ListItemText primary={language.name} />
+          </MenuItem>
+        ))}
+      </Menu>
     </AppBar>
   );
 };

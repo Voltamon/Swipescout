@@ -1,5 +1,5 @@
 // Linkedincallback.jsx
-import { useEffect } from 'react';
+import { useEffect , useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";

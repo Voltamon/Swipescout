@@ -39,8 +39,9 @@ import {
 } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { getJobDetails } from "../services/api";
-import { useAuth } from "../hooks/useAuth";
-import { useVideoContext } from '../context/VideoContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
+import { useVideoContext } from '../contexts/VideoContext';
 import FeedIcon from '@mui/icons-material/Feed';
 
 // Styled components

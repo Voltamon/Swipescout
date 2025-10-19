@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Container,
@@ -94,7 +94,7 @@ const EditVideoPage = () => {
   const [newHashtag, setNewHashtag] = useState('');
   const [videoState, setVideoState] = useState({
     isPlaying: false,
-    isMuted: false
+    isMuted: false 
   });
   const [loading, setLoading] = useState(true);
   

@@ -41,7 +41,8 @@ import {
     People as PeopleIcon,
     Assessment as AssessmentIcon
 } from '@mui/icons-material';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import { useContext } from 'react';
 import {
     getEmployerDashboardStats,
     getRecentActivities,
@@ -248,7 +249,7 @@ const EmployerDashboard = () => {
     return (
         <DashboardContainer maxWidth="lg" sx={{ mt: 3}}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h4">{'Welcome '+ user.display_name + ' to Your Dashboard' }  </Typography>
+                <Typography variant="h4">{'Welcome '+ user.displayName + ' to Your Dashboard' }  </Typography>
 
                 <Box>
                     <Button
@@ -484,7 +485,7 @@ const EmployerDashboard = () => {
                                             <TableRow key={candidate.id}>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                        <Avatar src={candidate.photo_url} sx={{ mr: 1, width: 32, height: 32 }} />
+                                                        <Avatar src={candidate.photoUrl} sx={{ mr: 1, width: 32, height: 32 }} />
                                                         {candidate.name}
                                                     </Box>
                                                 </TableCell>
@@ -606,7 +607,7 @@ const EmployerDashboard = () => {
                                 sx={{ py: 2 }}
                             >
                                 <Avatar
-                                    src={candidate.photo_url}
+                                    src={candidate.photoUrl}
                                     sx={{ mr: 2 }}
                                 />
                                 <ListItemText

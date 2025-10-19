@@ -1,5 +1,5 @@
-import axios from 'axios';
-import api from './api.js';
+import axios from "axios";
+import api from "./api.js";
 
 /** 
  * Service for handling chat-related API requests
@@ -11,7 +11,7 @@ import api from './api.js';
  * @returns {Promise} Promise object with conversations data
  */
 export const getConversations = () => {
-  return api.get('/chat/conversations');
+  return api.get("/chat/conversations");
 };
 
 /**
@@ -19,7 +19,7 @@ export const getConversations = () => {
  * @param {string} conversationId - ID of the conversation
  * @returns {Promise} Promise object with messages data
  */
-export const getMessages = (conversationId) => {
+export const getMessages = conversationId => {
   return api.get(`/chat/conversation/${conversationId}`);
 };
 
@@ -28,11 +28,8 @@ export const getMessages = (conversationId) => {
  * @returns {Promise} Promise object with all users data
  */
 export const getAllUsers = () => {
-  return api.get('chat/users/all'); // Assuming your backend endpoint for all users is /api/users/all
+  return api.get("/chat/users/all"); // Backend endpoint for all users
 };
-
-
-
 
 /**
  * Send a new message in a conversation
@@ -52,7 +49,7 @@ export const sendMessage = (conversationId, content) => {
  * @param {string} messageId - ID of the message
  * @returns {Promise} Promise object with the updated message data
  */
-export const markAsRead = (messageId) => {
+export const markAsRead = messageId => {
   return api.post(`/chat/read/${messageId}`);
 };
 
@@ -71,7 +68,7 @@ export const startConversation = (receiverId, initialMessage) => {
  * @param {string} messageId - ID of the message to delete
  * @returns {Promise} Promise object with deletion confirmation
  */
-export const deleteMessage = (messageId) => {
+export const deleteMessage = messageId => {
   return api.delete(`/chat/message/${messageId}`);
 };
 
@@ -80,5 +77,5 @@ export const deleteMessage = (messageId) => {
  * @returns {Promise} Promise object with unread message count
  */
 export const getUnreadCount = () => {
-  return api.get('/chat/unread/count');
+  return api.get("/chat/unread/count");
 };

@@ -1,530 +1,535 @@
-import React, { useState } from 'react';
-import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
-import { 
-    Box, 
-    Container, 
-    Typography, 
-    Paper, 
-    Grid,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Link,
-    Avatar,
-    Menu,
-    MenuItem,
+import React, { useContext, useState, useEffect  } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Tabs,
+  Tab,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  Chip,
+  Avatar,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+  LinearProgress,
+  Tooltip
 } from '@mui/material';
-import { 
-    Users, 
-    Briefcase, 
-    FileText, 
-    Clock as UserClock,
-    Facebook,
-    Twitter,
-    Linkedin,
-    Instagram,
-    LogOut,
-    User,
-    Settings,
-    HelpCircle
-} from 'lucide-react';
-import { blue, amber, green, red, grey, indigo } from '@mui/material/colors';
-// import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Dashboard,
+  People,
+  VideoLibrary,
+  Work,
+  Analytics,
+  Settings,
+  Block,
+  CheckCircle,
+  Warning,
+  Delete,
+  Edit,
+  Visibility,
+  TrendingUp,
+  TrendingDown,
+  Psychology
+} from '@mui/icons-material';
 
-// ===============================
-// Styles
-// ===============================
+function TabPanel({ children, value, index, ...other }) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`admin-tabpanel-${index}`}
+      aria-labelledby={`admin-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
-const primaryColor = blue[600];  // #2563EB
-const secondaryColor = amber[500]; // #F59E0B
-const bgLight = grey[50];       // #F9FAFB
-const textDark = grey[800];      // #1F2937
-const textLight = grey[500];    // #6B7280
-const white = '#FFFFFF';
-const cardShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-const successColor = green[500];    // #10B981
-const dangerColor = red[500];      // #EF4444
-const indigoColor = indigo[500];
-const warningColor = amber[500];
+const AdminDashboard = () => {
+  const { t } = useTranslation();
+  const [tabValue, setTabValue] = useState(0);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalVideos: 0,
+    totalJobs: 0,
+    activeUsers: 0,
+    pendingReports: 0,
+    aiAnalyses: 0
+  });
+  const [users, setUsers] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [reports, setReports] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const PoppinsFont = "'Poppins', sans-serif";
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-// Create a theme with Poppins font
-const theme = createTheme({
-    typography: {
-        fontFamily: PoppinsFont,
-    },
-});
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      // Mock data - replace with actual API calls
+      setStats({
+        totalUsers: 1250,
+        totalVideos: 3420,
+        totalJobs: 890,
+        activeUsers: 890,
+        pendingReports: 12,
+        aiAnalyses: 2150
+      });
 
-const Root = styled('div')({
-    fontFamily: PoppinsFont,
-});
+      setUsers([
+        { id: 1, name: 'John Doe', email: 'john@example.com', role: 'job_seeker', status: 'active', joinDate: '2024-01-15' },
+        { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'employer', status: 'active', joinDate: '2024-01-20' },
+        { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'job_seeker', status: 'suspended', joinDate: '2024-02-01' }
+      ]);
 
-const HeaderContainer = styled(Container)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: theme.spacing(1.5, 0),
-    [theme.breakpoints.down('md')]: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-    },
-}));
+      setVideos([
+        { id: 1, title: 'Frontend Developer Introduction', user: 'John Doe', status: 'approved', views: 1250, reports: 0 },
+        { id: 2, title: 'Company Culture Video', user: 'Jane Smith', status: 'pending', views: 890, reports: 2 },
+        { id: 3, title: 'Software Engineer Portfolio', user: 'Bob Johnson', status: 'flagged', views: 450, reports: 5 }
+      ]);
 
-const Logo = styled('a')({
-    fontSize: '24px',
-    fontWeight: 700,
-    color: primaryColor,
-    textDecoration: 'none',
-    '& span': {
-        color: secondaryColor,
-    },
-});
+      setJobs([
+        { id: 1, title: 'Senior React Developer', company: 'Tech Corp', status: 'active', applications: 45, posted: '2024-03-01' },
+        { id: 2, title: 'UX Designer', company: 'Design Studio', status: 'active', applications: 32, posted: '2024-03-05' },
+        { id: 3, title: 'Backend Engineer', company: 'StartupXYZ', status: 'expired', applications: 28, posted: '2024-02-15' }
+      ]);
 
-const Nav = styled('nav')(({ theme }) => ({
-    '& ul': {
-        display: 'flex',
-        listStyle: 'none',
-        padding: 0,
-        margin: 0,
-        [theme.breakpoints.down('md')]: {
-            marginTop: '15px',
-            flexWrap: 'wrap',
-        },
-        '& li': {
-            marginLeft: '30px',
-            [theme.breakpoints.down('md')]: {
-                margin: '5px 15px 5px 0',
-            },
-            '& a': {
-                textDecoration: 'none',
-                color: textDark,
-                fontWeight: 500,
-                transition: 'color 0.3s',
-                '&:hover': {
-                    color: primaryColor,
-                },
-            },
-        },
-    },
-}));
-
-const UserAvatar = styled(Avatar)(({ theme }) => ({
-    width: 40,
-    height: 40,
-    borderRadius: '50%',
-    backgroundColor: primaryColor,
-    color: white,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    position: 'relative',
-}));
-
-const DashboardContent = styled('main')(({ theme }) => ({
-    padding: theme.spacing(8, 0),
-    [theme.breakpoints.down('md')]: {
-        padding: theme.spacing(5, 0),
-    },
-}));
-
-const WelcomeMessage = styled(Typography)({
-    fontSize: '28px',
-    marginBottom: '40px',
-    fontWeight: 500
-});
-
-const MetricsGrid = styled(Grid)(({ theme }) => ({
-    marginBottom: '40px',
-}));
-
-const MetricCard = styled(Paper)(({ theme }) => ({
-    borderRadius: 8,
-    padding: theme.spacing(3),
-    boxShadow: cardShadow,
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-}));
-
-const MetricHeader = styled('div')({
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '15px',
-});
-
-const MetricIcon = styled('div')(({ bgColor, color }) => ({
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: '15px',
-    fontSize: '18px',
-    backgroundColor: bgColor,
-    color: color,
-}));
-
-const MetricTitle = styled(Typography)({
-    fontSize: '14px',
-    color: textLight,
-});
-
-const MetricValue = styled(Typography)({
-    fontSize: '24px',
-    fontWeight: 600,
-    marginBottom: '10px',
-});
-
-const MetricChange = styled('div')(({ color }) => ({
-    fontSize: '12px',
-    marginTop: 'auto',
-    color: color,
-    display: 'flex',
-    alignItems: 'center'
-}));
-
-const SectionTitle = styled(Typography)({
-    fontSize: '22px',
-    marginBottom: '20px',
-    color: primaryColor,
-    fontWeight: 600
-});
-
-const ActivityCard = styled(Paper)(({ theme }) => ({
-    borderRadius: 8,
-    padding: '24px',
-    boxShadow: cardShadow,
-    marginBottom: '40px',
-}));
-
-const ActivityItem = styled(ListItem)(({ theme }) => ({
-    padding: '12px 0',
-    borderBottom: `1px solid #E5E7EB`,
-    '&:last-child': {
-        borderBottom: 'none',
-    },
-    alignItems: 'flex-start',
-}));
-
-const ActivityIcon = styled(ListItemIcon)(({ theme }) => ({
-    marginRight: '15px',
-    color: primaryColor,
-    fontSize: '18px',
-    minWidth: 'auto'
-}));
-
-const ActivityContent = styled('div')({
-    '& p': {
-        fontSize: '14px',
-        marginBottom: '5px',
-    },
-});
-
-const ActivityTime = styled(Typography)({
-    color: textLight,
-    fontSize: '12px',
-});
-
-const QuickLinks = styled('div')(({ theme }) => ({
-    display: 'flex',
-    gap: '15px',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginBottom: '40px',
-    '& a': {
-        padding: '12px 24px',
-        backgroundColor: primaryColor,
-        color: white,
-        borderRadius: '6px',
-        textDecoration: 'none',
-        fontWeight: 500,
-        transition: 'background-color 0.3s',
-        '&:hover': {
-            backgroundColor: '#1D4ED8',
-        },
+      setReports([
+        { id: 1, type: 'video', itemId: 2, reason: 'Inappropriate content', reporter: 'User123', status: 'pending' },
+        { id: 2, type: 'user', itemId: 3, reason: 'Spam behavior', reporter: 'User456', status: 'investigating' },
+        { id: 3, type: 'job', itemId: 1, reason: 'Misleading information', reporter: 'User789', status: 'resolved' }
+      ]);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setLoading(false);
     }
-}));
+  };
 
-const FooterContainer = styled('div')({
-    display: 'flex',
-    flexDirection: 'column',
-});
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
-const FooterLinks = styled('div')({
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '20px',
-    '& a': {
-        margin: '0 15px',
-        color: textDark,
-        textDecoration: 'none',
-        fontSize: '14px',
-        '&:hover': {
-            color: primaryColor,
-        },
-    },
-});
+  const handleAction = (action, item) => {
+    setSelectedItem({ ...item, action });
+    setDialogOpen(true);
+  };
 
-const SocialIcons = styled('div')({
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '20px',
-    '& a': {
-        margin: '0 10px',
-        color: textDark,
-        fontSize: '20px',
-        '&:hover': {
-            color: primaryColor,
-        },
-    },
-});
+  const confirmAction = () => {
+    // Implement action logic here
+    console.log(`Performing ${selectedItem.action} on:`, selectedItem);
+    setDialogOpen(false);
+    setSelectedItem(null);
+  };
 
-const Copyright = styled(Typography)({
-    textAlign: 'center',
-    color: textLight,
-    fontSize: '14px',
-});
-
-// ===============================
-// Components
-// ===============================
-
-const Header = () => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
+  const getStatusChip = (status) => {
+    const statusConfig = {
+      active: { color: 'success', label: 'Active' },
+      pending: { color: 'warning', label: 'Pending' },
+      suspended: { color: 'error', label: 'Suspended' },
+      approved: { color: 'success', label: 'Approved' },
+      flagged: { color: 'error', label: 'Flagged' },
+      expired: { color: 'default', label: 'Expired' },
+      investigating: { color: 'info', label: 'Investigating' },
+      resolved: { color: 'success', label: 'Resolved' }
     };
 
+    const config = statusConfig[status] || { color: 'default', label: status };
+    return <Chip label={config.label} color={config.color} size="small" />;
+  };
+
+  if (loading) {
     return (
-        <header>
-            <Container maxWidth="xl">
-                <HeaderContainer>
-                    <Logo href="#">
-                        Swip<span>scout</span>
-                    </Logo>
-                    <Nav>
-                        <ul>
-                            <li><a href="#">Dashboard</a></li>
-                            <li><a href="#">Users</a></li>
-                            <li><a href="#">Jobs</a></li>
-                            <li><a href="#">Reports</a></li>
-                            <li><a href="#">Logout</a></li>
-                        </ul>
-                    </Nav>
-                    <UserAvatar onClick={handleClick}>
-                        AD
-                    </UserAvatar>
-                    <Menu
-                        id="dropdown-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        PaperProps={{
-                            style: {
-                                borderRadius: 8,
-                                boxShadow: cardShadow,
-                                width: 200,
-                            }
-                        }}
+      <Box sx={{ width: '100%', p: 3 }}>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ width: '100%', p: 3 }}>
+      <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Dashboard color="primary" />
+        {t('admin.title', 'Admin Dashboard')}
+      </Typography>
+
+      {/* Stats Overview */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1}>
+                <People color="primary" />
+                <Box>
+                  <Typography variant="h6">{stats.totalUsers}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('admin.totalUsers', 'Total Users')}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1}>
+                <VideoLibrary color="primary" />
+                <Box>
+                  <Typography variant="h6">{stats.totalVideos}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('admin.totalVideos', 'Total Videos')}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Work color="primary" />
+                <Box>
+                  <Typography variant="h6">{stats.totalJobs}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('admin.totalJobs', 'Total Jobs')}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1}>
+                <TrendingUp color="success" />
+                <Box>
+                  <Typography variant="h6">{stats.activeUsers}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('admin.activeUsers', 'Active Users')}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Warning color="warning" />
+                <Box>
+                  <Typography variant="h6">{stats.pendingReports}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('admin.pendingReports', 'Pending Reports')}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Psychology color="info" />
+                <Box>
+                  <Typography variant="h6">{stats.aiAnalyses}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('admin.aiAnalyses', 'AI Analyses')}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Tabs */}
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="admin dashboard tabs">
+        <Tab label={t('admin.users', 'Users')} icon={<People />} iconPosition="start" />
+        <Tab label={t('admin.videos', 'Videos')} icon={<VideoLibrary />} iconPosition="start" />
+        <Tab label={t('admin.jobs', 'Jobs')} icon={<Work />} iconPosition="start" />
+        <Tab label={t('admin.reports', 'Reports')} icon={<Warning />} iconPosition="start" />
+        <Tab label={t('admin.analytics', 'Analytics')} icon={<Analytics />} iconPosition="start" />
+        <Tab label={t('admin.settings', 'Settings')} icon={<Settings />} iconPosition="start" />
+      </Tabs>
+
+      {/* Users Tab */}
+      <TabPanel value={tabValue} index={0}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('admin.user', 'User')}</TableCell>
+                <TableCell>{t('admin.email', 'Email')}</TableCell>
+                <TableCell>{t('admin.role', 'Role')}</TableCell>
+                <TableCell>{t('admin.status', 'Status')}</TableCell>
+                <TableCell>{t('admin.joinDate', 'Join Date')}</TableCell>
+                <TableCell>{t('admin.actions', 'Actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Avatar>{user.name.charAt(0)}</Avatar>
+                      <Typography>{user.name}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Chip 
+                      label={user.role.replace('_', ' ')} 
+                      variant="outlined" 
+                      size="small" 
+                    />
+                  </TableCell>
+                  <TableCell>{getStatusChip(user.status)}</TableCell>
+                  <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <Tooltip title="View Details">
+                      <IconButton size="small" onClick={() => handleAction('view', user)}>
+                        <Visibility />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit User">
+                      <IconButton size="small" onClick={() => handleAction('edit', user)}>
+                        <Edit />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={user.status === 'active' ? 'Suspend' : 'Activate'}>
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleAction(user.status === 'active' ? 'suspend' : 'activate', user)}
+                      >
+                        {user.status === 'active' ? <Block /> : <CheckCircle />}
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </TabPanel>
+
+      {/* Videos Tab */}
+      <TabPanel value={tabValue} index={1}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('admin.title', 'Title')}</TableCell>
+                <TableCell>{t('admin.user', 'User')}</TableCell>
+                <TableCell>{t('admin.status', 'Status')}</TableCell>
+                <TableCell>{t('admin.views', 'Views')}</TableCell>
+                <TableCell>{t('admin.reports', 'Reports')}</TableCell>
+                <TableCell>{t('admin.actions', 'Actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {videos.map((video) => (
+                <TableRow key={video.id}>
+                  <TableCell>{video.title}</TableCell>
+                  <TableCell>{video.user}</TableCell>
+                  <TableCell>{getStatusChip(video.status)}</TableCell>
+                  <TableCell>{video.views.toLocaleString()}</TableCell>
+                  <TableCell>
+                    {video.reports > 0 && (
+                      <Chip 
+                        label={video.reports} 
+                        color="error" 
+                        size="small" 
+                      />
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title="View Video">
+                      <IconButton size="small" onClick={() => handleAction('view', video)}>
+                        <Visibility />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Approve/Reject">
+                      <IconButton size="small" onClick={() => handleAction('moderate', video)}>
+                        <CheckCircle />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton size="small" onClick={() => handleAction('delete', video)}>
+                        <Delete />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </TabPanel>
+
+      {/* Jobs Tab */}
+      <TabPanel value={tabValue} index={2}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('admin.jobTitle', 'Job Title')}</TableCell>
+                <TableCell>{t('admin.company', 'Company')}</TableCell>
+                <TableCell>{t('admin.status', 'Status')}</TableCell>
+                <TableCell>{t('admin.applications', 'Applications')}</TableCell>
+                <TableCell>{t('admin.posted', 'Posted')}</TableCell>
+                <TableCell>{t('admin.actions', 'Actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {jobs.map((job) => (
+                <TableRow key={job.id}>
+                  <TableCell>{job.title}</TableCell>
+                  <TableCell>{job.company}</TableCell>
+                  <TableCell>{getStatusChip(job.status)}</TableCell>
+                  <TableCell>{job.applications}</TableCell>
+                  <TableCell>{new Date(job.posted).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <Tooltip title="View Job">
+                      <IconButton size="small" onClick={() => handleAction('view', job)}>
+                        <Visibility />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit Job">
+                      <IconButton size="small" onClick={() => handleAction('edit', job)}>
+                        <Edit />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton size="small" onClick={() => handleAction('delete', job)}>
+                        <Delete />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </TabPanel>
+
+      {/* Reports Tab */}
+      <TabPanel value={tabValue} index={3}>
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          {t('admin.reportsAlert', 'Review and handle user reports promptly to maintain platform quality.')}
+        </Alert>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('admin.type', 'Type')}</TableCell>
+                <TableCell>{t('admin.reason', 'Reason')}</TableCell>
+                <TableCell>{t('admin.reporter', 'Reporter')}</TableCell>
+                <TableCell>{t('admin.status', 'Status')}</TableCell>
+                <TableCell>{t('admin.actions', 'Actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {reports.map((report) => (
+                <TableRow key={report.id}>
+                  <TableCell>
+                    <Chip 
+                      label={report.type} 
+                      variant="outlined" 
+                      size="small" 
+                    />
+                  </TableCell>
+                  <TableCell>{report.reason}</TableCell>
+                  <TableCell>{report.reporter}</TableCell>
+                  <TableCell>{getStatusChip(report.status)}</TableCell>
+                  <TableCell>
+                    <Button 
+                      size="small" 
+                      variant="outlined"
+                      onClick={() => handleAction('investigate', report)}
                     >
-                        <MenuItem onClick={handleClose}>
-                            <ListItemIcon>
-                                <User size={16} />
-                            </ListItemIcon>
-                            Profile Settings
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <ListItemIcon>
-                                <Settings size={16} />
-                            </ListItemIcon>
-                            Account
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <ListItemIcon>
-                                <HelpCircle size={16} />
-                            </ListItemIcon>
-                            Help Center
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <ListItemIcon>
-                                 <LogOut size={16} />
-                            </ListItemIcon>
-                            Logout
-                        </MenuItem>
-                    </Menu>
-                </HeaderContainer>
-            </Container>
-        </header>
-    );
+                      {t('admin.investigate', 'Investigate')}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </TabPanel>
+
+      {/* Analytics Tab */}
+      <TabPanel value={tabValue} index={4}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Alert severity="info">
+              {t('admin.analyticsInfo', 'Advanced analytics and reporting features will be available here.')}
+            </Alert>
+          </Grid>
+        </Grid>
+      </TabPanel>
+
+      {/* Settings Tab */}
+      <TabPanel value={tabValue} index={5}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Alert severity="info">
+              {t('admin.settingsInfo', 'System settings and configuration options will be available here.')}
+            </Alert>
+          </Grid>
+        </Grid>
+      </TabPanel>
+
+      {/* Action Confirmation Dialog */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>
+          {t('admin.confirmAction', 'Confirm Action')}
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {t('admin.confirmMessage', `Are you sure you want to ${selectedItem?.action} this ${selectedItem?.name || selectedItem?.title || 'item'}?`)}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>
+            {t('common.cancel', 'Cancel')}
+          </Button>
+          <Button onClick={confirmAction} variant="contained" color="primary">
+            {t('common.confirm', 'Confirm')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 };
 
-const MetricCardComponent = ({
-    icon,
-    title,
-    value,
-    change,
-    isPositive,
-}) => {
-    return (
-        <MetricCard>
-            <MetricHeader>
-                <MetricIcon
-                    bgColor={
-                        title === 'Total Users' ? '#DBEAFE' :
-                        title === 'Total Jobs' ? '#D1FAE5' :
-                        title === 'Total Applications' ? '#FEF3C7' :
-                        '#E0E7FF'
-                    }
-                    color={
-                        title === 'Total Users' ? primaryColor :
-                        title === 'Total Jobs' ? successColor :
-                        title === 'Total Applications' ? warningColor :
-                        indigoColor
-                    }
-                >
-                    {icon}
-                </MetricIcon>
-                <div>
-                    <MetricTitle>{title}</MetricTitle>
-                    <MetricValue>{value}</MetricValue>
-                </div>
-            </MetricHeader>
-         
-        </MetricCard>
-    );
-};
-//    <MetricChange color={isPositive ? successColor : dangerColor}>
-//                 {isPositive ? <><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>&nbsp;</> :
-//                 <><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>&nbsp;</>}
-//                 {change}
-//             </MetricChange>
-const ActivityItemComponent = ({ icon, children }) => (
-    <ActivityItem>
-        <ActivityIcon>{icon}</ActivityIcon>
-        <ActivityContent>{children}</ActivityContent>
-    </ActivityItem>
-);
+export default AdminDashboard;
 
-const Footer = () => (
-    <footer>
-        <Container maxWidth="xl">
-            <FooterContainer>
-                <FooterLinks>
-                    <Link href="#">About Us</Link>
-                    <Link href="#">Contact Us</Link>
-                    <Link href="#">Privacy Policy</Link>
-                    <Link href="#">Terms and Conditions</Link>
-                </FooterLinks>
-                <SocialIcons>
-                    <Link href="#"><Facebook /></Link>
-                    <Link href="#"><Twitter /></Link>
-                    <Link href="#"><Linkedin /></Link>
-                    <Link href="#"><Instagram /></Link>
-                </SocialIcons>
-                <Copyright>© {new Date().getFullYear()} Swipscout. All rights reserved.</Copyright>
-            </FooterContainer>
-        </Container>
-    </footer>
-);
-
-const adminDashboard = () => {
-    return (
-        <ThemeProvider theme={theme}>
-            <Root>
-                <Header />
-                <DashboardContent>
-                    <Container maxWidth="xl">
-                        <WelcomeMessage>Welcome back, Admin!</WelcomeMessage>
-
-                        <MetricsGrid container spacing={3}>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <MetricCardComponent
-                                    icon={<Users />}
-                                    title="Total Users"
-                                    value="1,248"
-                                    change="12% from last month"
-                                    isPositive={true}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <MetricCardComponent
-                                    icon={<Briefcase />}
-                                    title="Total Jobs"
-                                    value="356"
-                                    change="8% from last month"
-                                    isPositive={true}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <MetricCardComponent
-                                    icon={<FileText />}
-                                    title="Total Applications"
-                                    value="2,187"
-                                    change="15% from last month"
-                                    isPositive={true}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
-                                <MetricCardComponent
-                                    icon={<UserClock />}
-                                    title="Active Users"
-                                    value="87"
-                                    change="5% from yesterday"
-                                    isPositive={false}
-                                />
-                            </Grid>
-                        </MetricsGrid>
-
-                        <SectionTitle>Recent Activity</SectionTitle>
-                        <ActivityCard>
-                            <List>
-                                <ActivityItemComponent icon={<Briefcase />}>
-                                    <p>New job posted by Tech Corp: "Senior Frontend Developer"</p>
-                                    <ActivityTime>10 minutes ago</ActivityTime>
-                                </ActivityItemComponent>
-                                <ActivityItemComponent icon={<Users />}>
-                                    <p>John Doe applied for "Software Engineer" at DataSystems</p>
-                                    <ActivityTime>25 minutes ago</ActivityTime>
-                                </ActivityItemComponent>
-                                <ActivityItemComponent icon={<Briefcase />}>
-                                    <p>New employer registered: DesignHub</p>
-                                    <ActivityTime>1 hour ago</ActivityTime>
-                                </ActivityItemComponent>
-                                <ActivityItemComponent icon={<Users />}>
-                                    <p>Alice Smith completed her profile (100%)</p>
-                                    <ActivityTime>2 hours ago</ActivityTime>
-                                </ActivityItemComponent>
-                            </List>
-                        </ActivityCard>
-
-                        <QuickLinks>
-                            <a href="#">Manage Users</a>
-                            <a href="#">Manage Jobs</a>
-                            <a href="#">View Reports</a>
-                        </QuickLinks>
-                    </Container>
-                </DashboardContent>
-                <Footer />
-            </Root>
-        </ThemeProvider>
-    );
-};
-
-export default adminDashboard;

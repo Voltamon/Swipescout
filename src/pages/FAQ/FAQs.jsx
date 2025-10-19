@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState  } from 'react';
 import Header from "../../components/Headers/Header";
 import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
-
+import { useTranslation } from 'react-i18next';
 
 import {
   Container,
@@ -25,6 +25,7 @@ import {
 } from "@mui/icons-material";
 
 const FAQPage = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,60 +34,52 @@ const FAQPage = () => {
   const faqData = [
     {
       category: "general",
-      question: "What is SwipeScout?",
-      answer:
-        "SwipeScout is a modern recruitment platform that connects job seekers with employers through video profiles and AI-powered matching. We make hiring more personal and efficient."
+      question: t('faq.questions.whatIsSwipeScout.question'),
+      answer: t('faq.questions.whatIsSwipeScout.answer')
     },
     {
       category: "job-seekers",
-      question: "How do I create a video resume?",
-      answer:
-        'Navigate to your profile and click "Create Video Resume". You can record directly or upload a 45-second video showcasing your skills and personality.'
+      question: t('faq.questions.createVideoResume.question'),
+      answer: t('faq.questions.createVideoResume.answer')
     },
     {
       category: "job-seekers",
-      question: "Is my video resume publicly visible?",
-      answer:
-        "You control visibility in Settings. Choose between public, only to employers you apply to, or private until you activate it."
+      question: t('faq.questions.videoVisibility.question'),
+      answer: t('faq.questions.videoVisibility.answer')
     },
     {
       category: "employers",
-      question: "How much does it cost to post jobs?",
-      answer:
-        "We offer free basic listings. Premium plans with advanced features start at $99/month. Volume discounts available for enterprise clients."
+      question: t('faq.questions.jobPostingCost.question'),
+      answer: t('faq.questions.jobPostingCost.answer')
     },
     {
       category: "technical",
-      question: "What video formats are supported?",
-      answer:
-        "We support MP4, MOV, and WebM formats up to 100MB. Recommended resolution is 1080p (1920x1080) for optimal quality."
+      question: t('faq.questions.videoFormats.question'),
+      answer: t('faq.questions.videoFormats.answer')
     },
     {
       category: "technical",
-      question: "Why is my video upload failing?",
-      answer:
-        "Check file size (<100MB), format, and internet connection. If issues persist, try compressing your video or contact support."
+      question: t('faq.questions.uploadFailing.question'),
+      answer: t('faq.questions.uploadFailing.answer')
     },
     {
       category: "general",
-      question: "How does matching work?",
-      answer:
-        "Our AI analyzes job requirements and candidate profiles to suggest the best matches. Employers and candidates can then connect directly."
+      question: t('faq.questions.howMatching.question'),
+      answer: t('faq.questions.howMatching.answer')
     },
     {
       category: "employers",
-      question: "Can I search candidates by skills?",
-      answer:
-        "Yes! Use our advanced search filters to find candidates by skills, experience level, location, and more."
+      question: t('faq.questions.searchCandidates.question'),
+      answer: t('faq.questions.searchCandidates.answer')
     }
   ];
 
   const categories = [
-    { id: "all", label: "All FAQs" },
-    { id: "general", label: "General" },
-    { id: "job-seekers", label: "Job Seekers" },
-    { id: "employers", label: "Employers" },
-    { id: "technical", label: "Technical" }
+    { id: "all", label: t('faq.categories.all') },
+    { id: "general", label: t('faq.categories.general') },
+    { id: "job-seekers", label: t('faq.categories.jobSeekers') },
+    { id: "employers", label: t('faq.categories.employers') },
+    { id: "technical", label: t('faq.categories.technical') }
   ];
 
   const filteredFaqs = faqData.filter(faq => {
