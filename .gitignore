@@ -33,3 +33,8 @@ missing-translation-report.json
 missing-translation-report-pretty.json
 missing-keys-clean.json
 missing-translation-report.json
+# i18n batch and generated files
+src/i18n/locales/batch_*_additions.json
+src/i18n/locales/*.json.bak
+missing-keys-*.txt
+missing-translation-report*.json

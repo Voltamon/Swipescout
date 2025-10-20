@@ -1148,7 +1148,12 @@
     "jobRecommendations": "Job Recommendations",
     "learningRecommendations": "Learning Recommendations",
     "careerPath": "Suggested Career Path",
-    "skillGaps": "Skill Gaps"
+    "skillGaps": "Skill Gaps",
+    "aiRecommendations": "AI Recommendations",
+    "careerPathDescription": "Suggested career path based on analysis",
+    "noVideos": "No videos available for analysis",
+    "videoAnalysis": "Video Analysis",
+    "videoAnalysisDescription": "Automated analysis of your video content"
   },
   "aiInterview": {
     "title": "AI Interview",
@@ -1172,6 +1177,31 @@
     "reports": "Reports",
     "pendingReports": "Pending Reports",
     "investigate": "Investigate",
-    "actions": "Actions"
+    "actions": "Actions",
+    "activeUsers": "Active Users",
+    "aiAnalyses": "AI Analyses",
+    "analytics": "Analytics",
+    "analyticsInfo": "Analytics & Insights",
+    "applications": "Applications",
+    "confirmAction": "Confirm Action",
+    "confirmMessage": "Are you sure?",
+    "email": "Email",
+    "posted": "Posted",
+    "reason": "Reason",
+    "reporter": "Reporter",
+    "reportsAlert": "Reports Alert",
+    "role": "Role",
+    "settingsInfo": "Settings info",
+    "status": "Status",
+    "totalJobs": "Total Jobs",
+    "totalUsers": "Total Users",
+    "totalVideos": "Total Videos",
+    "type": "Type",
+    "user": "User",
+    "views": "Views"
+  },
+  "interviews": {
+    "title": "Interviews",
+    "backToCamera": "Back to camera"
   }
 }

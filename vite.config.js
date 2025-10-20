@@ -9,6 +9,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['lucide-react', 'react-icons'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Increase limit to 1000kb to reduce warnings
+  },
   server: {
     port: 5173,
     open: true,

@@ -1258,7 +1258,12 @@
     "jobRecommendations": "توصيات الوظائف",
     "learningRecommendations": "توصيات التعلم",
     "careerPath": "المسار المهني المقترح",
-    "skillGaps": "ثغرات المهارات"
+    "skillGaps": "ثغرات المهارات",
+    "aiRecommendations": "توصيات AI",
+    "careerPathDescription": "المسار المهني المقترح بناءً على التحليل",
+    "noVideos": "لا توجد فيديوهات للتحليل",
+    "videoAnalysis": "تحليل الفيديو",
+    "videoAnalysisDescription": "تحليل تلقائي لمحتوى الفيديو الخاص بك"
   },
   "aiInterview": {
     "title": "مقابلة AI",
@@ -1282,7 +1287,28 @@
     "reports": "التقارير",
     "pendingReports": "التقارير المعلقة",
     "investigate": "تحقيق",
-    "actions": "إجراءات"
+    "actions": "إجراءات",
+    "activeUsers": "المستخدمون النشطون",
+    "aiAnalyses": "تحليلات AI",
+    "analytics": "التحليلات",
+    "analyticsInfo": "التحليلات والرؤى",
+    "applications": "الطلبات",
+    "confirmAction": "تأكيد الإجراء",
+    "confirmMessage": "هل أنت متأكد؟",
+    "email": "البريد الإلكتروني",
+    "posted": "منشور",
+    "reason": "السبب",
+    "reporter": "المبلغ",
+    "reportsAlert": "تنبيه التقارير",
+    "role": "الدور",
+    "settingsInfo": "معلومات الإعدادات",
+    "status": "الحالة",
+    "totalJobs": "إجمالي الوظائف",
+    "totalUsers": "إجمالي المستخدمين",
+    "totalVideos": "إجمالي الفيديوهات",
+    "type": "النوع",
+    "user": "المستخدم",
+    "views": "المشاهدات"
   },
   "footer": {
     "aboutUs": "معلومات عنا",
@@ -1330,5 +1356,9 @@
   "errors": {
     "genericError": "حدث خطأ ما",
     "loginRequired": "يجب تسجيل الدخول للقيام بهذا الإجراء"
+  },
+  "interviews": {
+    "title": "المقابلات",
+    "backToCamera": "العودة إلى الكاميرا"
   }
 }

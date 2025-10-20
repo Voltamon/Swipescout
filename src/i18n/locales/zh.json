@@ -1240,7 +1240,12 @@
     "jobRecommendations": "职位推荐",
     "learningRecommendations": "学习建议",
     "careerPath": "建议的职业路径",
-    "skillGaps": "技能差距"
+    "skillGaps": "技能差距",
+    "aiRecommendations": "AI 建议",
+    "careerPathDescription": "基于分析的建议职业路径",
+    "noVideos": "没有可供分析的视频",
+    "videoAnalysis": "视频分析",
+    "videoAnalysisDescription": "对您的视频内容的自动分析"
   },
   "aiInterview": {
     "title": "AI 面试",
@@ -1258,13 +1263,34 @@
   },
   "admin": {
     "title": "管理员",
-    "users": "用户",
+    "users": "用户们",
     "videos": "视频",
     "jobs": "职位",
     "reports": "报告",
     "pendingReports": "待处理报告",
     "investigate": "调查",
-    "actions": "操作"
+    "actions": "操作",
+    "activeUsers": "活跃用户",
+    "aiAnalyses": "AI 分析",
+    "analytics": "分析",
+    "analyticsInfo": "分析与洞察",
+    "applications": "申请",
+    "confirmAction": "确认操作",
+    "confirmMessage": "您确定吗？",
+    "email": "电子邮件",
+    "posted": "已发布",
+    "reason": "原因",
+    "reporter": "报告人",
+    "reportsAlert": "报告警报",
+    "role": "角色",
+    "settingsInfo": "设置信息",
+    "status": "状态",
+    "totalJobs": "职位总数",
+    "totalUsers": "用户总数",
+    "totalVideos": "视频总数",
+    "type": "类型",
+    "user": "用户",
+    "views": "观看次数"
   },
   "footer": {
     "aboutUs": "关于我们",
@@ -1312,5 +1338,9 @@
   "errors": {
     "genericError": "出了点问题",
     "loginRequired": "您必须登录才能执行此操作"
+  },
+  "interviews": {
+    "title": "面试",
+    "backToCamera": "返回摄像头"
   }
 }
