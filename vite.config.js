@@ -16,7 +16,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           ui: ['lucide-react', 'react-icons', '@mui/material', '@mui/icons-material', '@mui/lab'],
-          firebase: ['firebase', '@firebase/auth'],
+          firebase: ['@firebase/auth'],
           charts: ['chart.js', 'react-chartjs-2', 'recharts'],
           forms: ['formik', 'react-hook-form', 'yup'],
           utils: ['axios', 'socket.io-client', 'date-fns', 'dayjs', 'uuid'],
