@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Test - SwipeScout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .language-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .language-btn {
+            padding: 10px 20px;
+            border: 2px solid #4f46e5;
+            background: white;
+            color: #4f46e5;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .language-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+        .language-btn:hover {
+            background: #4f46e5;
+            color: white;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .section h3 {
+            color: #4f46e5;
+            margin-top: 0;
+        }
+        .tab-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8fafc;
+            border-left: 4px solid #4f46e5;
+            border-radius: 4px;
+        }
+        .tab-item strong {
+            color: #1e293b;
+        }
+        .tab-item small {
+            color: #64748b;
+            display: block;
+            margin-top: 5px;
+        }
+        .current-lang {
+            text-align: center;
+            font-size: 18px;
+            color: #4f46e5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #4f46e5;">Translation Test Page</h1>
+        <div class="current-lang">Current Language: <span id="currentLang">English</span></div>
+        
+        <div class="language-buttons">
+            <button class="language-btn active" onclick="changeLanguage('en')">English</button>
+            <button class="language-btn" onclick="changeLanguage('ar')">العربية</button>
+            <button class="language-btn" onclick="changeLanguage('zh')">中文</button>
+        </div>
+
+        <div class="section">
+            <h3>Common Translations</h3>
+            <div class="tab-item">
+                <strong>Home:</strong> <span id="home">Home</span>
+            </div>
+            <div class="tab-item">
+                <strong>Dashboard:</strong> <span id="dashboard">Dashboard</span>
+            </div>
+            <div class="tab-item">
+                <strong>Settings:</strong> <span id="settings">Settings</span>
+            </div>
+            <div class="tab-item">
+                <strong>Search:</strong> <span id="search">Search</span>
+            </div>
+            <div class="tab-item">
+                <strong>Profile:</strong> <span id="profile">Profile</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Jobseeker Tab Categories</h3>
+            <div id="jobseekerTabs"></div>
+        </div>
+
+        <div class="section">
+            <h3>Employer Tab Categories</h3>
+            <div id="employerTabs"></div>
+        </div>
+    </div>
+
+    <script>
+        // Translation data
+        const translations = {
+            en: {
+                currentLang: "English",
+                home: "Home",
+                dashboard: "Dashboard",
+                settings: "Settings",
+                search: "Search",
+                profile: "Profile",
+                jobseekerTabs: {
+                    dashboard: {
+                        label: "Dashboard",
+                        tabs: {
+                            overview: { label: "Overview", description: "General overview and statistics" },
+                            profile: { label: "Profile", description: "Manage your profile information" }
+                        }
+                    },
+                    jobs: {
+                        label: "Jobs",
+                        tabs: {
+                            search: { label: "Job Search", description: "Search for available jobs" },
+                            applications: { label: "My Applications", description: "Track your job applications" }
+                        }
+                    },
+                    videos: {
+                        label: "Videos",
+                        tabs: {
+                            "upload-video": { label: "Upload Video", description: "Upload your introduction video" },
+                            "my-videos": { label: "My Videos", description: "Manage your uploaded videos" }
+                        }
+                    }
+                },
+                employerTabs: {
+                    dashboard: {
+                        label: "Dashboard",
+                        tabs: {
+                            overview: { label: "Overview", description: "Company dashboard overview" },
+                            analytics: { label: "Analytics", description: "View hiring analytics" }
+                        }
+                    },
+                    candidates: {
+                        label: "Candidates",
+                        tabs: {
+                            search: { label: "Search Candidates", description: "Find potential candidates" },
+                            applications: { label: "Applications", description: "Review job applications" }
+                        }
+                    },
+                    jobs: {
+                        label: "Jobs",
+                        tabs: {
+                            "post-job": { label: "Post Job", description: "Create new job posting" },
+                            "manage-jobs": { label: "Manage Jobs", description: "Manage your job postings" }
+                        }
+                    }
+                }
+            },
+            ar: {
+                currentLang: "العربية",
+                home: "الرئيسية",
+                dashboard: "لوحة التحكم",
+                settings: "الإعدادات",
+                search: "البحث",
+                profile: "الملف الشخصي",
+                jobseekerTabs: {
+                    dashboard: {
+                        label: "لوحة التحكم",
+                        tabs: {
+                            overview: { label: "نظرة عامة", description: "نظرة عامة والإحصائيات" },
+                            profile: { label: "الملف الشخصي", description: "إدارة معلومات ملفك الشخصي" }
+                        }
+                    },
+                    jobs: {
+                        label: "الوظائف",
+                        tabs: {
+                            search: { label: "البحث عن وظيفة", description: "البحث عن الوظائف المتاحة" },
+                            applications: { label: "طلباتي", description: "تتبع طلبات العمل الخاصة بك" }
+                        }
+                    },
+                    videos: {
+                        label: "الفيديوهات",
+                        tabs: {
+                            "upload-video": { label: "رفع فيديو", description: "رفع فيديو التعريف الخاص بك" },
+                            "my-videos": { label: "فيديوهاتي", description: "إدارة الفيديوهات المرفوعة" }
+                        }
+                    }
+                },
+                employerTabs: {
+                    dashboard: {
+                        label: "لوحة التحكم",
+                        tabs: {
+                            overview: { label: "نظرة عامة", description: "نظرة عامة على لوحة تحكم الشركة" },
+                            analytics: { label: "التحليلات", description: "عرض تحليلات التوظيف" }
+                        }
+                    },
+                    candidates: {
+                        label: "المرشحون",
+                        tabs: {
+                            search: { label: "البحث عن مرشحين", description: "العثور على مرشحين محتملين" },
+                            applications: { label: "الطلبات", description: "مراجعة طلبات العمل" }
+                        }
+                    },
+                    jobs: {
+                        label: "الوظائف",
+                        tabs: {
+                            "post-job": { label: "نشر وظيفة", description: "إنشاء إعلان وظيفة جديد" },
+                            "manage-jobs": { label: "إدارة الوظائف", description: "إدارة إعلانات الوظائف الخاصة بك" }
+                        }
+                    }
+                }
+            },
+            zh: {
+                currentLang: "中文",
+                home: "首页",
+                dashboard: "仪表板",
+                settings: "设置",
+                search: "搜索",
+                profile: "个人资料",
+                jobseekerTabs: {
+                    dashboard: {
+                        label: "仪表板",
+                        tabs: {
+                            overview: { label: "概览", description: "总体概览和统计" },
+                            profile: { label: "个人资料", description: "管理您的个人资料信息" }
+                        }
+                    },
+                    jobs: {
+                        label: "工作",
+                        tabs: {
+                            search: { label: "职位搜索", description: "搜索可用职位" },
+                            applications: { label: "我的申请", description: "跟踪您的工作申请" }
+                        }
+                    },
+                    videos: {
+                        label: "视频",
+                        tabs: {
+                            "upload-video": { label: "上传视频", description: "上传您的介绍视频" },
+                            "my-videos": { label: "我的视频", description: "管理您上传的视频" }
+                        }
+                    }
+                },
+                employerTabs: {
+                    dashboard: {
+                        label: "仪表板",
+                        tabs: {
+                            overview: { label: "概览", description: "公司仪表板概览" },
+                            analytics: { label: "分析", description: "查看招聘分析" }
+                        }
+                    },
+                    candidates: {
+                        label: "候选人",
+                        tabs: {
+                            search: { label: "搜索候选人", description: "寻找潜在候选人" },
+                            applications: { label: "申请", description: "审查工作申请" }
+                        }
+                    },
+                    jobs: {
+                        label: "工作",
+                        tabs: {
+                            "post-job": { label: "发布职位", description: "创建新的职位发布" },
+                            "manage-jobs": { label: "管理职位", description: "管理您的职位发布" }
+                        }
+                    }
+                }
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update active button
+            document.querySelectorAll('.language-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update current language display
+            document.getElementById('currentLang').textContent = translations[lang].currentLang;
+            
+            // Update common translations
+            document.getElementById('home').textContent = translations[lang].home;
+            document.getElementById('dashboard').textContent = translations[lang].dashboard;
+            document.getElementById('settings').textContent = translations[lang].settings;
+            document.getElementById('search').textContent = translations[lang].search;
+            document.getElementById('profile').textContent = translations[lang].profile;
+            
+            // Update jobseeker tabs
+            updateTabSection('jobseekerTabs', translations[lang].jobseekerTabs);
+            
+            // Update employer tabs
+            updateTabSection('employerTabs', translations[lang].employerTabs);
+            
+            // Update page direction for Arabic
+            document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        function updateTabSection(sectionId, tabData) {
+            const section = document.getElementById(sectionId);
+            section.innerHTML = '';
+            
+            Object.keys(tabData).forEach(categoryKey => {
+                const category = tabData[categoryKey];
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'tab-item';
+                categoryDiv.innerHTML = `<strong>${category.label}</strong>`;
+                
+                Object.keys(category.tabs).forEach(tabKey => {
+                    const tab = category.tabs[tabKey];
+                    const tabDiv = document.createElement('div');
+                    tabDiv.style.marginLeft = '20px';
+                    tabDiv.style.marginTop = '10px';
+                    tabDiv.innerHTML = `
+                        <div class="tab-item">
+                            <strong>${tab.label}</strong>
+                            <small>${tab.description}</small>
+                        </div>
+                    `;
+                    categoryDiv.appendChild(tabDiv);
+                });
+                
+                section.appendChild(categoryDiv);
+            });
+        }
+
+        // Initialize with English
+        changeLanguage('en');
+    </script>
+</body>
+</html>
+

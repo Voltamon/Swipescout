@@ -1,0 +1,1334 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "saved": "تم الحفظ",
+    "popupBlocked": "تم حظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة والمحاولة مرة أخرى.",
+    "loginTimeout": "انتهت مهلة تسجيل الدخول",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "upload": "رفع",
+    "download": "تحميل",
+    "share": "مشاركة",
+    "like": "إعجاب",
+    "comment": "تعليق",
+    "view": "عرض",
+    "apply": "تقديم",
+    "connect": "اتصال",
+    "message": "رسالة",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "home": "الرئيسية",
+    "dashboard": "لوحة التحكم",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "close": "إغلاق",
+    "open": "فتح",
+    "yes": "نعم",
+    "no": "لا",
+    "confirm": "تأكيد",
+    "darkMode": "الوضع الداكن",
+    "lightMode": "الوضع الفاتح",
+    "notifications": "الإشعارات",
+    "welcome": "مرحباً"
+  },
+  "home": {
+    "hero": {
+      "title": "اسحب طريقك إلى النجاح",
+      "subtitle": "اكتشف الفرص من خلال الفيديو. تواصل مع المواهب من خلال القصص."
+    },
+    "search": {
+      "placeholder": "ابحث عن وظائف أو شركات أو مهارات..."
+    },
+    "quickActions": {
+      "findJobs": "البحث عن وظائف",
+      "findTalent": "البحث عن مواهب",
+      "exploreVideos": "استكشاف الفيديوهات"
+    },
+    "stats": {
+      "activeUsers": "المستخدمون النشطون",
+      "successfulHires": "التوظيفات الناجحة",
+      "videoViews": "مشاهدات الفيديو",
+      "satisfactionRate": "معدل الرضا"
+    },
+    "testimonials": {
+      "sarah": {
+        "name": "سارة جونسون",
+        "role": "مديرة التسويق",
+        "quote": "غيّر SwipeScout عملية التوظيف لدينا تماماً. وجدنا المرشح المثالي في ثلاثة أيام فقط!"
+      },
+      "michael": {
+        "name": "مايكل تشين",
+        "role": "مهندس برمجيات",
+        "quote": "كباحث عن عمل، أتاح لي SwipeScout الفرصة لإظهار شخصيتي ومهاراتي بما يتجاوز السيرة الذاتية التقليدية."
+      },
+      "techstart": {
+        "name": "شركة TechStart",
+        "role": "مدير الموارد البشرية",
+        "quote": "عملية التوظيف لدينا أصبحت أسرع بنسبة 40%، ونحن نحقق توافقاً ثقافياً أفضل بكثير. إنها أداة أساسية للموارد البشرية الحديثة."
+      }
+    },
+    "loginForm": {
+      "title": "ابدأ رحلتك",
+      "subtitle": "سجل الدخول للوصول إلى عالم من الفرص",
+      "emailPlaceholder": "البريد الإلكتروني",
+      "passwordPlaceholder": "كلمة المرور",
+      "signInButton": "تسجيل الدخول",
+      "signingInButton": "جاري تسجيل الدخول...",
+      "orContinueWith": "أو تابع باستخدام",
+      "googleButton": "جوجل",
+      "linkedinButton": "لينكدإن",
+      "noAccount": "ليس لديك حساب؟",
+      "signUpLink": "سجل الآن",
+      "welcomeBack": "مرحباً بعودتك، {{user}}!",
+      "goToDashboard": "انتقل إلى لوحة التحكم"
+    },
+    "howItWorks": {
+      "title": "كيف يعمل SwipeScout",
+      "createProfilesTitle": "أنشئ ملفات فيديو جذابة",
+      "createProfilesText": "أنشئ سير ذاتية بالفيديو أو ملفات شركة تعرض مهاراتك وثقافتك بشكل أفضل من النصوص التقليدية",
+      "swipeMatchTitle": "اسحب وطابق",
+      "swipeMatchText": "تصفح الفرص أو المواهب من خلال تجربة تشبه التطبيقات الحديثة، مع مطابقة ذكية تعتمد على الذكاء الاصطناعي",
+      "connectSucceedTitle": "تواصل ونجح",
+      "connectSucceedText": "تواصل مباشرة مع الشركات أو المرشحين المناسبين وابدأ رحلتك نحو النجاح المهني"
+    },
+    "videoPreview": {
+      "title": "جرب مستقبل التوظيف",
+      "exploreTitle": "استكشف مكتبة الفيديو",
+      "exploreText": "انقر لمشاهدة فيديوهات حقيقية من مرشحين وشركات"
+    },
+    "testimonialsSection": {
+      "title": "ماذا يقول مستخدمونا"
+    }
+  },
+  "videos": {
+    "loadingVideos": "جاري تحميل الفيديوهات...",
+    "oops": "عذراً!",
+    "noVideosYet": "لا توجد فيديوهات بعد",
+    "beTheFirstToShare": "كن أول من يشارك قصته",
+    "uploadVideo": "رفع فيديو",
+    "addedToLikes": "تمت الإضافة للمفضلة",
+    "removedFromLikes": "تم الحذف من المفضلة",
+    "savedToCollection": "تم الحفظ في المجموعة",
+    "removedFromSaved": "تم الحذف من المحفوظات",
+    "linkCopied": "تم نسخ الرابط",
+    "checkOutThisVideo": "شاهد هذا الفيديو: {{videoTitle}}",
+    "sampleVideoMessage": "هذا فيديو تجريبي للعرض التوضيحي",
+    "connectionRequestSent": "تم إرسال طلب الاتصال",
+    "allVideos": "جميع الفيديوهات",
+    "myVideos": "فيديوهاتي",
+    "savedVideos": "الفيديوهات المحفوظة",
+    "likedVideos": "الفيديوهات المعجب بها",
+    "companyVideos": "فيديوهات الشركة",
+    "candidateVideos": "فيديوهات المرشحين",
+    "editVideo": "تعديل الفيديو",
+    "deleteVideo": "حذف الفيديو",
+    "shareVideo": "مشاركة الفيديو",
+    "likeVideo": "إعجاب بالفيديو",
+    "saveVideo": "حفظ الفيديو",
+    "commentOnVideo": "التعليق على الفيديو",
+    "videoTitle": "عنوان الفيديو",
+    "videoDescription": "وصف الفيديو",
+    "videoTags": "علامات الفيديو",
+    "videoCategory": "فئة الفيديو",
+    "videoViews": "المشاهدات",
+    "videoLikes": "الإعجابات",
+    "videoComments": "التعليقات",
+    "videoShares": "المشاركات",
+    "playVideo": "تشغيل الفيديو",
+    "pauseVideo": "إيقاف الفيديو",
+    "fullscreen": "ملء الشاشة",
+    "volume": "مستوى الصوت",
+    "quality": "الجودة",
+    "speed": "السرعة",
+    "videoEditor": "محرر الفيديو",
+    "trim": "تقطيع",
+    "cut": "قص",
+    "brightness": "السطوع",
+    "contrast": "التباين",
+    "saturation": "التشبع",
+    "blur": "ضبابية",
+    "rotate": "دوران",
+    "filters": "المرشحات",
+    "effects": "التأثيرات",
+    "audio": "الصوت",
+    "export": "تصدير",
+    "preview": "معاينة"
+  },
+  "sampleVideos": {
+    "softwareEngineerResume": "مهندس برمجيات - سيرة ذاتية بالفيديو",
+    "marketingManagerPosition": "منصب مدير التسويق",
+    "techCompanyHiring": "شركة تقنية - نحن نوظف!",
+    "dataScientistResume": "عالم بيانات - ملف أعمال",
+    "jobSeeker": "باحث عن عمل",
+    "employer": "صاحب عمل",
+    "ahmedHassan": "أحمد حسان",
+    "saraAhmed": "سارة أحمد",
+    "techCorpSolutions": "حلول TechCorp",
+    "omarKhaled": "عمر خالد"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "jobs": "الوظائف",
+    "candidates": "المرشحون",
+    "videos": "الفيديوهات",
+    "messages": "الرسائل",
+    "notifications": "الإشعارات",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "help": "المساعدة",
+    "about": "حول",
+    "contact": "اتصل بنا",
+    "pricing": "الأسعار",
+    "features": "الميزات"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "dashboard": "لوحة التحكم",
+    "analytics": "التحليلات",
+    "uploadvideo": "رفع فيديو",
+    "findJobs": "البحث عن وظائف",
+    "videoFeed": "تغذية الفيديو",
+    "myProfile": "ملفي الشخصي",
+    "resumeBuilder": "منشئ السيرة الذاتية",
+    "myVideos": "فيديوهاتي",
+    "aiAnalysis": "تحليل الذكاء الاصطناعي",
+    "aiInterview": "مقابلة AI",
+    "templateInterview": "مقابلة قالب",
+    "aiMatching": "مطابقة AI",
+    "savedVideos": "الفيديوهات المحفوظة",
+    "likedVideos": "الفيديوهات المعجب بها",
+    "settings": "الإعدادات",
+    "notificationSettings": "إعدادات الإشعارات",
+    "interviews": "المقابلات",
+    "notifications": "الإشعارات",
+    "chat": "المحادثة",
+    "findCandidates": "البحث عن مرشحين",
+    "candidateVideos": "فيديوهات المرشح",
+    "postJob": "نشر وظيفة",
+    "myJobs": "وظائفي",
+    "companyProfile": "ملف الشركة",
+    "companyVideos": "فيديوهات الشركة",
+    "templateManagement": "إدارة القوالب",
+    "templateAnalysis": "تحليل القوالب",
+    "videoUpload": "رفع فيديو",
+    "videoEditor": "محرر الفيديو",
+    "messages": "الرسائل",
+    "helpAndSupport": "المساعدة والدعم",
+    "adminDashboard": "لوحة تحكم المشرف"
+  },
+  "header": {
+    "findJobs": "البحث عن وظائف",
+    "findTalent": "البحث عن مواهب",
+    "exploreVideos": "استكشاف الفيديوهات",
+    "profileSettings": "إعدادات الملف الشخصي",
+    "account": "الحساب",
+    "helpCenter": "مركز المساعدة",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "welcome": "مرحباً",
+    "languageSelector": "اللغة"
+  },
+  "homepage": {
+    "title": "SwipeScout - مستقبل التوظيف بالفيديو",
+    "subtitle": "ربط المواهب بالفرص من خلال ملفات الفيديو التفاعلية",
+    "heroDescription": "اكتشف فرصتك المهنية التالية أو اعثر على المرشح المثالي من خلال منصتنا المبتكرة التي تعتمد على الفيديو أولاً.",
+    "getStarted": "ابدأ الآن",
+    "learnMore": "اعرف المزيد",
+    "findJobs": "البحث عن وظائف",
+    "findTalent": "البحث عن مواهب",
+    "exploreVideos": "استكشاف الفيديوهات",
+    "howItWorks": "كيف يعمل SwipeScout",
+    "seeInAction": "شاهد SwipeScout في العمل",
+    "experienceFuture": "اختبر مستقبل التوظيف",
+    "experienceDescription": "شاهد المحترفين الحقيقيين وهم يعرضون مهاراتهم واطلع على كيفية عرض الشركات لثقافتها - كل ذلك بتنسيق فيديو جذاب.",
+    "watchDemo": "مشاهدة العرض التوضيحي",
+    "startSwiping": "ابدأ التمرير",
+    "testimonials": "ماذا يقول مستخدمونا",
+    "readyToStart": "هل أنت مستعد لبدء رحلتك؟",
+    "joinThousands": "انضم إلى آلاف المحترفين والشركات التي تستخدم SwipeScout بالفعل",
+    "signUpFree": "اشترك مجاناً",
+    "features": {
+      "videoProfiles": "ملفات الفيديو الشخصية",
+      "videoProfilesDesc": "اعرض شخصيتك ومهاراتك من خلال سير ذاتية بالفيديو جذابة",
+      "smartMatching": "المطابقة الذكية",
+      "smartMatchingDesc": "المطابقة المدعومة بالذكاء الاصطناعي تربطك بالفرص المناسبة",
+      "realTimeChat": "المحادثة الفورية",
+      "realTimeChatDesc": "تواصل فوراً مع أصحاب العمل أو المرشحين المحتملين"
+    }
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "firstName": "الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "userType": "نوع المستخدم",
+    "jobSeeker": "باحث عن عمل",
+    "employer": "صاحب عمل",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "rememberMe": "تذكرني",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "dontHaveAccount": "ليس لديك حساب؟",
+    "signInWith": "تسجيل الدخول باستخدام",
+    "signUpWith": "التسجيل باستخدام",
+    "termsAndConditions": "أوافق على الشروط والأحكام وسياسة الخصوصية",
+    "loginSuccess": "تم تسجيل الدخول بنجاح!",
+    "registerSuccess": "تم التسجيل بنجاح!",
+    "loginError": "فشل تسجيل الدخول. يرجى التحقق من بياناتك.",
+    "registerError": "فشل التسجيل. يرجى المحاولة مرة أخرى."
+  },
+  "jobSeeker": {
+    "dashboard": "لوحة التحكم",
+    "findJobs": "البحث عن وظائف",
+    "myVideos": "فيديوهاتي",
+    "interviews": "المقابلات",
+    "resumeBuilder": "منشئ السيرة الذاتية",
+    "savedVideos": "الفيديوهات المحفوظة",
+    "likedVideos": "الفيديوهات المعجب بها",
+    "applications": "طلباتي",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "uploadVideo": "رفع فيديو",
+    "editVideo": "تعديل الفيديو",
+    "videoResume": "السيرة الذاتية بالفيديو",
+    "skills": "المهارات",
+    "experience": "الخبرة",
+    "education": "التعليم",
+    "jobPreferences": "تفضيلات الوظيفة",
+    "searchJobs": "البحث عن وظائف",
+    "jobTitle": "المسمى الوظيفي",
+    "location": "الموقع",
+    "salary": "الراتب",
+    "jobType": "نوع الوظيفة",
+    "experienceLevel": "مستوى الخبرة",
+    "industry": "الصناعة",
+    "applyNow": "تقدم الآن",
+    "viewJob": "عرض الوظيفة",
+    "saveJob": "حفظ الوظيفة"
+  },
+  "employer": {
+    "dashboard": "لوحة التحكم",
+    "findCandidates": "البحث عن مرشحين",
+    "myJobs": "وظائفي",
+    "companyVideos": "فيديوهات الشركة",
+    "analytics": "التحليلات",
+    "applications": "الطلبات",
+    "interviews": "المقابلات",
+    "messages": "الرسائل",
+    "profile": "ملف الشركة",
+    "settings": "الإعدادات",
+    "postJob": "نشر وظيفة",
+    "editJob": "تعديل الوظيفة",
+    "viewApplications": "عرض الطلبات",
+    "searchCandidates": "البحث عن مرشحين",
+    "candidateName": "اسم المرشح",
+    "candidateSkills": "المهارات",
+    "candidateExperience": "الخبرة",
+    "candidateEducation": "التعليم",
+    "connectWithCandidate": "التواصل مع المرشح",
+    "viewProfile": "عرض الملف الشخصي",
+    "scheduleInterview": "جدولة مقابلة",
+    "companyName": "اسم الشركة",
+    "companyDescription": "وصف الشركة",
+    "companySize": "حجم الشركة",
+    "companyIndustry": "صناعة الشركة"
+  },
+  "search": {
+    "searchJobs": "البحث عن وظائف",
+    "searchCandidates": "البحث عن مرشحين",
+    "searchVideos": "البحث عن فيديوهات",
+    "searchResults": "نتائج البحث",
+    "noResults": "لم يتم العثور على نتائج",
+    "refineSearch": "تحسين البحث",
+    "clearFilters": "مسح المرشحات",
+    "sortBy": "ترتيب حسب",
+    "relevance": "الصلة",
+    "date": "التاريخ",
+    "salary": "الراتب",
+    "experience": "الخبرة",
+    "location": "الموقع",
+    "remote": "عن بُعد",
+    "onSite": "في الموقع",
+    "hybrid": "مختلط",
+    "fullTime": "دوام كامل",
+    "partTime": "دوام جزئي",
+    "contract": "عقد",
+    "freelance": "عمل حر",
+    "internship": "تدريب",
+    "entryLevel": "مستوى مبتدئ",
+    "midLevel": "مستوى متوسط",
+    "seniorLevel": "مستوى كبير",
+    "executive": "تنفيذي"
+  },
+  "notifications": {
+    "notifications": "الإشعارات",
+    "markAsRead": "تحديد كمقروء",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "deleteNotification": "حذف الإشعار",
+    "notificationSettings": "إعدادات الإشعارات",
+    "emailNotifications": "إشعارات البريد الإلكتروني",
+    "pushNotifications": "الإشعارات المنبثقة",
+    "smsNotifications": "إشعارات الرسائل النصية",
+    "jobAlerts": "تنبيهات الوظائف",
+    "applicationUpdates": "تحديثات الطلبات",
+    "messageNotifications": "إشعارات الرسائل",
+    "interviewReminders": "تذكيرات المقابلات",
+    "profileViews": "مشاهدات الملف الشخصي",
+    "newMatches": "المطابقات الجديدة",
+    "systemUpdates": "تحديثات النظام",
+    "marketingEmails": "رسائل التسويق عبر البريد الإلكتروني",
+    "quietHours": "ساعات الهدوء",
+    "frequency": "التكرار",
+    "immediately": "فوراً",
+    "daily": "يومياً",
+    "weekly": "أسبوعياً",
+    "never": "أبداً"
+  },
+  "pricing": {
+    "choosePlan": "اختر خطتك المثالية",
+    "features": "سواء كنت تبحث عن وظيفتك المثالية أو المرشح المثالي، لدينا الخطة المناسبة لك.",
+    "monthly": "شهرياً",
+    "yearly": "سنوياً",
+    "year": "سنة",
+    "month": "شهر",
+    "savePercent": "وفر {{percent}}٪",
+    "mostPopular": "الأكثر شيوعاً",
+    "tabs": {
+      "jobSeekerPlans": "خطط الباحث عن عمل",
+      "employerPlans": "خطط صاحب العمل"
+    },
+    "trustedBy": "موثوق به من قبل آلاف المحترفين",
+    "securePayments": "مدفوعات آمنة",
+    "support247": "دعم على مدار الساعة",
+    "moneyBackGuarantee": "ضمان استعادة الأموال",
+    "purchaseService": "شراء الخدمة",
+    "currentSubscription": {
+      "title": "الاشتراك الحالي",
+      "plan": "الخطة",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "expires": "ينتهي في"
+    },
+    "confirmSubscription": {
+      "title": "تأكيد الاشتراك",
+      "plan": "الخطة",
+      "button": "تأكيد الاشتراك"
+    },
+    "jobSeekerPlans": {
+      "basic": {
+        "title": "أساسي",
+        "price": "مجاني",
+        "description": "مثالي للأفراد الذين يبدأون البحث عن عمل.",
+        "features": {
+          "0": "أنشئ سيرة ذاتية واحدة بالفيديو",
+          "1": "تقديم طلبات لـ 10 وظائف شهرياً",
+          "2": "ملف شخصي أساسي ومراسلة",
+          "3": "دعم المجتمع",
+          "4": "مرشحات بحث وظيفي أساسية"
+        },
+        "buttonText": "ابدأ مجاناً"
+      },
+      "professional": {
+        "title": "محترف",
+        "price": "$9.99",
+        "description": "مثالي للباحثين النشطين عن عمل.",
+        "features": {
+          "0": "أنشئ حتى 5 سير ذاتية بالفيديو",
+          "1": "تقديم طلبات لـ 50 وظيفة شهرياً",
+          "2": "تحليلات متقدمة وعرض الملف الشخصي",
+          "3": "دعم أولوية",
+          "4": "مطابقة وظائف مدعومة بالذكاء الاصطناعي",
+          "5": "أدوات تحرير الفيديو",
+          "6": "زيادة ظهور الملف الشخصي"
+        },
+        "buttonText": "اختر المحترف"
+      },
+      "premium": {
+        "title": "مميز",
+        "price": "$19.99",
+        "description": "للباحثين الجادين عن عمل.",
+        "features": {
+          "0": "عدد غير محدود من السير الذاتية بالفيديو",
+          "1": "عدد غير محدود من الطلبات",
+          "2": "الوصول إلى مدرب مهني",
+          "3": "جلسات تحضير للمقابلات",
+          "4": "تقييمات ومصادقات المهارات",
+          "5": "مراسلة مباشرة مع مسؤول التوظيف",
+          "6": "تحسين ملف لينكدإن",
+          "7": "أدوات تحسين السيرة الذاتية"
+        },
+        "buttonText": "اختر المميز"
+      }
+    },
+    "featureList": "الخدمات المهنية",
+    "jobAlerts": "عزز بحثك عن وظيفة بهذه الخدمات.",
+    "jobSeekerServices": {
+      "careerCoaching": {
+        "title": "جلسة تدريب مهني",
+        "price": "$99.99",
+        "description": "جلسة خبراء لمدة ساعة لتوجيه مسارك المهني واستراتيجيتك.",
+        "duration": "ساعة واحدة",
+        "features": {
+          "0": "تقييم مهني مخصص",
+          "1": "تحديد الأهداف وخطة العمل",
+          "2": "رؤى واتجاهات الصناعة",
+          "3": "استراتيجيات بناء العلاقات"
+        }
+      },
+      "resumeReview": {
+        "title": "مراجعة السيرة الذاتية المهنية",
+        "price": "$49.99",
+        "description": "تحسين احترافي لسيرتك الذاتية لتحقيق أقصى تأثير.",
+        "duration": "3-5 أيام عمل",
+        "features": {
+          "0": "تحليل شامل للسيرة الذاتية",
+          "1": "تحسين ATS",
+          "2": "توصيات خاصة بالصناعة",
+          "3": "مقارنة قبل/بعد"
+        }
+      },
+      "interviewPrep": {
+        "title": "حزمة تحضير المقابلات",
+        "price": "$149.99",
+        "description": "حزمة تحضير كاملة لمقابلتك القادمة.",
+        "duration": "أسبوعان",
+        "features": {
+          "0": "جلسات مقابلة تجريبية",
+          "1": "بنك الأسئلة والأجوبة",
+          "2": "تدريب لغة الجسد",
+          "3": "استراتيجيات المتابعة"
+        }
+      },
+      "linkedinOptimization": {
+        "title": "تحسين ملف لينكدإن",
+        "price": "$79.99",
+        "description": "تحسين احترافي لملف لينكدإن لجذب مسؤولي التوظيف.",
+        "duration": "5-7 أيام عمل",
+        "features": {
+          "0": "تحسين عنوان الملف الشخصي",
+          "1": "تحسين ملخص وخبرات العمل",
+          "2": "تحسين الكلمات المفتاحية",
+          "3": "إرشادات الصورة المهنية"
+        }
+      }
+    },
+    "employerPlans": {
+      "starter": {
+        "title": "مبتدئ",
+        "price": "$29.99",
+        "description": "مثالي للشركات الصغيرة والشركات الناشئة.",
+        "features": {
+          "0": "نشر حتى 3 وظائف",
+          "1": "الوصول إلى قاعدة بيانات المرشحين",
+          "2": "مرشحات بحث مرشحين أساسية",
+          "3": "إنشاء ملف الشركة",
+          "4": "تحليلات أساسية",
+          "5": "دعم عبر البريد الإلكتروني"
+        },
+        "buttonText": "ابدأ التوظيف"
+      },
+      "business": {
+        "title": "أعمال",
+        "price": "$79.99",
+        "description": "مثالي للشركات النامية.",
+        "features": {
+          "0": "نشر وظائف غير محدود",
+          "1": "بحث مرشحين متقدم ومرشحات",
+          "2": "زيادة ظهور الوظائف",
+          "3": "تحليلات مرشحين متقدمة",
+          "4": "جدولة مقابلات الفيديو",
+          "5": "دعم عملاء أولوية",
+          "6": "أدوات التعاون بين الفريق",
+          "7": "نظام تتبع المتقدمين"
+        },
+        "buttonText": "اختر الأعمال"
+      },
+      "enterprise": {
+        "title": "شركات",
+        "price": "$199.99",
+        "description": "للمنظمات الكبيرة.",
+        "features": {
+          "0": "كل ميزات الأعمال",
+          "1": "مدير حساب مخصص",
+          "2": "تكاملات مخصصة والوصول إلى API",
+          "3": "حلول العلامة البيضاء",
+          "4": "تقارير وتحليلات متقدمة",
+          "5": "أولوية عرض الوظائف",
+          "6": "تخصيص العلامة التجارية",
+          "7": "دعم هاتفي 24/7",
+          "8": "تدريب وتهيئة"
+        },
+        "buttonText": "اتصل بالمبيعات"
+      }
+    },
+    "employerServices": {
+      "recruitmentConsulting": {
+        "title": "استشارات استراتيجية التوظيف",
+        "price": "$299.99",
+        "description": "استشارة خبراء لتحسين عملية التوظيف.",
+        "duration": "ساعتان",
+        "features": {
+          "0": "تدقيق عملية التوظيف",
+          "1": "تحسين وصف الوظيفة",
+          "2": "استراتيجيات البحث عن المرشحين",
+          "3": "تصميم عملية المقابلة"
+        }
+      },
+      "employerBranding": {
+        "title": "حزمة العلامة التجارية لصاحب العمل",
+        "price": "$499.99",
+        "description": "بناء علامة تجارية جذابة لجذب أفضل المواهب.",
+        "duration": "2-3 أسابيع",
+        "features": {
+          "0": "تقييم ثقافة الشركة",
+          "1": "عرض قيمة صاحب العمل",
+          "2": "استراتيجية وسائل التواصل الاجتماعي",
+          "3": "إرشادات إنشاء المحتوى"
+        }
+      },
+      "teamTraining": {
+        "title": "تدريب فريق التوظيف",
+        "price": "$799.99",
+        "description": "تدريب فريقك على أفضل ممارسات التوظيف الحديثة.",
+        "duration": "ورشة عمل ليوم واحد",
+        "features": {
+          "0": "تقنيات المقابلات بالفيديو",
+          "1": "ممارسات توظيف خالية من التحيز",
+          "2": "تحسين تجربة المرشح",
+          "3": "تدريب على منصة التقنية"
+        }
+      }
+    },
+    "contactSales": "اتصل بفريق المبيعات لمزيد من المعلومات."
+  },
+  "legal": {
+    "backToHome": "العودة إلى الصفحة الرئيسية",
+    "downloadPDF": "تحميل PDF",
+    "lastUpdated": "آخر تحديث",
+    "privacyPolicy": {
+      "title": "سياسة الخصوصية",
+      "introduction": {
+        "title": "مقدمة",
+        "content": "تلتزم SwipeScout بحماية خصوصيتك. تشرح سياسة الخصوصية هذه كيفية جمعنا لمعلوماتك واستخدامها والكشف عنها وحمايتها عند استخدامك لمنصة التوظيف بالفيديو والخدمات ذات الصلة."
+      },
+      "informationWeCollect": {
+        "title": "المعلومات التي نجمعها",
+        "personalInfo": {
+          "title": "المعلومات الشخصية",
+          "accountInfo": "معلومات الحساب: الاسم، البريد الإلكتروني، رقم الهاتف، صورة الملف الشخصي",
+          "professionalInfo": "المعلومات المهنية: السيرة الذاتية، الخبرة العملية، المهارات، التعليم",
+          "videoContent": "محتوى الفيديو: السير الذاتية بالفيديو، فيديوهات الشركة، والبيانات ذات الصلة",
+          "communicationData": "بيانات التواصل: الرسائل، التعليقات، والتفاعلات الأخرى"
+        },
+        "automaticInfoTitle": "المعلومات التي يتم جمعها تلقائياً",
+        "usageData": "بيانات الاستخدام: كيفية تفاعلك مع المنصة، الميزات المستخدمة، الوقت المستغرق",
+        "deviceInfo": "معلومات الجهاز: عنوان IP، نوع المتصفح، نظام التشغيل",
+        "analyticsData": "بيانات التحليلات: مؤشرات الأداء، سجلات الأخطاء، أنماط سلوك المستخدم"
+      },
+      "howWeUseInfo": {
+        "title": "كيف نستخدم المعلومات",
+        "content": "نستخدم المعلومات لتحسين الخدمة، التواصل معك، وتخصيص تجربتك.",
+        "provideService": "تقديم وصيانة خدمات التوظيف",
+        "matchJobs": "مطابقة الباحثين عن عمل مع الفرص المناسبة",
+        "enableCommunication": "تمكين التواصل بين المستخدمين",
+        "improvePlatform": "تحسين المنصة وتطوير ميزات جديدة",
+        "sendUpdates": "إرسال التحديثات والإشعارات الهامة",
+        "ensureSecurity": "ضمان أمان المنصة ومنع الاحتيال"
+      },
+      "sharingDisclosure": {
+        "title": "مشاركة المعلومات والإفصاح",
+        "content": "قد نشارك معلوماتك مع شركاء موثوقين لتحسين الخدمة أو حسب القانون.",
+        "withUsers": "مع المستخدمين الآخرين",
+        "withUsersContent": "قد تكون معلومات ملفك الشخصي ومحتوى الفيديو مرئية للمستخدمين الآخرين حسب إعدادات الخصوصية الخاصة بك. قد يتم مشاركة معلومات الباحثين عن عمل مع أصحاب العمل، ومعلومات الشركة قد تكون مرئية للباحثين عن عمل.",
+        "withProviders": "مع مزودي الخدمة",
+        "withProvidersContent": "قد نشارك المعلومات مع مزودي خدمات خارجيين موثوقين يساعدوننا في تشغيل المنصة، مثل التخزين السحابي، التحليلات، وخدمات معالجة الدفع.",
+        "legalRequirements": "المتطلبات القانونية",
+        "legalRequirementsContent": "قد نكشف المعلومات إذا طلب القانون ذلك أو بأمر من المحكمة أو لحماية حقوقنا أو ممتلكاتنا أو سلامتنا أو سلامة المستخدمين أو الآخرين."
+      },
+      "dataSecurity": {
+        "title": "أمان البيانات",
+        "content": "نطبق تدابير أمنية تقنية وتنظيمية مناسبة لحماية معلوماتك الشخصية من الوصول أو التغيير أو الكشف أو التدمير غير المصرح به. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100٪."
+      },
+      "yourRights": {
+        "title": "حقوقك وخياراتك",
+        "access": "الوصول: طلب الوصول إلى معلوماتك الشخصية",
+        "correction": "التصحيح: تحديث أو تصحيح المعلومات غير الدقيقة",
+        "deletion": "الحذف: طلب حذف معلوماتك الشخصية",
+        "portability": "قابلية النقل: طلب نسخة من بياناتك بصيغة قابلة للنقل",
+        "optOut": "إلغاء الاشتراك: إلغاء الاشتراك في الرسائل التسويقية"
+      },
+      "cookies": {
+        "title": "ملفات تعريف الارتباط وتقنيات التتبع",
+        "content": "نستخدم ملفات تعريف الارتباط وتقنيات تتبع مشابهة لتحسين تجربتك، وتحليل أنماط الاستخدام، وتقديم محتوى مخصص. يمكنك التحكم في إعدادات ملفات تعريف الارتباط من خلال تفضيلات المتصفح."
+      },
+      "internationalTransfers": {
+        "title": "نقل البيانات الدولية",
+        "content": "قد يتم نقل معلوماتك ومعالجتها في دول غير دولتك. نضمن وجود ضمانات مناسبة لحماية معلوماتك وفقاً لقوانين حماية البيانات المعمول بها."
+      },
+      "childrenPrivacy": {
+        "title": "خصوصية الأطفال",
+        "content": "خدماتنا غير مخصصة للأفراد دون سن 16 عاماً. لا نجمع معلومات شخصية من الأطفال دون 16 عاماً عن قصد. إذا علمنا بذلك، سنتخذ خطوات لحذف المعلومات."
+      }
+    },
+    "termsOfService": {
+      "title": "شروط الخدمة",
+      "agreementToTerms": {
+        "title": "الموافقة على الشروط",
+        "content": "باستخدامك لمنصة SwipeScout، فإنك توافق على جميع الشروط والأحكام الموضحة هنا."
+      },
+      "descriptionOfService": {
+        "title": "وصف الخدمة",
+        "content": "SwipeScout توفر منصة توظيف بالفيديو تربط الباحثين عن عمل بأصحاب العمل.",
+        "features": {
+          "videoResume": "سيرة ذاتية بالفيديو",
+          "companyVideoProfiles": "ملفات فيديو الشركات",
+          "matchingCommunication": "المطابقة والتواصل",
+          "analyticsInsights": "تحليلات ورؤى",
+          "premiumFeatures": "ميزات مميزة"
+        }
+      },
+      "userAccounts": {
+        "title": "حسابات المستخدمين",
+        "content": "يجب تقديم معلومات دقيقة والحفاظ على أمان بيانات الحساب.",
+        "points": {
+          "accurateInfo": "معلومات دقيقة",
+          "updateInfo": "تحديث المعلومات",
+          "secureCredentials": "تأمين بيانات الدخول",
+          "responsibleForActivities": "المسؤولية عن الأنشطة",
+          "notifyUnauthorizedUse": "إبلاغ عن استخدام غير مصرح به"
+        }
+      },
+      "userContent": {
+        "title": "محتوى المستخدم",
+        "contentGuidelines": {
+          "title": "إرشادات المحتوى",
+          "content": "يجب أن يكون المحتوى دقيقاً وملائماً ولا ينتهك الحقوق.",
+          "points": {
+            "accurateTruthful": "دقيق وصادق",
+            "noViolations": "لا انتهاكات",
+            "noInfringement": "لا انتهاك للحقوق",
+            "noInappropriate": "لا محتوى غير لائق",
+            "relevantToRecruitment": "ذو صلة بالتوظيف"
+          }
+        },
+        "prohibitedActivities": {
+          "title": "أنشطة محظورة",
+          "points": {
+            "harassment": "تحرش",
+            "impersonation": "انتحال شخصية",
+            "spamming": "رسائل غير مرغوب فيها",
+            "dataScraping": "جمع بيانات غير مصرح به",
+            "disruptiveActivity": "نشاط تخريبي"
+          }
+        }
+      },
+      "intellectualProperty": {
+        "title": "الملكية الفكرية",
+        "content1": "جميع الحقوق محفوظة لـ SwipeScout.",
+        "content2": "لا يجوز نسخ أو إعادة توزيع المحتوى بدون إذن."
+      },
+      "subscriptionPayments": {
+        "title": "الاشتراكات والمدفوعات",
+        "content1": "يجب دفع الرسوم حسب الخطة المختارة.",
+        "points": {
+          "payFees": "دفع الرسوم",
+          "accurateBilling": "معلومات فوترة دقيقة",
+          "authorizeCharge": "تفويض الدفع"
+        },
+        "content2": "تطبق شروط الإلغاء والاسترداد حسب السياسة."
+      },
+      "termination": {
+        "title": "إنهاء الخدمة",
+        "content1": "يحق لـ SwipeScout إنهاء الحساب في حال مخالفة الشروط.",
+        "content2": "يمكن للمستخدم إلغاء الحساب في أي وقت."
+      },
+      "disclaimer": {
+        "title": "إخلاء المسؤولية",
+        "content1": "لا تضمن SwipeScout توفر الخدمة بشكل دائم أو خلوها من الأخطاء.",
+        "points": {
+          "requirements": "متطلبات النظام",
+          "uninterrupted": "عدم الانقطاع",
+          "accurateReliable": "الدقة والموثوقية"
+        },
+        "content2": "قد تتغير الخدمة أو تتوقف في أي وقت."
+      },
+      "governingLaw": {
+        "title": "القانون الحاكم",
+        "content1": "تخضع هذه الشروط لقوانين الدولة.",
+        "content2": "أي نزاع يخضع للمحاكم المختصة."
+      },
+      "changesToTerms": {
+        "title": "تغييرات الشروط",
+        "content1": "قد يتم تعديل الشروط في أي وقت.",
+        "content2": "سيتم إعلام المستخدمين بالتغييرات."
+      },
+      "contactInformation": {
+        "title": "معلومات الاتصال",
+        "content": "للاستفسارات، يرجى التواصل معنا.",
+        "email": "support@swipescout.xyz",
+        "address": "123 شارع التقنية، الرياض، السعودية"
+      }
+    },
+    "cookiePolicy": {
+      "title": "سياسة ملفات تعريف الارتباط",
+      "whatAreCookies": {
+        "title": "ما هي ملفات تعريف الارتباط؟",
+        "content": "ملفات تعريف الارتباط هي ملفات صغيرة تُخزن على جهازك لتحسين تجربة الاستخدام."
+      },
+      "howWeUseCookies": {
+        "title": "كيف نستخدم ملفات تعريف الارتباط",
+        "content": "نستخدم ملفات تعريف الارتباط لتحسين الخدمة وتحليل الأداء.",
+        "points": {
+          "essential": "ملفات ضرورية",
+          "performanceAnalytics": "تحليلات الأداء",
+          "functionality": "الوظائف",
+          "advertisingTargeting": "الإعلانات والاستهداف"
+        }
+      },
+      "thirdPartyCookies": {
+        "title": "ملفات الطرف الثالث",
+        "content": "قد نستخدم ملفات تعريف الارتباط من أطراف ثالثة لتحسين الخدمة."
+      },
+      "yourChoices": {
+        "title": "خياراتك",
+        "content": "يمكنك إدارة ملفات تعريف الارتباط من خلال إعدادات المتصفح.",
+        "points": {
+          "browserSettings": "إعدادات المتصفح",
+          "cookieConsentTool": "أداة الموافقة على ملفات تعريف الارتباط"
+        }
+      },
+      "changesToPolicy": {
+        "title": "تغييرات السياسة",
+        "content": "قد يتم تحديث سياسة ملفات تعريف الارتباط من وقت لآخر."
+      },
+      "contactUs": {
+        "title": "اتصل بنا",
+        "content": "لأي استفسار حول سياسة ملفات تعريف الارتباط، يرجى التواصل معنا.",
+        "email": "support@swipescout.xyz"
+      }
+    },
+    "communityGuidelines": {
+      "title": "إرشادات المجتمع",
+      "welcome": {
+        "title": "مرحباً بك في مجتمعنا",
+        "content": "نحن ملتزمون بتوفير بيئة آمنة ومحترمة للجميع."
+      },
+      "respectfulProfessional": {
+        "title": "الاحترام والاحترافية",
+        "points": {
+          "respect": "احترام الجميع",
+          "noHarassment": "عدم التحرش",
+          "noInappropriate": "عدم نشر محتوى غير لائق"
+        }
+      },
+      "authenticityAccuracy": {
+        "title": "الأصالة والدقة",
+        "points": {
+          "accurateTruthful": "كن دقيقًا وصادقًا",
+          "noImpersonation": "لا تنتحل شخصية أحد",
+          "genuineJobPostings": "انشر قوائم وظائف حقيقية"
+        }
+      },
+      "privacyConfidentiality": {
+        "title": "الخصوصية والسرية",
+        "points": {
+          "noSharing": "عدم مشاركة معلومات خاصة",
+          "respectPrivacy": "احترام خصوصية الآخرين"
+        }
+      },
+      "noSpam": {
+        "title": "مكافحة الرسائل غير المرغوب فيها",
+        "points": {
+          "noDeceptivePractices": "عدم استخدام ممارسات خادعة",
+          "noIrrelevantContent": "عدم نشر محتوى غير ذي صلة",
+          "noIllegalActivities": "عدم القيام بأنشطة غير قانونية"
+        }
+      },
+      "intellectualProperty": {
+        "title": "الملكية الفكرية",
+        "points": {
+          "ownContent": "امتلاك المحتوى",
+          "respectRights": "احترام حقوق الآخرين"
+        }
+      },
+      "reportingViolations": {
+        "title": "الإبلاغ عن الانتهاكات",
+        "content": "يرجى الإبلاغ عن أي انتهاك لإرشادات المجتمع."
+      },
+      "enforcement": {
+        "title": "التنفيذ",
+        "content": "قد يتم اتخاذ إجراءات ضد المخالفين لإرشادات المجتمع."
+      },
+      "contactUs": {
+        "title": "اتصل بنا",
+        "content": "لأي استفسار أو اقتراح، يرجى التواصل معنا.",
+        "email": "support@swipescout.xyz"
+      }
+    },
+    "copyrightAndIPTerms": {
+      "title": "حقوق النشر وشروط الملكية الفكرية",
+      "ownershipOfContent": {
+        "title": "ملكية المحتوى",
+        "content": "جميع المحتوى على SwipeScout مملوك للشركة أو المستخدمين."
+      },
+      "userGeneratedContent": {
+        "title": "المحتوى الذي ينشئه المستخدم",
+        "content1": "يحتفظ المستخدمون بحقوقهم في المحتوى الذي ينشئونه.",
+        "content2": "يجب ألا ينتهك المحتوى حقوق الملكية الفكرية للآخرين."
+      },
+      "reportingInfringement": {
+        "title": "الإبلاغ عن الانتهاك",
+        "content": "إذا كنت تعتقد أن حقوقك قد انتهكت، يرجى تقديم المعلومات التالية:",
+        "points": {
+          "signature": "توقيع إلكتروني أو فعلي لصاحب الحق",
+          "identification": "تحديد العمل المحمي بحقوق النشر",
+          "materialIdentification": "تحديد المادة المنتهكة",
+          "contactInfo": "معلومات الاتصال",
+          "goodFaith": "بيان حسن النية",
+          "accuracy": "بيان دقة المعلومات"
+        }
+      },
+      "trademarks": {
+        "title": "العلامات التجارية",
+        "content": "جميع العلامات التجارية والشعارات مملوكة لـ SwipeScout أو الجهات المالكة."
+      },
+      "changesToTerms": {
+        "title": "تغييرات الشروط",
+        "content": "قد يتم تعديل شروط حقوق النشر والملكية الفكرية في أي وقت."
+      },
+      "contactUs": {
+        "title": "اتصل بنا",
+        "content": "لأي استفسار حول حقوق النشر والملكية الفكرية، يرجى التواصل معنا.",
+        "email": "support@swipescout.xyz"
+      }
+    },
+    "eula": {
+      "title": "اتفاقية ترخيص المستخدم النهائي",
+      "importantReadCarefully": {
+        "title": "هام: يرجى القراءة بعناية",
+        "content1": "باستخدامك لهذا البرنامج، فإنك توافق على جميع الشروط.",
+        "content2": "إذا كنت لا توافق على الشروط، لا تستخدم البرنامج."
+      },
+      "grantOfLicense": {
+        "title": "منح الترخيص",
+        "content": "يمنحك SwipeScout ترخيصاً محدوداً وغير حصري لاستخدام البرنامج."
+      },
+      "restrictions": {
+        "title": "القيود",
+        "content": "لا يجوز لك القيام بما يلي:",
+        "points": {
+          "reverseEngineer": "عكس هندسة البرنامج",
+          "modifyAdapt": "تعديل أو تكييف البرنامج",
+          "rentLease": "تأجير أو ترخيص البرنامج",
+          "illegalUnauthorized": "استخدام البرنامج لأغراض غير قانونية",
+          "removeNotices": "إزالة إشعارات الملكية"
+        }
+      },
+      "intellectualProperty": {
+        "title": "الملكية الفكرية",
+        "content": "جميع الحقوق محفوظة لـ SwipeScout."
+      },
+      "termination": {
+        "title": "إنهاء الاتفاقية",
+        "content": "قد يتم إنهاء الاتفاقية في حال مخالفة الشروط."
+      },
+      "disclaimerOfWarranties": {
+        "title": "إخلاء المسؤولية عن الضمانات",
+        "content": "يتم توفير البرنامج كما هو دون أي ضمانات."
+      },
+      "limitationOfLiability": {
+        "title": "تحديد المسؤولية",
+        "content": "لا تتحمل SwipeScout أي مسؤولية عن الأضرار الناتجة عن استخدام البرنامج."
+      },
+      "governingLaw": {
+        "title": "القانون الحاكم",
+        "content": "تخضع الاتفاقية لقوانين الدولة."
+      },
+      "entireAgreement": {
+        "title": "الاتفاقية الكاملة",
+        "content": "تشكل هذه الاتفاقية الاتفاقية الكاملة بين الأطراف."
+      },
+      "contactInformation": {
+        "title": "معلومات الاتصال",
+        "content": "لأي استفسار حول الاتفاقية، يرجى التواصل معنا.",
+        "email": "support@swipescout.xyz"
+      }
+    }
+  },
+  "templates": {
+    "title": "قوالب المقابلات",
+    "subtitle": "إنشاء وإدارة قوالب المقابلات لعملية التوظيف",
+    "createNew": "إنشاء قالب جديد",
+    "createFirst": "إنشاء أول قالب لك",
+    "noTemplates": "لم يتم العثور على قوالب",
+    "noTemplatesDescription": "لم تقم بإنشاء أي قوالب مقابلات بعد. ابدأ بإنشاء أول قالب لك.",
+    "searchPlaceholder": "البحث في القوالب...",
+    "allCategories": "جميع الفئات",
+    "categories": {
+      "general": "عام",
+      "technical": "تقني",
+      "behavioral": "سلوكي",
+      "custom": "مخصص"
+    },
+    "status": {
+      "active": "نشط",
+      "draft": "مسودة",
+      "archived": "مؤرشف"
+    },
+    "questions": "الأسئلة",
+    "questionsCount": "أسئلة",
+    "responses": "الردود",
+    "minutes": "دقيقة",
+    "seconds": "ثانية",
+    "preview": "معاينة",
+    "duplicate": "نسخ",
+    "confirmDelete": "هل أنت متأكد من حذف هذا القالب؟",
+    "basicInfo": "المعلومات الأساسية",
+    "templateTitle": "عنوان القالب",
+    "titlePlaceholder": "أدخل عنوان القالب...",
+    "category": "الفئة",
+    "description": "الوصف",
+    "descriptionPlaceholder": "اوصف الغرض من هذا القالب...",
+    "settings": "الإعدادات",
+    "timeLimit": "الحد الزمني",
+    "allowRetakes": "السماح بالإعادة",
+    "makePublic": "جعله عام",
+    "addQuestion": "إضافة سؤال",
+    "questionText": "نص السؤال",
+    "questionPlaceholder": "أدخل سؤالك...",
+    "questionType": "نوع السؤال",
+    "textQuestion": "سؤال نصي",
+    "videoQuestion": "سؤال فيديو",
+    "required": "مطلوب",
+    "question": "السؤال",
+    "type": "النوع",
+    "create": "إنشاء القالب",
+    "update": "تحديث القالب",
+    "editTemplate": "تعديل القالب"
+  },
+  "interview": {
+    "templateNotFound": "القالب غير موجود",
+    "backToTemplates": "العودة للقوالب",
+    "questions": "الأسئلة",
+    "questionsToAnswer": "أسئلة للإجابة عليها",
+    "minutes": "دقائق",
+    "totalTime": "إجمالي الوقت المحدد",
+    "videoResponses": "ردود الفيديو",
+    "recordYourAnswers": "سجل إجاباتك",
+    "instructions": "التعليمات",
+    "instruction1": "اقرأ كل سؤال بعناية قبل الإجابة",
+    "instruction2": "يمكنك تسجيل ردود فيديو أو كتابة إجابات نصية",
+    "instruction3": "تأكد من وجود إضاءة وجودة صوت جيدة",
+    "instruction4": "يمكنك إعادة التسجيل إذا لزم الأمر",
+    "startInterview": "بدء المقابلة",
+    "question": "السؤال",
+    "of": "من",
+    "progress": "التقدم",
+    "textQuestion": "نص",
+    "videoQuestion": "فيديو",
+    "timeLimit": "الحد الزمني",
+    "seconds": "ثانية",
+    "yourAnswer": "إجابتك",
+    "typeYourAnswer": "اكتب إجابتك هنا...",
+    "previous": "السابق",
+    "nextQuestion": "السؤال التالي",
+    "submitInterview": "إرسال المقابلة",
+    "recordYourResponse": "سجل ردك",
+    "recordingInstructions": "انقر على بدء لبدء تسجيل رد الفيديو",
+    "startRecording": "بدء التسجيل",
+    "pause": "إيقاف مؤقت",
+    "resume": "استئناف",
+    "stop": "إيقاف",
+    "preview": "معاينة",
+    "hidePreview": "إخفاء المعاينة",
+    "retake": "إعادة التسجيل",
+    "recordingComplete": "اكتمل التسجيل",
+    "duration": "المدة"
+  },
+  "jobseekerTabs": {
+    "categories": {
+      "dashboard": "لوحة التحكم",
+      "jobSearch": "البحث عن وظائف",
+      "profileContent": "الملف الشخصي والمحتوى",
+      "savedLiked": "المحفوظ والمفضل",
+      "activities": "الأنشطة",
+      "communication": "التواصل",
+      "videoManagement": "إدارة الفيديوهات"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "analytics": "التحليلات",
+      "findJobs": "البحث عن وظائف",
+      "videoFeed": "تغذية الفيديو",
+      "myProfile": "ملفي الشخصي",
+      "resumeBuilder": "منشئ السيرة الذاتية",
+      "myVideos": "فيديوهاتي",
+      "savedVideos": "الفيديوهات المحفوظة",
+      "likedVideos": "الفيديوهات المفضلة",
+      "interviews": "المقابلات",
+      "notifications": "الإشعارات",
+      "settings": "الإعدادات",
+      "notificationSettings": "إعدادات الإشعارات",
+      "chat": "المحادثة",
+      "videoUpload": "رفع فيديو",
+      "videoEditor": "محرر الفيديو"
+    },
+    "descriptions": {
+      "overview": "نظرة عامة على لوحة تحكم الباحث عن عمل",
+      "analytics": "عرض التحليلات والرؤى",
+      "findJobs": "البحث عن فرص عمل",
+      "videoFeed": "تصفح الفيديوهات المتعلقة بالوظائف",
+      "myProfile": "إدارة ملفك الشخصي",
+      "resumeBuilder": "بناء سيرتك الذاتية",
+      "myVideos": "فيديوهاتك المرفوعة",
+      "savedVideos": "فيديوهاتك المحفوظة",
+      "likedVideos": "الفيديوهات التي أعجبتك",
+      "interviews": "إدارة المقابلات",
+      "notifications": "فحص الإشعارات",
+      "settings": "إعدادات الحساب",
+      "notificationSettings": "إدارة إعدادات الإشعارات",
+      "chat": "المحادثة مع أصحاب العمل والدعم",
+      "videoUpload": "رفع فيديوهات جديدة لحسابك",
+      "videoEditor": "تحرير فيديوهاتك المرفوعة"
+    },
+    "activities": "الأنشطة",
+    "analytics": "التحليلات",
+    "chat": "دردشة",
+    "communication": "التواصل",
+    "dashboard": "لوحة التحكم",
+    "findJobs": "ابحث عن وظائف",
+    "interviews": "المقابلات",
+    "jobSearch": "بحث عن وظائف",
+    "likedVideos": "الفيديوهات المعجب بها",
+    "myProfile": "ملفي الشخصي",
+    "myVideos": "فيديوهاتي",
+    "notifications": "الإشعارات",
+    "overview": "نظرة عامة",
+    "profileContent": "الملف والمحتوى",
+    "resumeBuilder": "منشئ السيرة الذاتية",
+    "savedLiked": "المحفوظات والإعجابات",
+    "savedVideos": "الفيديوهات المحفوظة",
+    "settings": "الإعدادات",
+    "videoFeed": "تغذية الفيديو",
+    "videoUpload": "رفع فيديو",
+    "notificationSettings": "إعدادات الإشعارات"
+  },
+  "employerTabs": {
+    "categories": {
+      "dashboard": "لوحة التحكم",
+      "talentAcquisition": "اكتساب المواهب",
+      "jobManagement": "إدارة الوظائف",
+      "companyContent": "محتوى الشركة",
+      "managementSettings": "الإدارة والإعدادات",
+      "communication": "التواصل",
+      "videoManagement": "إدارة الفيديوهات"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "analytics": "التحليلات",
+      "findCandidates": "البحث عن مرشحين",
+      "candidateVideos": "فيديوهات المرشحين",
+      "postNewJob": "نشر وظيفة جديدة",
+      "myJobListings": "إعلانات وظائفي",
+      "companyProfile": "ملف الشركة",
+      "companyVideos": "فيديوهات الشركة",
+      "videoEditor": "محرر الفيديو",
+      "notifications": "الإشعارات",
+      "settings": "الإعدادات",
+      "chat": "المحادثة",
+      "helpSupport": "المساعدة والدعم",
+      "videoUpload": "رفع فيديو"
+    },
+    "descriptions": {
+      "overview": "نظرة عامة على لوحة تحكم صاحب العمل",
+      "analytics": "عرض التحليلات والتقارير",
+      "findCandidates": "البحث واكتشاف المرشحين",
+      "candidateVideos": "تصفح ملفات فيديو المرشحين",
+      "postNewJob": "إنشاء ونشر إعلانات وظائف جديدة",
+      "myJobListings": "عرض وإدارة إعلانات وظائفك",
+      "companyProfile": "تحرير وعرض ملف شركتك",
+      "companyVideos": "إدارة فيديوهات شركتك",
+      "videoEditor": "تحرير فيديوهات شركتك",
+      "notifications": "إدارة إعدادات الإشعارات",
+      "settings": "تكوين إعدادات حسابك وشركتك",
+      "chat": "المحادثة مع المرشحين والفريق",
+      "helpSupport": "الحصول على المساعدة والدعم",
+      "videoUpload": "رفع فيديوهات جديدة لحسابك"
+    }
+  },
+  "analysis": {
+    "interviewAnalysis": "تحليل المقابلة",
+    "responseNotFound": "الرد غير موجود",
+    "backToTemplates": "العودة للقوالب",
+    "status": {
+      "in_progress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "submitted": "مرسل",
+      "reviewed": "تم المراجعة"
+    },
+    "transcribed": "تم النسخ النصي",
+    "startTranscription": "بدء النسخ النصي",
+    "generateAnalysis": "إنشاء التحليل",
+    "transcriptionProgress": "تقدم النسخ النصي",
+    "analysisProgress": "تقدم التحليل",
+    "overallPerformance": "الأداء العام",
+    "overallScore": "النتيجة الإجمالية",
+    "communicationScore": "نتيجة التواصل",
+    "technicalScore": "النتيجة التقنية",
+    "completenessScore": "نتيجة الاكتمال",
+    "strengths": "نقاط القوة",
+    "areasForImprovement": "مجالات التحسين",
+    "recommendations": "التوصيات",
+    "questionByQuestion": "تحليل سؤال بسؤال",
+    "question": "السؤال",
+    "videoNotSupported": "متصفحك لا يدعم تشغيل الفيديو",
+    "transcript": "النسخة النصية",
+    "textResponse": "الرد النصي",
+    "aiAnalysis": "تحليل الذكاء الاصطناعي",
+    "communicationQuality": "جودة التواصل",
+    "keywordsFound": "الكلمات المفتاحية الموجودة",
+    "improvementSuggestions": "اقتراحات التحسين"
+  },
+  "about": {
+    "hero": {
+      "title": "عن SwipeScout",
+      "subtitle": "ثورة في طريقة العثور على الوظائف واكتشاف المواهب",
+      "description": "تأسست SwipeScout في عام 2025، وتربط بين المرشحين وأصحاب العمل من خلال ملفات تعريف فيديو قصيرة وأدوات مطابقة ذكية."
+    },
+    "meta": {
+      "title": "عن SwipeScout | مهمتنا وفريقنا",
+      "description": "تعرف على مهمة SwipeScout لتحديث التوظيف باستخدام الملفات الشخصية بالفيديو والمطابقة بالذكاء الاصطناعي.",
+      "keywords": "SwipeScout, سيرة ذاتية فيديو, التوظيف, المطابقة بالذكاء الاصطناعي",
+      "ogDescription": "اطلع على كيف تساعد SwipeScout المرشحين وأصحاب العمل في العثور على التطابقات الأفضل عبر ملفات الفيديو والذكاء الاصطناعي."
+    },
+    "mission": {
+      "title": "مهمتنا",
+      "description1": "جعل البحث عن وظيفة ممتعًا وفعالًا كالشبكات الاجتماعية.",
+      "description2": "نؤمن أن ملفات الفيديو تسمح للمرشحين بعرض شخصياتهم ومهاراتهم التواصلية جنبًا إلى جنب مع مهاراتهم المهنية."
+    },
+    "stats": {
+      "candidatesHired": "المرشحون المعينون",
+      "jobsPosted": "الوظائف المنشورة",
+      "partnerCompanies": "الشركات الشريكة",
+      "satisfactionRate": "معدل الرضا"
+    },
+    "team": {
+      "title": "فريقنا",
+      "description": "محترفون شغوفون مكرسون لتحويل تجربة التوظيف.",
+      "bahri": {
+        "role": "مصمم واجهات/تجربة مستخدم",
+        "bio": "مطور متكامل وقائد واجهة"
+      },
+      "obaid": {
+        "role": "شريك مؤسس ورئيس التكنولوجيا",
+        "bio": "أكثر من 20 عامًا في التطوير وهندسة النظم"
+      },
+      "raj": {
+        "role": "رؤى إدارة الأعمال",
+        "bio": "العمليات والاستراتيجية"
+      },
+      "tareq": {
+        "role": "المؤسس والمدير التنفيذي",
+        "bio": "الرؤية والمنتج والنمو"
+      },
+      "varshal": {
+        "role": "العمليات والاستراتيجية",
+        "bio": "التسويق ومتعدد المهام"
+      }
+    }
+  },
+  "aiAnalysis": {
+    "title": "تحليل AI",
+    "overallScore": "النتيجة الإجمالية",
+    "recommendations": "التوصيات",
+    "jobRecommendations": "توصيات الوظائف",
+    "learningRecommendations": "توصيات التعلم",
+    "careerPath": "المسار المهني المقترح",
+    "skillGaps": "ثغرات المهارات"
+  },
+  "aiInterview": {
+    "title": "مقابلة AI",
+    "analyzing": "جاري التحليل...",
+    "results": "النتائج",
+    "generateQuestions": "توليد الأسئلة",
+    "feedback": "ملاحظات",
+    "improvements": "مجالات التحسين"
+  },
+  "aiMatching": {
+    "title": "مطابقة AI",
+    "useAIMatching": "استخدم مطابقة AI",
+    "noMatchingVideos": "لم يتم العثور على فيديوهات متطابقة",
+    "filterTooltip": "تصفية مطابقات AI"
+  },
+  "admin": {
+    "title": "لوحة الإدارة",
+    "users": "المستخدمون",
+    "videos": "الفيديوهات",
+    "jobs": "الوظائف",
+    "reports": "التقارير",
+    "pendingReports": "التقارير المعلقة",
+    "investigate": "تحقيق",
+    "actions": "إجراءات"
+  },
+  "footer": {
+    "aboutUs": "معلومات عنا",
+    "communityGuidelines": "إرشادات المجتمع",
+    "company": "الشركة",
+    "connect": "اتصل",
+    "contactUs": "اتصل بنا",
+    "cookiePolicy": "سياسة ملفات تعريف الارتباط",
+    "copyright": "© SwipeScout",
+    "credits": "الاعتمادات",
+    "customerSupport": "دعم العملاء",
+    "eula": "اتفاقية ترخيص المستخدم النهائي",
+    "faq": "الأسئلة الشائعة",
+    "howItWorks": "كيف تعمل",
+    "joinCommunity": "انضم إلى المجتمع",
+    "legal": "قانوني",
+    "privacyPolicy": "سياسة الخصوصية",
+    "successRate": "معدل النجاح",
+    "support24_7": "دعم 24/7",
+    "termsOfService": "شروط الخدمة",
+    "verifiedCompanies": "شركات موثوقة"
+  },
+  "contact": {
+    "title": "اتصل",
+    "description": "تواصل مع فريق SwipeScout.",
+    "discord": {
+      "title": "انضم إلى Discord",
+      "description": "تواصل مع المجتمع على Discord.",
+      "button": "انضم إلى Discord"
+    },
+    "email": {
+      "title": "البريد الإلكتروني",
+      "description": "أرسل لنا رسالة وسنرد في أقرب وقت ممكن."
+    }
+  },
+  "faq": {
+    "categories": {
+      "all": "الكل",
+      "employers": "أصحاب العمل",
+      "general": "عام",
+      "jobSeekers": "باحثو عن عمل",
+      "technical": "تقني"
+    }
+  },
+  "errors": {
+    "genericError": "حدث خطأ ما",
+    "loginRequired": "يجب تسجيل الدخول للقيام بهذا الإجراء"
+  }
+}
