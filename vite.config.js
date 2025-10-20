@@ -15,11 +15,15 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          ui: ['lucide-react', 'react-icons'],
+          ui: ['lucide-react', 'react-icons', '@mui/material', '@mui/icons-material', '@mui/lab'],
+          firebase: ['firebase', '@firebase/auth'],
+          charts: ['chart.js', 'react-chartjs-2', 'recharts'],
+          forms: ['formik', 'react-hook-form', 'yup'],
+          utils: ['axios', 'socket.io-client', 'date-fns', 'dayjs', 'uuid'],
         },
       },
     },
-    chunkSizeWarningLimit: 1000, // Increase limit to 1000kb to reduce warnings
+    chunkSizeWarningLimit: 1000,
   },
   server: {
     port: 5173,
