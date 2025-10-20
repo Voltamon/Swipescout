@@ -1,11 +1,11 @@
-{
+﻿{
   "common": {
     "loading": "جاري التحميل...",
     "error": "خطأ",
     "success": "نجح",
     "cancel": "إلغاء",
-    "save": "حفظ",
-    "saved": "تم الحفظ",
+  "save": "حفظ",
+  "saved": "تم الحفظ",
     "popupBlocked": "تم حظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة والمحاولة مرة أخرى.",
     "loginTimeout": "انتهت مهلة تسجيل الدخول",
     "delete": "حذف",
@@ -36,11 +36,7 @@
     "open": "فتح",
     "yes": "نعم",
     "no": "لا",
-    "confirm": "تأكيد",
-    "darkMode": "الوضع الداكن",
-    "lightMode": "الوضع الفاتح",
-    "notifications": "الإشعارات",
-    "welcome": "مرحباً"
+    "confirm": "تأكيد"
   },
   "home": {
     "hero": {
@@ -836,11 +832,11 @@
         }
       },
       "authenticityAccuracy": {
-        "title": "الأصالة والدقة",
+        "title": "المصداقية والدقة",
         "points": {
-          "accurateTruthful": "كن دقيقًا وصادقًا",
-          "noImpersonation": "لا تنتحل شخصية أحد",
-          "genuineJobPostings": "انشر قوائم وظائف حقيقية"
+          "accurateTruthful": "معلومات دقيقة وصحيحة",
+          "noImpersonation": "عدم انتحال شخصية",
+          "genuineJobPostings": "إعلانات وظائف حقيقية"
         }
       },
       "privacyConfidentiality": {
@@ -1104,28 +1100,7 @@
       "chat": "المحادثة مع أصحاب العمل والدعم",
       "videoUpload": "رفع فيديوهات جديدة لحسابك",
       "videoEditor": "تحرير فيديوهاتك المرفوعة"
-    },
-    "activities": "الأنشطة",
-    "analytics": "التحليلات",
-    "chat": "دردشة",
-    "communication": "التواصل",
-    "dashboard": "لوحة التحكم",
-    "findJobs": "ابحث عن وظائف",
-    "interviews": "المقابلات",
-    "jobSearch": "بحث عن وظائف",
-    "likedVideos": "الفيديوهات المعجب بها",
-    "myProfile": "ملفي الشخصي",
-    "myVideos": "فيديوهاتي",
-    "notifications": "الإشعارات",
-    "overview": "نظرة عامة",
-    "profileContent": "الملف والمحتوى",
-    "resumeBuilder": "منشئ السيرة الذاتية",
-    "savedLiked": "المحفوظات والإعجابات",
-    "savedVideos": "الفيديوهات المحفوظة",
-    "settings": "الإعدادات",
-    "videoFeed": "تغذية الفيديو",
-    "videoUpload": "رفع فيديو",
-    "notificationSettings": "إعدادات الإشعارات"
+    }
   },
   "employerTabs": {
     "categories": {
@@ -1202,133 +1177,7 @@
     "communicationQuality": "جودة التواصل",
     "keywordsFound": "الكلمات المفتاحية الموجودة",
     "improvementSuggestions": "اقتراحات التحسين"
-  },
-  "about": {
-    "hero": {
-      "title": "عن SwipeScout",
-      "subtitle": "ثورة في طريقة العثور على الوظائف واكتشاف المواهب",
-      "description": "تأسست SwipeScout في عام 2025، وتربط بين المرشحين وأصحاب العمل من خلال ملفات تعريف فيديو قصيرة وأدوات مطابقة ذكية."
-    },
-    "meta": {
-      "title": "عن SwipeScout | مهمتنا وفريقنا",
-      "description": "تعرف على مهمة SwipeScout لتحديث التوظيف باستخدام الملفات الشخصية بالفيديو والمطابقة بالذكاء الاصطناعي.",
-      "keywords": "SwipeScout, سيرة ذاتية فيديو, التوظيف, المطابقة بالذكاء الاصطناعي",
-      "ogDescription": "اطلع على كيف تساعد SwipeScout المرشحين وأصحاب العمل في العثور على التطابقات الأفضل عبر ملفات الفيديو والذكاء الاصطناعي."
-    },
-    "mission": {
-      "title": "مهمتنا",
-      "description1": "جعل البحث عن وظيفة ممتعًا وفعالًا كالشبكات الاجتماعية.",
-      "description2": "نؤمن أن ملفات الفيديو تسمح للمرشحين بعرض شخصياتهم ومهاراتهم التواصلية جنبًا إلى جنب مع مهاراتهم المهنية."
-    },
-    "stats": {
-      "candidatesHired": "المرشحون المعينون",
-      "jobsPosted": "الوظائف المنشورة",
-      "partnerCompanies": "الشركات الشريكة",
-      "satisfactionRate": "معدل الرضا"
-    },
-    "team": {
-      "title": "فريقنا",
-      "description": "محترفون شغوفون مكرسون لتحويل تجربة التوظيف.",
-      "bahri": {
-        "role": "مصمم واجهات/تجربة مستخدم",
-        "bio": "مطور متكامل وقائد واجهة"
-      },
-      "obaid": {
-        "role": "شريك مؤسس ورئيس التكنولوجيا",
-        "bio": "أكثر من 20 عامًا في التطوير وهندسة النظم"
-      },
-      "raj": {
-        "role": "رؤى إدارة الأعمال",
-        "bio": "العمليات والاستراتيجية"
-      },
-      "tareq": {
-        "role": "المؤسس والمدير التنفيذي",
-        "bio": "الرؤية والمنتج والنمو"
-      },
-      "varshal": {
-        "role": "العمليات والاستراتيجية",
-        "bio": "التسويق ومتعدد المهام"
-      }
-    }
-  },
-  "aiAnalysis": {
-    "title": "تحليل AI",
-    "overallScore": "النتيجة الإجمالية",
-    "recommendations": "التوصيات",
-    "jobRecommendations": "توصيات الوظائف",
-    "learningRecommendations": "توصيات التعلم",
-    "careerPath": "المسار المهني المقترح",
-    "skillGaps": "ثغرات المهارات"
-  },
-  "aiInterview": {
-    "title": "مقابلة AI",
-    "analyzing": "جاري التحليل...",
-    "results": "النتائج",
-    "generateQuestions": "توليد الأسئلة",
-    "feedback": "ملاحظات",
-    "improvements": "مجالات التحسين"
-  },
-  "aiMatching": {
-    "title": "مطابقة AI",
-    "useAIMatching": "استخدم مطابقة AI",
-    "noMatchingVideos": "لم يتم العثور على فيديوهات متطابقة",
-    "filterTooltip": "تصفية مطابقات AI"
-  },
-  "admin": {
-    "title": "لوحة الإدارة",
-    "users": "المستخدمون",
-    "videos": "الفيديوهات",
-    "jobs": "الوظائف",
-    "reports": "التقارير",
-    "pendingReports": "التقارير المعلقة",
-    "investigate": "تحقيق",
-    "actions": "إجراءات"
-  },
-  "footer": {
-    "aboutUs": "معلومات عنا",
-    "communityGuidelines": "إرشادات المجتمع",
-    "company": "الشركة",
-    "connect": "اتصل",
-    "contactUs": "اتصل بنا",
-    "cookiePolicy": "سياسة ملفات تعريف الارتباط",
-    "copyright": "© SwipeScout",
-    "credits": "الاعتمادات",
-    "customerSupport": "دعم العملاء",
-    "eula": "اتفاقية ترخيص المستخدم النهائي",
-    "faq": "الأسئلة الشائعة",
-    "howItWorks": "كيف تعمل",
-    "joinCommunity": "انضم إلى المجتمع",
-    "legal": "قانوني",
-    "privacyPolicy": "سياسة الخصوصية",
-    "successRate": "معدل النجاح",
-    "support24_7": "دعم 24/7",
-    "termsOfService": "شروط الخدمة",
-    "verifiedCompanies": "شركات موثوقة"
-  },
-  "contact": {
-    "title": "اتصل",
-    "description": "تواصل مع فريق SwipeScout.",
-    "discord": {
-      "title": "انضم إلى Discord",
-      "description": "تواصل مع المجتمع على Discord.",
-      "button": "انضم إلى Discord"
-    },
-    "email": {
-      "title": "البريد الإلكتروني",
-      "description": "أرسل لنا رسالة وسنرد في أقرب وقت ممكن."
-    }
-  },
-  "faq": {
-    "categories": {
-      "all": "الكل",
-      "employers": "أصحاب العمل",
-      "general": "عام",
-      "jobSeekers": "باحثو عن عمل",
-      "technical": "تقني"
-    }
-  },
-  "errors": {
-    "genericError": "حدث خطأ ما",
-    "loginRequired": "يجب تسجيل الدخول للقيام بهذا الإجراء"
   }
 }
+
+

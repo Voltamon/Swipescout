@@ -3,7 +3,7 @@
 
 /* Root background */
 body #root {
-  background-color: #2B2B2B;
+  background-color: #0a0a0a;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -94,7 +94,7 @@ body #root {
 
 .home-logo {
   width: 32px;
-  color: #1976d2; ;
+  color: #8b5cf6; ;
   height: 32px;
   object-fit: contain;
   
@@ -133,7 +133,7 @@ body #root {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(43, 43, 43, 0.7);
+  background-color: rgba(15, 15, 15, 0.85);
   z-index: 1;
 }
 
@@ -173,7 +173,7 @@ body #root {
 }
 
 .home-title-highlight {
-  color: #1976d2;
+  color: #8b5cf6;
  
 }
 
@@ -193,7 +193,7 @@ body #root {
 }
 
 .home-subtitle-highlight {
-  color: #1976d2;
+  color: #8b5cf6;
 }
 
 .home-description {
@@ -244,7 +244,7 @@ body #root {
   text-transform: none;
   border-radius: 12px;
   transition: all 0.3s ease;
-  background: linear-gradient(135deg, #1976d2 100%);
+  background: linear-gradient(135deg, #8b5cf6 100%);
   color: rgba(255, 255, 255, 0.8);
   padding: 16px 32px;
   display: flex;
@@ -286,8 +286,8 @@ body #root {
   text-transform: none;
   border-radius: 12px;
   transition: all 0.3s ease;
-  border: 2px solid #1976d2;
-  color: #64b5f6;
+  border: 2px solid #8b5cf6;
+  color: #a78bfa;
   padding: 16px 32px;
   background: transparent;
   display: flex;
@@ -297,11 +297,11 @@ body #root {
 }
 
 .home-signup-button:hover {
-  border-color: #1565c0;
-  color: #90caf9;
-  background-color: rgba(25, 118, 210, 0.05);
+  border-color: #7c3aed;
+  color: #c4b5fd;
+  background-color: rgba(139, 92, 246, 0.05);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
 
 .home-signup-button:active {
@@ -691,12 +691,12 @@ body #root {
 }
 
 .home-tab:hover {
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.1);
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
 }
 
 .home-tab.active {
-  color: #667eea;
+  color: #8b5cf6;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-weight: 700;
@@ -743,13 +743,13 @@ body #root {
 
 .home-input-field input:focus,
 .home-input-field textarea:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 .home-input-field input:hover,
 .home-input-field textarea:hover {
-  border-color: #1976d2;
+  border-color: #8b5cf6;
 }
 
 .home-input-field label {
@@ -913,7 +913,7 @@ body #root {
 }
 
 .home-forgot-password {
-  color: #1976d2;
+  color: #8b5cf6;
   text-decoration: none;
   font-size: 0.9rem;
   text-align: right;
@@ -923,25 +923,25 @@ body #root {
 }
 
 .home-forgot-password:hover {
-  color: #1565c0;
+  color: #7c3aed;
   text-decoration: underline;
 }
 
 .home-auth-button {
-  background: linear-gradient(45deg, #1976d2, #42a5f5) !important;
+  background: linear-gradient(45deg, #8b5cf6, #a855f7) !important;
   color: white !important;
   padding: 12px 24px !important;
   font-size: 1rem !important;
   font-weight: 600 !important;
   text-transform: none !important;
   border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
   transition: all 0.3s ease !important;
 }
 
 .home-auth-button:hover {
-  background: linear-gradient(45deg, #1565c0, #1976d2) !important;
-  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4) !important;
+  background: linear-gradient(45deg, #7c3aed, #8b5cf6) !important;
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4) !important;
   transform: translateY(-2px);
 }
 
@@ -986,8 +986,8 @@ body #root {
 }
 
 .home-social-button:hover {
-  border-color: #1976d2 !important;
-  background-color: rgba(25, 118, 210, 0.04) !important;
+  border-color: #8b5cf6 !important;
+  background-color: rgba(139, 92, 246, 0.04) !important;
   transform: translateY(-1px);
 }
 
@@ -1051,7 +1051,7 @@ body #root {
 }
 
 .home-feature-statement-highlight {
-  color: #1976d2;
+  color: #8b5cf6;
   
 }
 
@@ -1083,18 +1083,18 @@ body #root {
 @keyframes sparkle {
   0% {
     text-shadow: 
-      0 0 5px rgba(25, 118, 210, 0.8),
-      0 0 10px rgba(25, 118, 210, 0.6),
-      0 0 15px rgba(25, 118, 210, 0.4),
-      0 0 20px rgba(25, 118, 210, 0.2),
+      0 0 5px rgba(139, 92, 246, 0.8),
+      0 0 10px rgba(139, 92, 246, 0.6),
+      0 0 15px rgba(139, 92, 246, 0.4),
+      0 0 20px rgba(139, 92, 246, 0.2),
       2px 2px 4px rgba(0, 0, 0, 0.5);
   }
   100% {
     text-shadow: 
-      0 0 10px rgba(25, 118, 210, 1),
-      0 0 20px rgba(25, 118, 210, 0.8),
-      0 0 30px rgba(25, 118, 210, 0.6),
-      0 0 40px rgba(25, 118, 210, 0.4),
+      0 0 10px rgba(139, 92, 246, 1),
+      0 0 20px rgba(139, 92, 246, 0.8),
+      0 0 30px rgba(139, 92, 246, 0.6),
+      0 0 40px rgba(139, 92, 246, 0.4),
       2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 }
@@ -1516,7 +1516,7 @@ body #root {
 
 .home-role-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 /* Mobile responsive adjustments for role buttons */
@@ -1546,7 +1546,7 @@ body #root {
 .home-video-feeds-section svg {
   width: 48px;
   height: 48px;
-  color: #667eea;
+  color: #8b5cf6;
   margin-bottom: 1rem;
 }
 

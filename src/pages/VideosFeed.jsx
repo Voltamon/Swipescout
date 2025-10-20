@@ -444,7 +444,7 @@ const VideoCard = React.memo(({
             <IconButton onClick={() => onSave(video.id)} aria-label="save" color={video.saved ? 'primary' : 'default'}>
               <Bookmark />
             </IconButton>
-            <Typography variant="caption">{video.saved ? t('homePage.saved','Saved') : t('homePage.save','Save')}</Typography>
+            <Typography variant="caption">{video.saved ? t('common.saved','Saved') : t('common.save','Save')}</Typography>
 
             <IconButton onClick={onNext} size="large" aria-label="next" sx={{ bgcolor: 'background.paper' }}>
               <KeyboardArrowDown />
@@ -1042,8 +1042,8 @@ const HomePage = () => {
   if (!videos.length) {
     return (
       <Box p={3} textAlign="center">
-        <Typography variant="h5">{t('homePage.noVideosAvailable', 'No videos available.')}</Typography>
-        <Typography variant="body1">{t('homePage.uploadPrompt', 'Start by uploading some videos!')}</Typography>
+  <Typography variant="h5">{t('videos.noVideosYet', 'No videos yet')}</Typography>
+  <Typography variant="body1">{t('videos.beTheFirstToShare', 'Be the first to share your story')}</Typography>
       </Box>
     );
   }

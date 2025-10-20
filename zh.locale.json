@@ -1,11 +1,11 @@
-{
+﻿{
   "common": {
     "loading": "加载中...",
     "error": "错误",
     "success": "成功",
     "cancel": "取消",
-    "save": "保存",
-    "saved": "已保存",
+  "save": "保存",
+  "saved": "已保存",
     "popupBlocked": "弹出窗口被拦截。请允许弹出窗口后重试。",
     "loginTimeout": "登录超时",
     "delete": "删除",
@@ -36,11 +36,7 @@
     "open": "打开",
     "yes": "是",
     "no": "否",
-    "confirm": "确认",
-    "darkMode": "深色",
-    "lightMode": "浅色",
-    "notifications": "通知",
-    "welcome": "欢迎"
+    "confirm": "确认"
   },
   "home": {
     "hero": {
@@ -804,7 +800,7 @@
       }
     },
     "communityGuidelines": {
-      "title": "社区准则",
+      "title": "社区指南",
       "welcome": {
         "title": "欢迎加入我们的社区",
         "content": "我们致力于为所有人提供安全、尊重的环境。"
@@ -820,9 +816,9 @@
       "authenticityAccuracy": {
         "title": "真实性与准确性",
         "points": {
-          "accurateTruthful": "保持准确与真实",
-          "noImpersonation": "禁止冒充他人",
-          "genuineJobPostings": "发布真实的职位信息"
+          "accurateTruthful": "准确真实",
+          "noImpersonation": "禁止冒充",
+          "genuineJobPostings": "真实职位发布"
         }
       },
       "privacyConfidentiality": {
@@ -1086,28 +1082,7 @@
       "chat": "与雇主和支持团队聊天",
       "videoUpload": "上传新视频到您的账户",
       "videoEditor": "编辑您上传的视频"
-    },
-    "activities": "活动",
-    "analytics": "分析",
-    "chat": "聊天",
-    "communication": "沟通",
-    "dashboard": "仪表板",
-    "findJobs": "查找职位",
-    "interviews": "面试",
-    "jobSearch": "职位搜索",
-    "likedVideos": "喜欢的视频",
-    "myProfile": "我的资料",
-    "myVideos": "我的视频",
-    "notifications": "通知",
-    "overview": "概览",
-    "profileContent": "个人资料与内容",
-    "resumeBuilder": "简历生成器",
-    "savedLiked": "已保存与喜欢",
-    "savedVideos": "已保存的视频",
-    "settings": "设置",
-    "videoFeed": "视频推送",
-    "videoUpload": "上传视频",
-    "notificationSettings": "通知设置"
+    }
   },
   "employerTabs": {
     "categories": {
@@ -1184,133 +1159,8 @@
     "communicationQuality": "沟通质量",
     "keywordsFound": "找到的关键词",
     "improvementSuggestions": "改进建议"
-  },
-  "about": {
-    "hero": {
-      "title": "关于 SwipeScout",
-      "subtitle": "革新人们寻找工作和公司发现人才的方式",
-      "description": "SwipeScout 于 2025 年成立，通过短视频个人简介和智能匹配连接候选人和雇主。"
-    },
-    "meta": {
-      "title": "关于 SwipeScout | 我们的使命与团队",
-      "description": "了解 SwipeScout 如何通过视频优先的简介和 AI 匹配来革新招聘流程。",
-      "keywords": "SwipeScout, 视频简历, 招聘, AI 匹配",
-      "ogDescription": "了解 SwipeScout 如何通过视频简介和人工智能帮助候选人和雇主找到更匹配的对象。"
-    },
-    "mission": {
-      "title": "我们的使命",
-      "description1": "让求职像社交网络一样更有吸引力且更有效。",
-      "description2": "我们相信视频简介可以让候选人在展示技能的同时展现个性和沟通能力。"
-    },
-    "stats": {
-      "candidatesHired": "被录用候选人",
-      "jobsPosted": "发布职位",
-      "partnerCompanies": "合作公司",
-      "satisfactionRate": "满意度"
-    },
-    "team": {
-      "title": "团队介绍",
-      "description": "致力于改变招聘体验的热情专业团队。",
-      "bahri": {
-        "role": "UI/UX 设计师",
-        "bio": "全栈开发 & 界面负责人"
-      },
-      "obaid": {
-        "role": "联合创始人 & CTO",
-        "bio": "20+ 年开发与系统架构经验"
-      },
-      "raj": {
-        "role": "业务管理洞察",
-        "bio": "运营与战略"
-      },
-      "tareq": {
-        "role": "创始人 & CEO",
-        "bio": "愿景、产品与增长"
-      },
-      "varshal": {
-        "role": "运营与战略",
-        "bio": "市场与多面手"
-      }
-    }
-  },
-  "aiAnalysis": {
-    "title": "AI 分析",
-    "overallScore": "总体得分",
-    "recommendations": "建议",
-    "jobRecommendations": "职位推荐",
-    "learningRecommendations": "学习建议",
-    "careerPath": "建议的职业路径",
-    "skillGaps": "技能差距"
-  },
-  "aiInterview": {
-    "title": "AI 面试",
-    "analyzing": "正在分析...",
-    "results": "结果",
-    "generateQuestions": "生成问题",
-    "feedback": "反馈",
-    "improvements": "改进建议"
-  },
-  "aiMatching": {
-    "title": "AI 匹配",
-    "useAIMatching": "使用 AI 匹配",
-    "noMatchingVideos": "未找到匹配的视频",
-    "filterTooltip": "筛选 AI 匹配"
-  },
-  "admin": {
-    "title": "管理员",
-    "users": "用户",
-    "videos": "视频",
-    "jobs": "职位",
-    "reports": "报告",
-    "pendingReports": "待处理报告",
-    "investigate": "调查",
-    "actions": "操作"
-  },
-  "footer": {
-    "aboutUs": "关于我们",
-    "communityGuidelines": "社区准则",
-    "company": "公司",
-    "connect": "联系",
-    "contactUs": "联系我们",
-    "cookiePolicy": "Cookie 政策",
-    "copyright": "© SwipeScout",
-    "credits": "鸣谢",
-    "customerSupport": "客户支持",
-    "eula": "最终用户许可协议",
-    "faq": "常见问题",
-    "howItWorks": "如何运作",
-    "joinCommunity": "加入社区",
-    "legal": "法律",
-    "privacyPolicy": "隐私政策",
-    "successRate": "成功率",
-    "support24_7": "全天候支持",
-    "termsOfService": "服务条款",
-    "verifiedCompanies": "认证公司"
-  },
-  "contact": {
-    "title": "联系",
-    "description": "与 SwipeScout 团队取得联系。",
-    "discord": {
-      "title": "加入我们的 Discord",
-      "description": "在 Discord 与社区连接。",
-      "button": "加入 Discord"
-    },
-    "email": {
-      "title": "电子邮件",
-      "description": "给我们发邮件，我们会尽快回复。"
-    }
-  },
-  "faq": {
-    "categories": {
-      "all": "全部",
-      "employers": "雇主",
-      "general": "通用",
-      "jobSeekers": "求职者",
-      "technical": "技术"
-    }
-  },
-  "errors": {
-    "genericError": "出了点问题",
-    "loginRequired": "您必须登录才能执行此操作"
   }
 }
+
+
+

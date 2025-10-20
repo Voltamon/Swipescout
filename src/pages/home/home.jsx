@@ -327,6 +327,23 @@ const Home = () => {
     navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
   };
 
+  const handleVideoFeedsClick = () => {
+    if (!user) {
+      setRedirectPath('/videos/'); // Set destination to videos page if not logged in
+      handleOpenAuthDialog(0); // Open login dialog
+      return;
+    }
+    // If logged in, navigate based on role
+    const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
+    if (effectiveRole === 'job_seeker' || effectiveRole === 'employee') {
+      navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
+    } else if (effectiveRole === 'employer' || effectiveRole === 'recruiter') {
+      navigate('/employer-tabs?group=profileContent&tab=video-upload');
+    } else {
+      navigate('/videos/'); // Fallback
+    }
+  };
+
   return (
     <Box className="home-wrapper">
       {/* SwipeScout Header */}
@@ -411,8 +428,8 @@ const Home = () => {
               className="home-video-feeds-section"
               role="button"
               tabIndex={0}
-              onClick={() => navigate('/videos/')}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { navigate('/videos/'); } }}
+              onClick={handleVideoFeedsClick}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { handleVideoFeedsClick(); } }}
             >
               <svg
                 width="48"

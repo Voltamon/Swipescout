@@ -1,0 +1,206 @@
+{
+  "en": {
+    "footer": {
+      "aboutUs": "About Us",
+      "communityGuidelines": "Community Guidelines",
+      "company": "Company",
+      "connect": "Connect",
+      "contactUs": "Contact Us",
+      "cookiePolicy": "Cookie Policy",
+      "copyright": "© SwipeScout",
+      "credits": "Credits",
+      "customerSupport": "Customer Support",
+      "eula": "End User License Agreement",
+      "faq": "FAQ",
+      "howItWorks": "How it works",
+      "joinCommunity": "Join the community",
+      "legal": "Legal",
+      "privacyPolicy": "Privacy Policy",
+      "successRate": "Success Rate",
+      "support24_7": "24/7 Support",
+      "termsOfService": "Terms of Service",
+      "verifiedCompanies": "Verified Companies"
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Get in touch with the SwipeScout team.",
+      "discord": {
+        "title": "Join our Discord",
+        "description": "Connect with the community on Discord.",
+        "button": "Join Discord"
+      },
+      "email": {
+        "title": "Email",
+        "description": "Send us an email and we'll reply as soon as we can."
+      }
+    },
+    "faq": {
+      "categories": {
+        "all": "All",
+        "employers": "Employers",
+        "general": "General",
+        "jobSeekers": "Job Seekers",
+        "technical": "Technical"
+      }
+    },
+    "errors": {
+      "genericError": "Something went wrong",
+      "loginRequired": "You must be logged in to perform this action"
+    },
+    "common": {
+      "darkMode": "Dark",
+      "lightMode": "Light",
+      "notifications": "Notifications",
+      "welcome": "Welcome"
+    },
+    "legal": {
+      "communityGuidelines": {
+        "title": "Community Guidelines",
+        "authenticityAccuracy": {
+          "title": "Authenticity & Accuracy",
+          "points": {
+            "accurateTruthful": "Be accurate and truthful",
+            "genuineJobPostings": "Post genuine job listings",
+            "noImpersonation": "No impersonation"
+          }
+        }
+      }
+    }
+  },
+  "ar": {
+    "footer": {
+      "aboutUs": "معلومات عنا",
+      "communityGuidelines": "إرشادات المجتمع",
+      "company": "الشركة",
+      "connect": "اتصل",
+      "contactUs": "اتصل بنا",
+      "cookiePolicy": "سياسة ملفات تعريف الارتباط",
+      "copyright": "© SwipeScout",
+      "credits": "الاعتمادات",
+      "customerSupport": "دعم العملاء",
+      "eula": "اتفاقية ترخيص المستخدم النهائي",
+      "faq": "الأسئلة الشائعة",
+      "howItWorks": "كيف تعمل",
+      "joinCommunity": "انضم إلى المجتمع",
+      "legal": "قانوني",
+      "privacyPolicy": "سياسة الخصوصية",
+      "successRate": "معدل النجاح",
+      "support24_7": "دعم 24/7",
+      "termsOfService": "شروط الخدمة",
+      "verifiedCompanies": "شركات موثوقة"
+    },
+    "contact": {
+      "title": "اتصل",
+      "description": "تواصل مع فريق SwipeScout.",
+      "discord": {
+        "title": "انضم إلى Discord",
+        "description": "تواصل مع المجتمع على Discord.",
+        "button": "انضم إلى Discord"
+      },
+      "email": {
+        "title": "البريد الإلكتروني",
+        "description": "أرسل لنا رسالة وسنرد في أقرب وقت ممكن."
+      }
+    },
+    "faq": {
+      "categories": {
+        "all": "الكل",
+        "employers": "أصحاب العمل",
+        "general": "عام",
+        "jobSeekers": "باحثو عن عمل",
+        "technical": "تقني"
+      }
+    },
+    "errors": {
+      "genericError": "حدث خطأ ما",
+      "loginRequired": "يجب تسجيل الدخول للقيام بهذا الإجراء"
+    },
+    "common": {
+      "darkMode": "الوضع الداكن",
+      "lightMode": "الوضع الفاتح",
+      "notifications": "الإشعارات",
+      "welcome": "مرحباً"
+    },
+    "legal": {
+      "communityGuidelines": {
+        "title": "إرشادات المجتمع",
+        "authenticityAccuracy": {
+          "title": "الأصالة والدقة",
+          "points": {
+            "accurateTruthful": "كن دقيقًا وصادقًا",
+            "genuineJobPostings": "انشر قوائم وظائف حقيقية",
+            "noImpersonation": "لا تنتحل شخصية أحد"
+          }
+        }
+      }
+    }
+  },
+  "zh": {
+    "footer": {
+      "aboutUs": "关于我们",
+      "communityGuidelines": "社区准则",
+      "company": "公司",
+      "connect": "联系",
+      "contactUs": "联系我们",
+      "cookiePolicy": "Cookie 政策",
+      "copyright": "© SwipeScout",
+      "credits": "鸣谢",
+      "customerSupport": "客户支持",
+      "eula": "最终用户许可协议",
+      "faq": "常见问题",
+      "howItWorks": "如何运作",
+      "joinCommunity": "加入社区",
+      "legal": "法律",
+      "privacyPolicy": "隐私政策",
+      "successRate": "成功率",
+      "support24_7": "全天候支持",
+      "termsOfService": "服务条款",
+      "verifiedCompanies": "认证公司"
+    },
+    "contact": {
+      "title": "联系",
+      "description": "与 SwipeScout 团队取得联系。",
+      "discord": {
+        "title": "加入我们的 Discord",
+        "description": "在 Discord 与社区连接。",
+        "button": "加入 Discord"
+      },
+      "email": {
+        "title": "电子邮件",
+        "description": "给我们发邮件，我们会尽快回复。"
+      }
+    },
+    "faq": {
+      "categories": {
+        "all": "全部",
+        "employers": "雇主",
+        "general": "通用",
+        "jobSeekers": "求职者",
+        "technical": "技术"
+      }
+    },
+    "errors": {
+      "genericError": "出了点问题",
+      "loginRequired": "您必须登录才能执行此操作"
+    },
+    "common": {
+      "darkMode": "深色",
+      "lightMode": "浅色",
+      "notifications": "通知",
+      "welcome": "欢迎"
+    },
+    "legal": {
+      "communityGuidelines": {
+        "title": "社区准则",
+        "authenticityAccuracy": {
+          "title": "真实性与准确性",
+          "points": {
+            "accurateTruthful": "保持准确与真实",
+            "genuineJobPostings": "发布真实的职位信息",
+            "noImpersonation": "禁止冒充他人"
+          }
+        }
+      }
+    }
+  }
+}
