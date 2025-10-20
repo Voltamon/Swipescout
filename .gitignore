@@ -26,3 +26,7 @@ build
 .env
 public/videos/*.*
 .continue 
+# Add these lines to your .gitignore
+missing-translation-report-pretty.json
+missing-keys-clean.json
+missing-translation-report.json
