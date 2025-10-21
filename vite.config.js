@@ -9,6 +9,22 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['lucide-react', 'react-icons', '@mui/material', '@mui/icons-material', '@mui/lab'],
+          firebase: ['@firebase/auth'],
+          charts: ['chart.js', 'react-chartjs-2', 'recharts'],
+          forms: ['formik', 'react-hook-form', 'yup'],
+          utils: ['axios', 'socket.io-client', 'date-fns', 'dayjs', 'uuid'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 2000,
+  },
   server: {
     port: 5173,
     open: true,

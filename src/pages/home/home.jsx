@@ -312,8 +312,12 @@ const Home = () => {
     navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
   };
 
-  return (
+ 
+  
+
+   return (
     <div className="home-wrapper">
+    
       {/* SwipeScout Header */}
       <div className="home-header">
         <div className="home-logo-container">

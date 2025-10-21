@@ -4,8 +4,8 @@
     "error": "Error",
     "success": "Success",
     "cancel": "Cancel",
-    "save": "Save",
-    "saved": "Saved",
+  "save": "Save",
+  "saved": "Saved",
     "popupBlocked": "Popup blocked. Please allow popups and try again.",
     "loginTimeout": "Login timed out",
     "delete": "Delete",
@@ -36,11 +36,7 @@
     "open": "Open",
     "yes": "Yes",
     "no": "No",
-    "confirm": "Confirm",
-    "darkMode": "Dark",
-    "lightMode": "Light",
-    "notifications": "Notifications",
-    "welcome": "Welcome"
+    "confirm": "Confirm"
   },
   "home": {
     "hero": {
@@ -636,7 +632,7 @@
     "markAsUnread": "Mark as Unread"
   },
   "errors": {
-    "genericError": "Something went wrong",
+    "genericError": "An error occurred. Please try again.",
     "networkError": "Network error. Please check your connection.",
     "serverError": "Server error. Please try again later.",
     "notFound": "Page not found.",
@@ -645,7 +641,7 @@
     "validationError": "Please check your inputs and try again.",
     "fileUploadError": "File upload failed. Please try again.",
     "videoUploadError": "Video upload failed. Please try again.",
-    "loginRequired": "You must be logged in to perform this action",
+    "loginRequired": "Please log in to continue.",
     "sessionExpired": "Your session has expired. Please log in again.",
     "rateLimitExceeded": "Too many requests. Please try again later.",
     "maintenanceMode": "System is currently under maintenance. Please try again later."
@@ -666,7 +662,7 @@
   "footer": {
     "company": "Company",
     "aboutUs": "About Us",
-    "howItWorks": "How it works",
+    "howItWorks": "How It Works",
     "faq": "FAQ",
     "contactUs": "Contact Us",
     "customerSupport": "Customer Support",
@@ -677,13 +673,13 @@
     "cookiePolicy": "Cookie Policy",
     "communityGuidelines": "Community Guidelines",
     "copyrightIpTerms": "Copyright & IP Terms",
-    "eula": "End User License Agreement",
+    "eula": "EULA",
     "connect": "Connect",
-    "joinCommunity": "Join the community",
+    "joinCommunity": "Join our community of professionals",
     "verifiedCompanies": "Verified Companies",
-    "successRate": "Success Rate",
+    "successRate": "87% Success Rate",
     "support24_7": "24/7 Support",
-    "copyright": "© SwipeScout",
+    "copyright": "© {{year}} SwipeScout. All rights reserved.",
     "trustedBy": "Trusted by thousands of professionals",
     "securePayments": "Secure Payments",
     "support247": "24/7 Support",
@@ -692,19 +688,19 @@
   "about": {
     "meta": {
       "title": "About SwipeScout | Our Mission and Team",
-      "description": "Learn about SwipeScout's mission to modernize hiring with video-first profiles and AI-driven matching.",
-      "keywords": "SwipeScout, video resume, recruitment, hiring, AI matching",
-      "ogDescription": "See how SwipeScout helps candidates and employers find better matches through video profiles and AI."
+      "description": "Learn about SwipeScout's mission to revolutionize recruitment with video resumes and our dedicated team of professionals.",
+      "keywords": "about SwipeScout, company mission, recruitment technology, hiring platform team",
+      "ogDescription": "Discover how SwipeScout is changing the way people find jobs and companies find talent through innovative technology."
     },
     "hero": {
       "title": "About SwipeScout",
       "subtitle": "Revolutionizing the way people find jobs and companies find talent",
-      "description": "Founded in 2025, SwipeScout connects candidates and employers through short, authentic video profiles and smart matching."
+      "description": "Founded in 2025, SwipeScout combines the efficiency of modern technology with the human touch needed in recruitment. Our platform bridges the gap between talented professionals and innovative companies through intuitive video profiles and smart matching algorithms."
     },
     "mission": {
       "title": "Our Mission",
-      "description1": "To make job searching as engaging and effective as social networking.",
-      "description2": "We believe video profiles let candidates showcase personality and communication alongside skills."
+      "description1": "To make job searching as engaging and effective as social networking, while giving employers better tools to discover authentic talent.",
+      "description2": "We believe the traditional resume is outdated. Video profiles allow candidates to showcase their personality, communication skills, and passion in ways paper never could."
     },
     "stats": {
       "jobsPosted": "Jobs Posted",
@@ -714,10 +710,10 @@
     },
     "team": {
       "title": "Meet Our Team",
-      "description": "Passionate professionals dedicated to transforming recruitment.",
+      "description": "Passionate professionals dedicated to transforming the recruitment experience",
       "raj": {
         "role": "Business Management Insights",
-        "bio": "Operations & strategy"
+        "bio": "+ Python experience"
       },
       "varshal": {
         "role": "Operations & Strategy",
@@ -725,21 +721,21 @@
       },
       "tareq": {
         "role": "Founder & CEO",
-        "bio": "Vision, product & growth"
+        "bio": "Vision Product & Growth"
       },
       "obaid": {
         "role": "Co-founder & CTO",
-        "bio": "20+ yrs dev & systems architect"
+        "bio": "20+ yrs dev & Systems Architect"
       },
       "bahri": {
         "role": "UI/UX Designer",
-        "bio": "Full‑stack dev & interface lead"
+        "bio": "Full Stack Dev. & interface lead"
       }
     }
   },
   "faq": {
     "categories": {
-      "all": "All",
+      "all": "All FAQs",
       "general": "General",
       "jobSeekers": "Job Seekers",
       "employers": "Employers",
@@ -781,15 +777,15 @@
     }
   },
   "contact": {
-    "title": "Contact",
-    "description": "Get in touch with the SwipeScout team.",
+    "title": "Contact Us",
+    "description": "We would love to hear from you. You can reach out to us using the options below.",
     "email": {
-      "title": "Email",
-      "description": "Send us an email and we'll reply as soon as we can."
+      "title": "Email Us Directly",
+      "description": "For general questions or inquiries, please send us an email."
     },
     "discord": {
-      "title": "Join our Discord",
-      "description": "Connect with the community on Discord.",
+      "title": "Join Our Discord Community",
+      "description": "Connect with us and the community for real-time support.",
       "button": "Join Discord"
     }
   },
@@ -838,28 +834,7 @@
       "chat": "Chat with employers and support",
       "videoUpload": "Upload new videos to your account",
       "videoEditor": "Edit your uploaded videos"
-    },
-    "activities": "Activities",
-    "analytics": "Analytics",
-    "chat": "Chat",
-    "communication": "Communication",
-    "dashboard": "Dashboard",
-    "findJobs": "Find Jobs",
-    "interviews": "Interviews",
-    "jobSearch": "Job Search",
-    "likedVideos": "Liked Videos",
-    "myProfile": "My Profile",
-    "myVideos": "My Videos",
-    "notifications": "Notifications",
-    "overview": "Overview",
-    "profileContent": "Profile & Content",
-    "resumeBuilder": "Resume Builder",
-    "savedLiked": "Saved & Liked",
-    "savedVideos": "Saved Videos",
-    "settings": "Settings",
-    "videoFeed": "Video Feed",
-    "videoUpload": "Video Upload",
-    "notificationSettings": "Notification Settings"
+    }
   },
   "employerTabs": {
     "categories": {
@@ -973,14 +948,6 @@
       "userConduct": {
         "title": "User Conduct",
         "content": "You are solely responsible for your interactions with other users of the Service. We reserve the right to monitor disputes between you and other users and to terminate your account if you violate these guidelines."
-      },
-      "authenticityAccuracy": {
-        "title": "Authenticity & Accuracy",
-        "points": {
-          "accurateTruthful": "Be accurate and truthful",
-          "genuineJobPostings": "Post genuine job listings",
-          "noImpersonation": "No impersonation"
-        }
       }
     },
     "copyrightAndIPTerms": {
@@ -1140,68 +1107,6 @@
     "communicationQuality": "Communication Quality",
     "keywordsFound": "Keywords Found",
     "improvementSuggestions": "Improvement Suggestions"
-  },
-  "aiAnalysis": {
-    "title": "AI Analysis",
-    "overallScore": "Overall Score",
-    "recommendations": "Recommendations",
-    "jobRecommendations": "Job Recommendations",
-    "learningRecommendations": "Learning Recommendations",
-    "careerPath": "Suggested Career Path",
-    "skillGaps": "Skill Gaps",
-    "aiRecommendations": "AI Recommendations",
-    "careerPathDescription": "Suggested career path based on analysis",
-    "noVideos": "No videos available for analysis",
-    "videoAnalysis": "Video Analysis",
-    "videoAnalysisDescription": "Automated analysis of your video content"
-  },
-  "aiInterview": {
-    "title": "AI Interview",
-    "analyzing": "Analyzing...",
-    "results": "Results",
-    "generateQuestions": "Generate Questions",
-    "feedback": "Feedback",
-    "improvements": "Improvements"
-  },
-  "aiMatching": {
-    "title": "AI Matching",
-    "useAIMatching": "Use AI Matching",
-    "noMatchingVideos": "No matching videos found",
-    "filterTooltip": "Filter AI matches"
-  },
-  "admin": {
-    "title": "Admin",
-    "users": "Users",
-    "videos": "Videos",
-    "jobs": "Jobs",
-    "reports": "Reports",
-    "pendingReports": "Pending Reports",
-    "investigate": "Investigate",
-    "actions": "Actions",
-    "activeUsers": "Active Users",
-    "aiAnalyses": "AI Analyses",
-    "analytics": "Analytics",
-    "analyticsInfo": "Analytics & Insights",
-    "applications": "Applications",
-    "confirmAction": "Confirm Action",
-    "confirmMessage": "Are you sure?",
-    "email": "Email",
-    "posted": "Posted",
-    "reason": "Reason",
-    "reporter": "Reporter",
-    "reportsAlert": "Reports Alert",
-    "role": "Role",
-    "settingsInfo": "Settings info",
-    "status": "Status",
-    "totalJobs": "Total Jobs",
-    "totalUsers": "Total Users",
-    "totalVideos": "Total Videos",
-    "type": "Type",
-    "user": "User",
-    "views": "Views"
-  },
-  "interviews": {
-    "title": "Interviews",
-    "backToCamera": "Back to camera"
   }
 }
+

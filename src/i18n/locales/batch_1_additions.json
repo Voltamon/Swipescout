@@ -1,0 +1,107 @@
+{
+  "en": {
+    "about": {
+      "hero": {
+        "title": "About SwipeScout",
+        "subtitle": "Revolutionizing the way people find jobs and companies find talent",
+        "description": "Founded in 2025, SwipeScout connects candidates and employers through short, authentic video profiles and smart matching."
+      },
+      "meta": {
+        "title": "About SwipeScout | Our Mission and Team",
+        "description": "Learn about SwipeScout's mission to modernize hiring with video-first profiles and AI-driven matching.",
+        "keywords": "SwipeScout, video resume, recruitment, hiring, AI matching",
+        "ogDescription": "See how SwipeScout helps candidates and employers find better matches through video profiles and AI." 
+      },
+      "mission": {
+        "title": "Our Mission",
+        "description1": "To make job searching as engaging and effective as social networking.",
+        "description2": "We believe video profiles let candidates showcase personality and communication alongside skills."
+      },
+      "stats": {
+        "candidatesHired": "Candidates Hired",
+        "jobsPosted": "Jobs Posted",
+        "partnerCompanies": "Partner Companies",
+        "satisfactionRate": "Satisfaction Rate"
+      },
+      "team": {
+        "title": "Meet Our Team",
+        "description": "Passionate professionals dedicated to transforming recruitment.",
+        "bahri": { "role": "UI/UX Designer", "bio": "Full‑stack dev & interface lead" },
+        "obaid": { "role": "Co-founder & CTO", "bio": "20+ yrs dev & systems architect" },
+        "raj": { "role": "Business Management Insights", "bio": "Operations & strategy" },
+        "tareq": { "role": "Founder & CEO", "bio": "Vision, product & growth" },
+        "varshal": { "role": "Operations & Strategy", "bio": "Marketing & generalist" }
+      }
+    }
+  },
+  "ar": {
+    "about": {
+      "hero": {
+        "title": "عن SwipeScout",
+        "subtitle": "ثورة في طريقة العثور على الوظائف واكتشاف المواهب",
+        "description": "تأسست SwipeScout في عام 2025، وتربط بين المرشحين وأصحاب العمل من خلال ملفات تعريف فيديو قصيرة وأدوات مطابقة ذكية."
+      },
+      "meta": {
+        "title": "عن SwipeScout | مهمتنا وفريقنا",
+        "description": "تعرف على مهمة SwipeScout لتحديث التوظيف باستخدام الملفات الشخصية بالفيديو والمطابقة بالذكاء الاصطناعي.",
+        "keywords": "SwipeScout, سيرة ذاتية فيديو, التوظيف, المطابقة بالذكاء الاصطناعي",
+        "ogDescription": "اطلع على كيف تساعد SwipeScout المرشحين وأصحاب العمل في العثور على التطابقات الأفضل عبر ملفات الفيديو والذكاء الاصطناعي."
+      },
+      "mission": {
+        "title": "مهمتنا",
+        "description1": "جعل البحث عن وظيفة ممتعًا وفعالًا كالشبكات الاجتماعية.",
+        "description2": "نؤمن أن ملفات الفيديو تسمح للمرشحين بعرض شخصياتهم ومهاراتهم التواصلية جنبًا إلى جنب مع مهاراتهم المهنية."
+      },
+      "stats": {
+        "candidatesHired": "المرشحون المعينون",
+        "jobsPosted": "الوظائف المنشورة",
+        "partnerCompanies": "الشركات الشريكة",
+        "satisfactionRate": "معدل الرضا"
+      },
+      "team": {
+        "title": "فريقنا",
+        "description": "محترفون شغوفون مكرسون لتحويل تجربة التوظيف.",
+        "bahri": { "role": "مصمم واجهات/تجربة مستخدم", "bio": "مطور متكامل وقائد واجهة" },
+        "obaid": { "role": "شريك مؤسس ورئيس التكنولوجيا", "bio": "أكثر من 20 عامًا في التطوير وهندسة النظم" },
+        "raj": { "role": "رؤى إدارة الأعمال", "bio": "العمليات والاستراتيجية" },
+        "tareq": { "role": "المؤسس والمدير التنفيذي", "bio": "الرؤية والمنتج والنمو" },
+        "varshal": { "role": "العمليات والاستراتيجية", "bio": "التسويق ومتعدد المهام" }
+      }
+    }
+  },
+  "zh": {
+    "about": {
+      "hero": {
+        "title": "关于 SwipeScout",
+        "subtitle": "革新人们寻找工作和公司发现人才的方式",
+        "description": "SwipeScout 于 2025 年成立，通过短视频个人简介和智能匹配连接候选人和雇主。"
+      },
+      "meta": {
+        "title": "关于 SwipeScout | 我们的使命与团队",
+        "description": "了解 SwipeScout 如何通过视频优先的简介和 AI 匹配来革新招聘流程。",
+        "keywords": "SwipeScout, 视频简历, 招聘, AI 匹配",
+        "ogDescription": "了解 SwipeScout 如何通过视频简介和人工智能帮助候选人和雇主找到更匹配的对象。"
+      },
+      "mission": {
+        "title": "我们的使命",
+        "description1": "让求职像社交网络一样更有吸引力且更有效。",
+        "description2": "我们相信视频简介可以让候选人在展示技能的同时展现个性和沟通能力。"
+      },
+      "stats": {
+        "candidatesHired": "被录用候选人",
+        "jobsPosted": "发布职位",
+        "partnerCompanies": "合作公司",
+        "satisfactionRate": "满意度"
+      },
+      "team": {
+        "title": "团队介绍",
+        "description": "致力于改变招聘体验的热情专业团队。",
+        "bahri": { "role": "UI/UX 设计师", "bio": "全栈开发 & 界面负责人" },
+        "obaid": { "role": "联合创始人 & CTO", "bio": "20+ 年开发与系统架构经验" },
+        "raj": { "role": "业务管理洞察", "bio": "运营与战略" },
+        "tareq": { "role": "创始人 & CEO", "bio": "愿景、产品与增长" },
+        "varshal": { "role": "运营与战略", "bio": "市场与多面手" }
+      }
+    }
+  }
+}
