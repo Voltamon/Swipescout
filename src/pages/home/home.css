@@ -223,8 +223,8 @@ body #root {
   flex-direction: column;
   gap: 1rem;
   position: fixed;
-  bottom: 4rem; /* keep buttons near the bottom on desktop */
-  right: 6rem;
+  bottom: 16rem; /* keep buttons near the bottom on desktop */
+  right: 7rem;
   transform: none;
   z-index: 10;
 }

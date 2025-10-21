@@ -37,6 +37,55 @@ axios.defaults.withCredentials = true;
 // add API base constant (from Vite env or fallback)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
 
+// Helper: robustly extract numbers/booleans from different possible API field names
+const _extractNumber = (obj, candidates = [], fallback = 0) => {
+  for (const k of candidates) {
+    if (!obj) continue;
+    const val = obj[k];
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string' && val !== '') {
+      const parsed = Number(val);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+  }
+  return fallback;
+};
+
+const _extractBoolean = (obj, candidates = [], fallback = false) => {
+  for (const k of candidates) {
+    if (!obj) continue;
+    const val = obj[k];
+    if (typeof val === 'boolean') return val;
+    if (typeof val === 'number') return !!val;
+    if (typeof val === 'string') {
+      const lower = val.toLowerCase();
+      if (lower === 'true' || lower === '1') return true;
+      if (lower === 'false' || lower === '0') return false;
+    }
+  }
+  return fallback;
+};
+
+const normalizeVideoFromApi = (v) => {
+  if (!v) return v;
+  const likes = _extractNumber(v, ['likes', 'likes_count', 'likesCount', 'likesCount'], 0);
+  const comments = _extractNumber(v, ['comments', 'comments_count', 'commentsCount', 'comment_count'], 0);
+  const shares = _extractNumber(v, ['shares', 'shares_count', 'sharesCount', 'sharesCount'], 0);
+  const saved = _extractBoolean(v, ['saved', 'is_saved', 'isSaved', 'saved_flag'], false);
+  const isLiked = _extractBoolean(v, ['isLiked', 'is_liked', 'liked', 'is_liked_flag'], false);
+  const views = _extractNumber(v, ['views', 'views_count', 'viewsCount'], v.views ?? 0);
+
+  return {
+    ...v,
+    likes,
+    comments,
+    shares,
+    saved,
+    isLiked,
+    views,
+  };
+};
+
 // Patch global fetch ONCE so same-origin /api/ requests include credentials and optional Authorization header.
 // This is idempotent and safe to run at module load.
 if (typeof window !== 'undefined' && !window.__fetchCredentialsPatched) {
@@ -101,17 +150,17 @@ const SwipeScoutBackground = () => (
         }
       }}
     >
-      <Box component="span" sx={{
-        display: 'inline-block',
-        mr: 1,
-        fontSize: { xs: '0.6rem', md: '0.85rem' },
-        color: 'rgba(255,255,255,0.75)',
-        letterSpacing: '0.12em',
-        fontWeight: 600,
-        textTransform: 'uppercase',
-        textShadow: '0 1px 4px rgba(0,0,0,0.5)',
-        animation: 'floatLabel 6s ease-in-out infinite',
-      }}>by</Box>
+  <Box component="span" sx={{
+  display: 'inline-block',
+  mr: 1,
+  fontSize: { xs: '.9rem', md: '1.2rem' },
+  color: 'rgba(255,255,255,0.75)',
+  letterSpacing: '0.12em',
+  fontWeight: 500,
+  textTransform: 'uppercase',
+  textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+  animation: 'floatLabel 6s ease-in-out infinite',
+}}>&copy;</Box>
 
       <Box component="span" sx={{
         display: 'inline-block',
@@ -631,7 +680,7 @@ const VideoCard = React.memo(({
   fontWeight: 'bold',
   borderRadius: '12px',
   px: 1,
-  py: .7, }}>{video.likes ?? 0}</Typography>
+  py: .7, }}>{video.likesCount ?? 0}</Typography>
             </Box>
 
             <Box sx={{ textAlign: 'center', p: 1 }}>
@@ -655,7 +704,7 @@ const VideoCard = React.memo(({
   fontWeight: 'bold',
   borderRadius: '12px',
   px: 1,
-  py: .7, }}>{video.shares ?? 0}</Typography>
+  py: .7, }}>{video.sharesCount ?? 0}</Typography>
             </Box>
 
             <Box sx={{ textAlign: 'center', p: 1 }}>
@@ -733,7 +782,7 @@ const Videos = () => {
 
       const results = await Promise.all(promises);
 
-      // Apply stats to state
+      // Apply stats to state (normalize returned stats fields)
       setVideos((prev) =>
         prev.map((v) => {
           const res = results.find((r) => r.id === v.id);
@@ -741,11 +790,11 @@ const Videos = () => {
           const s = res.stats;
           return {
             ...v,
-            likes: typeof s.likes === 'number' ? s.likes : v.likes,
-            comments: typeof s.comments === 'number' ? s.comments : v.comments,
-            shares: typeof s.shares === 'number' ? s.shares : v.shares,
-            isLiked: typeof s.isLiked === 'boolean' ? s.isLiked : v.isLiked,
-            saved: typeof s.saved === 'boolean' ? s.saved : v.saved,
+            likes: _extractNumber(s, ['likes', 'likes_count', 'likesCount'], v.likes ?? 0),
+            comments: _extractNumber(s, ['comments', 'comments_count', 'commentsCount'], v.comments ?? 0),
+            shares: _extractNumber(s, ['shares', 'shares_count', 'sharesCount'], v.shares ?? 0),
+            isLiked: _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
+            saved: _extractBoolean(s, ['saved', 'is_saved', 'isSaved'], v.saved ?? false),
           };
         })
       );
@@ -765,11 +814,11 @@ const Videos = () => {
         if (v.id !== videoId) return v;
         return {
           ...v,
-          likes: typeof s.likes === 'number' ? s.likes : v.likes,
-          comments: typeof s.comments === 'number' ? s.comments : v.comments,
-          shares: typeof s.shares === 'number' ? s.shares : v.shares, // Include shares
-          isLiked: typeof s.isLiked === 'boolean' ? s.isLiked : v.isLiked,
-          saved: typeof s.isSaved === 'boolean' ? s.isSaved : v.saved
+          likes: _extractNumber(s, ['likes', 'likes_count', 'likesCount'], v.likes ?? 0),
+          comments: _extractNumber(s, ['comments', 'comments_count', 'commentsCount'], v.comments ?? 0),
+          shares: _extractNumber(s, ['shares', 'shares_count', 'sharesCount'], v.shares ?? 0),
+          isLiked: _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
+          saved: _extractBoolean(s, ['saved', 'is_saved', 'isSaved', 'isSavedFlag'], v.saved ?? false)
         };
       }));
     } catch (err) {
@@ -805,15 +854,13 @@ const Videos = () => {
         if (Array.isArray(arrField)) rawList = arrField;
       }
 
-      const normalized = rawList.map((v) => ({
-        ...v,
-        likes: v?.likes ?? 0,
-        comments: v?.comments ?? 0,
-        shares: v?.shares ?? 0,
-        saved: v?.saved ?? false,
-        isLiked: v?.isLiked ?? false,
-        id: v?.id,
-      }));
+      const normalized = rawList.map((v) => {
+        const n = normalizeVideoFromApi(v);
+        return {
+          ...n,
+          id: n?.id ?? v?.id,
+        };
+      });
 
       setVideos((prev) => {
         const next = append ? [...prev, ...normalized] : normalized;
@@ -1289,6 +1336,29 @@ const Videos = () => {
       fetchStatsForVideos(videos.map(v => v.id));
     }
   }, [user, videos.length]);
+
+  // Proactively fetch comment counts for videos that are active or near the viewport
+  useEffect(() => {
+    if (!videos || !videos.length) return;
+    const idsToFetch = [];
+    videos.forEach((v, idx) => {
+      const distance = Math.abs(idx - currentVideoIndex);
+      const shouldFetch = distance <= 1 || v.id === playingVideoId || maximizedVideoId === v.id;
+      if (shouldFetch) {
+        const meta = commentsByVideo[v.id];
+        if (!meta || (!meta.loading && (meta.comments == null || meta.total == null))) {
+          idsToFetch.push(v.id);
+        }
+      }
+    });
+
+    if (!idsToFetch.length) return;
+    // Fire-and-forget small requests (limit=1) to populate totals; swallow errors
+    idsToFetch.forEach((id) => {
+      // fetch only first page with limit=1 to get total without pulling all comments
+      fetchComments(id, 1, 1).catch(() => {});
+    });
+  }, [videos, currentVideoIndex, playingVideoId, commentsByVideo, maximizedVideoId, fetchComments]);
 
   if (loading) {
     return (
