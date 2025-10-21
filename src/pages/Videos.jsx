@@ -68,18 +68,26 @@ const _extractBoolean = (obj, candidates = [], fallback = false) => {
 
 const normalizeVideoFromApi = (v) => {
   if (!v) return v;
-  const likes = _extractNumber(v, ['likes', 'likes_count', 'likesCount', 'likesCount'], 0);
+  const likes = _extractNumber(v, ['likes', 'likes_count', 'likesCount'], 0);
   const comments = _extractNumber(v, ['comments', 'comments_count', 'commentsCount', 'comment_count'], 0);
-  const shares = _extractNumber(v, ['shares', 'shares_count', 'sharesCount', 'sharesCount'], 0);
-  const saved = _extractBoolean(v, ['saved', 'is_saved', 'isSaved', 'saved_flag'], false);
+  const shares = _extractNumber(v, ['shares', 'shares_count', 'sharesCount'], 0);
+  const savesCount = _extractNumber(v, ['savesCount', 'saves', 'saves_count'], 0);
+  // saved flag may be boolean or derived from savesCount
+  const saved = _extractBoolean(v, ['saved', 'is_saved', 'isSaved', 'saved_flag'], savesCount > 0);
   const isLiked = _extractBoolean(v, ['isLiked', 'is_liked', 'liked', 'is_liked_flag'], false);
   const views = _extractNumber(v, ['views', 'views_count', 'viewsCount'], v.views ?? 0);
 
   return {
     ...v,
+    // provide both <name>Count and shorthand for compatibility
+    likesCount: likes,
     likes,
+    commentsCount: comments,
     comments,
+    sharesCount: shares,
     shares,
+    savesCount,
+    saves: savesCount,
     saved,
     isLiked,
     views,
