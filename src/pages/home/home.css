@@ -1,9 +1,19 @@
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&family=Epunda+Sans:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playwrite+IS:wght@100..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,100..900&display=swap');
 
+:root{
+  --bg-very-dark: #05030a;
+  --panel-dark: rgba(10,8,18,0.9);
+  --accent-purple: #7c3aed;
+  --accent-purple-2: #a78bfa;
+  --muted-text: rgba(255,255,255,0.94);
+  --muted-text-2: rgba(255,255,255,0.78);
+  --card-bg: rgba(20,16,28,0.6);
+}
+
 /* Root background */
 body #root {
-  background-color: #2B2B2B;
+  background-color: var(--bg-very-dark);
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -82,11 +92,11 @@ body #root {
   display: flex;
   align-items: center;
   gap: 0.75rem;
- cursor:default;
+  cursor: default;
   border-radius: 12px;
   padding: 0.75rem 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 30px rgba(124,58,237,0.06);
   transition: all 0.3s ease;
 }
 
@@ -94,17 +104,16 @@ body #root {
 
 .home-logo {
   width: 32px;
-  color: #1976d2; ;
+  color: var(--accent-purple);
   height: 32px;
   object-fit: contain;
-  
 }
 
 .home-brand-text {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   letter-spacing: 0.5px;
 }
@@ -120,7 +129,7 @@ body #root {
   align-items: center;
   justify-content: center;
   position: relative;
-  border: 3px solid rgba(245, 245, 245, 0.3);
+  border: 1px solid rgba(255,255,255,0.04);
   border-radius: 20px;
   overflow: hidden;
   margin-top: 1%;
@@ -133,14 +142,14 @@ body #root {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(43, 43, 43, 0.7);
+  background: linear-gradient(180deg, rgba(3,2,14,0.75), rgba(10,8,18,0.85));
   z-index: 1;
 }
 
 .home-content {
   position: relative;
   z-index: 2;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -158,7 +167,7 @@ body #root {
   justify-content: center;
   align-items: center;
   width: 100%;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text);
 }
 
 .home-title {
@@ -166,15 +175,14 @@ body #root {
   font-size: 3.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text);
  
 
   letter-spacing: 1px;
 }
 
 .home-title-highlight {
-  color: #1976d2;
- 
+  color: var(--accent-purple-2);
 }
 
 
@@ -184,7 +192,7 @@ body #root {
   font-size: 2.2rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   opacity: 0.95;
  
   line-height: 1.2;
@@ -193,14 +201,14 @@ body #root {
 }
 
 .home-subtitle-highlight {
-  color: #1976d2;
+  color: var(--accent-purple);
 }
 
 .home-description {
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   font-size: 1.3rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   opacity: 0.9;
   
   line-height: 1.5;
@@ -244,8 +252,8 @@ body #root {
   text-transform: none;
   border-radius: 12px;
   transition: all 0.3s ease;
-  background: linear-gradient(135deg, #1976d2 100%);
-  color: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
+  color: var(--muted-text) !important;
   padding: 16px 32px;
   display: flex;
   align-items: center;
@@ -256,7 +264,7 @@ body #root {
 
 .home-login-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(49, 58, 95, 0.4);
+  box-shadow: 0 12px 40px rgba(124,58,237,0.18);
 }
 
 .home-login-button:active {
@@ -286,8 +294,8 @@ body #root {
   text-transform: none;
   border-radius: 12px;
   transition: all 0.3s ease;
-  border: 2px solid #1976d2;
-  color: #64b5f6;
+  border: 2px solid var(--accent-purple);
+  color: var(--accent-purple-2);
   padding: 16px 32px;
   background: transparent;
   display: flex;
@@ -297,11 +305,11 @@ body #root {
 }
 
 .home-signup-button:hover {
-  border-color: #1565c0;
-  color: #90caf9;
-  background-color: rgba(25, 118, 210, 0.05);
+  border-color: var(--accent-purple-2);
+  color: var(--accent-purple-2);
+  background-color: rgba(124,58,237,0.06);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+  box-shadow: 0 8px 20px rgba(124,58,237,0.12);
 }
 
 .home-signup-button:active {
@@ -316,7 +324,7 @@ body #root {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -326,10 +334,10 @@ body #root {
 }
 
 .home-auth-dialog {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
+  background: rgba(10,8,18,0.6);
+  backdrop-filter: blur(8px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.04);
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
@@ -369,13 +377,13 @@ body #root {
   justify-content: center;
   padding: 1rem 2rem 2rem 2rem;
   flex-shrink: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255,255,255,0.03);
 }
 
 .home-auth-close-button {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted-text-2);
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
@@ -397,7 +405,7 @@ body #root {
   left: 0;
   right: 0;
   background: transparent;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255,255,255,0.03);
   z-index: 50;
   padding-bottom: 10px;
   margin-left: 1%;
@@ -420,7 +428,7 @@ body #root {
 }
 
 .home-footer-link {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   text-decoration: none;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   font-size: 0.9rem;
@@ -430,8 +438,8 @@ body #root {
 }
 
 .home-footer-link:hover {
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  color: var(--muted-text);
+  text-shadow: 0 0 12px rgba(167,139,250,0.12);
 }
 
 .home-footer-button {
@@ -439,7 +447,7 @@ body #root {
   border: none;
   padding: 0.5rem 0;
   font: inherit;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   text-decoration: none;
   cursor: pointer;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -463,7 +471,7 @@ body #root {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   text-decoration: none;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   font-size: 0.9rem;
@@ -474,8 +482,8 @@ body #root {
 }
 
 .home-social-link:hover {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--muted-text);
+  background-color: rgba(167,139,250,0.06);
   transform: translateY(-2px);
 }
 
@@ -634,11 +642,11 @@ body #root {
 }
 
 .home-auth-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  background: rgba(18,16,26,0.75);
+  backdrop-filter: blur(8px);
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255,255,255,0.04);
   max-width: 500px;
   width: 100%;
   margin: 0 auto;
@@ -654,7 +662,7 @@ body #root {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(167,139,250,0.03) 100%);
   pointer-events: none;
 }
 
@@ -667,7 +675,7 @@ body #root {
 .home-auth-tabs {
   display: flex;
   margin-bottom: 2rem;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255,255,255,0.02);
   border-radius: 12px;
   padding: 4px;
   position: relative;
@@ -678,7 +686,7 @@ body #root {
   padding: 12px 24px;
   border: none;
   background: transparent;
-  color: #6b7280;
+  color: #9ca3af;
   font-weight: 600;
   font-size: 1rem;
   text-transform: none;
@@ -691,14 +699,14 @@ body #root {
 }
 
 .home-tab:hover {
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.1);
+  color: var(--accent-purple-2);
+  background: rgba(124,58,237,0.06);
 }
 
 .home-tab.active {
-  color: #667eea;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--accent-purple-2);
+  background: rgba(255,255,255,0.02);
+  box-shadow: 0 6px 18px rgba(124,58,237,0.08);
   font-weight: 700;
 }
 
@@ -731,25 +739,25 @@ body #root {
 .home-input-field textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid rgba(255,255,255,0.04);
   border-radius: 8px;
   font-size: 1rem;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background-color: #ffffff;
-  color: #333333;
+  background-color: rgba(255,255,255,0.02);
+  color: #e6e6e6;
   transition: all 0.3s ease;
   outline: none;
 }
 
 .home-input-field input:focus,
 .home-input-field textarea:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 6px rgba(124,58,237,0.06);
 }
 
 .home-input-field input:hover,
 .home-input-field textarea:hover {
-  border-color: #1976d2;
+  border-color: var(--accent-purple);
 }
 
 .home-input-field label {
@@ -757,21 +765,21 @@ body #root {
   margin-bottom: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #555555;
+  color: #bfc7d6;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .home-input-field input::placeholder,
 .home-input-field textarea::placeholder {
-  color: #999999;
+  color: rgba(255,255,255,0.4);
   font-size: 0.9rem;
 }
 
 /* Input Field Error States */
 .home-input-field.error input,
 .home-input-field.error textarea {
-  border-color: #f44336;
-  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 4px rgba(255,107,107,0.08);
 }
 
 .home-input-field.error input:focus,
@@ -787,8 +795,8 @@ body #root {
 /* Input Field Success States */
 .home-input-field.success input,
 .home-input-field.success textarea {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  border-color: #28c76f;
+  box-shadow: 0 0 0 4px rgba(40,199,111,0.06);
 }
 
 .home-input-field.success input:focus,
@@ -800,10 +808,10 @@ body #root {
 /* Input Field Disabled States */
 .home-input-field input:disabled,
 .home-input-field textarea:disabled {
-  background-color: #f5f5f5;
-  color: #999999;
+  background-color: rgba(255,255,255,0.01);
+  color: rgba(255,255,255,0.38);
   cursor: not-allowed;
-  border-color: #e0e0e0;
+  border-color: rgba(255,255,255,0.02);
 }
 
 /* Input Field Required Indicator */
@@ -913,7 +921,7 @@ body #root {
 }
 
 .home-forgot-password {
-  color: #1976d2;
+  color: var(--accent-purple-2);
   text-decoration: none;
   font-size: 0.9rem;
   text-align: right;
@@ -928,20 +936,20 @@ body #root {
 }
 
 .home-auth-button {
-  background: linear-gradient(45deg, #1976d2, #42a5f5) !important;
-  color: white !important;
+  background: linear-gradient(45deg, var(--accent-purple), var(--accent-purple-2)) !important;
+  color: #0b0620 !important;
   padding: 12px 24px !important;
   font-size: 1rem !important;
   font-weight: 600 !important;
   text-transform: none !important;
   border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3) !important;
+  box-shadow: 0 8px 24px rgba(124,58,237,0.18) !important;
   transition: all 0.3s ease !important;
 }
 
 .home-auth-button:hover {
-  background: linear-gradient(45deg, #1565c0, #1976d2) !important;
-  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4) !important;
+  background: linear-gradient(45deg, var(--accent-purple-2), var(--accent-purple)) !important;
+  box-shadow: 0 10px 28px rgba(124,58,237,0.22) !important;
   transform: translateY(-2px);
 }
 
@@ -958,13 +966,13 @@ body #root {
   left: 0;
   right: 0;
   height: 1px;
-  background: #e0e0e0;
+  background: rgba(255,255,255,0.03);
 }
 
 .home-social-divider-text {
-  background: rgba(255, 255, 255, 0.95);
+  background: transparent;
   padding: 0 1rem;
-  color: #666;
+  color: #9aa1b2;
   font-size: 0.9rem;
 }
 
@@ -980,14 +988,14 @@ body #root {
   border-radius: 8px !important;
   text-transform: none !important;
   font-weight: 600 !important;
-  border: 2px solid #e0e0e0 !important;
-  color: #333 !important;
+  border: 2px solid rgba(255,255,255,0.04) !important;
+  color: #e6e6e6 !important;
   transition: all 0.3s ease !important;
 }
 
 .home-social-button:hover {
-  border-color: #1976d2 !important;
-  background-color: rgba(25, 118, 210, 0.04) !important;
+  border-color: var(--accent-purple) !important;
+  background-color: rgba(124,58,237,0.04) !important;
   transform: translateY(-1px);
 }
 
@@ -1034,39 +1042,38 @@ body #root {
   font-size: 1.5rem;
   font-weight: 600;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
   letter-spacing: 0.3px;
   margin: 0;
 }
 
 .home-feature-statement-primary {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text);
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .home-feature-statement-secondary {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   opacity: 0.95;
 }
 
 .home-feature-statement-highlight {
-  color: #1976d2;
-  
+  color: var(--accent-purple-2);
 }
 
 /* Icon colors to match their statements */
 .home-feature-item:first-child .home-feature-icon {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text);
 }
 
 .home-feature-item:nth-child(2) .home-feature-icon {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted-text-2);
   opacity: 0.95;
 }
 
 .home-feature-item:nth-child(3) .home-feature-icon {
-  color: #1976d2;
+  color: var(--accent-purple);
   animation: sparkle 2s ease-in-out infinite alternate;
 }
 
@@ -1083,20 +1090,54 @@ body #root {
 @keyframes sparkle {
   0% {
     text-shadow: 
-      0 0 5px rgba(25, 118, 210, 0.8),
-      0 0 10px rgba(25, 118, 210, 0.6),
-      0 0 15px rgba(25, 118, 210, 0.4),
-      0 0 20px rgba(25, 118, 210, 0.2),
+      0 0 6px rgba(124,58,237,0.9),
+      0 0 12px rgba(167,139,250,0.7),
+      0 0 18px rgba(167,139,250,0.5),
+      0 0 24px rgba(167,139,250,0.3),
       2px 2px 4px rgba(0, 0, 0, 0.5);
   }
   100% {
     text-shadow: 
-      0 0 10px rgba(25, 118, 210, 1),
-      0 0 20px rgba(25, 118, 210, 0.8),
-      0 0 30px rgba(25, 118, 210, 0.6),
-      0 0 40px rgba(25, 118, 210, 0.4),
+      0 0 12px rgba(167,139,250,1),
+      0 0 24px rgba(167,139,250,0.9),
+      0 0 36px rgba(167,139,250,0.7),
+      0 0 48px rgba(167,139,250,0.5),
       2px 2px 4px rgba(0, 0, 0, 0.5);
   }
+}
+
+/* Watch Video Feeds Section tweaks */
+.home-video-feeds-section {
+  position: absolute;
+  top: 82%;
+  right: 505px;
+  transform: translateY(-50%);
+  padding: 1rem;
+  margin-top: 2rem;
+  text-align: center;
+  background-color: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  transition: all 0.3s ease;
+}
+
+.home-video-feeds-section svg {
+  width: 40px;
+  height: 40px;
+  color: var(--accent-purple);
+  margin-bottom: 0.75rem;
+}
+
+.home-video-feeds-section h5 {
+  color: var(--muted-text);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.home-video-feeds-section p {
+  color: var(--muted-text-2);
+  font-weight: 500;
 }
 
 /* Responsive Design for Tablets and Mobile */
@@ -1567,7 +1608,7 @@ body #root {
     position: relative;
     top: auto;
     right: 0px;
-    margin-top: 5.5rem;
+    margin-top: 6rem;
     width: 72%;
   }
 
@@ -1582,7 +1623,7 @@ body #root {
 
 @media (max-width: 1024px) {
   .home-video-feeds-section {
-    margin: 2rem 0 -5rem 0 ;
+    margin: 3rem 0 0 0 ;
     width: 95%;
     
   }
@@ -1605,7 +1646,7 @@ body #root {
 
 @media (max-width: 768px) {
   .home-video-feeds-section {
-    margin-top: 2.9rem;
+    margin-top: 3.5rem;
     padding: 1rem;
     width: 92%;
 

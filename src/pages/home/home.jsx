@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-  InputAdornment,
-  CircularProgress,
-  Alert,
-  Menu,
-  MenuItem,
-} from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,
-} from '@mui/icons-material';
-import { AlertCircle as AlertCircleIcon } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import AuthPage from '../AuthPage';
 import { useAuth } from '../../contexts/AuthContext';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { AlertCircle as AlertCircleIcon } from 'lucide-react';
+import AuthPage from '../AuthPage';
 import ContactUs from './contact us/contactus';
 import './home.css';
 import TermsOfService from './terms of service/terms';
@@ -328,7 +313,7 @@ const Home = () => {
   };
 
   return (
-    <Box className="home-wrapper">
+    <div className="home-wrapper">
       {/* SwipeScout Header */}
       <div className="home-header">
         <div className="home-logo-container">
@@ -337,9 +322,9 @@ const Home = () => {
         </div>
       </div>
       
-      <Box className="home-container">
-        <Container maxWidth="lg" className="home-content">
-          <Box className="home-hero-section" sx={{ position: 'relative' }}>
+      <div className="home-container">
+        <div className="home-content">
+          <div className="home-hero-section">
             <h1 className="home-title">
               Jobs Meet the <span className="home-title-highlight">Feed</span>
             </h1>
@@ -349,11 +334,9 @@ const Home = () => {
             <h5 className="home-description">
               Join us and find your dream job
             </h5>
-
-
-          </Box>
-        </Container>
-      </Box>
+          </div>
+        </div>
+      </div>
       
       {/* Feature Statements */}
       <div className="home-feature-statements">
@@ -392,21 +375,22 @@ const Home = () => {
       
       {/* Action Buttons - Outside the home container */}
       <div className="home-action-buttons">
-        <button
+        <Button
           onClick={() => handleOpenAuthDialog(0)}
           className="home-login-button"
         >
           Login
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleOpenAuthDialog(1)}
+          variant="outline"
           className="home-signup-button"
         >
           Sign Up
-        </button>
+        </Button>
       </div>
 
-                  {/* New Section for Video Feeds */}
+            {/* New Section for Video Feeds */}
             <div
               className="home-video-feeds-section"
               role="button"
@@ -415,33 +399,21 @@ const Home = () => {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { navigate('/videos/'); } }}
             >
               <svg
+                className="home-video-icon"
                 width="48"
                 height="48"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                style={{ color: '#667eea', marginBottom: '1rem' }}
+                style={{ marginBottom: '1rem' }}
               >
                 <path d="M10 16.5l6-4.5-6-4.5v9zm12-4.5c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-2 0c0-4.418-3.582-8-8-8s-8 3.582-8 8 3.582 8 8 8 8-3.582 8-8z" />
               </svg>
-              <Typography
-                variant="h5"
-                sx={{
-                  color: '#374151',
-                  fontWeight: 600,
-                  marginBottom: '0.5rem',
-                }}
-              >
+              <h5 className="text-lg font-semibold text-muted-foreground mb-2">
                 Watch Video Feeds
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#6b7280',
-                  fontWeight: 500,
-                }}
-              >
+              </h5>
+              <p className="text-sm text-muted-foreground/80 font-medium">
                 Explore and enjoy video resumes from job seekers.
-              </Typography>
+              </p>
             </div>
             {/* End of New Section */}
 
@@ -518,7 +490,7 @@ const Home = () => {
         isOpen={showCookie}
         onClose={() => setShowCookie(false)}
       />
-    </Box>
+    </div>
   );
 };
 
