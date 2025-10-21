@@ -11,7 +11,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Google as GoogleIcon, LinkedIn as LinkedInIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Google as GoogleIcon, LinkedIn as LinkedInIcon, PersonOutline as PersonOutlineIcon, Business as BusinessIcon } from '@mui/icons-material';
 import { AlertCircle as AlertCircleIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -78,7 +78,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       if (result?.error) {
         setError(result.message);
       } else if (result?.user && result.user.role && result.user.role !== 'no role') {
-        close();
+        // close();
         navigate(redirectPath || getDefaultRoute(result.user.role));
       } else {
         setError('Sign-in successful but user role is not set. Please contact support.');
@@ -105,10 +105,14 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       return;
     }
     try {
+            console.log("Registering with data: ", formData.email , formData.firstName, formData.lastName, formData.role);
+
+      // Pass firstName and lastName as separate arguments (backend expects both)
       const result = await registerByEmailAndPassword(
         formData.email,
         formData.password,
-        `${formData.firstName} ${formData.lastName}`,
+        formData.firstName,
+        formData.lastName,
         formData.role
       );
       if (result?.error) {
@@ -157,14 +161,61 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
   };
 
   return (
-    <div className="home-auth-dialog-overlay" onClick={close}>
-      <div className="home-auth-dialog" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="home-auth-dialog-overlay"
+      onClick={close}
+      style={{ background: 'transparent', backdropFilter: 'blur(4px)' }}
+    >
+      <div
+        className="home-auth-dialog"
+        onClick={(e) => e.stopPropagation()}
+        style={{ background: 'transparent', color: '#111827', borderRadius: 12, boxShadow: '0 10px 30px rgba(0,0,0,0.12)' }}
+      >
         <div className="home-auth-dialog-content">
-          <div className="home-auth-card">
-            <div className="home-auth-card-content">
-              <div className="home-auth-tabs">
-                <button className={`home-tab ${activeTab === 0 ? 'active' : ''}`} onClick={() => handleTabChange(0)}>Login</button>
-                <button className={`home-tab ${activeTab === 1 ? 'active' : ''}`} onClick={() => handleTabChange(1)}>Sign Up</button>
+          <div className="home-auth-outer" style={{ background: '#000000ff', padding: 10, borderRadius: 12 }}>
+            <div
+              className="home-auth-card"
+              style={{
+                background: 'rgba(255,255,255,0.98)',
+                padding: 18,
+                borderRadius: 10,
+                boxShadow: '0 6px 18px rgba(17,24,39,0.06)',
+              }}
+            >
+              <div className="home-auth-card-content" style={{ background: 'transparent' }}>
+              <div className="home-auth-tabs" style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <button
+                  onClick={() => handleTabChange(0)}
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: 10,
+                    cursor: 'pointer',
+                    border: 'none',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    background: activeTab === 0 ? '#667eea' : 'transparent',
+                    color: activeTab === 0 ? '#fff' : '#374151',
+                    boxShadow: activeTab === 0 ? '0 6px 18px rgba(102,126,234,0.18)' : 'none',
+                  }}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => handleTabChange(1)}
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: 10,
+                    cursor: 'pointer',
+                    border: 'none',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    background: activeTab === 1 ? '#667eea' : 'transparent',
+                    color: activeTab === 1 ? '#fff' : '#374151',
+                    boxShadow: activeTab === 1 ? '0 6px 18px rgba(102,126,234,0.18)' : 'none',
+                  }}
+                >
+                  Sign Up
+                </button>
               </div>
 
               <Box className="home-auth-form-container">
@@ -187,8 +238,22 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     <Box sx={{ mt: 2, mb: 2 }}>
                       <Typography variant="body2" sx={{ color: '#374151', fontWeight: 600, mb: 1.5, fontSize: '0.9rem' }}>I am signing up as:</Typography>
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Button variant={formData.role === 'job_seeker' ? 'contained' : 'outlined'} onClick={() => handleRoleSelect('job_seeker')} sx={{ flex: 1 }}>👤 Employee</Button>
-                        <Button variant={formData.role === 'employer' ? 'contained' : 'outlined'} onClick={() => handleRoleSelect('employer')} sx={{ flex: 1 }}>🏢 Recruiter</Button>
+                        <Button
+                          variant={formData.role === 'employer' ? 'contained' : 'outlined'}
+                          onClick={() => handleRoleSelect('employer')}
+                          startIcon={<BusinessIcon />}
+                          sx={{ flex: 1 }}
+                        >
+                          Employer
+                        </Button>
+                        <Button
+                          variant={formData.role === 'job_seeker' ? 'contained' : 'outlined'}
+                          onClick={() => handleRoleSelect('job_seeker')}
+                          startIcon={<PersonOutlineIcon />}
+                          sx={{ flex: 1 }}
+                        >
+                          Job Seeker
+                        </Button>
                       </Box>
                     </Box>
 
@@ -232,7 +297,10 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
         </div>
       </div>
     </div>
+    </div>
   );
 };
+
+
 
 export default AuthPage;

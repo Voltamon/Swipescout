@@ -166,7 +166,7 @@ const Home = () => {
       const result = await registerByEmailAndPassword(
         formData.email, 
         formData.password, 
-        `${formData.firstName} ${formData.lastName}`, 
+         formData.firstName,formData.lastName,
         formData.role
       );
       
@@ -328,6 +328,11 @@ const Home = () => {
       
       <div className="home-container">
         <div className="home-content">
+          {/* Centered brand in the hero area (visually aligned like the action buttons were) */}
+          <div className="home-hero-brand" aria-hidden="true">
+            <img src="/swipescout.svg" alt="" className="home-hero-logo" />
+            <span className="home-hero-brand-text">SwipeScout</span>
+          </div>
           <div className="home-hero-section">
             <h1 className="home-title">
               Jobs Meet the <span className="home-title-highlight">Feed</span>

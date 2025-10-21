@@ -72,7 +72,7 @@ const SwipeScoutBackground = () => (
       width: '100vw',
       height: '100vh',
       zIndex: 0,
-      background: 'linear-gradient(135deg, #1e1e2f 0%, #2b2b4f 50%, #181828 100%)',
+      background: 'linear-gradient(135deg, #83c9f1ff 0%, #2b2b4f 50%, #8585c4ff 100%)',
       opacity: 1,
       pointerEvents: 'none',
     }}
@@ -84,18 +84,141 @@ const SwipeScoutBackground = () => (
         top: '6%',
         left: '16%',
         transform: 'translateX(-50%)',
-        color: 'rgba(255,255,255,0.08)',
-        fontWeight: 600,
-        fontSize: { xs: '1.5rem', md: '4rem' },
-        letterSpacing: '0.15em',
         userSelect: 'none',
-        textShadow: '0 2px 16px #000',
         fontFamily: 'monospace',
+        // container-level will-change for smoother nested animations
+        willChange: 'transform, opacity',
+        // define both keyframes here so MUI injects them alongside styles
+        '@keyframes floatMain': {
+          '0%': { transform: 'translateY(0)', opacity: 0.96 },
+          '50%': { transform: 'translateY(-9px) scale(1.03)', opacity: 1 },
+          '100%': { transform: 'translateY(0)', opacity: 0.96 },
+        },
+        '@keyframes floatLabel': {
+          '0%': { transform: 'translateY(0)', opacity: 0.9 },
+          '50%': { transform: 'translateY(-6px)', opacity: 1 },
+          '100%': { transform: 'translateY(0)', opacity: 0.9 },
+        }
       }}
     >
-      SwipeScout
+      <Box component="span" sx={{
+        display: 'inline-block',
+        mr: 1,
+        fontSize: { xs: '0.6rem', md: '0.85rem' },
+        color: 'rgba(255,255,255,0.75)',
+        letterSpacing: '0.12em',
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+        animation: 'floatLabel 6s ease-in-out infinite',
+      }}>by</Box>
+
+      <Box component="span" sx={{
+        display: 'inline-block',
+        fontSize: { xs: '1.6rem', md: '4rem' },
+        fontWeight: 900,
+        letterSpacing: '0.18em',
+        lineHeight: 1,
+        // gradient text fill with fallback color
+        background: 'linear-gradient(90deg, #ffffff 0%, #ffe7f0 30%, #ffd36b 70%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        color: 'rgba(255,255,255,0.98)',
+        // subtle stroke and crispness
+        textShadow: '0 1px 4px rgba(219, 152, 152, 0.55)',
+        // animate the word separately for a more organic feel
+        animation: 'floatMain 6s ease-in-out infinite',
+        // small transform to keep horizontal centering transformX from parent
+        transform: 'translateX(0)',
+      }}>
+        SwipeScout
+      </Box>
     </Typography>
   </Box>
+);
+
+// Tailwind-based full-screen background (uses project's Tailwind setup)
+const TailwindBackground = () => (
+  <div className="fixed inset-0 z-0 pointer-events-none">
+    <style>{`
+      @keyframes floatGradient {
+        0% { transform: translate3d(-12%, 0, 0) scale(1); filter: saturate(1); }
+        25% { transform: translate3d(8%, -6%, 0) scale(1.04); filter: saturate(1.25); }
+        50% { transform: translate3d(12%, -2%, 0) scale(1.06); filter: saturate(1.35); }
+        75% { transform: translate3d(-6%, 6%, 0) scale(1.03); filter: saturate(1.2); }
+        100% { transform: translate3d(-12%, 0, 0) scale(1); filter: saturate(1); }
+      }
+      @keyframes patternMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      @keyframes wordPulse {
+        0% { opacity: 0.06; transform: scale(1); }
+        50% { opacity: 0.18; transform: scale(1.06); }
+        100% { opacity: 0.06; transform: scale(1); }
+      }
+      @keyframes conicSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `}</style>
+
+    {/* vivid animated gradient layer */}
+    <div
+      className="absolute inset-0"
+      style={{
+        background: 'linear-gradient(120deg, rgba(34,211,238,0.95) 0%, rgba(124,58,237,0.92) 25%, rgba(236,72,153,0.95) 55%, rgba(251,191,36,0.95) 80%)',
+        filter: 'saturate(1.3) contrast(1.05) blur(6px) brightness(1.05)',
+        opacity: 1,
+        transformOrigin: '50% 50%',
+        animation: 'floatGradient 8s ease-in-out infinite'
+      }}
+    />
+
+    {/* fast moving pattern overlay (uses project's asset if present) */}
+    <div
+      className="absolute inset-0 mix-blend-overlay"
+      style={{
+        backgroundImage: "url('/assets/pattern.svg')",
+        backgroundRepeat: 'repeat',
+        backgroundSize: '900px',
+        opacity: 0.22,
+        animation: 'patternMove 12s linear infinite'
+      }}
+    />
+
+    {/* optional spinning conic highlight for extra color dynamics */}
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        background: 'conic-gradient(from 180deg at 50% 50%, rgba(255,255,255,0.04), rgba(255,255,255,0.02), transparent 40%)',
+        mixBlendMode: 'screen',
+        opacity: 0.6,
+        transformOrigin: '50% 50%',
+        animation: 'conicSpin 24s linear infinite'
+      }}
+    />
+
+    {/* centered large wordmark with stronger pulse */}
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div
+        className="text-white select-none"
+        style={{
+          fontSize: '3.5rem',
+          fontWeight: 900,
+          letterSpacing: '0.35em',
+          opacity: 0.06,
+          color: 'rgba(255,255,255,0.98)',
+          WebkitTextStroke: '0.5px rgba(0,0,0,0.12)',
+          transformOrigin: 'center',
+          animation: 'wordPulse 4s ease-in-out infinite'
+        }}
+      >
+        SwipeScout
+      </div>
+    </div>
+  </div>
 );
 
 // VideoCard component (replace existing VideoCard with this)
@@ -408,6 +531,8 @@ const VideoCard = React.memo(({
                 src={shouldLoad ? video.videoUrl : undefined}
                 loop
                 playsInline
+                autoPlay={isPlaying}
+                muted={isMuted || !isPlaying}
                 preload={shouldLoad ? 'auto' : 'metadata'}
                 poster={video.thumbnail}
                 style={{
@@ -690,7 +815,15 @@ const Videos = () => {
         id: v?.id,
       }));
 
-      setVideos((prev) => (append ? [...prev, ...normalized] : normalized));
+      setVideos((prev) => {
+        const next = append ? [...prev, ...normalized] : normalized;
+        // If nothing is playing yet, start autoplay on the first video
+        if (!playingVideoId && next.length > 0) {
+          setPlayingVideoId(next[0].id);
+          setCurrentVideoIndex(0);
+        }
+        return next;
+      });
        // Merge authoritative stats for those videos (best-effort)
        fetchStatsForVideos(normalized.map(v => v.id));
       // Use returned total if provided, otherwise base on received page length
@@ -780,31 +913,32 @@ const Videos = () => {
   const handleActionWithAnonymousUser = async (actionFn, videoId, ...args) => {
     const targetVideo = videos.find((v) => v.id === videoId);
     const videoType = targetVideo?.videoType || targetVideo?.video_type || targetVideo?.type || null;
-    // --- NEW: check before calling action ---
     const isUserLoggedIn = !!(user && user.role !== null);
-    if (videoType !== "sample" && !isUserLoggedIn) {
+
+    // If this is a non-sample video and the user is not logged in, require login first.
+    if (videoType !== 'sample' && !isUserLoggedIn) {
       await ensureLoggedInThen(() => actionFn(videoId, ...args));
       return;
     }
 
-    if (videoType === "sample") {
-      if (!window.__anonymousUserId) {
-        try {
-          const anonymousUserId = await resolveAnonymousUserId();
-          if (!anonymousUserId) {
-            toast.error("Failed to resolve anonymous user.");
-            return;
-          }
-          window.__anonymousUserId = anonymousUserId;
-        } catch (err) {
-          console.error("Failed to resolve anonymous user ID", err);
-          return;
-        }
+    // For sample videos, the backend will accept unauthenticated requests and map them to a canonical
+    // anonymous user. To support optimistic UI we create a lightweight client-side placeholder id
+    // (if one doesn't already exist) and call the action directly. The server will still record the
+    // real anonymous user and return canonical IDs when it responds.
+    if (videoType === 'sample' && !window.__anonymousUserId) {
+      window.__anonymousUserId = `anon-temp-${Date.now()}`;
+    }
+
+    try {
+      await actionFn(videoId, ...args);
+    } catch (err) {
+      // If the server still rejects with 401, fall back to login flow.
+      if (err?.response?.status === 401) {
+        await ensureLoggedInThen(() => actionFn(videoId, ...args));
+      } else {
+        // Re-throw for higher-level handlers to catch (UI will show toast where appropriate)
+        throw err;
       }
-      user.id = window.__anonymousUserId;
-      actionFn(videoId, ...args);
-    } else {
-      actionFn(videoId, ...args);
     }
   };
 

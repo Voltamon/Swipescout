@@ -468,14 +468,15 @@ export const AuthProvider = ({ children }) => {
 	}, [apiUrl, LINKEDIN_CLIENT_ID]);
 
 	// Email Signup
-	const signupWithEmail = useCallback(async (email, password, name, roleArg) => {
+	const signupWithEmail = useCallback(async (email, password, firstName, lastName, roleArg) => {
 		try {
 			clearTokens(); // Clear any existing tokens before signup
-			const response = 
-			await fetch(`${apiUrl}/api/auth/signup`, {
+			console.log("Signing up with email:============", email, firstName, lastName, roleArg);
+			const response = await fetch(`${apiUrl}/api/auth/signup`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email, password, name, roleArg })
+				// backend expects 'role' key; pass roleArg as role
+				body: JSON.stringify({ email, password, firstName, lastName, role: roleArg })
 			});
 
 			const data = await response.json();

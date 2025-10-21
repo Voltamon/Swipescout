@@ -664,22 +664,25 @@ const HomePage = () => {
   const handleActionWithAnonymousUser = async (actionFn, videoId, ...args) => {
     const targetVideo = videos.find((v) => v.id === videoId);
     const videoType = targetVideo?.videoType || targetVideo?.video_type || targetVideo?.type || null;
+    const isUserLoggedIn = !!(user && user.role !== null);
 
-    if (videoType === "sample") {
-      // For sample videos, proceed without requiring login
-      const anonymousUserId = await resolveAnonymousUserId();
-      if (!anonymousUserId) {
-        toast.error("Failed to resolve anonymous user.");
-        return;
-      }
-      user.id = anonymousUserId; // Temporarily assign anonymous user ID
-      actionFn(videoId, ...args);
-    } else if (!user) {
-      // For non-sample videos, require login
+    if (videoType !== 'sample' && !isUserLoggedIn) {
       await ensureLoggedInThen(() => actionFn(videoId, ...args));
-    } else {
-      // Proceed for logged-in users
-      actionFn(videoId, ...args);
+      return;
+    }
+
+    if (videoType === 'sample' && !window.__anonymousUserId) {
+      window.__anonymousUserId = `anon-temp-${Date.now()}`;
+    }
+
+    try {
+      await actionFn(videoId, ...args);
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        await ensureLoggedInThen(() => actionFn(videoId, ...args));
+      } else {
+        throw err;
+      }
     }
   };
 

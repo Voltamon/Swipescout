@@ -39,8 +39,8 @@ body #root {
   justify-content: flex-start;
   padding: 0;
   overflow-x: hidden;
-  margin-left: 1%;
-  margin-top: 1%;
+  /* Remove small margins that can cause tiny scrollbars on some viewports */
+  margin: 0;
 }
 
 /* Desktop view - restore original layout */
@@ -58,7 +58,7 @@ body #root {
   }
   
   .home-container {
-    height: 70vh;
+    height: 66vh;
   }
   
   .home-feature-statements {
@@ -68,9 +68,10 @@ body #root {
   
   .home-action-buttons {
     position: fixed;
-    top: 86%;
-    right: 3rem;
-    transform: translateY(-50%);
+    bottom: 4rem; /* place buttons near the bottom */
+    right: 6rem;
+    transform: none;
+    z-index: 10;
   }
   
   .home-footer {
@@ -83,7 +84,7 @@ body #root {
 .home-header {
   position: fixed;
   top: 0;
-  right: 0;
+  right: 50px;
   z-index: 100;
   padding: 1rem 2rem;
 }
@@ -132,7 +133,7 @@ body #root {
   border: 1px solid rgba(255,255,255,0.04);
   border-radius: 20px;
   overflow: hidden;
-  margin-top: 1%;
+  margin-top: 0; /* ensure container doesn't push past 100vh */
 }
 
 .home-container::before {
@@ -222,10 +223,34 @@ body #root {
   flex-direction: column;
   gap: 1rem;
   position: fixed;
-  top: 82%;
-  right: 3rem;
-  transform: translateY(-50%);
+  bottom: 4rem; /* keep buttons near the bottom on desktop */
+  right: 6rem;
+  transform: none;
   z-index: 10;
+}
+
+/* Hero brand centered inside the main container */
+.home-hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  pointer-events: none;
+}
+
+.home-hero-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
+}
+
+.home-hero-brand-text {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--muted-text);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.45);
 }
 
 .home-login-button {
@@ -352,7 +377,7 @@ body #root {
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  scrollbar-color: rgba(248, 246, 246, 0.3) transparent;
 }
 
 .home-auth-dialog-content::-webkit-scrollbar {
@@ -407,9 +432,10 @@ body #root {
   background: transparent;
   border-top: 1px solid rgba(255,255,255,0.03);
   z-index: 50;
-  padding-bottom: 10px;
+  padding-bottom: 6px; /* reduce extra space that can create overflow */
   margin-left: 1%;
   width: 80%;
+  box-sizing: border-box;
 }
 
 .home-footer-content {
@@ -1113,7 +1139,7 @@ body #root {
   right: 505px;
   transform: translateY(-50%);
   padding: 1rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
   text-align: center;
   background-color: rgba(255,255,255,0.02);
   border-radius: 12px;
@@ -1144,7 +1170,7 @@ body #root {
 @media (max-width: 1024px) {
   .home-wrapper {
     margin-left: 0.5%;
-    margin-top: 0.5%;
+    margin-top: 0.1%;
   }
   
   .home-container {
@@ -1175,6 +1201,7 @@ body #root {
   .home-feature-statements {
     gap: 2rem;
     padding: 0 1.5rem;
+    margin-bottom: 2rem;
   }
   
   .home-feature-statement {
