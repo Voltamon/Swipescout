@@ -404,7 +404,7 @@ const Home = () => {
                 height="48"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                style={{ marginBottom: '1rem' }}
+                style={{ marginBottom: '.1rem' }}
               >
                 <path d="M10 16.5l6-4.5-6-4.5v9zm12-4.5c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-2 0c0-4.418-3.582-8-8-8s-8 3.582-8 8 3.582 8 8 8 8-3.582 8-8z" />
               </svg>
