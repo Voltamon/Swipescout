@@ -1,1686 +1,1710 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&family=Epunda+Sans:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playwrite+IS:wght@100..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,100..900&display=swap');
+  /* Import Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&family=Epunda+Sans:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playwrite+IS:wght@100..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,100..900&display=swap');
 
-:root{
-  --bg-very-dark: #05030a;
-  --panel-dark: rgba(10,8,18,0.9);
-  --accent-purple: #7c3aed;
-  --accent-purple-2: #a78bfa;
-  --muted-text: rgba(255,255,255,0.94);
-  --muted-text-2: rgba(255,255,255,0.78);
-  --card-bg: rgba(20,16,28,0.6);
-}
-
-/* Root background */
-body #root {
-  background-color: var(--bg-very-dark);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-}
-
-/* Desktop view - no scrolling */
-@media (min-width: 1025px) {
-  body #root {
-    height: 100vh;
-    overflow: hidden;
+  :root{
+    --bg-very-dark: #05030a;
+    --panel-dark: rgba(10,8,18,0.9);
+    --accent-purple: #7c3aed;
+    --accent-purple-2: #a78bfa;
+    --muted-text: rgba(255,255,255,0.94);
+    --muted-text-2: rgba(255,255,255,0.78);
+    --card-bg: rgba(20,16,28,0.6);
   }
-}
 
-/* Home wrapper - replaces the sx prop styling */
-.home-wrapper {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0;
-  overflow-x: hidden;
-  /* Remove small margins that can cause tiny scrollbars on some viewports */
-  margin: 0;
-}
+  /* Root background */
+  body #root {
+    background-color: var(--bg-very-dark);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
 
-/* Desktop view - restore original layout */
-@media (min-width: 1025px) {
+  /* Desktop view - no scrolling */
+  @media (min-width: 1025px) {
+    body #root {
+      height: 100vh;
+      overflow: hidden;
+    }
+  }
+
+  /* Home wrapper - replaces the sx prop styling */
   .home-wrapper {
-    height: 100vh;
+    position: relative;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    overflow: hidden;
+    padding: 0;
+    overflow-x: hidden;
+    /* Remove small margins that can cause tiny scrollbars on some viewports */
+    margin: 0;
   }
-  
+
+  /* Desktop view - restore original layout */
+  @media (min-width: 1025px) {
+    .home-wrapper {
+      height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+    
+    .home-header {
+      position: fixed;
+    }
+    
+    .home-container {
+      height: 66vh;
+    }
+    
+    .home-feature-statements {
+      position: absolute;
+      bottom: 18%;
+    }
+    
+    .home-action-buttons {
+      position: fixed;
+      bottom: 4rem; /* place buttons near the bottom */
+      right: 6rem;
+      transform: none;
+      z-index: 10;
+    }
+    
+    .home-footer {
+      position: fixed;
+      bottom: 0;
+    }
+  }
+
+  /* SwipeScout Header */
   .home-header {
     position: fixed;
+    top: 0;
+    right: 50px;
+    z-index: 100;
+    padding: 1rem 2rem;
   }
-  
+
+  .home-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: default;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 30px rgba(124,58,237,0.06);
+    transition: all 0.3s ease;
+  }
+
+
+
+  .home-logo {
+    width: 32px;
+    color: var(--accent-purple);
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .home-brand-text {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--muted-text);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+  }
+
   .home-container {
-    height: 66vh;
+    width: 75%;
+    height: 70vh;
+    background-image: url('/backgrounds/meeting_room2.jpg');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 0; /* ensure container doesn't push past 100vh */
   }
-  
-  .home-feature-statements {
+
+  .home-container::before {
+    content: '';
     position: absolute;
-    bottom: 15%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(3,2,14,0.75), rgba(10,8,18,0.85));
+    z-index: 1;
   }
+
+  .home-content {
+    position: relative;
+    z-index: 2;
+    color: var(--muted-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .home-hero-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: var(--muted-text);
+  }
+
+  .home-title {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--muted-text);
   
+
+    letter-spacing: 1px;
+  }
+
+  .home-title-highlight {
+    color: var(--accent-purple-2);
+  }
+
+
+
+  .home-subtitle {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--muted-text-2);
+    opacity: 0.95;
+  
+    line-height: 1.2;
+
+    letter-spacing: 1px;
+  }
+
+  .home-subtitle-highlight {
+    color: var(--accent-purple);
+  }
+
+  .home-description {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--muted-text-2);
+    opacity: 0.9;
+    
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    
+    letter-spacing: 0.01em;
+  }
+
   .home-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     position: fixed;
-    bottom: 4rem; /* place buttons near the bottom */
-    right: 6rem;
+    bottom: 16rem; /* keep buttons near the bottom on desktop */
+    right: 7rem;
     transform: none;
     z-index: 10;
   }
-  
+
+  /* Hero brand centered inside the main container */
+  .home-hero-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    pointer-events: none;
+  }
+
+  .home-hero-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
+  }
+
+  .home-hero-brand-text {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--muted-text);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  }
+
+  .home-login-button {
+    /* Reset all default button styles */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    
+    /* Custom styles */
+    max-width: 100%;
+    width: 18rem;
+    height: 140px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
+    color: var(--muted-text) !important;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 1px;
+    justify-content: center;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+
+  .home-login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(124,58,237,0.18);
+  }
+
+  .home-login-button:active {
+    transform: translateY(0);
+  }
+
+  .home-signup-button {
+    /* Reset all default button styles */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    
+    /* Custom styles */
+    min-width: 140px;
+    height: 140px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--accent-purple);
+    color: var(--accent-purple-2);
+    padding: 16px 32px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+
+  .home-signup-button:hover {
+    border-color: var(--accent-purple-2);
+    color: var(--accent-purple-2);
+    background-color: rgba(124,58,237,0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(124,58,237,0.12);
+  }
+
+  .home-signup-button:active {
+    transform: translateY(0);
+  }
+
+
+  /* Simple Auth Dialog Styles */
+  .home-auth-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+
+  .home-auth-dialog {
+    background: rgba(10,8,18,0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.04);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .home-auth-dialog-content {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(248, 246, 246, 0.3) transparent;
+  }
+
+  .home-auth-dialog-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .home-auth-dialog-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .home-auth-dialog-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .home-auth-dialog-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .home-auth-dialog-footer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 2rem 2rem 2rem;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .home-auth-close-button {
+    background: none;
+    border: none;
+    color: var(--muted-text-2);
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+
+  .home-auth-close-button:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Footer Styles */
   .home-footer {
     position: fixed;
     bottom: 0;
+    left: 0;
+    right: 0;
+    background: transparent;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    z-index: 50;
+    padding-bottom: 6px; /* reduce extra space that can create overflow */
+    margin-left: 1%;
+    width: 80%;
+    box-sizing: border-box;
   }
-}
 
-/* SwipeScout Header */
-.home-header {
-  position: fixed;
-  top: 0;
-  right: 50px;
-  z-index: 100;
-  padding: 1rem 2rem;
-}
-
-.home-logo-container {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: default;
-  border-radius: 12px;
-  padding: 0.75rem 1.25rem;
-  border: 1px solid rgba(255,255,255,0.04);
-  box-shadow: 0 8px 30px rgba(124,58,237,0.06);
-  transition: all 0.3s ease;
-}
-
-
-
-.home-logo {
-  width: 32px;
-  color: var(--accent-purple);
-  height: 32px;
-  object-fit: contain;
-}
-
-.home-brand-text {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--muted-text);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: 0.5px;
-}
-
-.home-container {
-  width: 75%;
-  height: 70vh;
-  background-image: url('/backgrounds/meeting_room2.jpg');
-  background-size: cover;
-  background-position: top;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border: 1px solid rgba(255,255,255,0.04);
-  border-radius: 20px;
-  overflow: hidden;
-  margin-top: 0; /* ensure container doesn't push past 100vh */
-}
-
-.home-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(180deg, rgba(3,2,14,0.75), rgba(10,8,18,0.85));
-  z-index: 1;
-}
-
-.home-content {
-  position: relative;
-  z-index: 2;
-  color: var(--muted-text);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  padding: 2rem;
-}
-
-.home-hero-section {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  color: var(--muted-text);
-}
-
-.home-title {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  color: var(--muted-text);
- 
-
-  letter-spacing: 1px;
-}
-
-.home-title-highlight {
-  color: var(--accent-purple-2);
-}
-
-
-
-.home-subtitle {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 2.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: var(--muted-text-2);
-  opacity: 0.95;
- 
-  line-height: 1.2;
-
-  letter-spacing: 1px;
-}
-
-.home-subtitle-highlight {
-  color: var(--accent-purple);
-}
-
-.home-description {
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 400;
-  color: var(--muted-text-2);
-  opacity: 0.9;
-  
-  line-height: 1.5;
-  margin-bottom: 2rem;
-  
-  letter-spacing: 0.01em;
-}
-
-.home-action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  position: fixed;
-  bottom: 16rem; /* keep buttons near the bottom on desktop */
-  right: 7rem;
-  transform: none;
-  z-index: 10;
-}
-
-/* Hero brand centered inside the main container */
-.home-hero-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-  pointer-events: none;
-}
-
-.home-hero-logo {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
-}
-
-.home-hero-brand-text {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--muted-text);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.45);
-}
-
-.home-login-button {
-  /* Reset all default button styles */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  border: none;
-  outline: none;
-  background: none;
-  margin: 0;
-  padding: 0;
-  font: inherit;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  
-  /* Custom styles */
-  max-width: 100%;
-  width: 12rem;
-  height: 56px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-transform: none;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
-  color: var(--muted-text) !important;
-  padding: 16px 32px;
-  display: flex;
-  align-items: center;
-  letter-spacing: 1px;
-  justify-content: center;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-}
-
-.home-login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(124,58,237,0.18);
-}
-
-.home-login-button:active {
-  transform: translateY(0);
-}
-
-.home-signup-button {
-  /* Reset all default button styles */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  border: none;
-  outline: none;
-  background: none;
-  margin: 0;
-  padding: 0;
-  font: inherit;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  
-  /* Custom styles */
-  min-width: 140px;
-  height: 56px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-transform: none;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  border: 2px solid var(--accent-purple);
-  color: var(--accent-purple-2);
-  padding: 16px 32px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-}
-
-.home-signup-button:hover {
-  border-color: var(--accent-purple-2);
-  color: var(--accent-purple-2);
-  background-color: rgba(124,58,237,0.06);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(124,58,237,0.12);
-}
-
-.home-signup-button:active {
-  transform: translateY(0);
-}
-
-
-/* Simple Auth Dialog Styles */
-.home-auth-dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.home-auth-dialog {
-  background: rgba(10,8,18,0.6);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.04);
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.home-auth-dialog-content {
-  padding: 2rem;
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(248, 246, 246, 0.3) transparent;
-}
-
-.home-auth-dialog-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.home-auth-dialog-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.home-auth-dialog-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
-
-.home-auth-dialog-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.home-auth-dialog-footer {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 2rem 2rem 2rem;
-  flex-shrink: 0;
-  border-top: 1px solid rgba(255,255,255,0.03);
-}
-
-.home-auth-close-button {
-  background: none;
-  border: none;
-  color: var(--muted-text-2);
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-}
-
-.home-auth-close-button:hover {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Footer Styles */
-.home-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: transparent;
-  border-top: 1px solid rgba(255,255,255,0.03);
-  z-index: 50;
-  padding-bottom: 6px; /* reduce extra space that can create overflow */
-  margin-left: 1%;
-  width: 80%;
-  box-sizing: border-box;
-}
-
-.home-footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-
-}
-
-.home-footer-links {
-  display: flex;
-  gap: 2rem;
-}
-
-.home-footer-link {
-  color: var(--muted-text-2);
-  text-decoration: none;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  padding: 0.5rem 0;
-}
-
-.home-footer-link:hover {
-  color: var(--muted-text);
-  text-shadow: 0 0 12px rgba(167,139,250,0.12);
-}
-
-.home-footer-button {
-  background: none;
-  border: none;
-  padding: 0.5rem 0;
-  font: inherit;
-  color: var(--muted-text-2);
-  text-decoration: none;
-  cursor: pointer;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.home-footer-button:hover {
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
-.home-footer-social {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.home-social-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--muted-text-2);
-  text-decoration: none;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
-}
-
-.home-social-link:hover {
-  color: var(--muted-text);
-  background-color: rgba(167,139,250,0.06);
-  transform: translateY(-2px);
-}
-
-.home-social-link svg {
-  width: 20px;
-  height: 20px;
-  transition: all 0.3s ease;
-}
-
-.home-social-link:hover svg {
-  transform: scale(1.1);
-}
-
-
-/* Mobile Responsive Footer */
-@media (max-width: 768px) {
   .home-footer-content {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-  }
-  
-  .home-footer-links {
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .home-footer-social {
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .home-social-link {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.6rem;
-  }
-}
-
-/* Mobile Auth Dialog Responsive Styles */
-@media (max-width: 768px) {
-  .home-auth-dialog {
-    max-width: 95%;
-    width: 95%;
-    margin: 0.5rem;
-    max-height: 95vh;
-  }
-  
-  .home-auth-dialog-content {
-    padding: 1.5rem 1rem;
-  }
-  
-  .home-auth-card {
-    max-width: 100%;
-    margin-top: 0.5rem;
-  }
-  
-  .home-auth-card-content {
-    padding: 1.5rem 1rem;
-  }
-  
-  .home-auth-tabs {
-    margin-bottom: 1.5rem;
-    padding: 3px;
-  }
-  
-  .home-tab {
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
-  
-  .home-auth-form {
-    gap: 1.2rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .home-name-fields {
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  .home-input-field {
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .home-input-field input,
-  .home-input-field textarea {
-    font-size: 0.9rem;
-    padding: 10px 14px;
-  }
-  
-  .home-input-field label {
-    font-size: 0.9rem;
-  }
-  
-  /* Override MUI classes for mobile */
-  .home-input-field .MuiInputBase-input,
-  .home-input-field .MuiOutlinedInput-input,
-  .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
-  .home-input-field input[class*="MuiInputBase-input"],
-  .home-input-field input[class*="MuiOutlinedInput-input"],
-  .home-input-field input[class*="css-"] {
-    font-size: 0.9rem !important;
-    padding: 10px 14px !important;
-  }
-  
-  .home-input-field .MuiInputLabel-root,
-  .home-input-field .MuiFormLabel-root,
-  .home-input-field label[class*="MuiInputLabel-root"],
-  .home-input-field label[class*="MuiFormLabel-root"] {
-    font-size: 0.9rem !important;
-  }
-  
-  .home-forgot-password {
-    font-size: 0.85rem;
-    margin-top: -0.3rem;
-    margin-bottom: 0.8rem;
-  }
-  
-  .home-auth-button {
-    padding: 10px 20px !important;
-    font-size: 0.9rem !important;
-    height: 44px !important;
-  }
-  
-  .home-social-divider {
-    margin: 1.5rem 0;
-  }
-  
-  .home-social-divider-text {
-    font-size: 0.8rem;
-    padding: 0 0.8rem;
-  }
-  
-  .home-social-buttons {
-    flex-direction: column;
-    gap: 0.8rem;
-    margin-bottom: 0.8rem;
-  }
-  
-  .home-social-button {
-    padding: 10px 14px !important;
-    font-size: 0.85rem !important;
-    height: 44px !important;
-  }
-  
-  .home-auth-dialog-footer {
-    padding: 0.8rem 1rem 1.5rem 1rem;
-  }
-  
-  .home-auth-close-button {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
-}
-
-.home-auth-card {
-  background: rgba(18,16,26,0.75);
-  backdrop-filter: blur(8px);
-  border-radius: 20px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255,255,255,0.04);
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-  margin-top: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.home-auth-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(167,139,250,0.03) 100%);
-  pointer-events: none;
-}
-
-.home-auth-card-content {
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-.home-auth-tabs {
-  display: flex;
-  margin-bottom: 2rem;
-  background: rgba(255,255,255,0.02);
-  border-radius: 12px;
-  padding: 4px;
-  position: relative;
-}
-
-.home-tab {
-  flex: 1;
-  padding: 12px 24px;
-  border: none;
-  background: transparent;
-  color: #9ca3af;
-  font-weight: 600;
-  font-size: 1rem;
-  text-transform: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  position: relative;
-  z-index: 2;
-}
-
-.home-tab:hover {
-  color: var(--accent-purple-2);
-  background: rgba(124,58,237,0.06);
-}
-
-.home-tab.active {
-  color: var(--accent-purple-2);
-  background: rgba(255,255,255,0.02);
-  box-shadow: 0 6px 18px rgba(124,58,237,0.08);
-  font-weight: 700;
-}
-
-.home-auth-form-container {
-  padding: 0 1rem;
-}
-
-.home-auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.home-name-fields {
-  display: flex;
-  gap: 1rem;
-}
-
-.home-name-field {
-  flex: 1;
-}
-
-.home-input-field {
-  margin-bottom: 0 !important;
-}
-
-/* Custom Input Field Styles */
-.home-input-field input,
-.home-input-field textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid rgba(255,255,255,0.04);
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background-color: rgba(255,255,255,0.02);
-  color: #e6e6e6;
-  transition: all 0.3s ease;
-  outline: none;
-}
-
-.home-input-field input:focus,
-.home-input-field textarea:focus {
-  border-color: var(--accent-purple);
-  box-shadow: 0 0 0 6px rgba(124,58,237,0.06);
-}
-
-.home-input-field input:hover,
-.home-input-field textarea:hover {
-  border-color: var(--accent-purple);
-}
-
-.home-input-field label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #bfc7d6;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-}
-
-.home-input-field input::placeholder,
-.home-input-field textarea::placeholder {
-  color: rgba(255,255,255,0.4);
-  font-size: 0.9rem;
-}
-
-/* Input Field Error States */
-.home-input-field.error input,
-.home-input-field.error textarea {
-  border-color: #ff6b6b;
-  box-shadow: 0 0 0 4px rgba(255,107,107,0.08);
-}
-
-.home-input-field.error input:focus,
-.home-input-field.error textarea:focus {
-  border-color: #f44336;
-  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
-}
-
-.home-input-field.error label {
-  color: #f44336;
-}
-
-/* Input Field Success States */
-.home-input-field.success input,
-.home-input-field.success textarea {
-  border-color: #28c76f;
-  box-shadow: 0 0 0 4px rgba(40,199,111,0.06);
-}
-
-.home-input-field.success input:focus,
-.home-input-field.success textarea:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-}
-
-/* Input Field Disabled States */
-.home-input-field input:disabled,
-.home-input-field textarea:disabled {
-  background-color: rgba(255,255,255,0.01);
-  color: rgba(255,255,255,0.38);
-  cursor: not-allowed;
-  border-color: rgba(255,255,255,0.02);
-}
-
-/* Input Field Required Indicator */
-.home-input-field.required label::after {
-  content: ' *';
-  color: #f44336;
-  font-weight: bold;
-}
-
-/* Override MUI Input Classes - Remove MUI Styling Completely */
-.home-input-field .MuiInputBase-input,
-.home-input-field .MuiOutlinedInput-input,
-.home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
-.home-input-field input[class*="MuiInputBase-input"],
-.home-input-field input[class*="MuiOutlinedInput-input"],
-.home-input-field input[class*="css-"] {
-  /* Reset all MUI styles */
-  all: unset !important;
-  
-  /* Apply our custom styles */
-  width: 100% !important;
-  padding: 12px 16px !important;
-  border: 2px solid #e0e0e0 !important;
-  border-radius: 8px !important;
-  font-size: 1rem !important;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
-  background-color: #ffffff !important;
-  color: #333333 !important;
-  transition: all 0.3s ease !important;
-  outline: none !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-  min-width: 0 !important;
-  display: block !important;
-}
-
-/* Override MUI Input Root Classes */
-.home-input-field .MuiInputBase-root,
-.home-input-field .MuiOutlinedInput-root,
-.home-input-field .css-16wblaj-MuiInputBase-root-MuiOutlinedInput-root,
-.home-input-field div[class*="MuiInputBase-root"],
-.home-input-field div[class*="MuiOutlinedInput-root"] {
-  all: unset !important;
-  display: block !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  background: none !important;
-  box-shadow: none !important;
-}
-
-/* Override MUI Form Control Classes */
-.home-input-field .MuiFormControl-root,
-.home-input-field .MuiTextField-root,
-.home-input-field div[class*="MuiFormControl-root"],
-.home-input-field div[class*="MuiTextField-root"] {
-  all: unset !important;
-  display: block !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  background: none !important;
-  box-shadow: none !important;
-}
-
-/* Override MUI Input Label Classes */
-.home-input-field .MuiInputLabel-root,
-.home-input-field .MuiFormLabel-root,
-.home-input-field label[class*="MuiInputLabel-root"],
-.home-input-field label[class*="MuiFormLabel-root"] {
-  all: unset !important;
-  display: block !important;
-  margin-bottom: 8px !important;
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-  color: #555555 !important;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Override MUI Input Adornment Classes */
-.home-input-field .MuiInputAdornment-root,
-.home-input-field div[class*="MuiInputAdornment-root"] {
-  display: none !important;
-}
-
-/* Override MUI Notched Outline Classes */
-.home-input-field .MuiOutlinedInput-notchedOutline,
-.home-input-field fieldset[class*="MuiOutlinedInput-notchedOutline"] {
-  display: none !important;
-}
-
-/* Override any other MUI classes that might interfere */
-.home-input-field [class*="Mui"] {
-  all: unset !important;
-  display: block !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  background: none !important;
-  box-shadow: none !important;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
-}
-
-.home-forgot-password {
-  color: var(--accent-purple-2);
-  text-decoration: none;
-  font-size: 0.9rem;
-  text-align: right;
-  margin-top: -0.5rem;
-  margin-bottom: 1rem;
-  transition: color 0.3s ease;
-}
-
-.home-forgot-password:hover {
-  color: #1565c0;
-  text-decoration: underline;
-}
-
-.home-auth-button {
-  background: linear-gradient(45deg, var(--accent-purple), var(--accent-purple-2)) !important;
-  color: #0b0620 !important;
-  padding: 12px 24px !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 24px rgba(124,58,237,0.18) !important;
-  transition: all 0.3s ease !important;
-}
-
-.home-auth-button:hover {
-  background: linear-gradient(45deg, var(--accent-purple-2), var(--accent-purple)) !important;
-  box-shadow: 0 10px 28px rgba(124,58,237,0.22) !important;
-  transform: translateY(-2px);
-}
-
-.home-social-divider {
-  position: relative;
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.home-social-divider::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(255,255,255,0.03);
-}
-
-.home-social-divider-text {
-  background: transparent;
-  padding: 0 1rem;
-  color: #9aa1b2;
-  font-size: 0.9rem;
-}
-
-.home-social-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.home-social-button {
-  flex: 1;
-  padding: 12px 16px !important;
-  border-radius: 8px !important;
-  text-transform: none !important;
-  font-weight: 600 !important;
-  border: 2px solid rgba(255,255,255,0.04) !important;
-  color: #e6e6e6 !important;
-  transition: all 0.3s ease !important;
-}
-
-.home-social-button:hover {
-  border-color: var(--accent-purple) !important;
-  background-color: rgba(124,58,237,0.04) !important;
-  transform: translateY(-1px);
-}
-
-.home-error-alert {
-  margin-top: 1rem;
-  border-radius: 8px !important;
-}
-
-.home-error-icon {
-  margin-right: 0.5rem;
-}
-
-/* Feature Statements */
-.home-feature-statements {
-  position: absolute;
-  bottom: 15%;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 3rem;
-  z-index: 10;
-  width: 100%;
-  max-width: 1100px;
- 
-}
-
-.home-feature-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.home-feature-icon {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-.home-feature-statement {
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: center;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-  letter-spacing: 0.3px;
-  margin: 0;
-}
-
-.home-feature-statement-primary {
-  color: var(--muted-text);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.home-feature-statement-secondary {
-  color: var(--muted-text-2);
-  opacity: 0.95;
-}
-
-.home-feature-statement-highlight {
-  color: var(--accent-purple-2);
-}
-
-/* Icon colors to match their statements */
-.home-feature-item:first-child .home-feature-icon {
-  color: var(--muted-text);
-}
-
-.home-feature-item:nth-child(2) .home-feature-icon {
-  color: var(--muted-text-2);
-  opacity: 0.95;
-}
-
-.home-feature-item:nth-child(3) .home-feature-icon {
-  color: var(--accent-purple);
-  animation: sparkle 2s ease-in-out infinite alternate;
-}
-
-/* Hover effects */
-.home-feature-item:hover .home-feature-icon {
-  transform: scale(1.1);
-}
-
-.home-feature-item:hover .home-feature-statement {
-  transform: translateY(-2px);
-}
-
-/* Sparkle Animation */
-@keyframes sparkle {
-  0% {
-    text-shadow: 
-      0 0 6px rgba(124,58,237,0.9),
-      0 0 12px rgba(167,139,250,0.7),
-      0 0 18px rgba(167,139,250,0.5),
-      0 0 24px rgba(167,139,250,0.3),
-      2px 2px 4px rgba(0, 0, 0, 0.5);
-  }
-  100% {
-    text-shadow: 
-      0 0 12px rgba(167,139,250,1),
-      0 0 24px rgba(167,139,250,0.9),
-      0 0 36px rgba(167,139,250,0.7),
-      0 0 48px rgba(167,139,250,0.5),
-      2px 2px 4px rgba(0, 0, 0, 0.5);
-  }
-}
-
-/* Watch Video Feeds Section tweaks */
-.home-video-feeds-section {
-  position: absolute;
-  top: 82%;
-  right: 505px;
-  transform: translateY(-50%);
-  padding: 1rem;
-  margin-top: 2rem;
-  text-align: center;
-  background-color: rgba(255,255,255,0.02);
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-  transition: all 0.3s ease;
-}
-
-.home-video-feeds-section svg {
-  width: 40px;
-  height: 40px;
-  color: var(--accent-purple);
-  margin-bottom: 0.75rem;
-}
-
-.home-video-feeds-section h5 {
-  color: var(--muted-text);
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.home-video-feeds-section p {
-  color: var(--muted-text-2);
-  font-weight: 500;
-}
-
-/* Responsive Design for Tablets and Mobile */
-@media (max-width: 1024px) {
-  .home-wrapper {
-    margin-left: 0.5%;
-    margin-top: 0.1%;
-  }
-  
-  .home-container {
-    width: 90%;
-    height: 65vh;
-    margin: 0 auto;
-  }
-  
-  .home-content {
-    padding: 1.5rem;
-  }
-  
-  .home-title {
-    font-size: 3rem;
-    line-height: 1.1;
-  }
-  
-  .home-subtitle {
-    font-size: 2rem;
-    line-height: 1.2;
-  }
-  
-  .home-description {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .home-feature-statements {
-    gap: 2rem;
-    padding: 0 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .home-feature-statement {
-    font-size: 1.3rem;
-  }
-  
-  .home-action-buttons {
-    right: 2rem;
-    gap: 1rem;
-  }
-  
-  .home-login-button,
-  .home-signup-button {
-    width: 10rem;
-    height: 52px;
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 1024px) {
-  body #root {
-    overflow-y: auto;
-  }
-  
-  .home-wrapper {
-    margin: 0;
-    padding: 1rem;
-    min-height: auto;
-    height: auto;
-  }
-  
-  .home-header {
-    position: relative;
-    padding: 0.5rem 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .home-logo-container {
-    padding: 0.5rem 1rem;
-    gap: 0.5rem;
-  }
-  
-  .home-logo {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .home-brand-text {
-    font-size: 1.1rem;
-  }
-  
-  .home-container {
-    width: 100%;
-    height: auto;
-    min-height: 50vh;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    position: relative;
-  }
-  
-  .home-content {
-    padding: 2rem 1rem;
-  }
-  
-  .home-title {
-    font-size: 2.2rem;
-    line-height: 1.1;
-    margin-bottom: 0.8rem;
-  }
-  
-  .home-subtitle {
-    font-size: 1.6rem;
-    line-height: 1.2;
-    margin-bottom: 0.8rem;
-  }
-  
-  .home-description {
-    font-size: 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .home-feature-statements {
-    position: relative;
-    bottom: auto;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 2rem 1rem;
-    margin-bottom: 2rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-  }
-  
-  .home-feature-item {
-    flex-direction: row;
-    gap: 0.75rem;
-    text-align: left;
-    justify-content: center;
-  }
-  
-  .home-feature-icon {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-  }
-  
-  .home-feature-statement {
-    font-size: 1.1rem;
-    text-align: center;
-  }
-  
-  .home-action-buttons {
-    position: relative;
-    top: auto;
-    right: auto;
-    transform: none;
-    flex-direction: row;
-    gap: 1rem;
-    margin: 2rem 0;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 0 1rem;
-  }
-  
-  .home-login-button,
-  .home-signup-button {
-    width: 100%;
-    max-width: 280px;
-    height: 48px;
-    font-size: 1rem;
-  }
-  
-  .home-auth-dialog {
-    max-width: 95%;
-    margin: 1rem;
-  }
-  
-  .home-auth-card {
-    max-width: 100%;
-  }
-  
-  .home-name-fields {
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  .home-social-buttons {
-    flex-direction: column;
-  }
-  
-  .home-footer {
-    position: relative;
-    margin: 2rem 0 0 0;
-    width: 100%;
-  }
-  
-  .home-footer-content {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-  
-  .home-footer-links {
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .home-footer-social {
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}
+    padding: 0.5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 
-@media (max-width: 480px) {
-  .home-wrapper {
-    padding: 0.5rem;
   }
-  
-  .home-header {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
+
+  .home-footer-links {
+    display: flex;
+    gap: 2rem;
   }
-  
-  .home-logo-container {
-    padding: 0.4rem 0.8rem;
-  }
-  
-  .home-brand-text {
-    font-size: 1rem;
-  }
-  
-  .home-container {
-    min-height: 45vh;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .home-content {
-    padding: 1.5rem 0.5rem;
-  }
-  
-  .home-title {
-    font-size: 1.8rem;
-    margin-bottom: 0.6rem;
-  }
-  
-  .home-subtitle {
-    font-size: 1.4rem;
-    margin-bottom: 0.6rem;
-  }
-  
-  .home-description {
+
+  .home-footer-link {
+    color: var(--muted-text-2);
+    text-decoration: none;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 0.9rem;
-    margin-bottom: 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
   }
-  
-  .home-feature-statements {
-    padding: 1.5rem 0.5rem;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+
+  .home-footer-link:hover {
+    color: var(--muted-text);
+    text-shadow: 0 0 12px rgba(167,139,250,0.12);
   }
-  
-  .home-feature-statement {
-    font-size: 1rem;
+
+  .home-footer-button {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+    font: inherit;
+    color: var(--muted-text-2);
+    text-decoration: none;
+    cursor: pointer;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
   }
-  
-  .home-feature-icon {
+
+  .home-footer-button:hover {
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+
+  .home-footer-social {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .home-social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-text-2);
+    text-decoration: none;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+  }
+
+  .home-social-link:hover {
+    color: var(--muted-text);
+    background-color: rgba(167,139,250,0.06);
+    transform: translateY(-2px);
+  }
+
+  .home-social-link svg {
     width: 20px;
     height: 20px;
+    transition: all 0.3s ease;
   }
-  
-  .home-action-buttons {
-    margin: 1.5rem 0;
-    padding: 0 0.5rem;
+
+  .home-social-link:hover svg {
+    transform: scale(1.1);
   }
-  
-  .home-login-button,
-  .home-signup-button {
-    height: 44px;
-    font-size: 0.9rem;
-    max-width: 250px;
+
+
+  /* Mobile Responsive Footer */
+  @media (max-width: 768px) {
+    .home-footer-content {
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    
+    .home-footer-links {
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .home-footer-social {
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .home-social-link {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.6rem;
+    }
   }
-  
-  .home-auth-dialog {
-    max-width: 98%;
-    margin: 0.5rem;
+
+  /* Mobile Auth Dialog Responsive Styles */
+  @media (max-width: 768px) {
+    .home-auth-dialog {
+      max-width: 95%;
+      width: 95%;
+      margin: 0.5rem;
+      max-height: 95vh;
+    }
+    
+    .home-auth-dialog-content {
+      padding: 1.5rem 1rem;
+    }
+    
+    .home-auth-card {
+      max-width: 100%;
+      margin-top: 0.5rem;
+    }
+    
+    .home-auth-card-content {
+      padding: 1.5rem 1rem;
+    }
+    
+    .home-auth-tabs {
+      margin-bottom: 1.5rem;
+      padding: 3px;
+    }
+    
+    .home-tab {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+    
+    .home-auth-form {
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .home-name-fields {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .home-input-field {
+      margin-bottom: 0.5rem !important;
+    }
+    
+    .home-input-field input,
+    .home-input-field textarea {
+      font-size: 0.9rem;
+      padding: 10px 14px;
+    }
+    
+    .home-input-field label {
+      font-size: 0.9rem;
+    }
+    
+    /* Override MUI classes for mobile */
+    .home-input-field .MuiInputBase-input,
+    .home-input-field .MuiOutlinedInput-input,
+    .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
+    .home-input-field input[class*="MuiInputBase-input"],
+    .home-input-field input[class*="MuiOutlinedInput-input"],
+    .home-input-field input[class*="css-"] {
+      font-size: 0.9rem !important;
+      padding: 10px 14px !important;
+    }
+    
+    .home-input-field .MuiInputLabel-root,
+    .home-input-field .MuiFormLabel-root,
+    .home-input-field label[class*="MuiInputLabel-root"],
+    .home-input-field label[class*="MuiFormLabel-root"] {
+      font-size: 0.9rem !important;
+    }
+    
+    .home-forgot-password {
+      font-size: 0.85rem;
+      margin-top: -0.3rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .home-auth-button {
+      padding: 10px 20px !important;
+      font-size: 0.9rem !important;
+      height: 44px !important;
+    }
+    
+    .home-social-divider {
+      margin: 1.5rem 0;
+    }
+    
+    .home-social-divider-text {
+      font-size: 0.8rem;
+      padding: 0 0.8rem;
+    }
+    
+    .home-social-buttons {
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .home-social-button {
+      padding: 10px 14px !important;
+      font-size: 0.85rem !important;
+      height: 44px !important;
+    }
+    
+    .home-auth-dialog-footer {
+      padding: 0.8rem 1rem 1.5rem 1rem;
+    }
+    
+    .home-auth-close-button {
+      font-size: 0.9rem;
+      padding: 6px 12px;
+    }
   }
-  
-  .home-auth-dialog-content {
-    padding: 2%;
+
+  .home-auth-card {
+    background: rgba(18,16,26,0.75);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255,255,255,0.04);
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
   }
-  
+
+  .home-auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(167,139,250,0.03) 100%);
+    pointer-events: none;
+  }
+
   .home-auth-card-content {
-    padding: 3%;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
   }
-  
-  /* Extra small mobile auth styles */
-  .home-auth-dialog {
-    max-width: 98%;
-    width: 98%;
-    margin: 0.25rem;
-  }
-  
-  .home-auth-dialog-content {
-    padding: 1rem 0.75rem;
-  }
-  
-  .home-auth-card-content {
-    padding: 1rem 0.75rem;
-  }
-  
+
   .home-auth-tabs {
-    margin-bottom: 1rem;
-    padding: 2px;
+    display: flex;
+    margin-bottom: 2rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    padding: 4px;
+    position: relative;
   }
-  
+
   .home-tab {
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    position: relative;
+    z-index: 2;
   }
-  
+
+  .home-tab:hover {
+    color: var(--accent-purple-2);
+    background: rgba(124,58,237,0.06);
+  }
+
+  .home-tab.active {
+    color: var(--accent-purple-2);
+    background: rgba(255,255,255,0.02);
+    box-shadow: 0 6px 18px rgba(124,58,237,0.08);
+    font-weight: 700;
+  }
+
+  .home-auth-form-container {
+    padding: 0 1rem;
+  }
+
   .home-auth-form {
-    gap: 1rem;
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
   }
-  
+
+  .home-name-fields {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .home-name-field {
+    flex: 1;
+  }
+
+  .home-input-field {
+    margin-bottom: 0 !important;
+  }
+
+  /* Custom Input Field Styles */
   .home-input-field input,
   .home-input-field textarea {
-    font-size: 0.85rem;
-    padding: 8px 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background-color: rgba(255,255,255,0.02);
+    color: #e6e6e6;
+    transition: all 0.3s ease;
+    outline: none;
   }
-  
+
+  .home-input-field input:focus,
+  .home-input-field textarea:focus {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 6px rgba(124,58,237,0.06);
+  }
+
+  .home-input-field input:hover,
+  .home-input-field textarea:hover {
+    border-color: var(--accent-purple);
+  }
+
   .home-input-field label {
-    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #bfc7d6;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   }
-  
-  /* Override MUI classes for small mobile */
+
+  .home-input-field input::placeholder,
+  .home-input-field textarea::placeholder {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.9rem;
+  }
+
+  /* Input Field Error States */
+  .home-input-field.error input,
+  .home-input-field.error textarea {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 4px rgba(255,107,107,0.08);
+  }
+
+  .home-input-field.error input:focus,
+  .home-input-field.error textarea:focus {
+    border-color: #f44336;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
+  }
+
+  .home-input-field.error label {
+    color: #f44336;
+  }
+
+  /* Input Field Success States */
+  .home-input-field.success input,
+  .home-input-field.success textarea {
+    border-color: #28c76f;
+    box-shadow: 0 0 0 4px rgba(40,199,111,0.06);
+  }
+
+  .home-input-field.success input:focus,
+  .home-input-field.success textarea:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  }
+
+  /* Input Field Disabled States */
+  .home-input-field input:disabled,
+  .home-input-field textarea:disabled {
+    background-color: rgba(255,255,255,0.01);
+    color: rgba(255,255,255,0.38);
+    cursor: not-allowed;
+    border-color: rgba(255,255,255,0.02);
+  }
+
+  /* Input Field Required Indicator */
+  .home-input-field.required label::after {
+    content: ' *';
+    color: #f44336;
+    font-weight: bold;
+  }
+
+  /* Override MUI Input Classes - Remove MUI Styling Completely */
   .home-input-field .MuiInputBase-input,
   .home-input-field .MuiOutlinedInput-input,
   .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
   .home-input-field input[class*="MuiInputBase-input"],
   .home-input-field input[class*="MuiOutlinedInput-input"],
   .home-input-field input[class*="css-"] {
-    font-size: 0.85rem !important;
-    padding: 8px 12px !important;
+    /* Reset all MUI styles */
+    all: unset !important;
+    
+    /* Apply our custom styles */
+    width: 100% !important;
+    padding: 12px 16px !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    display: block !important;
   }
-  
+
+  /* Override MUI Input Root Classes */
+  .home-input-field .MuiInputBase-root,
+  .home-input-field .MuiOutlinedInput-root,
+  .home-input-field .css-16wblaj-MuiInputBase-root-MuiOutlinedInput-root,
+  .home-input-field div[class*="MuiInputBase-root"],
+  .home-input-field div[class*="MuiOutlinedInput-root"] {
+    all: unset !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Override MUI Form Control Classes */
+  .home-input-field .MuiFormControl-root,
+  .home-input-field .MuiTextField-root,
+  .home-input-field div[class*="MuiFormControl-root"],
+  .home-input-field div[class*="MuiTextField-root"] {
+    all: unset !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Override MUI Input Label Classes */
   .home-input-field .MuiInputLabel-root,
   .home-input-field .MuiFormLabel-root,
   .home-input-field label[class*="MuiInputLabel-root"],
   .home-input-field label[class*="MuiFormLabel-root"] {
-    font-size: 0.85rem !important;
+    all: unset !important;
+    display: block !important;
+    margin-bottom: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #555555 !important;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
-  
+
+  /* Override MUI Input Adornment Classes */
+  .home-input-field .MuiInputAdornment-root,
+  .home-input-field div[class*="MuiInputAdornment-root"] {
+    display: none !important;
+  }
+
+  /* Override MUI Notched Outline Classes */
+  .home-input-field .MuiOutlinedInput-notchedOutline,
+  .home-input-field fieldset[class*="MuiOutlinedInput-notchedOutline"] {
+    display: none !important;
+  }
+
+  /* Override any other MUI classes that might interfere */
+  .home-input-field [class*="Mui"] {
+    all: unset !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+  }
+
   .home-forgot-password {
-    font-size: 0.8rem;
-    margin-top: -0.2rem;
-    margin-bottom: 0.6rem;
+    color: var(--accent-purple-2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    text-align: right;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+    transition: color 0.3s ease;
   }
-  
+
+  .home-forgot-password:hover {
+    color: #1565c0;
+    text-decoration: underline;
+  }
+
   .home-auth-button {
-    padding: 8px 16px !important;
-    font-size: 0.85rem !important;
-    height: 40px !important;
+    background: linear-gradient(45deg, var(--accent-purple), var(--accent-purple-2)) !important;
+    color: #0b0620 !important;
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.18) !important;
+    transition: all 0.3s ease !important;
   }
-  
+
+  .home-auth-button:hover {
+    background: linear-gradient(45deg, var(--accent-purple-2), var(--accent-purple)) !important;
+    box-shadow: 0 10px 28px rgba(124,58,237,0.22) !important;
+    transform: translateY(-2px);
+  }
+
   .home-social-divider {
-    margin: 1rem 0;
+    position: relative;
+    text-align: center;
+    margin: 2rem 0;
   }
-  
+
+  .home-social-divider::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.03);
+  }
+
   .home-social-divider-text {
-    font-size: 0.75rem;
-    padding: 0 0.6rem;
+    background: transparent;
+    padding: 0 1rem;
+    color: #9aa1b2;
+    font-size: 0.9rem;
   }
-  
+
   .home-social-buttons {
-    gap: 0.6rem;
-    margin-bottom: 0.6rem;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
   }
-  
+
   .home-social-button {
-    padding: 8px 12px !important;
-    font-size: 0.8rem !important;
-    height: 40px !important;
-  }
-  
-  .home-auth-dialog-footer {
-    padding: 0.6rem 0.75rem 1rem 0.75rem;
-  }
-  
-  .home-auth-close-button {
-    font-size: 0.85rem;
-    padding: 5px 10px;
-  }
-}
-
-/* Role Selection Styles */
-.home-role-button {
-  position: relative;
-  overflow: hidden;
-  border: 2px solid transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.home-role-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.home-role-button:hover::before {
-  left: 100%;
-}
-
-.home-role-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-
-/* Mobile responsive adjustments for role buttons */
-@media (max-width: 480px) {
-  .home-role-button {
-    padding: 10px 12px !important;
-    font-size: 0.8rem !important;
-    min-height: 44px;
-  }
-}
-
-/* Watch Video Feeds Section */
-.home-video-feeds-section {
-  position: absolute;
-  top: 82%;
-  right: 505px;
-  transform: translateY(-50%);
-  padding: 1.5rem;
-  text-align: center;
-  background-color: #f3f4f6;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.home-video-feeds-section svg {
-  width: 48px;
-  height: 48px;
-  color: #667eea;
-  margin-bottom: 1rem;
-}
-
-.home-video-feeds-section h5 {
-  color: #374151;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.home-video-feeds-section p {
-  color: #6b7280;
-  font-weight: 500;
-}
-
-/* Adjust layout for smaller screens */
-@media (max-width: 2022px) {
-  .home-video-feeds-section {
-    position: relative;
-    top: auto;
-    right: 0px;
-    margin-top: 6rem;
-    width: 72%;
+    flex: 1;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    border: 2px solid rgba(255,255,255,0.04) !important;
+    color: #e6e6e6 !important;
+    transition: all 0.3s ease !important;
   }
 
+  .home-social-button:hover {
+    border-color: var(--accent-purple) !important;
+    background-color: rgba(124,58,237,0.04) !important;
+    transform: translateY(-1px);
+  }
+
+  .home-error-alert {
+    margin-top: 1rem;
+    border-radius: 8px !important;
+  }
+
+  .home-error-icon {
+    margin-right: 0.5rem;
+  }
+
+  /* Feature Statements */
   .home-feature-statements {
-    position: relative;
-    margin: 1.1rem 1rem;
-    bottom: auto;
+    position: absolute;
+    bottom: 15%;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    z-index: 10;
+    width: 100%;
+    max-width: 1100px;
+  
   }
 
-   
-}
+  .home-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
 
-@media (max-width: 1024px) {
+  .home-feature-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+
+  .home-feature-statement {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    letter-spacing: 0.3px;
+    margin: 0;
+  }
+
+  .home-feature-statement-primary {
+    color: var(--muted-text);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .home-feature-statement-secondary {
+    color: var(--muted-text-2);
+    opacity: 0.95;
+  }
+
+  .home-feature-statement-highlight {
+    color: var(--accent-purple-2);
+  }
+
+  /* Icon colors to match their statements */
+  .home-feature-item:first-child .home-feature-icon {
+    color: var(--muted-text);
+  }
+
+  .home-feature-item:nth-child(2) .home-feature-icon {
+    color: var(--muted-text-2);
+    opacity: 0.95;
+  }
+
+  .home-feature-item:nth-child(3) .home-feature-icon {
+    color: var(--accent-purple);
+    animation: sparkle 2s ease-in-out infinite alternate;
+  }
+
+  /* Hover effects */
+  .home-feature-item:hover .home-feature-icon {
+    transform: scale(1.1);
+  }
+
+  .home-feature-item:hover .home-feature-statement {
+    transform: translateY(-2px);
+  }
+
+  /* Sparkle Animation */
+  @keyframes sparkle {
+    0% {
+      text-shadow: 
+        0 0 6px rgba(124,58,237,0.9),
+        0 0 12px rgba(167,139,250,0.7),
+        0 0 18px rgba(167,139,250,0.5),
+        0 0 24px rgba(167,139,250,0.3),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    100% {
+      text-shadow: 
+        0 0 12px rgba(167,139,250,1),
+        0 0 24px rgba(167,139,250,0.9),
+        0 0 36px rgba(167,139,250,0.7),
+        0 0 48px rgba(167,139,250,0.5),
+        2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  /* Watch Video Feeds Section tweaks */
   .home-video-feeds-section {
-    margin: 3rem 0 0 0 ;
-    width: 95%;
+    position: absolute;
+    top: 82%;
+    right: 505px;
+    transform: translateY(-50%);
+    padding: 1rem;
+    margin-top: 2rem;
+    text-align: center;
+    background-color: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+  }
+
+  .home-video-feeds-section svg {
+    width: 40px;
+    height: 40px;
+    color: var(--accent-purple);
+    margin-bottom: 0.75rem;
+  }
+
+  .home-video-feeds-section h5 {
+    color: var(--muted-text);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .home-video-feeds-section p {
+    color: var(--muted-text-2);
+    font-weight: 500;
+  }
+
+  /* Responsive Design for Tablets and Mobile */
+  @media (max-width: 1024px) {
+    .home-wrapper {
+      margin-left: 0.5%;
+      margin-top: 0.1%;
+    }
+    
+    .home-container {
+      width: 90%;
+      height: 65vh;
+      margin: 0 auto;
+    }
+    
+    .home-content {
+      padding: 1.5rem;
+    }
+    
+    .home-title {
+      font-size: 3rem;
+      line-height: 1.1;
+    }
+    
+    .home-subtitle {
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+    
+    .home-description {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .home-feature-statement {
+      font-size: 1.3rem;
+    }
+    
+    .home-action-buttons {
+      right: 2rem;
+      gap: 1rem;
+    }
+    
+    .home-login-button,
+    .home-signup-button {
+      width: 11rem;
+      height: 92px;
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    body #root {
+      overflow-y: auto;
+    }
+    
+    .home-wrapper {
+      margin: 0;
+      padding: 1rem;
+      min-height: auto;
+      height: auto;
+    }
+    
+    .home-header {
+      position: relative;
+      padding: 0.5rem 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .home-logo-container {
+      padding: 0.5rem 1rem;
+      gap: 0.5rem;
+    }
+    
+    .home-logo {
+      width: 28px;
+      height: 28px;
+    }
+    
+    .home-brand-text {
+      font-size: 1.1rem;
+    }
+    
+    .home-container {
+      width: 100%;
+      height: auto;
+      min-height: 50vh;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    
+    .home-content {
+      padding: 2rem 1rem;
+    }
+    
+    .home-title {
+      font-size: 2.2rem;
+      line-height: 1.1;
+      margin-bottom: 0.8rem;
+    }
+    
+    .home-subtitle {
+      font-size: 1.6rem;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+    }
+    
+    .home-description {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .home-feature-statements {
+      position: relative;
+      bottom: auto;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 2rem 1rem;
+      margin-bottom: 2rem;
+      margin-left: 2rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .home-feature-item {
+      flex-direction: row;
+      gap: 0.75rem;
+      text-align: left;
+      justify-content: center;
+    }
+    
+    .home-feature-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    
+    .home-feature-statement {
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    
+    .home-action-buttons {
+      position: relative;
+      top: auto;
+      right: auto;
+      transform: none;
+      flex-direction: row;
+      gap: 1rem;
+      margin: 2rem 0;
+      align-items: center;
+      padding: 0 1rem;
+    }
+    
+    .home-login-button,
+    .home-signup-button {
+      width: 100%;
+      max-width: 320px;
+      height: 92px;
+      font-size: 1rem;
+    }
+    
+    .home-auth-dialog {
+      max-width: 95%;
+      margin: 1rem;
+    }
+    
+    .home-auth-card {
+      max-width: 100%;
+    }
+    
+    .home-name-fields {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .home-social-buttons {
+      flex-direction: column;
+    }
+    
+    .home-footer {
+      position: relative;
+      margin: 2rem 0 0 0;
+      width: 100%;
+    }
+    
+    .home-footer-content {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    
+    .home-footer-links {
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .home-footer-social {
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .home-wrapper {
+      padding: 0.5rem;
+    }
+    
+    .home-header {
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .home-logo-container {
+      padding: 0.4rem 0.8rem;
+    }
+    
+    .home-brand-text {
+      font-size: 1rem;
+    }
+    
+    .home-container {
+      min-height: 45vh;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .home-content {
+      padding: 1.5rem 0.5rem;
+    }
+    
+    .home-title {
+      font-size: 1.8rem;
+      margin-bottom: 0.6rem;
+    }
+    
+    .home-subtitle {
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+    
+    .home-description {
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .home-feature-statements {
+      padding: 1.5rem 0.5rem;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+    
+    .home-feature-statement {
+      font-size: 1rem;
+    }
+    
+    .home-feature-icon {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .home-action-buttons {
+      margin: 1.5rem 0;
+      padding: 0 0.5rem;
+    }
+    
+    .home-login-button,
+    .home-signup-button {
+      height: 164px !important;
+      font-size: 0.95rem;
+      max-width: 320px;
+      flex-shrink: 0;
+    }
+
+    /* Stronger, higher-specificity overrides to ensure Tailwind utility classes
+      or parent flexbox rules do not shrink the buttons on very small screens. */
+    .home-action-buttons > button.home-login-button,
+    .home-action-buttons > button.home-signup-button,
+    .home-action-buttons > .home-login-button,
+    .home-action-buttons > .home-signup-button {
+      height: 164px !important;
+      min-height: 164px !important;
+      line-height: 1 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      max-width: 320px !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
+    }
+    
+    .home-auth-dialog {
+      max-width: 98%;
+      margin: 0.5rem;
+    }
+    
+    .home-auth-dialog-content {
+      padding: 2%;
+    }
+    
+    .home-auth-card-content {
+      padding: 3%;
+    }
+    
+    /* Extra small mobile auth styles */
+    .home-auth-dialog {
+      max-width: 98%;
+      width: 98%;
+      margin: 0.25rem;
+    }
+    
+    .home-auth-dialog-content {
+      padding: 1rem 0.75rem;
+    }
+    
+    .home-auth-card-content {
+      padding: 1rem 0.75rem;
+    }
+    
+    .home-auth-tabs {
+      margin-bottom: 1rem;
+      padding: 2px;
+    }
+    
+    .home-tab {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+    
+    .home-auth-form {
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .home-input-field input,
+    .home-input-field textarea {
+      font-size: 0.85rem;
+      padding: 8px 12px;
+    }
+    
+    .home-input-field label {
+      font-size: 0.85rem;
+    }
+    
+    /* Override MUI classes for small mobile */
+    .home-input-field .MuiInputBase-input,
+    .home-input-field .MuiOutlinedInput-input,
+    .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
+    .home-input-field input[class*="MuiInputBase-input"],
+    .home-input-field input[class*="MuiOutlinedInput-input"],
+    .home-input-field input[class*="css-"] {
+      font-size: 0.85rem !important;
+      padding: 8px 12px !important;
+    }
+    
+    .home-input-field .MuiInputLabel-root,
+    .home-input-field .MuiFormLabel-root,
+    .home-input-field label[class*="MuiInputLabel-root"],
+    .home-input-field label[class*="MuiFormLabel-root"] {
+      font-size: 0.85rem !important;
+    }
+    
+    .home-forgot-password {
+      font-size: 0.8rem;
+      margin-top: -0.2rem;
+      margin-bottom: 0.6rem;
+    }
+    
+    .home-auth-button {
+      padding: 8px 16px !important;
+      font-size: 0.85rem !important;
+      height: 40px !important;
+    }
+    
+    .home-social-divider {
+      margin: 1rem 0;
+    }
+    
+    .home-social-divider-text {
+      font-size: 0.75rem;
+      padding: 0 0.6rem;
+    }
+    
+    .home-social-buttons {
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+    
+    .home-social-button {
+      padding: 8px 12px !important;
+      font-size: 0.8rem !important;
+      height: 40px !important;
+    }
+    
+    .home-auth-dialog-footer {
+      padding: 0.6rem 0.75rem 1rem 0.75rem;
+    }
+    
+    .home-auth-close-button {
+      font-size: 0.85rem;
+      padding: 5px 10px;
+    }
+  }
+
+  /* Role Selection Styles */
+  .home-role-button {
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .home-role-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .home-role-button:hover::before {
+    left: 100%;
+  }
+
+  .home-role-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+
+  /* Mobile responsive adjustments for role buttons */
+  @media (max-width: 480px) {
+    .home-role-button {
+      padding: 10px 12px !important;
+      font-size: 0.8rem !important;
+      min-height: 44px;
+    }
+  }
+
+  /* Watch Video Feeds Section */
+  .home-video-feeds-section {
+    position: absolute;
+    top: 82%;
+    right: 505px;
+    transform: translateY(-50%);
+    padding: 1.5rem;
+    text-align: center;
+    background-color: #f3f4f6;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .home-video-feeds-section svg {
+    width: 56px;
+    height: 56px;
+    color: #667eea;
+    margin-bottom: 1rem;
+  }
+
+  .home-video-feeds-section h5 {
+    color: #374151;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem; /* ~20px - larger title */
+  }
+
+  .home-video-feeds-section p {
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 1rem; /* ~16px - larger description */
+  }
+
+  /* Adjust layout for smaller screens */
+  @media (max-width: 2022px) {
+    .home-video-feeds-section {
+      position: relative;
+      top: auto;
+      right: 0px;
+      margin-top: 6rem;
+      width: 72%;
+    }
+
+    .home-feature-statements {
+      position: relative;
+      margin: 1.1rem 1rem;
+      bottom: auto;
+          gap: 2rem;
+      padding: 0 1.5rem;
+      margin-bottom: 2rem;
+      margin-left: 1rem ;
+    }
+
     
   }
 
-  .home-feature-statements {
-    position: relative;
-    margin: .1rem 0 1rem 0;
-     width: 95%;
-    bottom: auto;
+  @media (max-width: 1024px) {
+    .home-video-feeds-section {
+      margin: 3rem 0 0 0 ;
+      width: 95%;
+      
+    }
+
+    .home-feature-statements {
+      position: relative;
+      margin: .1rem 0 1rem 0;
+      width: 95%;
+      bottom: auto;
+    }
+
+    .home-login-button,
+    .home-signup-button {
+      margin: -2.2rem 0 2.2rem 0;
+    }
+
+
+
   }
 
-  .home-login-button,
-  .home-signup-button {
-    margin: -2.2rem 0 2.2rem 0;
+  @media (max-width: 768px) {
+    .home-video-feeds-section {
+      margin-top: 3.5rem;
+      padding: 1rem;
+      width: 92%;
+
+    }
+
+    .home-login-button,
+    .home-signup-button {
+      margin: -1.7rem 0 1.8rem 0;
+    }
   }
 
-
-
-}
-
-@media (max-width: 768px) {
-  .home-video-feeds-section {
-    margin-top: 3.5rem;
-    padding: 1rem;
-    width: 92%;
-
-  }
-
-   .home-login-button,
-  .home-signup-button {
-    margin: -1.7rem 0 1.8rem 0;
-  }
-}
+  

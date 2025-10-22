@@ -304,14 +304,28 @@ const Home = () => {
 
   // add handler to go to video-upload tab, require login first
   const handleVideoFeatureClick = () => {
+    // If not logged in, store the intended destination and prompt login
     if (!user) {
       setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload'); // Set destination
       handleOpenAuthDialog(0); // Open login dialog
       return;
     }
-    navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
-  };
 
+    // If logged in, route based on the user's role. Reuse getDefaultRoute to
+    // determine the appropriate base route for their role, then append the
+    // video-upload tab for job seekers / employees.
+    const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
+
+    if (effectiveRole === 'job_seeker' || effectiveRole === 'employee') {
+      navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
+    } else {
+      // For employers/recruiters/admins, send them to the employer area
+      // (use getDefaultRoute to support additional role mappings)
+      const base = getDefaultRoute(effectiveRole) || '/employer-tabs';
+      // If the base already contains a path for employer tabs, navigate there.
+      navigate(base);
+    }
+  };
  
   
 
@@ -338,26 +352,31 @@ const Home = () => {
               Jobs Meet the <span className="home-title-highlight">Feed</span>
             </h1>
             <h3 className="home-subtitle">
-              Welcome to the <span className="home-subtitle-highlight">Future</span> Recruiting Agency
+              Welcome to the The First Video Hiring App.
+Swipe through video resumes just like TikTok.
+The fastest, most interactive  <span className="home-subtitle-highlight">way to hire — and be hired.</span> 
             </h3>
             <h5 className="home-description">
-              Join us and find your dream job
+              Join us and find your dream job 
             </h5>
           </div>
         </div>
       </div>
-      
+     
       {/* Feature Statements */}
       <div className="home-feature-statements">
         <div
           className="home-feature-item"
-          role="button"
-          tabIndex={0}
-          onClick={handleVideoFeatureClick}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { handleVideoFeatureClick(); } }}
-          style={{ cursor: 'pointer' }} // indicate clickable
+          
+  
         >
-          <svg className="home-feature-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+           <svg className="home-feature-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+             onClick={handleVideoFeatureClick}
+             role="button"
+             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { handleVideoFeatureClick(); } }}
+                   tabIndex={0}
+                    style={{ cursor: 'pointer' }} // indicate clickable
+           >
             <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"/>
           </svg>
           <h3 className="home-feature-statement home-feature-statement-primary">
