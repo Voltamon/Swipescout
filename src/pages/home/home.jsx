@@ -316,14 +316,36 @@ const Home = () => {
     // video-upload tab for job seekers / employees.
     const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
 
-    if (effectiveRole === 'job_seeker' || effectiveRole === 'employee') {
+    if (effectiveRole === 'job_seeker' ) {
       navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
+    } else if (effectiveRole === 'employee' ) {
+      navigate('/employer-tabs?group=profileContent&tab=video-upload');
+    }
+  };
+
+  const handleEmployersClick = () => {
+    // If not logged in, prompt login and store redirect
+    if (!user) {
+      setRedirectPath('/employer-tabs');
+      handleOpenAuthDialog(0);
+      return;
+    }
+    const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
+    // navigate to employer area
+    navigate(getDefaultRoute(effectiveRole) || '/employer-tabs');
+  };
+
+  const handleSkillsClick = () => {
+    if (!user) {
+      setRedirectPath('/jobseeker-tabs');
+      handleOpenAuthDialog(0);
+      return;
+    }
+    const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
+    if (effectiveRole === 'job_seeker' || effectiveRole === 'employee') {
+      navigate('/jobseeker-tabs');
     } else {
-      // For employers/recruiters/admins, send them to the employer area
-      // (use getDefaultRoute to support additional role mappings)
-      const base = getDefaultRoute(effectiveRole) || '/employer-tabs';
-      // If the base already contains a path for employer tabs, navigate there.
-      navigate(base);
+      navigate(getDefaultRoute(effectiveRole));
     }
   };
  
@@ -349,13 +371,16 @@ const Home = () => {
           </div>
           <div className="home-hero-section">
             <h1 className="home-title">
-              Jobs Meet the <span className="home-title-highlight">Feed</span>
+              The First  <span className="home-title-highlight">Video</span> Hiring App
             </h1>
             <h3 className="home-subtitle">
-              Welcome to the The First Video Hiring App.
+             
 Swipe through video resumes just like TikTok.
 The fastest, most interactive  <span className="home-subtitle-highlight">way to hire — and be hired.</span> 
             </h3>
+            <p className="home-hero-tagline">
+              Video resumes made fast, hiring made smarter.
+            </p>
             <h5 className="home-description">
               Join us and find your dream job 
             </h5>
@@ -363,41 +388,73 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
         </div>
       </div>
      
-      {/* Feature Statements */}
+      {/* Feature Statements & Video Feed Link */}
       <div className="home-feature-statements">
-        <div
-          className="home-feature-item"
-          
-  
-        >
-           <svg className="home-feature-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
-             onClick={handleVideoFeatureClick}
-             role="button"
-             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { handleVideoFeatureClick(); } }}
-                   tabIndex={0}
-                    style={{ cursor: 'pointer' }} // indicate clickable
-           >
-            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"/>
-          </svg>
+        <div className="home-feature-item">
+          <button
+            type="button"
+            className="home-feature-icon-button"
+            onClick={handleVideoFeatureClick}
+            aria-label="Create a video resume"
+          >
+            <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"/>
+            </svg>
+          </button>
           <h3 className="home-feature-statement home-feature-statement-primary">
-          Video resumes made fast, hiring made smarter.
+            Launch your video profile in minutes.
           </h3>
         </div>
+
         <div className="home-feature-item">
-          <svg className="home-feature-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
+          <button
+            type="button"
+            className="home-feature-icon-button home-feature-icon-button--secondary"
+            onClick={handleSkillsClick}
+            aria-label="Show your skills"
+          >
+            <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </button>
           <h3 className="home-feature-statement home-feature-statement-secondary">
             Show your skills in 15 seconds
           </h3>
         </div>
+
         <div className="home-feature-item">
-          <svg className="home-feature-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
+          <button
+            type="button"
+            className="home-feature-icon-button home-feature-icon-button--highlight"
+            onClick={handleEmployersClick}
+            aria-label="Employers area"
+          >
+            <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </button>
           <h3 className="home-feature-statement home-feature-statement-highlight">
             Employers are already swiping
           </h3>
+        </div>
+
+        <div className="home-feature-item home-video-feeds-card">
+          <button
+            type="button"
+            className="home-feature-icon-button home-feature-icon-button--video"
+            onClick={() => navigate('/videos')}
+            aria-label="Watch video feeds"
+          >
+            <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 16.5l6-4.5-6-4.5v9zm12-4.5c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-2 0c0-4.418-3.582-8-8-8s-8 3.582-8 8 3.582 8 8 8 8-3.582 8-8z" />
+            </svg>
+          </button>
+          <h3 className="home-feature-statement home-feature-statement-secondary">
+            Watch Video Feeds
+          </h3>
+          <p className="home-feature-description">
+            Explore curated reels and experience SwipeScout in action.
+          </p>
         </div>
       </div>
       
@@ -418,31 +475,6 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
         </Button>
       </div>
 
-            {/* New Section for Video Feeds */}
-            <div
-              className="home-video-feeds-section"
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate('/videos/')}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { navigate('/videos/'); } }}
-            >
-              <svg
-                className="home-video-icon"
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                style={{ marginBottom: '.1rem' }}
-              >
-                <path d="M10 16.5l6-4.5-6-4.5v9zm12-4.5c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-2 0c0-4.418-3.582-8-8-8s-8 3.582-8 8 3.582 8 8 8 8-3.582 8-8z" />
-              </svg>
-              <h5 className="text-lg font-semibold text-muted-foreground mb-2">
-                Watch Video Feeds
-              </h5>
-              <p className="text-sm text-muted-foreground/80 font-medium">
-                Explore and enjoy video resumes from job seekers.
-              </p>
-            </div>
             {/* End of New Section */}
 
       {/* Authentication Route / Modal - AuthPage handles login/register UI */}

@@ -61,9 +61,16 @@
       height: 66vh;
     }
     
+    /* Place feature statements below the hero in normal flow on desktop */
     .home-feature-statements {
-      position: absolute;
-      bottom: 18%;
+      position: relative;
+      margin-top: 2rem;
+      bottom: auto;
+      left: 0;
+      right: 0;
+      width: 75%;
+      display: flex;
+      justify-content: center;
     }
     
     .home-action-buttons {
@@ -130,10 +137,11 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border: 1px solid rgba(255,255,255,0.04);
+    border: none; /* Removed the border */
     border-radius: 20px;
     overflow: hidden;
     margin-top: 0; /* ensure container doesn't push past 100vh */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Added a subtle shadow */
   }
 
   .home-container::before {
@@ -205,6 +213,15 @@
     color: var(--accent-purple);
   }
 
+  .home-hero-tagline {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--accent-purple-2);
+    margin: 0.5rem 0 1.25rem;
+    letter-spacing: 0.5px;
+  }
+
   .home-description {
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 1.3rem;
@@ -271,7 +288,8 @@
     /* Custom styles */
     max-width: 100%;
     width: 18rem;
-    height: 140px;
+    height: 56px;
+    min-height: 56px;
     font-size: 1.1rem;
     font-weight: 600;
     text-transform: none;
@@ -279,7 +297,7 @@
     transition: all 0.3s ease;
     background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
     color: var(--muted-text) !important;
-    padding: 16px 32px;
+    padding: 10px 24px;
     display: flex;
     align-items: center;
     letter-spacing: 1px;
@@ -313,7 +331,8 @@
     
     /* Custom styles */
     min-width: 140px;
-    height: 140px;
+    height: 56px;
+    min-height: 56px;
     font-size: 1.1rem;
     font-weight: 600;
     text-transform: none;
@@ -321,7 +340,7 @@
     transition: all 0.3s ease;
     border: 2px solid var(--accent-purple);
     color: var(--accent-purple-2);
-    padding: 16px 32px;
+    padding: 10px 24px;
     background: transparent;
     display: flex;
     align-items: center;
@@ -1036,41 +1055,118 @@
 
   /* Feature Statements */
   .home-feature-statements {
-    position: absolute;
-    bottom: 15%;
-    
+    position: relative;
+    margin: 2.5rem auto 0;
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-wrap: wrap;
+    align-items: stretch;
     justify-content: center;
-    gap: 3rem;
-    z-index: 10;
-    width: 100%;
+    gap: 2rem 1.5rem;
+    width: 75%;
     max-width: 1100px;
-  
+    z-index: 5;
   }
 
   .home-feature-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     gap: 0.75rem;
+    flex: 1 1 220px;
+    min-width: 200px;
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: rgba(12, 10, 22, 0.65);
+    border: 1px solid rgba(124,58,237,0.08);
+    box-shadow: 0 12px 40px rgba(8,6,20,0.35);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  /* Force video feature item to stack icon above text (image on top, text below) */
+  .home-feature-item--video {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .home-feature-item--video .home-feature-icon-button {
+    margin-bottom: 0.5rem;
+  }
+
+  .home-feature-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 48px rgba(124,58,237,0.18);
+  }
+
+  .home-feature-icon-button {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.22);
+    background: linear-gradient(135deg, rgba(124,58,237,0.16), rgba(167,139,250,0.08));
+    color: var(--accent-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  }
+
+  .home-feature-icon-button:hover,
+  .home-feature-icon-button:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(124,58,237,0.3);
+    outline: none;
+  }
+
+  .home-feature-icon-button--secondary {
+    background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(59,130,246,0.12));
+    border-color: rgba(59,130,246,0.24);
+    color: #4ade80;
+  }
+
+  .home-feature-icon-button--highlight {
+    background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(234,179,8,0.12));
+    border-color: rgba(255,215,0,0.28);
+    color: #facc15;
+  }
+
+  .home-feature-icon-button--video {
+    background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(14,165,233,0.18));
+    border-color: rgba(14,165,233,0.24);
+    color: #60a5fa;
   }
 
   .home-feature-icon {
     width: 28px;
     height: 28px;
     flex-shrink: 0;
-    transition: all 0.3s ease;
+    transition: transform 200ms ease;
+  }
+
+  .home-feature-icon-button:hover .home-feature-icon,
+  .home-feature-icon-button:focus-visible .home-feature-icon {
+    transform: scale(1.12);
   }
 
   .home-feature-statement {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 600;
     text-align: center;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
     letter-spacing: 0.3px;
     margin: 0;
+  }
+
+  .home-feature-description {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted-text-2);
+    margin: 0;
+    line-height: 1.4;
   }
 
   .home-feature-statement-primary {
@@ -1088,28 +1184,8 @@
     color: var(--accent-purple-2);
   }
 
-  /* Icon colors to match their statements */
-  .home-feature-item:first-child .home-feature-icon {
-    color: var(--muted-text);
-  }
-
-  .home-feature-item:nth-child(2) .home-feature-icon {
-    color: var(--muted-text-2);
-    opacity: 0.95;
-  }
-
-  .home-feature-item:nth-child(3) .home-feature-icon {
-    color: var(--accent-purple);
+  .home-feature-icon-button--highlight .home-feature-icon {
     animation: sparkle 2s ease-in-out infinite alternate;
-  }
-
-  /* Hover effects */
-  .home-feature-item:hover .home-feature-icon {
-    transform: scale(1.1);
-  }
-
-  .home-feature-item:hover .home-feature-statement {
-    transform: translateY(-2px);
   }
 
   /* Sparkle Animation */
@@ -1132,38 +1208,14 @@
     }
   }
 
-  /* Watch Video Feeds Section tweaks */
-  .home-video-feeds-section {
-    position: absolute;
-    top: 82%;
-    right: 505px;
-    transform: translateY(-50%);
-    padding: 1rem;
-    margin-top: 2rem;
-    text-align: center;
-    background-color: rgba(255,255,255,0.02);
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    transition: all 0.3s ease;
+  /* Watch Video Feeds card */
+  .home-video-feeds-card {
+    background: linear-gradient(180deg, rgba(124,58,237,0.16), rgba(15,23,42,0.72));
+    border: 1px solid rgba(124,58,237,0.28);
   }
 
-  .home-video-feeds-section svg {
-    width: 40px;
-    height: 40px;
-    color: var(--accent-purple);
-    margin-bottom: 0.75rem;
-  }
-
-  .home-video-feeds-section h5 {
-    color: var(--muted-text);
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  .home-video-feeds-section p {
-    color: var(--muted-text-2);
-    font-weight: 500;
+  .home-video-feeds-card:hover {
+    box-shadow: 0 20px 56px rgba(56,189,248,0.18);
   }
 
   /* Responsive Design for Tablets and Mobile */
@@ -1192,14 +1244,30 @@
       font-size: 2rem;
       line-height: 1.2;
     }
+
+    .home-hero-tagline {
+      font-size: 1.4rem;
+      margin: 0.5rem 0 1rem;
+    }
     
     .home-description {
       font-size: 1.2rem;
       margin-bottom: 1.5rem;
     }
 
+    .home-feature-statements {
+      width: 90%;
+      margin-top: 2rem;
+      gap: 1.5rem;
+    }
+
+    .home-feature-item {
+      flex: 1 1 240px;
+      padding: 1.25rem;
+    }
+
     .home-feature-statement {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
     
     .home-action-buttons {
@@ -1210,7 +1278,6 @@
     .home-login-button,
     .home-signup-button {
       width: 11rem;
-      height: 92px;
       font-size: 1rem;
     }
   }
@@ -1271,6 +1338,11 @@
       line-height: 1.2;
       margin-bottom: 0.8rem;
     }
+
+    .home-hero-tagline {
+      font-size: 1.2rem;
+      margin: 0.4rem 0 0.9rem;
+    }
     
     .home-description {
       font-size: 1rem;
@@ -1324,7 +1396,6 @@
     .home-signup-button {
       width: 100%;
       max-width: 320px;
-      height: 92px;
       font-size: 1rem;
     }
     
@@ -1408,6 +1479,11 @@
       font-size: 1.4rem;
       margin-bottom: 0.6rem;
     }
+
+    .home-hero-tagline {
+      font-size: 1.05rem;
+      margin: 0.35rem 0 0.75rem;
+    }
     
     .home-description {
       font-size: 0.9rem;
@@ -1417,16 +1493,27 @@
     .home-feature-statements {
       padding: 1.5rem 0.5rem;
       margin-bottom: 1.5rem;
-      gap: 1rem;
+      gap: 1.25rem;
+      width: 100%;
+    }
+    
+    .home-feature-item {
+      flex: 1 1 100%;
+      padding: 1.25rem;
     }
     
     .home-feature-statement {
-      font-size: 1rem;
+      font-size: 1.05rem;
+    }
+    
+    .home-feature-icon-button {
+      width: 56px;
+      height: 56px;
     }
     
     .home-feature-icon {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
     }
     
     .home-action-buttons {
@@ -1436,20 +1523,19 @@
     
     .home-login-button,
     .home-signup-button {
-      height: 164px !important;
+      height: 56px !important;
+      min-height: 56px !important;
       font-size: 0.95rem;
       max-width: 320px;
       flex-shrink: 0;
     }
 
-    /* Stronger, higher-specificity overrides to ensure Tailwind utility classes
-      or parent flexbox rules do not shrink the buttons on very small screens. */
     .home-action-buttons > button.home-login-button,
     .home-action-buttons > button.home-signup-button,
     .home-action-buttons > .home-login-button,
     .home-action-buttons > .home-signup-button {
-      height: 164px !important;
-      min-height: 164px !important;
+      height: 56px !important;
+      min-height: 56px !important;
       line-height: 1 !important;
       padding-top: 0 !important;
       padding-bottom: 0 !important;
@@ -1612,99 +1698,7 @@
     }
   }
 
-  /* Watch Video Feeds Section */
-  .home-video-feeds-section {
-    position: absolute;
-    top: 82%;
-    right: 505px;
-    transform: translateY(-50%);
-    padding: 1.5rem;
-    text-align: center;
-    background-color: #f3f4f6;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-  }
-
-  .home-video-feeds-section svg {
-    width: 56px;
-    height: 56px;
-    color: #667eea;
-    margin-bottom: 1rem;
-  }
-
-  .home-video-feeds-section h5 {
-    color: #374151;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem; /* ~20px - larger title */
-  }
-
-  .home-video-feeds-section p {
-    color: #6b7280;
-    font-weight: 500;
-    font-size: 1rem; /* ~16px - larger description */
-  }
-
-  /* Adjust layout for smaller screens */
-  @media (max-width: 2022px) {
-    .home-video-feeds-section {
-      position: relative;
-      top: auto;
-      right: 0px;
-      margin-top: 6rem;
-      width: 72%;
-    }
-
-    .home-feature-statements {
-      position: relative;
-      margin: 1.1rem 1rem;
-      bottom: auto;
-          gap: 2rem;
-      padding: 0 1.5rem;
-      margin-bottom: 2rem;
-      margin-left: 1rem ;
-    }
-
-    
-  }
-
-  @media (max-width: 1024px) {
-    .home-video-feeds-section {
-      margin: 3rem 0 0 0 ;
-      width: 95%;
-      
-    }
-
-    .home-feature-statements {
-      position: relative;
-      margin: .1rem 0 1rem 0;
-      width: 95%;
-      bottom: auto;
-    }
-
-    .home-login-button,
-    .home-signup-button {
-      margin: -2.2rem 0 2.2rem 0;
-    }
-
-
-
-  }
-
-  @media (max-width: 768px) {
-    .home-video-feeds-section {
-      margin-top: 3.5rem;
-      padding: 1rem;
-      width: 92%;
-
-    }
-
-    .home-login-button,
-    .home-signup-button {
-      margin: -1.7rem 0 1.8rem 0;
-    }
-  }
+  /* legacy absolute-positioned video-feeds block removed — responsive
+     behavior for the card is handled above. */
 
   
