@@ -17,6 +17,8 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
     overflow-x: hidden;
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   }
@@ -32,6 +34,7 @@
   /* Home wrapper - replaces the sx prop styling */
   .home-wrapper {
     position: relative;
+    width: 100%;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -39,61 +42,118 @@
     justify-content: flex-start;
     padding: 0;
     overflow-x: hidden;
-    /* Remove small margins that can cause tiny scrollbars on some viewports */
     margin: 0;
+    box-sizing: border-box;
   }
 
   /* Desktop view - restore original layout */
   @media (min-width: 1025px) {
     .home-wrapper {
       height: 100vh;
+      width: 100%;
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
       overflow: hidden;
+      position: relative;
     }
     
     .home-header {
       position: fixed;
+      top: 0;
+      right: 2rem;
+      z-index: 100;
     }
     
     .home-container {
       height: 66vh;
-    }
-    
-    /* Place feature statements below the hero in normal flow on desktop */
-    .home-feature-statements {
-      position: relative;
-      margin-top: 2rem;
-      bottom: auto;
-      left: 0;
-      right: 0;
       width: 75%;
+      margin-left: 2%;
+      margin-top: 1.5%;
+    }
+
+    /* Place feature statements below the hero, aligned with the image */
+    .home-feature-statements {
+      position: absolute;
+      /* anchor to the left edge of the image area (same left as .home-container) */
+      left: 2%;
+      top: calc(68% + 1.5%);
+      width: 75%;
+      max-width: 1000px;
+      margin: 0;
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 1.2rem 1.5rem;
+      padding: 0;
+      z-index: 5;
+    }
+
+    /* Center header and action buttons vertically in the right blank area
+       The right blank area begins at the right edge of the image (.home-container)
+       which is 75% width; we center elements within the remaining 25% zone. */
+    .home-header,
+    .home-action-buttons {
+      position: absolute;
+      right: 2%;
+      /* place them inside the right column area (to the right of the 75% image)
+         Use calc to place center in the vertical middle of the hero container */
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      align-items: flex-end;
+    }
+
+    /* ensure the header doesn't collide with the action buttons */
+    .home-header {
+      right: calc( (100% - 75%) / 2 );
+      /* minor offset to push it visually into the right column */
+      margin-right: 1rem;
+      align-items: flex-end;
+    }
+
+    .home-action-buttons {
+      right: calc( (100% - 75%) / 2 );
+      margin-right: 1rem;
+      align-items: flex-end;
+    }
+
+    .home-feature-item {
+      flex: 0 1 calc(25% - 1.2rem);
+      min-width: 180px;
+      max-width: 220px;
+      height: auto;
     }
     
     .home-action-buttons {
+      /* fallback for small desktop screens, overridden above */
       position: fixed;
-      bottom: 4rem; /* place buttons near the bottom */
-      right: 6rem;
+      bottom: 3rem;
+      right: 3rem;
       transform: none;
+      flex-direction: column;
+      gap: 0.8rem;
       z-index: 10;
     }
     
     .home-footer {
       position: fixed;
       bottom: 0;
+      width: 100%;
+      left: 0;
     }
   }
 
   /* SwipeScout Header */
   .home-header {
     position: fixed;
-    top: 0;
-    right: 50px;
+    top: 1rem;
+    right: 1.5rem;
     z-index: 100;
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.25rem;
   }
 
   .home-logo-container {
@@ -131,17 +191,18 @@
     height: 70vh;
     background-image: url('/backgrounds/meeting_room2.jpg');
     background-size: cover;
-    background-position: top;
+    background-position: center;
     background-repeat: no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    border: none; /* Removed the border */
+    border: none;
     border-radius: 20px;
     overflow: hidden;
-    margin-top: 0; /* ensure container doesn't push past 100vh */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Added a subtle shadow */
+    margin: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
   }
 
   .home-container::before {
@@ -181,13 +242,12 @@
 
   .home-title {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 3.5rem;
+    font-size: clamp(1.8rem, 6vw, 3.5rem);
     font-weight: 800;
     margin-bottom: 1rem;
     color: var(--muted-text);
-  
-
     letter-spacing: 1px;
+    line-height: 1.1;
   }
 
   .home-title-highlight {
@@ -198,14 +258,12 @@
 
   .home-subtitle {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 2.2rem;
+    font-size: clamp(1.3rem, 4vw, 2.2rem);
     font-weight: 600;
     margin-bottom: 1rem;
     color: var(--muted-text-2);
     opacity: 0.95;
-  
     line-height: 1.2;
-
     letter-spacing: 1px;
   }
 
@@ -215,34 +273,34 @@
 
   .home-hero-tagline {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 1.6rem;
+    font-size: clamp(1rem, 3vw, 1.6rem);
     font-weight: 600;
     color: var(--accent-purple-2);
     margin: 0.5rem 0 1.25rem;
     letter-spacing: 0.5px;
+    line-height: 1.2;
   }
 
   .home-description {
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 1.3rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.3rem);
     font-weight: 400;
     color: var(--muted-text-2);
     opacity: 0.9;
-    
     line-height: 1.5;
     margin-bottom: 2rem;
-    
     letter-spacing: 0.01em;
   }
 
   .home-action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.8rem;
     position: fixed;
-    bottom: 16rem; /* keep buttons near the bottom on desktop */
-    right: 7rem;
-    transform: none;
+    bottom: auto;
+    top: 50%;
+    right: 2rem;
+    transform: translateY(-50%);
     z-index: 10;
   }
 
@@ -286,23 +344,26 @@
     cursor: pointer;
     
     /* Custom styles */
-    max-width: 100%;
-    width: 18rem;
-    height: 56px;
-    min-height: 56px;
-    font-size: 1.1rem;
+    width: auto;
+    max-width: 180px;
+    min-width: 140px;
+    height: 48px;
+    min-height: 48px;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 600;
     text-transform: none;
     border-radius: 12px;
     transition: all 0.3s ease;
     background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
     color: var(--muted-text) !important;
-    padding: 10px 24px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     letter-spacing: 1px;
     justify-content: center;
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    box-sizing: border-box;
+    white-space: nowrap;
   }
 
   .home-login-button:hover {
@@ -330,22 +391,26 @@
     cursor: pointer;
     
     /* Custom styles */
+    width: auto;
+    max-width: 180px;
     min-width: 140px;
-    height: 56px;
-    min-height: 56px;
-    font-size: 1.1rem;
+    height: 48px;
+    min-height: 48px;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 600;
     text-transform: none;
     border-radius: 12px;
     transition: all 0.3s ease;
     border: 2px solid var(--accent-purple);
     color: var(--accent-purple-2);
-    padding: 10px 24px;
+    padding: 10px 20px;
     background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    box-sizing: border-box;
+    white-space: nowrap;
   }
 
   .home-signup-button:hover {
@@ -448,12 +513,13 @@
     bottom: 0;
     left: 0;
     right: 0;
+    width: 100%;
+    height: auto;
     background: transparent;
     border-top: 1px solid rgba(255,255,255,0.03);
     z-index: 50;
-    padding-bottom: 6px; /* reduce extra space that can create overflow */
-    margin-left: 1%;
-    width: 80%;
+    padding: 0.5rem 0;
+    margin: 0;
     box-sizing: border-box;
   }
 
@@ -461,10 +527,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-
+    padding: 0.5rem 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .home-footer-links {
@@ -1059,12 +1125,14 @@
     margin: 2.5rem auto 0;
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
+    align-items: flex-start;
     justify-content: center;
     gap: 2rem 1.5rem;
     width: 75%;
     max-width: 1100px;
     z-index: 5;
+    box-sizing: border-box;
+    padding: 0 1rem;
   }
 
   .home-feature-item {
@@ -1073,8 +1141,9 @@
     align-items: center;
     justify-content: flex-start;
     gap: 0.75rem;
-    flex: 1 1 220px;
+    flex: 0 1 auto;
     min-width: 200px;
+    max-width: 240px;
     text-align: center;
     padding: 1.5rem;
     border-radius: 16px;
@@ -1082,6 +1151,8 @@
     border: 1px solid rgba(124,58,237,0.08);
     box-shadow: 0 12px 40px rgba(8,6,20,0.35);
     transition: transform 200ms ease, box-shadow 200ms ease;
+    box-sizing: border-box;
+    height: 100%;
   }
 
   /* Force video feature item to stack icon above text (image on top, text below) */
@@ -1221,83 +1292,20 @@
   /* Responsive Design for Tablets and Mobile */
   @media (max-width: 1024px) {
     .home-wrapper {
-      margin-left: 0.5%;
-      margin-top: 0.1%;
-    }
-    
-    .home-container {
-      width: 90%;
-      height: 65vh;
-      margin: 0 auto;
-    }
-    
-    .home-content {
-      padding: 1.5rem;
-    }
-    
-    .home-title {
-      font-size: 3rem;
-      line-height: 1.1;
-    }
-    
-    .home-subtitle {
-      font-size: 2rem;
-      line-height: 1.2;
-    }
-
-    .home-hero-tagline {
-      font-size: 1.4rem;
-      margin: 0.5rem 0 1rem;
-    }
-    
-    .home-description {
-      font-size: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .home-feature-statements {
-      width: 90%;
-      margin-top: 2rem;
-      gap: 1.5rem;
-    }
-
-    .home-feature-item {
-      flex: 1 1 240px;
-      padding: 1.25rem;
-    }
-
-    .home-feature-statement {
-      font-size: 1.2rem;
-    }
-    
-    .home-action-buttons {
-      right: 2rem;
-      gap: 1rem;
-    }
-    
-    .home-login-button,
-    .home-signup-button {
-      width: 11rem;
-      font-size: 1rem;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    body #root {
-      overflow-y: auto;
-    }
-    
-    .home-wrapper {
       margin: 0;
-      padding: 1rem;
+      padding: 0;
       min-height: auto;
       height: auto;
+      width: 100%;
     }
     
     .home-header {
       position: relative;
-      padding: 0.5rem 1rem;
+      top: auto;
+      right: auto;
+      padding: 1rem;
       margin-bottom: 1rem;
+      z-index: 100;
     }
     
     .home-logo-container {
@@ -1315,11 +1323,11 @@
     }
     
     .home-container {
-      width: 100%;
+      width: 90%;
       height: auto;
       min-height: 50vh;
       border-radius: 15px;
-      margin-bottom: 2rem;
+      margin: 0 auto 2rem;
       position: relative;
     }
     
@@ -1328,99 +1336,107 @@
     }
     
     .home-title {
-      font-size: 2.2rem;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
       line-height: 1.1;
       margin-bottom: 0.8rem;
     }
     
     .home-subtitle {
-      font-size: 1.6rem;
+      font-size: clamp(1.3rem, 4vw, 2rem);
       line-height: 1.2;
       margin-bottom: 0.8rem;
     }
 
     .home-hero-tagline {
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 3vw, 1.4rem);
       margin: 0.4rem 0 0.9rem;
     }
     
     .home-description {
-      font-size: 1rem;
-      margin-bottom: 2rem;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      margin-bottom: 1.5rem;
     }
     
     .home-feature-statements {
       position: relative;
       bottom: auto;
+      width: 100%;
+      margin: 2rem auto 0;
+      padding: 0 1rem;
+      gap: 1rem;
       flex-direction: column;
-      gap: 1.5rem;
-      padding: 2rem 1rem;
-      margin-bottom: 2rem;
-      margin-left: 2rem;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
+      background: transparent;
+      border-radius: 0;
+      backdrop-filter: none;
+      max-width: 100%;
     }
     
     .home-feature-item {
-      flex-direction: row;
+      flex: 1 1 100%;
+      padding: 1.25rem;
       gap: 0.75rem;
       text-align: left;
-      justify-content: center;
+      justify-content: flex-start;
+      min-width: auto;
+      max-width: 100%;
+      height: auto;
+      align-items: flex-start;
+      flex-direction: row;
+      background: rgba(12, 10, 22, 0.65);
+      border: 1px solid rgba(124,58,237,0.08);
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .home-feature-icon-button {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      margin-top: 0.25rem;
     }
     
     .home-feature-icon {
       width: 24px;
       height: 24px;
-      flex-shrink: 0;
     }
     
     .home-feature-statement {
-      font-size: 1.1rem;
-      text-align: center;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      text-align: left;
+    }
+
+    .home-feature-description {
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      text-align: left;
     }
     
     .home-action-buttons {
       position: relative;
       top: auto;
+      bottom: auto;
       right: auto;
       transform: none;
-      flex-direction: row;
+      flex-direction: column;
       gap: 1rem;
-      margin: 2rem 0;
-      align-items: center;
+      margin: 2rem auto 3rem;
       padding: 0 1rem;
+      align-items: stretch;
+      width: 100%;
     }
     
     .home-login-button,
     .home-signup-button {
       width: 100%;
-      max-width: 320px;
-      font-size: 1rem;
-    }
-    
-    .home-auth-dialog {
-      max-width: 95%;
-      margin: 1rem;
-    }
-    
-    .home-auth-card {
       max-width: 100%;
-    }
-    
-    .home-name-fields {
-      flex-direction: column;
-      gap: 0;
-    }
-    
-    .home-social-buttons {
-      flex-direction: column;
+      height: 48px;
+      font-size: 1rem;
     }
     
     .home-footer {
       position: relative;
-      margin: 2rem 0 0 0;
+      margin: 0;
       width: 100%;
+      padding: 1rem;
     }
     
     .home-footer-content {
@@ -1448,8 +1464,12 @@
     }
     
     .home-header {
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
+      position: relative;
+      top: auto;
+      right: auto;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      z-index: 100;
     }
     
     .home-logo-container {
@@ -1461,6 +1481,7 @@
     }
     
     .home-container {
+      width: 100%;
       min-height: 45vh;
       border-radius: 12px;
       margin-bottom: 1.5rem;
@@ -1471,193 +1492,213 @@
     }
     
     .home-title {
-      font-size: 1.8rem;
+      font-size: clamp(1.5rem, 6vw, 2.2rem);
       margin-bottom: 0.6rem;
+      letter-spacing: 0px;
     }
     
     .home-subtitle {
-      font-size: 1.4rem;
+      font-size: clamp(1.1rem, 4vw, 1.6rem);
       margin-bottom: 0.6rem;
+      letter-spacing: 0px;
     }
 
     .home-hero-tagline {
-      font-size: 1.05rem;
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
       margin: 0.35rem 0 0.75rem;
     }
     
     .home-description {
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 2vw, 1rem);
       margin-bottom: 1.5rem;
     }
     
     .home-feature-statements {
-      padding: 1.5rem 0.5rem;
-      margin-bottom: 1.5rem;
-      gap: 1.25rem;
+      position: relative;
       width: 100%;
+      padding: 0;
+      margin: 0 auto 2rem;
+      gap: 0.75rem;
+      flex-direction: column;
+      background: transparent;
+      border-radius: 0;
+      backdrop-filter: none;
+      max-width: 100%;
     }
     
     .home-feature-item {
       flex: 1 1 100%;
-      padding: 1.25rem;
+      padding: 1rem;
+      gap: 0.75rem;
+      border-radius: 12px;
+      background: rgba(12, 10, 22, 0.65);
+      border: 1px solid rgba(124,58,237,0.08);
+      height: auto;
+      min-width: auto;
+      max-width: 100%;
+      align-items: flex-start;
+      flex-direction: row;
+      justify-content: flex-start;
     }
-    
-    .home-feature-statement {
-      font-size: 1.05rem;
+
+    .home-feature-item:hover {
+      transform: translateY(-4px);
     }
     
     .home-feature-icon-button {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
     }
     
     .home-feature-icon {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
+    }
+    
+    .home-feature-statement {
+      font-size: clamp(0.95rem, 2vw, 1.2rem);
+      text-align: left;
+      line-height: 1.3;
+    }
+
+    .home-feature-description {
+      font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+      text-align: left;
     }
     
     .home-action-buttons {
-      margin: 1.5rem 0;
+      position: relative;
+      width: 100%;
+      margin: 2rem auto 3rem;
       padding: 0 0.5rem;
+      gap: 0.8rem;
+      flex-direction: column;
+      align-items: stretch;
     }
     
     .home-login-button,
     .home-signup-button {
-      height: 56px !important;
-      min-height: 56px !important;
-      font-size: 0.95rem;
-      max-width: 320px;
-      flex-shrink: 0;
+      width: 100%;
+      height: 48px !important;
+      min-height: 48px !important;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      padding: 0 1rem;
+    }
+    
+    .home-auth-dialog {
+      max-width: 95%;
+      width: 95%;
+      margin: 0.5rem auto;
+    }
+    
+    .home-auth-card {
+      max-width: 100%;
+    }
+    
+    .home-footer {
+      position: relative;
+      width: 100%;
+      margin: 1.5rem 0 0;
+      padding: 1rem 0.5rem;
+    }
+    
+    .home-footer-content {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 0.75rem;
+    }
+    
+    .home-footer-links {
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+    
+    .home-footer-social {
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .home-action-buttons > button.home-login-button,
-    .home-action-buttons > button.home-signup-button,
-    .home-action-buttons > .home-login-button,
-    .home-action-buttons > .home-signup-button {
-      height: 56px !important;
-      min-height: 56px !important;
-      line-height: 1 !important;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: 100% !important;
-      max-width: 320px !important;
-      flex-shrink: 0 !important;
-      box-sizing: border-box !important;
-    }
-    
-    .home-auth-dialog {
-      max-width: 98%;
-      margin: 0.5rem;
-    }
-    
-    .home-auth-dialog-content {
-      padding: 2%;
-    }
-    
-    .home-auth-card-content {
-      padding: 3%;
-    }
-    
-    /* Extra small mobile auth styles */
-    .home-auth-dialog {
-      max-width: 98%;
-      width: 98%;
-      margin: 0.25rem;
-    }
-    
-    .home-auth-dialog-content {
-      padding: 1rem 0.75rem;
-    }
-    
-    .home-auth-card-content {
-      padding: 1rem 0.75rem;
-    }
-    
-    .home-auth-tabs {
-      margin-bottom: 1rem;
-      padding: 2px;
-    }
-    
-    .home-tab {
-      padding: 8px 12px;
-      font-size: 0.85rem;
-    }
-    
-    .home-auth-form {
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    
-    .home-input-field input,
-    .home-input-field textarea {
-      font-size: 0.85rem;
-      padding: 8px 12px;
-    }
-    
-    .home-input-field label {
-      font-size: 0.85rem;
-    }
-    
-    /* Override MUI classes for small mobile */
-    .home-input-field .MuiInputBase-input,
-    .home-input-field .MuiOutlinedInput-input,
-    .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
-    .home-input-field input[class*="MuiInputBase-input"],
-    .home-input-field input[class*="MuiOutlinedInput-input"],
-    .home-input-field input[class*="css-"] {
-      font-size: 0.85rem !important;
-      padding: 8px 12px !important;
-    }
-    
-    .home-input-field .MuiInputLabel-root,
-    .home-input-field .MuiFormLabel-root,
-    .home-input-field label[class*="MuiInputLabel-root"],
-    .home-input-field label[class*="MuiFormLabel-root"] {
-      font-size: 0.85rem !important;
-    }
-    
-    .home-forgot-password {
+    .home-social-link {
       font-size: 0.8rem;
-      margin-top: -0.2rem;
-      margin-bottom: 0.6rem;
+      padding: 0.4rem 0.6rem;
+    }
+  }
+
+  /* Extra small mobile devices (< 480px) */
+  @media (max-width: 360px) {
+    .home-wrapper {
+      padding: 0.25rem;
     }
     
-    .home-auth-button {
-      padding: 8px 16px !important;
-      font-size: 0.85rem !important;
-      height: 40px !important;
+    .home-header {
+      padding: 0.5rem;
     }
     
-    .home-social-divider {
-      margin: 1rem 0;
+    .home-logo-container {
+      padding: 0.3rem 0.6rem;
+      gap: 0.3rem;
     }
     
-    .home-social-divider-text {
+    .home-brand-text {
+      font-size: 0.9rem;
+    }
+    
+    .home-title {
+      font-size: 1.5rem;
+    }
+    
+    .home-subtitle {
+      font-size: 1.1rem;
+    }
+
+    .home-hero-tagline {
+      font-size: 0.9rem;
+    }
+    
+    .home-description {
       font-size: 0.75rem;
-      padding: 0 0.6rem;
     }
     
-    .home-social-buttons {
-      gap: 0.6rem;
-      margin-bottom: 0.6rem;
+    .home-feature-statements {
+      padding: 0;
+      gap: 0.5rem;
+      margin: 0 auto 1.5rem;
     }
     
-    .home-social-button {
-      padding: 8px 12px !important;
-      font-size: 0.8rem !important;
-      height: 40px !important;
+    .home-feature-item {
+      padding: 0.75rem;
+      gap: 0.5rem;
+    }
+
+    .home-feature-icon-button {
+      width: 48px;
+      height: 48px;
     }
     
-    .home-auth-dialog-footer {
-      padding: 0.6rem 0.75rem 1rem 0.75rem;
+    .home-feature-statement {
+      font-size: 0.95rem;
+    }
+
+    .home-feature-description {
+      font-size: 0.75rem;
     }
     
-    .home-auth-close-button {
-      font-size: 0.85rem;
-      padding: 5px 10px;
+    .home-action-buttons {
+      margin: 1.5rem auto 2rem;
+    }
+    
+    .home-footer-content {
+      padding: 0.5rem;
+    }
+    
+    .home-footer-links {
+      gap: 0.5rem;
+      font-size: 0.75rem;
     }
   }
 
@@ -1698,7 +1739,135 @@
     }
   }
 
+  /* Very large screens (2560px and above) */
+  @media (min-width: 2560px) {
+    .home-wrapper {
+      font-size: 1.2rem;
+    }
+
+    .home-title {
+      font-size: 4.5rem;
+    }
+
+    .home-subtitle {
+      font-size: 3rem;
+    }
+
+    .home-description {
+      font-size: 1.6rem;
+    }
+
+    .home-feature-statements {
+      width: 80%;
+      gap: 3rem 2rem;
+    }
+
+    .home-feature-item {
+      min-width: 240px;
+      max-width: 320px;
+      padding: 2rem;
+    }
+
+    .home-feature-icon-button {
+      width: 80px;
+      height: 80px;
+    }
+
+    .home-feature-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .home-feature-statement {
+      font-size: 1.6rem;
+    }
+
+    .home-login-button,
+    .home-signup-button {
+      width: 200px;
+      height: 64px;
+      font-size: 1.2rem;
+    }
+
+    .home-footer-links {
+      gap: 3rem;
+    }
+
+    .home-social-link {
+      font-size: 1.1rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .home-social-link svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* Large screens (1440px - 2559px) */
+  @media (min-width: 1440px) and (max-width: 2559px) {
+    .home-title {
+      font-size: 4rem;
+    }
+
+    .home-subtitle {
+      font-size: 2.8rem;
+    }
+
+    .home-feature-statements {
+      width: 80%;
+    }
+
+    .home-feature-item {
+      max-width: 300px;
+    }
+  }
+
   /* legacy absolute-positioned video-feeds block removed — responsive
      behavior for the card is handled above. */
+
+/* Ensure the last feature item sits flush to the right edge of the image
+   on desktop viewports. This complements the earlier absolute placement
+   of .home-feature-statements which was anchored to the image left. */
+@media (min-width: 1025px) {
+  .home-feature-statements {
+    align-items: flex-start;
+  }
+
+  .home-feature-statements .home-feature-item:last-child {
+    margin-left: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Desktop visibility override
+   Ensures the feature statements are rendered in document flow on large
+   screens and prevents accidental clipping/positioning regressions.
+   This override is intentionally placed at the end of the file so it wins
+   over earlier rules during debugging. Remove or refine after verification.
+----------------------------------------------------------------------------*/
+@media (min-width: 1025px) {
+  .home-feature-statements {
+    /* keep statements in the document flow so they remain visible */
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    margin: 1.5rem auto 0 !important;
+    width: 75% !important;
+    max-width: 1100px !important;
+    padding: 0 1rem !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 1.2rem 1.5rem !important;
+    z-index: 20 !important;
+  }
+
+  .home-feature-item {
+    flex: 0 1 calc(25% - 1.2rem) !important;
+    min-width: 180px !important;
+    max-width: 260px !important;
+  }
+}
 
   

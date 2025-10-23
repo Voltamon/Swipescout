@@ -455,7 +455,8 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
           <p className="home-feature-description">
             Explore curated reels and experience SwipeScout in action.
           </p>
-        </div>
+         </div>
+         
       </div>
       
       {/* Action Buttons - Outside the home container */}
