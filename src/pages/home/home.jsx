@@ -304,22 +304,21 @@ const Home = () => {
 
   // add handler to go to video-upload tab, require login first
   const handleVideoFeatureClick = () => {
-    // If not logged in, store the intended destination and prompt login
+    console.log("Video feature clicked==================", { user, role });
+    const effectiveRole = user ? (Array.isArray(user.role) ? user.role[0] : user.role) : null;
+
     if (!user) {
-      setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload'); // Set destination
-      handleOpenAuthDialog(0); // Open login dialog
+      setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload');
+      handleOpenAuthDialog(0);
       return;
     }
 
-    // If logged in, route based on the user's role. Reuse getDefaultRoute to
-    // determine the appropriate base route for their role, then append the
-    // video-upload tab for job seekers / employees.
-    const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
-
-    if (effectiveRole === 'job_seeker' ) {
+    if (effectiveRole === 'job_seeker') {
       navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
-    } else if (effectiveRole === 'employee' ) {
+    } else if (effectiveRole === 'employee') {
       navigate('/employer-tabs?group=profileContent&tab=video-upload');
+    } else {
+      navigate(getDefaultRoute(effectiveRole));
     }
   };
 
@@ -361,8 +360,9 @@ const Home = () => {
           <span className="home-brand-text">SwipeScout</span>
         </div>
       </div>
-      
+      <div style={{ border: '1px solid #433213' }}>
       <div className="home-container">
+        <div style={{ height: '95vh' }}>
         <div className="home-content">
           {/* Centered brand in the hero area (visually aligned like the action buttons were) */}
           <div className="home-hero-brand" aria-hidden="true">
@@ -373,6 +373,10 @@ const Home = () => {
             <h1 className="home-title">
               The First  <span className="home-title-highlight">Video</span> Hiring App
             </h1>
+
+
+
+      
             <h3 className="home-subtitle">
              
 Swipe through video resumes just like TikTok.
@@ -385,15 +389,15 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
               Join us and find your dream job 
             </h5>
           </div>
-        </div>
-      </div>
-     
-      {/* Feature Statements & Video Feed Link */}
-      <div className="home-feature-statements">
+       
+      </div></div></div>  
+                 {/* Feature Statements & Video Feed Link */}
+                 <div style={{ height: '30vh' ,width:'95%' ,alignSelf:'center' ,border: '1px solid #433213' }}>  
+      <div className="home-feature-statements" >
         <div className="home-feature-item">
           <button
             type="button"
-            className="home-feature-icon-button"
+            className="home-feature-icon-button home-feature-clickable"
             onClick={handleVideoFeatureClick}
             aria-label="Create a video resume"
           >
@@ -408,12 +412,13 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
 
         <div className="home-feature-item">
           <button
-            type="button"
+            
             className="home-feature-icon-button home-feature-icon-button--secondary"
             onClick={handleSkillsClick}
             aria-label="Show your skills"
           >
-            <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"             style={{ cursor: 'normal !important' }}
+>
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </button>
@@ -441,7 +446,7 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
         <div className="home-feature-item home-video-feeds-card">
           <button
             type="button"
-            className="home-feature-icon-button home-feature-icon-button--video"
+            className="home-feature-icon-button home-feature-icon-button--video home-feature-clickable"
             onClick={() => navigate('/videos')}
             aria-label="Watch video feeds"
           >
@@ -458,7 +463,11 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
          </div>
          
       </div>
-      
+      </div>
+</div>
+       
+       
+    
       {/* Action Buttons - Outside the home container */}
       <div className="home-action-buttons">
         <Button
