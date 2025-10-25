@@ -56,10 +56,10 @@
     .home-feature-statements {
       position: absolute;
       /* anchor to the left edge of the image area (same left as .home-container) */
-      left: 2%;
+      left: 0%;
       top: calc(68% + 1.5%);
-      width: 75%;
-      max-width: 1000px;
+      width: 100%;
+      max-width: 1100px;
       margin: 0;
       display: flex;
       justify-content: flex-start;
@@ -75,7 +75,7 @@
     .home-header,
     .home-action-buttons {
       position: absolute;
-      right: 2%;
+      right: 50%;
       /* place them inside the right column area (to the right of the 75% image)
          Use calc to place center in the vertical middle of the hero container */
       top: 50%;
@@ -84,7 +84,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
-      align-items: flex-end;
+      align-items: center;
     }
 
     /* ensure the header doesn't collide with the action buttons */
@@ -96,9 +96,9 @@
     }
 
     .home-action-buttons {
-      right: calc( (100% - 75%) / 2 );
-      margin-right: 1rem;
-      align-items: flex-end;
+      right:15%;
+      margin-right: 15%;
+      align-items: flex-start;
     }
 
     .home-feature-item {
@@ -112,7 +112,7 @@
       /* fallback for small desktop screens, overridden above */
       position: fixed;
       bottom: 3rem;
-      right: 3rem;
+      right: 15%;
       transform: none;
       flex-direction: column;
       gap: 0.8rem;
@@ -131,14 +131,15 @@
   .home-header {
     position: fixed;
     top: 1rem;
-    right: 1.5rem;
+    
     z-index: 100;
     padding: 0.75rem 0rem;
   }
 
   .home-logo-container {
     display: flex;
-    align-items: center;
+        margin-right: 10%;
+    
     gap: 0.75rem;
     cursor: default;
     border-radius: 12px;
@@ -341,10 +342,10 @@
     
     /* Custom styles */
     width: auto;
-    max-width: 180px;
-    min-width: 140px;
-    height: 48px;
-    min-height: 48px;
+    max-width: 280px;
+    min-width: 240px;
+    height: 64px;
+    min-height: 64px;
     font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 600;
     text-transform: none;
@@ -388,10 +389,10 @@
     
     /* Custom styles */
     width: auto;
-    max-width: 180px;
-    min-width: 140px;
-    height: 48px;
-    min-height: 48px;
+    max-width: 280px;
+    min-width: 240px;
+    height: 64px;
+    min-height: 64px;
     font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 600;
     text-transform: none;

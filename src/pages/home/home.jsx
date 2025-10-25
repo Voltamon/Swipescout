@@ -303,22 +303,44 @@ const Home = () => {
   };
 
   // add handler to go to video-upload tab, require login first
-  const handleVideoFeatureClick = () => {
-    console.log("Video feature clicked==================", { user, role });
-    const effectiveRole = user ? (Array.isArray(user.role) ? user.role[0] : user.role) : null;
+  const handleVideoFeatureClick = async () => {
+    // Defensive: wrap navigation in a short async delay and try/catch so
+    // any timing-related message/extension races don't prevent navigation
+    // and we get a clearer error trace if something goes wrong.
+    try {
+      console.log("Video feature clicked==================", { user, role });
+      const effectiveRole = user ? (Array.isArray(user.role) ? user.role[0] : user.role) : null;
 
-    if (!user) {
-      setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload');
-      handleOpenAuthDialog(0);
-      return;
-    }
+      if (!user) {
+        setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload');
+        handleOpenAuthDialog(0);
+        return;
+      }
 
-    if (effectiveRole === 'job_seeker') {
-      navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
-    } else if (effectiveRole === 'employee') {
-      navigate('/employer-tabs?group=profileContent&tab=video-upload');
-    } else {
-      navigate(getDefaultRoute(effectiveRole));
+      // Small micro-delay to avoid potential message-channel races with browser
+      // extensions or other listeners (50ms is usually sufficient and low impact).
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      if (effectiveRole === 'job_seeker') {
+        navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
+      } else if (effectiveRole === 'employee') {
+        navigate('/employer-tabs?group=profileContent&tab=video-upload');
+      } else {
+        navigate(getDefaultRoute(effectiveRole));
+      }
+    } catch (err) {
+      // Log and attempt a safe fallback; avoid throwing unhandled exceptions
+      // that could break UI handlers.
+      // eslint-disable-next-line no-console
+      console.error('handleVideoFeatureClick error:', err);
+      try {
+        const fallbackRole = user ? (Array.isArray(user.role) ? user.role[0] : user.role) : null;
+        navigate(getDefaultRoute(fallbackRole) || '/');
+      } catch (e) {
+        // swallow secondary navigation errors
+        // eslint-disable-next-line no-console
+        console.error('fallback navigation failed:', e);
+      }
     }
   };
 
@@ -399,14 +421,14 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
        
       </div>
   </div>
-<div style={{ border: '2px solid #faf2f2ff' }}>
+<div >
   {/* Feature Statements: kept below the hero in source order (no inline widths/heights) */}
   <div className="home-feature-statements" >
           <div className="home-feature-item">
           <button
             type="button"
             className="home-feature-icon-button home-feature-clickable"
-            onClick={handleVideoFeatureClick}
+            onClick={(e) => { console.log('video-feature button DOM clicked', e); handleVideoFeatureClick(); }}
             aria-label="Create a video resume"
           >
             <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -467,7 +489,7 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
             Watch Video Feeds
           </h3>
           <p className="home-feature-description">
-            Explore curated reels and experience SwipeScout in action.
+            Explore curated reels 
           </p>
          </div>
         </div>
