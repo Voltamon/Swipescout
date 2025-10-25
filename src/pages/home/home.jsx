@@ -363,6 +363,12 @@ const Home = () => {
       {/* HERO + FEATURES WRAPPER (keeps features below the hero and responsive) */}
       <div className="hero-features-wrap hero-features-wrap--left">
         <div className="home-container">
+          {/* Background video element (plays behind content) */}
+          <video className="home-bg-video" autoPlay muted loop playsInline poster="/backgrounds/meeting_room2.jpg">
+            <source src="/videos/vidBkg_out_s.mp4" type="video/mp4" />
+            {/* Fallback content shown when video isn't supported */}
+            Your browser does not support the background video.
+          </video>
           <div className="home-content">
             {/* Centered brand in the hero area (visually aligned like the action buttons were) */}
             <div className="home-hero-brand" aria-hidden="true">
@@ -392,10 +398,10 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
           </div>
        
       </div>
-        </div>
-
-        {/* Feature Statements: kept below the hero in source order (no inline widths/heights) */}
-        <div className="home-feature-statements">
+  </div>
+<div style={{ border: '2px solid #faf2f2ff' }}>
+  {/* Feature Statements: kept below the hero in source order (no inline widths/heights) */}
+  <div className="home-feature-statements" >
           <div className="home-feature-item">
           <button
             type="button"
@@ -410,7 +416,8 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
           <h3 className="home-feature-statement home-feature-statement-primary">
             Launch your video profile in minutes.
           </h3>
-        </div>
+             </div>
+             
 
         <div className="home-feature-item">
           <button
@@ -464,9 +471,8 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
           </p>
          </div>
         </div>
-      </div>
-       
-       
+         </div>
+         </div>
     
       {/* Action Buttons - Outside the hero-features wrap */}
       <div className="home-action-buttons">
