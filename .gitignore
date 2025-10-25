@@ -24,7 +24,7 @@ build
 *.sln
 *.sw?
 .env
-public/videos/*.*
+
 .continue 
 # i18n batch and generated files
 missing-translation-report-pretty.json
