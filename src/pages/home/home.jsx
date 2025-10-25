@@ -311,9 +311,9 @@ const Home = () => {
       console.log("Video feature clicked==================", { user, role });
       const effectiveRole = user ? (Array.isArray(user.role) ? user.role[0] : user.role) : null;
 
-      if (!user) {
-        setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload');
+      if (role === null || !effectiveRole) {
         handleOpenAuthDialog(0);
+        setRedirectPath('/jobseeker-tabs?group=profileContent&tab=video-upload');
         return;
       }
 
