@@ -1,1946 +1,864 @@
 /* Import Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&family=Epunda+Sans:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playwrite+IS:wght@100..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,100..900&display=swap');
-
-  :root{
-    --bg-very-dark: #05030a;
-    --panel-dark: rgba(10,8,18,0.9);
-    --accent-purple: #7c3aed;
-    --accent-purple-2: #a78bfa;
-    --muted-text: rgba(255,255,255,0.94);
-    --muted-text-2: rgba(255,255,255,0.78);
-    --card-bg: rgba(20,16,28,0.6);
-  }
-
-  /* Root background */
-  body #root {
-    background-color: var(--bg-very-dark);
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  }
-
-  /* Desktop view - no scrolling */
-  @media (min-width: 1025px) {
-    body #root {
-      /* previously: height: 100vh; overflow: hidden; */
-      min-height: 100vh;
-      height: auto;
-      overflow: auto; /* allow scrolling when content is taller than viewport */
-    }
-
-    .home-wrapper {
-      /* previously: height: 100vh; */
-      min-height: 100vh;
-      height: auto;
-    }
-    
-    .home-header {
-      position: fixed;
-      top: 0;
-      right: 2rem;
-      z-index: 100;
-    }
-    
-    .home-container {
-      height: 66vh;
-      width: 100%;
-      margin-left: 2%;
-      margin-top: 1.5%;
-    }
-
-    /* Place feature statements below the hero, aligned with the image */
-    .home-feature-statements {
-      position: absolute;
-      /* anchor to the left edge of the image area (same left as .home-container) */
-      left: 0%;
-      top: calc(68% + 1.5%);
-      width: 100%;
-      max-width: 1100px;
-      margin: 0;
-      display: flex;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      gap: 1.2rem 1.5rem;
-      padding: 0;
-      z-index: 5;
-    }
-
-    /* Center header and action buttons vertically in the right blank area
-       The right blank area begins at the right edge of the image (.home-container)
-       which is 75% width; we center elements within the remaining 25% zone. */
-    .home-header,
-    .home-action-buttons {
-      position: absolute;
-      right: 50%;
-      /* place them inside the right column area (to the right of the 75% image)
-         Use calc to place center in the vertical middle of the hero container */
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      align-items: center;
-    }
-
-    /* ensure the header doesn't collide with the action buttons */
-    .home-header {
-      right: calc( (100% - 75%) / 2 );
-      /* minor offset to push it visually into the right column */
-      margin-right: 1rem;
-      align-items: flex-end;
-    }
-
-    .home-action-buttons {
-      /*right:15%;
-      margin-right: 15%;*/
-      align-items: flex-start;
-    }
-
-    .home-feature-item {
-      flex: 0 1 calc(25% - 1.2rem);
-      min-width: 180px;
-      max-width: 220px;
-      height: auto;
-    }
-    
-    .home-action-buttons {
-      /* fallback for small desktop screens, overridden above */
-      position: fixed;
-      bottom: 3rem;
-      right: 15%;
-      transform: none;
-      flex-direction: column;
-      gap: 0.8rem;
-      z-index: 10;
-    }
-    
-    .home-footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      left: 0;
-    }
-  }
-
-  /* SwipeScout Header */
-  .home-header {
-    position: fixed;
-    top: 1rem;
-    
-    z-index: 100;
-    padding: 0.75rem 0rem;
-  }
-
-  .home-logo-container {
-    display: flex;
-        margin-right: 1%;
-    
-    gap: 0.75rem;
-    cursor: default;
-    border-radius: 12px;
-    padding: 0.75rem 0rem;
-    border: 1px solid rgba(255,255,255,0.04);
-    box-shadow: 0 8px 30px rgba(124,58,237,0.06);
-    transition: all 0.3s ease;
-  }
-
-
-
-  .home-logo {
-    width: 32px;
-    color: var(--accent-purple);
-    height: 32px;
-    object-fit: contain;
-  }
-
-  .home-brand-text {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--muted-text);
-    margin-top: 6px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.5px;
-  }
-
-  .home-container {
-    width: 100%;
-    height: 90vh;
-    /* Background image removed in favor of an actual <video> element
-       placed inside the container. A solid fallback color is kept. */
-    background-color: var(--bg-very-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border: none;
-    border-radius: 20px;
-    overflow: hidden;
-    margin: 0;
-    margin-top: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    box-sizing: border-box;
-  }
-
-  /* Background video fills the container and sits behind content */
-  .home-bg-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0; /* overlay (::before) uses z-index:1 and content z-index:2 */
-    pointer-events: none; /* don't capture pointer events */
-    /* small performance hint: let the browser decide how to decode */
-    will-change: transform;
-  }
-
-  .home-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(180deg, rgba(3,2,14,0.75), rgba(10,8,18,0.85));
-    z-index: 1;
-  }
-
-  .home-content {
-    position: relative;
-    z-index: 2;
-    color: var(--muted-text);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .home-hero-section {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    color: var(--muted-text);
-  }
-
-  .home-title {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: clamp(1.8rem, 6vw, 3.5rem);
-    font-weight: 800;
-    margin-bottom: 1rem;
-    color: var(--muted-text);
-    letter-spacing: 1px;
-    line-height: 1.1;
-  }
-
-  .home-title-highlight {
-    color: var(--accent-purple-2);
-  }
-
-
-
-  .home-subtitle {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: clamp(1.3rem, 4vw, 2.2rem);
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--muted-text-2);
-    opacity: 0.95;
-    line-height: 1.2;
-    letter-spacing: 1px;
-  }
-
-  .home-subtitle-highlight {
-    color: var(--accent-purple);
-  }
-
-  .home-hero-tagline {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: clamp(1rem, 3vw, 1.6rem);
-    font-weight: 600;
-    color: var(--accent-purple-2);
-    margin: 0.5rem 0 1.25rem;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-  }
-
-  .home-description {
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-    font-weight: 400;
-    color: var(--muted-text-2);
-    opacity: 0.9;
-    line-height: 1.5;
-    margin-bottom: 2rem;
-    letter-spacing: 0.01em;
-  }
-
-  .home-action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    position: absolute;
-    top: 50%;
-    right: clamp(1rem, 4vw, 2.5rem);
-    transform: translateY(-50%);
-    bottom: auto;
-    z-index: 10;
-    align-items: flex-end;
-  }
-
-  /* Hero brand centered inside the main container */
-  .home-hero-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-    pointer-events: none;
-  }
-
-  .home-hero-logo {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
-  }
-
-  .home-hero-brand-text {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--muted-text);
-    text-shadow: 0 2px 6px rgba(0,0,0,0.45);
-  }
-
-  .home-login-button {
-    /* Reset all default button styles */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    outline: none;
-    background: none;
-    margin: 0;
-    padding: 0;
-    font: inherit;
-    color: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    
-    /* Custom styles */
-    width: auto;
-    max-width: 280px;
-    min-width: 240px;
-    height: 64px;
-    min-height: 64px;
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    font-weight: 600;
-    text-transform: none;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
-    color: var(--muted-text) !important;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    letter-spacing: 1px;
-    justify-content: center;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    box-sizing: border-box;
-    white-space: nowrap;
-  }
-
-  .home-login-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(124,58,237,0.18);
-  }
-
-  .home-login-button:active {
-    transform: translateY(0);
-  }
-
-  .home-signup-button {
-    /* Reset all default button styles */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    outline: none;
-    background: none;
-    margin: 0;
-    padding: 0;
-    font: inherit;
-    color: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    
-    /* Custom styles */
-    width: auto;
-    max-width: 280px;
-    min-width: 240px;
-    height: 64px;
-    min-height: 64px;
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    font-weight: 600;
-    text-transform: none;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    border: 2px solid var(--accent-purple);
-    color: var(--accent-purple-2);
-    padding: 10px 20px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    box-sizing: border-box;
-    white-space: nowrap;
-  }
-
-  .home-signup-button:hover {
-    border-color: var(--accent-purple-2);
-    color: var(--accent-purple-2);
-    background-color: rgba(124,58,237,0.06);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(124,58,237,0.12);
-  }
-
-  .home-signup-button:active {
-    transform: translateY(0);
-  }
-
-
-  /* Simple Auth Dialog Styles */
-  .home-auth-dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-  }
-
-  .home-auth-dialog {
-    background: rgba(10,8,18,0.6);
-    backdrop-filter: blur(8px);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.04);
-    max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-
-  .home-auth-dialog-content {
-    padding: 2rem;
-    flex: 1;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(248, 246, 246, 0.3) transparent;
-  }
-
-  .home-auth-dialog-content::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .home-auth-dialog-content::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .home-auth-dialog-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
-  }
-
-  .home-auth-dialog-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-  }
-
-  .home-auth-dialog-footer {
-    display: flex;
-    justify-content: center;
-    padding: 1rem 2rem 2rem 2rem;
-    flex-shrink: 0;
-    border-top: 1px solid rgba(255,255,255,0.03);
-  }
-
-  .home-auth-close-button {
-    background: none;
-    border: none;
-    color: var(--muted-text-2);
-    font-weight: 500;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  }
-
-  .home-auth-close-button:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  /* Footer Styles */
-  .home-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: auto;
-    background: transparent;
-    border-top: 1px solid rgba(255,255,255,0.03);
-    z-index: 50;
-    padding: 0.5rem 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-
-  .home-footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1.5rem;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .home-footer-links {
-    display: flex;
-    gap: 2rem;
-  }
-
-  .home-footer-link {
-    color: var(--muted-text-2);
-    text-decoration: none;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    padding: 0.5rem 0;
-  }
-
-  .home-footer-link:hover {
-    color: var(--muted-text);
-    text-shadow: 0 0 12px rgba(167,139,250,0.12);
-  }
-
-  .home-footer-button {
-    background: none;
-    border: none;
-    padding: 0.5rem 0;
-    font: inherit;
-    color: var(--muted-text-2);
-    text-decoration: none;
-    cursor: pointer;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .home-footer-button:hover {
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-  }
-
-  .home-footer-social {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  .home-social-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--muted-text-2);
-    text-decoration: none;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-  }
-
-  .home-social-link:hover {
-    color: var(--muted-text);
-    background-color: rgba(167,139,250,0.06);
-    transform: translateY(-2px);
-  }
-
-  .home-social-link svg {
-    width: 20px;
-    height: 20px;
-    transition: all 0.3s ease;
-  }
-
-  .home-social-link:hover svg {
-    transform: scale(1.1);
-  }
-
-
-  /* Mobile Responsive Footer */
-  @media (max-width: 768px) {
-    .home-footer-content {
-      flex-direction: column;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-    }
-    
-    .home-footer-links {
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    
-    .home-footer-social {
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    
-    .home-social-link {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.6rem;
-    }
-  }
-
-  /* Mobile Auth Dialog Responsive Styles */
-  @media (max-width: 768px) {
-    .home-auth-dialog {
-      max-width: 95%;
-      width: 95%;
-      margin: 0.5rem;
-      max-height: 95vh;
-    }
-    
-    .home-auth-dialog-content {
-      padding: 1.5rem 1rem;
-    }
-    
-    .home-auth-card {
-      max-width: 100%;
-      margin-top: 0.5rem;
-    }
-    
-    .home-auth-card-content {
-      padding: 1.5rem 1rem;
-    }
-    
-    .home-auth-tabs {
-      margin-bottom: 1.5rem;
-      padding: 3px;
-    }
-    
-    .home-tab {
-      padding: 10px 16px;
-      font-size: 0.9rem;
-    }
-    
-    .home-auth-form {
-      gap: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .home-name-fields {
-      flex-direction: column;
-      gap: 0;
-    }
-    
-    .home-input-field {
-      margin-bottom: 0.5rem !important;
-    }
-    
-    .home-input-field input,
-    .home-input-field textarea {
-      font-size: 0.9rem;
-      padding: 10px 14px;
-    }
-    
-    .home-input-field label {
-      font-size: 0.9rem;
-    }
-    
-    /* Override MUI classes for mobile */
-    .home-input-field .MuiInputBase-input,
-    .home-input-field .MuiOutlinedInput-input,
-    .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
-    .home-input-field input[class*="MuiInputBase-input"],
-    .home-input-field input[class*="MuiOutlinedInput-input"],
-    .home-input-field input[class*="css-"] {
-      font-size: 0.9rem !important;
-      padding: 10px 14px !important;
-    }
-    
-    .home-input-field .MuiInputLabel-root,
-    .home-input-field .MuiFormLabel-root,
-    .home-input-field label[class*="MuiInputLabel-root"],
-    .home-input-field label[class*="MuiFormLabel-root"] {
-      font-size: 0.9rem !important;
-    }
-    
-    .home-forgot-password {
-      font-size: 0.85rem;
-      margin-top: -0.3rem;
-      margin-bottom: 0.8rem;
-    }
-    
-    .home-auth-button {
-      padding: 10px 20px !important;
-      font-size: 0.9rem !important;
-      height: 44px !important;
-    }
-    
-    .home-social-divider {
-      margin: 1.5rem 0;
-    }
-    
-    .home-social-divider-text {
-      font-size: 0.8rem;
-      padding: 0 0.8rem;
-    }
-    
-    .home-social-buttons {
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-bottom: 0.8rem;
-    }
-    
-    .home-social-button {
-      padding: 10px 14px !important;
-      font-size: 0.85rem !important;
-      height: 44px !important;
-    }
-    
-    .home-auth-dialog-footer {
-      padding: 0.8rem 1rem 1.5rem 1rem;
-    }
-    
-    .home-auth-close-button {
-      font-size: 0.9rem;
-      padding: 6px 12px;
-    }
-  }
-
-  .home-auth-card {
-    background: rgba(18,16,26,0.75);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255,255,255,0.04);
-    max-width: 500px;
-    width: 100%;
-    margin: 0 auto;
-    margin-top: 1rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .home-auth-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(167,139,250,0.03) 100%);
-    pointer-events: none;
-  }
-
-  .home-auth-card-content {
-    padding: 2rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .home-auth-tabs {
-    display: flex;
-    margin-bottom: 2rem;
-    background: rgba(255,255,255,0.02);
-    border-radius: 12px;
-    padding: 4px;
-    position: relative;
-  }
-
-  .home-tab {
-    flex: 1;
-    padding: 12px 24px;
-    border: none;
-    background: transparent;
-    color: #9ca3af;
-    font-weight: 600;
-    font-size: 1rem;
-    text-transform: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    position: relative;
-    z-index: 2;
-  }
-
-  .home-tab:hover {
-    color: var(--accent-purple-2);
-    background: rgba(124,58,237,0.06);
-  }
-
-  .home-tab.active {
-    color: var(--accent-purple-2);
-    background: rgba(255,255,255,0.02);
-    box-shadow: 0 6px 18px rgba(124,58,237,0.08);
-    font-weight: 700;
-  }
-
-  .home-auth-form-container {
-    padding: 0 1rem;
-  }
-
-  .home-auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .home-name-fields {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .home-name-field {
-    flex: 1;
-  }
-
-  .home-input-field {
-    margin-bottom: 0 !important;
-  }
-
-  /* Custom Input Field Styles */
-  .home-input-field input,
-  .home-input-field textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid rgba(255,255,255,0.04);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    background-color: rgba(255,255,255,0.02);
-    color: #e6e6e6;
-    transition: all 0.3s ease;
-    outline: none;
-  }
-
-  .home-input-field input:focus,
-  .home-input-field textarea:focus {
-    border-color: var(--accent-purple);
-    box-shadow: 0 0 0 6px rgba(124,58,237,0.06);
-  }
-
-  .home-input-field input:hover,
-  .home-input-field textarea:hover {
-    border-color: var(--accent-purple);
-  }
-
-  .home-input-field label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #bfc7d6;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  }
-
-  .home-input-field input::placeholder,
-  .home-input-field textarea::placeholder {
-    color: rgba(255,255,255,0.4);
-    font-size: 0.9rem;
-  }
-
-  /* Input Field Error States */
-  .home-input-field.error input,
-  .home-input-field.error textarea {
-    border-color: #ff6b6b;
-    box-shadow: 0 0 0 4px rgba(255,107,107,0.08);
-  }
-
-  .home-input-field.error input:focus,
-  .home-input-field.error textarea:focus {
-    border-color: #f44336;
-    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
-  }
-
-  .home-input-field.error label {
-    color: #f44336;
-  }
-
-  /* Input Field Success States */
-  .home-input-field.success input,
-  .home-input-field.success textarea {
-    border-color: #28c76f;
-    box-shadow: 0 0 0 4px rgba(40,199,111,0.06);
-  }
-
-  .home-input-field.success input:focus,
-  .home-input-field.success textarea:focus {
-    border-color: #4caf50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-  }
-
-  /* Input Field Disabled States */
-  .home-input-field input:disabled,
-  .home-input-field textarea:disabled {
-    background-color: rgba(255,255,255,0.01);
-    color: rgba(255,255,255,0.38);
-    cursor: not-allowed;
-    border-color: rgba(255,255,255,0.02);
-  }
-
-  /* Input Field Required Indicator */
-  .home-input-field.required label::after {
-    content: ' *';
-    color: #f44336;
-    font-weight: bold;
-  }
-
-  /* Override MUI Input Classes - Remove MUI Styling Completely */
-  .home-input-field .MuiInputBase-input,
-  .home-input-field .MuiOutlinedInput-input,
-  .home-input-field .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input,
-  .home-input-field input[class*="MuiInputBase-input"],
-  .home-input-field input[class*="MuiOutlinedInput-input"],
-  .home-input-field input[class*="css-"] {
-    /* Reset all MUI styles */
-    all: unset !important;
-    
-    /* Apply our custom styles */
-    width: 100% !important;
-    padding: 12px 16px !important;
-    border: 2px solid #e0e0e0 !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
-    background-color: #ffffff !important;
-    color: #333333 !important;
-    transition: all 0.3s ease !important;
-    outline: none !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    min-width: 0 !important;
-    display: block !important;
-  }
-
-  /* Override MUI Input Root Classes */
-  .home-input-field .MuiInputBase-root,
-  .home-input-field .MuiOutlinedInput-root,
-  .home-input-field .css-16wblaj-MuiInputBase-root-MuiOutlinedInput-root,
-  .home-input-field div[class*="MuiInputBase-root"],
-  .home-input-field div[class*="MuiOutlinedInput-root"] {
-    all: unset !important;
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-  }
-
-  /* Override MUI Form Control Classes */
-  .home-input-field .MuiFormControl-root,
-  .home-input-field .MuiTextField-root,
-  .home-input-field div[class*="MuiFormControl-root"],
-  .home-input-field div[class*="MuiTextField-root"] {
-    all: unset !important;
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-  }
-
-  /* Override MUI Input Label Classes */
-  .home-input-field .MuiInputLabel-root,
-  .home-input-field .MuiFormLabel-root,
-  .home-input-field label[class*="MuiInputLabel-root"],
-  .home-input-field label[class*="MuiFormLabel-root"] {
-    all: unset !important;
-    display: block !important;
-    margin-bottom: 8px !important;
-    font-size: 0.9rem !important;
-    font-weight: 600 !important;
-    color: #555555 !important;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Override MUI Input Adornment Classes */
-  .home-input-field .MuiInputAdornment-root,
-  .home-input-field div[class*="MuiInputAdornment-root"] {
-    display: none !important;
-  }
-
-  /* Override MUI Notched Outline Classes */
-  .home-input-field .MuiOutlinedInput-notchedOutline,
-  .home-input-field fieldset[class*="MuiOutlinedInput-notchedOutline"] {
-    display: none !important;
-  }
-
-  /* Override any other MUI classes that might interfere */
-  .home-input-field [class*="Mui"] {
-    all: unset !important;
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
-  }
-
-  .home-forgot-password {
-    color: var(--accent-purple-2);
-    text-decoration: none;
-    font-size: 0.9rem;
-    text-align: right;
-    margin-top: -0.5rem;
-    margin-bottom: 1rem;
-    transition: color 0.3s ease;
-  }
-
-  .home-forgot-password:hover {
-    color: #1565c0;
-    text-decoration: underline;
-  }
-
-  .home-auth-button {
-    background: linear-gradient(45deg, var(--accent-purple), var(--accent-purple-2)) !important;
-    color: #0b0620 !important;
-    padding: 12px 24px !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    text-transform: none !important;
-    border-radius: 8px !important;
-    box-shadow: 0 8px 24px rgba(124,58,237,0.18) !important;
-    transition: all 0.3s ease !important;
-  }
-
-  .home-auth-button:hover {
-    background: linear-gradient(45deg, var(--accent-purple-2), var(--accent-purple)) !important;
-    box-shadow: 0 10px 28px rgba(124,58,237,0.22) !important;
-    transform: translateY(-2px);
-  }
-
-  .home-social-divider {
-    position: relative;
-    text-align: center;
-    margin: 2rem 0;
-  }
-
-  .home-social-divider::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(255,255,255,0.03);
-  }
-
-  .home-social-divider-text {
-    background: transparent;
-    padding: 0 1rem;
-    color: #9aa1b2;
-    font-size: 0.9rem;
-  }
-
-  .home-social-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .home-social-button {
-    flex: 1;
-    padding: 12px 16px !important;
-    border-radius: 8px !important;
-    text-transform: none !important;
-    font-weight: 600 !important;
-    border: 2px solid rgba(255,255,255,0.04) !important;
-    color: #e6e6e6 !important;
-    transition: all 0.3s ease !important;
-  }
-
-  .home-social-button:hover {
-    border-color: var(--accent-purple) !important;
-    background-color: rgba(124,58,237,0.04) !important;
-    transform: translateY(-1px);
-  }
-
-  .home-error-alert {
-    margin-top: 1rem;
-    border-radius: 8px !important;
-  }
-
-  .home-error-icon {
-    margin-right: 0.5rem;
-  }
-
-  /* Feature Statements */
-  .home-feature-statements {
-    position: relative;
-    margin: 2.5rem auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 2rem 1.5rem;
-    width: 100%;
-    max-width: 1100px;
-    z-index: 5;
-    box-sizing: border-box;
-    padding: 0 1rem;
-  }
-
-  .home-feature-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.75rem;
-    flex: 0 1 auto;
-    min-width: 300px;
-    max-width: 340px;
-    text-align: center;
-    padding: 1.5rem;
-    border-radius: 16px;
-    background: rgba(12, 10, 22, 0.65);
-    border: 1px solid rgba(124,58,237,0.08);
-    box-shadow: 0 12px 40px rgba(8,6,20,0.35);
-    transition: transform 200ms ease, box-shadow 200ms ease;
-    box-sizing: border-box;
-    height: 100%;
-  }
-
-  /* Force video feature item to stack icon above text (image on top, text below) */
-  .home-feature-item--video {
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-  }
-
-  .home-feature-item--video .home-feature-icon-button {
-    margin-bottom: 0.5rem;
-  }
-
-  .home-feature-item:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 48px rgba(124,58,237,0.18);
-  }
-
-  .home-feature-icon-button {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 1px solid rgba(124,58,237,0.22);
-    background: linear-gradient(135deg, rgba(124,58,237,0.16), rgba(167,139,250,0.08));
-    color: var(--accent-purple);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
-  }
-
-  .home-feature-icon-button:hover,
-  .home-feature-icon-button:focus-visible {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(124,58,237,0.3);
-    outline: none;
-  }
-
-  .home-feature-icon-button--secondary {
-    background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(59,130,246,0.12));
-    border-color: rgba(59,130,246,0.24);
-    color: #4ade80;
-  }
-
-  .home-feature-icon-button--highlight {
-    background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(234,179,8,0.12));
-    border-color: rgba(255,215,0,0.28);
-    color: #facc15;
-  }
-
-  .home-feature-icon-button--video {
-    background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(14,165,233,0.18));
-    border-color: rgba(14,165,233,0.24);
-    color: #60a5fa;
-  }
-
-  .home-feature-icon {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    transition: transform 200ms ease;
-  }
-
-  .home-feature-icon-button:hover .home-feature-icon,
-  .home-feature-icon-button:focus-visible .home-feature-icon {
-    transform: scale(1.12);
-  }
-
-  .home-feature-statement {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 1.35rem;
-    font-weight: 600;
-    text-align: center;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
-    letter-spacing: 0.3px;
-    margin: 0;
-  }
-
-  .home-feature-description {
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 0.9rem;
-    color: var(--muted-text-2);
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  .home-feature-statement-primary {
-    color: var(--muted-text);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-
-  .home-feature-statement-secondary {
-    color: var(--muted-text-2);
-    opacity: 0.95;
-  }
-
-  .home-feature-statement-highlight {
-    color: var(--accent-purple-2);
-  }
-
-  .home-feature-icon-button--highlight .home-feature-icon {
-    animation: sparkle 2s ease-in-out infinite alternate;
-  }
-
-  /* Sparkle Animation */
-  @keyframes sparkle {
-    0% {
-      text-shadow: 
-        0 0 6px rgba(124,58,237,0.9),
-        0 0 12px rgba(167,139,250,0.7),
-        0 0 18px rgba(167,139,250,0.5),
-        0 0 24px rgba(167,139,250,0.3),
-        2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-    100% {
-      text-shadow: 
-        0 0 12px rgba(167,139,250,1),
-        0 0 24px rgba(167,139,250,0.9),
-        0 0 36px rgba(167,139,250,0.7),
-        0 0 48px rgba(167,139,250,0.5),
-        2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-  }
-
-  /* Watch Video Feeds card */
-  .home-video-feeds-card {
-    background: linear-gradient(180deg, rgba(124,58,237,0.16), rgba(15,23,42,0.72));
-    border: 1px solid rgba(124,58,237,0.28);
-  }
-
-  .home-video-feeds-card:hover {
-    box-shadow: 0 20px 56px rgba(56,189,248,0.18);
-  }
-
-  /* Responsive Design for Tablets and Mobile */
-  @media (max-width: 1024px) {
-    .home-wrapper {
-      margin: 0;
-      padding: 0;
-      min-height: auto;
-      height: auto;
-      width: 100%;
-    }
-    
-    .home-header {
-      position: relative;
-      top: auto;
-      right: auto;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      z-index: 100;
-    }
-    
-    .home-logo-container {
-      padding: 0.5rem 1rem;
-      gap: 0.5rem;
-    }
-    
-    .home-logo {
-      width: 28px;
-      height: 28px;
-    }
-    
-    .home-brand-text {
-      font-size: 1.1rem;
-    }
-    
-    .home-container {
-      width: 100%;
-      height: auto;
-      min-height: 50vh;
-      border-radius: 15px;
-      margin: 0 auto 2rem;
-      position: relative;
-    }
-    
-    .home-content {
-      padding: 2rem 1rem;
-    }
-    
-    .home-title {
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
-      line-height: 1.1;
-      margin-bottom: 0.8rem;
-    }
-    
-    .home-subtitle {
-      font-size: clamp(1.3rem, 4vw, 2rem);
-      line-height: 1.2;
-      margin-bottom: 0.8rem;
-    }
-
-    .home-hero-tagline {
-      font-size: clamp(1rem, 3vw, 1.4rem);
-      margin: 0.4rem 0 0.9rem;
-    }
-    
-    .home-description {
-      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-      margin-bottom: 1.5rem;
-    }
-    
-    .home-feature-statements {
-      position: relative;
-      bottom: auto;
-      width: 100%;
-      margin: 2rem auto 0;
-      padding: 0 1rem;
-      gap: 1rem;
-      flex-direction: column;
-      background: transparent;
-      border-radius: 0;
-      backdrop-filter: none;
-      max-width: 100%;
-    }
-    
-    .home-feature-item {
-      flex: 1 1 100%;
-      padding: 1.25rem;
-      gap: 0.75rem;
-      text-align: left;
-      justify-content: flex-start;
-      min-width: auto;
-      max-width: 100%;
-      height: auto;
-      align-items: flex-start;
-      flex-direction: row;
-      background: rgba(12, 10, 22, 0.65);
-      border: 1px solid rgba(124,58,237,0.08);
-      border-radius: 12px;
-      margin-bottom: 0.5rem;
-    }
-    
-    .home-feature-icon-button {
-      width: 56px;
-      height: 56px;
-      flex-shrink: 0;
-      margin-top: 0.25rem;
-    }
-    
-    .home-feature-icon {
-      width: 24px;
-      height: 24px;
-    }
-    
-    .home-feature-statement {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      text-align: left;
-    }
-
-    .home-feature-description {
-      font-size: clamp(0.85rem, 2vw, 1rem);
-      text-align: left;
-    }
-    
-    .home-action-buttons {
-      position: relative;
-      top: auto;
-      bottom: auto;
-      right: auto;
-      transform: none;
-      flex-direction: column;
-      gap: 1rem;
-      margin: 2rem auto 3rem;
-      padding: 0 1rem;
-      align-items: stretch;
-      width: 100%;
-    }
-    
-    .home-login-button,
-    .home-signup-button {
-      width: 100%;
-      max-width: 100%;
-      height: 48px;
-      font-size: 1rem;
-    }
-    
-    .home-footer {
-      position: relative;
-      margin: 0;
-      width: 100%;
-      padding: 1rem;
-    }
-    
-    .home-footer-content {
-      flex-direction: column;
-      gap: 1rem;
-      padding: 1rem;
-    }
-    
-    .home-footer-links {
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    
-    .home-footer-social {
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .home-wrapper {
-      padding: 0.5rem;
-    }
-    
-    .home-header {
-      position: relative;
-      top: auto;
-      right: auto;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      z-index: 100;
-    }
-    
-    .home-logo-container {
-      padding: 0.4rem 0.8rem;
-    }
-    
-    .home-brand-text {
-      font-size: 1rem;
-    }
-    
-    .home-container {
-      width: 100%;
-      min-height: 45vh;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-    }
-    
-    .home-content {
-      padding: 1.5rem 0.5rem;
-    }
-    
-    .home-title {
-      font-size: clamp(1.5rem, 6vw, 2.2rem);
-      margin-bottom: 0.6rem;
-      letter-spacing: 0px;
-    }
-    
-    .home-subtitle {
-      font-size: clamp(1.1rem, 4vw, 1.6rem);
-      margin-bottom: 0.6rem;
-      letter-spacing: 0px;
-    }
-
-    .home-hero-tagline {
-      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
-      margin: 0.35rem 0 0.75rem;
-    }
-    
-    .home-description {
-      font-size: clamp(0.8rem, 2vw, 1rem);
-      margin-bottom: 1.5rem;
-    }
-    
-    .home-feature-statements {
-      position: relative;
-      width: 100%;
-      padding: 0;
-      margin: 0 auto 2rem;
-      gap: 0.75rem;
-      flex-direction: column;
-      background: transparent;
-      border-radius: 0;
-      backdrop-filter: none;
-      max-width: 100%;
-    }
-    
-    .home-feature-item {
-      flex: 1 1 100%;
-      padding: 1rem;
-      gap: 0.75rem;
-      border-radius: 12px;
-      background: rgba(12, 10, 22, 0.65);
-      border: 1px solid rgba(124,58,237,0.08);
-      height: auto;
-      min-width: auto;
-      max-width: 100%;
-      align-items: flex-start;
-      flex-direction: row;
-      justify-content: flex-start;
-    }
-    
-    .home-feature-icon-button {
-      width: 52px;
-      height: 52px;
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-    }
-    
-    .home-feature-icon {
-      width: 20px;
-      height: 20px;
-    }
-    
-    .home-feature-statement {
-      font-size: clamp(0.95rem, 2vw, 1.2rem);
-      text-align: left;
-      line-height: 1.3;
-    }
-
-    .home-feature-description {
-      font-size: clamp(0.8rem, 1.5vw, 0.95rem);
-      text-align: left;
-    }
-    
-    .home-action-buttons {
-      position: relative;
-      width: 100%;
-      margin: 2rem auto 3rem;
-      padding: 0 0.5rem;
-      gap: 0.8rem;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    .home-login-button,
-    .home-signup-button {
-      width: 100%;
-      height: 48px !important;
-      min-height: 48px !important;
-      font-size: clamp(0.9rem, 2vw, 1rem);
-      padding: 0 1rem;
-    }
-    
-    .home-auth-dialog {
-      max-width: 95%;
-      width: 95%;
-      margin: 0.5rem auto;
-    }
-    
-    .home-auth-card {
-      max-width: 100%;
-    }
-    
-    .home-footer {
-      position: relative;
-      width: 100%;
-      margin: 1.5rem 0 0;
-      padding: 1rem 0.5rem;
-    }
-    
-    .home-footer-content {
-      flex-direction: column;
-      gap: 1rem;
-      padding: 0.75rem;
-    }
-    
-    .home-footer-links {
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      font-size: 0.85rem;
-    }
-    
-    .home-footer-social {
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  }
-
-  /* Extra small mobile devices (< 480px) */
-  @media (max-width: 360px) {
-    .home-wrapper {
-      padding: 0.25rem;
-    }
-    
-    .home-header {
-      padding: 0.5rem;
-    }
-    
-    .home-logo-container {
-      padding: 0.3rem 0.6rem;
-      gap: 0.3rem;
-    }
-    
-    .home-brand-text {
-      font-size: 0.9rem;
-    }
-    
-    .home-title {
-      font-size: 1.5rem;
-    }
-    
-    .home-subtitle {
-      font-size: 1.1rem;
-    }
-
-    .home-hero-tagline {
-      font-size: 0.9rem;
-    }
-    
-    .home-description {
-      font-size: 0.75rem;
-    }
-    
-    .home-feature-statements {
-      padding: 0;
-      gap: 0.5rem;
-      margin: 0 auto 1.5rem;
-    }
-    
-    .home-feature-item {
-      padding: 0.75rem;
-      gap: 0.5rem;
-    }
-
-    .home-feature-icon-button {
-      width: 48px;
-      height: 48px;
-    }
-    
-    .home-feature-statement {
-      font-size: 0.95rem;
-    }
-
-    .home-feature-description {
-      font-size: 0.75rem;
-    }
-    
-    .home-action-buttons {
-      margin: 1.5rem auto 2rem;
-    }
-    
-    .home-footer-content {
-      padding: 0.5rem;
-    }
-    
-    .home-footer-links {
-      gap: 0.5rem;
-      font-size: 0.75rem;
-    }
-  }
-
-  /* Role Selection Styles */
-  .home-role-button {
-    position: relative;
-    overflow: hidden;
-    border: 2px solid transparent;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .home-role-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-  }
-
-  .home-role-button:hover::before {
-    left: 100%;
-  }
-
-  .home-role-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-  }
-
-  /* Mobile responsive adjustments for role buttons */
-  @media (max-width: 480px) {
-    .home-role-button {
-      padding: 10px 12px !important;
-      font-size: 0.8rem !important;
-      min-height: 44px;
-    }
-  }
-
-  /* Very large screens (2560px and above) */
-  @media (min-width: 2560px) {
-    .home-wrapper {
-      font-size: 1.2rem;
-    }
-
-    .home-title {
-      font-size: 4.5rem;
-    }
-
-    .home-subtitle {
-      font-size: 3rem;
-    }
-
-    .home-description {
-      font-size: 1.6rem;
-    }
-
-    .home-feature-statements {
-      width: 80%;
-      gap: 3rem 2rem;
-    }
-
-    .home-feature-item {
-      min-width: 240px;
-      max-width: 320px;
-      padding: 2rem;
-    }
-
-    .home-feature-icon-button {
-      width: 80px;
-      height: 80px;
-      cursor: normal !important;
-    }
-
-    .home-feature-icon {
-      width: 40px;
-      height: 40px;
-      
-    }
-
-    .home-feature-statement {
-      font-size: 1.6rem;
-    }
-
-    .home-login-button,
-    .home-signup-button {
-      width: 200px;
-      height: 64px;
-      font-size: 1.2rem;
-    }
-
-    .home-footer-links {
-      gap: 3rem;
-    }
-
-    .home-social-link {
-      font-size: 1.1rem;
-      padding: 0.75rem 1rem;
-    }
-
-    .home-social-link svg {
-      width: 28px;
-      height: 28px;
-    }
-  }
-
-  /* Large screens (1440px - 2559px) */
-  @media (min-width: 1440px) and (max-width: 2559px) {
-    .home-title {
-      font-size: 4rem;
-    }
-
-    .home-subtitle {
-      font-size: 2.8rem;
-    }
-
-    .home-feature-statements {
-      width: 80%;
-    }
-
-    .home-feature-item {
-      max-width: 300px;
-    }
-  }
-
-  /* legacy absolute-positioned video-feeds block removed — responsive
-     behavior for the card is handled above. */
-
-/* Ensure the last feature item sits flush to the right edge of the image
-   on desktop viewports. This complements the earlier absolute placement
-   of .home-feature-statements which was anchored to the image left. */
-@media (min-width: 1025px) {
-  .home-feature-statements {
-    align-items: flex-start;
-  }
-
-  .home-feature-statements .home-feature-item:last-child {
-    margin-left: auto !important;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&family=Epunda+Sans:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playwrite+IS:wght@100..400&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,100..900&display=swap');
+
+:root{
+  --bg-very-dark: #05030a;
+  --panel-dark: rgba(10,8,18,0.9);
+  --accent-purple: #7c3aed;
+  --accent-purple-2: #a78bfa;
+  --muted-text: rgba(255,255,255,0.94);
+  --muted-text-2: rgba(255,255,255,0.78);
+  --card-bg: rgba(20,16,28,0.6);
 }
 
-@media (min-width: 1025px) and (max-width: 1360px) {
-  .home-feature-statements {
-    justify-content: center !important;
-    gap: 1.2rem !important;
-  }
-
-  .home-feature-statements .home-feature-item {
-    flex: 0 1 calc(50% - 1.2rem) !important;
-    max-width: 320px !important;
-  }
-
-  .home-feature-statements .home-feature-item:last-child {
-    margin-left: 0 !important;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Desktop visibility override
-   Ensures the feature statements are rendered in document flow on large
-   screens and prevents accidental clipping/positioning regressions.
-   This override is intentionally placed at the end of the file so it wins
-   over earlier rules during debugging. Remove or refine after verification.
-----------------------------------------------------------------------------*/
-@media (min-width: 1025px) {
-  .home-feature-statements {
-    /* keep statements in the document flow so they remain visible */
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    margin: 1.5rem auto 0 !important;
-    width: 75% !important;
-    max-width: 1100px !important;
-    padding: 0 1rem !important;
-    display: flex !important;
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
-    gap: 1.2rem 1.5rem !important;
-    z-index: 20 !important;
-  }
-
-  .home-feature-item {
-    flex: 0 1 calc(25% - 1.2rem) !important;
-    min-width: 180px !important;
-    max-width: 260px !important;
-  }
-}
-
-/* Explicitly allow pointer cursor for buttons that should be clickable.
-   This overrides the global .home-feature-icon-button default cursor rules. */
-.home-feature-icon-button.home-feature-clickable,
-.home-feature-icon-button.home-feature-clickable *,
-[role="button"].home-feature-icon-button.home-feature-clickable,
-[role="button"] .home-feature-icon-button.home-feature-clickable,
-[role="button"] .home-feature-icon-button.home-feature-clickable * {
-  cursor: pointer !important;
-}
-
-/* Ensure interactive states keep pointer */
-.home-feature-icon-button.home-feature-clickable:hover,
-.home-feature-icon-button.home-feature-clickable:active,
-.home-feature-icon-button.home-feature-clickable:focus,
-.home-feature-icon-button.home-feature-clickable:focus-visible,
-[role="button"].home-feature-icon-button.home-feature-clickable:hover,
-[role="button"].home-feature-icon-button.home-feature-clickable:active,
-[role="button"].home-feature-icon-button.home-feature-clickable:focus,
-[role="button"].home-feature-icon-button.home-feature-clickable:focus-visible {
-  cursor: pointer !important;
-}
-
-/* Force non-pointer cursor for feature icon buttons (override [role="button"] rules) */
-.home-feature-icon-button,
-.home-feature-icon-button[role="button"],
-.home-feature-icon-button[role="button"] * {
-  cursor: default !important;
-}
-
-/* Keep non-pointer cursor on interactive states */
-.home-feature-icon-button:hover,
-home-content.home-feature-icon-button:active,
-.home-feature-icon-button:focus,
-.home-feature-icon-button:focus-visible,
-.home-feature-icon-button[role="button"]:hover,
-.home-feature-icon-button[role="button"]:active,
-.home-feature-icon-button[role="button"]:focus,
-.home-feature-icon-button[role="button"]:focus-visible {
-  cursor: default !important;
-}
-
-/* Also guard against broader rules that target [role="button"] */
-[role="button"].home-feature-icon-button,
-[role="button"] .home-feature-icon-button,
-[role="button"] .home-feature-icon-button * {
-  cursor: default !important;
-}
-
-/* Shared sizing + left-alignment helper for hero + features wrapper */
-.hero-features-wrap {
-  /* change this value to control the maximum width used by both hero and features */
-  --hero-max-width: 1100px;
-  /* fallback percentage used when viewport is narrower than --hero-max-width */
-  --hero-fallback-percent: 85%;
-
+/* Root and Base Styles */
+body #root {
+  background-color: var(--bg-very-dark);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Header Styles */
+.home-header {
+  position: fixed;
+  top: 1rem;
+  right: 2rem;
+  z-index: 100;
+  padding: 0.75rem 0rem;
+}
+
+.home-logo-container {
+  display: flex;
+  margin-right: 1%;
+  gap: 0.75rem;
+  cursor: default;
+  border-radius: 12px;
+  padding: 0.75rem 0rem;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 30px rgba(124,58,237,0.06);
+  transition: all 0.3s ease;
+}
+
+.home-logo {
+  width: 32px;
+  color: var(--accent-purple);
+  height: 32px;
+  object-fit: contain;
+}
+
+.home-brand-text {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--muted-text);
+  margin-top: 6px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* Main Container & Hero Section */
+.home-container {
+  width: 100%;
+  height: 95vh ;
+  background-color: var(--bg-very-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0;
+  margin-top: 0rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.home-bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.home-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(3,2,14,0.75), rgba(10,8,18,0.85));
+  z-index: 1;
+}
+
+.home-content {
+  position: relative;
+  z-index: 2;
+  color: var(--muted-text);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  padding: 2rem;
+}
+
+.home-hero-section {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  color: var(--muted-text);
+}
+
+.home-title {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: clamp(1.8rem, 6vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--muted-text);
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.home-title-highlight {
+  color: var(--accent-purple-2);
+}
+
+.home-subtitle {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: clamp(1.3rem, 4vw, 2.2rem);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--muted-text-2);
+  opacity: 0.95;
+  line-height: 1.2;
+  letter-spacing: 1px;
+}
+
+.home-subtitle-highlight {
+  color: var(--accent-purple);
+}
+
+.home-hero-tagline {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  font-weight: 600;
+  color: var(--accent-purple-2);
+  margin: 0.5rem 0 1.25rem;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.home-description {
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+  font-weight: 400;
+  color: var(--muted-text-2);
+  opacity: 0.9;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  letter-spacing: 0.01em;
+}
+
+.home-hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  pointer-events: none;
+}
+
+.home-hero-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
+}
+
+.home-hero-brand-text {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--muted-text);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+}
+
+/* Action Buttons */
+.home-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  position: absolute;
+  top: 50%;
+  right: clamp(1rem, 4vw, 2.5rem);
+  transform: translateY(-50%);
+  bottom: auto;
+  z-index: 10;
+  align-items: flex-end;
+}
+
+.home-login-button,
+.home-signup-button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  width: auto;
+  max-width: 260px;
+  min-width: 220px;
+  height: 54px;
+  min-height: 54px;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.home-login-button {
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-2));
+  color: var(--muted-text) !important;
+}
+
+.home-login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(124,58,237,0.18);
+}
+
+.home-login-button:active {
+  transform: translateY(0);
+}
+
+.home-signup-button {
+  border: 2px solid var(--accent-purple);
+  color: var(--accent-purple-2);
+  background: transparent;
+}
+
+.home-signup-button:hover {
+  border-color: var(--accent-purple-2);
+  color: var(--accent-purple-2);
+  background-color: rgba(124,58,237,0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(124,58,237,0.12);
+}
+
+.home-signup-button:active {
+  transform: translateY(0);
+}
+
+/* Feature Statements */
+.home-feature-statements {
+  position: relative;
+  margin-top:  0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0rem 1.5rem;
+  width: 100%;
+  max-width: 1100px;
+  z-index: 5;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.home-feature-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  flex: 0 1 auto;
+  min-width: 250px;
+  max-width: 300px;
+  text-align: left;
+  padding: .5rem;
+  border-radius: 16px;
+  background: rgba(12, 10, 22, 0.65);
+  border: 1px solid rgba(124,58,237,0.08);
+  box-shadow: 0 12px 40px rgba(8,6,20,0.35);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  box-sizing: border-box;
+  height: auto;
+}
+
+.home-feature-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 48px rgba(124,58,237,0.18);
+}
+
+.home-feature-icon-button {
+  border-radius: 50%;
+  border: 1px solid rgba(124,58,237,0.22);
+  background: linear-gradient(135deg, rgba(124,58,237,0.16), rgba(167,139,250,0.08));
+  color: var(--accent-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  cursor: default !important;
+}
+
+.home-feature-icon-button:hover,
+.home-feature-icon-button:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(124,58,237,0.3);
+  outline: none;
+}
+
+.home-feature-icon-button--secondary {
+  background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(59,130,246,0.12));
+  border-color: rgba(59,130,246,0.24);
+  color: #4ade80;
+}
+
+.home-feature-icon-button--highlight {
+  background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(234,179,8,0.12));
+  border-color: rgba(255,215,0,0.28);
+  color: #facc15;
+}
+
+.home-feature-icon-button--video {
+  background: linear-gradient(135deg, rgba(124,58,237,0.22), rgba(14,165,233,0.18));
+  border-color: rgba(14,165,233,0.24);
+  color: #60a5fa;
+}
+
+.home-feature-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  transition: transform 200ms ease;
+}
+
+.home-feature-icon-button:hover .home-feature-icon,
+.home-feature-icon-button:focus-visible .home-feature-icon {
+  transform: scale(1.12);
+}
+
+.home-feature-statement {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-align: left;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.home-feature-description {
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  color: var(--muted-text-2);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.home-feature-statement-primary {
+  color: var(--muted-text);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.home-feature-statement-secondary {
+  color: var(--muted-text-2);
+  opacity: 0.95;
+}
+
+.home-feature-statement-highlight {
+  color: var(--accent-purple-2);
+}
+
+.home-feature-icon-button--highlight .home-feature-icon {
+  animation: sparkle 2s ease-in-out infinite alternate;
+}
+
+@keyframes sparkle {
+  0% {
+    text-shadow: 
+      0 0 6px rgba(124,58,237,0.9),
+      0 0 12px rgba(167,139,250,0.7),
+      0 0 18px rgba(167,139,250,0.5),
+      0 0 24px rgba(167,139,250,0.3),
+      2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  100% {
+    text-shadow: 
+      0 0 12px rgba(167,139,250,1),
+      0 0 24px rgba(167,139,250,0.9),
+      0 0 36px rgba(167,139,250,0.7),
+      0 0 48px rgba(167,139,250,0.5),
+      2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.home-video-feeds-card {
+  background: linear-gradient(180deg, rgba(124,58,237,0.16), rgba(15,23,42,0.72));
+  border: 1px solid rgba(124,58,237,0.28);
+}
+
+.home-video-feeds-card:hover {
+  box-shadow: 0 20px 56px rgba(56,189,248,0.18);
+}
+
+/* Auth Dialog Styles */
+.home-auth-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.home-auth-dialog {
+  background: rgba(10,8,18,0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.04);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-auth-dialog-content {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(248, 246, 246, 0.3) transparent;
+}
+
+.home-auth-dialog-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.home-auth-dialog-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.home-auth-dialog-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.home-auth-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.home-auth-dialog-footer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 2rem 2rem 2rem;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+.home-auth-close-button {
+  background: none;
+  border: none;
+  color: var(--muted-text-2);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.home-auth-close-button:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.home-auth-card {
+  background: rgba(18,16,26,0.75);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255,255,255,0.04);
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(167,139,250,0.03) 100%);
+  pointer-events: none;
+}
+
+.home-auth-card-content {
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.home-auth-tabs {
+  display: flex;
+  margin-bottom: 2rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
+  padding: 4px;
+  position: relative;
+}
+
+.home-tab {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  position: relative;
+  z-index: 2;
+}
+
+.home-tab:hover {
+  color: var(--accent-purple-2);
+  background: rgba(124,58,237,0.06);
+}
+
+.home-tab.active {
+  color: var(--accent-purple-2);
+  background: rgba(255,255,255,0.02);
+  box-shadow: 0 6px 18px rgba(124,58,237,0.08);
+  font-weight: 700;
+}
+
+.home-auth-form-container {
   padding: 0 1rem;
 }
 
-/* Ensure both hero and features use the exact same width calculation */
+.home-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.home-name-fields {
+  display: flex;
+  gap: 1rem;
+}
+
+.home-name-field {
+  flex: 1;
+}
+
+.home-input-field {
+  margin-bottom: 0 !important;
+}
+
+.home-input-field input,
+.home-input-field textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(255,255,255,0.04);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: rgba(255,255,255,0.02);
+  color: #e6e6e6;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.home-input-field input:focus,
+.home-input-field textarea:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 6px rgba(124,58,237,0.06);
+}
+
+.home-input-field input:hover,
+.home-input-field textarea:hover {
+  border-color: var(--accent-purple);
+}
+
+.home-input-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #bfc7d6;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.home-input-field input::placeholder,
+.home-input-field textarea::placeholder {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.9rem;
+}
+
+.home-input-field.error input,
+.home-input-field.error textarea {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 4px rgba(255,107,107,0.08);
+}
+
+.home-input-field.success input,
+.home-input-field.success textarea {
+  border-color: #28c76f;
+  box-shadow: 0 0 0 4px rgba(40,199,111,0.06);
+}
+
+.home-forgot-password {
+  color: var(--accent-purple-2);
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-align: right;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
+}
+
+.home-forgot-password:hover {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+.home-auth-button {
+  background: linear-gradient(45deg, var(--accent-purple), var(--accent-purple-2)) !important;
+  color: #0b0620 !important;
+  padding: 12px 24px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(124,58,237,0.18) !important;
+  transition: all 0.3s ease !important;
+}
+
+.home-auth-button:hover {
+  background: linear-gradient(45deg, var(--accent-purple-2), var(--accent-purple)) !important;
+  box-shadow: 0 10px 28px rgba(124,58,237,0.22) !important;
+  transform: translateY(-2px);
+}
+
+.home-social-divider {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.home-social-divider::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.03);
+}
+
+.home-social-divider-text {
+  background: transparent;
+  padding: 0 1rem;
+  color: #9aa1b2;
+  font-size: 0.9rem;
+}
+
+.home-social-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.home-social-button {
+  flex: 1;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  border: 2px solid rgba(255,255,255,0.04) !important;
+  color: #e6e6e6 !important;
+  transition: all 0.3s ease !important;
+}
+
+.home-social-button:hover {
+  border-color: var(--accent-purple) !important;
+  background-color: rgba(124,58,237,0.04) !important;
+  transform: translateY(-1px);
+}
+
+.home-error-alert {
+  margin-top: 1rem;
+  border-radius: 8px !important;
+}
+
+.home-error-icon {
+  margin-right: 0.5rem;
+}
+
+/* Footer Styles */
+.home-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: auto;
+  background: transparent;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  z-index: 50;
+  padding: 0.5rem 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.home-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.home-footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.home-footer-link {
+  color: var(--muted-text-2);
+  text-decoration: none;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+}
+
+.home-footer-link:hover {
+  color: var(--muted-text);
+  text-shadow: 0 0 12px rgba(167,139,250,0.12);
+}
+
+.home-footer-button {
+  background: none;
+  border: none;
+  padding: 0.5rem 0;
+  font: inherit;
+  color: var(--muted-text-2);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.home-footer-button:hover {
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.home-footer-social {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.home-social-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-text-2);
+  text-decoration: none;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+}
+
+.home-social-link:hover {
+  color: var(--muted-text);
+  background-color: rgba(167,139,250,0.06);
+  transform: translateY(-2px);
+}
+
+.home-social-link svg {
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s ease;
+}
+
+.home-social-link:hover svg {
+  transform: scale(1.1);
+}
+
+/* Helper Classes */
+.hero-features-wrap {
+  /*--hero-max-width: 1000px;*/
+  --hero-fallback-percent: 85%;
+  width: 100%;
+  /*display: flex;*/
+  flex-direction: column;
+  align-items: center;
+  gap: 0rem;
+  box-sizing: border-box;
+}
+
 .hero-features-wrap .home-container,
 .hero-features-wrap .home-feature-statements {
   width: min(var(--hero-max-width), var(--hero-fallback-percent));
@@ -1948,29 +866,217 @@ home-content.home-feature-icon-button:active,
   box-sizing: border-box;
 }
 
-/* When you want the feature block (and the hero) aligned to the left edge,
-   add the modifier class "hero-features-wrap--left" to the wrapper element.
-   This will align both elements to the same left offset. */
 .hero-features-wrap--left {
   align-items: flex-start;
-  padding-left: 2%; /* optional page margin — adjust as needed */
 }
 
-/* keep the inner elements flush with the wrapper's left edge when using the modifier */
 .hero-features-wrap--left .home-container,
 .hero-features-wrap--left .home-feature-statements {
-  margin-left: 0;
-  margin-right: 0;
+  margin-left: 0rem;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+
 }
 
-/* If you prefer the features to be slightly more left than the hero,
-   use this helper to nudge the features left (adjust value as needed). */
-.hero-features-wrap--left .home-feature-statements--offset-left {
-  margin-left: -1.5rem; /* negative to nudge left; change to positive to nudge right */
+.home-feature-icon-button.home-feature-clickable,
+.home-feature-icon-button.home-feature-clickable * {
+  cursor: pointer !important;
 }
 
-/* Preserve responsive behaviour - when stacked on small screens both remain full width */
+/* Desktop Styles */
+@media (min-width: 1025px) {
+  body #root {
+    min-height: 100vh;
+    height: auto;
+    overflow: auto;
+  }
+
+  .home-wrapper {
+    min-height: 100vh;
+    height: auto;
+  }
+  
+  .home-header {
+    position: fixed;
+    top: 5;
+    right: -2rem;
+  }
+  
+  .home-container {
+    height: 88vh;
+    width: 100vw;
+    margin-left: 0%;
+    margin-top: 1.5%;
+  }
+
+  .home-feature-statements {
+    gap: 1.2rem 1.5rem;
+  }
+
+  .home-feature-item {
+    flex: 0 1 calc(25% - 1.2rem);
+    min-width: 200px;
+    max-width: 240px;
+  }
+  
+  .home-action-buttons {
+    position: absolute;
+    right: 43%;
+    top: 72%;
+    transform: translateY(-50%);
+    align-items: flex-start;
+  }
+
+  .home-header {
+    right: calc( (100% - 75%) / 2 );
+    margin-right: 1rem;
+    align-items: flex-end;
+  }
+
+  .hero-features-wrap .home-container,
+  .hero-features-wrap .home-feature-statements {
+    width: min(var(--hero-max-width), var(--hero-fallback-percent));
+    max-width: calc(var(--hero-max-width) + 10px);
+  }
+}
+
+/* Tablet and Mobile Responsive */
 @media (max-width: 1024px) {
+  .home-wrapper {
+    margin: 0;
+    padding: 0;
+    min-height: auto;
+    height: auto;
+    width: 100%;
+  }
+  .home-feature-statement-secondary {
+    font-size: 1.85rem;
+  }
+   .home-feature-statement {
+    font-size: 1.85rem;
+  }
+  .home-header {
+    position: relative;
+    top: auto;
+    right: auto;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .home-logo-container {
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+  }
+  
+  .home-logo {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .home-brand-text {
+    font-size: 1.1rem;
+  }
+  
+  .home-container {
+    width: 100%;
+    height: auto;
+    min-height: 50vh;
+    border-radius: 15px;
+    margin: 0 auto 2rem;
+  }
+  
+  .home-content {
+    padding: 2rem 1rem;
+  }
+  
+  .home-title {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    margin-bottom: 0.8rem;
+  }
+  
+  .home-subtitle {
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    margin-bottom: 0.8rem;
+  }
+
+  .home-hero-tagline {
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    margin: 0.4rem 0 0.9rem;
+  }
+  
+  .home-description {
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    margin-bottom: 1.5rem;
+  }
+  
+  .home-feature-statements {
+    gap: 1rem;
+    flex-direction: column;
+  }
+  
+  .home-feature-item {
+    flex: 1 1 100%;
+    padding: 1.25rem;
+    gap: 0.75rem;
+    min-width: auto;
+    max-width: 100%;
+  }
+  
+  .home-feature-icon-button {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .home-feature-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .home-action-buttons {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin: 2rem auto 3rem;
+    padding: 0 1rem;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .home-login-button,
+  .home-signup-button {
+    width: 100%;
+    max-width: 100%;
+    height: 48px;
+    font-size: 1rem;
+  }
+  
+  .home-footer {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .home-footer-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .home-footer-links {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .home-footer-social {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .hero-features-wrap .home-container,
   .hero-features-wrap .home-feature-statements {
     width: 100% !important;
@@ -1978,25 +1084,274 @@ home-content.home-feature-icon-button:active,
     padding: 0 1rem !important;
   }
 }
-.hero-features-wrap--left .home-feature-statements {
-  margin-left: 0;
-  margin-right: 0;
-}
 
-/* If you prefer the features to be slightly more left than the hero,
-   use this helper to nudge the features left (adjust value as needed). */
-.hero-features-wrap--left .home-feature-statements--offset-left {
-  margin-left: -1.5rem; /* negative to nudge left; change to positive to nudge right */
-}
-
-/* Preserve responsive behaviour - when stacked on small screens both remain full width */
-@media (max-width: 1024px) {
-  .hero-features-wrap .home-container,
-  .hero-features-wrap .home-feature-statements {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 1rem !important;
+/* Mobile Footer Responsive */
+@media (max-width: 768px) {
+  .home-footer-content {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .home-footer-links {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .home-footer-social {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .home-social-link {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
   }
 }
 
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .home-wrapper {
+    padding: 0.5rem;
+  }
+  
+  .home-header {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .home-logo-container {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .home-brand-text {
+    font-size: 1rem;
+  }
+  
+  .home-container {
+    width: 100%;
+    min-height: 45vh;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .home-content {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .home-title {
+    font-size: clamp(1.5rem, 6vw, 2.2rem);
+    margin-bottom: 0.6rem;
+  }
+  
+  .home-subtitle {
+    font-size: clamp(1.1rem, 4vw, 1.6rem);
+    margin-bottom: 0.6rem;
+  }
 
+  .home-hero-tagline {
+    font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+    margin: 0.35rem 0 0.75rem;
+  }
+  
+  .home-description {
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    margin-bottom: 1.5rem;
+  }
+  
+  .home-feature-statements {
+    gap: 0.75rem;
+  }
+  
+  .home-feature-item {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+  
+  .home-feature-icon-button {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .home-feature-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .home-action-buttons {
+    margin: 2rem auto 3rem;
+    padding: 0 0.5rem;
+    gap: 0.8rem;
+  }
+  
+  .home-login-button,
+  .home-signup-button {
+    width: 100%;
+    height: 48px !important;
+    min-height: 48px !important;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+  }
+  
+  .home-auth-dialog {
+    max-width: 95%;
+    width: 95%;
+    margin: 0.5rem auto;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+  .home-wrapper {
+    padding: 0.25rem;
+  }
+  
+  .home-header {
+    padding: 0.5rem;
+  }
+  
+  .home-logo-container {
+    padding: 0.3rem 0.6rem;
+    gap: 0.3rem;
+  }
+  
+  .home-brand-text {
+    font-size: 0.9rem;
+  }
+  
+  .home-title {
+    font-size: 1.5rem;
+  }
+  
+  .home-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .home-hero-tagline {
+    font-size: 0.9rem;
+  }
+  
+  .home-description {
+    font-size: 0.75rem;
+  }
+  
+  .home-feature-statements {
+    gap: 0.5rem;
+    margin: 0 auto 1.5rem;
+  }
+  
+  .home-feature-item {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .home-feature-icon-button {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .home-feature-statement {
+    font-size: 0.95rem;
+  }
+
+  .home-feature-description {
+    font-size: 0.75rem;
+  }
+  
+  .home-action-buttons {
+    margin: 1.5rem auto 2rem;
+  }
+  
+  .home-footer-content {
+    padding: 0.5rem;
+  }
+  
+  .home-footer-links {
+    gap: 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Large Screens */
+@media (min-width: 2560px) {
+  .home-wrapper {
+    font-size: 1.2rem;
+  }
+
+  .home-title {
+    font-size: 4.5rem;
+  }
+
+  .home-subtitle {
+    font-size: 3rem;
+  }
+
+  .home-description {
+    font-size: 1.6rem;
+  }
+
+  .home-feature-statements {
+    width: 80%;
+    gap: 1rem 2rem;
+  }
+
+  .home-feature-item {
+    min-width: 240px;
+    max-width: 320px;
+    padding: 2rem;
+  }
+
+  .home-feature-icon-button {
+    width: 80px;
+    height: 80px;
+  }
+
+  .home-feature-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .home-feature-statement {
+    font-size: 1.6rem;
+  }
+
+  .home-login-button,
+  .home-signup-button {
+    width: 200px;
+    height: 64px;
+    font-size: 1.2rem;
+  }
+
+  .home-footer-links {
+    gap: 3rem;
+  }
+
+  .home-social-link {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .home-social-link svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (min-width: 1440px) and (max-width: 2559px) {
+  .home-title {
+    font-size: 4rem;
+  }
+
+  .home-subtitle {
+    font-size: 2.8rem;
+  }
+
+  .home-feature-statements {
+    width: 80%;
+  }
+
+  .home-feature-item {
+    max-width: 300px;
+  }
+}
