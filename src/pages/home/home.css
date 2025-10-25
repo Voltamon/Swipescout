@@ -26,36 +26,16 @@
   /* Desktop view - no scrolling */
   @media (min-width: 1025px) {
     body #root {
-      height: 100vh;
-      overflow: hidden;
+      /* previously: height: 100vh; overflow: hidden; */
+      min-height: 100vh;
+      height: auto;
+      overflow: auto; /* allow scrolling when content is taller than viewport */
     }
-  }
 
-  /* Home wrapper - replaces the sx prop styling */
-  .home-wrapper {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 0;
-    overflow-x: hidden;
-    margin: 0;
-    box-sizing: border-box;
-  }
-
-  /* Desktop view - restore original layout */
-  @media (min-width: 1025px) {
     .home-wrapper {
-      height: 100vh;
-      width: 100%;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      overflow: hidden;
-      position: relative;
+      /* previously: height: 100vh; */
+      min-height: 100vh;
+      height: auto;
     }
     
     .home-header {
@@ -1621,11 +1601,6 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-
-    .home-social-link {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.6rem;
-    }
   }
 
   /* Extra small mobile devices (< 480px) */
@@ -1934,4 +1909,80 @@ home-content.home-feature-icon-button:active,
 [role="button"] .home-feature-icon-button * {
   cursor: default !important;
 }
+
+/* Shared sizing + left-alignment helper for hero + features wrapper */
+.hero-features-wrap {
+  /* change this value to control the maximum width used by both hero and features */
+  --hero-max-width: 1100px;
+  /* fallback percentage used when viewport is narrower than --hero-max-width */
+  --hero-fallback-percent: 85%;
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  box-sizing: border-box;
+  padding: 0 1rem;
+}
+
+/* Ensure both hero and features use the exact same width calculation */
+.hero-features-wrap .home-container,
+.hero-features-wrap .home-feature-statements {
+  width: min(var(--hero-max-width), var(--hero-fallback-percent));
+  max-width: var(--hero-max-width);
+  box-sizing: border-box;
+}
+
+/* When you want the feature block (and the hero) aligned to the left edge,
+   add the modifier class "hero-features-wrap--left" to the wrapper element.
+   This will align both elements to the same left offset. */
+.hero-features-wrap--left {
+  align-items: flex-start;
+  padding-left: 2%; /* optional page margin — adjust as needed */
+}
+
+/* keep the inner elements flush with the wrapper's left edge when using the modifier */
+.hero-features-wrap--left .home-container,
+.hero-features-wrap--left .home-feature-statements {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* If you prefer the features to be slightly more left than the hero,
+   use this helper to nudge the features left (adjust value as needed). */
+.hero-features-wrap--left .home-feature-statements--offset-left {
+  margin-left: -1.5rem; /* negative to nudge left; change to positive to nudge right */
+}
+
+/* Preserve responsive behaviour - when stacked on small screens both remain full width */
+@media (max-width: 1024px) {
+  .hero-features-wrap .home-container,
+  .hero-features-wrap .home-feature-statements {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+  }
+}
+.hero-features-wrap--left .home-feature-statements {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* If you prefer the features to be slightly more left than the hero,
+   use this helper to nudge the features left (adjust value as needed). */
+.hero-features-wrap--left .home-feature-statements--offset-left {
+  margin-left: -1.5rem; /* negative to nudge left; change to positive to nudge right */
+}
+
+/* Preserve responsive behaviour - when stacked on small screens both remain full width */
+@media (max-width: 1024px) {
+  .hero-features-wrap .home-container,
+  .hero-features-wrap .home-feature-statements {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+  }
+}
+
 

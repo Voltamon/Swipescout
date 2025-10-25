@@ -352,7 +352,6 @@ const Home = () => {
 
    return (
     <div className="home-wrapper">
-    
       {/* SwipeScout Header */}
       <div className="home-header">
         <div className="home-logo-container">
@@ -360,19 +359,21 @@ const Home = () => {
           <span className="home-brand-text">SwipeScout</span>
         </div>
       </div>
-      <div style={{ border: '1px solid #433213' }}>
-      <div className="home-container">
-        <div style={{ height: '95vh' }}>
-        <div className="home-content">
-          {/* Centered brand in the hero area (visually aligned like the action buttons were) */}
-          <div className="home-hero-brand" aria-hidden="true">
-            <img src="/swipescout.svg" alt="" className="home-hero-logo" />
-            <span className="home-hero-brand-text">SwipeScout</span>
-          </div>
-          <div className="home-hero-section">
-            <h1 className="home-title">
-              The First  <span className="home-title-highlight">Video</span> Hiring App
-            </h1>
+
+      {/* HERO + FEATURES WRAPPER (keeps features below the hero and responsive) */}
+      <div className="hero-features-wrap hero-features-wrap--left">
+        <div className="home-container">
+          <div className="home-content">
+            {/* Centered brand in the hero area (visually aligned like the action buttons were) */}
+            <div className="home-hero-brand" aria-hidden="true">
+              <img src="/swipescout.svg" alt="" className="home-hero-logo" />
+              <span className="home-hero-brand-text">SwipeScout</span>
+            </div>
+
+            <div className="home-hero-section">
+              <h1 className="home-title">
+                The First  <span className="home-title-highlight">Video</span> Hiring App
+              </h1>
 
 
 
@@ -390,11 +391,12 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
             </h5>
           </div>
        
-      </div></div></div>  
-                 {/* Feature Statements & Video Feed Link */}
-                 <div style={{ height: '30vh' ,width:'95%' ,alignSelf:'center' ,border: '1px solid #433213' }}>  
-      <div className="home-feature-statements" >
-        <div className="home-feature-item">
+      </div>
+        </div>
+
+        {/* Feature Statements: kept below the hero in source order (no inline widths/heights) */}
+        <div className="home-feature-statements">
+          <div className="home-feature-item">
           <button
             type="button"
             className="home-feature-icon-button home-feature-clickable"
@@ -461,14 +463,12 @@ The fastest, most interactive  <span className="home-subtitle-highlight">way to 
             Explore curated reels and experience SwipeScout in action.
           </p>
          </div>
-         
+        </div>
       </div>
-      </div>
-</div>
        
        
     
-      {/* Action Buttons - Outside the home container */}
+      {/* Action Buttons - Outside the hero-features wrap */}
       <div className="home-action-buttons">
         <Button
           onClick={() => handleOpenAuthDialog(0)}
