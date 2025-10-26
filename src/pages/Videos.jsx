@@ -524,8 +524,32 @@ const VideoCard = React.memo(({
                   <input
                     aria-label="comment-input"
                     placeholder={'Add a comment...'}
-                    style={{ flex: 1, padding: '8px 10px', borderRadius: 6, border: '1px solid #ccc' }}
+                    style={{ 
+                      flex: 1, 
+                      padding: '8px 10px', 
+                      borderRadius: 6, 
+                      border: '1px solid #ccc',
+                      backgroundColor: '#fff',
+                      color: '#000',
+                      fontSize: '14px'
+                    }}
                     id={`comment-input-${video.id}`}
+                    onFocus={(e) => {
+                      // Check if user needs to login for non-sample videos
+                      const videoType = video?.videoType || video?.video_type || video?.type || null;
+                      const isUserLoggedIn = !!(user && user.role !== null);
+                      
+                      if (videoType !== 'sample' && !isUserLoggedIn) {
+                        e.target.blur(); // Remove focus from input
+                        ensureLoggedInThen(() => {
+                          // After login, refocus the input
+                          setTimeout(() => {
+                            const input = document.getElementById(`comment-input-${video.id}`);
+                            if (input) input.focus();
+                          }, 100);
+                        });
+                      }
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
