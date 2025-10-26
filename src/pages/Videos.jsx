@@ -428,38 +428,29 @@ const VideoCard = React.memo(({
             flexDirection: 'column',
             gap: 2,
             justifyContent: 'flex-end',
-            minHeight: '100vh',
+            minHeight: isMaximized ? 'auto' : '100vh',
             boxSizing: 'border-box',
             pb: { xs: 2, md: 3 },
 
-            // overlay styling when maximized
+            // overlay styling when maximized - hide to prevent overlap
             ...(isMaximized && {
-              position: 'fixed',
-              left: 16,
-              right: 16,
-              bottom: 16,
-              top: 'auto',
-              width: '90%', //to calc
-              zIndex: 1500,
-              bgcolor: 'transparent', //rgba(0,0,0,0.45)
-              color: '#fff',
-              borderRadius: 2,
-              p: 2
+              display: 'none'
             })
           }}
         >
           {/* Comments panel (left) — only shown when toggled */}
-          <Paper
-            elevation={1}
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              maxHeight: { xs: 220, md: 420 },
-              overflowY: 'auto',
-              bgcolor: 'rgba(255,255,255,0.1)',
-              color: '#fff',
-            }}
-          >
+          {showComments && (
+            <Paper
+              elevation={1}
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                maxHeight: { xs: 220, md: 420 },
+                overflowY: 'auto',
+                bgcolor: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+              }}
+            >
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
               Comments ({commentCount})
             </Typography>
@@ -572,6 +563,7 @@ const VideoCard = React.memo(({
               )}
             </Box>
           </Paper>
+          )}
 
           {/* Video info */}
           <Paper
@@ -603,12 +595,38 @@ const VideoCard = React.memo(({
         </Box>
 
         {/* Center: Video */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', order: 1, justifyContent: 'center' }}>
-          <Box sx={{ width: '100%', maxWidth: 720, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          order: 1, 
+          justifyContent: 'center',
+          // When maximized, take full screen minus button space
+          ...(isMaximized && {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 1400,
+            width: '100vw',
+            height: '100vh',
+          })
+        }}>
+          <Box sx={{ 
+            width: '100%', 
+            maxWidth: isMaximized ? '100%' : 720, 
+            height: isMaximized ? '100vh' : 'auto',
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            position: 'relative'
+          }}>
             <Box
               onClick={handleVideoClick}
               sx={{
-                width: isMaximized ? '96vw' : '100%',
+                width: isMaximized ? 'calc(100vw - 120px)' : '100%', // Reserve 120px for right buttons when maximized
                 maxWidth: '100%',
                 height: isMaximized ? '100vh' : 'calc(100vh - 24px)',
                 bgcolor: 'black',
@@ -616,8 +634,11 @@ const VideoCard = React.memo(({
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: isMaximized ? 'fixed' : 'relative',
+                top: isMaximized ? 0 : 'auto',
+                left: isMaximized ? 0 : 'auto',
                 borderRadius: isMaximized ? 0 : 2,
                 overflow: 'hidden',
+                zIndex: isMaximized ? 1400 : 'auto',
               }}
             >
               <video
@@ -703,25 +724,38 @@ const VideoCard = React.memo(({
             justifyContent: 'center',
             order: { xs: 3, md: 2 },
             position: isMaximized ? 'fixed' : 'relative',
-            right: isMaximized ? 0 : 'auto',
+            right: isMaximized ? { xs: 4, md: 8 } : 'auto',
             top: isMaximized ? '50%' : 'auto',
             transform: isMaximized ? 'translateY(-50%)' : 'none',
             zIndex: isMaximized ? 1450 : 1200,
             pointerEvents: 'auto',
-            width: isMaximized ? '96px' : { xs: '100%', md: 80 },
+            width: isMaximized ? { xs: '80px', md: '100px' } : { xs: '100%', md: 80 },
+            bgcolor: isMaximized ? 'rgba(0,0,0,0.3)' : 'transparent',
+            borderRadius: isMaximized ? 2 : 0,
+            py: isMaximized ? 2 : 0,
           }}
         >
           <Stack spacing={1} alignItems="center" sx={{ justifyContent: 'center', width: '100%' }}>
-            <IconButton onClick={onPrev} size="large" aria-label="previous">
+            <IconButton 
+              onClick={onPrev} 
+              size="large" 
+              aria-label="previous"
+              sx={{ color: isMaximized ? '#fff' : 'inherit' }}
+            >
               <KeyboardArrowUp />
             </IconButton>
 
             <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton color={video.isLiked ? 'error' : 'default'} onClick={() => onLike(video.id)} aria-label="like">
+              <IconButton 
+                color={video.isLiked ? 'error' : 'default'} 
+                onClick={() => onLike(video.id)} 
+                aria-label="like"
+                sx={{ color: isMaximized && !video.isLiked ? '#fff' : undefined }}
+              >
                 <Favorite />
               </IconButton><br></br>
               <Typography variant="caption" sx={{  
-  color:'#ffffffff',
+  color: isMaximized ? '#fff' : '#ffffffff',
   fontWeight: 'bold',
   borderRadius: '12px',
   px: 1,
@@ -729,11 +763,15 @@ const VideoCard = React.memo(({
             </Box>
 
             <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton onClick={() => onCommentToggle(video.id)} aria-label="comment">
+              <IconButton 
+                onClick={() => onCommentToggle(video.id)} 
+                aria-label="comment"
+                sx={{ color: isMaximized ? '#fff' : 'inherit' }}
+              >
                 <Comment />
               </IconButton><br></br>
               <Typography variant="caption" sx={{  
-  color:'#ffffffff',
+  color: isMaximized ? '#fff' : '#ffffffff',
   fontWeight: 'bold',
   borderRadius: '12px',
   px: 1,
@@ -741,11 +779,15 @@ const VideoCard = React.memo(({
             </Box>
 
             <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton onClick={() => onShare(video.id)} aria-label="share">
+              <IconButton 
+                onClick={() => onShare(video.id)} 
+                aria-label="share"
+                sx={{ color: isMaximized ? '#fff' : 'inherit' }}
+              >
                 <Share />
               </IconButton><br></br>
-              <Typography variant="caption" sx={{  color: '#ffffffff',
-  
+              <Typography variant="caption" sx={{  
+  color: isMaximized ? '#fff' : '#ffffffff',
   fontWeight: 'bold',
   borderRadius: '12px',
   px: 1,
@@ -753,13 +795,26 @@ const VideoCard = React.memo(({
             </Box>
 
             <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton onClick={() => onSave(video.id)} aria-label="save" color={video.saved ? 'primary' : 'default'}>
+              <IconButton 
+                onClick={() => onSave(video.id)} 
+                aria-label="save" 
+                color={video.saved ? 'primary' : 'default'}
+                sx={{ color: isMaximized && !video.saved ? '#fff' : undefined }}
+              >
                 <Bookmark />
               </IconButton>
-              <Typography variant="caption">{video.saved ? t('homePage.saved', 'Saved') : t('homePage.save', 'Save')}</Typography>
+              <Typography 
+                variant="caption"
+                sx={{ color: isMaximized ? '#fff' : 'inherit' }}
+              >{video.saved ? t('homePage.saved', 'Saved') : t('homePage.save', 'Save')}</Typography>
             </Box>
 
-            <IconButton onClick={onNext} size="large" aria-label="next">
+            <IconButton 
+              onClick={onNext} 
+              size="large" 
+              aria-label="next"
+              sx={{ color: isMaximized ? '#fff' : 'inherit' }}
+            >
               <KeyboardArrowDown />
             </IconButton>
           </Stack>
