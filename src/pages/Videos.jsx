@@ -865,24 +865,19 @@ const Videos = () => {
       const s = r?.data?.data ?? r?.data;
       if (!s) return;
       
-      // Get localStorage state for anonymous users
-      const likedVideos = getLocalStorageArray('likedVideos');
-      const savedVideos = getLocalStorageArray('savedVideos');
-      
       setVideos((prev) => prev.map((v) => {
         if (v.id !== videoId) return v;
         return {
           ...v,
           likes: _extractNumber(s, ['likes', 'likes_count', 'likesCount'], v.likes ?? 0),
+          likesCount: _extractNumber(s, ['likes', 'likes_count', 'likesCount'], v.likesCount ?? 0),
           comments: _extractNumber(s, ['comments', 'comments_count', 'commentsCount'], v.comments ?? 0),
+          commentsCount: _extractNumber(s, ['comments', 'comments_count', 'commentsCount'], v.commentsCount ?? 0),
           shares: _extractNumber(s, ['shares', 'shares_count', 'sharesCount'], v.shares ?? 0),
-          // For anonymous users, prefer localStorage state; for logged-in users, use server state
-          isLiked: (!user || user.role === null) 
-            ? likedVideos.includes(videoId) 
-            : _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
-          saved: (!user || user.role === null)
-            ? savedVideos.includes(videoId)
-            : _extractBoolean(s, ['saved', 'is_saved', 'isSaved', 'isSavedFlag'], v.saved ?? false)
+          sharesCount: _extractNumber(s, ['shares', 'shares_count', 'sharesCount'], v.sharesCount ?? 0),
+          // Always use server state for logged-in users
+          isLiked: _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
+          saved: _extractBoolean(s, ['saved', 'is_saved', 'isSaved', 'isSavedFlag'], v.saved ?? false)
         };
       }));
     } catch (err) {
@@ -1103,8 +1098,8 @@ const Videos = () => {
           }
           toast.success("You liked the video");
         }
-        // Refresh to get server-side counts
-        await refreshVideoStats(videoId);
+        // Don't refresh immediately - the optimistic update is correct
+        // The server will have the authoritative count on next fetch
       } catch (err) {
         // Revert optimistic update on error
         setVideos((prev) =>
@@ -1164,8 +1159,7 @@ const Videos = () => {
           }
         }
 
-        // Refresh to get server-side counts
-        await refreshVideoStats(videoId);
+        // Don't refresh immediately - the optimistic update is correct
       } catch (err) {
         toast.error("Failed to share video");
         console.error("Share error:", err);
@@ -1204,8 +1198,7 @@ const Videos = () => {
           }
           toast.success("Saved");
         }
-        // Refresh to get server-side state
-        await refreshVideoStats(videoId);
+        // Don't refresh immediately - the optimistic update is correct
       } catch (err) {
         // Revert optimistic toggle on error
         setVideos((prev) =>
@@ -1314,7 +1307,7 @@ const Videos = () => {
         }
 
         toast.success("Comment added");
-        refreshVideoStats(videoId);
+        // Don't refresh immediately - the optimistic update is correct
       } catch (err) {
         setCommentsByVideo((prev) => ({
           ...prev,
@@ -1349,24 +1342,29 @@ const Videos = () => {
 
       const finalize = () => {
         cleanup();
-        // Wait for AuthContext to update user before running actionFn
+        // Wait longer for AuthContext to update user before running actionFn
         setTimeout(() => {
-          try { actionFn(); } catch (e) { console.error('Action after login failed', e); }
+          try { 
+            // Just run the action - the user context will be updated
+            actionFn(); 
+          } catch (e) { 
+            console.error('Action after login failed', e); 
+          }
           resolve();
-        }, 100);
+        }, 500); // Increased delay to ensure user context is updated
       };
 
       const messageListener = (event) => {
         if (event.origin !== window.location.origin) return;
         const data = event.data || {};
         if (data.type === 'OAUTH_COMPLETE' || data.type === 'LINKEDIN_AUTH_SUCCESS' || data.type === 'google-oauth-complete') {
-          setTimeout(finalize, 200);
+          setTimeout(finalize, 300);
         }
       };
 
       const storageListener = (event) => {
         if (event.key === 'accessToken' && event.newValue) {
-          setTimeout(finalize, 100);
+          setTimeout(finalize, 200);
         }
       };
 
@@ -1462,6 +1460,21 @@ const Videos = () => {
     }
     // no cleanup required — we explicitly delete header when user becomes null
   }, [user]);
+
+  // Refetch stats when user changes (login/logout) to get user-specific flags
+  useEffect(() => {
+    if (videos.length > 0) {
+      // Refresh stats for currently visible videos
+      const visibleRange = 2; // Videos before and after current
+      const startIdx = Math.max(0, currentVideoIndex - visibleRange);
+      const endIdx = Math.min(videos.length, currentVideoIndex + visibleRange + 1);
+      const visibleVideos = videos.slice(startIdx, endIdx);
+      
+      visibleVideos.forEach(v => {
+        refreshVideoStats(v.id).catch(() => {});
+      });
+    }
+  }, [user?.id, user?.userId]); // Only trigger when user ID changes (login/logout)
 
   // Refetch stats when user changes (login/logout)
   useEffect(() => {
