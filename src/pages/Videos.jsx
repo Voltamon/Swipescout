@@ -37,6 +37,19 @@ axios.defaults.withCredentials = true;
 // add API base constant (from Vite env or fallback)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
 
+// Helper function to safely get array from localStorage
+const getLocalStorageArray = (key) => {
+  try {
+    const item = localStorage.getItem(key);
+    if (!item) return [];
+    const parsed = JSON.parse(item);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.warn(`Failed to parse localStorage key "${key}":`, e);
+    return [];
+  }
+};
+
 // Helper: robustly extract numbers/booleans from different possible API field names
 const _extractNumber = (obj, candidates = [], fallback = 0) => {
   for (const k of candidates) {
@@ -789,6 +802,10 @@ const Videos = () => {
       });
 
       const results = await Promise.all(promises);
+      
+      // Get localStorage state for anonymous users
+      const likedVideos = getLocalStorageArray('likedVideos');
+      const savedVideos = getLocalStorageArray('savedVideos');
 
       // Apply stats to state (normalize returned stats fields)
       setVideos((prev) =>
@@ -801,8 +818,13 @@ const Videos = () => {
             likes: _extractNumber(s, ['likes', 'likes_count', 'likesCount'], v.likes ?? 0),
             comments: _extractNumber(s, ['comments', 'comments_count', 'commentsCount'], v.comments ?? 0),
             shares: _extractNumber(s, ['shares', 'shares_count', 'sharesCount'], v.shares ?? 0),
-            isLiked: _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
-            saved: _extractBoolean(s, ['saved', 'is_saved', 'isSaved'], v.saved ?? false),
+            // For anonymous users, prefer localStorage state; for logged-in users, use server state
+            isLiked: (!user || user.role === null)
+              ? likedVideos.includes(v.id)
+              : _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
+            saved: (!user || user.role === null)
+              ? savedVideos.includes(v.id)
+              : _extractBoolean(s, ['saved', 'is_saved', 'isSaved'], v.saved ?? false),
           };
         })
       );
@@ -818,6 +840,11 @@ const Videos = () => {
       const r = await getVideoStats(videoId);
       const s = r?.data?.data ?? r?.data;
       if (!s) return;
+      
+      // Get localStorage state for anonymous users
+      const likedVideos = getLocalStorageArray('likedVideos');
+      const savedVideos = getLocalStorageArray('savedVideos');
+      
       setVideos((prev) => prev.map((v) => {
         if (v.id !== videoId) return v;
         return {
@@ -825,8 +852,13 @@ const Videos = () => {
           likes: _extractNumber(s, ['likes', 'likes_count', 'likesCount'], v.likes ?? 0),
           comments: _extractNumber(s, ['comments', 'comments_count', 'commentsCount'], v.comments ?? 0),
           shares: _extractNumber(s, ['shares', 'shares_count', 'sharesCount'], v.shares ?? 0),
-          isLiked: _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
-          saved: _extractBoolean(s, ['saved', 'is_saved', 'isSaved', 'isSavedFlag'], v.saved ?? false)
+          // For anonymous users, prefer localStorage state; for logged-in users, use server state
+          isLiked: (!user || user.role === null) 
+            ? likedVideos.includes(videoId) 
+            : _extractBoolean(s, ['isLiked', 'is_liked', 'liked'], v.isLiked ?? false),
+          saved: (!user || user.role === null)
+            ? savedVideos.includes(videoId)
+            : _extractBoolean(s, ['saved', 'is_saved', 'isSaved', 'isSavedFlag'], v.saved ?? false)
         };
       }));
     } catch (err) {
@@ -870,8 +902,18 @@ const Videos = () => {
         };
       });
 
+      // Restore anonymous user interaction state from localStorage
+      const likedVideos = getLocalStorageArray('likedVideos');
+      const savedVideos = getLocalStorageArray('savedVideos');
+      
+      const restoredVideos = normalized.map(v => ({
+        ...v,
+        isLiked: likedVideos.includes(v.id) || v.isLiked || false,
+        saved: savedVideos.includes(v.id) || v.saved || false,
+      }));
+
       setVideos((prev) => {
-        const next = append ? [...prev, ...normalized] : normalized;
+        const next = append ? [...prev, ...restoredVideos] : restoredVideos;
         // If nothing is playing yet, start autoplay on the first video
         if (!playingVideoId && next.length > 0) {
           setPlayingVideoId(next[0].id);
@@ -999,35 +1041,62 @@ const Videos = () => {
 
   const handleLike = async (videoId) => {
     await handleActionWithAnonymousUser(async (videoId) => {
+      const target = videos.find((v) => v.id === videoId);
+      const wasLiked = target?.isLiked || false;
+      
       // Optimistic update
       setVideos((prev) =>
         prev.map((v) =>
           v.id === videoId
-            ? { ...v, isLiked: !v.isLiked, likes: v.isLiked ? v.likes - 1 : v.likes + 1 }
+            ? { 
+                ...v, 
+                isLiked: !wasLiked, 
+                likes: wasLiked ? Math.max(0, (v.likes || 0) - 1) : (v.likes || 0) + 1,
+                likesCount: wasLiked ? Math.max(0, (v.likesCount || 0) - 1) : (v.likesCount || 0) + 1
+              }
             : v
         )
       );
 
       try {
-        const target = videos.find((v) => v.id === videoId);
-        if (target && target.isLiked) {
+        if (wasLiked) {
           await unlikeVideo(videoId);
+          // Track anonymous unlike in localStorage
+          if (!user || user.role === null) {
+            const likedVideos = getLocalStorageArray('likedVideos');
+            localStorage.setItem('likedVideos', JSON.stringify(likedVideos.filter(id => id !== videoId)));
+          }
           toast.success("Removed like");
         } else {
           await likeVideo(videoId);
+          // Track anonymous like in localStorage
+          if (!user || user.role === null) {
+            const likedVideos = getLocalStorageArray('likedVideos');
+            if (!likedVideos.includes(videoId)) {
+              likedVideos.push(videoId);
+              localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
+            }
+          }
           toast.success("You liked the video");
         }
-        refreshVideoStats(videoId);
+        // Refresh to get server-side counts
+        await refreshVideoStats(videoId);
       } catch (err) {
         // Revert optimistic update on error
         setVideos((prev) =>
           prev.map((v) =>
             v.id === videoId
-              ? { ...v, isLiked: !v.isLiked, likes: v.isLiked ? v.likes + 1 : v.likes - 1 }
+              ? { 
+                  ...v, 
+                  isLiked: wasLiked, 
+                  likes: wasLiked ? (v.likes || 0) + 1 : Math.max(0, (v.likes || 0) - 1),
+                  likesCount: wasLiked ? (v.likesCount || 0) + 1 : Math.max(0, (v.likesCount || 0) - 1)
+                }
               : v
           )
         );
         toast.error("Failed to update like");
+        console.error("Like error:", err);
       }
     }, videoId);
   };
@@ -1054,40 +1123,72 @@ const Videos = () => {
         // Optimistically increment the share count
         setVideos((prev) =>
           prev.map((v) =>
-            v.id === videoId ? { ...v, shares: (v.shares || 0) + 1 } : v
+            v.id === videoId ? { 
+              ...v, 
+              shares: (v.shares || 0) + 1,
+              sharesCount: (v.sharesCount || 0) + 1
+            } : v
           )
         );
+        
+        // Track anonymous share in localStorage
+        if (!user || user.role === null) {
+          const sharedVideos = getLocalStorageArray('sharedVideos');
+          if (!sharedVideos.includes(videoId)) {
+            sharedVideos.push(videoId);
+            localStorage.setItem('sharedVideos', JSON.stringify(sharedVideos));
+          }
+        }
 
-        refreshVideoStats(videoId);
+        // Refresh to get server-side counts
+        await refreshVideoStats(videoId);
       } catch (err) {
         toast.error("Failed to share video");
+        console.error("Share error:", err);
       }
     }, videoId);
   };
 
   const handleSave = async (videoId) => {
     await handleActionWithAnonymousUser(async (videoId) => {
+      const target = videos.find((v) => v.id === videoId);
+      const wasSaved = target?.saved || false;
+      
       // Optimistic toggle
       setVideos((prev) =>
-        prev.map((v) => (v.id === videoId ? { ...v, saved: !v.saved } : v))
+        prev.map((v) => (v.id === videoId ? { ...v, saved: !wasSaved } : v))
       );
 
       try {
-        const target = videos.find((v) => v.id === videoId);
-        if (target && target.saved) {
+        if (wasSaved) {
           await unsaveVideo(videoId);
+          // Track anonymous unsave in localStorage
+          if (!user || user.role === null) {
+            const savedVideos = getLocalStorageArray('savedVideos');
+            localStorage.setItem('savedVideos', JSON.stringify(savedVideos.filter(id => id !== videoId)));
+          }
           toast.success("Removed from saved");
         } else {
           await saveVideo(videoId);
+          // Track anonymous save in localStorage
+          if (!user || user.role === null) {
+            const savedVideos = getLocalStorageArray('savedVideos');
+            if (!savedVideos.includes(videoId)) {
+              savedVideos.push(videoId);
+              localStorage.setItem('savedVideos', JSON.stringify(savedVideos));
+            }
+          }
           toast.success("Saved");
         }
-        refreshVideoStats(videoId);
+        // Refresh to get server-side state
+        await refreshVideoStats(videoId);
       } catch (err) {
         // Revert optimistic toggle on error
         setVideos((prev) =>
-          prev.map((v) => (v.id === videoId ? { ...v, saved: !v.saved } : v))
+          prev.map((v) => (v.id === videoId ? { ...v, saved: wasSaved } : v))
         );
         toast.error("Failed to save");
+        console.error("Save error:", err);
       }
     }, videoId);
   };
