@@ -8,6 +8,20 @@ const api = axios.create({
 });
 
 let token;
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.request.use(
   (config) => {
     token = localStorage.getItem('accessToken');
@@ -15,6 +29,78 @@ api.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If error is 401 and we haven't already tried to refresh
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If already refreshing, queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(token => {
+            originalRequest.headers['Authorization'] = 'Bearer ' + token;
+            return api(originalRequest);
+          })
+          .catch(err => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const refreshToken = localStorage.getItem('refreshToken');
+      
+      if (!refreshToken) {
+        // No refresh token, redirect to login
+        processQueue(error, null);
+        isRefreshing = false;
+        localStorage.clear();
+        window.location.href = '/';
+        return Promise.reject(error);
+      }
+
+      try {
+        const response = await axios.post(`${API_BASE_URL}/auth/refresh-token`, {
+          refreshToken
+        });
+
+        const { accessToken, refreshToken: newRefreshToken, accessExpiresIn, refreshExpiresIn } = response.data;
+        
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem('accessExpiresTime', (Date.now() + (accessExpiresIn * 1000)).toString());
+        if (refreshExpiresIn) {
+          localStorage.setItem('refreshExpiresTime', (Date.now() + (refreshExpiresIn * 1000)).toString());
+        }
+
+        api.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
+        originalRequest.headers['Authorization'] = 'Bearer ' + accessToken;
+        
+        processQueue(null, accessToken);
+        isRefreshing = false;
+        
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        isRefreshing = false;
+        localStorage.clear();
+        window.location.href = '/';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    // If 403, user doesn't have permission
+    if (error.response?.status === 403) {
+      console.error('Access forbidden:', error.response.data);
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 // Auth

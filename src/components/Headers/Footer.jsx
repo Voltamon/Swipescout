@@ -78,6 +78,7 @@ const Footer = () => {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <FooterLink to="/about">{t('footer.aboutUs')}</FooterLink>
             <FooterLink to="/how-it-works">{t('footer.howItWorks')}</FooterLink>
+            <FooterLink to="/blog">{t('footer.blog')}</FooterLink>
             <FooterLink to="/FAQs">{t('footer.faq')}</FooterLink>
             <FooterLink to="/contact">{t('footer.contactUs')}</FooterLink>
             <FooterLink to="/customer-support">{t('footer.customerSupport')}</FooterLink>

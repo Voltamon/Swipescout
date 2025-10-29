@@ -28,6 +28,9 @@ import NotificationsPage from "../pages/NotificationsPage";
 import VideoUpload from "../pages/VideoUpload";
 import VideoEditPage from "../pages/VideoEditPage";
 import VideosPage from "../pages/VideosPage";
+import CareerAdvicePage from "../pages/CareerAdvicePage";
+import PersonalityTestPage from "../pages/PersonalityTestPage";
+import SkillGapAnalysisPage from "../pages/SkillGapAnalysisPage";
 
 import { useTranslation } from "react-i18next";
 
@@ -152,6 +155,33 @@ export const jobseekerTabCategories = () => {
           component: NotificationSettingsPage,
           path: "notification-settings",
           description: "Manage notification settings."
+        }
+      ]
+    },
+    {
+      key: "resources",
+      label: t("jobseekerTabs.resources", "Resources"),
+      tabs: [
+        {
+          label: t("jobseekerTabs.careerAdvice", "Career Advice"),
+          icon: { name: "BookOpen" },
+          component: CareerAdvicePage,
+          path: "career-advice",
+          description: "Browse career tips and advice."
+        },
+        {
+          label: t("jobseekerTabs.personalityTest", "Personality Test"),
+          icon: { name: "Psychology" },
+          component: PersonalityTestPage,
+          path: "personality-test",
+          description: "Discover your personality type and ideal career match."
+        },
+        {
+          label: t("jobseekerTabs.skillGap", "Skill Gap Analysis"),
+          icon: { name: "TrendingUp" },
+          component: SkillGapAnalysisPage,
+          path: "skill-gap-analysis",
+          description: "Identify and bridge your skills gaps."
         }
       ]
     },

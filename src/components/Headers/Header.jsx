@@ -198,6 +198,7 @@ const Header = () => {
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, ml: 'auto' }}>
           <NavButton component={Link} to="/">{t('navigation.home')}</NavButton>
           <NavButton onClick={() => navigate('/videos/all')}>{t('header.exploreVideos')}</NavButton>
+          <NavButton component={Link} to="/blog">{t('navigation.blog')}</NavButton>
           <NavButton component={Link} to="/pricing">{t('navigation.pricing')}</NavButton>
           <NavButton component={Link} to="/about">{t('navigation.about')}</NavButton>
           <NavButton component={Link} to="/contact">{t('navigation.contact')}</NavButton>

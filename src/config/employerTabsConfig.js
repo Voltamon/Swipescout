@@ -186,6 +186,32 @@ export const getEmployerTabCategories = t => [
     ]
   },
   {
+    key: "resources",
+    label: t("employerTabs.categories.resources", "Resources"),
+    tabs: [
+      {
+        label: t("employerTabs.tabs.hiringTips", "Hiring Tips"),
+        icon: { name: "BookOpen" },
+        path: "/blog",
+        externalLink: true,
+        description: t(
+          "employerTabs.descriptions.hiringTips",
+          "Browse hiring tips and best practices."
+        )
+      },
+      {
+        label: t("employerTabs.tabs.aboutUs", "About Us"),
+        icon: { name: "Info" },
+        path: "/about",
+        externalLink: true,
+        description: t(
+          "employerTabs.descriptions.aboutUs",
+          "Learn about SwipeScout."
+        )
+      }
+    ]
+  },
+  {
     key: "communication",
     label: t("employerTabs.categories.communication", "Communication"),
     tabs: [

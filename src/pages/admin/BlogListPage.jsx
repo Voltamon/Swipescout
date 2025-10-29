@@ -122,6 +122,8 @@ const BlogListPage = () => {
       setSelectedBlog(null);
     } catch (error) {
       console.error('Failed to delete blog:', error);
+      const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Failed to delete blog post';
+      alert(errorMessage);
     }
   };
 
@@ -132,6 +134,8 @@ const BlogListPage = () => {
       fetchBlogs();
     } catch (error) {
       console.error('Failed to update blog status:', error);
+      const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Failed to update blog status';
+      alert(errorMessage);
     }
   };
 

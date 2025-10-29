@@ -111,6 +111,10 @@ import "./i18n/index.js"; // Import i18n configuration
 import SharePage from "./pages/SharePage"; // Import the new SharePage component
 import VideosFeed from "./pages/VideosFeed"; // Import the new SharePage component
 
+// Blog Pages
+import PublicBlogPage from "./pages/PublicBlogPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
+
 
 
 // Initialize once (put this in a separate config file)
@@ -156,6 +160,10 @@ function App() {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
+            
+            {/* Blog Routes */}
+            <Route path="/blog" element={<PublicBlogPage />} />
+            <Route path="/blog/:slug" element={<BlogDetailPage />} />
             
             
             <Route path="/how-it-works" element={<HowItWorksPage />} />

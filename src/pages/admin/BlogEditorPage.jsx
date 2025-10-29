@@ -69,6 +69,9 @@ const BlogEditorPage = () => {
       });
     } catch (error) {
       console.error('Failed to fetch blog:', error);
+      const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Failed to load blog post';
+      alert(errorMessage);
+      navigate('/admin-tabs?group=blog&tab=blogs');
     } finally {
       setLoading(false);
     }
@@ -111,7 +114,8 @@ const BlogEditorPage = () => {
       navigate('/admin-tabs?group=blog&tab=blogs');
     } catch (error) {
       console.error('Failed to save blog:', error);
-      alert('Failed to save blog post. Please try again.');
+      const errorMessage = error?.response?.data?.error || error?.response?.data?.message || 'Failed to save blog post. Please try again.';
+      alert(errorMessage);
     } finally {
       setSaving(false);
     }
