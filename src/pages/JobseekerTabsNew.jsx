@@ -5,55 +5,64 @@ import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getEmployerTabCategories } from '@/config/employerTabsConfig';
-import { getEmployerStats } from '@/services/api';
+import { jobseekerTabCategories } from '@/config/jobseekerTabsConfig';
+import { getJobseekerStats } from '@/services/api';
 import {
   Home,
   Search,
   Film as VideoLibrary,
-  Building2,
-  PlusCircle,
-  BarChart3,
-  Bell,
+  Person,
+  CalendarDays as CalendarToday,
+  Bell as Notifications,
   Settings,
-  Edit,
+  Bookmark,
+  Favorite,
+  // lucide-react doesn't provide a `Dashboard` export; we'll use Home as a safe fallback below
+  BarChart3 as Analytics,
+  CloudUpload,
+  FileText,
   MessageSquare,
-  HelpCircle,
-  Users,
-  Briefcase,
   Eye,
-  UserPlus,
-  TrendingUp,
-  FileText
+  ThumbsUp as ThumbUp,
+  Briefcase,
+  Mail,
+  TrendingUp
 } from 'lucide-react';
- 
-const EmployerTabs = () => {
+
+const JobseekerTabs = () => {
+  // Fallback: use Home icon as dashboard icon since lucide-react doesn't export a `Dashboard` symbol
+  const DashboardIcon = Home;
   const { t } = useTranslation();
   const { user, role } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [stats, setStats] = useState({
-    activeJobs: 0,
-    newApplications: 0,
-    companyVideos: 0,
+    activeApplications: 0,
+    upcomingInterviews: 0,
+    myVideos: 0,
+    savedJobs: 0,
     profileViews: 0,
-    shortlisted: 0,
-    interviewsScheduled: 0
+    matches: 0,
+    applications: 0,
+    unreadMessages: 0
   });
 
   const tabCategoryKey = searchParams.get('group') || 'dashboard';
   const tabParam = searchParams.get('tab') || 'overview';
 
-  const employerTabCategories = getEmployerTabCategories(t);
+  const jobseekerTabCategoriesData = jobseekerTabCategories();
 
-  const tabCategory = employerTabCategories.find((cat) => cat.key === tabCategoryKey) || employerTabCategories[0];
+  const tabCategory =
+    jobseekerTabCategoriesData.find((cat) => cat.key === tabCategoryKey) ||
+    jobseekerTabCategoriesData[0];
+
   const currentTab = tabCategory.tabs.find((tab) => tab.path === tabParam) || tabCategory.tabs[0];
 
   useEffect(() => {
     if (user) {
       const primary = Array.isArray(role) ? role[0] : role;
-      if (primary && primary !== 'employer' && primary !== 'recruiter') {
-        if (primary === 'job_seeker' || primary === 'employee') navigate('/jobseeker-tabs');
+      if (primary && primary !== 'job_seeker' && primary !== 'employee') {
+        if (primary === 'employer' || primary === 'recruiter') navigate('/employer-tabs');
         else if (primary === 'admin') navigate('/admin-dashboard');
         else navigate('/');
       }
@@ -63,12 +72,12 @@ const EmployerTabs = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const statsResponse = await getEmployerStats();
+        const statsResponse = await getJobseekerStats();
         if (statsResponse && statsResponse.data) {
           setStats(statsResponse.data);
         }
       } catch (error) {
-        console.error('Failed to fetch employer stats:', error);
+        console.error('Failed to fetch jobseeker stats:', error);
       }
     };
 
@@ -80,25 +89,25 @@ const EmployerTabs = () => {
     Search: Search,
     Work: Briefcase,
     VideoLibrary: VideoLibrary,
-    Person: Users,
-    PostAdd: PlusCircle,
-    Analytics: BarChart3,
-    Notifications: Bell,
+    Person: Person,
+    CalendarToday: CalendarToday,
+    Notifications: Notifications,
     Settings: Settings,
-    Business: Building2,
-    Edit: Edit,
+    Bookmark: Bookmark,
+    Favorite: Favorite,
+    Dashboard: DashboardIcon,
     ChatIcon: MessageSquare,
-    HelpIcon: HelpCircle,
+    AnalyticsIcon: Analytics,
   };
 
   // Build navigation items from config
-  const navigationItems = employerTabCategories.flatMap((category, catIndex) => {
+  const navigationItems = jobseekerTabCategoriesData.flatMap((category, catIndex) => {
     const items = category.tabs.map((tab) => {
-      const IconComponent = iconMap[tab.icon.name] || BarChart3;
+      const IconComponent = iconMap[tab.icon.name] || DashboardIcon;
       return {
         label: tab.label,
         icon: IconComponent,
-        path: `/employer-tabs?group=${category.key}&tab=${tab.path}`,
+        path: `/jobseeker-tabs?group=${category.key}&tab=${tab.path}`,
       };
     });
 
@@ -123,9 +132,7 @@ const EmployerTabs = () => {
     path: '/',
   });
 
-  const isEmployer = Array.isArray(role) ? role.includes('employer') || role.includes('recruiter') : role === 'employer';
-
-  if (!user || !isEmployer) {
+  if (!user || !(Array.isArray(role) ? role.includes('job_seeker') || role.includes('employee') : role === 'job_seeker' || role === 'employee')) {
     return null;
   }
 
@@ -135,65 +142,65 @@ const EmployerTabs = () => {
         {/* Welcome Section */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-            Welcome back, {user?.companyName || 'Employer'}! 🏢
+            Welcome back, {user?.firstName || 'Job Seeker'}! 👋
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            Manage your hiring process, company profile, and find the best talent for your team.
+            Manage your job search, profile, and career opportunities all in one place.
           </p>
         </div>
 
         {/* Quick Stats Cards - OpenVC Style */}
         {tabParam === 'overview' && (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-                <Briefcase className="h-4 w-4 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats?.activeJobs ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  <TrendingUp className="inline h-3 w-3 mr-1" />
-                  Currently hiring positions
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-cyan-500 hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">New Applications</CardTitle>
-                <FileText className="h-4 w-4 text-cyan-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats?.newApplications ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Pending review
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Shortlisted</CardTitle>
-                <UserPlus className="h-4 w-4 text-orange-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats?.shortlisted ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Candidates in pipeline
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
+            <Card className="border-l-4 border-l-purple-500">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-                <Eye className="h-4 w-4 text-blue-600" />
+                <Eye className="h-4 w-4 text-purple-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats?.profileViews ?? 0}</div>
+                <div className="text-2xl font-bold">{stats?.profileViews ?? stats?.profile_views ?? 0}</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Company visibility
+                  <TrendingUp className="inline h-3 w-3 mr-1" />
+                  +12% from last month
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-cyan-500">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Matches</CardTitle>
+                <ThumbUp className="h-4 w-4 text-cyan-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.matches ?? 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Companies interested in you
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-orange-500">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Applications</CardTitle>
+                <Briefcase className="h-4 w-4 text-orange-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.applications ?? stats?.applications_count ?? 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Active job applications
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Unread Messages</CardTitle>
+                <Mail className="h-4 w-4 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.unreadMessages ?? stats?.unread_messages ?? 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  New messages waiting
                 </p>
               </CardContent>
             </Card>
@@ -204,7 +211,7 @@ const EmployerTabs = () => {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              {React.createElement(iconMap[currentTab.icon.name] || BarChart3, {
+              {React.createElement(iconMap[currentTab.icon.name] || DashboardIcon, {
                 className: 'h-6 w-6 text-purple-600',
               })}
               <div>
@@ -224,5 +231,4 @@ const EmployerTabs = () => {
   );
 };
 
-export default EmployerTabs;
-
+export default JobseekerTabs;
