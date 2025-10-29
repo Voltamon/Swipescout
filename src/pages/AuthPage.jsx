@@ -46,7 +46,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       case 'employee': return '/jobseeker-tabs';
       case 'employer':
       case 'recruiter': return '/employer-tabs';
-      case 'admin': return '/admin-dashboard';
+      case 'admin': return '/admin-tabs';
       default: return '/';
     }
   };

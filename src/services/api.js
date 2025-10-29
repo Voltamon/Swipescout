@@ -219,5 +219,23 @@ export const getVideoAIAnalysis = (videoId) => api.get(`/ai/video-analysis/${vid
 export const generateAIInterviewQuestions = (userId, jobId) => api.post('/ai/generate-interview-questions', { userId, jobId });
 export const getVideoStats = (id) => api.get(`/videos/${id}/stats`);
 
+// Admin
+export const getAdminStats = () => api.get('/admin/stats');
+export const getPlatformAnalytics = (params) => api.get('/admin/analytics', { params });
+export const getUsers = (params) => api.get('/admin/users', { params });
+export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
+export const banUser = (id, data) => api.post(`/admin/users/${id}/ban`, data);
+export const getReportedContent = (params) => api.get('/admin/reports', { params });
+export const handleReport = (id, data) => api.post(`/admin/reports/${id}/action`, data);
+
+// Blog
+export const getBlogs = (params) => api.get('/blogs', { params });
+export const getBlog = (id) => api.get(`/blogs/${id}`);
+export const createBlog = (data) => api.post('/blogs', data);
+export const updateBlog = (id, data) => api.put(`/blogs/${id}`, data);
+export const deleteBlog = (id) => api.delete(`/blogs/${id}`);
+export const getBlogCategories = () => api.get('/blogs/categories');
+export const getBlogTags = () => api.get('/blogs/tags');
+
 export default api;
 

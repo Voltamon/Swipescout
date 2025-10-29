@@ -97,6 +97,7 @@ import CustomerSupportPage from "./pages/CustomerSupportPage";
 import ContactPage from "./pages/ContactPage";
 import EmployerTabs from "./pages/EmployerTabs";
 import JobseekerTabs from "./pages/JobseekerTabs";
+import AdminTabs from "./pages/AdminTabs";
 
 // New enhanced pages
 import InterviewPage from "./pages/InterviewPage";
@@ -189,6 +190,7 @@ function App() {
             {/* Enhanced Tab Routes - Main entry points after login */}
             <Route path="/employer-tabs" element={<EmployerTabs />} />
             <Route path="/jobseeker-tabs" element={<JobseekerTabs />} />
+            <Route path="/admin-tabs" element={<AdminTabs />} />
 
             {/* Private Routes */}
             <Route element={<ProtectedRoute />}>

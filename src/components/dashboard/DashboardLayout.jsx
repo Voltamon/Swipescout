@@ -3,8 +3,8 @@ import { cn } from '@/lib/utils';
 import CollapsibleSidebar from './CollapsibleSidebar';
 import BreadcrumbNav from './BreadcrumbNav';
 import { Bell, Settings, User, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/UI/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
+} from '@/components/UI/dropdown-menu';
+import { Badge } from '@/components/UI/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 

@@ -33,13 +33,13 @@ import {
     Users,
     BarChart3,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card';
+import { Button } from '@/components/UI/button';
+import { Badge } from '@/components/UI/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/table';
+import { ScrollArea } from '@/components/UI/scroll-area';
 import themeColors from '@/config/theme-colors';
 
 // Register ChartJS components
