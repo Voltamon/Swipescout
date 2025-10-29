@@ -1,31 +1,35 @@
 import React from 'react';
-import './terms.css';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { FileText, Calendar, Building2 } from 'lucide-react';
 
 const TermsOfService = ({ isOpen, onClose }) => {
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  if (!isOpen) return null;
-
   return (
-    <div className="terms-overlay" onClick={handleOverlayClick}>
-      <div className="terms-popup">
-        <div className="terms-header">
-          <h2>Terms of Service</h2>
-          <button className="terms-close-btn" onClick={onClose} aria-label="Close Terms of Service">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b sticky top-0 bg-white z-10">
+          <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-2">
+            <FileText className="h-8 w-8 text-purple-600" />
+            Terms of Service
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className="terms-content">
-          <div className="terms-meta">
-            <p><strong>Effective Date:</strong> 19 August 2025</p>
-            <p><strong>Company:</strong> SwipeScout Ltd, United Kingdom</p>
+        <div className="px-6 pb-6 space-y-6">
+          {/* Meta Information */}
+          <div className="flex flex-wrap gap-3 p-4 bg-gradient-to-r from-purple-50 to-cyan-50 rounded-lg border border-purple-100">
+            <Badge variant="outline" className="flex items-center gap-2 py-2 px-3">
+              <Calendar className="h-4 w-4" />
+              <span><strong>Effective Date:</strong> 19 August 2025</span>
+            </Badge>
+            <Badge variant="outline" className="flex items-center gap-2 py-2 px-3">
+              <Building2 className="h-4 w-4" />
+              <span><strong>Company:</strong> SwipeScout Ltd, United Kingdom</span>
+            </Badge>
           </div>
 
           <section className="terms-section">
