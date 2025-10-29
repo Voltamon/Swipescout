@@ -1,55 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Box,
-    Grid,
-    Typography,
-    Card,
-    CardMedia,
-    CardContent,
-    IconButton,
-    Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-    Button,
-    Chip,
-    CircularProgress,
-    useTheme,
-    TextField,
-    InputAdornment,
-    Avatar,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Snackbar,
-    Alert,
-    Menu,
-    MenuItem,
-    Container
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import {
-    PlayArrow,
-    FilterList,
-    Search,
-    Business,
-    LocationOn,
-    People,
-    Language,
-    Category,
-    Favorite,
-    FavoriteBorder,
-    Share,
-    Bookmark,
-    BookmarkBorder,
-    Comment,
-    Visibility,
-    MoreVert,
-    Handshake as Connect
-} from '@mui/icons-material';
 import { 
     getEmployerPublicVideos, 
     likeVideo, 
@@ -62,56 +11,55 @@ import {
     connectWithCandidate
 } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
-
-const CompanyVideosContainer = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(3),
-    backgroundColor: theme.palette.background.default,
-    minHeight: 'calc(100vh - 56px)',
-}));
-
-const VideoCard = styled(Card)(({ theme }) => ({
-    position: 'relative',
-    cursor: 'pointer',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-    '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: theme.shadows[8],
-    },
-}));
-
-const PlayButton = styled(IconButton)(({ theme }) => ({
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    color: 'white',
-    '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    },
-}));
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import {
+    Play,
+    Filter,
+    Search,
+    Building2,
+    MapPin,
+    Users,
+    Globe,
+    Tag,
+    Heart,
+    Bookmark,
+    BookmarkCheck,
+    Share2,
+    MessageCircle,
+    Eye,
+    MoreVertical,
+    Handshake,
+    Loader2,
+    PlayCircle
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors';
 
 export default function CompanyVideos() {
-    const theme = useTheme();
     const { user } = useAuth();
+    const { toast } = useToast();
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedLocation, setSelectedLocation] = useState('all');
     const [selectedCompanySize, setSelectedCompanySize] = useState('all');
-    const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [videoDialog, setVideoDialog] = useState(false);
     const [commentDialog, setCommentDialog] = useState({ open: false, video: null });
     const [newComment, setNewComment] = useState('');
     const [comments, setComments] = useState([]);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [menuVideo, setMenuVideo] = useState(null);
     const [likedVideos, setLikedVideos] = useState(new Set());
     const [savedVideos, setSavedVideos] = useState(new Set());
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
     const categories = [
         { value: 'all', label: 'All Categories' },
@@ -150,10 +98,10 @@ export default function CompanyVideos() {
             setVideos(response.data.videos || []);
         } catch (error) {
             console.error('Error fetching company videos:', error);
-            setSnackbar({
-                open: true,
-                message: 'Failed to load company videos',
-                severity: 'error'
+            toast({
+                title: "Error",
+                description: "Failed to load company videos",
+                variant: "destructive",
             });
         } finally {
             setLoading(false);
@@ -181,10 +129,10 @@ export default function CompanyVideos() {
             }
         } catch (error) {
             console.error('Error liking video:', error);
-            setSnackbar({
-                open: true,
-                message: 'Failed to like video',
-                severity: 'error'
+            toast({
+                title: "Error",
+                description: "Failed to like video",
+                variant: "destructive",
             });
         }
     };
@@ -199,26 +147,23 @@ export default function CompanyVideos() {
                     newSet.delete(videoId);
                     return newSet;
                 });
-                setSnackbar({
-                    open: true,
-                    message: 'Video removed from saved list',
-                    severity: 'info'
+                toast({
+                    description: "Video removed from saved list",
                 });
             } else {
                 await saveVideo(videoId);
                 setSavedVideos(prev => new Set(prev).add(videoId));
-                setSnackbar({
-                    open: true,
-                    message: 'Video saved successfully',
-                    severity: 'success'
+                toast({
+                    title: "Saved!",
+                    description: "Video saved successfully",
                 });
             }
         } catch (error) {
             console.error('Error saving video:', error);
-            setSnackbar({
-                open: true,
-                message: 'Failed to save video',
-                severity: 'error'
+            toast({
+                title: "Error",
+                description: "Failed to save video",
+                variant: "destructive",
             });
         }
     };
@@ -226,18 +171,29 @@ export default function CompanyVideos() {
     const handleShare = async (video, event) => {
         event.stopPropagation();
         try {
-            await navigator.share({
-                title: video.title,
-                text: `Check out this company video from ${video.company}`,
-                url: window.location.href
-            });
+            if (navigator.share) {
+                await navigator.share({
+                    title: video.title,
+                    text: `Check out this company video from ${video.company}`,
+                    url: window.location.href
+                });
+            } else {
+                await navigator.clipboard.writeText(window.location.href);
+                toast({
+                    description: "Link copied to clipboard",
+                });
+                setSnackbar({
+                    open: true,
+                    message: 'Link copied to clipboard',
+                    severity: 'success'
+                });
+            }
         } catch (error) {
-            // Fallback to copying to clipboard
-            navigator.clipboard.writeText(window.location.href);
-            setSnackbar({
-                open: true,
-                message: 'Link copied to clipboard',
-                severity: 'success'
+            console.error('Error sharing video:', error);
+            toast({
+                title: "Error",
+                description: "Failed to share the video",
+                variant: "destructive",
             });
         }
     };
@@ -684,5 +640,5 @@ export default function CompanyVideos() {
             </CompanyVideosContainer>
         </Container>
     );
-}
+}   
 

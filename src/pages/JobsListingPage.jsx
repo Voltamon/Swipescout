@@ -1,826 +1,388 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Button,
-  Chip,
-  TextField,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Pagination,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  IconButton,
-  Divider,
-  Paper,
-  Skeleton,
-  styled,
-  useTheme,
-  useMediaQuery
-} from '@mui/material';
-import {
-  Search as SearchIcon,
-  LocationOn as LocationIcon,
-  Work as WorkIcon,
-  PlayArrow as PlayArrowIcon,
-  Pause as PauseIcon,
-  Close as CloseIcon,
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-  Share as ShareIcon,
-  Business as BusinessIcon,
-  AttachMoney as MoneyIcon,
-  FilterList as FilterListIcon,
-  Sort as SortIcon,
-  VolumeOff as VolumeOffIcon,
-  VolumeUp as VolumeUpIcon
-} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
-import { getAllJobs, getJobById, getEmployerProfile, getCategories ,getAllJobsPosted } from '../services/api';
+import { getAllJobsPosted, getCategories } from '../services/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Search,
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Clock,
+  Eye,
+  Edit,
+  Trash2,
+  Users,
+  Calendar,
+  TrendingUp,
+  Loader2,
+  Plus,
+  Filter,
+  PlayCircle
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors';
 
-// Styled components
-const PageContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
-  minHeight: '100vh',
-  padding: theme.spacing(3),
-  width: '100%'
-}));
-
-const SearchPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  width: '100%'
-}));
-
-const JobCard = styled(Card)(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: theme.spacing(1),
-  overflow: 'hidden',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[10],
-  }
-}));
-
-const JobCardMedia = styled(CardMedia)(({ theme }) => ({
-  height: 0,
-  paddingTop: '56.25%',
-  position: 'relative',
-  backgroundColor: theme.palette.grey[200],
-  cursor: 'pointer',
-  '&:hover .video-controls': {
-    opacity: 1
-  }
-}));
-
-const VideoPlayButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  color: '#fff',
-  '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  }
-}));
-
-const VideoControls = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(1),
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  opacity: 0,
-  transition: 'opacity 0.3s ease',
-}));
-
-const JobCardContent = styled(CardContent)(({ theme }) => ({
-  flexGrow: 1,
-}));
-
-const CategoryChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.secondary.light,
-  color: theme.palette.secondary.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.secondary.main,
-  }
-}));
-
-const SkillChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.primary.light,
-  color: theme.palette.primary.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.primary.main,
-  }
-}));
-
-const VideoDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialog-paper': {
-    borderRadius: theme.spacing(1),
-    overflow: 'hidden',
-    width: '100%',
-    maxWidth: '800px'
-  }
-}));
-
-const VideoDialogContent = styled(DialogContent)(({ theme }) => ({
-  padding: 0,
-  backgroundColor: '#000',
-  position: 'relative',
-}));
-
-const JobsListingPage = () => {
-  const theme = useTheme();
+export default function JobsListingPage() {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const {role} =useAuth;
-  
-  // State
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [locationFilter, setLocationFilter] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [videoDialog, setVideoDialog] = useState({
-    open: false,
-    videoUrl: '',
-    title: '',
-    isPlaying: false,
-    isMuted: true
-  });
-  const [favorites, setFavorites] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [categories, setCategories] = useState([]);
-  const [locations, setLocations] = useState([]);
-  
-  // Refs
-  const videoRef = React.useRef(null);
-  const hoverVideoRefs = React.useRef({});
-  
-  // Constants
-  const jobsPerPage = 9;
-  
-  // Fetch jobs and categories
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        let  jobsResponse;
-        // Fetch jobs
-        if (role=="job_seeker")
-        {
-jobsResponse = await getAllJobsPosted({
-          page,
-          limit: jobsPerPage,
-          search: searchQuery,
-          location: locationFilter,
-          category: categoryFilter,
-          sort: sortBy
-        });
-        }
-        else
-         jobsResponse = await getAllJobs({
-          page,
-          limit: jobsPerPage,
-          search: searchQuery,
-          location: locationFilter,
-          category: categoryFilter,
-          sort: sortBy
-        });
-        
-        // Fetch categories
-        const categoriesResponse = await getCategories();
-        
-        setJobs(jobsResponse.data.jobs);
-        setTotalPages(Math.ceil(jobsResponse.data.total / jobsPerPage));
-        setCategories(categoriesResponse.data.categories);
-        
-        // Extract unique locations from jobs
-        const uniqueLocations = [...new Set(jobsResponse.data.jobs.map(job => job.location).filter(Boolean))];
-        setLocations(uniqueLocations);
-        
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, [page, searchQuery, locationFilter, categoryFilter, sortBy]);
-  
-  // Apply filters
-  useEffect(() => {
-    let filtered = [...jobs];
-    
-    if (searchQuery) {
-      filtered = filtered.filter(job => 
-        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.company.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    
-    if (locationFilter) {
-      filtered = filtered.filter(job => 
-        job.location.toLowerCase().includes(locationFilter.toLowerCase())
-      );
-    }
-    
-    if (categoryFilter) {
-      filtered = filtered.filter(job => 
-        job.categoryRelations && job.categoryRelations.some(categoryRel => 
-          categoryRel.category_id === categoryFilter
-        )
-      );
-    }
-    
-    // Sort jobs
-    switch (sortBy) {
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at));
-        break;
-      case 'salary-high':
-        filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
-        break;
-      case 'salary-low':
-        filtered.sort((a, b) => (a.salary_min || 0) - (b.salary_min || 0));
-        break;
-      default:
-        break;
-    }
-    
-    setFilteredJobs(filtered);
-  }, [jobs, searchQuery, locationFilter, categoryFilter, sortBy]);
-  
-  // Handle search
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setPage(1);
-  };
-  
-  // Handle location filter
-  const handleLocationFilter = (e) => {
-    setLocationFilter(e.target.value);
-    setPage(1);
-  };
-  
-  // Handle category filter
-  const handleCategoryFilter = (e) => {
-    setCategoryFilter(e.target.value);
-    setPage(1);
-  };
-  
-  // Handle sort change
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-  };
-  
-  // Handle page change
-  const handlePageChange = (event, value) => {
-    setPage(value);
-    window.scrollTo(0, 0);
-  };
-  
-  // Open video dialog
-  const openVideoDialog = (videoUrl, title) => {
-    setVideoDialog({
-      open: true,
-      videoUrl,
-      title,
-      isPlaying: true,
-      isMuted: true
-    });
-  };
-  
-  // Close video dialog
-  const closeVideoDialog = () => {
-    setVideoDialog({
-      ...videoDialog,
-      open: false,
-      isPlaying: false
-    });
-    
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  };
-  
-  // Toggle video playback
-  const toggleVideoPlayback = () => {
-    if (videoRef.current) {
-      if (videoDialog.isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      
-      setVideoDialog({
-        ...videoDialog,
-        isPlaying: !videoDialog.isPlaying
-      });
-    }
-  };
-  
-  // Toggle video mute
-  const toggleVideoMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setVideoDialog({
-        ...videoDialog,
-        isMuted: !videoDialog.isMuted
-      });
-    }
-  };
-  
-  // Handle video ended
-  const handleVideoEnded = () => {
-    setVideoDialog({
-      ...videoDialog,
-      isPlaying: false
-    });
-  };
-  
-  // Handle hover video play
-  const handleVideoHover = (jobId, action) => {
-    const videoElement = hoverVideoRefs.current[jobId];
-    if (videoElement) {
-      if (action === 'enter') {
-        videoElement.play();
-      } else {
-        videoElement.pause();
-        videoElement.currentTime = 0;
-      }
-    }
-  };
-  
-  // Toggle favorite
-  const toggleFavorite = (jobId) => {
-    if (favorites.includes(jobId)) {
-      setFavorites(favorites.filter(id => id !== jobId));
-    } else {
-      setFavorites([...favorites, jobId]);
-    }
-  };
-  
-  // Navigate to job details
-  const navigateToJobDetails = (jobId) => {
-    navigate(`/job/${jobId}`);
-  };
-  
-  // Navigate to employer profile
-  const navigateToEmployerProfile = (employerId) => {
-    navigate(`/employer/${employerId}`);
-  };
-  
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    
-    const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-  };
-  
-  // Format salary range
-  const formatSalaryRange = (min, max, currency = 'USD', period = 'yearly') => {
-    if (!min && !max) return 'Salary not specified';
-    
-    const currencySymbols = {
-      USD: '$',
-      EUR: '€',
-      GBP: '£',
-      CAD: 'C$',
-      AUD: 'A$',
-      JPY: '¥',
-      INR: '₹',
-      SAR: '﷼',
-      AED: 'د.إ'
-    };
-    
-    const symbol = currencySymbols[currency] || currency;
-    
-    let range = '';
-    if (min && max) {
-      range = `${symbol}${min.toLocaleString()} - ${symbol}${max.toLocaleString()}`;
-    } else if (min) {
-      range = `${symbol}${min.toLocaleString()}+`;
-    } else if (max) {
-      range = `Up to ${symbol}${max.toLocaleString()}`;
-    }
-    
-    const periodMap = {
-      hourly: 'per hour',
-      daily: 'per day',
-      weekly: 'per week',
-      monthly: 'per month',
-      yearly: 'per year'
-    };
-    
-    return `${range} ${periodMap[period] || ''}`;
-  };
-  
-  return (
-    <PageContainer>
-      <Container maxWidth="lg" sx={{ width: '100%', padding: 0 }}>
-        {/* Page Header */}
-        <Box sx={{ mb: 4, width: '100%' }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Job Listings
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            Find your next career opportunity with video previews of companies and positions
-          </Typography>
-        </Box>
-        
-        {/* Search and Filter Section */}
-        <SearchPaper elevation={1}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="Search Jobs"
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder="Job title, company, or keywords"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth>
-                <InputLabel id="location-filter-label">Location</InputLabel>
-                <Select
-                  labelId="location-filter-label"
-                  value={locationFilter}
-                  onChange={handleLocationFilter}
-                  label="Location"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <LocationIcon />
-                    </InputAdornment>
-                  }
-                >
-                  <MenuItem value="">All Locations</MenuItem>
-                  {locations.map((location) => (
-                    <MenuItem key={location} value={location}>
-                      {location}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth>
-                <InputLabel id="category-filter-label">Category</InputLabel>
-                <Select
-                  labelId="category-filter-label"
-                  value={categoryFilter}
-                  onChange={handleCategoryFilter}
-                  label="Category"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <FilterListIcon />
-                    </InputAdornment>
-                  }
-                >
-                  <MenuItem value="">All Categories</MenuItem>
-                  {categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth>
-                <InputLabel id="sort-by-label">Sort By</InputLabel>
-                <Select
-                  labelId="sort-by-label"
-                  value={sortBy}
-                  onChange={handleSortChange}
-                  label="Sort By"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <SortIcon />
-                    </InputAdornment>
-                  }
-                >
-                  <MenuItem value="newest">Newest</MenuItem>
-                  <MenuItem value="salary-high">Highest Salary</MenuItem>
-                  <MenuItem value="salary-low">Lowest Salary</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </SearchPaper>
-        
-        {/* Jobs List */}
-        {loading ? (
-          <Box sx={{ width: '100%' }}>
-            {[...Array(3)].map((_, index) => (
-              <Box key={index} sx={{ mb: 3, width: '100%' }}>
-                <JobCard>
-                  <Skeleton variant="rectangular" height={200} width="100%" />
-                  <CardContent>
-                    <Skeleton variant="text" height={32} width="80%" />
-                    <Skeleton variant="text" height={24} width="60%" />
-                    <Skeleton variant="text" height={20} width="40%" />
-                    <Box sx={{ mt: 2 }}>
-                      <Skeleton variant="text" height={20} width="100%" />
-                      <Skeleton variant="text" height={20} width="100%" />
-                    </Box>
-                    <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-                      <Skeleton variant="rectangular" height={32} width={80} />
-                      <Skeleton variant="rectangular" height={32} width={80} />
-                    </Box>
-                  </CardContent>
-                </JobCard>
-              </Box>
-            ))}
-          </Box>
-        ) : filteredJobs.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 5, width: '100%' }}>
-            <Typography variant="h6" color="textSecondary">
-              No jobs found matching your criteria
-            </Typography>
-            <Typography variant="body1" color="textSecondary" sx={{ mt: 1 }}>
-              Try adjusting your search or filters
-            </Typography>
-          </Box>
-        ) : (
-          <Box sx={{ width: '100%' }}>
-            {filteredJobs.map((job) => (
-              <Box key={job.id} sx={{ mb: 3, width: '100%' }}>
-                <JobCard>
-                  {job.video?.video_url ? (
-                    <Box
-                      sx={{
-                        height: 0,
-                        paddingTop: '56.25%',
-                        position: 'relative',
-                        backgroundColor: theme.palette.grey[200],
-                        overflow: 'hidden',
-                        '&:hover video': {
-                          opacity: 1,
-                        },
-                        '& video': {
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          opacity: 0,
-                          transition: 'opacity 0.3s ease-in-out',
-                        },
-                        '&:hover .video-overlay': {
-                          opacity: 0,
-                        },
-                      }}
-                      onMouseEnter={() => handleVideoHover(job.id, 'enter')}
-                      onMouseLeave={() => handleVideoHover(job.id, 'leave')}
-                      onClick={() => openVideoDialog(job.video.video_url, job.title)}
-                    >
-                      <video
-                        ref={el => hoverVideoRefs.current[job.id] = el}
-                        src={job.video.video_url}
-                        poster={job.video.thumbnail || `https://via.placeholder.com/640x360?text=${encodeURIComponent(job.title)}`}
-                        muted
-                        loop
-                        playsInline
-                      />
-                      <VideoPlayButton aria-label="play" className="video-overlay">
-                        <PlayArrowIcon />
-                      </VideoPlayButton>
-                    </Box>
-                  ) : ''}
-                  
-                  <JobCardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      {job.company.logo && (
-                        <><Box
-                        component="img"
-                        src={job.company.logo || 'https://via.placeholder.com/40x40?text=Logo'}
-                        alt={job.company.name}
-                        sx={{ width: 40, height: 40, borderRadius: '50%', mr: 1, objectFit: 'cover' ,fontSize:8 }}
-                      />
-                      <Typography
-                        variant="subtitle2"
-                        color="textSecondary"
-                        sx={{ cursor: 'pointer' }}
-                        onClick={() => navigateToEmployerProfile(job.company.id)}
-                      >
-                        {job.company.name}
-                      </Typography></>)}
-                    </Box>
-                    
-                    <Typography
-                      variant="h6"
-                      component="h2"
-                      gutterBottom
-                      sx={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => navigateToJobDetails(job.id)}
-                    >
-                      {job.title}
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <LocationIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
-                      <Typography variant="body2" color="textSecondary">
-                        {job.location || 'Location not specified'}
-                      </Typography>
-                    </Box>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <MoneyIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
-                      <Typography variant="body2" color="textSecondary">
-                        {formatSalaryRange(job.salary_min, job.salary_max)}
-                      </Typography>
-                    </Box>
-                    
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                      <Chip
-                        label={job.employment_type || 'Full-time'}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
-                      {job.remote_ok && (
-                        <Chip
-                          label="Remote"
-                          size="small"
-                          color="secondary"
-                          variant="outlined"
-                        />
-                      )}
-                    </Box>
-                    
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{
-                        mb: 2,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                      }}
-                    >
-                      {job.description || 'No description provided'}
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
-                      {job.jobSkills?.slice(0, 3).map((skill, index) => (
-                        <SkillChip
-                          key={index}
-                          label={skill}
-                          size="small"
-                        />
-                      ))}
-                      {job.jobSkills?.length > 3 && (
-                        <Chip
-                          label={`+${job.jobSkills.length - 3}`}
-                          size="small"
-                          variant="outlined"
-                        />
-                      )}
-                    </Box>
-                    
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
-                      <Typography variant="caption" color="textSecondary">
-                        Posted: {formatDate(job.posted_at)}
-                      </Typography>
-                    </Box>
-                  </JobCardContent>
-                  
-                  <Divider />
-                  
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => navigateToJobDetails(job.id)}
-                    >
-                      View Details
-                    </Button>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() => toggleFavorite(job.id)}
-                    >
-                      {favorites.includes(job.id) ? (
-                        <FavoriteIcon />
-                      ) : (
-                        <FavoriteBorderIcon />
-                      )}
-                    </IconButton>
-                    <IconButton size="small" color="primary">
-                      <ShareIcon />
-                    </IconButton>
-                  </CardActions>
-                </JobCard>
-              </Box>
-            ))}
-          </Box>
-        )}
-        
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, width: '100%' }}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-              size={isMobile ? 'small' : 'medium'}
-            />
-          </Box>
-        )}
-      </Container>
-      
-      {/* Video Dialog */}
-      <VideoDialog
-        open={videoDialog.open}
-        onClose={closeVideoDialog}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6">{videoDialog.title}</Typography>
-            <IconButton edge="end" color="inherit" onClick={closeVideoDialog} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-        <VideoDialogContent>
-          <video
-            ref={videoRef}
-            src={videoDialog.videoUrl}
-            width="100%"
-            height="auto"
-            autoPlay
-            muted={videoDialog.isMuted}
-            onEnded={handleVideoEnded}
-            style={{ display: 'block' }}
-          />
-          <VideoControls>
-            <IconButton size="small" color="inherit" onClick={toggleVideoPlayback}>
-              {videoDialog.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-            </IconButton>
-            <IconButton size="small" color="inherit" onClick={toggleVideoMute}>
-              {videoDialog.isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-            </IconButton>
-            <Typography variant="caption" color="inherit">
-              {videoDialog.title}
-            </Typography>
-          </VideoControls>
-        </VideoDialogContent>
-      </VideoDialog>
-    </PageContainer>
-  );
-};
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
 
-export default JobsListingPage;
+  useEffect(() => {
+    fetchJobs();
+    fetchCategories();
+  }, [statusFilter]);
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllJobsPosted();
+      setJobs(response.data.jobs || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load job listings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategories();
+      setCategories(response.data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleEdit = (jobId) => {
+    navigate(`/employer-tabs?group=jobManagement&tab=post-job&edit=${jobId}`);
+  };
+
+  const handleDelete = async () => {
+    try {
+      // Add delete API call here
+      toast({
+        title: "Success!",
+        description: "Job deleted successfully",
+      });
+      setDeleteDialog(false);
+      fetchJobs();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete job",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         job.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const JobCard = ({ job }) => (
+    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-purple-500">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div className="flex-grow">
+            <CardTitle className="text-xl mb-2">{job.title}</CardTitle>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>
+                {job.status || 'Active'}
+              </Badge>
+              {job.jobType && (
+                <Badge variant="outline">
+                  <Clock className="h-3 w-3 mr-1" />
+                  {job.jobType}
+                </Badge>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="icon" onClick={() => handleEdit(job.id)}>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => {
+                setSelectedJob(job);
+                setDeleteDialog(true);
+              }}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {job.description && (
+          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+            {job.description}
+          </p>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+          {job.location && (
+            <div className="flex items-center gap-2 text-sm">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <span>{job.location}</span>
+            </div>
+          )}
+
+          {(job.minSalary || job.maxSalary) && (
+            <div className="flex items-center gap-2 text-sm">
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <span>
+                {job.minSalary && job.maxSalary 
+                  ? `$${job.minSalary.toLocaleString()} - $${job.maxSalary.toLocaleString()}`
+                  : job.minSalary 
+                    ? `From $${job.minSalary.toLocaleString()}`
+                    : `Up to $${job.maxSalary.toLocaleString()}`
+                }
+              </span>
+            </div>
+          )}
+
+          {job.applicants_count !== undefined && (
+            <div className="flex items-center gap-2 text-sm">
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <span>{job.applicants_count} Applicants</span>
+            </div>
+          )}
+
+          {job.views !== undefined && (
+            <div className="flex items-center gap-2 text-sm">
+              <Eye className="h-4 w-4 text-muted-foreground" />
+              <span>{job.views} Views</span>
+            </div>
+          )}
+        </div>
+
+        {job.skills && job.skills.length > 0 && (
+          <div className="mb-4">
+            <p className="text-sm font-medium mb-2">Required Skills:</p>
+            <div className="flex flex-wrap gap-1">
+              {job.skills.slice(0, 5).map((skill, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {skill.name || skill}
+                </Badge>
+              ))}
+              {job.skills.length > 5 && (
+                <Badge variant="outline" className="text-xs">
+                  +{job.skills.length - 5} more
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-2 mt-4">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex-1"
+            onClick={() => navigate(`/job/${job.id}`)}
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            View Details
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            className={`${themeColors.buttons.primary} text-white flex-1  hover:from-purple-700 hover:to-cyan-700`}
+            onClick={() => navigate(`/job/${job.id}/applications`)}
+          >
+            <Users className="h-4 w-4 mr-1" />
+            View Applications
+          </Button>
+        </div>
+
+        {job.createdAt && (
+          <p className="text-xs text-muted-foreground mt-3 text-center">
+            Posted {new Date(job.createdAt).toLocaleDateString()}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="`${themeColors.text.gradient} text-4xl font-bold ">
+          My Job Listings
+        </h1>
+        <Button
+          onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
+          className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Post New Job
+        </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{jobs.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {jobs.filter(j => j.status === 'active').length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Total Applicants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {jobs.reduce((sum, j) => sum + (j.applicants_count || 0), 0)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {jobs.reduce((sum, j) => sum + (j.views || 0), 0)}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="search">Search Jobs</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="search"
+                  placeholder="Search by title or description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="status">Status Filter</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger id="status">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-end">
+              <Button variant="outline" className="w-full">
+                <Filter className="h-4 w-4 mr-2" />
+                More Filters
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Job Listings */}
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+        </div>
+      ) : filteredJobs.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredJobs.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+        </div>
+      ) : (
+        <Card className="text-center py-12">
+          <CardContent>
+            <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No jobs found</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || statusFilter !== 'all' 
+                ? "Try adjusting your filters"
+                : "Start by posting your first job"}
+            </p>
+            <Button
+              onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
+              className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Post a Job
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Job Posting?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{selectedJob?.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDelete}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Job
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

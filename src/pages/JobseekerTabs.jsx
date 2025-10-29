@@ -7,31 +7,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { jobseekerTabCategories } from '@/config/jobseekerTabsConfig';
 import { getJobseekerStats } from '@/services/api';
+import themeColors from '@/config/theme-colors-jobseeker';
 import {
   Home,
   Search,
-  Film as VideoLibrary, // OK if Film is the icon you want
-  User as Person, // Correction: Use 'User'
-  CalendarDays as CalendarToday, // OK
-  Bell as Notifications, // OK
+  Film as VideoLibrary,
+  User as Person,
+  CalendarDays as CalendarToday,
+  Bell as Notifications,
   Settings,
   Bookmark,
-  Heart as Favorite, // Correction: Use 'Heart'
-  // Use Home as a safe fallback for Dashboard icon — lucide-react doesn't export a `Dashboard`/`LayoutDashboard` symbol
-  BarChart3 as Analytics, // OK
+  Heart as Favorite,
+  LayoutDashboard as Dashboard,
+  BarChart3 as Analytics,
   CloudUpload,
   FileText,
   MessageSquare,
   Eye,
-  ThumbsUp as ThumbUp, // Alias ThumbsUp to ThumbUp to match existing JSX usage
+  ThumbsUp as ThumbUp,
   Briefcase,
   Mail,
   TrendingUp,
 } from 'lucide-react';
 
 const JobseekerTabs = () => {
-  // Fallback: use Home icon as dashboard icon since lucide-react doesn't export a 'Dashboard' variant
-  const DashboardIcon = Home;
+  const DashboardIcon = Dashboard;
   const { t } = useTranslation();
   const { user, role } = useAuth();
   const navigate = useNavigate();
@@ -141,10 +141,10 @@ const JobseekerTabs = () => {
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+          <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
             Welcome back, {user?.firstName || 'Job Seeker'}! 👋
           </h1>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className={themeColors.text.secondary}>
             Manage your job search, profile, and career opportunities all in one place.
           </p>
         </div>
@@ -152,14 +152,14 @@ const JobseekerTabs = () => {
         {/* Quick Stats Cards - OpenVC Style */}
         {tabParam === 'overview' && (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow">
+            <Card className={`border-l-4 ${themeColors.borders.primary} hover:shadow-lg transition-shadow`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-                <Eye className="h-4 w-4 text-purple-600" />
+                <Eye className={`h-4 w-4 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats?.profileViews ?? stats?.profile_views ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.profileViews ?? stats?.profile_views ?? 0}</div>
+                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   <TrendingUp className="inline h-3 w-3 mr-1" />
                   +12% from last month
                 </p>
@@ -169,11 +169,11 @@ const JobseekerTabs = () => {
             <Card className="border-l-4 border-l-cyan-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Matches</CardTitle>
-                <ThumbUp className="h-4 w-4 text-cyan-600" />
+                <ThumbUp className={`h-4 w-4 ${themeColors.iconBackgrounds.secondary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats?.matches ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.matches ?? 0}</div>
+                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   Companies interested in you
                 </p>
               </CardContent>
@@ -182,11 +182,11 @@ const JobseekerTabs = () => {
             <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Applications</CardTitle>
-                <Briefcase className="h-4 w-4 text-orange-600" />
+                <Briefcase className={`h-4 w-4 ${themeColors.iconBackgrounds.warning.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats?.applications ?? stats?.applications_count ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.applications ?? stats?.applications_count ?? 0}</div>
+                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   Active job applications
                 </p>
               </CardContent>
@@ -195,11 +195,11 @@ const JobseekerTabs = () => {
             <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Unread Messages</CardTitle>
-                <Mail className="h-4 w-4 text-blue-600" />
+                <Mail className={`h-4 w-4 ${themeColors.iconBackgrounds.info.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats?.unreadMessages ?? stats?.unread_messages ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.unreadMessages ?? stats?.unread_messages ?? 0}</div>
+                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   New messages waiting
                 </p>
               </CardContent>
@@ -212,7 +212,7 @@ const JobseekerTabs = () => {
           <CardHeader>
             <div className="flex items-center gap-3">
               {React.createElement(iconMap[currentTab.icon.name] || DashboardIcon, {
-                className: 'h-6 w-6 text-purple-600',
+                className: `h-6 w-6 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`,
               })}
               <div>
                 <CardTitle>{currentTab.label}</CardTitle>

@@ -1,0 +1,5743 @@
+{
+	"info": {
+		"_postman_id": "c34850d5-d934-41a6-aaa4-ad7796fa583c",
+		"name": "SwipeScout_APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11905199",
+		"_collection_link": "https://swipscoutteam.postman.co/workspace/63b39c63-7824-4af6-bded-102c51c78acd/collection/11905199-c34850d5-d934-41a6-aaa4-ad7796fa583c?action=share&source=collection_link&creator=11905199"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "__",
+					"item": [
+						{
+							"name": "Register Employer",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Acme Corp\",\n    \"email\": \"employer@acme.com\",\n    \"password\": \"securepassword\",\n    \"role\": \"employer\",\n    \"company_name\": \"Acme Corporation\",\n    \"industry\": \"Technology\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"email\": \"ea@example.com\",\n\"password\":\"password123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register Job Seeker",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"anotherpassword\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "signin with linkedin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id_token\":\"{{idToken}}\"         \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signin/linkedin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signin",
+								"linkedin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign up with linkedin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"eyJ6aXAiOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImQ5Mjk2NjhhLWJhYjEtNGM2OS05NTk4LTQzNzMxNDk3MjNmZiIsImFsZyI6IlJTMjU2In0.eyJpc3MiOiJodHRwczovL3d3dy5saW5rZWRpbi5jb20vb2F1dGgiLCJhdWQiOiI3OGFjZXVuaDY3MmMzYyIsImlhdCI6MTc0NzUxMjEyMCwiZXhwIjoxNzQ3NTE1NzIwLCJzdWIiOiJoR05yNDZQTjdyIiwibmFtZSI6Ik9iYWlkIE5pZXJvdWtoIiwiZ2l2ZW5fbmFtZSI6Ik9iYWlkIiwiZmFtaWx5X25hbWUiOiJOaWVyb3VraCIsInBpY3R1cmUiOiJodHRwczovL21lZGlhLmxpY2RuLmNvbS9kbXMvaW1hZ2UvdjIvRDU2MDNBUUVaQV9MLVY2OVN4QS9wcm9maWxlLWRpc3BsYXlwaG90by1zaHJpbmtfMTAwXzEwMC9wcm9maWxlLWRpc3BsYXlwaG90by1zaHJpbmtfMTAwXzEwMC8wLzE3MDI3MTEyMjYzMDg_ZT0yMTQ3NDgzNjQ3JnY9YmV0YSZ0PWFINzRRak5JUnJUZUJKalMzVGZ1blpVSmE5cDhBdUpuaVFjRElLRk1KSTQiLCJlbWFpbCI6Im9iYWlkb2ZqQG91dGxvb2suY29tIiwiZW1haWxfdmVyaWZpZWQiOiJ0cnVlIiwibG9jYWxlIjoiYXJfQUUifQ.Z1NtEKsyRzuoZimB9C-Gfcht7zM2k__a6BoDZEpKCURw6Yhta0Ok5WL9h2Q7QH5-Z5uldaXGKnA2x4AlYp2tO1CWPxNjP7mlLcLkijxcnL8UBM2ztuO0J-nCczsvxDL9DkRVO7rqPrTQTaxUsF2DoWON6RhWUGeBpmjiSAfvSrKijBuVIJ1XEmMhEQJH5D_01tond7x6sl72hd1rwqb929vVTY4-VFfiH8mfGtS517blhBjQx7ABLvRSQ2J9HWvLHauQ4UfNUxxxw4DZKfLvZc0l93CvIybsfjdqq2cn3wtASvInsaMUZUuPSIWpBiJhjxbOjMPgZky0CSTS1Bbsr6H0a93u3yGAPbP9AHbZ63NyHJx23lC8NPsuSFNQvsj24X9hCoueD3ucQ6NY7SGrfivqxSk-dLeFzUJgr60O8A1AUfqMOU9kBkdKDAYCXxcqVWdVkx5z9t1uRFMQB1a4n9KZb2XLpEPnpnnS3SQO87YLR_FRNlOfTghYCY6y6dYUzhQ_ga8M11I2wnDVjwy9nK8cPnza931-Y_KwGJwPfQkakMEEsU6jRMHAdP8IR1bHTMgPf2rlnpeCiHPLI8LRGieTG8ETwgZbjQrVCuH2Ig-0EGzEMZHvVMdwOKrHZz4oZB18A-9Gs7lCvzJa50H9pxxaKr1dI8ST3P0KBSLMQZ0\"         \r\n  ,\r\n  \"role\": \"job_seeker\"      \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signup/linkedin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signup",
+								"linkedin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signInWithGoogle",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idToken\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signin/google",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signin",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "linked exchang token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\":\"AQTUqHTWxIZkggbta8G4dOY8tBDT1Ix1ieW4_9B0HPPd-JQ66suGpzyWPDLNJXeZGlHdP2rPNUXbtGg1IOfBTVYFAOSJN1eTKKjYp8nuA1E32pQQwMkGOZdBBIQwwOvjlDIDTyabKx1uDB2ols1ROkP-o08KCNLCUc5vTW-Y-hrR-swQRyD26FhkScoN4N4xkdrkzx2g7_2v1U68iWs\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/linkedin/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"linkedin",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign up with Google",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idToken\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6IjA1NTc3MjZmYWIxMjMxZmEyZGNjNTcyMWExMDgzZGE2ODBjNGE3M2YiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiT2JhaWQgTmllcm91a2giLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTFQ0RlBINjh3YjBlWW9wLXVteWx2cnFTMF9USzNrLU1MUmVQQS0xazBVckNZQ1VNd249czk2LWMiLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc3dpcHNjb3V0IiwiYXVkIjoic3dpcHNjb3V0IiwiYXV0aF90aW1lIjoxNzU5MDU1NDI3LCJ1c2VyX2lkIjoiWVV3dUZuTnZ1YU5kc05jT1FIZnJwOXl5QkdhMiIsInN1YiI6IllVd3VGbk52dWFOZHNOY09RSGZycDl5eUJHYTIiLCJp…WJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExNTYzNzQ1NzMyMTE1ODYwMjUyNiJdLCJlbWFpbCI6WyJvYmFpZG9makBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.K48k3-7sQe3xQl2y82plHqJWi6lksSj-QuwY0fMN7VHJXgR9s9NimvTO5bBDnUDyyGWvYCTBcJfauhqpbErsvqg7jL_9bLyEz3z6sd_Hrpuii53R1Dyf2Y8D_YjkPX6-NuNrB05kAI7-dE86qmp6SJRW_A7RsfvvrrGSzm3NwUjEXgHdznoe4_6ryFsAzKZz9u8gHWdoych0YVUlpUwvTIpnpozgojFUlbIzdsuiWHvn4Sg9yJ-76oqSNHe1r0PK8R0TLhC-BoBPRzm0Vx2i26A2URgEIJnwgCoi1k79pMwDMGAxvnbrI04DzsgSQW-prdYSB94u-mNy9m6bD4Jj6g\"\r\n   ,\r\n  \"role\": \"employer\"      \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signup/google",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signup",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the response body\r",
+									"const res = pm.response.json();\r",
+									"\r",
+									"// Store accessToken in global or environment variable\r",
+									"if (res.accessToken) {\r",
+									"  const idToken = res.accessToken;\r",
+									"  pm.collectionVariables.set(\"idToken\", idToken);\r",
+									"  console.log(\"Access token stored in idToken:\", res.accessToken);\r",
+									"} else {\r",
+									"  console.warn(\"No accessToken found in response.\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"email\":\"test2@test.com\",\r\n\"password\":\"test2@123\"\r\n}\r\n\r\n//\"email\": \"ea@example.com\",\r\n//\"password\":\"password123\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"email\": \"test5@test.com\", \r\n  \"password\": \"test@123\" ,\r\n  \"displayName\":\"user2\", \r\n   \"role\": \"job_seeker\"\r\n}\r\n\r\n// { \r\n// \"email\":\"admin@amin.com\", \r\n// \"password\":\"password123\", \r\n// \"displayName\":\"amin user\", \r\n// \"role\":\"admin\" \r\n// }\r\n// {\r\n// \"email\": \"ea@example.com\",\r\n// \"password\":\"password123\"\r\n// \"displayName\":\"user1\", \r\n// \"role\":\"employer\" \r\n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup_",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"email\": \"test@test.com\", \r\n  \"password\": \"test@123\" ,\r\n  \"displayName\":\"user2\", \r\n   \"role\": \"job_seeker\"\r\n}\r\n\r\n// { \r\n// \"email\":\"admin@amin.com\", \r\n// \"password\":\"password123\", \r\n// \"displayName\":\"amin user\", \r\n// \"role\":\"admin\" \r\n// }\r\n// {\r\n// \"email\": \"ea@example.com\",\r\n// \"password\":\"password123\"\r\n// \"displayName\":\"user1\", \r\n// \"role\":\"employer\" \r\n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reset pass",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"oobCode\":\"\",\r\n  \"newPassword\":\"\" \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/reset-password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forget pass",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"email\": \"test@test.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/forgot-password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delte user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"token\":\"{{idToken}}\",\r\n\"email\":\"obaidofj@outlook.com\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/delete-user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"delete-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/refresh-token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"token\": \"{{idToken}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify token",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxMEB0ZXN0LmNvbSIsInJvbGUiOiJqb2Jfc2Vla2VyIiwiaWF0IjoxNzQ5ODcwNjQ0LCJleHAiOjE3NDk4NzQyNDR9.TAq-o6-6bV0qD6uk_EM_knz0cJau08WB4ihNHQUp3fg\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/verify-token?verifyOnly=true",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"verify-token"
+							],
+							"query": [
+								{
+									"key": "verifyOnly",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify token_",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "xenogeneic-karie-obaidorg-2ec9d531.koyeb.app/api/auth/verify-token?verifyOnly=true",
+							"host": [
+								"xenogeneic-karie-obaidorg-2ec9d531",
+								"koyeb",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"verify-token"
+							],
+							"query": [
+								{
+									"key": "verifyOnly",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get k",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "xenogeneic-karie-obaidorg-2ec9d531.koyeb.app/",
+							"host": [
+								"xenogeneic-karie-obaidorg-2ec9d531",
+								"koyeb",
+								"app"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Swipes",
+			"item": [
+				{
+					"name": "Record Swipe (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"job_id\": \"c308ebfb-a721-41b4-83e1-dc4b64158d54\",\n    \"direction\": \"right\",\n    \"notes\": \"Interested in this job\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/swipes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Swipe History (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/swipes/history",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes",
+								"history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Swipe Stats (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/swipes/stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Matches (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/swipes/matches",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes",
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Match Details (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/swipes/matche/440b443e-9e51-4c25-8d5b-7eac466acbab",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes",
+								"matche",
+								"440b443e-9e51-4c25-8d5b-7eac466acbab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Match (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/swipes/matche/440b443e-9e51-4c25-8d5b-7eac466acbab/accept",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes",
+								"matche",
+								"440b443e-9e51-4c25-8d5b-7eac466acbab",
+								"accept"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Match (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/swipes/matche/440b443e-9e51-4c25-8d5b-7eac466acbab/reject",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"swipes",
+								"matche",
+								"440b443e-9e51-4c25-8d5b-7eac466acbab",
+								"reject"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Matching",
+			"item": [
+				{
+					"name": "Get Matching Jobs (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/matching/jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"matching",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Matching Users (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/matching/users/446a554a-c3a7-4dfa-9a42-c075879d0cc0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"matching",
+								"users",
+								"446a554a-c3a7-4dfa-9a42-c075879d0cc0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Recommendations (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/matching/recommendations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"matching",
+								"recommendations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Employer Profile",
+			"item": [
+				{
+					"name": "Create Company Profile (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\":\"{{idToken}}\",\n    \"name\": \"New Company Inc.For Int\",\n    \"industry\": \"Software Development\",\n    \"description\": \"Innovative tech company...\",\n    \"website\": \"https://newcompany.com\",\n    \"location\": \"New York, USA\",\n    \"size\": \"51-200 employees\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/employer/employer-profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"employer-profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Company Profile (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"token\":\"{{idToken}}\",\n    \"description\": \"A leading innovator in the tech space.\",\n    \"website\": \"https://newcompany.com/careers\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/employer/employer-profile/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"employer-profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Company Profile (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/employer/employer-profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"employer-profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employer Profile ByID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/employer/employer-profile/af8a6940-9928-4efc-8518-5233f611d803",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"employer-profile",
+								"af8a6940-9928-4efc-8518-5233f611d803"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employer Caegories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/employer/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Employer Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"categoryId\":\"0e10a603-494c-403c-9e6a-ea434a508b80\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/employer/category/0e10a603-494c-403c-9e6a-ea434a508b80",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"category",
+								"0e10a603-494c-403c-9e6a-ea434a508b80"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employer Category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"categoryId\":\"0e10a603-494c-403c-9e6a-ea434a508b80\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/employer/category/0e10a603-494c-403c-9e6a-ea434a508b80",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"category",
+								"0e10a603-494c-403c-9e6a-ea434a508b80"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Job (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Senior Backend Developer222\",\n  \"description\": \"Looking for an experienced backend engineer...\",\n  \"requirements\": [\"5+ years Node.js\", \"TypeScript experience\"],\n  \"responsibilities\": [\"API development\", \"Database design\"],\n  \"location\": \"Remote\",\n  \"salary_min\": 90000,\n  \"salary_max\": 120000,\n  \"employment_type\": \"full_time\",\n  \"experience_level\": \"senior\",\n  \"education_level\": \"bachelor\",\n  \"remote_ok\": true,\n  \"skillIds\": [\"63e1c8d4-244d-4f05-9394-aa6d62323984\"],\n  \"categoryIds\": [\"c9e0e43c-851a-4aa5-9730-3448dcff7936\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/employer/job",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"job"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Company Logo (Requires Auth, Form-Data)",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "postman-cloud:///1f0214b7-bf08-4730-945f-bbb78480d197"
+								},
+								{
+									"key": "Bearer ",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/employer/upload-logo/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"upload-logo",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Get All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/categories?parentId=null",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "parentId",
+									"value": "null"
+								}
+							]
+						},
+						"description": "Get all categories, optionally filtered by parentId"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/categories/job/334a1d89-066b-47b8-8c99-5329faf388b9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"job",
+								"334a1d89-066b-47b8-8c99-5329faf388b9"
+							]
+						},
+						"description": "Get all categories, optionally filtered by parentId"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Software Development\",\n  \"parentCategoryId\": null\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/categories/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/categories/7b35020a-4668-4e5e-b8af-9f713aa69ce1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"7b35020a-4668-4e5e-b8af-9f713aa69ce1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Software Development\",\n  \"parentCategoryId\": \"c9e0e43c-851a-4aa5-9730-3448dcff7936\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/categories/7b35020a-4668-4e5e-b8af-9f713aa69ce1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"7b35020a-4668-4e5e-b8af-9f713aa69ce1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category (Soft Delete)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/categories/7b35020a-4668-4e5e-b8af-9f713aa69ce1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"7b35020a-4668-4e5e-b8af-9f713aa69ce1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restore Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/categories/7b35020a-4668-4e5e-b8af-9f713aa69ce1/restore",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"7b35020a-4668-4e5e-b8af-9f713aa69ce1",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Category to Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"job_id\": \"334a1d89-066b-47b8-8c99-5329faf388b9\",\n  \"category_id\": \"0e10a603-494c-403c-9e6a-ea434a508b80\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/categories/jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Category from Job",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"job_id\": \"c308ebfb-a721-41b4-83e1-dc4b64158d54\",\n  \"category_id\": \"7bfaecc1-76f0-4951-84b4-d469f58cb113\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/categories/jobs/:job_id/7b35020a-4668-4e5e-b8af-9f713aa69ce1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								"jobs",
+								":job_id",
+								"7b35020a-4668-4e5e-b8af-9f713aa69ce1"
+							],
+							"variable": [
+								{
+									"key": "job_id",
+									"value": "c308ebfb-a721-41b4-83e1-dc4b64158d54"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job",
+			"item": [
+				{
+					"name": "Get Jobs (Requires Auth)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"token\":\"{{idToken}}\",\n    \"title\": \"Senior Software Engineer\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Applicants",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/job/applications/8962bd53-d5ee-4750-b507-d3d676341030",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job",
+								"applications",
+								"8962bd53-d5ee-4750-b507-d3d676341030"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apply to Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"coverLetter\" : \"convert lettt\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job/8962bd53-d5ee-4750-b507-d3d676341030/apply",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job",
+								"8962bd53-d5ee-4750-b507-d3d676341030",
+								"apply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Applicant",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"coverLetter\" : \"convert lettt\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job/8962bd53-d5ee-4750-b507-d3d676341030/unapply",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job",
+								"8962bd53-d5ee-4750-b507-d3d676341030",
+								"unapply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employer Jobs By Emp ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/employer/jobs/50baedf6-8364-4ee3-9801-57953eaf41e1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"employer",
+								"jobs",
+								"50baedf6-8364-4ee3-9801-57953eaf41e1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job (Requires Auth)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"token\":\"{{idToken}}\",\n    \"title\": \"Senior Software Engineer\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job/bbb0cfa6-7ce9-4c1f-9748-25d73fa522f2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job",
+								"bbb0cfa6-7ce9-4c1f-9748-25d73fa522f2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Job (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"token\":\"{{idToken}}\",\n    \"title\": \"Senior Software Engineer\"\n\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job/07685419-bf28-4f21-8f1a-0223851bdfe3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job",
+								"07685419-bf28-4f21-8f1a-0223851bdfe3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletee Job (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"token\":\"{{idToken}}\",\n    \"title\": \"Senior Software Engineer\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job/3ae21f88-397e-4078-ac29-1167217d1f43",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job",
+								"3ae21f88-397e-4078-ac29-1167217d1f43"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Jobseeker Profile",
+			"item": [
+				{
+					"name": "Get Profile (Requires Auth)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile All",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Updated Name2222\",\n    \"mobile\": \"123-456-7890\",\n    \"address\": \"Updated Address\",\n    \"bio\": \"Updated bio information\",\n    \"preferred_job_title\": \"Updated Job Title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Profile (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Name\",\n    \"mobile\": \"123-456-7890\",\n    \"address\": \"Updated Address\",\n    \"bio\": \"Updated bio information\",\n    \"preferred_job_title\": \"Updated Job Title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile By ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/fd546rt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"fd546rt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Logo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "logo",
+									"type": "file",
+									"src": "postman-cloud:///1f025155-7db5-4be0-9428-a6b8b8553e4a"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/upload-logo/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"upload-logo",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Skills (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/skills",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"skills"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Skills By UserId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/skills/user/dkljfalsgb342",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"skills",
+								"user",
+								"dkljfalsgb342"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Skill (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"skill_id\": \"3f5275c8-dc6a-4111-80f0-b5e175f44a34\",\n    \"level\": \"Expert\",\n    \"years_experience\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/skills",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"skills"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Skill (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"level\": \"Advanced\",\n    \"years_experience\": 7\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/skills/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"skills",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "63e1c8d4-244d-4f05-9394-aa6d62323984"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Skill (Requires Auth)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/job-seeker/skills/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"job-seeker",
+								"skills",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "358d5620-e313-4c35-96e2-b606b4913502"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Videos",
+			"item": [
+				{
+					"name": "Get Video",
+					"item": [
+						{
+							"name": "Get Videos Status",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/upload-status/483dff4c-0970-483f-8326-f3698f9dc5b7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"upload-status",
+										"483dff4c-0970-483f-8326-f3698f9dc5b7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Video ByID",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/81211949-e6b9-408b-bd95-424c3ddfda62",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"81211949-e6b9-408b-bd95-424c3ddfda62"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Videos (requires auth)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Videos By User ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/user/{{userId}}?page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"user",
+										"{{userId}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Videos By Job ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/job/{{jobId}}?page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"job",
+										"{{jobId}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Videos For Home Page",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"token\": \"{{idToken}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/getVideosForHomePage",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"getVideosForHomePage"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/search/videos?search=engineer&category=all&page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"search",
+										"videos"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "engineer"
+										},
+										{
+											"key": "category",
+											"value": "all"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Videos",
+					"item": [
+						{
+							"name": "Get Job Videos (Requires Auth)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/videos/job/:jobId",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"job",
+										":jobId"
+									],
+									"variable": [
+										{
+											"key": "jobId",
+											"value": "acd9584b-317e-4b78-a0f8-d16f597870d2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Video Resumes (Requires Auth)",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/ae9312c2-b9c2-4fdd-b8b7-7bb1c9600e46",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"ae9312c2-b9c2-4fdd-b8b7-7bb1c9600e46"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a User Videos By UserID",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/?page=1&limit=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user Videos",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/?page=1&limit=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all Videos",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "localhost:5000/api/videos/all/?page=1&limit=8",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"all",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "8"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/all?page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"all"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all Videos",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/all/?page=1&limit=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"all",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Jobseekers Videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/jobseekers?page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"jobseekers"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Employers Videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/employers?page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"employers"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Jobseekers Videos",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/jobseekers/?page=1&limit=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"jobseekers",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Employers Videos",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/employers/?page=1&limit=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"employers",
+										""
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "LikeShareComments",
+					"item": [
+						{
+							"name": "Like Video",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"token\": \"{{idToken}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/likeVideo",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"likeVideo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Unlike Video",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/like",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"like"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Save Video",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/save",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"save"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Unsave Video",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/save",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"save"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Share Video",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"platform\": \"linkedin\" }"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/share",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"share"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Video Comments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/comments?page=1&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Video Comment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"content\": \"Nice video!\" }"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}/comments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Saved Videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{userId}}/getUserSavedVideos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{userId}}",
+										"getUserSavedVideos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Liked Videos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{userId}}/getUserLikedVideos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{userId}}",
+										"getUserLikedVideos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "change",
+					"item": [
+						{
+							"name": "Video Meta Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "video",
+											"type": "file",
+											"src": "/D:/oba/_wrk/vid/Atefe Pirzade _ Video CV _ Video resume.mp4"
+										},
+										{
+											"key": "title",
+											"value": "Video About my Design Skill",
+											"type": "text"
+										},
+										{
+											"key": "hashtags",
+											"value": "[\"#video\" ,\"#ideation\",\"#idea\"]",
+											"type": "text"
+										},
+										{
+											"key": "videoType",
+											"value": "main",
+											"type": "text"
+										},
+										{
+											"key": "videoDuration",
+											"value": "3.2",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/video-metadata",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"video-metadata"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Video Resume (Requires Auth)",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/videos/be867455-2da3-4f07-ac17-fe77656d7b4c",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"be867455-2da3-4f07-ac17-fe77656d7b4c"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Video",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/81211949-e6b9-408b-bd95-424c3ddfda62",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"81211949-e6b9-408b-bd95-424c3ddfda62"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Video Metadata (PUT)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"video_title\": \"Updated title\",\n  \"video_position\": \"mid\",\n  \"hashtags\": [\"skill1\",\"skill2\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/{{videoId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"{{videoId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "upload",
+					"item": [
+						{
+							"name": "Mobile Upload Video (Requires Auth, Form-Data)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "video",
+											"type": "file",
+											"src": "postman-cloud:///1f0220c8-32cd-4230-9bf9-79c5e1af16dc"
+										},
+										{
+											"key": "title",
+											"value": "Video About my Design Skill",
+											"type": "text"
+										},
+										{
+											"key": "hashtags",
+											"value": "[\"#video\" ,\"#ideation\",\"#idea\"]",
+											"type": "text"
+										},
+										{
+											"key": "videoType",
+											"value": "main",
+											"type": "text"
+										},
+										{
+											"key": "videoDuration",
+											"value": "3.2",
+											"type": "text"
+										},
+										{
+											"key": "video_position",
+											"value": "Downloads",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/mobile/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"mobile",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload Video (Requires Auth, Form-Data)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "video",
+											"type": "file",
+											"src": [
+												"/D:/oba/_wrk/vid/VIDEO RESUME _ Pervin L. Yabut.mp4",
+												"/D:/oba/_wrk/vid/emp/corporate video for IT company _ corporate video for Perfectial.mp4"
+											]
+										},
+										{
+											"key": "title",
+											"value": "Video About my Design Skill",
+											"type": "text"
+										},
+										{
+											"key": "hashtags",
+											"value": "[\"#video\" ,\"#ideation\",\"#idea\"]",
+											"type": "text"
+										},
+										{
+											"key": "videoType",
+											"value": "main",
+											"type": "text"
+										},
+										{
+											"key": "videoDuration",
+											"value": "3.2",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "test u",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "video",
+											"type": "file",
+											"src": [
+												"/D:/oba/_wrk/vid/VIDEO RESUME _ Pervin L. Yabut.mp4",
+												"/D:/oba/_wrk/vid/emp/corporate video for IT company _ corporate video for Perfectial.mp4"
+											]
+										},
+										{
+											"key": "title",
+											"value": "Video About my Design Skill",
+											"type": "text"
+										},
+										{
+											"key": "hashtags",
+											"value": "[\"#video\" ,\"#ideation\",\"#idea\"]",
+											"type": "text"
+										},
+										{
+											"key": "videoType",
+											"value": "main",
+											"type": "text"
+										},
+										{
+											"key": "videoDuration",
+											"value": "3.2",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Upload Limit",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/videos/upload-limit",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"upload-limit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Upload Status",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/videos/upload-status/2a92461a-1ebd-43fe-91df-dcad3e1efc20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"upload-status",
+										"2a92461a-1ebd-43fe-91df-dcad3e1efc20"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check me",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{idToken}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "video",
+											"type": "file",
+											"src": [
+												"/D:/oba/_wrk/vid/VIDEO RESUME _ Pervin L. Yabut.mp4",
+												"/D:/oba/_wrk/vid/emp/corporate video for IT company _ corporate video for Perfectial.mp4"
+											]
+										},
+										{
+											"key": "title",
+											"value": "Video About my Design Skill",
+											"type": "text"
+										},
+										{
+											"key": "hashtags",
+											"value": "[\"#video\" ,\"#ideation\",\"#idea\"]",
+											"type": "text"
+										},
+										{
+											"key": "videoType",
+											"value": "main",
+											"type": "text"
+										},
+										{
+											"key": "videoDuration",
+											"value": "3.2",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/videos/check-memory",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"videos",
+										"check-memory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check Upload Limit",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/videos/upload-limit",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"videos",
+										"upload-limit"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Experience Routes",
+			"item": [
+				{
+					"name": "Create Experience",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\":\"{{idToken}}\",\n  \"title\": \"Senior Software Developer\",\n  \"employment_type\": \"Full-time\",\n  \"company_name\": \"TechCorp Inc.\",\n  \"location\": \"San Francisco, CA\",\n  \"description\": \"Developed cutting-edge applications using React and Node.js\",\n  \"currently_working\": false,\n  \"start_date\": \"2020-01-15\",\n  \"end_date\": \"2023-05-20\",\n  \"primary_skill_id\": \"\",\n  \"achievements\": [\n    \"Led team of 5 developers\",\n    \"Increased performance by 40%\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/experiences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"experiences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Experiences",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/experiences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"experiences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Experience by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/experiences/842c1058-8c49-415b-8f52-603de07ec2b3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"experiences",
+								"842c1058-8c49-415b-8f52-603de07ec2b3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a UserExperiences by user ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/experiences/user/81239ca8-5873-4490-9ff4-17d34c6ffcd2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"experiences",
+								"user",
+								"81239ca8-5873-4490-9ff4-17d34c6ffcd2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Experience",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\":\"{{idToken}}\",\n  \"title\": \"Lead Software Developer (Updated)\",\n  \"currently_working\": true,\n  \"achievements\": [\n    \"Led team of 5 developers\",\n    \"Increased performance by 40%\",\n    \"Implemented CI/CD pipeline\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/experiences/842c1058-8c49-415b-8f52-603de07ec2b3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"experiences",
+								"842c1058-8c49-415b-8f52-603de07ec2b3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Experience",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/experiences/{{experience_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"experiences",
+								"{{experience_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Skills",
+			"item": [
+				{
+					"name": "Get All Skills",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/skills",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"skills"
+							],
+							"query": [
+								{
+									"key": "categoryId",
+									"value": "category-uuid-or-null",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "search-term",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Skills by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/categories/:categoryId/skills",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories",
+								":categoryId",
+								"skills"
+							],
+							"variable": [
+								{
+									"key": "categoryId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Software Development Engineer\",\n  \"categoryId\": \"\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/skills",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"skills"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Skill",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"python\",\n  \"categoryId\": \"\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/skills/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"skills",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "358d5620-e313-4c35-96e2-b606b4913502"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Skill (Soft Delete)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/skills/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"skills",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "358d5620-e313-4c35-96e2-b606b4913502"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restore Skill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/skills/:id/restore",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"skills",
+								":id",
+								"restore"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "358d5620-e313-4c35-96e2-b606b4913502"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Education",
+			"item": [
+				{
+					"name": "Create Education",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"institution\": \"University of Technology\",\n  \"degree\": \"Bachelor of Science\",\n  \"field\": \"Computer Science\",\n  \"startDate\": \"2012-09-01\",\n  \"endDate\": \"2016-05-31\",\n  \"location\": \"New York\",\n  \"description\": \"Specialized in software development and engineering. Final project: Web application for project management.\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/education",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"education"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Educations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/education",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"education"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Educations By User Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/education/user/81239ca8-5873-4490-9ff4-17d34c6ffcd2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"education",
+								"user",
+								"81239ca8-5873-4490-9ff4-17d34c6ffcd2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Education",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"institution\": \"Updated University\",\n  \"degree\": \"Master of Science\",\n  \"field\": \"AI & Machine Learning\",\n  \"startDate\": \"2017-01-01\",\n  \"endDate\": \"2019-12-31\",\n  \"location\": \"San Francisco\",\n  \"description\": \"Updated description for testing\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/education/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"education",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Education",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/education/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"education",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Me",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Avatar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "postman-cloud:///1f025155-7db5-4be0-9428-a6b8b8553e4a"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/me/avatar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"me",
+								"avatar"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "Get User Chats (Requires Auth)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/conversations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"conversations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat Messages (Requires Auth)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/conversation/b6775aae-382f-4b51-9a4c-6fe685c22624",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"conversation",
+								"b6775aae-382f-4b51-9a4c-6fe685c22624"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat Messages (Requires Auth) Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/users/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unread count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\":\"{{idToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/unread/count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"unread",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Message (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\":\"{{idToken}}\",\n    \"conversationId\": \"b6775aae-382f-4b51-9a4c-6fe685c22624\",\n    \"content\": \"how are you!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/send",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\":\"{{idToken}}\",\n    \"conversationId\": \"b6775aae-382f-4b51-9a4c-6fe685c22624\",\n    \"content\": \"how are you!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/read/a9f2160f-ae4f-4ba6-9e3e-03e574f3524d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"read",
+								"a9f2160f-ae4f-4ba6-9e3e-03e574f3524d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "start conver",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\":\"{{idToken}}\",\n    \"receiverId\": \"947e84ba-044f-4463-883c-8d1dfc60aa78\",\n    \"initialMessage\": \"how are you!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Message (Requires Auth)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\":\"{{idToken}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/message/4e3fcdc6-7ee4-4ad3-be97-2702021be2ec",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"message",
+								"4e3fcdc6-7ee4-4ad3-be97-2702021be2ec"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Interviews",
+			"item": [
+				{
+					"name": "Schedule Interview (Requires Auth)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"job_id\": \"3ae21f88-397e-4078-ac29-1167217d1f43\",\n    \"candidate_id\": \"1e5ad778-a33a-4b67-8ca1-9fb77487d3d0\",\n    \"scheduled_at\": \"2024-05-15T10:00:00.000Z\",\n    \"duration_minutes\": 45,\n    \"notes\": \"Discuss candidate experience\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/interviews",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"interviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Interviews (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/interviews",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"interviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Interview Details (Requires Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/interviews/ca4df598-4929-4d1d-ac08-317539f45b3f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"interviews",
+								"ca4df598-4929-4d1d-ac08-317539f45b3f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Interview (Requires Auth)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"scheduled_at\": \"2024-05-15T11:00:00.000Z\",\n    \"duration_minutes\": 60\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/interviews/37d1baf4-be07-48a8-9671-700b21a612bd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"interviews",
+								"37d1baf4-be07-48a8-9671-700b21a612bd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Interview (Requires Auth)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/interviews/37d1baf4-be07-48a8-9671-700b21a612bd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"interviews",
+								"37d1baf4-be07-48a8-9671-700b21a612bd"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get All Users (Requires Admin Auth)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/admin/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ban a User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " { \"reason\": \"reason text\"\r\n , \"duration\": 20 } ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/admin/users/:id/ban",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"admin",
+								"users",
+								":id",
+								"ban"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "d68a9800-9f63-4723-84f4-29abb16e89bb"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reports",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/admin/reports",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"admin",
+								"reports"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dissmis Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminAuthToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/admin/reports/:id/action",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"admin",
+								"reports",
+								":id",
+								"action"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "USER_ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Requires Admin Auth)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/admin/users/:UserId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"admin",
+								"users",
+								":UserId"
+							],
+							"variable": [
+								{
+									"key": "UserId",
+									"value": "d68a9800-9f63-4723-84f4-29abb16e89bb"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recommendation",
+			"item": [
+				{
+					"name": "Get Job Recommendations (Job Seeker)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/recommendations/jobs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"recommendations",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Candidate Recommendations (Employer)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/recommendations/candidates?jobId=605861f4-f306-4064-9a4b-df4ed836409e",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"recommendations",
+								"candidates"
+							],
+							"query": [
+								{
+									"key": "jobId",
+									"value": "605861f4-f306-4064-9a4b-df4ed836409e"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Feedback (Job Seeker/Employer)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recommendation_id\": \"111\",\n    \"is_relevant\": true,\n    \"feedback_text\": \"This job was a great match!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/recommendations/feedback",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"recommendations",
+								"feedback"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Analytics",
+			"item": [
+				{
+					"name": "Get Profile View Stats (Job Seeker)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/analytics/profile-views?period=week",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"analytics",
+								"profile-views"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "week"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile Stats",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/analytics/jobseeker-stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"analytics",
+								"jobseeker-stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Swipe Stats (Job Seeker)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/analytics/swipe-stats?period=month",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"analytics",
+								"swipe-stats"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "month"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Stats (Employer)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/analytics/job-stats?jobId=605861f4-f306-4064-9a4b-df4ed836409e&period=year",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"analytics",
+								"job-stats"
+							],
+							"query": [
+								{
+									"key": "jobId",
+									"value": "605861f4-f306-4064-9a4b-df4ed836409e"
+								},
+								{
+									"key": "period",
+									"value": "year"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Candidate Engagement (Employer)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/analytics/candidate-engagement?period=30days",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"analytics",
+								"candidate-engagement"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "30days"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get User Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/:id/read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								":id",
+								"read"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "b1a2492c-df1b-499f-9d05-011878684da1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/notifications/:id?Authorization=Bearer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications",
+								":id"
+							],
+							"query": [
+								{
+									"key": "Authorization",
+									"value": "Bearer"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "b1a2492c-df1b-499f-9d05-011878684da1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Notification (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{idToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"job_application\",\n  \"message\": \"Your application has been reviewed\",\n  \"link\": \"/jobs/123/applications\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/notifications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"pm.sendRequest({\r",
+					"    url: 'http://localhost:5000/api/auth/signin',\r",
+					"    method: 'POST',\r",
+					"    header: [\r",
+					"        { key: 'Content-Type', value: 'application/json' }\r",
+					"    ],\r",
+					"    body: {\r",
+					"        mode: 'raw',\r",
+					"        raw: JSON.stringify({\r",
+					"            \"email\":\"test22@test.com\",\r",
+					"\"password\":\"test2@123\"\r",
+					"        })\r",
+					"    }\r",
+					"}, function (err, res) {\r",
+					"    if (err) {\r",
+					"        console.log(\"Request error:\", err);\r",
+					"    } else {\r",
+					"        try {\r",
+					"            const jsonData = res.json(); //  Postman parses it this way\r",
+					"            if (jsonData && jsonData.token) {\r",
+					"                pm.collectionVariables.set(\"idToken\", jsonData.token);\r",
+					"                pm.collectionVariables.set(\"token\", jsonData.token);\r",
+					"                console.log(\"Auth token set:\", jsonData.token);\r",
+					"            } else {\r",
+					"                console.log(\"Token not found in response.\");\r",
+					"            }\r",
+					"        } catch (e) {\r",
+					"            console.log(\"Failed to parse JSON:\", e);\r",
+					"        }\r",
+					"    }\r",
+					"});\r",
+					"\r",
+					"\r",
+					"// const email = \"test@test.com\";\r",
+					"// const password = \"test@123\";\r",
+					"// const email2 = \"ea@example.com\";\r",
+					"// const password2 = \"password123\";\r",
+					"// const email3 = \"test2@test.com\";\r",
+					"// const password3 = \"test2@123\";\r",
+					"// const apiKey = \"AIzaSyCXln2JUz_Ire8wV1zfO9mIf36W0l2milI\"; \r",
+					"\r",
+					"// const signInUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;\r",
+					"\r",
+					"// const payload = {\r",
+					"//     email: email3,\r",
+					"//     password: password3,\r",
+					"//     returnSecureToken: true\r",
+					"// };\r",
+					"\r",
+					"// pm.sendRequest({\r",
+					"//     url: signInUrl,\r",
+					"//     method: 'POST',\r",
+					"//     header: {\r",
+					"//         'Content-Type': 'application/json'\r",
+					"//     },\r",
+					"//     body: {\r",
+					"//         mode: 'raw',\r",
+					"//         raw: JSON.stringify(payload)\r",
+					"//     }\r",
+					"// }, function (err, res) {\r",
+					"//     if (!err && res.code === 200) {\r",
+					"//         const idToken = res.json().idToken;\r",
+					"//         pm.collectionVariables.set(\"idToken\", idToken);\r",
+					"//         console.log(\"ID Token set:\", idToken);\r",
+					"//     } else {\r",
+					"//         console.log(\"Error logging in:\", err || res);\r",
+					"//     }\r",
+					"// });\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "authToken",
+			"value": ""
+		},
+		{
+			"key": "adminAuthToken",
+			"value": ""
+		},
+		{
+			"key": "idToken",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": "",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		}
+	]
+}

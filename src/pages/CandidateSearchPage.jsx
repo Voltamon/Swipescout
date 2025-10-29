@@ -1,51 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  FormControl,
-  Grid,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-  useTheme,
-  CircularProgress,
-  Alert,
-  Pagination,
-  Chip,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Snackbar
-} from "@mui/material";
-import { 
-  LocationOn, 
-  Search, 
-  PlayArrow, 
-  Code, 
-  WorkOutline, 
-  Email,
-  Phone,
-  LinkedIn,
-  School,
-  Star,
-  Handshake as Connect,
-  Visibility,
-  PersonAdd
-} from "@mui/icons-material";
 import { searchCandidates, connectWithCandidate, getFilterOptions } from "../services/api";
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import {
+  MapPin,
+  Search,
+  Play,
+  Briefcase,
+  Mail,
+  Phone,
+  Linkedin,
+  GraduationCap,
+  Star,
+  Handshake,
+  Eye,
+  UserPlus,
+  Loader2,
+  AlertCircle
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors';
 
 export default function CandidateSearchPage() {
-  const theme = useTheme();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("any");
@@ -59,7 +46,6 @@ export default function CandidateSearchPage() {
   const [filterOptions, setFilterOptions] = useState({});
   const [connectDialog, setConnectDialog] = useState({ open: false, candidate: null });
   const [connectMessage, setConnectMessage] = useState("");
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const experienceLevelOptions = [
     { value: "any", label: "Any Experience" },
@@ -132,162 +118,129 @@ export default function CandidateSearchPage() {
   const handleSendConnection = async () => {
     try {
       await connectWithCandidate(connectDialog.candidate.id, connectMessage);
-      setSnackbar({
-        open: true,
-        message: "Connection request sent successfully!",
-        severity: "success"
+      toast({
+        title: "Success!",
+        description: "Connection request sent successfully!",
       });
       setConnectDialog({ open: false, candidate: null });
       setConnectMessage("");
     } catch (error) {
       console.error('Error sending connection:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to send connection request. Please try again.",
-        severity: "error"
+      toast({
+        title: "Error",
+        description: "Failed to send connection request. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
   const CandidateCard = ({ candidate }) => (
-    <Card 
-      sx={{ 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: theme.shadows[8]
-        }
-      }}
-    >
-      <CardContent sx={{ flexGrow: 1, p: 3 }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <Avatar
-            src={candidate.profileImage}
-            sx={{ width: 60, height: 60, mr: 2 }}
-          >
-            {candidate.firstName?.[0]}{candidate.lastName?.[0]}
+    <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-200 border-l-4 border-l-purple-500">
+      <CardContent className="flex-grow p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Avatar className="h-16 w-16">
+            <AvatarImage src={candidate.profileImage} />
+            <AvatarFallback className="bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
+              {candidate.firstName?.[0]}{candidate.lastName?.[0]}
+            </AvatarFallback>
           </Avatar>
-          <Box flexGrow={1}>
-            <Typography variant="h6" fontWeight="bold">
-              {candidate.firstName} {candidate.lastName}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {candidate.title || 'Job Seeker'}
-            </Typography>
+          <div className="flex-grow">
+            <h3 className="font-bold text-lg">{candidate.firstName} {candidate.lastName}</h3>
+            <p className="text-sm text-muted-foreground">{candidate.title || 'Job Seeker'}</p>
             {candidate.rating && (
-              <Box display="flex" alignItems="center" mt={0.5}>
-                <Star sx={{ color: '#ffc107', fontSize: 16, mr: 0.5 }} />
-                <Typography variant="body2">{candidate.rating}/5</Typography>
-              </Box>
+              <div className="flex items-center gap-1 mt-1">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-medium">{candidate.rating}/5</span>
+              </div>
             )}
-          </Box>
-        </Box>
+          </div>
+        </div>
 
         {candidate.summary && (
-          <Typography variant="body2" color="text.secondary" mb={2}>
-            {candidate.summary.length > 120 
-              ? `${candidate.summary.substring(0, 120)}...` 
-              : candidate.summary
-            }
-          </Typography>
+          <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+            {candidate.summary}
+          </p>
         )}
 
-        {candidate.location && (
-          <Box display="flex" alignItems="center" mb={1}>
-            <LocationOn sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-            <Typography variant="body2" color="text.secondary">
-              {candidate.location}
-            </Typography>
-          </Box>
-        )}
+        <div className="space-y-2 mb-4">
+          {candidate.location && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>{candidate.location}</span>
+            </div>
+          )}
 
-        {candidate.experience && (
-          <Box display="flex" alignItems="center" mb={1}>
-            <WorkOutline sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-            <Typography variant="body2" color="text.secondary">
-              {candidate.experience} years experience
-            </Typography>
-          </Box>
-        )}
+          {candidate.experience && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Briefcase className="h-4 w-4" />
+              <span>{candidate.experience} years experience</span>
+            </div>
+          )}
 
-        {candidate.education && (
-          <Box display="flex" alignItems="center" mb={2}>
-            <School sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-            <Typography variant="body2" color="text.secondary">
-              {candidate.education}
-            </Typography>
-          </Box>
-        )}
+          {candidate.education && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <GraduationCap className="h-4 w-4" />
+              <span>{candidate.education}</span>
+            </div>
+          )}
+        </div>
 
         {candidate.skills && candidate.skills.length > 0 && (
-          <Box mb={2}>
-            <Typography variant="body2" fontWeight="medium" mb={1}>
-              Skills:
-            </Typography>
-            <Box display="flex" flexWrap="wrap" gap={0.5}>
+          <div className="mb-4">
+            <p className="text-sm font-medium mb-2">Skills:</p>
+            <div className="flex flex-wrap gap-1">
               {candidate.skills.slice(0, 4).map((skill, index) => (
-                <Chip
-                  key={index}
-                  label={skill.name || skill}
-                  size="small"
-                  variant="outlined"
-                  sx={{ fontSize: '0.75rem' }}
-                />
+                <Badge key={index} variant="outline" className="text-xs">
+                  {skill.name || skill}
+                </Badge>
               ))}
               {candidate.skills.length > 4 && (
-                <Chip
-                  label={`+${candidate.skills.length - 4} more`}
-                  size="small"
-                  variant="outlined"
-                  sx={{ fontSize: '0.75rem' }}
-                />
+                <Badge variant="outline" className="text-xs">
+                  +{candidate.skills.length - 4} more
+                </Badge>
               )}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
 
-        <Box display="flex" gap={1} mt="auto">
+        <div className="flex gap-2 mt-auto">
           <Button
-            variant="outlined"
-            size="small"
-            startIcon={<Visibility />}
+            variant="outline"
+            size="sm"
+            className="flex-1"
             onClick={() => window.open(`/candidate/${candidate.id}`, '_blank')}
-            sx={{ flex: 1 }}
           >
-            View Profile
+            <Eye className="h-4 w-4 mr-1" />
+            View
           </Button>
           <Button
-            variant="contained"
-            size="small"
-            startIcon={<Connect />}
+            variant="default"
+            size="sm"
+            className={`${themeColors.buttons.primary} text-white flex-1 `}
             onClick={() => handleConnect(candidate)}
-            sx={{ flex: 1 }}
           >
+            <Handshake className="h-4 w-4 mr-1" />
             Connect
           </Button>
           <Button
-            variant="contained"
-            size="small"
-            color="secondary"
-            startIcon={<PersonAdd />}
+            variant="secondary"
+            size="sm"
+            className="flex-1"
             onClick={() => window.open(`/recruit/${candidate.id}`, '_blank')}
-            sx={{ flex: 1 }}
           >
+            <UserPlus className="h-4 w-4 mr-1" />
             Recruit
           </Button>
-        </Box>
+        </div>
 
         {candidate.videoResume && (
           <Button
-            variant="text"
-            size="small"
-            startIcon={<PlayArrow />}
+            variant="ghost"
+            size="sm"
+            className="w-full mt-2"
             onClick={() => window.open(candidate.videoResume, '_blank')}
-            sx={{ mt: 1, width: '100%' }}
           >
+            <Play className="h-4 w-4 mr-1" />
             Watch Video Resume
           </Button>
         )}
@@ -296,130 +249,153 @@ export default function CandidateSearchPage() {
   );
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4}>
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      <h1 className={`${themeColors.text.gradient} text-4xl font-bold mb-6 `}>
         Find Talented Candidates
-      </Typography>
+      </h1>
 
       {/* Search Filters */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                label="Search candidates"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Job title, company, keywords..."
-                InputProps={{
-                  startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                fullWidth
-                label="Skills"
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div className="md:col-span-2">
+              <Label htmlFor="search">Search candidates</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="search"
+                  placeholder="Job title, company, keywords..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="skills">Skills</Label>
+              <Input
+                id="skills"
+                placeholder="React, Python, etc."
                 value={skills}
                 onChange={(e) => setSkills(e.target.value)}
-                placeholder="React, Python, etc."
               />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth>
-                <Select
-                  value={experienceLevel}
-                  onChange={(e) => setExperienceLevel(e.target.value)}
-                  displayEmpty
-                >
+            </div>
+
+            <div>
+              <Label htmlFor="experience">Experience Level</Label>
+              <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+                <SelectTrigger id="experience">
+                  <SelectValue placeholder="Any Experience" />
+                </SelectTrigger>
+                <SelectContent>
                   {experienceLevelOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option.value}>
                       {option.label}
-                    </MenuItem>
+                    </SelectItem>
                   ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                fullWidth
-                label="Location"
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                placeholder="City, State, Country"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="City, State, Country"
               />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth>
-                <Select
-                  value={educationLevel}
-                  onChange={(e) => setEducationLevel(e.target.value)}
-                  displayEmpty
-                >
+            </div>
+
+            <div>
+              <Label htmlFor="education">Education</Label>
+              <Select value={educationLevel} onValueChange={setEducationLevel}>
+                <SelectTrigger id="education">
+                  <SelectValue placeholder="Any Education" />
+                </SelectTrigger>
+                <SelectContent>
                   {educationLevelOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option.value}>
                       {option.label}
-                    </MenuItem>
+                    </SelectItem>
                   ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={1}>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleSearch}
-                sx={{ height: '56px' }}
-                disabled={loading}
-              >
-                {loading ? <CircularProgress size={24} /> : <Search />}
-              </Button>
-            </Grid>
-          </Grid>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <Button
+              onClick={handleSearch}
+              disabled={loading}
+              className={`${themeColors.buttons.primary} text-white `}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Searching...
+                </>
+              ) : (
+                <>
+                  <Search className="mr-2 h-4 w-4" />
+                  Search Candidates
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
       {/* Error Alert */}
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {/* Results */}
       {loading ? (
-        <Box display="flex" justifyContent="center" py={8}>
-          <CircularProgress size={60} />
-        </Box>
+        <div className="flex justify-center py-12">
+          <Loader2 className={`h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
+        </div>
       ) : (
         <>
-          <Typography variant="h6" mb={3}>
+          <h2 className="text-2xl font-semibold mb-4">
             {candidates.length > 0 
               ? `Found ${candidates.length} candidates` 
               : 'No candidates found'
             }
-          </Typography>
+          </h2>
 
-          <Grid container spacing={3}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {candidates.map((candidate) => (
-              <Grid item xs={12} sm={6} md={4} key={candidate.id}>
-                <CandidateCard candidate={candidate} />
-              </Grid>
+              <CandidateCard key={candidate.id} candidate={candidate} />
             ))}
-          </Grid>
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <Box display="flex" justifyContent="center" mt={4}>
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={handlePageChange}
-                color="primary"
-                size="large"
-              />
-            </Box>
+            <div className="flex justify-center gap-2 mt-8">
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(null, page - 1)}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <span className="flex items-center px-4 text-sm text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(null, page + 1)}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
+            </div>
           )}
         </>
       )}
@@ -427,53 +403,46 @@ export default function CandidateSearchPage() {
       {/* Connect Dialog */}
       <Dialog 
         open={connectDialog.open} 
-        onClose={() => setConnectDialog({ open: false, candidate: null })}
-        maxWidth="sm"
-        fullWidth
+        onOpenChange={(open) => !open && setConnectDialog({ open: false, candidate: null })}
       >
-        <DialogTitle>
-          Connect with {connectDialog.candidate?.firstName} {connectDialog.candidate?.lastName}
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            label="Message"
-            value={connectMessage}
-            onChange={(e) => setConnectMessage(e.target.value)}
-            placeholder="Write a personalized message..."
-            sx={{ mt: 2 }}
-          />
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>
+              Connect with {connectDialog.candidate?.firstName} {connectDialog.candidate?.lastName}
+            </DialogTitle>
+            <DialogDescription>
+              Send a personalized message to start the conversation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="message">Message</Label>
+            <Textarea
+              id="message"
+              placeholder="Write a personalized message..."
+              value={connectMessage}
+              onChange={(e) => setConnectMessage(e.target.value)}
+              rows={4}
+              className="mt-2"
+            />
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setConnectDialog({ open: false, candidate: null })}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSendConnection}
+              disabled={!connectMessage.trim()}
+              className={`${themeColors.buttons.primary} text-white `}
+            >
+              Send Connection Request
+            </Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConnectDialog({ open: false, candidate: null })}>
-            Cancel
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={handleSendConnection}
-            disabled={!connectMessage.trim()}
-          >
-            Send Connection Request
-          </Button>
-        </DialogActions>
       </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
-          severity={snackbar.severity}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Container>
+    </div>
   );
 }
 

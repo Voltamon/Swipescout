@@ -1,0 +1,138 @@
+all frontend curret and new pages should use Tailwind with shadcn/ui instead of mui and be styled a lot better, 
+and make sure it integrated with backend , also there should be blog pages and control to add blogs 
+from admin control pannel also pages for checking if user has gaps in his skilles than the job 
+needs and give him advices for that ,also what is his personality and jobs that suitable is stored in db to give him 
+advice as personality and traits for it and carrer path recomendation and there are tables for all of that 
+and check if pages available otherwise add them , also feature for points for user if 
+he did interactions and posting commects ... etc 
+he will get points and amount of these points can be converted to subscription kind of available kinds , 
+also here there are notes in this file below , 
+putted in like question answer you can use them to execute things, 
+also there are json files in same folder of this file you can check for quick reference if you want for apis of 
+backend and ai apis for python service just need to pull reapo to see that folder
+
+From the Postman file — about automatically maping API endpoints (like /users, /jobs, /applications, /videos, /analytics, etc.) to the dashboard widgets and pages data and result? Or defineinig a new, cleaner dashboard routes (e.g. /dashboard/summary, /dashboard/notifications) and implementing them in the backend ?
+yes map them to existing one ,  only if there is no endpoint offer a thing or an endpoint can not be changed or updated to offer that ,you can add one but make sure alot if current ones can be used or updated
+and for upload viedos singin singup by different ways and the context for booth videos and auth and chat do not do new ones for them for sure , also Videos.jsx page is working very will for current things it has , prevoise pages are working and tested with the frontend pages also use pages in forent end taht are used for that they are working very well with backend but you required and better change style width and the looking to be better and to use taillwind and shadcn/ui in styling them instead of mui and as what we want to say here about styling
+Should analytics and insights be pre-computed on the backend (like totals, charts, response rates) or fetched raw and calculated on the frontend (e.g. count applications client-side)?
+Check how current routes and current backend work and decide the best thing to be used
+For notifications and requests — do you want real-time updates (e.g., via websockets or Firebase listeners), or just refresh/poll every 60 seconds?
+yes realtime
+Are the “AI Insights” (like “You’re 2x more likely to get hired…”) already part of the backend, or should the prompt include logic for calling a GPT-powered endpoint like /ai/insights that uses user data?
+the ai endpoints are attached as json file here also a file for nodjs backedn api is attached if that better for quick reference , also the ai is done by paython backend service not by nodejs ,
+if any endpoints missing or needed other current ones you can make them in the python service files in the AI_ServiceServiceApi folder
+🎨 UI/UX Design Fine-Tuning
+For motion and animation, do you prefer:
+Framer Motion for micro animations (card entry, hover glow, transitions), or
+A lightweight CSS-based approach for performance (e.g., Tailwind motion classes)?
+use Tailwind motion classess forperformance and regarding pages make them all use tailwind and shadcn/ui for all pages instead of mui in pages that use them currentlly.
+Should the dashboards have a unified top navbar (showing user avatar, notifications, settings) across both roles, or keep navigation strictly in the sidebar?
+no without top navbar
+but if showing which page user in , the breadcrumb navigation.
+Do you want a mode switch between Job Seeker and Employer views (e.g., toggle in the sidebar if an account has both roles)?
+No as the user have one role only , except admin if he want to toggle from admin dashboard to either jobseeker or employer like for viewing or testing.
+and so also there are admin dashboard that contian all thing realted for users or moderation and suprvision checking overall things or deleting some not good content .. etc
+For illustrations in empty states, do you want:
+Custom minimal line-style illustrations , or
+Prebuilt animated Lottie icons that fit the SwipeScout aesthetic?
+Decide which better 
+📊 Analytics & Charts
+Do you want both roles to use the same chart types (line for engagement, pie for skill level, etc.), or different ones (e.g., Job Seekers get personal analytics, Employers get hiring funnel charts)?
+Different ones i think better
+Should analytics include comparison metrics (e.g., “+23% profile views vs last week”)?
+Yes Ok.
+🧩 Reusable Components & Integration
+Should I define a shared design system folder (like /components/ui/) for elements such as Card, MetricBox, ChartWidget, Toast, VideoPreview, etc.?
+Yes
+Do you want the Dashboard layout to live under a shared layout file (e.g., /app/dashboard/layout.tsx) so both dashboards reuse the same structure, or do you want two completely separate layouts (/dashboard/jobseeker/ and /dashboard/employer/)?
+To be two completely separate
+For the video previews, do you want them embedded directly on the dashboard or just linked to the “My Videos” or “Find Talent” pages?
+Choose if booth or better way.
+🧠 Final Functional Touches
+Should users be able to drag-and-drop widgets (customize their dashboard), or is layout fixed?
+Yes Ok  be able to
+Should analytics data persist across sessions (cached per user), or refresh fresh from backend every time they open it?
+choose to be Refresh from backend or better ways, also  real data for the possible or realvent things
+Should employers see team-level stats (e.g., multiple recruiters under one company), or only individual account metrics for now?
+choose the best
+A) Data and plumbing
+Realtime transport - use our own backend websockets or Firebase listeners as the source of truth for notifications, matches, chat counts, etc.
+Check current things and choose best expand or add
+SSR vs CSR - should the first dashboard paint use SSR with cookies or client fetch only.
+Choose the best 
+Metrics per role - confirm the exact list that shows at the top of each dashboard:
+each user has one role except the admin
+Job seeker: Profile views, Matches, Applications, Unread messages, Saves, Response rate, Video views, Watch time ...etc
+Employer: Applicants, Shortlisted, Interviews scheduled, Unread messages, Job views, Apply rate, Save rate .. etc
+Edit as needed.
+Admin add all pages needed that are not exists and make a dashboard for it as will
+B) Widgets and layout
+Video preview on dashboard - embed a small autoplay-muted hero video on the dashboard or only link to My Videos or Find Talent.
+After pressing “Connect,” user sees Company Details or Candidate Details popup (like your sketch).
+“Open Profile” goes to profile id page with all videos and apply/message buttons.
+When users mutually connect (like each other), should it trigger a match modal that says “It’s a match!” and automatically create a chat thread in Messages?
+🔍 Detailed Search Tab
+check page for search and there should be if not
+Search keyword
+Location
+Salary min/max
+Job Type (Full-time / Part-time / Contract / Freelance)
+Experience Level
+(For employers: candidate filters like skills, experience, education, language, availability)
+Anything else to add?
+decide if thing applicable also
+When searching, should results display as cards with company logo, job title, salary, and location? 
+yes ok
+Metrics per role - confirm the exact list that shows at the top of each dashboard:
+decide the best
+B) Widgets and layout
+Top navbar - do we include a slim top bar with avatar and notifications, or keep navigation strictly in the sidebar. You mentioned one role per account, but this is about placement of controls.
+C) Visual details
+Chart theming - Recharts with SwipeScout colors and soft glow, yes.also  Any preference for default time range on charts: last 7 days, last 30 days, or remember last selection.
+D) Admin
+Admin viewer toggle - allow Admin to switch view into Job Seeker or Employer dashboards in read-only mode. If yes, show a clear “Viewing as” chip and a return to Admin button. Confirm.
+🧠 Connect Flow
+Pagination: show 6–8 results per page or infinite scroll like Explore?
+ok
+🗂 Job Listings Tab
+The Job Listings tab acts as a saved list + all available jobs.
+no i can choose if saved or available
+Should users be able to sort by relevance, newest, salary, or company name?
+yes
+Should “Save” jobs persist to backend ?
+yes
+When clicking “View Details,” should it reuse the Open Profile layout (company info + videos), right?
+choose what is better and best
+🧩 Employer “Find Talent”
+For Employers:
+Explore → swipe through candidate videos
+Detailed Search → advanced filters (skills, experience, education, etc.)
+Candidates → saved / shortlisted profiles
+Correct?
+yes ok and you can decide
+When an employer clicks “Invite” on a candidate, should it create a job invitation object visible to the candidate under Notifications?
+Yes
+🧠 AI Integration
+The Python AI service offers endpoints like /api/analyze-text and /api/analyze-interview.
+Should these be used to:
+Auto-generate skill tags from videos/descriptions?
+it from video speach/ transcription also from relevant data and make that stored in the db to make help make match and etc
+Create short summaries under cards like “This company values creativity and collaboration”?
+ok
+Recommend matches (AI rank ordering of feed)?
+yes according user profile and preferences and so on 
+and for that to specified clearly even for the user in his dashboard and he can edit and change that
+⚙️ Integration + Performance
+Use the existing backend endpoints from Node/Express for all CRUD operations (search, list, match, connect). Only propose new ones if missing. Correct?
+yes
+Should the feed and listings cache recently viewed videos/jobs to minimize reloads between tabs?
+ok if relevant
+Should all feeds update live (WebSocket), or only update after refresh / re-enter?
+live and in best possible way can be added to current backend
+✨ UI / Motion / Style
+Maintain SwipeScout’s purple-cyan glow aesthetic, glassmorphism cards, and rounded corners everywhere, correct?
+choose the best
+Do you want motion transitions when switching between tabs (e.g., slide/fade like shadcn/ui tabs + Tailwind motion)?
+ok
+Empty states — use same animated Lottie style as dashboards or custom static illustrations?
+choose the best

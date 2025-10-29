@@ -1,27 +1,55 @@
-// VideosPage.jsx
-import React, { useContext, useState, useEffect, useRef  } from 'react';
-import { useVideoContext } from '../contexts/VideoContext'; // Correct import
-import { styled } from "@mui/material/styles";
-import {
-  Container, Grid, Card, CardMedia, CardContent,
-  Typography, Button, CircularProgress, Box,
-  LinearProgress, Chip, Stack, Alert, IconButton,
-  Pagination, Dialog, DialogTitle, DialogContent,
-  DialogActions, Tooltip
-} from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { useVideoContext } from '../contexts/VideoContext';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Error, CloudUpload, Replay, Delete } from '@mui/icons-material';
-import api, { deleteVideo } from '../services/api'; // Ensure deleteVideo is imported from your API service
-import { toast } from 'react-toastify';
-import CloudSyncIcon from '@mui/icons-material/CloudSync';
-import { VolumeUp, VolumeOff } from '@mui/icons-material';
+import api, { deleteVideo } from '../services/api';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Video,
+  Upload,
+  Loader2,
+  Play,
+  Trash2,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Volume2,
+  VolumeX,
+  Eye
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors';
 
-const VideosPage = ({setVideoTab}) => {
-  // Destructure removeVideo from useVideoContext
-  const { videos: localVideos, retryUpload, removeVideo } = useVideoContext(); 
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+export default function VideosPage({ setVideoTab }) {
+  const { videos: localVideos, retryUpload, removeVideo } = useVideoContext();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const videoRefs = useRef({});
+
   const [serverVideos, setServerVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [uploadLimitReached, setUploadLimitReached] = useState(false);
@@ -29,35 +57,28 @@ const VideosPage = ({setVideoTab}) => {
   const [isMuted, setIsMuted] = useState(true);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' }); // Added for retry messages
-
-  const videoRefs = useRef({});
-  const navigate = useNavigate();
 
   const VIDEOS_PER_PAGE = 9;
 
-  const toggleMute = () => {
-    setIsMuted(prev => !prev);
-  };
-
-  // Fetch server videos with pagination
   const fetchServerVideos = async (pageNum) => {
     try {
       setLoading(true);
       const response = await api.get(`/videos/?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
-      setServerVideos(response.data.videos);
+      setServerVideos(response.data.videos || []);
       setTotalPages(response.data.totalPages || 1);
       setUploadLimitReached(response.data.uploadLimitReached || false);
-      setError(null);
     } catch (err) {
       console.error('Failed to fetch videos:', err);
-      setError('Failed to load videos. Please try again later.');
+      toast({
+        title: "Error",
+        description: "Failed to load videos",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // Check upload limit from server
   const checkUploadLimit = async () => {
     try {
       const response = await api.get(`/videos/upload-limit`);
@@ -69,39 +90,31 @@ const VideosPage = ({setVideoTab}) => {
     }
   };
 
-  // Handle video deletion
   const handleDeleteVideo = async () => {
     if (!videoToDelete) return;
     
     try {
       if (videoToDelete.isLocal) {
-        // If it's a local video (e.g., failed upload, or still uploading)
-        // We directly remove it from the local contexts/AuthContextlocalStorage
         removeVideo(videoToDelete.id);
-        setSnackbar({
-          open: true,
-          message: 'Video removed successfully.',
-          severity: 'success'
+        toast({
+          title: "Success",
+          description: "Video removed successfully",
         });
       } else {
-        // If it's a server video, call the API to delete it
         await deleteVideo(videoToDelete.id);
         removeVideo(videoToDelete.id);
-        setSnackbar({
-          open: true,
-          message: 'Video deleted from server successfully.',
-          severity: 'success'
+        toast({
+          title: "Success",
+          description: "Video deleted successfully",
         });
-        // After successful server deletion, refetch server videos
         await fetchServerVideos(page);
       }
     } catch (err) {
       console.error('Failed to delete video:', err);
-      setError('Failed to delete video. Please try again.');
-      setSnackbar({
-        open: true,
-        message: 'Failed to delete video: ' + (err.response?.data?.message || err.message),
-        severity: 'error'
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to delete video",
+        variant: "destructive",
       });
     } finally {
       setDeleteConfirmOpen(false);
@@ -109,28 +122,25 @@ const VideosPage = ({setVideoTab}) => {
     }
   };
 
-  // Handle retry for stuck processing videos
   const handleRetry = async (video) => {
     try {
-      if (video.status === 'failed' || video.isLocal) { // Use retryUpload for local failed or stuck uploads
+      if (video.status === 'failed' || video.isLocal) {
         await retryUpload(video.id);
-      } else if (video.status === 'processing') { // For server-side stuck processing
+      } else if (video.status === 'processing') {
         await api.post(`/videos/${video.id}/retry-processing`);
       }
       
-      // Refresh the list
       await fetchServerVideos(page);
-      setSnackbar({
-        open: true,
-        message: 'Retry started successfully',
-        severity: 'success'
+      toast({
+        title: "Success",
+        description: "Retry started successfully",
       });
     } catch (error) {
       console.error('Retry failed:', error);
-      setSnackbar({
-        open: true,
-        message: 'Retry failed: ' + (error.response?.data?.message || error.message),
-        severity: 'error'
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Retry failed",
+        variant: "destructive",
       });
     }
   };
@@ -143,19 +153,13 @@ const VideosPage = ({setVideoTab}) => {
   const handleUploadClick = async () => {
     const limitReached = await checkUploadLimit();
     if (limitReached) {
-      toast.info('You have reached your daily upload limit. Please try again tomorrow.');
+      toast({
+        title: "Upload Limit Reached",
+        description: "You have reached your daily upload limit. Please try again tomorrow.",
+      });
       return;
     }
-     navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
-        // setVideoTab(1); 
-
-  //navigate('/video-upload');
-  };
-
-
-
-  const handlePageChange = (event, value) => {
-    setPage(value);
+    navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
   };
 
   const handleVideoHover = (videoId, isHovering) => {
@@ -186,14 +190,11 @@ const VideosPage = ({setVideoTab}) => {
     });
   };
 
-  // Combine local and server videos, with local videos first
   const allVideos = [
     ...localVideos.map(v => ({ ...v, isLocal: true })),
     ...serverVideos.map(v => ({ ...v, isLocal: false, status: v.status || 'completed' }))
   ];
 
-  // Filter out local videos that have been successfully uploaded AND are now present on the server
-  // This prevents duplicates of successfully uploaded videos.
   const filteredVideos = allVideos.filter(video => {
     if (video.isLocal && video.status === 'completed') {
       return !serverVideos.some(sv => sv.id === video.id);
@@ -201,347 +202,318 @@ const VideosPage = ({setVideoTab}) => {
     return true;
   });
 
-  // Styled component for processing/uploading borders
-  const StatusBorder = styled('div')(({ status, theme }) => ({
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: '8px',
-    border: `8px solid ${status === 'processing' ? "rgb(22, 85, 167)" : theme.palette.error.main}`,
-    background: 'transparent',
-    zIndex: 2,
-    pointerEvents: 'none',
-    animation: 'pulse 2s infinite',
-    '@keyframes pulse': {
-      '0%': { opacity: 0.9 },
-      '50%': { opacity: 0.5 },
-      '100%': { opacity: 0.9 },
-    },
-  }));
+  const getStatusBadge = (video) => {
+    if (video.status === 'uploading') {
+      return (
+        <Badge className="bg-blue-100 text-blue-800">
+          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+          Uploading {video.progress}%
+        </Badge>
+      );
+    }
+    if (video.status === 'processing') {
+      return (
+        <Badge className="bg-yellow-100 text-yellow-800">
+          <Clock className="h-3 w-3 mr-1" />
+          Processing
+        </Badge>
+      );
+    }
+    if (video.status === 'failed') {
+      return (
+        <Badge variant="destructive">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          Failed
+        </Badge>
+      );
+    }
+    if (video.status === 'completed') {
+      return (
+        <Badge className="bg-green-100 text-green-800">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Ready
+        </Badge>
+      );
+    }
+    return null;
+  };
+
+  if (loading && serverVideos.length === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className={`h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
+      </div>
+    );
+  }
 
   return (
-    <Container maxWidth={false} sx={{
-      bgcolor: 'background.jobseeker',
-      padding: 0,
-      minHeight: 'calc(100vh - 24px)', // Adjust for header
-      mt: 0,
-      pt: 2,
-      pb: 4,
-    }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary', fontFamily: 'arial' }}>
-          My Videos
-        </Typography>
-        <Button 
-          variant="contained" 
-          onClick={handleUploadClick}
-          startIcon={<CloudUpload />}
-          disabled={uploadLimitReached}
-        >
-          Upload New Video
-        </Button>
-      </Box>
-
-      {uploadLimitReached && (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          You have reached your daily upload limit. Please try again tomorrow.
-        </Alert>
-      )}
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
-      {loading && page === 1 ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : filteredVideos.length === 0 ? (
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            No videos uploaded yet
-          </Typography>
-          <Button 
-            variant="contained" 
-            onClick={handleUploadClick}
-            sx={{ mt: 2 }}
-            startIcon={<CloudUpload />}
-            disabled={uploadLimitReached}
-          >
-            Upload Your First Video
-          </Button>
-        </Box>
-      ) : (
-        <>
-        <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
-        {filteredVideos.map((video) => (
-          <Grid item key={video.id} xs={12} sm={6} md={4} lg={4}> {/* Changed lg from 3 to 4 */}
-            <Card
-              sx={{
-                width: '300px',
-                maxWidth: 400, // Increased from 350
-                height: '400px', // Ensure card takes full height
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                borderRadius: 2,
-                boxShadow: 2,
-                transition: 'transform 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'scale(1.02)',
-                },
-                position: 'relative',
-                overflow: 'visible',
-              }}
-              onMouseEnter={() => handleVideoHover(video.id, true)}
-              onMouseLeave={() => handleVideoHover(video.id, false)}
-              onClick={() => handleVideoClick(video)}
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className={`${themeColors.text.gradient} text-4xl font-bold  mb-2`}>
+              My Videos
+            </h1>
+            <p className="text-muted-foreground">
+              Manage your video content
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsMuted(!isMuted)}
             >
-                  {(video.status === 'uploading' || video.status === 'processing') && (
-                    <StatusBorder status={video.status} />
-                  )}
+              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            </Button>
+            <Button
+              onClick={handleUploadClick}
+              disabled={uploadLimitReached}
+              className={`${themeColors.buttons.primary} text-white `}
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Video
+            </Button>
+          </div>
+        </div>
 
-                  <CardMedia
-          component="div"
-                sx={{
-                
-                    width: '300px',
-                    height: '400px',
-            paddingTop: '56.25%', // 16:9 aspect ratio
-            backgroundColor: '#000',
-            position: 'relative',
-            overflow: 'hidden',
-            borderRadius: '8px 8px 0 0',
-            cursor: 'pointer'
-          }}
-        >
-                    { (video.video_url || video.videoUrl || video.video_url) && (
-                      <video
-                        ref={el => videoRefs.current[video.id] = el}
-                        src={video.video_url || video.videoUrl || video.videoUrl}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          
-                            width: '300px',
-                            
-                            height: '400px',
-                          
-                          backgroundColor: '#000',
-                        }}
-                        muted={isMuted}
-                        loop
-                        playsInline
-                        disablePictureInPicture
-                        controlsList="nodownload"
-                      />
-                    )}
+        {uploadLimitReached && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+            <div>
+              <p className="font-medium text-yellow-900">Upload Limit Reached</p>
+              <p className="text-sm text-yellow-700">
+                You have reached your daily upload limit. Please try again tomorrow.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
 
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleMute();
-                      }}
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        zIndex: 2,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        color: 'white'
-                      }}
-                    >
-                      {isMuted ? <VolumeOff /> : <VolumeUp />}
-                    </IconButton>
-
-                    {/* Delete button */}
-                    <Tooltip title="Delete video">
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setVideoToDelete(video); // This is correct, 'video' contains 'isLocal'
-                          setDeleteConfirmOpen(true);
-                        }}
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          left: 8,
-                          zIndex: 2,
-                          backgroundColor: 'rgba(0,0,0,0.5)',
-                          color: 'white'
-                        }}
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-
-                    {/* Overlay Content */}
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        p: 1,
-                        color: 'white',
-                        background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-                        zIndex: 1,
-                      }}
-                    >
-                      <Typography variant="subtitle1" noWrap  sx={{   color:'white',}}>
-                        {video.video_title || video.videoTitle || video.title || 'Untitled Video'}
-                      </Typography>
-
-                      <Typography variant="body2" sx={{   color:'white',}}>
-                        {(video.category || video.video_category || video.catagory || video.video_type || 'Uncategorized')} •{' '}
-                        {Math.round((video.video_duration || video.videoDuration || 0))}s
-                      </Typography>
-
-                      {video.hashtags && (
-                        <Stack direction="row" spacing={0.5} sx={{ mt: 0.5, flexWrap: 'wrap', gap: 0.5 }}>
-                          {(() => {
-                            try {
-                              let tags = [];
-                              if (Array.isArray(video.hashtags)) {
-                                tags = video.hashtags;
-                              } else {
-                                try {
-                                  const parsed = JSON.parse(video.hashtags);
-                                  tags = Array.isArray(parsed) ? parsed : [parsed];
-                                } catch (e) {
-                                  tags = video.hashtags.split(',').map(t => t.trim()).filter(Boolean);
-                                }
-                              }
-                              return tags.map((tag, i) => (
-                                <Chip
-                                  key={`${video.id}-${i}`}
-                                  label={`#${tag}`}
-                                  size="small"
-                                  sx={{ 
-                                    color: 'white', 
-                                    borderColor: 'white',
-                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                    height: '24px'
-                                  }}
-                                />
-                              ));
-                            } catch (error) {
-                              console.error('Error parsing hashtags:', error);
-                              return null;
-                            }
-                          })()}
-                        </Stack>
-                      )}
-                    </Box>
-                  </CardMedia>
-
-                  {/* CardContent - Status information */}
-                  <CardContent sx={{ pt: 1, pb: 1 }}>
-                    {video.isLocal && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        {video.status === 'completed' ? (
-                          <CheckCircle color="success" />
-                        ) : (
-                          <CloudSyncIcon />
-                        )}
-                        {video.status === 'uploading' && (
-                          <>
-                            <Typography variant="caption" color="text.secondary">
-                              Uploading... {video.progress}%
-                            </Typography>
-                            <LinearProgress
-                              variant="determinate"
-                              value={video.progress}
-                              color="error"
-                              sx={{ width: '60%' }}
-                            />
-                          </>
-                        )}
-
-                      {/* Show retry button for failed or local failed uploads */}
-                      {video.isLocal && video.status === 'failed' && (
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          size="small"
-                          startIcon={<Replay />}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRetry(video);
-                          }}
-                          sx={{ mt: 1 }}
-                        >
-                          Retry Upload
-                        </Button>
-                      )}
-
-                      {/* If not local and completed, show check mark */}
-                      {!video.isLocal && video.status === 'completed' && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <CheckCircle color="success" />
-                          <Typography variant="caption" color="text.secondary">Ready</Typography>
-                        </Box>
-                      )}
-                    </Box>
-
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-
-          {totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={handlePageChange}
-                color="primary"
-                sx={{
-                  '& .MuiPaginationItem-root': {
-                    color: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                  },
-                  '& .Mui-selected': {
-                    backgroundColor: 'rgba(255,255,255,0.4)',
-                  },
+      {/* Videos Grid */}
+      {filteredVideos.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {filteredVideos.map((video) => (
+              <VideoCard
+                key={video.id}
+                video={video}
+                videoRefs={videoRefs}
+                hoveredVideo={hoveredVideo}
+                isMuted={isMuted}
+                onHover={handleVideoHover}
+                onClick={handleVideoClick}
+                onDelete={(v) => {
+                  setVideoToDelete(v);
+                  setDeleteConfirmOpen(true);
                 }}
+                onRetry={handleRetry}
+                getStatusBadge={getStatusBadge}
               />
-            </Box>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <div className="flex items-center gap-2 px-4">
+                <span className="text-sm text-muted-foreground">
+                  Page {page} of {totalPages}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
+            </div>
           )}
         </>
+      ) : (
+        <Card className="text-center py-12">
+          <CardContent>
+            <Video className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No videos yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Upload your first video to get started
+            </p>
+            <Button
+              onClick={handleUploadClick}
+              className={`${themeColors.buttons.primary} text-white `}
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Video
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Delete confirmation dialog */}
-      <Dialog
-        open={deleteConfirmOpen}
-        onClose={() => setDeleteConfirmOpen(false)}
-      >
-        <DialogTitle>Delete Video</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete this video? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
-          <Button 
-            onClick={handleDeleteVideo} 
-            color="error"
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Video</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{videoToDelete?.title}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteVideo}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
-};
+}
 
-export default VideosPage;
+// Video Card Component
+function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, onDelete, onRetry, getStatusBadge }) {
+  const isProcessing = video.status === 'uploading' || video.status === 'processing';
+  const isFailed = video.status === 'failed';
+
+  return (
+    <Card
+      className={`group relative overflow-hidden hover:shadow-lg transition-all duration-200 ${
+        isProcessing ? 'border-l-4 border-l-blue-500' : isFailed ? 'border-l-4 border-l-red-500' : ''
+      }`}
+      onMouseEnter={() => onHover(video.id, true)}
+      onMouseLeave={() => onHover(video.id, false)}
+    >
+      {/* Video Preview */}
+      <div className="relative aspect-[9/16] bg-black overflow-hidden">
+        {video.thumbnailUrl || video.videoUrl ? (
+          <video
+            ref={el => videoRefs.current[video.id] = el}
+            src={`${VITE_API_BASE_URL}${video.videoUrl || video.thumbnailUrl}`}
+            poster={video.thumbnailUrl ? `${VITE_API_BASE_URL}${video.thumbnailUrl}` : undefined}
+            muted={isMuted}
+            loop
+            className="w-full h-full object-cover"
+            onClick={() => !isProcessing && !isFailed && onClick(video)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Video className="h-16 w-16 text-gray-400" />
+          </div>
+        )}
+
+        {/* Processing Overlay */}
+        {isProcessing && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="text-center text-white">
+              <Loader2 className="h-12 w-12 animate-spin mx-auto mb-2" />
+              <p className="text-sm">
+                {video.status === 'uploading' ? `Uploading ${video.progress}%` : 'Processing...'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Failed Overlay */}
+        {isFailed && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="text-center text-white">
+              <AlertCircle className="h-12 w-12 mx-auto mb-2 text-red-500" />
+              <p className="text-sm">Upload Failed</p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-2 text-white border-white hover:bg-white/20"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRetry(video);
+                }}
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Retry
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Hover Play Icon */}
+        {!isProcessing && !isFailed && hoveredVideo !== video.id && (
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
+              <Play className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Video Info */}
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-semibold line-clamp-1">{video.title || 'Untitled'}</h3>
+          {getStatusBadge(video)}
+        </div>
+
+        {video.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+            {video.description}
+          </p>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          {!isProcessing && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick(video);
+                }}
+              >
+                <Eye className="h-3 w-3 mr-1" />
+                View
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(video);
+                }}
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </>
+          )}
+          {isFailed && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRetry(video);
+              }}
+            >
+              <RefreshCw className="h-3 w-3 mr-1" />
+              Retry Upload
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

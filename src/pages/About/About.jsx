@@ -1,35 +1,24 @@
-import React, { useContext } from "react";
+import React from "react";
 import Header from "../../components/Headers/Header";
-import HeroSection from "../../components/HeroSection/HeroSection";
 import { Helmet } from "react-helmet";
 import Footer from "../../components/Headers/Footer";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Avatar,
-  Divider,
-  useTheme,
-  useMediaQuery
-} from "@mui/material";
-import {
-  Groups,
-  Diversity3,
-  EmojiObjects,
+  Users,
+  Heart,
+  Lightbulb,
   Handshake,
-  LocationOn,
-  Email,
-  Phone
-} from "@mui/icons-material";
+  MapPin,
+  Mail,
+  TrendingUp,
+  Target,
+  Award
+} from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 const AboutUs = () => {
   const { t } = useTranslation();
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const teamMembers = [
     {
@@ -65,229 +54,171 @@ const AboutUs = () => {
   ];
 
   const stats = [
-    { value: "+", label: t('about.stats.jobsPosted'), icon: <Groups fontSize="large" /> },
-    {
-      value: "+",
-      label: t('about.stats.candidatesHired'),
-      icon: <Diversity3 fontSize="large" />
-    },
-    {
-      value: "+",
-      label: t('about.stats.partnerCompanies'),
-      icon: <Handshake fontSize="large" />
-    },
-    {
-      value: "95%",
-      label: t('about.stats.satisfactionRate'),
-      icon: <EmojiObjects fontSize="large" />
-    }
+    { value: "+", label: t('about.stats.jobsPosted'), icon: <Users className="h-10 w-10" /> },
+    { value: "+", label: t('about.stats.candidatesHired'), icon: <Heart className="h-10 w-10" /> },
+    { value: "+", label: t('about.stats.partnerCompanies'), icon: <Handshake className="h-10 w-10" /> },
+    { value: "95%", label: t('about.stats.satisfactionRate'), icon: <Lightbulb className="h-10 w-10" /> }
   ];
 
   return (
- <>
-  <Helmet>
-    <title>{t('about.meta.title')}</title>
-    <meta name="description" content={t('about.meta.description')} />
-    <meta name="keywords" content={t('about.meta.keywords')} />
-    <meta property="og:title" content={t('about.meta.title')} />
-    <meta property="og:description" content={t('about.meta.ogDescription')} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.swipescout.xyz/about" />
-    <link rel="canonical" href="https://www.swipescout.xyz/about" />
-  </Helmet>
+    <>
+      <Helmet>
+        <title>{t('about.meta.title')}</title>
+        <meta name="description" content={t('about.meta.description')} />
+        <meta name="keywords" content={t('about.meta.keywords')} />
+        <meta property="og:title" content={t('about.meta.title')} />
+        <meta property="og:description" content={t('about.meta.ogDescription')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.swipescout.xyz/about" />
+        <link rel="canonical" href="https://www.swipescout.xyz/about" />
+      </Helmet>
 
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50">
+        <Header />
+        
+        <div className="container mx-auto py-8 px-4 max-w-7xl">
+          {/* Hero Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+              {t('about.hero.title')}
+            </h1>
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              {t('about.hero.subtitle')}
+            </h2>
+            <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+              {t('about.hero.description')}
+            </p>
+          </div>
 
-  <Box
-    sx={{
-      background: "linear-gradient(135deg, rgb(185, 229, 255) 0%, rgb(162, 194, 241) 100%)", // New bright background
-      color: "#212121", // Very dark gray for general text for strong contrast
-      pt: 0,
-      pb: 8
-    }}
-  >
-      <Header />
-      <Container maxWidth="lg" sx={{ mt:3}}>
-        {/* Hero Section */}
-        <Box textAlign="center" mb={8}>
-          <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#0D47A1" }}> {/* Darker, strong blue */}
-            {t('about.hero.title')}
-          </Typography>
-          <Typography variant="h5" component="h2" sx={{ color: "#1565C0" }} gutterBottom> {/* Slightly lighter dark blue */}
-            {t('about.hero.subtitle')}
-          </Typography>
-          <Typography variant="body1" maxWidth="md" mx="auto" sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-            {t('about.hero.description')}
-          </Typography>
-        </Box>
+          <div className="border-t-4 border-purple-600 my-12"></div>
 
-        <Divider sx={{ my: 6, bgcolor: "#0D47A1" }} /> {/* Darker, strong blue for divider */}
+          {/* Mission Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                {t('about.mission.title')}
+              </h2>
+              <p className="text-gray-700 mb-4 text-lg leading-relaxed">
+                {t('about.mission.description1')}
+              </p>
+              <p className="text-gray-700 text-lg leading-relaxed">
+                {t('about.mission.description2')}
+              </p>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="grid grid-cols-2 gap-6">
+                <Card className="bg-gradient-to-br from-purple-100 to-purple-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
+                  <CardContent className="p-6 text-center">
+                    <Target className="h-12 w-12 mx-auto mb-3 text-purple-600" />
+                    <p className="font-semibold text-purple-900">Innovation</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-cyan-100 to-cyan-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
+                  <CardContent className="p-6 text-center">
+                    <Award className="h-12 w-12 mx-auto mb-3 text-cyan-600" />
+                    <p className="font-semibold text-cyan-900">Excellence</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-pink-100 to-pink-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
+                  <CardContent className="p-6 text-center">
+                    <Heart className="h-12 w-12 mx-auto mb-3 text-pink-600" />
+                    <p className="font-semibold text-pink-900">Passion</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-green-100 to-green-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
+                  <CardContent className="p-6 text-center">
+                    <TrendingUp className="h-12 w-12 mx-auto mb-3 text-green-600" />
+                    <p className="font-semibold text-green-900">Growth</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
 
-        {/* Mission Section */}
-        <Grid container spacing={6} alignItems="center" mb={8}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h4" gutterBottom sx={{ color: "#0D47A1" }}> {/* Darker, strong blue */}
-              {t('about.mission.title')}
-            </Typography>
-            <Typography variant="body1" paragraph sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-              {t('about.mission.description1')}
-            </Typography>
-            <Typography variant="body1" paragraph sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-              {t('about.mission.description2')}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box   sx={{ width: "100%", borderRadius: 1, boxShadow: 3 }} />
-          </Grid>
-        </Grid>
+          {/* Stats Section */}
+          <Card className="bg-gradient-to-r from-blue-100 to-cyan-100 border-none shadow-xl mb-16">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.map((stat, index) => (
+                  <Card key={index} className="bg-white border-none shadow-md hover:shadow-lg transition-all duration-200">
+                    <CardContent className="p-6 text-center">
+                      <div className="text-purple-600 mb-4 flex justify-center">
+                        {stat.icon}
+                      </div>
+                      <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                        {stat.value}
+                      </div>
+                      <div className="text-gray-600 font-medium">
+                        {stat.label}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-     {/* Stats Section */}
-<Box sx={{
-  bgcolor: "#BBDEFB", // Lighter blue for stats section background
-  p: 4,
-  borderRadius: 2,
-  mb: 8,
-  width: '100%' // Ensure container takes full width
-}}>
-  <Grid container spacing={4} justifyContent="space-between">
-    {stats.map((stat, index) => (
-      <Grid item xs={12} sm={6} md={3} key={index} sx={{
-        display: 'flex',
-        flex: 1, // Make items grow equally
-        minWidth: { xs: '100%', sm: 'calc(50% - 32px)', md: 'calc(25% - 32px)' } // Account for spacing
-      }}>
-        <Card sx={{
-          flex: 1, // Take all available space
-          display: 'flex',
-          flexDirection: 'column',
-          textAlign: "center",
-          boxShadow: "none",
-          bgcolor: "#E3F2FD", // Very light blue for card background
-          color: "#212121", // Very dark gray for card text
-          height: '100%' // Ensure full height
-        }}>
-          <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ color: "#0D47A1", mb: 2 }}> {/* Darker, strong blue for icons */}
-              {stat.icon}
-            </Box>
-            <Typography variant="h4" component="div" gutterBottom>
-              {stat.value}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 'auto' }}>
-              {stat.label}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-    ))}
-  </Grid>
-</Box>
+          {/* Team Section */}
+          <div className="mb-16">
+            <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+              {t('about.team.title')}
+            </h2>
+            <p className="text-gray-600 text-center text-lg max-w-3xl mx-auto mb-12">
+              {t('about.team.description')}
+            </p>
 
-        {/* Team Section */}
- <Box mb={8} sx={{ width: '100%', px: { xs: 2, sm: 3 } }}>
-  <Typography variant="h4" align="center" gutterBottom sx={{ color: "#0D47A1", mb: 3 }}> {/* Darker, strong blue */}
-    {t('about.team.title')}
-  </Typography>
-  <Typography variant="body1" align="center" maxWidth="md" mx="auto" mb={6} sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-    {t('about.team.description')}
-  </Typography>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {teamMembers.map((member, index) => (
+                <Card
+                  key={index}
+                  className="bg-gradient-to-br from-blue-50 to-cyan-50 border-purple-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                >
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <Avatar className="h-32 w-32 mb-4 border-4 border-white shadow-lg">
+                      <AvatarImage src={member.avatar} alt={member.name} />
+                      <AvatarFallback className="bg-gradient-to-r from-purple-600 to-cyan-600 text-white text-2xl">
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <h3 className="text-lg font-semibold mb-1 text-gray-900">
+                      {member.name}
+                    </h3>
+                    <p className="text-sm font-medium text-purple-600 mb-3">
+                      {member.role}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {member.bio}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
 
-  <Grid container spacing={4} justifyContent="center" sx={{ margin: '0 auto', maxWidth: '1200px' }}>
-    {teamMembers.map((member, index) => (
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        md={3}
-        key={index}
-        sx={{
-          display: 'flex',
-          width: { xs: '100%', sm: 'calc(50% - 32px)', md: 'calc(25% - 32px)' }, // Fixed width calculation
-          minWidth: { xs: '100%', sm: 'calc(50% - 32px)', md: 'calc(25% - 32px)' } // Ensures no growing beyond allocated space
-        }}
-      >
-        <Card
-          sx={{
-            width: '100%', // Takes full width of Grid item
-            display: "flex",
-            flexDirection: "column",
-            bgcolor: "rgb(178, 225, 245)", // Light blue-gray for card background
-            color: "#212121", // Very dark gray for card text
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              transform: 'translateY(-5px)',
-              boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
-            }
-          }}
-        >
-          <Box
-            sx={{
-              pt: 4,
-              display: "flex",
-              justifyContent: "center",
-              flexShrink: 0
-            }}
-          >
-            <Avatar
-              alt={member.name}
-              src={member.avatar}
-              sx={{
-                width: 120,
-                height: 120,
-                border: '3px solid white',
-                boxShadow: '0 3px 5px rgba(0,0,0,0.2)'
-              }}
-            />
-          </Box>
-          <CardContent
-            sx={{
-              flex: '1 0 auto', // Allows content to grow but not shrink
-              display: 'flex',
-              flexDirection: 'column',
-              textAlign: "center",
-              px: 3,
-              pb: 3
-            }}
-          >
-            <Typography variant="h6" component="div" sx={{ fontWeight: 600, mb: 1 }}>
-              {member.name}
-            </Typography>
-            <Typography variant="subtitle2" color="#1976D2" sx={{ fontWeight: 500, mb: 2 }}> {/* Medium dark blue for role */}
-              {member.role}
-            </Typography>
-            <Typography variant="body2" sx={{ flexGrow: 1 }}>
-              {member.bio}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-    ))}
-  </Grid>
-</Box>
-        {/* Contact Section */}
-        <Box sx={{ bgcolor: "#90CAF9", p: 4, borderRadius: 2 }}> {/* Medium light blue for contact section background */}
-          <Typography variant="h4" align="center" gutterBottom sx={{ color: "#0D47A1" }}> {/* Darker, strong blue */}
-            Get In Touch
-          </Typography>
-          <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} md={4}>
-              <Box display="flex" alignItems="center" mb={2}>
-                <LocationOn sx={{ color: "#0D47A1", mr: 2 }} /> {/* Darker, strong blue */}
-                <Typography sx={{ color: "#424242" }}>Doha Qatar</Typography> {/* Dark gray */}
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box display="flex" alignItems="center" mb={2}>
-                <Email sx={{ color: "#0D47A1", mr: 2 }} /> {/* Darker, strong blue */}
-                <Typography sx={{ color: "#424242" }}> {/* Dark gray */}
-                  info@swipescout.xyz
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-      </Container>
-      <Footer />
-    </Box>;
+          {/* Contact Section */}
+          <Card className="bg-gradient-to-r from-purple-100 to-cyan-100 border-none shadow-xl">
+            <CardContent className="p-8">
+              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                Get In Touch
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md">
+                  <MapPin className="h-6 w-6 text-purple-600 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">Doha Qatar</span>
+                </div>
+                <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md">
+                  <Mail className="h-6 w-6 text-purple-600 flex-shrink-0" />
+                  <span className="text-gray-700 font-medium">info@swipescout.xyz</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="mt-16">
+          <Footer />
+        </div>
+      </div>
     </>
   );
 };

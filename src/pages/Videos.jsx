@@ -946,9 +946,11 @@ const Videos = () => {
 
     try {
       setLoading(!append);
+      console.log('Fetching videos with startId:', startId);
       // Use public endpoint alias to avoid "No token provided" when unauthenticated.
       // Be tolerant to multiple response shapes (array, { videos: [...] }, { data: { videos: [...] } }, etc.)
       const response = await axios.get(`${API_BASE_URL}/videos/public/getVideosForHomePage`, { params: { id: startId } });
+      console.log('Videos response:', response);
       const payload = response?.data ?? response ?? {};
 
       let rawList = [];
@@ -1008,8 +1010,9 @@ const Videos = () => {
         setHasMoreVideos(normalized.length > 0);
       }
     } catch (err) {
-      setError("Failed to fetch videos");
-      console.error(err);
+      const errorMsg = err?.response?.data?.message || err?.message || "Failed to fetch videos";
+      setError(errorMsg);
+      console.error("Failed to fetch videos:", err);
     } finally {
       setLoading(false);
       isFetchingMore.current = false;
@@ -1571,8 +1574,50 @@ const Videos = () => {
 
   if (error) {
     return (
-      <Box p={3}>
-        <Alert severity="error">{error}</Alert>
+      <Box p={3} display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="100vh">
+        <Alert severity="error" sx={{ mb: 2, maxWidth: 600 }}>
+          <Typography variant="h6" gutterBottom>Oops!</Typography>
+          <Typography variant="body1">{error}</Typography>
+        </Alert>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Please try refreshing the page or contact support if the problem persists.
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <button 
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              fetchVideos(initialVideoId);
+            }}
+            style={{
+              padding: '10px 20px',
+              borderRadius: 6,
+              border: 'none',
+              backgroundColor: '#1976d2',
+              color: '#fff',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 600
+            }}
+          >
+            Try Again
+          </button>
+          <button 
+            onClick={() => window.location.href = '/'}
+            style={{
+              padding: '10px 20px',
+              borderRadius: 6,
+              border: '1px solid #ccc',
+              backgroundColor: '#fff',
+              color: '#000',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 600
+            }}
+          >
+            Go Home
+          </button>
+        </Box>
       </Box>
     );
   }

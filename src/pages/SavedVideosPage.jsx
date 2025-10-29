@@ -1,68 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  IconButton,
-  Button,
-  Chip,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress,
-  Alert,
-  TextField,
-  InputAdornment,
-  Menu,
-  MenuItem,
-  Divider
-} from '@mui/material';
-import {
-  PlayArrow,
-  Bookmark,
-  BookmarkBorder,
-  Share,
-  MoreVert,
-  Search,
-  FilterList,
-  Delete,
-  Visibility,
-  Work,
-  Business,
-  Sort
-} from '@mui/icons-material';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
-import { 
-  getUserSavedVideos, 
-  unsaveVideo, 
-  shareVideo,
-  searchVideos 
-} from '../services/api';
-import { toast } from 'react-toastify';
-import AllVideosPage from './AllVideosPage';
+import { getUserSavedVideos, unsaveVideo, shareVideo } from '../services/api';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Bookmark,
+  BookmarkCheck,
+  Play,
+  Search,
+  Share2,
+  Trash2,
+  Eye,
+  Loader2,
+  Filter,
+  SortAsc
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors-jobseeker';
 
-const SavedVideosPage = () => {
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+export default function SavedVideosPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+  const { toast } = useToast();
+  const videoRefs = useRef({});
+
   const [savedVideos, setSavedVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('saved_date');
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [hoveredVideo, setHoveredVideo] = useState(null);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState(null);
 
@@ -77,383 +66,292 @@ const SavedVideosPage = () => {
       setSavedVideos(response.data.videos || []);
     } catch (error) {
       console.error('Failed to fetch saved videos:', error);
-      setError('Failed to load saved videos');
+      toast({
+        title: "Error",
+        description: "Failed to load saved videos",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUnsaveVideo = async (videoId) => {
+  const handleUnsaveVideo = async () => {
+    if (!videoToDelete) return;
+
     try {
-      await unsaveVideo(videoId);
-      setSavedVideos(prev => prev.filter(video => video.id !== videoId));
-      setDeleteDialog(false);
-      setVideoToDelete(null);
+      await unsaveVideo(videoToDelete.id);
+      setSavedVideos(prev => prev.filter(v => v.id !== videoToDelete.id));
+      toast({
+        title: "Success",
+        description: "Video removed from saved collection",
+      });
     } catch (error) {
       console.error('Failed to unsave video:', error);
-      setError('Failed to remove video from saved');
+      toast({
+        title: "Error",
+        description: "Failed to remove video",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialog(false);
+      setVideoToDelete(null);
     }
   };
 
   const handleShareVideo = async (video) => {
     try {
+      const shareUrl = `${window.location.origin}/video-player/${video.id}`;
+      
       if (navigator.share) {
         await navigator.share({
-          title: video.video_title,
-          text: `Check out this video: ${video.video_title}`,
-          url: `${window.location.origin}/video-player/${video.id}`,
+          title: video.title,
+          text: video.description,
+          url: shareUrl
         });
       } else {
-  await navigator.clipboard.writeText(`${window.location.origin}/video-player/${video.id}`);
-  toast.success('Link copied to clipboard!');
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Link Copied",
+          description: "Video link copied to clipboard",
+        });
       }
-      
-      await shareVideo(video.id, 'link');
     } catch (error) {
-      console.error('Failed to share video:', error);
+      if (error.name !== 'AbortError') {
+        console.error('Failed to share video:', error);
+      }
     }
   };
 
-  const handlePlayVideo = (video) => {
-    setSelectedVideo(video);
-    setShowVideoPlayer(true);
+  const handleVideoClick = (video) => {
+    navigate(`/video-player/${video.id}`, {
+      state: {
+        currentVideo: video,
+        allVideos: filteredVideos,
+      }
+    });
   };
 
-  const filteredVideos = savedVideos.filter(video => {
-    const matchesSearch = video.video_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         video.user?.displayName?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesFilter = filterType === 'all' || 
-                         (filterType === 'jobseeker' && video.video_type === 'Job Seeker') ||
-                         (filterType === 'employer' && video.video_type === 'Employer');
-    
-    return matchesSearch && matchesFilter;
-  });
-
-  const sortedVideos = [...filteredVideos].sort((a, b) => {
-    switch (sortBy) {
-      case 'saved_date':
-        return new Date(b.saved_at || b.created_at) - new Date(a.saved_at || a.created_at);
-      case 'title':
-        return a.video_title?.localeCompare(b.video_title);
-      case 'views':
-        return (b.views_count || 0) - (a.views_count || 0);
-      case 'likes':
-        return (b.likes_count || 0) - (a.likes_count || 0);
-      default:
-        return 0;
+  const handleVideoHover = (videoId, isHovering) => {
+    if (isHovering) {
+      setHoveredVideo(videoId);
+      const videoEl = videoRefs.current[videoId];
+      if (videoEl) {
+        videoEl.currentTime = 0;
+        videoEl.play().catch(e => console.log('Autoplay prevented:', e));
+      }
+    } else {
+      const videoEl = videoRefs.current[videoId];
+      if (videoEl && !videoEl.paused) {
+        videoEl.pause();
+        videoEl.currentTime = 0;
+      }
+      setHoveredVideo(null);
     }
-  });
+  };
 
-  if (showVideoPlayer && selectedVideo) {
-    return (
-      <AllVideosPage 
-        pagetype="saved"
-        onClose={() => {
-          setShowVideoPlayer(false);
-          setSelectedVideo(null);
-        }}
-      />
-    );
-  }
+  // Filter and sort videos
+  const filteredVideos = savedVideos
+    .filter(video => {
+      const matchesSearch = video.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          video.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      if (filterType === 'all') return matchesSearch;
+      if (filterType === 'jobseeker') return matchesSearch && video.uploaderType === 'jobseeker';
+      if (filterType === 'employer') return matchesSearch && video.uploaderType === 'employer';
+      return matchesSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'saved_date') return new Date(b.savedAt) - new Date(a.savedAt);
+      if (sortBy === 'title') return a.title.localeCompare(b.title);
+      if (sortBy === 'upload_date') return new Date(b.createdAt) - new Date(a.createdAt);
+      return 0;
+    });
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4" gutterBottom>
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="`${themeColors.text.gradient} text-4xl font-bold  mb-2">
           Saved Videos
-        </Typography>
-        <Chip 
-          label={`${savedVideos.length} videos saved`} 
-          color="primary" 
-          variant="outlined" 
-        />
-      </Box>
+        </h1>
+        <p className="text-muted-foreground">
+          Your bookmarked video collection ({savedVideos.length} videos)
+        </p>
+      </div>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
+      {/* Filters */}
+      <div className="mb-6 flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search saved videos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
 
-      {/* Search and Filter Controls */}
-      <Box sx={{ mb: 4 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              placeholder="Search saved videos..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<FilterList />}
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              Filter: {filterType === 'all' ? 'All' : filterType === 'jobseeker' ? 'Job Seekers' : 'Employers'}
-            </Button>
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<Sort />}
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              Sort: {sortBy.replace('_', ' ')}
-            </Button>
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => navigate('/videos/all')}
-            >
-              Browse Videos
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
+        <Select value={filterType} onValueChange={setFilterType}>
+          <SelectTrigger className="w-full md:w-48">
+            <Filter className="h-4 w-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Videos</SelectItem>
+            <SelectItem value="jobseeker">Job Seekers</SelectItem>
+            <SelectItem value="employer">Employers</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-full md:w-48">
+            <SortAsc className="h-4 w-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="saved_date">Recently Saved</SelectItem>
+            <SelectItem value="upload_date">Recently Uploaded</SelectItem>
+            <SelectItem value="title">Title (A-Z)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       {/* Videos Grid */}
-      {sortedVideos.length > 0 ? (
-        <Grid container spacing={3}>
-          {sortedVideos.map((video) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ position: 'relative' }}>
-                  <CardMedia
-                    component="div"
-                    sx={{
-                      height: 200,
-                      backgroundImage: `url(${video.thumbnail_url || '/api/placeholder/300/200'})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      '&:hover .play-button': {
-                        opacity: 1,
-                        transform: 'scale(1.1)'
-                      }
-                    }}
-                    onClick={() => handlePlayVideo(video)}
-                  >
-                    <IconButton
-                      className="play-button"
-                      sx={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                        color: 'white',
-                        opacity: 0.8,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                        }
-                      }}
-                    >
-                      <PlayArrow sx={{ fontSize: 40 }} />
-                    </IconButton>
-                  </CardMedia>
-                  
-                  <Chip
-                    label={video.video_type === 'Job Seeker' ? 'Job Seeker' : 'Employer'}
-                    size="small"
-                    color={video.video_type === 'Job Seeker' ? 'primary' : 'secondary'}
-                    sx={{
-                      position: 'absolute',
-                      top: 8,
-                      left: 8,
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)'
-                    }}
-                  />
-                  
-                  <Box sx={{
-                    position: 'absolute',
-                    bottom: 8,
-                    right: 8,
-                    display: 'flex',
-                    gap: 0.5
-                  }}>
-                    <Chip
-                      label={`${video.views_count || 0} views`}
-                      size="small"
-                      sx={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}
-                    />
-                  </Box>
-                </Box>
+      {filteredVideos.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredVideos.map((video) => (
+            <Card
+              key={video.id}
+              className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-l-4 border-l-cyan-500"
+              onMouseEnter={() => handleVideoHover(video.id, true)}
+              onMouseLeave={() => handleVideoHover(video.id, false)}
+            >
+              {/* Video Preview */}
+              <div className="relative aspect-[9/16] bg-black overflow-hidden">
+                <video
+                  ref={el => videoRefs.current[video.id] = el}
+                  src={`${VITE_API_BASE_URL}${video.videoUrl}`}
+                  poster={video.thumbnailUrl ? `${VITE_API_BASE_URL}${video.thumbnailUrl}` : undefined}
+                  muted
+                  loop
+                  className="w-full h-full object-cover"
+                  onClick={() => handleVideoClick(video)}
+                />
 
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="h3" gutterBottom noWrap>
-                    {video.video_title}
-                  </Typography>
-                  
-                  <Box display="flex" alignItems="center" gap={1} mb={1}>
-                    <Avatar sx={{ width: 24, height: 24 }}>
-                      {video.user?.displayName?.charAt(0)}
-                    </Avatar>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {video.user?.displayName}
-                    </Typography>
-                  </Box>
+                {/* Saved Badge */}
+                <div className="absolute top-3 right-3">
+                  <Badge className="bg-cyan-100 text-cyan-800">
+                    <BookmarkCheck className="h-3 w-3 mr-1" />
+                    Saved
+                  </Badge>
+                </div>
 
-                  {video.hashtags && (
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {video.hashtags}
-                    </Typography>
-                  )}
+                {/* Hover Play Icon */}
+                {hoveredVideo !== video.id && (
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
+                      <Play className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+                )}
+              </div>
 
-                  <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
-                    <Typography variant="caption" color="text.secondary">
-                      Saved {new Date(video.saved_at || video.created_at).toLocaleDateString()}
-                    </Typography>
-                    <Box display="flex" gap={0.5}>
-                      <Chip
-                        label={`${video.likes_count || 0}`}
-                        size="small"
-                        variant="outlined"
-                      />
-                    </Box>
-                  </Box>
-                </CardContent>
+              {/* Video Info */}
+              <CardContent className="p-4">
+                <h3 className="font-semibold line-clamp-1 mb-1">{video.title || 'Untitled'}</h3>
+                
+                {video.uploaderName && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    by {video.uploaderName}
+                  </p>
+                )}
 
-                <CardActions>
+                {video.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {video.description}
+                  </p>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-2">
                   <Button
-                    size="small"
-                    startIcon={<PlayArrow />}
-                    onClick={() => handlePlayVideo(video)}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleVideoClick(video)}
                   >
+                    <Eye className="h-3 w-3 mr-1" />
                     Watch
                   </Button>
-                  
                   <Button
-                    size="small"
-                    startIcon={<Share />}
+                    variant="outline"
+                    size="sm"
                     onClick={() => handleShareVideo(video)}
                   >
-                    Share
+                    <Share2 className="h-3 w-3" />
                   </Button>
-                  
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      setAnchorEl(e.currentTarget);
-                      setSelectedVideo(video);
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setVideoToDelete(video);
+                      setDeleteDialog(true);
                     }}
                   >
-                    <MoreVert />
-                  </IconButton>
-                </CardActions>
-              </Card>
-            </Grid>
+                    <Bookmark className="h-3 w-3" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
+        </div>
       ) : (
-        <Box textAlign="center" py={8}>
-          <Bookmark sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
-          <Typography variant="h5" gutterBottom color="text.secondary">
-            No saved videos yet
-          </Typography>
-          <Typography variant="body1" color="text.secondary" mb={3}>
-            Start saving videos you like to watch them later
-          </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => navigate('/videos/all')}
-          >
-            Browse Videos
-          </Button>
-        </Box>
+        <Card className="text-center py-12">
+          <CardContent>
+            <Bookmark className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">
+              {searchQuery ? 'No matching videos' : 'No saved videos yet'}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {searchQuery 
+                ? 'Try adjusting your search or filters'
+                : 'Start saving videos to build your collection'}
+            </p>
+            {!searchQuery && (
+              <Button onClick={() => navigate('/jobseeker-tabs?group=discovery&tab=all-videos')}>
+                Discover Videos
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       )}
 
-      {/* Filter Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => setAnchorEl(null)}
-      >
-        <MenuItem onClick={() => { setFilterType('all'); setAnchorEl(null); }}>
-          All Videos
-        </MenuItem>
-        <MenuItem onClick={() => { setFilterType('jobseeker'); setAnchorEl(null); }}>
-          Job Seekers
-        </MenuItem>
-        <MenuItem onClick={() => { setFilterType('employer'); setAnchorEl(null); }}>
-          Employers
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={() => { setSortBy('saved_date'); setAnchorEl(null); }}>
-          Sort by Saved Date
-        </MenuItem>
-        <MenuItem onClick={() => { setSortBy('title'); setAnchorEl(null); }}>
-          Sort by Title
-        </MenuItem>
-        <MenuItem onClick={() => { setSortBy('views'); setAnchorEl(null); }}>
-          Sort by Views
-        </MenuItem>
-        <MenuItem onClick={() => { setSortBy('likes'); setAnchorEl(null); }}>
-          Sort by Likes
-        </MenuItem>
-        {selectedVideo && (
-          <>
-            <Divider />
-            <MenuItem onClick={() => {
-              setVideoToDelete(selectedVideo);
-              setDeleteDialog(true);
-              setAnchorEl(null);
-            }}>
-              <Delete sx={{ mr: 1 }} />
-              Remove from Saved
-            </MenuItem>
-          </>
-        )}
-      </Menu>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
-        <DialogTitle>Remove from Saved Videos</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to remove "{videoToDelete?.video_title}" from your saved videos?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialog(false)}>Cancel</Button>
-          <Button 
-            onClick={() => handleUnsaveVideo(videoToDelete?.id)} 
-            color="error"
-            variant="contained"
-          >
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+      {/* Unsave Confirmation Dialog */}
+      <AlertDialog open={deleteDialog} onOpenChange={setDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove from Saved</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove "{videoToDelete?.title}" from your saved collection?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnsaveVideo}>
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
-};
-
-export default SavedVideosPage;
-
+}

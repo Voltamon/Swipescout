@@ -1,34 +1,15 @@
-// AllVideosPage.jsx - Enhanced TikTok Style Vertical Video Feed
+// AllVideosPage.jsx - TikTok Style Vertical Video Feed with Tailwind
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useVideoContext } from '../contexts/VideoContext';
-import { styled } from "@mui/material/styles";
-import {
-  Box, Typography, IconButton, Fab, Snackbar, Alert,
-  CircularProgress, Avatar, Chip, Tooltip, useTheme,
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, TextField, List, ListItem, ListItemText,
-  ListItemAvatar, Divider, Menu, MenuItem, Paper,
-  Stack, Grid, Drawer, FormControl, InputLabel,
-  Select, Slider, useMediaQuery, Fade, Backdrop
-} from '@mui/material';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  PlayArrow, Pause, VolumeOff, VolumeUp, Share, Favorite,
-  FavoriteBorder, Bookmark, BookmarkBorder, PersonAdd,
-  ArrowUpward, ArrowDownward, Home, Close, MoreVert,
-  Send, Comment, Repeat, FilterList, Search,
-  Work, Business, School, LocationOn, SkipNext,
-  SkipPrevious, Fullscreen, FullscreenExit,
-  WhatsApp, Twitter, LinkedIn, Facebook,
-  Link as LinkIcon, Report, Block, Download,
-  Visibility, AccessTime, Settings, Tune,
-  PersonSearch, Explore
-} from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useParams } from 'react-router-dom';
+  Play, Pause, VolumeX, Volume2, Share2, Heart,
+  Bookmark, UserPlus, ArrowUp, ArrowDown, Home, X,
+  MessageCircle, Eye, Clock, ChevronUp, ChevronDown
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
 import { 
   getAllVideos, 
   getEmployerPublicVideos, 
@@ -36,12 +17,15 @@ import {
   likeVideo,
   saveVideo,
   connectWithUser,
-  addVideoComment,
-  getVideoComments,
   searchVideos
 } from '../services/api';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
-// Sample videos data generator function (will be called after t is available)
+// Sample videos data generator
 const getSampleVideos = (t) => [
   {
     id: '2b1f4b8e-9f3c-4d2a-9c6b-1a2d3e4f5a61',
@@ -109,121 +93,10 @@ const getSampleVideos = (t) => [
   }
 ];
 
-// Styled components for TikTok-like interface
-const VideoContainer = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  width: '100vw',
-  height: '100vh',
-  backgroundColor: '#000',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  overflow: 'hidden',
-  scrollSnapAlign: 'start',
-}));
-
-const VideoElement = styled('video')({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  outline: 'none',
-});
-
-const VideoOverlay = styled(Box)({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%)',
-  pointerEvents: 'none',
-});
-
-const VideoInfo = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 80,
-  padding: theme.spacing(3),
-  color: 'white',
-  zIndex: 2,
-  // Stronger text shadow for better legibility
-  textShadow: '2px 2px 8px rgba(0,0,0,0.9), 1px 1px 2px rgba(255,255,255,0.3)',
-}));
-
-const ActionButtons = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  right: theme.spacing(2),
-  bottom: theme.spacing(15),
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(2),
-  zIndex: 2,
-}));
-
-// Updated ActionButton style for better visibility
-const ActionButton = styled(IconButton)(({ theme }) => ({
-  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  color: 'white',
-  backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  width: 56,
-  height: 56,
-  '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    transform: 'scale(1.1)',
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-  },
-  transition: 'all 0.2s ease-in-out',
-}));
-
-const NavigationButtons = styled(Box)(({ theme }) => ({
-  position: 'fixed',
-  right: theme.spacing(2),
-  top: '50%',
-  transform: 'translate(-8px, -69%)',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(1),
-  zIndex: 10,
-  [theme.breakpoints.down('sm')]: {
-    transform: 'translate(-8px, -144%)',
-  },
-}));
-
-const TopBar = styled(Box)(({ theme }) => ({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)',
-  zIndex: 10,
-  color: 'white',
-  // Stronger text shadow for better legibility
-  textShadow: '2px 2px 8px rgba(0,0,0,0.9), 1px 1px 2px rgba(255,255,255,0.3)',
-}));
-
-// Updated StyledIconButton style for better visibility
-const StyledIconButton = styled(IconButton)({
-  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  color: 'white',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  backdropFilter: 'blur(10px)',
-  '&:disabled': { opacity: 0.3, color: 'rgba(255, 255, 255, 0.5)' },
-  '&:hover': {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-  },
-});
-
 const AllVideosPage = ({ 
   pagetype: propPagetype, 
   onClose,
-  context = 'general', // general, my-videos, saved-videos, liked-videos, candidate-videos, company-videos, jobseeker-feed, analytics
+  context = 'general',
   filterType = null,
   showSidebar = true,
   showHeader = true,
@@ -239,7 +112,6 @@ const AllVideosPage = ({
   const [isMuted, setIsMuted] = useState(true);
   const [likedVideos, setLikedVideos] = useState(new Set());
   const [savedVideos, setSavedVideos] = useState(new Set());
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const containerRef = useRef(null);
   const videoRefs = useRef({});
@@ -248,9 +120,9 @@ const AllVideosPage = ({
   const { pagetype: urlPagetype } = useParams();
   const pagetype = propPagetype || urlPagetype;
   const { user } = useAuth();
-  const theme = useTheme();
+  const { toast } = useToast();
 
-  // Get context from navigation state (from VideoGridPage)
+  // Get context from navigation state
   const navigationContext = location.state?.context;
   const contextVideos = location.state?.videos;
   const initialVideoId = location.state?.videoId;
@@ -261,11 +133,9 @@ const AllVideosPage = ({
       setLoading(true);
       let response;
       
-      // If we have context from VideoGridPage, use those videos
       if (contextVideos && contextVideos.length > 0) {
         setServerVideos(contextVideos);
         
-        // Set initial video index if specified
         if (initialVideoId) {
           const initialIndex = contextVideos.findIndex(video => video.id === initialVideoId);
           if (initialIndex !== -1) {
@@ -277,7 +147,6 @@ const AllVideosPage = ({
         return;
       }
 
-      // If we have navigation context, fetch videos with those filters
       if (navigationContext) {
         const params = {
           category: navigationContext.category,
@@ -289,18 +158,14 @@ const AllVideosPage = ({
         };
         response = await searchVideos(params);
       } else {
-        // Determine API call based on context
         switch (context) {
           case 'my-videos':
-            // Fetch user's own videos
             response = await getAllVideos(1, 50, { userId: user?.id });
             break;
           case 'saved-videos':
-            // Fetch saved videos (would need API endpoint)
             response = await getAllVideos(1, 50, { saved: true });
             break;
           case 'liked-videos':
-            // Fetch liked videos (would need API endpoint)
             response = await getAllVideos(1, 50, { liked: true });
             break;
           case 'candidate-videos':
@@ -316,7 +181,6 @@ const AllVideosPage = ({
             response = await getAllVideos(1, 50, { analytics: true });
             break;
           default:
-            // Use pagetype for backward compatibility
             if (propPagetype === 'all' || urlPagetype === 'all') {
               response = await getAllVideos(1, 50);
             } else if (propPagetype === 'jobseekers' || urlPagetype === 'jobseekers') {
@@ -344,18 +208,15 @@ const AllVideosPage = ({
     fetchServerVideos();
   }, [pagetype, context]);
 
-  // Combine real videos with sample videos based on count
+  // Combine real videos with sample videos
   const allVideos = React.useMemo(() => {
     const realVideos = [
       ...serverVideos.map(v => ({ ...v, isLocal: false, status: v.status || 'completed' }))
     ];
 
-    // Show sample videos if we have fewer than 5 real videos
     if (realVideos.length < 5) {
-      // Get sample videos with translations
       const sampleVideos = getSampleVideos(t);
       
-      // Filter sample videos based on page type
       let filteredSamples = sampleVideos;
       if (pagetype === 'jobseekers') {
         filteredSamples = sampleVideos.filter(v => v.user.role === 'jobseeker');
@@ -363,7 +224,6 @@ const AllVideosPage = ({
         filteredSamples = sampleVideos.filter(v => v.user.role === 'employer');
       }
 
-      // Mix real videos with samples
       return [...realVideos, ...filteredSamples];
     }
 
@@ -375,13 +235,11 @@ const AllVideosPage = ({
     if (index >= 0 && index < allVideos.length) {
       setCurrentVideoIndex(index);
 
-      // Pause current video
       const currentVideo = videoRefs.current[allVideos[currentVideoIndex]?.id];
       if (currentVideo) {
         currentVideo.pause();
       }
 
-      // Play new video after a short delay
       setTimeout(() => {
         const newVideo = videoRefs.current[allVideos[index]?.id];
         if (newVideo) {
@@ -400,10 +258,8 @@ const AllVideosPage = ({
     const handleWheel = (e) => {
       e.preventDefault();
       if (e.deltaY > 0) {
-        // Scroll down - next video
         goToVideo(currentVideoIndex + 1);
       } else {
-        // Scroll up - previous video
         goToVideo(currentVideoIndex - 1);
       }
     };
@@ -474,10 +330,10 @@ const AllVideosPage = ({
       const newSet = new Set(prev);
       if (newSet.has(videoId)) {
         newSet.delete(videoId);
-        setSnackbar({ open: true, message: t("videos.removedFromLikes"), severity: "info" });
+        toast({ description: t("videos.removedFromLikes") });
       } else {
         newSet.add(videoId);
-        setSnackbar({ open: true, message: t("videos.addedToLikes"), severity: "success" });
+        toast({ description: t("videos.addedToLikes") });
       }
       return newSet;
     });
@@ -488,10 +344,10 @@ const AllVideosPage = ({
       const newSet = new Set(prev);
       if (newSet.has(videoId)) {
         newSet.delete(videoId);
-        setSnackbar({ open: true, message: t("videos.removedFromSaved"), severity: "info" });
+        toast({ description: t("videos.removedFromSaved") });
       } else {
         newSet.add(videoId);
-        setSnackbar({ open: true, message: t("videos.savedToCollection"), severity: "success" });
+        toast({ description: t("videos.savedToCollection") });
       }
       return newSet;
     });
@@ -506,279 +362,227 @@ const AllVideosPage = ({
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      setSnackbar({ open: true, message: t("videos.linkCopied"), severity: "success" });
+      toast({ description: t("videos.linkCopied") });
     }
   };
 
   const handleConnect = (video) => {
     if (video.isSample) {
-      setSnackbar({ open: true, message: t("videos.sampleVideoMessage"), severity: "info" });
+      toast({ description: t("videos.sampleVideoMessage") });
       return;
     }
-    // Navigate to user profile or send connection request
-    setSnackbar({ open: true, message: t("videos.connectionRequestSent"), severity: "success" });
+    toast({ description: t("videos.connectionRequestSent") });
   };
 
   if (loading) {
     return (
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#000',
-        color: 'white'
-      }}>
-        <CircularProgress color="primary" size={60} />
-        <Typography variant="h6" sx={{ ml: 2, textShadow: '2px 2px 8px rgba(0,0,0,0.9)', fontWeight: 'bold' }}>{t('videos.loadingVideos')}</Typography>
-      </Box>
+      <div className="flex justify-center items-center h-screen bg-black text-white">
+        <Loader2 className={`h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
+        <p className="ml-4 text-lg font-bold">{t('videos.loadingVideos')}</p>
+      </div>
     );
   }
 
   if (error || allVideos.length === 0) {
     return (
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#000',
-        color: 'white',
-        textAlign: 'center',
-        p: 3
-      }}>
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+      <div className="flex flex-col justify-center items-center h-screen bg-black text-white text-center p-6">
+        <h1 className="text-4xl font-bold mb-4">
           {error ? t('videos.oops') : t('videos.noVideosYet')}
-        </Typography>
-        <Typography variant="body1" sx={{ mb: 4, opacity: 0.8, textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+        </h1>
+        <p className="text-lg opacity-80 mb-8">
           {error || t('videos.beTheFirstToShare')}
-        </Typography>
-        <Fab
-          color="primary"
-          variant="extended"
+        </p>
+        <Button
           onClick={() => navigate('/video-upload')}
-          sx={{
-            borderRadius: '25px',
-            px: 4,
-            py: 1.5,
-            fontSize: '1.1rem',
-            fontWeight: 'bold'
-          }}
+          className={`${themeColors.buttons.primary} text-white px-8 py-6 text-lg rounded-full`}
         >
-          <PlayArrow sx={{ mr: 1 }} />
+          <Play className="h-5 w-5 mr-2" />
           {t('videos.uploadVideo')}
-        </Fab>
-      </Box>
+        </Button>
+      </div>
     );
   }
 
   const currentVideo = allVideos[currentVideoIndex];
 
   return (
-    <Box sx={{
-      position: 'relative',
-      width: '100vw',
-      height: '100vh',
-      overflow: 'hidden',
-      backgroundColor: '#000'
-    }}>
+    <div className="relative w-screen h-screen overflow-hidden bg-black">
       {/* Top Bar */}
-      <TopBar>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <div className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent z-10 text-white">
+        <div className="flex items-center gap-4">
           {onClose ? (
-            // Render Close icon when the onClose prop is provided
-            <IconButton onClick={onClose} sx={{ color: 'white' }}>
-              <CloseIcon  />
-            </IconButton>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="text-white hover:bg-white/20"
+            >
+              <X className="h-6 w-6" />
+            </Button>
           ) : (
-            // Render Home icon and navigate when onClose is not provided
-            <IconButton onClick={() => navigate('/')} sx={{ color: 'white' }}>
-              <Home />
-            </IconButton>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/')}
+              className="text-white hover:bg-white/20"
+            >
+              <Home className="h-6 w-6" />
+            </Button>
           )}
 
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          <h2 className="text-xl font-bold">
             {pagetype === 'all' ? 'All Videos' :
              pagetype === 'jobseekers' ? 'Job Seekers' : 'Employers'}
-          </Typography>
+          </h2>
           {currentVideo?.isSample && (
-            <Chip
-              label="Sample"
-              size="small"
-              sx={{
-                backgroundColor: 'rgba(255, 193, 7, 0.8)',
-                color: 'black',
-                fontWeight: 'bold'
-              }}
-            />
+            <Badge className="bg-yellow-500 text-black">Sample</Badge>
           )}
-        </Box>
-        <Typography variant="body2" sx={{ opacity: 0.8, fontWeight: 'bold' }}>
+        </div>
+        <p className="text-sm opacity-80">
           {currentVideoIndex + 1} / {allVideos.length}
-        </Typography>
-      </TopBar>
+        </p>
+      </div>
 
       {/* Video Container */}
-      <VideoContainer ref={containerRef}>
-        {currentVideo && (
-          <>
-            <VideoElement
-              ref={el => videoRefs.current[currentVideo.id] = el}
-              src={currentVideo.video_url}
-              loop
-              playsInline
-              muted={isMuted}
-              onClick={togglePlayPause}
-            />
-            <VideoOverlay />
-
-            {/* Video Info */}
-            <VideoInfo>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Avatar
-                  src={currentVideo.user?.profile_image}
-                  sx={{ width: 48, height: 48, mr: 2, border: '2px solid white' }}
-                >
-                  {currentVideo.user?.displayName?.charAt(0) || 'U'}
-                </Avatar>
-                <Box>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    @{currentVideo.user?.display_name || 'Unknown User'}
-                  </Typography>
-                  <Chip
-                    label={currentVideo.user?.role || currentVideo.video_type}
-                    size="small"
-                    sx={{
-                      backgroundColor: currentVideo.user?.role === 'employer' ?
-                        'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)',
-                      color: 'white',
-                      fontWeight: 'bold'
-                    }}
-                  />
-                </Box>
-              </Box>
-
-              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
-                {currentVideo.video_title}
-              </Typography>
-
-              <Typography variant="body1" sx={{ mb: 2, opacity: 0.9 }}>
-                {currentVideo.hashtags}
-              </Typography>
-
-              <Box sx={{ display: 'flex', gap: 3, opacity: 0.8 }}>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  👁 {currentVideo.views_count || 0} views
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  ❤️ {currentVideo.likes_count || 0} likes
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  ⏱ {Math.round(currentVideo.video_duration || 0)}s
-                </Typography>
-              </Box>
-            </VideoInfo>
-
-            {/* Action Buttons */}
-            <ActionButtons>
-              <Tooltip title={likedVideos.has(currentVideo.id) ? "Unlike" : "Like"} placement="left">
-                <ActionButton onClick={() => handleLike(currentVideo.id)}>
-                  {likedVideos.has(currentVideo.id) ?
-                    <Favorite sx={{ color: '#ff4458' }} /> :
-                    <FavoriteBorder />
-                  }
-                </ActionButton>
-              </Tooltip>
-
-              <Tooltip title="Comment" placement="left">
-                <ActionButton>
-                  <Comment />
-                </ActionButton>
-              </Tooltip>
-
-              <Tooltip title={savedVideos.has(currentVideo.id) ? "Unsave" : "Save"} placement="left">
-                <ActionButton onClick={() => handleSave(currentVideo.id)}>
-                  {savedVideos.has(currentVideo.id) ?
-                    <Bookmark sx={{ color: '#ffc107' }} /> :
-                    <BookmarkBorder />
-                  }
-                </ActionButton>
-              </Tooltip>
-
-              <Tooltip title="Share" placement="left">
-                <ActionButton onClick={() => handleShare(currentVideo)}>
-                  <Share />
-                </ActionButton>
-              </Tooltip>
-
-              <Tooltip title="Connect" placement="left">
-                <ActionButton onClick={() => handleConnect(currentVideo)}>
-                  <PersonAdd />
-                </ActionButton>
-              </Tooltip>
-            </ActionButtons>
-          </>
-        )}
-      </VideoContainer>
-
-      {/* Navigation Buttons */}
-      <NavigationButtons>
-        <Tooltip title="Previous video (↑)" placement="left">
-          <StyledIconButton
-            onClick={() => goToVideo(currentVideoIndex - 1)}
-            disabled={currentVideoIndex === 0}
-
-          >
-            <ArrowUpward />
-          </StyledIconButton>
-        </Tooltip>
-
-        <Tooltip title={isPlaying ? "Pause (Space)" : "Play (Space)"} placement="left">
-          <StyledIconButton
+      {currentVideo && (
+        <div className="relative w-full h-full flex items-center justify-center">
+          <video
+            ref={el => videoRefs.current[currentVideo.id] = el}
+            src={currentVideo.video_url}
+            loop
+            playsInline
+            muted={isMuted}
             onClick={togglePlayPause}
+            className="w-full h-full object-cover cursor-pointer"
+          />
+          
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none" />
 
-          >
-            {isPlaying ? <Pause /> : <PlayArrow />}
-          </StyledIconButton>
-        </Tooltip>
+          {/* Video Info */}
+          <div className="absolute bottom-0 left-0 right-20 p-6 text-white z-10 drop-shadow-[2px_2px_8px_rgba(0,0,0,0.9)]">
+            <div className="flex items-center mb-4">
+              <Avatar className="w-12 h-12 mr-3 border-2 border-white">
+                <AvatarImage src={currentVideo.user?.profile_image} />
+                <AvatarFallback>{currentVideo.user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="text-xl font-bold">
+                  @{currentVideo.user?.display_name || 'Unknown User'}
+                </h3>
+                <Badge className={
+                  currentVideo.user?.role === 'employer' ?
+                  'bg-green-600' : 'bg-blue-600'
+                }>
+                  {currentVideo.user?.role || currentVideo.video_type}
+                </Badge>
+              </div>
+            </div>
 
-        <Tooltip title={isMuted ? "Unmute (M)" : "Mute (M)"} placement="left">
-          <StyledIconButton
-            onClick={toggleMute}
+            <h2 className="text-3xl font-bold mb-2">{currentVideo.video_title}</h2>
+            <p className="text-lg mb-3 opacity-90">{currentVideo.hashtags}</p>
 
-          >
-            {isMuted ? <VolumeOff /> : <VolumeUp />}
-          </StyledIconButton>
-        </Tooltip>
+            <div className="flex gap-6 text-sm opacity-80">
+              <span className="flex items-center gap-1">
+                <Eye className="h-4 w-4" />
+                {currentVideo.views_count || 0}
+              </span>
+              <span className="flex items-center gap-1">
+                <Heart className="h-4 w-4" />
+                {currentVideo.likes_count || 0}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {Math.round(currentVideo.video_duration || 0)}s
+              </span>
+            </div>
+          </div>
 
-        <Tooltip title="Next video (↓)" placement="left">
-          <StyledIconButton
-            onClick={() => goToVideo(currentVideoIndex + 1)}
-            disabled={currentVideoIndex === allVideos.length - 1}
+          {/* Action Buttons */}
+          <div className="absolute right-4 bottom-24 flex flex-col gap-4 z-10">
+            <Button
+              size="icon"
+              onClick={() => handleLike(currentVideo.id)}
+              className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 hover:scale-110 transition-all"
+            >
+              <Heart
+                className={`h-6 w-6 ${likedVideos.has(currentVideo.id) ? 'fill-red-500 text-red-500' : 'text-white'}`}
+              />
+            </Button>
 
-          >
-            <ArrowDownward />
-          </StyledIconButton>
-        </Tooltip>
-      </NavigationButtons>
+            <Button
+              size="icon"
+              className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 hover:scale-110 transition-all"
+            >
+              <MessageCircle className="h-6 w-6 text-white" />
+            </Button>
 
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
+            <Button
+              size="icon"
+              onClick={() => handleSave(currentVideo.id)}
+              className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 hover:scale-110 transition-all"
+            >
+              <Bookmark
+                className={`h-6 w-6 ${savedVideos.has(currentVideo.id) ? 'fill-yellow-500 text-yellow-500' : 'text-white'}`}
+              />
+            </Button>
+
+            <Button
+              size="icon"
+              onClick={() => handleShare(currentVideo)}
+              className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 hover:scale-110 transition-all"
+            >
+              <Share2 className="h-6 w-6 text-white" />
+            </Button>
+
+            <Button
+              size="icon"
+              onClick={() => handleConnect(currentVideo)}
+              className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 hover:scale-110 transition-all"
+            >
+              <UserPlus className="h-6 w-6 text-white" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation Controls */}
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-10">
+        <Button
+          size="icon"
+          onClick={() => goToVideo(currentVideoIndex - 1)}
+          disabled={currentVideoIndex === 0}
+          className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 disabled:opacity-30"
         >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <ChevronUp className="h-6 w-6 text-white" />
+        </Button>
+
+        <Button
+          size="icon"
+          onClick={togglePlayPause}
+          className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60"
+        >
+          {isPlaying ? <Pause className="h-6 w-6 text-white" /> : <Play className="h-6 w-6 text-white" />}
+        </Button>
+
+        <Button
+          size="icon"
+          onClick={toggleMute}
+          className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60"
+        >
+          {isMuted ? <VolumeX className="h-6 w-6 text-white" /> : <Volume2 className="h-6 w-6 text-white" />}
+        </Button>
+
+        <Button
+          size="icon"
+          onClick={() => goToVideo(currentVideoIndex + 1)}
+          disabled={currentVideoIndex === allVideos.length - 1}
+          className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 disabled:opacity-30"
+        >
+          <ChevronDown className="h-6 w-6 text-white" />
+        </Button>
+      </div>
+    </div>
   );
 };
 

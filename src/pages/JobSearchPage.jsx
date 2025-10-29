@@ -1,51 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  Grid,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-  useTheme,
-  CircularProgress,
-  Alert,
-  Pagination,
-  Chip,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Snackbar,
-  FormControl,
-  InputLabel
-} from "@mui/material";
-import { 
-  Search, 
-  LocationOn, 
-  Work, 
-  AttachMoney, 
-  Schedule,
-  Business,
-  Check as Apply,
-  Bookmark,
-  BookmarkBorder,
-  Share
-} from "@mui/icons-material";
 import { searchJobs, applyToJob, getFilterOptions, saveVideo, unsaveVideo } from "../services/api";
-
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Search,
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Clock,
+  Building2,
+  CheckCircle,
+  Bookmark,
+  BookmarkCheck,
+  Share2,
+  Loader2,
+  AlertCircle,
+  PlayCircle
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors-jobseeker';
 
 export default function JobSearchPage() {
-  const theme = useTheme();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [minSalary, setMinSalary] = useState("");
@@ -61,7 +48,6 @@ export default function JobSearchPage() {
   const [filterOptions, setFilterOptions] = useState({});
   const [applyDialog, setApplyDialog] = useState({ open: false, job: null });
   const [applicationMessage, setApplicationMessage] = useState("");
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [savedJobs, setSavedJobs] = useState(new Set());
 
   const jobTypeOptions = ["Full-Time", "Part-Time", "Contract", "Freelance", "Internship"];
@@ -138,19 +124,18 @@ export default function JobSearchPage() {
   const handleSendApplication = async () => {
     try {
       await applyToJob(applyDialog.job.id, { message: applicationMessage });
-      setSnackbar({
-        open: true,
-        message: "Application sent successfully!",
-        severity: "success"
+      toast({
+        title: "Success!",
+        description: "Application sent successfully!",
       });
       setApplyDialog({ open: false, job: null });
       setApplicationMessage("");
     } catch (error) {
       console.error('Error sending application:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to send application. Please try again.",
-        severity: "error"
+      toast({
+        title: "Error",
+        description: "Failed to send application. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -164,341 +149,325 @@ export default function JobSearchPage() {
           newSet.delete(jobId);
           return newSet;
         });
-        setSnackbar({
-          open: true,
-          message: "Job removed from saved list",
-          severity: "info"
+        toast({
+          description: "Job removed from saved list",
         });
       } else {
         await saveVideo(jobId);
         setSavedJobs(prev => new Set(prev).add(jobId));
-        setSnackbar({
-          open: true,
-          message: "Job saved successfully!",
-          severity: "success"
+        toast({
+          title: "Saved!",
+          description: "Job saved successfully!",
         });
       }
     } catch (error) {
       console.error('Error saving/unsaving job:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to save job. Please try again.",
-        severity: "error"
+      toast({
+        title: "Error",
+        description: "Failed to save job. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
   const JobCard = ({ job }) => (
-    <Card 
-      sx={{ 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: theme.shadows[8]
-        }
-      }}
-    >
-      <CardContent sx={{ flexGrow: 1, p: 3 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
-          <Box display="flex" alignItems="center" flexGrow={1}>
-            <Avatar
-              src={job.companyLogo}
-              sx={{ width: 50, height: 50, mr: 2, cursor: 'pointer' }}
-              onClick={() => job.companyVideoId && window.open(`/company-video/${job.companyVideoId}`, '_blank')}
-            >
-              {job.company?.[0]}
+    <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-200 border-l-4 border-l-cyan-500">
+      <CardContent className="flex-grow p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-center gap-3 flex-grow">
+            <Avatar className="h-12 w-12 cursor-pointer" onClick={() => job.companyVideoId && window.open(`/company-video/${job.companyVideoId}`, '_blank')}>
+              <AvatarImage src={job.companyLogo} />
+              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-cyan-500 text-white">
+                {job.company?.[0]}
+              </AvatarFallback>
             </Avatar>
-            <Box flexGrow={1}>
-              <Typography variant="h6" fontWeight="bold" noWrap>
-                {job.title}
-              </Typography>
-              <Typography 
-                variant="body2" 
-                color="text.secondary"
-                sx={{ 
-                  cursor: job.companyVideoId ? 'pointer' : 'default',
-                  '&:hover': job.companyVideoId ? { color: 'primary.main' } : {}
-                }}
+            <div className="flex-grow min-w-0">
+              <h3 className="font-bold text-lg truncate">{job.title}</h3>
+              <p 
+                className={`text-sm text-muted-foreground ${job.companyVideoId ? `cursor-pointer hover:${themeColors.iconBackgrounds.primary.split(' ')[1]}` : ''} flex items-center gap-1`}
                 onClick={() => job.companyVideoId && window.open(`/company-video/${job.companyVideoId}`, '_blank')}
               >
                 {job.company}
                 {job.companyVideoId && (
-                  <Chip 
-                    label="Video" 
-                    size="small" 
-                    color="primary" 
-                    variant="outlined" 
-                    sx={{ ml: 1, fontSize: '0.7rem', height: '20px' }}
-                  />
+                  <Badge variant="outline" className="ml-1 text-xs h-5">
+                    <PlayCircle className="h-3 w-3 mr-1" />
+                    Video
+                  </Badge>
                 )}
-              </Typography>
-            </Box>
-          </Box>
+              </p>
+            </div>
+          </div>
           <Button
-            size="small"
+            variant="ghost"
+            size="icon"
             onClick={() => handleSaveJob(job.id)}
-            sx={{ minWidth: 'auto', p: 1 }}
+            className="shrink-0"
           >
-            {savedJobs.has(job.id) ? <Bookmark /> : <BookmarkBorder />}
+            {savedJobs.has(job.id) ? (
+              <BookmarkCheck className={`h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]} fill-current`} />
+            ) : (
+              <Bookmark className="h-5 w-5" />
+            )}
           </Button>
-        </Box>
+        </div>
 
         {job.description && (
-          <Typography variant="body2" color="text.secondary" mb={2}>
-            {job.description.length > 150 
-              ? `${job.description.substring(0, 150)}...` 
-              : job.description
-            }
-          </Typography>
+          <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+            {job.description}
+          </p>
         )}
 
-        <Box mb={2}>
+        <div className="space-y-2 mb-4">
           {job.location && (
-            <Box display="flex" alignItems="center" mb={1}>
-              <LocationOn sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-              <Typography variant="body2" color="text.secondary">
-                {job.location}
-              </Typography>
-            </Box>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>{job.location}</span>
+            </div>
           )}
 
           {job.jobType && (
-            <Box display="flex" alignItems="center" mb={1}>
-              <Schedule sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-              <Typography variant="body2" color="text.secondary">
-                {job.jobType}
-              </Typography>
-            </Box>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="h-4 w-4" />
+              <span>{job.jobType}</span>
+            </div>
           )}
 
           {job.experienceLevel && (
-            <Box display="flex" alignItems="center" mb={1}>
-              <Work sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-              <Typography variant="body2" color="text.secondary">
-                {job.experienceLevel} level
-              </Typography>
-            </Box>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Briefcase className="h-4 w-4" />
+              <span>{job.experienceLevel} level</span>
+            </div>
           )}
 
           {(job.minSalary || job.maxSalary) && (
-            <Box display="flex" alignItems="center" mb={1}>
-              <AttachMoney sx={{ fontSize: 16, mr: 1, color: 'text.secondary' }} />
-              <Typography variant="body2" color="text.secondary">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <DollarSign className="h-4 w-4" />
+              <span>
                 {job.minSalary && job.maxSalary 
                   ? `$${job.minSalary.toLocaleString()} - $${job.maxSalary.toLocaleString()}`
                   : job.minSalary 
                     ? `From $${job.minSalary.toLocaleString()}`
                     : `Up to $${job.maxSalary.toLocaleString()}`
                 }
-              </Typography>
-            </Box>
+              </span>
+            </div>
           )}
-        </Box>
+        </div>
 
         {job.skills && job.skills.length > 0 && (
-          <Box mb={2}>
-            <Typography variant="body2" fontWeight="medium" mb={1}>
-              Required Skills:
-            </Typography>
-            <Box display="flex" flexWrap="wrap" gap={0.5}>
+          <div className="mb-4">
+            <p className="text-sm font-medium mb-2">Required Skills:</p>
+            <div className="flex flex-wrap gap-1">
               {job.skills.slice(0, 4).map((skill, index) => (
-                <Chip
-                  key={index}
-                  label={skill.name || skill}
-                  size="small"
-                  variant="outlined"
-                  sx={{ fontSize: '0.75rem' }}
-                />
+                <Badge key={index} variant="outline" className="text-xs">
+                  {skill.name || skill}
+                </Badge>
               ))}
               {job.skills.length > 4 && (
-                <Chip
-                  label={`+${job.skills.length - 4} more`}
-                  size="small"
-                  variant="outlined"
-                  sx={{ fontSize: '0.75rem' }}
-                />
+                <Badge variant="outline" className="text-xs">
+                  +{job.skills.length - 4} more
+                </Badge>
               )}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
 
-        <Box display="flex" gap={1} mt="auto">
+        <div className="flex gap-2 mt-auto">
           <Button
-            variant="outlined"
-            size="small"
+            variant="outline"
+            size="sm"
+            className="flex-1"
             onClick={() => window.open(`/job/${job.id}`, '_blank')}
-            sx={{ flex: 1 }}
           >
             View Details
           </Button>
           <Button
-            variant="contained"
-            size="small"
-            startIcon={<Apply />}
+            variant="default"
+            size="sm"
+            className={`${themeColors.buttons.primary} text-white flex-1 `}
             onClick={() => handleApply(job)}
-            sx={{ flex: 1 }}
           >
+            <CheckCircle className="h-4 w-4 mr-1" />
             Apply Now
           </Button>
-        </Box>
+        </div>
 
         {job.postedDate && (
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+          <p className="text-xs text-muted-foreground mt-3 text-center">
             Posted {new Date(job.postedDate).toLocaleDateString()}
-          </Typography>
+          </p>
         )}
       </CardContent>
     </Card>
   );
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4}>
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      <h1 className={`${themeColors.text.gradient} text-4xl font-bold mb-6 `}>
         Find Your Dream Job
-      </Typography>
+      </h1>
 
       {/* Search Filters */}
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                label="Search jobs"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Job title, company, keywords..."
-                InputProps={{
-                  startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                fullWidth
-                label="Location"
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div className="md:col-span-2">
+              <Label htmlFor="search">Search jobs</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="search"
+                  placeholder="Job title, company, keywords..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                placeholder="City, State, Country"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="City, State, Country"
               />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth>
-                <InputLabel>Experience Level</InputLabel>
-                <Select
-                  value={experienceLevel}
-                  onChange={(e) => setExperienceLevel(e.target.value)}
-                  label="Experience Level"
-                >
+            </div>
+
+            <div>
+              <Label htmlFor="experience">Experience Level</Label>
+              <Select value={experienceLevel} onValueChange={setExperienceLevel}>
+                <SelectTrigger id="experience">
+                  <SelectValue placeholder="Any Experience" />
+                </SelectTrigger>
+                <SelectContent>
                   {experienceLevelOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option.value}>
                       {option.label}
-                    </MenuItem>
+                    </SelectItem>
                   ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={1.5}>
-              <TextField
-                fullWidth
-                label="Min Salary"
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="minSalary">Min Salary</Label>
+              <Input
+                id="minSalary"
                 type="number"
+                placeholder="50000"
                 value={minSalary}
                 onChange={(e) => setMinSalary(e.target.value)}
-                placeholder="50000"
               />
-            </Grid>
-            <Grid item xs={12} md={1.5}>
-              <TextField
-                fullWidth
-                label="Max Salary"
+            </div>
+
+            <div>
+              <Label htmlFor="maxSalary">Max Salary</Label>
+              <Input
+                id="maxSalary"
                 type="number"
+                placeholder="100000"
                 value={maxSalary}
                 onChange={(e) => setMaxSalary(e.target.value)}
-                placeholder="100000"
               />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleSearch}
-                sx={{ height: '56px' }}
-                disabled={loading}
-              >
-                {loading ? <CircularProgress size={24} /> : <Search />}
-              </Button>
-            </Grid>
-          </Grid>
+            </div>
+          </div>
 
           {/* Job Type Filters */}
-          <Box mt={3}>
-            <Typography variant="body2" fontWeight="medium" mb={1}>
-              Job Type:
-            </Typography>
-            <Box display="flex" flexWrap="wrap" gap={1}>
+          <div className="mt-6">
+            <Label className="text-base font-semibold mb-3 block">Job Type:</Label>
+            <div className="flex flex-wrap gap-4">
               {jobTypeOptions.map((type) => (
-                <FormControlLabel
-                  key={type}
-                  control={
-                    <Checkbox
-                      value={type}
-                      checked={jobTypes.includes(type)}
-                      onChange={handleJobTypeChange}
-                      size="small"
-                    />
-                  }
-                  label={type}
-                />
+                <div key={type} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={type}
+                    checked={jobTypes.includes(type)}
+                    onCheckedChange={(checked) => {
+                      setJobTypes(prev =>
+                        checked ? [...prev, type] : prev.filter(t => t !== type)
+                      );
+                    }}
+                  />
+                  <Label htmlFor={type} className="cursor-pointer">
+                    {type}
+                  </Label>
+                </div>
               ))}
-            </Box>
-          </Box>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <Button
+              onClick={handleSearch}
+              disabled={loading}
+              className={`${themeColors.buttons.primary} text-white `}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Searching...
+                </>
+              ) : (
+                <>
+                  <Search className="mr-2 h-4 w-4" />
+                  Search Jobs
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
       {/* Error Alert */}
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {/* Results */}
       {loading ? (
-        <Box display="flex" justifyContent="center" py={8}>
-          <CircularProgress size={60} />
-        </Box>
+        <div className="flex justify-center py-12">
+          <Loader2 className={`h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
+        </div>
       ) : (
         <>
-          <Typography variant="h6" mb={3}>
+          <h2 className="text-2xl font-semibold mb-4">
             {jobs.length > 0 
               ? `Found ${jobs.length} jobs` 
               : 'No jobs found'
             }
-          </Typography>
+          </h2>
 
-          <Grid container spacing={3}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
-              <Grid item xs={12} sm={6} md={4} key={job.id}>
-                <JobCard job={job} />
-              </Grid>
+              <JobCard key={job.id} job={job} />
             ))}
-          </Grid>
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <Box display="flex" justifyContent="center" mt={4}>
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={handlePageChange}
-                color="primary"
-                size="large"
-              />
-            </Box>
+            <div className="flex justify-center gap-2 mt-8">
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(null, page - 1)}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <span className="flex items-center px-4 text-sm text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(null, page + 1)}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
+            </div>
           )}
         </>
       )}
@@ -506,53 +475,46 @@ export default function JobSearchPage() {
       {/* Apply Dialog */}
       <Dialog 
         open={applyDialog.open} 
-        onClose={() => setApplyDialog({ open: false, job: null })}
-        maxWidth="sm"
-        fullWidth
+        onOpenChange={(open) => !open && setApplyDialog({ open: false, job: null })}
       >
-        <DialogTitle>
-          Apply for {applyDialog.job?.title} at {applyDialog.job?.company}
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            multiline
-            rows={6}
-            label="Cover Letter"
-            value={applicationMessage}
-            onChange={(e) => setApplicationMessage(e.target.value)}
-            placeholder="Write your cover letter..."
-            sx={{ mt: 2 }}
-          />
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>
+              Apply for {applyDialog.job?.title} at {applyDialog.job?.company}
+            </DialogTitle>
+            <DialogDescription>
+              Submit your application with a personalized cover letter.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="coverLetter">Cover Letter</Label>
+            <Textarea
+              id="coverLetter"
+              placeholder="Write your cover letter..."
+              value={applicationMessage}
+              onChange={(e) => setApplicationMessage(e.target.value)}
+              rows={8}
+              className="mt-2"
+            />
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setApplyDialog({ open: false, job: null })}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSendApplication}
+              disabled={!applicationMessage.trim()}
+              className={`${themeColors.buttons.primary} text-white `}
+            >
+              Send Application
+            </Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setApplyDialog({ open: false, job: null })}>
-            Cancel
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={handleSendApplication}
-            disabled={!applicationMessage.trim()}
-          >
-            Send Application
-          </Button>
-        </DialogActions>
       </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
-          severity={snackbar.severity}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Container>
+    </div>
   );
 }
 

@@ -1,372 +1,316 @@
 import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Grid,
-  Switch,
-  FormControlLabel,
-  Chip,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Dialog,
-  DialogTitle,
   DialogContent,
-  DialogActions,
-  TextField,
-  Snackbar,
-  Alert,
-  CircularProgress,
-  Divider,
-  useTheme,
-  Tabs,
-  Tab,
-  Paper
-} from '@mui/material';
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import {
-  CheckCircleOutline as CheckCircleOutlineIcon,
-  StarBorder as StarBorderIcon,
-  BusinessCenter as BusinessCenterIcon,
-  Diamond as DiamondIcon,
   Check,
   Star,
-  Business,
-  Person,
+  Briefcase,
+  Building,
   CreditCard,
-  Security,
-  Support,
-  Work,
-  Search,
-  Analytics,
-  VideoLibrary,
-  Message,
+  Shield,
+  Loader2,
   TrendingUp,
-  Group
-} from '@mui/icons-material';
-import { Link } from "react-router-dom";
-import Header from "../components/Headers/Header";
-import Footer from "../components/Headers/Footer";
+  Users,
+  MessageCircle,
+  Video,
+  BarChart,
+  Search,
+  Sparkles,
+  GraduationCap,
+  UserPlus,
+  Clock
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Header from '../components/Headers/Header';
+import Footer from '../components/Headers/Footer';
 import { 
   getPlansAndServices, 
   createSubscription, 
   purchaseService,
   getSubscriptionStatus 
 } from '../services/api';
-
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
-
-function TabPanel({ children, value, index, ...other }) {
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`pricing-tabpanel-${index}`}
-      aria-labelledby={`pricing-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ pt: 3 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
 export default function PricingPage() {
-  const theme = useTheme();
   const { user } = useAuth();
-  const { t, i18n } = useTranslation(); // Add i18n for language detection
-  const [tabValue, setTabValue] = useState(0);
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const [tabValue, setTabValue] = useState('job-seekers');
   const [isAnnual, setIsAnnual] = useState(false);
-  const [plans, setPlans] = useState([]);
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentDialog, setPaymentDialog] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [currentSubscription, setCurrentSubscription] = useState(null);
 
   // Job Seeker Plans
-const jobSeekerPlans = [
-  {
-    id: 'basic',
-    type: 'BASIC',
-    title: t('pricing.jobSeekerPlans.basic.title'),
-    price: t('pricing.jobSeekerPlans.basic.price'),
-    monthlyPrice: 0,
-    annualPrice: 0,
-    description: t('pricing.jobSeekerPlans.basic.description'),
-    features: [
-      t('pricing.jobSeekerPlans.basic.features.0'),
-      t('pricing.jobSeekerPlans.basic.features.1'),
-      t('pricing.jobSeekerPlans.basic.features.2'),
-      t('pricing.jobSeekerPlans.basic.features.3'),
-      t('pricing.jobSeekerPlans.basic.features.4')
-    ],
-    buttonText: t('pricing.jobSeekerPlans.basic.buttonText'),
-    buttonVariant: "outlined",
-    buttonColor: "primary",
-    mostPopular: false
-  },
-  {
-    id: 'professional',
-    type: 'PROFESSIONAL',
-    title: t('pricing.jobSeekerPlans.professional.title'),
-    price: t('pricing.jobSeekerPlans.professional.price'),
-    monthlyPrice: 9.99,
-    annualPrice: 99.99,
-    period: "/month",
-    description: t('pricing.jobSeekerPlans.professional.description'),
-    features: [
-      t('pricing.jobSeekerPlans.professional.features.0'),
-      t('pricing.jobSeekerPlans.professional.features.1'),
-      t('pricing.jobSeekerPlans.professional.features.2'),
-      t('pricing.jobSeekerPlans.professional.features.3'),
-      t('pricing.jobSeekerPlans.professional.features.4'),
-      t('pricing.jobSeekerPlans.professional.features.5'),
-      t('pricing.jobSeekerPlans.professional.features.6')
-    ],
-    buttonText: t('pricing.jobSeekerPlans.professional.buttonText'),
-    buttonVariant: "contained",
-    buttonColor: "primary",
-    highlight: true,
-    mostPopular: true
-  },
-  {
-    id: 'premium',
-    type: 'PREMIUM',
-    title: t('pricing.jobSeekerPlans.premium.title'),
-    price: t('pricing.jobSeekerPlans.premium.price'),
-    monthlyPrice: 19.99,
-    annualPrice: 199.99,
-    period: "/month",
-    description: t('pricing.jobSeekerPlans.premium.description'),
-    features: [
-      t('pricing.jobSeekerPlans.premium.features.0'),
-      t('pricing.jobSeekerPlans.premium.features.1'),
-      t('pricing.jobSeekerPlans.premium.features.2'),
-      t('pricing.jobSeekerPlans.premium.features.3'),
-      t('pricing.jobSeekerPlans.premium.features.4'),
-      t('pricing.jobSeekerPlans.premium.features.5'),
-      t('pricing.jobSeekerPlans.premium.features.6'),
-      t('pricing.jobSeekerPlans.premium.features.7')
-    ],
-    buttonText: t('pricing.jobSeekerPlans.premium.buttonText'),
-    buttonVariant: "outlined",
-    buttonColor: "secondary",
-    mostPopular: false
-  }
-];
+  const jobSeekerPlans = [
+    {
+      id: 'basic',
+      type: 'BASIC',
+      title: t('pricing.jobSeekerPlans.basic.title'),
+      price: t('pricing.jobSeekerPlans.basic.price'),
+      monthlyPrice: 0,
+      annualPrice: 0,
+      description: t('pricing.jobSeekerPlans.basic.description'),
+      features: [
+        t('pricing.jobSeekerPlans.basic.features.0'),
+        t('pricing.jobSeekerPlans.basic.features.1'),
+        t('pricing.jobSeekerPlans.basic.features.2'),
+        t('pricing.jobSeekerPlans.basic.features.3'),
+        t('pricing.jobSeekerPlans.basic.features.4')
+      ],
+      buttonText: t('pricing.jobSeekerPlans.basic.buttonText'),
+      mostPopular: false
+    },
+    {
+      id: 'professional',
+      type: 'PROFESSIONAL',
+      title: t('pricing.jobSeekerPlans.professional.title'),
+      price: t('pricing.jobSeekerPlans.professional.price'),
+      monthlyPrice: 9.99,
+      annualPrice: 99.99,
+      period: '/month',
+      description: t('pricing.jobSeekerPlans.professional.description'),
+      features: [
+        t('pricing.jobSeekerPlans.professional.features.0'),
+        t('pricing.jobSeekerPlans.professional.features.1'),
+        t('pricing.jobSeekerPlans.professional.features.2'),
+        t('pricing.jobSeekerPlans.professional.features.3'),
+        t('pricing.jobSeekerPlans.professional.features.4'),
+        t('pricing.jobSeekerPlans.professional.features.5'),
+        t('pricing.jobSeekerPlans.professional.features.6')
+      ],
+      buttonText: t('pricing.jobSeekerPlans.professional.buttonText'),
+      highlight: true,
+      mostPopular: true
+    },
+    {
+      id: 'premium',
+      type: 'PREMIUM',
+      title: t('pricing.jobSeekerPlans.premium.title'),
+      price: t('pricing.jobSeekerPlans.premium.price'),
+      monthlyPrice: 19.99,
+      annualPrice: 199.99,
+      period: '/month',
+      description: t('pricing.jobSeekerPlans.premium.description'),
+      features: [
+        t('pricing.jobSeekerPlans.premium.features.0'),
+        t('pricing.jobSeekerPlans.premium.features.1'),
+        t('pricing.jobSeekerPlans.premium.features.2'),
+        t('pricing.jobSeekerPlans.premium.features.3'),
+        t('pricing.jobSeekerPlans.premium.features.4'),
+        t('pricing.jobSeekerPlans.premium.features.5'),
+        t('pricing.jobSeekerPlans.premium.features.6'),
+        t('pricing.jobSeekerPlans.premium.features.7')
+      ],
+      buttonText: t('pricing.jobSeekerPlans.premium.buttonText'),
+      mostPopular: false
+    }
+  ];
 
-// Employer Plans
-const employerPlans = [
-  {
-    id: 'starter',
-    type: 'STARTER',
-    title: t('pricing.employerPlans.starter.title'),
-    price: t('pricing.employerPlans.starter.price'),
-    monthlyPrice: 29.99,
-    annualPrice: 299.99,
-    period: "/month",
-    description: t('pricing.employerPlans.starter.description'),
-    features: [
-      t('pricing.employerPlans.starter.features.0'),
-      t('pricing.employerPlans.starter.features.1'),
-      t('pricing.employerPlans.starter.features.2'),
-      t('pricing.employerPlans.starter.features.3'),
-      t('pricing.employerPlans.starter.features.4'),
-      t('pricing.employerPlans.starter.features.5')
-    ],
-    buttonText: t('pricing.employerPlans.starter.buttonText'),
-    buttonVariant: "outlined",
-    buttonColor: "primary",
-    mostPopular: false
-  },
-  {
-    id: 'business',
-    type: 'BUSINESS',
-    title: t('pricing.employerPlans.business.title'),
-    price: t('pricing.employerPlans.business.price'),
-    monthlyPrice: 79.99,
-    annualPrice: 799.99,
-    period: "/month",
-    description: t('pricing.employerPlans.business.description'),
-    features: [
-      t('pricing.employerPlans.business.features.0'),
-      t('pricing.employerPlans.business.features.1'),
-      t('pricing.employerPlans.business.features.2'),
-      t('pricing.employerPlans.business.features.3'),
-      t('pricing.employerPlans.business.features.4'),
-      t('pricing.employerPlans.business.features.5'),
-      t('pricing.employerPlans.business.features.6'),
-      t('pricing.employerPlans.business.features.7')
-    ],
-    buttonText: t('pricing.employerPlans.business.buttonText'),
-    buttonVariant: "contained",
-    buttonColor: "primary",
-    highlight: true,
-    mostPopular: true
-  },
-  {
-    id: 'enterprise',
-    type: 'ENTERPRISE',
-    title: t('pricing.employerPlans.enterprise.title'),
-    price: t('pricing.employerPlans.enterprise.price'),
-    monthlyPrice: 199.99,
-    annualPrice: 1999.99,
-    period: "/month",
-    description: t('pricing.employerPlans.enterprise.description'),
-    features: [
-      t('pricing.employerPlans.enterprise.features.0'),
-      t('pricing.employerPlans.enterprise.features.1'),
-      t('pricing.employerPlans.enterprise.features.2'),
-      t('pricing.employerPlans.enterprise.features.3'),
-      t('pricing.employerPlans.enterprise.features.4'),
-      t('pricing.employerPlans.enterprise.features.5'),
-      t('pricing.employerPlans.enterprise.features.6'),
-      t('pricing.employerPlans.enterprise.features.7'),
-      t('pricing.employerPlans.enterprise.features.8')
-    ],
-    buttonText: t('pricing.employerPlans.enterprise.buttonText'),
-    buttonVariant: "outlined",
-    buttonColor: "info",
-    mostPopular: false
-  }
-];
+  // Employer Plans
+  const employerPlans = [
+    {
+      id: 'starter',
+      type: 'STARTER',
+      title: t('pricing.employerPlans.starter.title'),
+      price: t('pricing.employerPlans.starter.price'),
+      monthlyPrice: 29.99,
+      annualPrice: 299.99,
+      period: '/month',
+      description: t('pricing.employerPlans.starter.description'),
+      features: [
+        t('pricing.employerPlans.starter.features.0'),
+        t('pricing.employerPlans.starter.features.1'),
+        t('pricing.employerPlans.starter.features.2'),
+        t('pricing.employerPlans.starter.features.3'),
+        t('pricing.employerPlans.starter.features.4'),
+        t('pricing.employerPlans.starter.features.5')
+      ],
+      buttonText: t('pricing.employerPlans.starter.buttonText'),
+      mostPopular: false
+    },
+    {
+      id: 'business',
+      type: 'BUSINESS',
+      title: t('pricing.employerPlans.business.title'),
+      price: t('pricing.employerPlans.business.price'),
+      monthlyPrice: 79.99,
+      annualPrice: 799.99,
+      period: '/month',
+      description: t('pricing.employerPlans.business.description'),
+      features: [
+        t('pricing.employerPlans.business.features.0'),
+        t('pricing.employerPlans.business.features.1'),
+        t('pricing.employerPlans.business.features.2'),
+        t('pricing.employerPlans.business.features.3'),
+        t('pricing.employerPlans.business.features.4'),
+        t('pricing.employerPlans.business.features.5'),
+        t('pricing.employerPlans.business.features.6'),
+        t('pricing.employerPlans.business.features.7')
+      ],
+      buttonText: t('pricing.employerPlans.business.buttonText'),
+      highlight: true,
+      mostPopular: true
+    },
+    {
+      id: 'enterprise',
+      type: 'ENTERPRISE',
+      title: t('pricing.employerPlans.enterprise.title'),
+      price: t('pricing.employerPlans.enterprise.price'),
+      monthlyPrice: 199.99,
+      annualPrice: 1999.99,
+      period: '/month',
+      description: t('pricing.employerPlans.enterprise.description'),
+      features: [
+        t('pricing.employerPlans.enterprise.features.0'),
+        t('pricing.employerPlans.enterprise.features.1'),
+        t('pricing.employerPlans.enterprise.features.2'),
+        t('pricing.employerPlans.enterprise.features.3'),
+        t('pricing.employerPlans.enterprise.features.4'),
+        t('pricing.employerPlans.enterprise.features.5'),
+        t('pricing.employerPlans.enterprise.features.6'),
+        t('pricing.employerPlans.enterprise.features.7'),
+        t('pricing.employerPlans.enterprise.features.8')
+      ],
+      buttonText: t('pricing.employerPlans.enterprise.buttonText'),
+      mostPopular: false
+    }
+  ];
 
-// Professional Services for Job Seekers
-const jobSeekerServices = [
-  {
-    id: 'career-coaching',
-    type: 'CAREER_COACHING',
-    title: t('pricing.jobSeekerServices.careerCoaching.title'),
-    price: t('pricing.jobSeekerServices.careerCoaching.price'),
-    description: t('pricing.jobSeekerServices.careerCoaching.description'),
-    icon: <BusinessCenterIcon sx={{ fontSize: 40, color: "#4caf50" }} />,
-    duration: t('pricing.jobSeekerServices.careerCoaching.duration'),
-    features: [
-      t('pricing.jobSeekerServices.careerCoaching.features.0'),
-      t('pricing.jobSeekerServices.careerCoaching.features.1'),
-      t('pricing.jobSeekerServices.careerCoaching.features.2'),
-      t('pricing.jobSeekerServices.careerCoaching.features.3')
-    ]
-  },
-  {
-    id: 'resume-review',
-    type: 'RESUME_REVIEW',
-    title: t('pricing.jobSeekerServices.resumeReview.title'),
-    price: t('pricing.jobSeekerServices.resumeReview.price'),
-    description: t('pricing.jobSeekerServices.resumeReview.description'),
-    icon: <StarBorderIcon sx={{ fontSize: 40, color: "#ff9800" }} />,
-    duration: t('pricing.jobSeekerServices.resumeReview.duration'),
-    features: [
-      t('pricing.jobSeekerServices.resumeReview.features.0'),
-      t('pricing.jobSeekerServices.resumeReview.features.1'),
-      t('pricing.jobSeekerServices.resumeReview.features.2'),
-      t('pricing.jobSeekerServices.resumeReview.features.3')
-    ]
-  },
-  {
-    id: 'interview-prep',
-    type: 'INTERVIEW_PREP',
-    title: t('pricing.jobSeekerServices.interviewPrep.title'),
-    price: t('pricing.jobSeekerServices.interviewPrep.price'),
-    description: t('pricing.jobSeekerServices.interviewPrep.description'),
-    icon: <DiamondIcon sx={{ fontSize: 40, color: "#2196f3" }} />,
-    duration: t('pricing.jobSeekerServices.interviewPrep.duration'),
-    features: [
-      t('pricing.jobSeekerServices.interviewPrep.features.0'),
-      t('pricing.jobSeekerServices.interviewPrep.features.1'),
-      t('pricing.jobSeekerServices.interviewPrep.features.2'),
-      t('pricing.jobSeekerServices.interviewPrep.features.3')
-    ]
-  },
-  {
-    id: 'linkedin-optimization',
-    type: 'LINKEDIN_OPTIMIZATION',
-    title: t('pricing.jobSeekerServices.linkedinOptimization.title'),
-    price: t('pricing.jobSeekerServices.linkedinOptimization.price'),
-    description: t('pricing.jobSeekerServices.linkedinOptimization.description'),
-    icon: <TrendingUp sx={{ fontSize: 40, color: "#0077b5" }} />,
-    duration: t('pricing.jobSeekerServices.linkedinOptimization.duration'),
-    features: [
-      t('pricing.jobSeekerServices.linkedinOptimization.features.0'),
-      t('pricing.jobSeekerServices.linkedinOptimization.features.1'),
-      t('pricing.jobSeekerServices.linkedinOptimization.features.2'),
-      t('pricing.jobSeekerServices.linkedinOptimization.features.3')
-    ]
-  }
-];
+  // Professional Services for Job Seekers
+  const jobSeekerServices = [
+    {
+      id: 'career-coaching',
+      type: 'CAREER_COACHING',
+      title: t('pricing.jobSeekerServices.careerCoaching.title'),
+      price: t('pricing.jobSeekerServices.careerCoaching.price'),
+      description: t('pricing.jobSeekerServices.careerCoaching.description'),
+      icon: <Briefcase className="h-10 w-10 text-green-600" />,
+      duration: t('pricing.jobSeekerServices.careerCoaching.duration'),
+      features: [
+        t('pricing.jobSeekerServices.careerCoaching.features.0'),
+        t('pricing.jobSeekerServices.careerCoaching.features.1'),
+        t('pricing.jobSeekerServices.careerCoaching.features.2'),
+        t('pricing.jobSeekerServices.careerCoaching.features.3')
+      ]
+    },
+    {
+      id: 'resume-review',
+      type: 'RESUME_REVIEW',
+      title: t('pricing.jobSeekerServices.resumeReview.title'),
+      price: t('pricing.jobSeekerServices.resumeReview.price'),
+      description: t('pricing.jobSeekerServices.resumeReview.description'),
+      icon: <Star className="h-10 w-10 text-orange-600" />,
+      duration: t('pricing.jobSeekerServices.resumeReview.duration'),
+      features: [
+        t('pricing.jobSeekerServices.resumeReview.features.0'),
+        t('pricing.jobSeekerServices.resumeReview.features.1'),
+        t('pricing.jobSeekerServices.resumeReview.features.2'),
+        t('pricing.jobSeekerServices.resumeReview.features.3')
+      ]
+    },
+    {
+      id: 'interview-prep',
+      type: 'INTERVIEW_PREP',
+      title: t('pricing.jobSeekerServices.interviewPrep.title'),
+      price: t('pricing.jobSeekerServices.interviewPrep.price'),
+      description: t('pricing.jobSeekerServices.interviewPrep.description'),
+      icon: <Sparkles className="h-10 w-10 text-blue-600" />,
+      duration: t('pricing.jobSeekerServices.interviewPrep.duration'),
+      features: [
+        t('pricing.jobSeekerServices.interviewPrep.features.0'),
+        t('pricing.jobSeekerServices.interviewPrep.features.1'),
+        t('pricing.jobSeekerServices.interviewPrep.features.2'),
+        t('pricing.jobSeekerServices.interviewPrep.features.3')
+      ]
+    },
+    {
+      id: 'linkedin-optimization',
+      type: 'LINKEDIN_OPTIMIZATION',
+      title: t('pricing.jobSeekerServices.linkedinOptimization.title'),
+      price: t('pricing.jobSeekerServices.linkedinOptimization.price'),
+      description: t('pricing.jobSeekerServices.linkedinOptimization.description'),
+      icon: <TrendingUp className="h-10 w-10 text-blue-700" />,
+      duration: t('pricing.jobSeekerServices.linkedinOptimization.duration'),
+      features: [
+        t('pricing.jobSeekerServices.linkedinOptimization.features.0'),
+        t('pricing.jobSeekerServices.linkedinOptimization.features.1'),
+        t('pricing.jobSeekerServices.linkedinOptimization.features.2'),
+        t('pricing.jobSeekerServices.linkedinOptimization.features.3')
+      ]
+    }
+  ];
 
-// Professional Services for Employers
-const employerServices = [
-  {
-    id: 'recruitment-consulting',
-    type: 'RECRUITMENT_CONSULTING',
-    title: t('pricing.employerServices.recruitmentConsulting.title'),
-    price: t('pricing.employerServices.recruitmentConsulting.price'),
-    description: t('pricing.employerServices.recruitmentConsulting.description'),
-    icon: <Group sx={{ fontSize: 40, color: "#4caf50" }} />,
-    duration: t('pricing.employerServices.recruitmentConsulting.duration'),
-    features: [
-      t('pricing.employerServices.recruitmentConsulting.features.0'),
-      t('pricing.employerServices.recruitmentConsulting.features.1'),
-      t('pricing.employerServices.recruitmentConsulting.features.2'),
-      t('pricing.employerServices.recruitmentConsulting.features.3')
-    ]
-  },
-  {
-    id: 'employer-branding',
-    type: 'EMPLOYER_BRANDING',
-    title: t('pricing.employerServices.employerBranding.title'),
-    price: t('pricing.employerServices.employerBranding.price'),
-    description: t('pricing.employerServices.employerBranding.description'),
-    icon: <Business sx={{ fontSize: 40, color: "#ff9800" }} />,
-    duration: t('pricing.employerServices.employerBranding.duration'),
-    features: [
-      t('pricing.employerServices.employerBranding.features.0'),
-      t('pricing.employerServices.employerBranding.features.1'),
-      t('pricing.employerServices.employerBranding.features.2'),
-      t('pricing.employerServices.employerBranding.features.3')
-    ]
-  },
-  {
-    id: 'team-training',
-    type: 'TEAM_TRAINING',
-    title: t('pricing.employerServices.teamTraining.title'),
-    price: t('pricing.employerServices.teamTraining.price'),
-    description: t('pricing.employerServices.teamTraining.description'),
-    icon: <Support sx={{ fontSize: 40, color: "#2196f3" }} />,
-    duration: t('pricing.employerServices.teamTraining.duration'),
-    features: [
-      t('pricing.employerServices.teamTraining.features.0'),
-      t('pricing.employerServices.teamTraining.features.1'),
-      t('pricing.employerServices.teamTraining.features.2'),
-      t('pricing.employerServices.teamTraining.features.3')
-    ]
-  }
-];
+  // Professional Services for Employers
+  const employerServices = [
+    {
+      id: 'recruitment-consulting',
+      type: 'RECRUITMENT_CONSULTING',
+      title: t('pricing.employerServices.recruitmentConsulting.title'),
+      price: t('pricing.employerServices.recruitmentConsulting.price'),
+      description: t('pricing.employerServices.recruitmentConsulting.description'),
+      icon: <Users className="h-10 w-10 text-green-600" />,
+      duration: t('pricing.employerServices.recruitmentConsulting.duration'),
+      features: [
+        t('pricing.employerServices.recruitmentConsulting.features.0'),
+        t('pricing.employerServices.recruitmentConsulting.features.1'),
+        t('pricing.employerServices.recruitmentConsulting.features.2'),
+        t('pricing.employerServices.recruitmentConsulting.features.3')
+      ]
+    },
+    {
+      id: 'employer-branding',
+      type: 'EMPLOYER_BRANDING',
+      title: t('pricing.employerServices.employerBranding.title'),
+      price: t('pricing.employerServices.employerBranding.price'),
+      description: t('pricing.employerServices.employerBranding.description'),
+      icon: <Building className="h-10 w-10 text-orange-600" />,
+      duration: t('pricing.employerServices.employerBranding.duration'),
+      features: [
+        t('pricing.employerServices.employerBranding.features.0'),
+        t('pricing.employerServices.employerBranding.features.1'),
+        t('pricing.employerServices.employerBranding.features.2'),
+        t('pricing.employerServices.employerBranding.features.3')
+      ]
+    },
+    {
+      id: 'team-training',
+      type: 'TEAM_TRAINING',
+      title: t('pricing.employerServices.teamTraining.title'),
+      price: t('pricing.employerServices.teamTraining.price'),
+      description: t('pricing.employerServices.teamTraining.description'),
+      icon: <GraduationCap className="h-10 w-10 text-blue-600" />,
+      duration: t('pricing.employerServices.teamTraining.duration'),
+      features: [
+        t('pricing.employerServices.teamTraining.features.0'),
+        t('pricing.employerServices.teamTraining.features.1'),
+        t('pricing.employerServices.teamTraining.features.2'),
+        t('pricing.employerServices.teamTraining.features.3')
+      ]
+    }
+  ];
 
   useEffect(() => {
     if (user) {
       loadCurrentSubscription();
     }
   }, [user]);
-
-  useEffect(() => {
-    // Update tab labels dynamically when the language changes
-    setTabValue((prevValue) => prevValue); // Trigger re-render to update labels
-  }, [i18n.language]); // Listen for language changes
 
   const loadCurrentSubscription = async () => {
     try {
@@ -377,16 +321,11 @@ const employerServices = [
     }
   };
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
   const handleSubscribe = async (plan) => {
     if (!user) {
-      setSnackbar({
-        open: true,
-        message: t('errors.loginRequired'),
-        severity: 'warning'
+      toast({
+        title: t('errors.loginRequired'),
+        variant: 'destructive'
       });
       return;
     }
@@ -399,19 +338,16 @@ const employerServices = [
     setSubscribing(true);
     try {
       await createSubscription(selectedPlan.type, user.id, isAnnual);
-      setSnackbar({
-        open: true,
-        message: t('success.subscriptionUpdated'),
-        severity: 'success'
+      toast({
+        title: t('success.subscriptionUpdated'),
       });
       setPaymentDialog(false);
       loadCurrentSubscription();
     } catch (error) {
       console.error('Error creating subscription:', error);
-      setSnackbar({
-        open: true,
-        message: t('errors.genericError'),
-        severity: 'error'
+      toast({
+        title: t('errors.genericError'),
+        variant: 'destructive'
       });
     } finally {
       setSubscribing(false);
@@ -420,27 +356,23 @@ const employerServices = [
 
   const handlePurchaseService = async (service) => {
     if (!user) {
-      setSnackbar({
-        open: true,
-        message: t('errors.loginRequired'),
-        severity: 'warning'
+      toast({
+        title: t('errors.loginRequired'),
+        variant: 'destructive'
       });
       return;
     }
 
     try {
       await purchaseService(service.type, user.id);
-      setSnackbar({
-        open: true,
-        message: t('success.paymentProcessed'),
-        severity: 'success'
+      toast({
+        title: t('success.paymentProcessed'),
       });
     } catch (error) {
       console.error('Error purchasing service:', error);
-      setSnackbar({
-        open: true,
-        message: t('errors.genericError'),
-        severity: 'error'
+      toast({
+        title: t('errors.genericError'),
+        variant: 'destructive'
       });
     }
   };
@@ -457,435 +389,263 @@ const employerServices = [
   };
 
   const renderPricingCards = (plansList) => (
-    <Grid container spacing={4} alignItems="stretch" justifyContent="center">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
       {plansList.map((plan, index) => (
-        <Grid item xs={12} md={4} key={index}>
-          <Card
-            sx={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              p: 3,
-              borderRadius: theme.shape.borderRadius * 2,
-              boxShadow: plan.highlight ? theme.shadows[10] : theme.shadows[3],
-              border: plan.highlight ? `2px solid ${theme.palette.primary.main}` : `1px solid ${theme.palette.divider}`,
-              transition: "all 0.3s ease-in-out",
-              position: 'relative',
-              "&:hover": {
-                transform: "translateY(-5px)",
-                boxShadow: plan.highlight ? theme.shadows[15] : theme.shadows[6],
-              },
-            }}
-          >
-            {plan.mostPopular && (
-              <Chip
-                label={t('pricing.mostPopular')}
-                color="primary"
-                sx={{
-                  position: 'absolute',
-                  top: -12,
-                  left: '50%',
-                  transform: 'translateX(-50%)'
-                }}
-              />
-            )}
-            
-            <CardContent sx={{ flexGrow: 1 }}>
-              <Typography
-                variant="h5"
-                component="h2"
-                align="center"
-                sx={{ fontWeight: "bold", mb: 2, color: theme.palette.primary.dark }}
-              >
-                {plan.title}
-              </Typography>
-              <Typography
-                variant="h4"
-                align="center"
-                sx={{ fontWeight: "bold", mb: 2, color: theme.palette.text.primary }}
-              >
-                {plan.monthlyPrice !== null ? 
-                  `$${isAnnual ? (plan.annualPrice || plan.monthlyPrice * 12) : plan.monthlyPrice}` : 
-                  plan.price
-                }
-                {plan.period && !isAnnual && (
-                  <Typography component="span" variant="h6" color="text.secondary">
-                    {plan.period}
-                  </Typography>
+        <Card
+          key={index}
+          className={`relative flex flex-col transition-all duration-300 hover:-translate-y-2 ${
+            plan.highlight
+              ? 'border-2 border-purple-600 shadow-2xl'
+              : 'border border-gray-200 shadow-lg hover:shadow-xl'
+          }`}
+        >
+          {plan.mostPopular && (
+            <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-cyan-600">
+              {t('pricing.mostPopular')}
+            </Badge>
+          )}
+
+          <CardHeader className="text-center pb-4">
+            <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+              {plan.title}
+            </h3>
+            <p className="text-gray-600 text-sm">{plan.description}</p>
+          </CardHeader>
+
+          <CardContent className="flex-1">
+            <div className="text-center mb-6">
+              <div className="flex items-baseline justify-center gap-1">
+                <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                  ${getPrice(plan)}
+                </span>
+                {plan.period && (
+                  <span className="text-gray-500 text-lg">{plan.period}</span>
                 )}
-                {plan.period && isAnnual && (
-                  <Typography component="span" variant="h6" color="text.secondary">
-                    /{t('pricing.year')}
-                  </Typography>
-                )}
-              </Typography>
-              
-              {isAnnual && getSavings(plan) > 0 && (
-                <Box textAlign="center" mb={2}>
-                  <Chip
-                    label={t('pricing.savePercent', { percent: getSavings(plan) })}
-                    color="success"
-                    size="small"
-                  />
-                </Box>
+              </div>
+              {isAnnual && plan.annualPrice > 0 && (
+                <Badge variant="outline" className="mt-2 border-green-500 text-green-600">
+                  Save {getSavings(plan)}%
+                </Badge>
               )}
-              
-              <Typography variant="body2" align="center" color="text.secondary" sx={{ mb: 3 }}>
-                {plan.description}
-              </Typography>
-              <List>
-                {plan.features.map((feature, featureIndex) => (
-                  <ListItem key={featureIndex} disableGutters>
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                      <CheckCircleOutlineIcon color="success" />
-                    </ListItemIcon>
-                    <ListItemText primary={feature} />
-                  </ListItem>
-                ))}
-              </List>
-            </CardContent>
-            <Box sx={{ p: 2, pt: 0 }}>
-              <Button
-                fullWidth
-                variant={plan.buttonVariant}
-                color={plan.buttonColor}
-                onClick={() => plan.type === 'ENTERPRISE' ? null : handleSubscribe(plan)}
-                sx={{
-                  py: 1.5,
-                  fontWeight: "bold",
-                  borderRadius: theme.shape.borderRadius,
-                }}
-              >
-                {plan.buttonText}
-              </Button>
-            </Box>
-          </Card>
-        </Grid>
+            </div>
+
+            <ul className="space-y-3">
+              {plan.features.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-gray-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+
+          <CardFooter>
+            <Button
+              onClick={() => handleSubscribe(plan)}
+              className={`w-full ${
+                plan.highlight
+                  ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700'
+                  : 'bg-white text-purple-600 border-2 border-purple-600 hover:bg-purple-50'
+              }`}
+            >
+              {plan.buttonText}
+            </Button>
+          </CardFooter>
+        </Card>
       ))}
-    </Grid>
+    </div>
   );
 
   const renderServiceCards = (servicesList) => (
-    <Grid container spacing={4} sx={{ mt: 4 }}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
       {servicesList.map((service, index) => (
-        <Grid item xs={12} md={6} lg={3} key={index}>
-          <Card
-            sx={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              p: 3,
-              borderRadius: theme.shape.borderRadius * 2,
-              boxShadow: theme.shadows[3],
-              transition: "all 0.3s ease-in-out",
-              "&:hover": {
-                transform: "translateY(-5px)",
-                boxShadow: theme.shadows[6],
-              },
-            }}
-          >
-            <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-              <Box sx={{ mb: 2 }}>
+        <Card key={index} className="hover:shadow-xl transition-all duration-200 border-l-4 border-l-purple-500">
+          <CardContent className="p-6">
+            <div className="flex justify-center mb-4">
+              <div className="p-4 rounded-full bg-gradient-to-r from-purple-100 to-cyan-100">
                 {service.icon}
-              </Box>
-              <Typography
-                variant="h6"
-                component="h3"
-                sx={{ fontWeight: "bold", mb: 1 }}
-              >
-                {service.title}
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: "bold", mb: 1, color: theme.palette.primary.main }}
-              >
+              </div>
+            </div>
+            <h3 className="text-xl font-bold text-center mb-2">{service.title}</h3>
+            <p className="text-center text-gray-600 text-sm mb-4">{service.description}</p>
+            
+            <div className="text-center mb-4">
+              <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
                 {service.price}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {service.description}
-              </Typography>
-              {service.duration && (
-                <Chip
-                  label={service.duration}
-                  size="small"
-                  color="primary"
-                  variant="outlined"
-                  sx={{ mb: 2 }}
-                />
-              )}
-              {service.features && (
-                <List dense>
-                  {service.features.map((feature, featureIndex) => (
-                    <ListItem key={featureIndex} disableGutters>
-                      <ListItemIcon sx={{ minWidth: 25 }}>
-                        <Check color="success" fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText 
-                        primary={feature} 
-                        primaryTypographyProps={{ variant: 'body2' }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              )}
-            </CardContent>
-            <Box sx={{ p: 2, pt: 0 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                onClick={() => handlePurchaseService(service)}
-                sx={{
-                  py: 1.5,
-                  fontWeight: "bold",
-                  borderRadius: theme.shape.borderRadius,
-                }}
-              >
-                {t('pricing.purchaseService')}
-              </Button>
-            </Box>
-          </Card>
-        </Grid>
+              </span>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Clock className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">{service.duration}</span>
+            </div>
+
+            <ul className="space-y-2 mb-6">
+              {service.features.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-xs text-gray-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Button
+              onClick={() => handlePurchaseService(service)}
+              className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+            >
+              Purchase
+            </Button>
+          </CardContent>
+        </Card>
       ))}
-    </Grid>
+    </div>
   );
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50">
       <Header />
-      <Box
-        sx={{
-          background: theme.palette.background.default,
-          color: theme.palette.text.primary,
-          py: { xs: 4, md: 8 }, // Adjust padding for mobile
-        }}
-      >
-        <Container maxWidth="lg">
-          {/* Header */}
-          <Box textAlign="center" mb={{ xs: 4, md: 6 }}>
-            <Typography
-              variant="h4"
-              component="h1"
-              align="center"
-              gutterBottom
-              sx={{
-                fontWeight: "bold",
-                mb: { xs: 2, md: 4 },
-                color: theme.palette.primary.main,
-                fontSize: { xs: "1.8rem", md: "2.5rem" }, // Adjust font size for mobile
-              }}
-            >
-              {t('pricing.choosePlan')}
-            </Typography>
-            <Typography
-              variant="body1"
-              align="center"
-              color="text.secondary"
-              sx={{
-                mb: { xs: 3, md: 4 },
-                fontSize: { xs: "0.9rem", md: "1rem" }, // Adjust font size for mobile
-              }}
-            >
-              {t('pricing.features')}
-            </Typography>
-            <Paper sx={{ mb: { xs: 3, md: 4 } }}>
-              <Tabs
-                value={tabValue}
-                onChange={handleTabChange}
-                centered
-                sx={{
-                  '& .MuiTab-root': {
-                    minWidth: { xs: 100, md: 200 }, // Adjust tab width for mobile
-                    py: { xs: 1, md: 2 },
-                    fontSize: { xs: "0.9rem", md: "1.1rem" }, // Adjust font size for mobile
-                    fontWeight: "bold",
-                  },
-                }}
-              >
-                <Tab 
-                  icon={<Person />} 
-                  label={t('pricing.tabs.jobSeekerPlans')}
-                  iconPosition="start"
-                />
-                <Tab 
-                  icon={<Business />} 
-                  label={t('pricing.tabs.employerPlans')}
-                  iconPosition="start"
-                />
-              </Tabs>
-            </Paper>
-            <Box display="flex" justifyContent="center" alignItems="center" mt={{ xs: 2, md: 4 }}>
-              <Typography variant="body2" sx={{ mr: 2 }}>
-                {t('pricing.monthly')}
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={isAnnual}
-                    onChange={(e) => setIsAnnual(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label=""
-              />
-              <Typography variant="body2" sx={{ ml: 2 }}>
-                {t('pricing.yearly')}
-              </Typography>
-              <Chip
-                label={t('pricing.savePercent', { percent: 20 })}
-                color="primary"
-                size="small"
-                sx={{ ml: 2 }}
-              />
-            </Box>
-          </Box>
+      
+      <div className="container mx-auto py-12 px-4">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+            {t('pricing.title') || 'Choose Your Plan'}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            {t('pricing.subtitle') || 'Find the perfect plan for your needs'}
+          </p>
+        </div>
 
-          {/* Current Subscription */}
-          {currentSubscription && (
-            <Card sx={{ mb: 4, bgcolor: 'primary.50' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {t('pricing.currentSubscription.title')}
-                </Typography>
-                <Typography variant="body1">
-                  {t('pricing.currentSubscription.plan')}: {currentSubscription.planType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {currentSubscription.isActive ? t('pricing.currentSubscription.active') : t('pricing.currentSubscription.inactive')} • 
-                  {t('pricing.currentSubscription.expires')}: {new Date(currentSubscription.expiresAt).toLocaleDateString()}
-                </Typography>
-              </CardContent>
-            </Card>
-          )}
+        {/* Annual/Monthly Toggle */}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <Label htmlFor="billing-toggle" className={`font-medium ${!isAnnual ? 'text-purple-600' : 'text-gray-500'}`}>
+            Monthly
+          </Label>
+          <Switch
+            id="billing-toggle"
+            checked={isAnnual}
+            onCheckedChange={setIsAnnual}
+          />
+          <Label htmlFor="billing-toggle" className={`font-medium ${isAnnual ? 'text-purple-600' : 'text-gray-500'}`}>
+            Annual <Badge variant="outline" className="ml-2 border-green-500 text-green-600">Save up to 17%</Badge>
+          </Label>
+        </div>
 
-          {/* Tab Panels */}
-          <TabPanel value={tabValue} index={0}>
-            {/* Job Seeker Plans */}
-            {renderPricingCards(jobSeekerPlans)}
-            
-            {/* Job Seeker Services */}
-            <Box sx={{ mt: 8 }}>
-              <Typography
-                variant="h4"
-                component="h2"
-                align="center"
-                gutterBottom
-                sx={{ fontWeight: "bold", mb: 4, color: theme.palette.primary.main }}
-              >
-                {t('pricing.featureList')}
-              </Typography>
-              <Typography
-                variant="h6"
-                align="center"
-                color="text.secondary"
-                sx={{ mb: 4 }}
-              >
-                {t('pricing.jobAlerts')}
-              </Typography>
+        {/* Tabs */}
+        <Tabs value={tabValue} onValueChange={setTabValue} className="max-w-7xl mx-auto">
+          <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto mb-8">
+            <TabsTrigger value="job-seekers">{t('pricing.forJobSeekers') || 'For Job Seekers'}</TabsTrigger>
+            <TabsTrigger value="employers">{t('pricing.forEmployers') || 'For Employers'}</TabsTrigger>
+          </TabsList>
+
+          {/* Job Seekers Tab */}
+          <TabsContent value="job-seekers" className="space-y-12">
+            <div>
+              <h2 className="text-3xl font-bold text-center mb-8">
+                {t('pricing.subscriptionPlans') || 'Subscription Plans'}
+              </h2>
+              {renderPricingCards(jobSeekerPlans)}
+            </div>
+
+            <div className="border-t-4 border-purple-200 pt-12">
+              <h2 className="text-3xl font-bold text-center mb-4">
+                {t('pricing.professionalServices') || 'Professional Services'}
+              </h2>
+              <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                {t('pricing.professionalServicesDesc') || 'Enhance your job search with our expert services'}
+              </p>
               {renderServiceCards(jobSeekerServices)}
-            </Box>
-          </TabPanel>
+            </div>
+          </TabsContent>
 
-          <TabPanel value={tabValue} index={1}>
-            {/* Employer Plans */}
-            {renderPricingCards(employerPlans)}
-            
-            {/* Employer Services */}
-            <Box sx={{ mt: 8 }}>
-              <Typography
-                variant="h4"
-                component="h2"
-                align="center"
-                gutterBottom
-                sx={{ fontWeight: "bold", mb: 4, color: theme.palette.primary.main }}
-              >
-                {t('pricing.featureList')}
-              </Typography>
-              <Typography
-                variant="h6"
-                align="center"
-                color="text.secondary"
-                sx={{ mb: 4 }}
-              >
-                {t('pricing.contactSales')}
-              </Typography>
+          {/* Employers Tab */}
+          <TabsContent value="employers" className="space-y-12">
+            <div>
+              <h2 className="text-3xl font-bold text-center mb-8">
+                {t('pricing.subscriptionPlans') || 'Subscription Plans'}
+              </h2>
+              {renderPricingCards(employerPlans)}
+            </div>
+
+            <div className="border-t-4 border-purple-200 pt-12">
+              <h2 className="text-3xl font-bold text-center mb-4">
+                {t('pricing.professionalServices') || 'Professional Services'}
+              </h2>
+              <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                {t('pricing.professionalServicesDesc') || 'Expert solutions for your recruitment needs'}
+              </p>
               {renderServiceCards(employerServices)}
-            </Box>
-          </TabPanel>
+            </div>
+          </TabsContent>
+        </Tabs>
 
-          {/* Trust Indicators */}
-          <Box sx={{ mt: 8, textAlign: 'center' }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-              {t('pricing.trustedBy')}
-            </Typography>
-            <Grid container spacing={4} sx={{ mt: 2 }}>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                  <Security color="primary" />
-                  <Typography variant="body1">{t('pricing.securePayments')}</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                  <Support color="primary" />
-                  <Typography variant="body1">{t('pricing.support247')}</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                  <Star color="primary" />
-                  <Typography variant="body1">{t('pricing.moneyBackGuarantee')}</Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-        </Container>
-      </Box>
+        {/* Payment Dialog */}
+        <Dialog open={paymentDialog} onOpenChange={setPaymentDialog}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle className="bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                {t('pricing.confirmSubscription') || 'Confirm Subscription'}
+              </DialogTitle>
+              <DialogDescription>
+                {t('pricing.confirmSubscriptionDesc') || 'Complete your subscription to get started'}
+              </DialogDescription>
+            </DialogHeader>
 
-      {/* Payment Dialog */}
-      <Dialog open={paymentDialog} onClose={() => setPaymentDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{t('pricing.confirmSubscription.title')}</DialogTitle>
-        <DialogContent>
-          {selectedPlan && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                {selectedPlan.title} {t('pricing.confirmSubscription.plan')}
-              </Typography>
-              <Typography variant="body1" gutterBottom>
-                ${isAnnual ? selectedPlan.annualPrice : selectedPlan.monthlyPrice} 
-                {isAnnual ? `/${t('pricing.year')}` : `/${t('pricing.month')}`}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {selectedPlan.description}
-              </Typography>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setPaymentDialog(false)}>{t('common.cancel')}</Button>
-          <Button 
-            onClick={handleConfirmSubscription} 
-            variant="contained" 
-            disabled={subscribing}
-          >
-            {subscribing ? <CircularProgress size={20} /> : t('pricing.confirmSubscription.button')}
-          </Button>
-        </DialogActions>
-      </Dialog>
+            {selectedPlan && (
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-purple-50 to-cyan-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-lg mb-2">{selectedPlan.title}</h3>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                    ${getPrice(selectedPlan)} {selectedPlan.period}
+                  </p>
+                  {isAnnual && selectedPlan.annualPrice > 0 && (
+                    <Badge variant="outline" className="mt-2 border-green-500 text-green-600">
+                      Save {getSavings(selectedPlan)}% annually
+                    </Badge>
+                  )}
+                </div>
 
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+                <div>
+                  <Label htmlFor="card-number">Card Number</Label>
+                  <Input id="card-number" placeholder="1234 5678 9012 3456" className="mt-1" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="expiry">Expiry Date</Label>
+                    <Input id="expiry" placeholder="MM/YY" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label htmlFor="cvv">CVV</Label>
+                    <Input id="cvv" placeholder="123" className="mt-1" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Shield className="h-4 w-4" />
+                  <span>Secure payment powered by Stripe</span>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setPaymentDialog(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmSubscription}
+                disabled={subscribing}
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+              >
+                {subscribing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {subscribing ? 'Processing...' : 'Confirm Payment'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       <Footer />
-    </>
+    </div>
   );
 }
-

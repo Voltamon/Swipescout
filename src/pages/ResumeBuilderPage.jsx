@@ -1,136 +1,97 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  IconButton,
-  LinearProgress,
-  Alert,
-  useTheme,
-  Paper,
-  Divider,
-  Chip,
-  Stack,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Snackbar,
-  CircularProgress,
-  Tab,
-  Tabs,
-  Stepper,
-  Step,
-  StepLabel
-} from "@mui/material";
-import {
-  Upload,
-  Download,
-  Preview,
-  Add,
-  Delete,
-  Edit,
-  Save,
-  Print,
-  PictureAsPdf,
-  Description,
-  Work,
-  School,
-  Star,
-  Language,
-  EmojiEvents,
-  ExpandMore,
-  CloudUpload,
-  Visibility,
-  GetApp
-} from "@mui/icons-material";
 import { 
   extractCVData, 
   generateResume, 
   previewResume, 
   saveResume, 
   getUserResumes 
-} from "../services/api";
+} from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
+import {
+  Upload,
+  Download,
+  Eye,
+  Plus,
+  Trash2,
+  Edit,
+  Save,
+  FileText,
+  Briefcase,
+  GraduationCap,
+  Award,
+  Languages,
+  Trophy,
+  Loader2,
+  File,
+  ChevronDown
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors-jobseeker';
 
 export default function ResumeBuilderPage() {
-  const theme = useTheme();
   const { user } = useAuth();
-  const [activeStep, setActiveStep] = useState(0);
-  const [tabValue, setTabValue] = useState(0);
+  const { toast } = useToast();
+  
+  const [activeTab, setActiveTab] = useState('build');
   const [loading, setLoading] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-  const [previewDialog, setPreviewDialog] = useState({ open: false, html: "" });
-  const [savedResumes, setSavedResumes] = useState([]);
-
+  const [progress, setProgress] = useState(0);
+  
+  // Resume data
   const [resumeData, setResumeData] = useState({
     personalInfo: {
       fullName: '',
       email: '',
       phone: '',
-      address: '',
+      location: '',
       linkedin: '',
-      website: '',
-      summary: '',
+      website: ''
     },
-    experience: [],
+    summary: '',
+    experiences: [],
     education: [],
     skills: [],
     languages: [],
     certifications: [],
-    projects: [],
+    projects: []
   });
 
-  const [selectedTemplate, setSelectedTemplate] = useState('modern');
-  const [uploadedFile, setUploadedFile] = useState(null);
-
-  const steps = [
-    'Personal Information',
-    'Experience',
-    'Education',
-    'Skills & Languages',
-    'Additional Information',
-    'Preview & Download'
-  ];
-
-  const templates = [
-    { id: 'modern', name: 'Modern', description: 'Clean and professional design' },
-    { id: 'classic', name: 'Classic', description: 'Traditional and formal layout' }
-  ];
+  const [savedResumes, setSavedResumes] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    loadSavedResumes();
+    fetchSavedResumes();
   }, []);
 
-  const loadSavedResumes = async () => {
+  const fetchSavedResumes = async () => {
     try {
       const response = await getUserResumes();
-      // response.data might be an array or an object { resumes: [...] }
-      const data = response?.data;
-      if (Array.isArray(data)) setSavedResumes(data);
-      else if (data && Array.isArray(data.resumes)) setSavedResumes(data.resumes);
-      else setSavedResumes([]);
+      setSavedResumes(response.data.resumes || []);
     } catch (error) {
-      console.error('Error loading saved resumes:', error);
+      console.error('Error fetching resumes:', error);
     }
   };
 
@@ -138,47 +99,52 @@ export default function ResumeBuilderPage() {
     const file = event.target.files[0];
     if (!file) return;
 
-    setUploadedFile(file);
+    setSelectedFile(file);
     setExtracting(true);
+    setProgress(0);
 
     try {
       const formData = new FormData();
       formData.append('cv', file);
 
+      const progressInterval = setInterval(() => {
+        setProgress(prev => Math.min(prev + 10, 90));
+      }, 200);
+
       const response = await extractCVData(formData);
-      setResumeData(response.data);
-      setSnackbar({
-        open: true,
-        message: "CV data extracted successfully!",
-        severity: "success"
-      });
+      
+      clearInterval(progressInterval);
+      setProgress(100);
+
+      if (response.data) {
+        setResumeData(prevData => ({
+          ...prevData,
+          ...response.data
+        }));
+        
+        toast({
+          title: "Success",
+          description: "CV data extracted successfully!",
+        });
+      }
     } catch (error) {
-      console.error('Error extracting CV data:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to extract CV data. Please try again.",
-        severity: "error"
+      console.error('Error extracting CV:', error);
+      toast({
+        title: "Error",
+        description: "Failed to extract CV data",
+        variant: "destructive",
       });
     } finally {
       setExtracting(false);
+      setProgress(0);
     }
   };
 
-  const handlePersonalInfoChange = (field, value) => {
+  const handleAddExperience = () => {
     setResumeData(prev => ({
       ...prev,
-      personalInfo: {
-        ...prev.personalInfo,
-        [field]: value
-      }
-    }));
-  };
-
-  const addExperience = () => {
-    setResumeData(prev => ({
-      ...prev,
-      experience: [
-        ...prev.experience,
+      experiences: [
+        ...prev.experiences,
         {
           title: '',
           company: '',
@@ -186,29 +152,29 @@ export default function ResumeBuilderPage() {
           startDate: '',
           endDate: '',
           current: false,
-          description: '',
+          description: ''
         }
       ]
     }));
   };
 
-  const updateExperience = (index, field, value) => {
+  const handleRemoveExperience = (index) => {
     setResumeData(prev => ({
       ...prev,
-      experience: prev.experience.map((exp, i) => 
+      experiences: prev.experiences.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleExperienceChange = (index, field, value) => {
+    setResumeData(prev => ({
+      ...prev,
+      experiences: prev.experiences.map((exp, i) => 
         i === index ? { ...exp, [field]: value } : exp
       )
     }));
   };
 
-  const removeExperience = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      experience: prev.experience.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addEducation = () => {
+  const handleAddEducation = () => {
     setResumeData(prev => ({
       ...prev,
       education: [
@@ -217,15 +183,23 @@ export default function ResumeBuilderPage() {
           degree: '',
           institution: '',
           location: '',
-          graduationDate: '',
+          startYear: '',
+          endYear: '',
           gpa: '',
-          description: '',
+          description: ''
         }
       ]
     }));
   };
 
-  const updateEducation = (index, field, value) => {
+  const handleRemoveEducation = (index) => {
+    setResumeData(prev => ({
+      ...prev,
+      education: prev.education.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleEducationChange = (index, field, value) => {
     setResumeData(prev => ({
       ...prev,
       education: prev.education.map((edu, i) => 
@@ -234,754 +208,617 @@ export default function ResumeBuilderPage() {
     }));
   };
 
-  const removeEducation = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      education: prev.education.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addSkill = () => {
-    setResumeData(prev => ({
-      ...prev,
-      skills: [
-        ...prev.skills,
-        { name: '', level: 'Intermediate' }
-      ]
-    }));
-  };
-
-  const updateSkill = (index, field, value) => {
-    setResumeData(prev => ({
-      ...prev,
-      skills: prev.skills.map((skill, i) => 
-        i === index ? { ...skill, [field]: value } : skill
-      )
-    }));
-  };
-
-  const removeSkill = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      skills: prev.skills.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addLanguage = () => {
-    setResumeData(prev => ({
-      ...prev,
-      languages: [
-        ...prev.languages,
-        { name: '', level: 'Intermediate' }
-      ]
-    }));
-  };
-
-  const updateLanguage = (index, field, value) => {
-    setResumeData(prev => ({
-      ...prev,
-      languages: prev.languages.map((lang, i) => 
-        i === index ? { ...lang, [field]: value } : lang
-      )
-    }));
-  };
-
-  const removeLanguage = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      languages: prev.languages.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handlePreview = async () => {
-    try {
-      const response = await previewResume({
-        data: resumeData,
-        template: selectedTemplate
-      });
-      setPreviewDialog({ open: true, html: response.data.html });
-    } catch (error) {
-      console.error('Error generating preview:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to generate preview. Please try again.",
-        severity: "error"
-      });
+  const handleAddSkill = (skill) => {
+    if (skill && !resumeData.skills.includes(skill)) {
+      setResumeData(prev => ({
+        ...prev,
+        skills: [...prev.skills, skill]
+      }));
     }
   };
 
-  const handleDownload = async (format = 'pdf') => {
+  const handleRemoveSkill = (skill) => {
+    setResumeData(prev => ({
+      ...prev,
+      skills: prev.skills.filter(s => s !== skill)
+    }));
+  };
+
+  const handleGenerateResume = async () => {
     setGenerating(true);
     try {
-      const response = await generateResume({
-        data: resumeData,
-        template: selectedTemplate,
-        format: format
-      });
-
-      // Create blob and download
-      const blob = new Blob([response.data], { 
-        type: format === 'pdf' ? 'application/pdf' : 'text/html' 
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `resume_${Date.now()}.${format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      setSnackbar({
-        open: true,
-        message: `Resume downloaded successfully as ${format.toUpperCase()}!`,
-        severity: "success"
-      });
+      const response = await generateResume(resumeData);
+      
+      if (response.data.downloadUrl) {
+        // Download the generated resume
+        window.open(response.data.downloadUrl, '_blank');
+        
+        toast({
+          title: "Success",
+          description: "Resume generated successfully!",
+        });
+      }
     } catch (error) {
       console.error('Error generating resume:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to generate resume. Please try again.",
-        severity: "error"
+      toast({
+        title: "Error",
+        description: "Failed to generate resume",
+        variant: "destructive",
       });
     } finally {
       setGenerating(false);
     }
   };
 
-  const handleSave = async () => {
+  const handlePreviewResume = async () => {
     try {
-      await saveResume({
-        data: resumeData,
-        template: selectedTemplate
-      });
-      setSnackbar({
-        open: true,
-        message: "Resume saved successfully!",
-        severity: "success"
-      });
-      loadSavedResumes();
+      const response = await previewResume(resumeData);
+      if (response.data.previewUrl) {
+        window.open(response.data.previewUrl, '_blank');
+      }
     } catch (error) {
-      console.error('Error saving resume:', error);
-      setSnackbar({
-        open: true,
-        message: "Failed to save resume. Please try again.",
-        severity: "error"
+      console.error('Error previewing resume:', error);
+      toast({
+        title: "Error",
+        description: "Failed to preview resume",
+        variant: "destructive",
       });
     }
   };
 
-  const PersonalInfoStep = () => (
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="Full Name"
-          value={resumeData.personalInfo.fullName}
-          onChange={(e) => handlePersonalInfoChange('fullName', e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="Email"
-          type="email"
-          value={resumeData.personalInfo.email}
-          onChange={(e) => handlePersonalInfoChange('email', e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="Phone"
-          value={resumeData.personalInfo.phone}
-          onChange={(e) => handlePersonalInfoChange('phone', e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="Address"
-          value={resumeData.personalInfo.address}
-          onChange={(e) => handlePersonalInfoChange('address', e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="LinkedIn"
-          value={resumeData.personalInfo.linkedin}
-          onChange={(e) => handlePersonalInfoChange('linkedin', e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          fullWidth
-          label="Website"
-          value={resumeData.personalInfo.website}
-          onChange={(e) => handlePersonalInfoChange('website', e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          fullWidth
-          multiline
-          rows={4}
-          label="Professional Summary"
-          value={resumeData.personalInfo.summary}
-          onChange={(e) => handlePersonalInfoChange('summary', e.target.value)}
-          placeholder="Write a brief summary of your professional background and career objectives..."
-        />
-      </Grid>
-    </Grid>
-  );
-
-  const ExperienceStep = () => (
-    <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h6">Work Experience</Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={addExperience}
-        >
-          Add Experience
-        </Button>
-      </Box>
+  const handleSaveResume = async () => {
+    setLoading(true);
+    try {
+      await saveResume(resumeData);
       
-      {resumeData.experience.map((exp, index) => (
-        <Card key={index} sx={{ mb: 3 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography variant="h6">Experience #{index + 1}</Typography>
-              <IconButton onClick={() => removeExperience(index)} color="error">
-                <Delete />
-              </IconButton>
-            </Box>
-            
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Job Title"
-                  value={exp.title}
-                  onChange={(e) => updateExperience(index, 'title', e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Company"
-                  value={exp.company}
-                  onChange={(e) => updateExperience(index, 'company', e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="Location"
-                  value={exp.location}
-                  onChange={(e) => updateExperience(index, 'location', e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="Start Date"
-                  type="month"
-                  value={exp.startDate}
-                  onChange={(e) => updateExperience(index, 'startDate', e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="End Date"
-                  type="month"
-                  value={exp.endDate}
-                  onChange={(e) => updateExperience(index, 'endDate', e.target.value)}
-                  disabled={exp.current}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={3}
-                  label="Job Description"
-                  value={exp.description}
-                  onChange={(e) => updateExperience(index, 'description', e.target.value)}
-                  placeholder="Describe your responsibilities and achievements..."
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      ))}
-    </Box>
-  );
-
-  const EducationStep = () => (
-    <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h6">Education</Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={addEducation}
-        >
-          Add Education
-        </Button>
-      </Box>
+      toast({
+        title: "Success",
+        description: "Resume saved successfully!",
+      });
       
-      {resumeData.education.map((edu, index) => (
-        <Card key={index} sx={{ mb: 3 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography variant="h6">Education #{index + 1}</Typography>
-              <IconButton onClick={() => removeEducation(index)} color="error">
-                <Delete />
-              </IconButton>
-            </Box>
-            
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Degree"
-                  value={edu.degree}
-                  onChange={(e) => updateEducation(index, 'degree', e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Institution"
-                  value={edu.institution}
-                  onChange={(e) => updateEducation(index, 'institution', e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="Location"
-                  value={edu.location}
-                  onChange={(e) => updateEducation(index, 'location', e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="Graduation Date"
-                  type="month"
-                  value={edu.graduationDate}
-                  onChange={(e) => updateEducation(index, 'graduationDate', e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  label="GPA (Optional)"
-                  value={edu.gpa}
-                  onChange={(e) => updateEducation(index, 'gpa', e.target.value)}
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      ))}
-    </Box>
-  );
-
-  const SkillsStep = () => (
-    <Grid container spacing={4}>
-      <Grid item xs={12} md={6}>
-        <Box>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">Skills</Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={addSkill}
-            >
-              Add Skill
-            </Button>
-          </Box>
-          
-          {resumeData.skills.map((skill, index) => (
-            <Card key={index} sx={{ mb: 2 }}>
-              <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="Skill"
-                      value={skill.name}
-                      onChange={(e) => updateSkill(index, 'name', e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <FormControl fullWidth>
-                      <InputLabel>Level</InputLabel>
-                      <Select
-                        value={skill.level}
-                        onChange={(e) => updateSkill(index, 'level', e.target.value)}
-                        label="Level"
-                      >
-                        <MenuItem value="Beginner">Beginner</MenuItem>
-                        <MenuItem value="Intermediate">Intermediate</MenuItem>
-                        <MenuItem value="Advanced">Advanced</MenuItem>
-                        <MenuItem value="Expert">Expert</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <IconButton onClick={() => removeSkill(index)} color="error">
-                      <Delete />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      </Grid>
-      
-      <Grid item xs={12} md={6}>
-        <Box>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">Languages</Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={addLanguage}
-            >
-              Add Language
-            </Button>
-          </Box>
-          
-          {resumeData.languages.map((language, index) => (
-            <Card key={index} sx={{ mb: 2 }}>
-              <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="Language"
-                      value={language.name}
-                      onChange={(e) => updateLanguage(index, 'name', e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <FormControl fullWidth>
-                      <InputLabel>Level</InputLabel>
-                      <Select
-                        value={language.level}
-                        onChange={(e) => updateLanguage(index, 'level', e.target.value)}
-                        label="Level"
-                      >
-                        <MenuItem value="Basic">Basic</MenuItem>
-                        <MenuItem value="Intermediate">Intermediate</MenuItem>
-                        <MenuItem value="Advanced">Advanced</MenuItem>
-                        <MenuItem value="Native">Native</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <IconButton onClick={() => removeLanguage(index)} color="error">
-                      <Delete />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      </Grid>
-    </Grid>
-  );
-
-  const PreviewStep = () => (
-    <Box>
-      <Typography variant="h6" mb={3}>Choose Template</Typography>
-      <Grid container spacing={3} mb={4}>
-        {templates.map((template) => (
-          <Grid item xs={12} md={6} key={template.id}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer',
-                border: selectedTemplate === template.id ? 2 : 1,
-                borderColor: selectedTemplate === template.id ? 'primary.main' : 'divider'
-              }}
-              onClick={() => setSelectedTemplate(template.id)}
-            >
-              <CardContent>
-                <Typography variant="h6">{template.name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {template.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      <Box display="flex" gap={2} mb={4}>
-        <Button
-          variant="outlined"
-          startIcon={<Visibility />}
-          onClick={handlePreview}
-        >
-          Preview Resume
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<Save />}
-          onClick={handleSave}
-        >
-          Save Resume
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<GetApp />}
-          onClick={() => handleDownload('pdf')}
-          disabled={generating}
-        >
-          {generating ? <CircularProgress size={20} /> : 'Download PDF'}
-        </Button>
-        <Button
-          variant="outlined"
-          startIcon={<GetApp />}
-          onClick={() => handleDownload('html')}
-        >
-          Download HTML
-        </Button>
-      </Box>
-    </Box>
-  );
-
-  const renderStepContent = (step) => {
-    switch (step) {
-      case 0:
-        return <PersonalInfoStep />;
-      case 1:
-        return <ExperienceStep />;
-      case 2:
-        return <EducationStep />;
-      case 3:
-        return <SkillsStep />;
-      case 4:
-        return <Box><Typography>Additional sections coming soon...</Typography></Box>;
-      case 5:
-        return <PreviewStep />;
-      default:
-        return <Typography>Unknown step</Typography>;
+      fetchSavedResumes();
+    } catch (error) {
+      console.error('Error saving resume:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save resume",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        py: { xs: 2, md: 4 }, // Adjust padding for mobile
-        px: { xs: 2, md: 4 }, // Adjust padding for mobile
-        backgroundColor: theme.palette.background.default,
-      }}
-    >
-      <Container maxWidth="lg">
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{
-            fontWeight: "bold",
-            mb: { xs: 2, md: 4 },
-            fontSize: { xs: "1.5rem", md: "2rem" }, // Adjust font size for mobile
-          }}
-        >
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-2">
           Resume Builder
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" }, // Stack sections on mobile
-            gap: { xs: 2, md: 4 },
-          }}
-        >
-          {/* Resume Sections */}
-          <Box sx={{ flex: 1 }}>
-            <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 4 }}>
-              <Tab label="Build Resume" />
-              <Tab label="Upload & Extract" />
-              <Tab label="Saved Resumes" />
-            </Tabs>
+        </h1>
+        <p className="text-muted-foreground">
+          Create a professional resume with our AI-powered builder
+        </p>
+      </div>
 
-            {tabValue === 0 && (
-              <Box>
-                <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-                  {steps.map((label) => (
-                    <Step key={label}>
-                      <StepLabel>{label}</StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
+      {/* Main Content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="build">Build Resume</TabsTrigger>
+          <TabsTrigger value="upload">Upload CV</TabsTrigger>
+          <TabsTrigger value="saved">Saved Resumes ({savedResumes.length})</TabsTrigger>
+        </TabsList>
 
-                <Card>
-                  <CardContent sx={{ p: 4 }}>
-                    {renderStepContent(activeStep)}
-                    
-                    <Box display="flex" justifyContent="space-between" mt={4}>
-                      <Button
-                        disabled={activeStep === 0}
-                        onClick={() => setActiveStep(prev => prev - 1)}
+        {/* Build Resume Tab */}
+        <TabsContent value="build" className="space-y-6">
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <Button 
+              onClick={handlePreviewResume}
+              variant="outline"
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              Preview
+            </Button>
+            <Button 
+              onClick={handleSaveResume}
+              variant="outline"
+              className="gap-2"
+              disabled={loading}
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              Save
+            </Button>
+            <Button 
+              onClick={handleGenerateResume}
+              className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 gap-2 ml-auto"
+              disabled={generating}
+            >
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              Generate PDF
+            </Button>
+          </div>
+
+          {/* Personal Information */}
+          <Card className="border-l-4 border-l-cyan-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-cyan-600" />
+                Personal Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Input
+                    id="fullName"
+                    value={resumeData.personalInfo.fullName}
+                    onChange={(e) => setResumeData(prev => ({
+                      ...prev,
+                      personalInfo: { ...prev.personalInfo, fullName: e.target.value }
+                    }))}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={resumeData.personalInfo.email}
+                    onChange={(e) => setResumeData(prev => ({
+                      ...prev,
+                      personalInfo: { ...prev.personalInfo, email: e.target.value }
+                    }))}
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={resumeData.personalInfo.phone}
+                    onChange={(e) => setResumeData(prev => ({
+                      ...prev,
+                      personalInfo: { ...prev.personalInfo, phone: e.target.value }
+                    }))}
+                    placeholder="+1 234 567 8900"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    value={resumeData.personalInfo.location}
+                    onChange={(e) => setResumeData(prev => ({
+                      ...prev,
+                      personalInfo: { ...prev.personalInfo, location: e.target.value }
+                    }))}
+                    placeholder="City, Country"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="linkedin">LinkedIn</Label>
+                  <Input
+                    id="linkedin"
+                    value={resumeData.personalInfo.linkedin}
+                    onChange={(e) => setResumeData(prev => ({
+                      ...prev,
+                      personalInfo: { ...prev.personalInfo, linkedin: e.target.value }
+                    }))}
+                    placeholder="linkedin.com/in/yourprofile"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="website">Website/Portfolio</Label>
+                  <Input
+                    id="website"
+                    value={resumeData.personalInfo.website}
+                    onChange={(e) => setResumeData(prev => ({
+                      ...prev,
+                      personalInfo: { ...prev.personalInfo, website: e.target.value }
+                    }))}
+                    placeholder="www.yourwebsite.com"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Professional Summary */}
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle>Professional Summary</CardTitle>
+              <CardDescription>
+                Write a brief overview of your professional background
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={resumeData.summary}
+                onChange={(e) => setResumeData(prev => ({ ...prev, summary: e.target.value }))}
+                placeholder="Experienced professional with..."
+                rows={5}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Work Experience */}
+          <Card className="border-l-4 border-l-cyan-500">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-cyan-600" />
+                  Work Experience
+                </div>
+                <Button onClick={handleAddExperience} size="sm" variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Experience
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {resumeData.experiences.map((exp, index) => (
+                <Accordion key={index} type="single" collapsible>
+                  <AccordionItem value={`exp-${index}`}>
+                    <AccordionTrigger>
+                      {exp.title || `Experience ${index + 1}`} {exp.company && `at ${exp.company}`}
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Job Title *</Label>
+                          <Input
+                            value={exp.title}
+                            onChange={(e) => handleExperienceChange(index, 'title', e.target.value)}
+                            placeholder="Software Engineer"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Company *</Label>
+                          <Input
+                            value={exp.company}
+                            onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
+                            placeholder="Tech Corp"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Location</Label>
+                          <Input
+                            value={exp.location}
+                            onChange={(e) => handleExperienceChange(index, 'location', e.target.value)}
+                            placeholder="New York, NY"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Start Date</Label>
+                          <Input
+                            type="month"
+                            value={exp.startDate}
+                            onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>End Date</Label>
+                          <Input
+                            type="month"
+                            value={exp.endDate}
+                            onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
+                            disabled={exp.current}
+                          />
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={`current-${index}`}
+                            checked={exp.current}
+                            onChange={(e) => handleExperienceChange(index, 'current', e.target.checked)}
+                            className="rounded border-gray-300"
+                          />
+                          <Label htmlFor={`current-${index}`}>I currently work here</Label>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Description</Label>
+                        <Textarea
+                          value={exp.description}
+                          onChange={(e) => handleExperienceChange(index, 'description', e.target.value)}
+                          placeholder="Describe your responsibilities and achievements..."
+                          rows={4}
+                        />
+                      </div>
+                      <Button 
+                        onClick={() => handleRemoveExperience(index)}
+                        variant="destructive"
+                        size="sm"
                       >
-                        Back
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remove
                       </Button>
-                      <Button
-                        variant="contained"
-                        onClick={() => setActiveStep(prev => prev + 1)}
-                        disabled={activeStep === steps.length - 1}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ))}
+              
+              {resumeData.experiences.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No work experience added yet. Click "Add Experience" to get started.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Education */}
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+                  Education
+                </div>
+                <Button onClick={handleAddEducation} size="sm" variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Education
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {resumeData.education.map((edu, index) => (
+                <Accordion key={index} type="single" collapsible>
+                  <AccordionItem value={`edu-${index}`}>
+                    <AccordionTrigger>
+                      {edu.degree || `Education ${index + 1}`} {edu.institution && `from ${edu.institution}`}
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Degree *</Label>
+                          <Input
+                            value={edu.degree}
+                            onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
+                            placeholder="Bachelor of Science"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Institution *</Label>
+                          <Input
+                            value={edu.institution}
+                            onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
+                            placeholder="University Name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Location</Label>
+                          <Input
+                            value={edu.location}
+                            onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
+                            placeholder="City, Country"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Start Year</Label>
+                          <Input
+                            type="number"
+                            value={edu.startYear}
+                            onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
+                            placeholder="2018"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>End Year</Label>
+                          <Input
+                            type="number"
+                            value={edu.endYear}
+                            onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
+                            placeholder="2022"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>GPA (Optional)</Label>
+                          <Input
+                            value={edu.gpa}
+                            onChange={(e) => handleEducationChange(index, 'gpa', e.target.value)}
+                            placeholder="3.8/4.0"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Additional Details</Label>
+                        <Textarea
+                          value={edu.description}
+                          onChange={(e) => handleEducationChange(index, 'description', e.target.value)}
+                          placeholder="Relevant coursework, honors, etc..."
+                          rows={3}
+                        />
+                      </div>
+                      <Button 
+                        onClick={() => handleRemoveEducation(index)}
+                        variant="destructive"
+                        size="sm"
                       >
-                        Next
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Remove
                       </Button>
-                    </Box>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ))}
+              
+              {resumeData.education.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No education added yet. Click "Add Education" to get started.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Skills */}
+          <Card className="border-l-4 border-l-cyan-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-cyan-600" />
+                Skills
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  id="skillInput"
+                  placeholder="Type a skill and press Enter"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddSkill(e.target.value);
+                      e.target.value = '';
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {resumeData.skills.map((skill, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="secondary"
+                    className="gap-2 px-3 py-1"
+                  >
+                    {skill}
+                    <button onClick={() => handleRemoveSkill(skill)}>
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              {resumeData.skills.length === 0 && (
+                <div className="text-center py-4 text-muted-foreground text-sm">
+                  No skills added yet. Type a skill above and press Enter.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Upload CV Tab */}
+        <TabsContent value="upload">
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+                Upload Existing CV
+              </CardTitle>
+              <CardDescription>
+                Upload your CV and we'll extract the information automatically
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+                <input
+                  type="file"
+                  id="cv-upload"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  disabled={extracting}
+                />
+                <label htmlFor="cv-upload" className="cursor-pointer">
+                  <div className="space-y-4">
+                    <div className="mx-auto w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center">
+                      {extracting ? (
+                        <Loader2 className="h-8 w-8 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+                      ) : (
+                        <Upload className="h-8 w-8 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold">
+                        {extracting ? 'Extracting data...' : 'Upload your CV'}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {extracting ? 'Please wait while we process your document' : 'PDF, DOC, or DOCX (Max 5MB)'}
+                      </p>
+                    </div>
+                    {!extracting && (
+                      <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700">
+                        Choose File
+                      </Button>
+                    )}
+                  </div>
+                </label>
+              </div>
+
+              {extracting && progress > 0 && (
+                <div className="space-y-2">
+                  <Progress value={progress} className="h-2" />
+                  <p className="text-sm text-center text-muted-foreground">{progress}% complete</p>
+                </div>
+              )}
+
+              {selectedFile && !extracting && (
+                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                  <File className="h-8 w-8 text-cyan-600" />
+                  <div className="flex-grow">
+                    <p className="font-medium">{selectedFile.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  <Badge variant="secondary">Uploaded</Badge>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Saved Resumes Tab */}
+        <TabsContent value="saved">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {savedResumes.length > 0 ? (
+              savedResumes.map((resume, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{resume.title || 'Untitled Resume'}</CardTitle>
+                    <CardDescription>
+                      Last updated: {new Date(resume.updatedAt).toLocaleDateString()}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </Button>
                   </CardContent>
                 </Card>
-              </Box>
-            )}
-
-            {tabValue === 1 && (
-              <Card>
-                <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                  <Typography variant="h6" mb={3}>
-                    Upload Your Existing Resume
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mb={4}>
-                    Upload a PDF or Word document and we'll extract the information for you
-                  </Typography>
-                  
-                  <input
-                    accept=".pdf,.doc,.docx"
-                    style={{ display: 'none' }}
-                    id="cv-upload"
-                    type="file"
-                    onChange={handleFileUpload}
-                  />
-                  <label htmlFor="cv-upload">
-                    <Button
-                      variant="contained"
-                      component="span"
-                      startIcon={<CloudUpload />}
-                      size="large"
-                      disabled={extracting}
-                    >
-                      {extracting ? <CircularProgress size={20} /> : 'Upload Resume'}
-                    </Button>
-                  </label>
-
-                  {extracting && (
-                    <Box mt={3}>
-                      <LinearProgress />
-                      <Typography variant="body2" mt={1}>
-                        Extracting data from your resume...
-                      </Typography>
-                    </Box>
-                  )}
+              ))
+            ) : (
+              <Card className="col-span-full text-center py-12">
+                <CardContent>
+                  <FileText className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No saved resumes</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Create and save your first resume to get started
+                  </p>
+                  <Button 
+                    onClick={() => setActiveTab('build')}
+                    className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                  >
+                    Build Resume
+                  </Button>
                 </CardContent>
               </Card>
             )}
-
-            {tabValue === 2 && (
-              <Box>
-                <Typography variant="h6" mb={3}>
-                  Your Saved Resumes
-                </Typography>
-                <Grid container spacing={3}>
-                  {Array.isArray(savedResumes) && savedResumes.map((resume) => (
-                    <Grid item xs={12} md={6} key={resume.id}>
-                      <Card>
-                        <CardContent>
-                          <Typography variant="h6">{resume.title || 'Untitled Resume'}</Typography>
-                          <Typography variant="body2" color="text.secondary" mb={2}>
-                            Template: {resume.template}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Created: {new Date(resume.createdAt).toLocaleDateString()}
-                          </Typography>
-                          <Box display="flex" gap={1} mt={2}>
-                            <Button size="small" variant="outlined">
-                              Edit
-                            </Button>
-                            <Button size="small" variant="contained">
-                              Download
-                            </Button>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
-          </Box>
-
-          {/* Preview */}
-          <Box sx={{ flex: 2 }}>
-            <Card
-              sx={{
-                p: { xs: 2, md: 3 },
-                borderRadius: theme.shape.borderRadius,
-                boxShadow: theme.shadows[3],
-              }}
-            >
-              {/* ...existing preview content... */}
-            </Card>
-          </Box>
-        </Box>
-      </Container>
-
-      {/* Preview Dialog */}
-      <Dialog 
-        open={previewDialog.open} 
-        onClose={() => setPreviewDialog({ open: false, html: "" })}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Resume Preview</DialogTitle>
-        <DialogContent>
-          <Box 
-            dangerouslySetInnerHTML={{ __html: previewDialog.html }}
-            sx={{ 
-              border: 1, 
-              borderColor: 'divider', 
-              p: 2, 
-              maxHeight: '70vh', 
-              overflow: 'auto' 
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setPreviewDialog({ open: false, html: "" })}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
-          severity={snackbar.severity}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
-

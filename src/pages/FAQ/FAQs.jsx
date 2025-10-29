@@ -1,33 +1,26 @@
-import React, { useContext, useState  } from 'react';
+import React, { useState } from 'react';
 import Header from "../../components/Headers/Header";
 import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
 import { useTranslation } from 'react-i18next';
-
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
-  Container,
-  Typography,
   Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  TextField,
-  Box,
-  Chip,
-  Divider,
-  useTheme,
-  useMediaQuery
-} from "@mui/material";
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
-  ExpandMore as ExpandMoreIcon,
-  Search as SearchIcon,
-  Category as CategoryIcon,
-  Help as HelpIcon
-} from "@mui/icons-material";
+  Search,
+  HelpCircle,
+  LayoutGrid,
+  ChevronDown
+} from "lucide-react";
 
 const FAQPage = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -92,11 +85,7 @@ const FAQPage = () => {
   });
 
   return (
-   <Box sx={{
-        background: "linear-gradient(135deg, rgb(185, 229, 255) 0%, rgb(162, 194, 241) 100%)", // Main background as requested
-        p: 0 ,width:'100%' ,m:0
-      }} >
-    
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50">
       <Helmet>
         <title>SwipeScout FAQs | Answers to Common Questions</title>
         <meta name="description" content="Find answers to frequently asked questions about SwipeScout's video resume platform, job matching, and employer solutions." />
@@ -126,158 +115,116 @@ const FAQPage = () => {
             }
           `}
         </script>
-      </Helmet >
+      </Helmet>
+      
       <Header width='120%' />
-      <Container
-        maxWidth="md"
-        sx={{
-          py: 6,
-          bgcolor: "#E3F2FD", // Very light blue for inner container background
-          color: "#212121", // Very dark gray for general text inside this container
-          borderRadius: 2,
-          boxShadow: 3,
-          mt:2
-        }}
-      >
-        <Box textAlign="center" mb={6}>
-          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, color: "#0D47A1" }}> {/* Darker, strong blue for heading */}
-            Frequently Asked Questions
-          </Typography>
-          <Typography variant="body1" sx={{ color: "#424242" }}> {/* Dark gray for body text */}
-            Find answers to common questions about SwipeScout
-          </Typography>
-        </Box>
-        <Box mb={4}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Search FAQs..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: <SearchIcon sx={{ mr: 1, color: "#0D47A1" }} /> // Dark blue for search icon
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 4,
-                boxShadow: theme.shadows[1],
-                backgroundColor: "#ffffff", // Keep white for input background
-                color: "#212121" // Dark gray for input text
-              }
-            }}
-          />
-        </Box>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 4, justifyContent: isMobile ? "center" : "flex-start" }}>
-          {categories.map(category =>
-            <Chip
-              key={category.id}
-              label={category.label}
-              onClick={() => setActiveCategory(category.id)}
-              color={activeCategory === category.id ? "primary" : "default"}
-              variant={activeCategory === category.id ? "filled" : "outlined"}
-              icon={category.id === "all" ? <HelpIcon /> : <CategoryIcon />}
-              sx={{
-                px: 1,
-                // Active Chip
-                bgcolor:
-                  activeCategory === category.id ? "#0D47A1" : "transparent", // Dark blue for active chip background
-                color: activeCategory === category.id ? "#ffffff" : "#424242", // White text for active, dark gray for default
-                // Default Chip
-                borderColor: "#0D47A1", // Dark blue border for default
-                "& .MuiChip-icon": {
-                  fontSize: "1rem",
-                  ml: 0.5,
-                  color:
-                    activeCategory === category.id ? "#ffffff" : "#0D47A1" // White icon for active, dark blue for default
-                },
-                "&:hover": {
-                  bgcolor:
-                    activeCategory === category.id ? "#0D47A1" : "#BBDEFB" // Dark blue for active hover, lighter blue for default hover
-                }
-              }}
-            />
-          )}
-        </Box>
-        <Box mb={6}>
-          {filteredFaqs.length > 0 ? filteredFaqs.map((faq, index) =>
-                <Accordion
-                  key={index}
-                  elevation={2}
-                  sx={{
-                    mb: 2,
-                    backgroundColor: "#BBDEFB", // Lighter blue for accordion body background
-                    color: "#424242", // Dark gray for accordion body text
-                    borderRadius: "8px !important",
-                    "&:before": { display: "none" },
-                    "&:hover": {
-                      backgroundColor: "#90CAF9" // Slightly darker light blue on hover
-                    }
-                  }}
+      
+      <div className="container mx-auto py-8 px-4 max-w-4xl">
+        <Card className="shadow-xl">
+          <CardContent className="p-8">
+            {/* Header Section */}
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                Frequently Asked Questions
+              </h1>
+              <p className="text-gray-600 text-lg">
+                Find answers to common questions about SwipeScout
+              </p>
+            </div>
+
+            {/* Search Box */}
+            <div className="mb-6 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search FAQs..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="pl-10 h-12 rounded-lg shadow-sm"
+              />
+            </div>
+
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
+              {categories.map(category => (
+                <Badge
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className={`px-4 py-2 cursor-pointer transition-all duration-200 ${
+                    activeCategory === category.id
+                      ? "bg-gradient-to-r from-purple-600 to-cyan-600 text-white hover:from-purple-700 hover:to-cyan-700"
+                      : "bg-white text-gray-700 border border-purple-200 hover:bg-purple-50"
+                  }`}
                 >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon sx={{ color: "#0D47A1" }} />} // Dark blue for expand icon
-                    sx={{
-                      bgcolor: "#90CAF9", // Medium light blue for accordion header background
-                      borderRadius: "8px 8px 0 0",
-                      "&:hover": {
-                        bgcolor: "#64B5F6" // Slightly darker blue on hover
-                      }
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight={600}
-                      color="#0D47A1" // Darker, strong blue for question text
+                  {category.id === "all" ? (
+                    <HelpCircle className="h-4 w-4 inline mr-1" />
+                  ) : (
+                    <LayoutGrid className="h-4 w-4 inline mr-1" />
+                  )}
+                  {category.label}
+                </Badge>
+              ))}
+            </div>
+
+            {/* FAQ Accordion */}
+            <div className="mb-8">
+              {filteredFaqs.length > 0 ? (
+                <Accordion type="single" collapsible className="space-y-4">
+                  {filteredFaqs.map((faq, index) => (
+                    <AccordionItem
+                      key={index}
+                      value={`item-${index}`}
+                      className="border rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 shadow-sm hover:shadow-md transition-all duration-200"
                     >
-                      {faq.question}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography variant="body1" sx={{ color:"#424242" }}> {/* Dark gray for answer text */}
-                      {faq.answer}
-                    </Typography>
-                  </AccordionDetails>
+                      <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                        <span className="text-left font-semibold text-purple-900">
+                          {faq.question}
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-6 pb-4 text-gray-700">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
                 </Accordion>
-              ) : <Box textAlign="center" py={4}>
-                <Typography variant="h6" sx={{ color: "#212121" }}> {/* Very dark gray */}
-                  No FAQs found matching your search
-                </Typography>
-                <Typography variant="body2" mt={1} sx={{ color: "#424242" }}> {/* Dark gray */}
-                  Try different keywords or browse all categories
-                </Typography>
-              </Box>}
-        </Box>
-        <Divider sx={{ my: 4, borderColor: "#0D47A1" }} /> {/* Darker, strong blue for divider */}
-        <Box textAlign="center">
-          <Typography variant="h5" gutterBottom sx={{ color: "#0D47A1" }}> {/* Darker, strong blue */}
-            Still have questions?
-          </Typography>
-          <Typography variant="body1" sx={{ color: "#424242" }} mb={3}> {/* Dark gray */}
-            Our support team is happy to help
-          </Typography>
-          <Chip
-            label="Contact Support"
-            variant="outlined"
-            sx={{
-              px: 3,
-              py: 1.5,
-              fontSize: "1rem",
-              cursor: "pointer",
-              color: "#0D47A1", // Dark blue for chip text
-              borderColor: "#0D47A1", // Dark blue for chip border
-              "&:hover": {
-                bgcolor: "#1976D2", // Medium dark blue on hover
-                color: "#ffffff" // White text on hover
-              }
-            }}
-            onClick={() => (window.location.href = "/contact")}
-          />
-        </Box>
-      </Container>
-      <br />
-      <br />
-      <Footer />
-    </Box>
+              ) : (
+                <div className="text-center py-12">
+                  <HelpCircle className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                    No FAQs found matching your search
+                  </h3>
+                  <p className="text-gray-500">
+                    Try different keywords or browse all categories
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-purple-200 my-8"></div>
+
+            {/* Contact Support Section */}
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                Still have questions?
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Our support team is happy to help
+              </p>
+              <button
+                onClick={() => (window.location.href = "/contact")}
+                className="px-8 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-cyan-700 transition-all duration-200 shadow-md hover:shadow-lg"
+              >
+                Contact Support
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <div className="mt-16">
+        <Footer />
+      </div>
+    </div>
   );
 };
 

@@ -1,692 +1,657 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Box,
-    Container,
-    Paper,
-    Typography,
-    Divider,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    ListItemButton,
-    Switch,
-    TextField,
-    Button,
-    Grid,
-    Avatar,
-    FormControl,
-    FormControlLabel,
-    InputLabel,
-    Select,
-    MenuItem,
-    Alert,
-    Snackbar,
-    CircularProgress,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import SecurityIcon from '@mui/icons-material/Security';
-import LanguageIcon from '@mui/icons-material/Language';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteIcon from '@mui/icons-material/Delete';
-import HelpIcon from '@mui/icons-material/Help';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
 import { getUserSettings, updateUserSettings } from '../services/userService';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  User,
+  Bell,
+  Shield,
+  Globe,
+  Eye,
+  Trash2,
+  HelpCircle,
+  Save,
+  Loader2,
+  Lock,
+  Mail,
+  Phone,
+  MapPin,
+  Camera
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors';
 
-const SettingsContainer = styled(Container)(({ theme }) => ({
-    padding: theme.spacing(3),
-    backgroundColor: theme.palette.background.default,
-    minHeight: 'calc(100vh - 56px)',
-}));
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-const SettingsPaper = styled(Paper)(({ theme }) => ({
-    padding: 0,
-    borderRadius: theme.shape.borderRadius,
-    overflow: 'hidden',
-}));
+export default function Settings() {
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-const SettingsSidebar = styled(Box)(({ theme }) => ({
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-    [theme.breakpoints.up('md')]: {
-        width: 240,
-        borderRight: `1px solid ${theme.palette.divider}`,
-        height: '100%',
-    },
-}));
+  const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
 
-const SettingsContent = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(3),
-    flex: 1,
-}));
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    bio: '',
+    location: '',
+    website: '',
+    linkedin: '',
+    github: '',
+    twitter: '',
+  });
 
-const SettingsHeader = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.divider}`,
-}));
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    pushNotifications: true,
+    jobAlerts: true,
+    messageNotifications: true,
+    interviewReminders: true,
+    weeklyDigest: false,
+  });
 
-const AvatarUpload = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: theme.spacing(3),
-}));
+  const [privacySettings, setPrivacySettings] = useState({
+    profileVisibility: 'public',
+    showEmail: false,
+    showPhone: false,
+    allowMessages: true,
+    allowConnections: true,
+  });
 
-const LargeAvatar = styled(Avatar)(({ theme }) => ({
-    width: 100,
-    height: 100,
-    marginBottom: theme.spacing(2),
-}));
+  const [accountSettings, setAccountSettings] = useState({
+    language: 'en',
+    timezone: 'UTC',
+    theme: 'light',
+  });
 
-const Settings = () => {
-    const { user } = useAuth();
-    const [activeSection, setActiveSection] = useState('profile');
-    const [settings, setSettings] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '' });
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        mobile: '',
-        bio: '',
-        location: '',
-        language: 'ar',
-        emailNotifications: true,
-        pushNotifications: true,
-        smsNotifications: false,
-        profileVisibility: 'public',
-        twoFactorAuth: false,
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      setLoading(true);
+      const response = await getUserSettings();
+      const data = response.data;
+
+      setFormData({
+        name: data.name || user?.displayName || '',
+        email: data.email || user?.email || '',
+        mobile: data.mobile || '',
+        bio: data.bio || '',
+        location: data.location || '',
+        website: data.website || '',
+        linkedin: data.linkedin || '',
+        github: data.github || '',
+        twitter: data.twitter || '',
+      });
+
+      setNotificationSettings(data.notifications || notificationSettings);
+      setPrivacySettings(data.privacy || privacySettings);
+      setAccountSettings(data.account || accountSettings);
+    } catch (error) {
+      console.error('Failed to fetch settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load settings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      await updateUserSettings({
+        profile: formData
+      });
+
+      toast({
+        title: "Success",
+        description: "Profile settings saved successfully",
+      });
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save settings",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveNotifications = async () => {
+    setSaving(true);
+    try {
+      await updateUserSettings({
+        notifications: notificationSettings
+      });
+
+      toast({
+        title: "Success",
+        description: "Notification settings saved successfully",
+      });
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save notification settings",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSavePrivacy = async () => {
+    setSaving(true);
+    try {
+      await updateUserSettings({
+        privacy: privacySettings
+      });
+
+      toast({
+        title: "Success",
+        description: "Privacy settings saved successfully",
+      });
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save privacy settings",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveAccount = async () => {
+    setSaving(true);
+    try {
+      await updateUserSettings({
+        account: accountSettings
+      });
+
+      toast({
+        title: "Success",
+        description: "Account settings saved successfully",
+      });
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save account settings",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    setConfirmDialog({
+      open: true,
+      title: 'Delete Account',
+      message: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.',
+      action: async () => {
+        // Implement delete account logic
+        toast({
+          title: "Account Deleted",
+          description: "Your account has been scheduled for deletion",
+        });
+      }
     });
+  };
 
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                setLoading(true);
-                const response = await getUserSettings();
-                setSettings(response.data.settings);
-                setFormData({
-                    name: response.data.settings.name || '',
-                    email: response.data.settings.email || '',
-                    mobile: response.data.settings.mobile || '',
-                    bio: response.data.settings.bio || '',
-                    location: response.data.settings.location || '',
-                    language: response.data.settings.language || 'ar',
-                    emailNotifications: response.data.settings.notifications?.email || true,
-                    pushNotifications: response.data.settings.notifications?.push || true,
-                    smsNotifications: response.data.settings.notifications?.sms || false,
-                    profileVisibility: response.data.settings.privacy?.profile_visibility || 'public',
-                    twoFactorAuth: response.data.settings.security?.two_factor_auth || false,
-                });
-            } catch (error) {
-                console.error('Error fetching settings:', error);
-                setSnackbar({
-                    open: true,
-                    message: 'An error occurred while loading settings',
-                    severity: 'error',
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
+  const handleChangePassword = () => {
+    setConfirmDialog({
+      open: true,
+      title: 'Change Password',
+      message: 'You will be redirected to change your password.',
+      action: () => {
+        // Redirect to password change page
+        window.location.href = '/change-password';
+      }
+    });
+  };
 
-        fetchSettings();
-    }, []);
-
-    const handleSectionChange = (section) => {
-        setActiveSection(section);
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
-
-    const handleSwitchChange = (e) => {
-        const { name, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: checked,
-        });
-    };
-
-    const handleSaveSettings = async () => {
-        try {
-            setSaving(true);
-
-            // Convert data to the required API format
-            const updatedSettings = {
-                name: formData.name,
-                email: formData.email,
-                mobile: formData.mobile,
-                bio: formData.bio,
-                location: formData.location,
-                language: formData.language,
-                notifications: {
-                    email: formData.emailNotifications,
-                    push: formData.pushNotifications,
-                    sms: formData.smsNotifications,
-                },
-                privacy: {
-                    profile_visibility: formData.profileVisibility,
-                },
-                security: {
-                    two_factor_auth: formData.twoFactorAuth,
-                },
-            };
-
-            await updateUserSettings(updatedSettings);
-
-            setSnackbar({
-                open: true,
-                message: 'Settings saved successfully',
-                severity: 'success',
-            });
-        } catch (error) {
-            console.error('Error saving settings:', error);
-            setSnackbar({
-                open: true,
-                message: 'An error occurred while saving settings',
-                severity: 'error',
-            });
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleCloseSnackbar = () => {
-        setSnackbar({ ...snackbar, open: false });
-    };
-
-    const handleOpenConfirmDialog = (title, message) => {
-        setConfirmDialog({
-            open: true,
-            title,
-            message,
-        });
-    };
-
-    const handleCloseConfirmDialog = () => {
-        setConfirmDialog({ ...confirmDialog, open: false });
-    };
-
-    const handleDeleteAccount = () => {
-        handleOpenConfirmDialog(
-            'Delete Account',
-            'Are you sure you want to delete your account? This action cannot be undone and will result in the loss of all your data.'
-        );
-    };
-
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 56px)' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }   
-
+  if (loading) {
     return (
-        <SettingsContainer maxWidth="lg" sx={{ mt: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Settings
-            </Typography>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin text-purple-600" />
+      </div>
+    );
+  }
 
-            <Grid container spacing={3} sx={{ mt: 1 , mb: 3 }}>
-                <Grid item xs={12} md={3}>
-                    <SettingsPaper elevation={2}>
-                        <SettingsSidebar>
-                            <List>
-                                <ListItemButton
-                                    selected={activeSection === 'profile'}
-                                    onClick={() => handleSectionChange('profile')}
-                                >
-                                    <ListItemIcon>
-                                        <AccountCircleIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Profile" />
-                                </ListItemButton>
+  return (
+    <div className="container mx-auto py-6 px-4 max-w-5xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+          Settings
+        </h1>
+        <p className="text-muted-foreground">
+          Manage your account settings and preferences
+        </p>
+      </div>
 
-                                <ListItemButton
-                                    selected={activeSection === 'notifications'}
-                                    onClick={() => handleSectionChange('notifications')}
-                                >
-                                    <ListItemIcon>
-                                        <NotificationsIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Notifications" />
-                                </ListItemButton>
+      {/* Settings Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+          <TabsTrigger value="profile">
+            <User className="h-4 w-4 mr-2" />
+            Profile
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            <Bell className="h-4 w-4 mr-2" />
+            Notifications
+          </TabsTrigger>
+          <TabsTrigger value="privacy">
+            <Eye className="h-4 w-4 mr-2" />
+            Privacy
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            <Shield className="h-4 w-4 mr-2" />
+            Security
+          </TabsTrigger>
+          <TabsTrigger value="account">
+            <Globe className="h-4 w-4 mr-2" />
+            Account
+          </TabsTrigger>
+        </TabsList>
 
-                                <ListItemButton
-                                    selected={activeSection === 'privacy'}
-                                    onClick={() => handleSectionChange('privacy')}
-                                >
-                                    <ListItemIcon>
-                                        <VisibilityIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Privacy" />
-                                </ListItemButton>
+        {/* Profile Settings */}
+        <TabsContent value="profile" className="space-y-6">
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle>Profile Information</CardTitle>
+              <CardDescription>Update your personal information</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Avatar Upload */}
+              <div className="flex flex-col items-center space-y-4">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={user?.photoURL} />
+                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-2xl">
+                    {user?.displayName?.charAt(0) || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <Button variant="outline" size="sm">
+                  <Camera className="h-4 w-4 mr-2" />
+                  Change Photo
+                </Button>
+              </div>
 
-                                <ListItemButton
-                                    selected={activeSection === 'security'}
-                                    onClick={() => handleSectionChange('security')}
-                                >
-                                    <ListItemIcon>
-                                        <SecurityIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Security" />
-                                </ListItemButton>
+              {/* Form Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
 
-                                <ListItemButton
-                                    selected={activeSection === 'language'}
-                                    onClick={() => handleSectionChange('language')}
-                                >
-                                    <ListItemIcon>
-                                        <LanguageIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Language" />
-                                </ListItemButton>
+                <div className="space-y-2">
+                  <Label htmlFor="email">
+                    <Mail className="h-4 w-4 inline mr-2" />
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
 
-                                <ListItemButton
-                                    selected={activeSection === 'help'}
-                                    onClick={() => handleSectionChange('help')}
-                                >
-                                    <ListItemIcon>
-                                        <HelpIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Help" />
-                                </ListItemButton>
+                <div className="space-y-2">
+                  <Label htmlFor="mobile">
+                    <Phone className="h-4 w-4 inline mr-2" />
+                    Mobile
+                  </Label>
+                  <Input
+                    id="mobile"
+                    value={formData.mobile}
+                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                  />
+                </div>
 
-                                <Divider />
+                <div className="space-y-2">
+                  <Label htmlFor="location">
+                    <MapPin className="h-4 w-4 inline mr-2" />
+                    Location
+                  </Label>
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  />
+                </div>
 
-                                <ListItemButton
-                                    onClick={handleDeleteAccount}
-                                    sx={{ color: 'error.main' }}
-                                >
-                                    <ListItemIcon sx={{ color: 'error.main' }}>
-                                        <DeleteIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Delete Account" />
-                                </ListItemButton>
-                            </List>
-                        </SettingsSidebar>
-                    </SettingsPaper>
-                </Grid>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    rows={4}
+                  />
+                </div>
 
-                <Grid item xs={12} md={9}>
-                    <SettingsPaper elevation={2}>
-                        {activeSection === 'profile' && (
-                            <Box>
-                                <SettingsHeader>
-                                    <Typography variant="h6">Profile Settings</Typography>
-                                </SettingsHeader>
+                <div className="space-y-2">
+                  <Label htmlFor="website">Website</Label>
+                  <Input
+                    id="website"
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    placeholder="https://"
+                  />
+                </div>
 
-                                <SettingsContent>
-                                    <AvatarUpload>
-                                        <LargeAvatar src={user?.photoUrl}>
-                                            {!user?.photoUrl && user?.name?.charAt(0)}
-                                        </LargeAvatar>
-                                        <Button variant="outlined" component="label">
-                                            Change Photo
-                                            <input type="file" hidden accept="image/*" />
-                                        </Button>
-                                    </AvatarUpload>
+                <div className="space-y-2">
+                  <Label htmlFor="linkedin">LinkedIn</Label>
+                  <Input
+                    id="linkedin"
+                    value={formData.linkedin}
+                    onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
+                    placeholder="linkedin.com/in/username"
+                  />
+                </div>
+              </div>
 
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                fullWidth
-                                                label="Name"
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleInputChange}
-                                                margin="normal"
-                                            />
-                                        </Grid>
+              <Button
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+              >
+                {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Save Changes
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                fullWidth
-                                                label="Email"
-                                                name="email"
-                                                value={formData.email}
-                                                onChange={handleInputChange}
-                                                margin="normal"
-                                            />
-                                        </Grid>
+        {/* Notification Settings */}
+        <TabsContent value="notifications" className="space-y-6">
+          <Card className="border-l-4 border-l-cyan-500">
+            <CardHeader>
+              <CardTitle>Notification Preferences</CardTitle>
+              <CardDescription>Manage how you receive notifications</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {Object.entries({
+                emailNotifications: 'Email Notifications',
+                pushNotifications: 'Push Notifications',
+                jobAlerts: 'Job Alerts',
+                messageNotifications: 'Message Notifications',
+                interviewReminders: 'Interview Reminders',
+                weeklyDigest: 'Weekly Digest'
+              }).map(([key, label]) => (
+                <div key={key} className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor={key} className="text-base">{label}</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Receive {label.toLowerCase()}
+                    </p>
+                  </div>
+                  <Switch
+                    id={key}
+                    checked={notificationSettings[key]}
+                    onCheckedChange={(checked) =>
+                      setNotificationSettings({ ...notificationSettings, [key]: checked })
+                    }
+                  />
+                </div>
+              ))}
 
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                fullWidth
-                                                label="Mobile Number"
-                                                name="mobile"
-                                                value={formData.mobile}
-                                                onChange={handleInputChange}
-                                                margin="normal"
-                                            />
-                                        </Grid>
+              <Button
+                onClick={handleSaveNotifications}
+                disabled={saving}
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+              >
+                {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Save Changes
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                fullWidth
-                                                label="Location"
-                                                name="location"
-                                                value={formData.location}
-                                                onChange={handleInputChange}
-                                                margin="normal"
-                                            />
-                                        </Grid>
-
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                fullWidth
-                                                label="Bio"
-                                                name="bio"
-                                                value={formData.bio}
-                                                onChange={handleInputChange}
-                                                margin="normal"
-                                                multiline
-                                                rows={4}
-                                            />
-                                        </Grid>
-                                    </Grid>
-
-                                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleSaveSettings}
-                                            disabled={saving}
-                                        >
-                                            {saving ? <CircularProgress size={24} /> : 'Save Changes'}
-                                        </Button>
-                                    </Box>
-                                </SettingsContent>
-                            </Box>
-                        )}
-
-                        {activeSection === 'notifications' && (
-                            <Box>
-                                <SettingsHeader>
-                                    <Typography variant="h6">Notification Settings</Typography>
-                                </SettingsHeader>
-
-                                <SettingsContent>
-                                    <List>
-                                        <ListItem>
-                                            <ListItemText
-                                                primary="Email Notifications"
-                                                secondary="Receive notifications via email"
-                                            />
-                                            <Switch
-                                                edge="end"
-                                                name="emailNotifications"
-                                                checked={formData.emailNotifications}
-                                                onChange={handleSwitchChange}
-                                            />
-                                        </ListItem>
-
-                                        <Divider />
-
-                                        <ListItem>
-                                            <ListItemText
-                                                primary="Push Notifications"
-                                                secondary="Receive notifications on your browser and mobile"
-                                            />
-                                            <Switch
-                                                edge="end"
-                                                name="pushNotifications"
-                                                checked={formData.pushNotifications}
-                                                onChange={handleSwitchChange}
-                                            />
-                                        </ListItem>
-
-                                        <Divider />
-
-                                        <ListItem>
-                                            <ListItemText
-                                                primary="SMS Notifications"
-                                                secondary="Receive notifications via SMS"
-                                            />
-                                            <Switch
-                                                edge="end"
-                                                name="smsNotifications"
-                                                checked={formData.smsNotifications}
-                                                onChange={handleSwitchChange}
-                                            />
-                                        </ListItem>
-                                    </List>
-
-                                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleSaveSettings}
-                                            disabled={saving}
-                                        >
-                                            {saving ? <CircularProgress size={24} /> : 'Save Changes'}
-                                        </Button>
-                                    </Box>
-                                </SettingsContent>
-                            </Box>
-                        )}
-
-                        {activeSection === 'privacy' && (
-                            <Box>
-                                <SettingsHeader>
-                                    <Typography variant="h6">Privacy Settings</Typography>
-                                </SettingsHeader>
-
-                                <SettingsContent>
-                                    <FormControl fullWidth margin="normal">
-                                        <InputLabel>Profile Visibility</InputLabel>
-                                        <Select
-                                            name="profileVisibility"
-                                            value={formData.profileVisibility}
-                                            onChange={handleInputChange}
-                                            label="Profile Visibility"
-                                        >
-                                            <MenuItem value="public">Public</MenuItem>
-                                            <MenuItem value="connections">Only Connections</MenuItem>
-                                            <MenuItem value="private">Private</MenuItem>
-                                        </Select>
-                                    </FormControl>
-
-                                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleSaveSettings}
-                                            disabled={saving}
-                                        >
-                                            {saving ? <CircularProgress size={24} /> : 'Save Changes'}
-                                        </Button>
-                                    </Box>
-                                </SettingsContent>
-                            </Box>
-                        )}
-
-                        {activeSection === 'security' && (
-                            <Box>
-                                <SettingsHeader>
-                                    <Typography variant="h6">Security Settings</Typography>
-                                </SettingsHeader>
-
-                                <SettingsContent>
-                                    <List>
-                                        <ListItem>
-                                            <ListItemText
-                                                primary="Two-Factor Authentication"
-                                                secondary="Enable two-factor authentication to increase your account security"
-                                            />
-                                            <Switch
-                                                edge="end"
-                                                name="twoFactorAuth"
-                                                checked={formData.twoFactorAuth}
-                                                onChange={handleSwitchChange}
-                                            />
-                                        </ListItem>
-
-                                        <Divider />
-                                    </List>
-
-                                    <Box sx={{ mt: 3 }}>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            fullWidth
-                                            sx={{ mb: 2 }}
-                                        >
-                                            Change Password
-                                        </Button>
-
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            fullWidth
-                                        >
-                                            Active Login Sessions
-                                        </Button>
-                                    </Box>
-
-                                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleSaveSettings}
-                                            disabled={saving}
-                                        >
-                                            {saving ? <CircularProgress size={24} /> : 'Save Changes'}
-                                        </Button>
-                                    </Box>
-                                </SettingsContent>
-                            </Box>)}
-
-                            {activeSection === 'language' && (
-                                <Box>
-                                    <SettingsHeader>
-                                        <Typography variant="h6">Language Settings</Typography>
-                                    </SettingsHeader>
-    
-                                    <SettingsContent>
-                                        <FormControl fullWidth margin="normal">
-                                            <InputLabel>Language</InputLabel>
-                                            <Select
-                                                name="language"
-                                                value={formData.language}
-                                                onChange={handleInputChange}
-                                                label="Language"
-                                            >
-                                                <MenuItem value="ar">Arabic</MenuItem>
-                                                <MenuItem value="en">English</MenuItem>
-                                            </Select>
-                                        </FormControl>
-    
-                                        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={handleSaveSettings}
-                                                disabled={saving}
-                                            >
-                                                {saving ? <CircularProgress size={24} /> : 'Save Changes'}
-                                            </Button>
-                                        </Box>
-                                    </SettingsContent>
-                                </Box>
-                            )}
-    
-                            {activeSection === 'help' && (
-                                <Box>
-                                    <SettingsHeader>
-                                        <Typography variant="h6">Help & Support</Typography>
-                                    </SettingsHeader>
-    
-                                    <SettingsContent>
-                                        <Typography variant="body1" paragraph>
-                                            If you need help or have any questions, you can contact our support team.
-                                        </Typography>
-    
-                                        <List>
-                                            <ListItem>
-                                                <ListItemText
-                                                    primary="Help Center"
-                                                    secondary="Browse frequently asked questions and tutorial articles"
-                                                />
-                                                <Button variant="outlined" size="small">
-                                                    Open
-                                                </Button>
-                                            </ListItem>
-    
-                                            <Divider />
-    
-                                            <ListItem>
-                                                <ListItemText
-                                                    primary="Technical Support"
-                                                    secondary="Contact our technical support team"
-                                                />
-                                                <Button variant="outlined" size="small">
-                                                    Contact
-                                                </Button>
-                                            </ListItem>
-    
-                                            <Divider />
-    
-                                            <ListItem>
-                                                <ListItemText
-                                                    primary="Report a Problem"
-                                                    secondary="Report an issue or bug in the application"
-                                                />
-                                                <Button variant="outlined" size="small">
-                                                    Report
-                                                </Button>
-                                            </ListItem>
-                                        </List>
-                                    </SettingsContent>
-                                </Box>
-                            )}
-                        </SettingsPaper>
-                    </Grid>
-                </Grid>
-    
-                <Snackbar
-                    open={snackbar.open}
-                    autoHideDuration={6000}
-                    onClose={handleCloseSnackbar}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        {/* Privacy Settings */}
+        <TabsContent value="privacy" className="space-y-6">
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle>Privacy Settings</CardTitle>
+              <CardDescription>Control who can see your information</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="profileVisibility">Profile Visibility</Label>
+                <Select
+                  value={privacySettings.profileVisibility}
+                  onValueChange={(value) =>
+                    setPrivacySettings({ ...privacySettings, profileVisibility: value })
+                  }
                 >
-                    <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-                        {snackbar.message}
-                    </Alert>
-                </Snackbar>
-    
-                <Dialog
-                    open={confirmDialog.open}
-                    onClose={handleCloseConfirmDialog}
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Public - Everyone can see</SelectItem>
+                    <SelectItem value="connections">Connections Only</SelectItem>
+                    <SelectItem value="private">Private - Only me</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {Object.entries({
+                showEmail: 'Show Email Address',
+                showPhone: 'Show Phone Number',
+                allowMessages: 'Allow Direct Messages',
+                allowConnections: 'Allow Connection Requests'
+              }).map(([key, label]) => (
+                <div key={key} className="flex items-center justify-between">
+                  <Label htmlFor={key}>{label}</Label>
+                  <Switch
+                    id={key}
+                    checked={privacySettings[key]}
+                    onCheckedChange={(checked) =>
+                      setPrivacySettings({ ...privacySettings, [key]: checked })
+                    }
+                  />
+                </div>
+              ))}
+
+              <Button
+                onClick={handleSavePrivacy}
+                disabled={saving}
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+              >
+                {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Save Changes
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Security Settings */}
+        <TabsContent value="security" className="space-y-6">
+          <Card className="border-l-4 border-l-cyan-500">
+            <CardHeader>
+              <CardTitle>Security</CardTitle>
+              <CardDescription>Manage your account security</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2">Password</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Last changed 30 days ago
+                  </p>
+                  <Button variant="outline" onClick={handleChangePassword}>
+                    <Lock className="h-4 w-4 mr-2" />
+                    Change Password
+                  </Button>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <h3 className="font-semibold mb-2">Two-Factor Authentication</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Add an extra layer of security to your account
+                  </p>
+                  <Button variant="outline">
+                    Enable 2FA
+                  </Button>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <h3 className="font-semibold mb-2 text-red-600">Danger Zone</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Permanently delete your account and all associated data
+                  </p>
+                  <Button variant="destructive" onClick={handleDeleteAccount}>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Account
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Account Settings */}
+        <TabsContent value="account" className="space-y-6">
+          <Card className="border-l-4 border-l-purple-500">
+            <CardHeader>
+              <CardTitle>Account Preferences</CardTitle>
+              <CardDescription>Customize your account settings</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="language">Language</Label>
+                <Select
+                  value={accountSettings.language}
+                  onValueChange={(value) =>
+                    setAccountSettings({ ...accountSettings, language: value })
+                  }
                 >
-                    <DialogTitle>{confirmDialog.title}</DialogTitle>
-                    <DialogContent>
-                        <Typography>{confirmDialog.message}</Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseConfirmDialog}>Cancel</Button>
-                        <Button color="error" onClick={handleCloseConfirmDialog}>
-                            Delete Account
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </SettingsContainer>
-        );
-    };
-    
-    export default Settings;
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="es">Spanish</SelectItem>
+                    <SelectItem value="fr">French</SelectItem>
+                    <SelectItem value="de">German</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="timezone">Timezone</Label>
+                <Select
+                  value={accountSettings.timezone}
+                  onValueChange={(value) =>
+                    setAccountSettings({ ...accountSettings, timezone: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="UTC">UTC</SelectItem>
+                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
+                    <SelectItem value="America/Chicago">Central Time</SelectItem>
+                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="theme">Theme</Label>
+                <Select
+                  value={accountSettings.theme}
+                  onValueChange={(value) =>
+                    setAccountSettings({ ...accountSettings, theme: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="light">Light</SelectItem>
+                    <SelectItem value="dark">Dark</SelectItem>
+                    <SelectItem value="auto">Auto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button
+                onClick={handleSaveAccount}
+                disabled={saving}
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+              >
+                {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                Save Changes
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirmDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>{confirmDialog.message}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                confirmDialog.action?.();
+                setConfirmDialog({ ...confirmDialog, open: false });
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}

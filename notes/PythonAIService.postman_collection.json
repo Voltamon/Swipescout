@@ -1,0 +1,197 @@
+{
+    "info": {
+        "name": "Python AI Service",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Health Check",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/health",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "health"
+                    ]
+                },
+                "description": "Health check endpoint — tests transcription, NLP, analysis and cache services; reports GPU availability and counts."
+            }
+        },
+        {
+            "name": "Transcribe Audio",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "audio",
+                            "type": "file",
+                            "src": []
+                        },
+                        {
+                            "key": "language",
+                            "value": "en",
+                            "type": "text"
+                        },
+                        {
+                            "key": "word_timestamps",
+                            "value": "true",
+                            "type": "text"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/transcribe",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "transcribe"
+                    ]
+                },
+                "description": "Transcribe a single audio file uploaded as form-data (field 'audio')."
+            }
+        },
+        {
+            "name": "Batch Transcribe Audio",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [
+                        {
+                            "key": "audio_files",
+                            "type": "file",
+                            "src": []
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/batch-transcribe",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "batch-transcribe"
+                    ]
+                },
+                "description": "Batch transcribe multiple uploaded audio files (form-data list 'audio_files')."
+            }
+        },
+        {
+            "name": "Analyze Text",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"This is a test sentence for NLP analysis.\",\n    \"categories\": [\"technology\", \"business\"],\n    \"include_sentiment\": true,\n    \"include_entities\": true,\n    \"include_keywords\": true\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/analyze-text",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "analyze-text"
+                    ]
+                },
+                "description": "Analyze arbitrary text using NLP service. Expects JSON with 'text' and optional flags/categories."
+            }
+        },
+        {
+            "name": "Analyze Interview",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"questions\": [{\"text\": \"What is your greatest strength?\"}],\n    \"responses\": [{\"text\": \"My greatest strength is my ability to learn quickly.\"}]\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/analyze-interview",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "analyze-interview"
+                    ]
+                },
+                "description": "Analyze interview questions and responses. Expects JSON with 'questions' and 'responses'."
+            }
+        },
+        {
+            "name": "Translate Text",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"text\": \"Hello, world!\",\n    \"target_languages\": [\"es\", \"fr\"]\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/translate-text",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "translate-text"
+                    ]
+                },
+                "description": "Translate a text string to target languages. Expects JSON with 'text' and 'target_languages' optional."
+            }
+        },
+        {
+            "name": "Get Models Info",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/models/info",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "models",
+                        "info"
+                    ]
+                },
+                "description": "Return information about loaded models (transcription, NLP) and system GPU info."
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5001"
+        }
+    ]
+}

@@ -1,58 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Switch,
-  FormControlLabel,
-  FormGroup,
-  Divider,
-  Button,
-  Alert,
-  CircularProgress,
-  Grid,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel
-} from '@mui/material';
-import {
-  Notifications,
-  Email,
-  Sms,
-  Work,
-  VideoCall,
-  Message,
-  Favorite,
-  PersonAdd,
-  Schedule,
-  Settings,
-  Save,
-  RestoreFromTrash
-} from '@mui/icons-material';
+  Bell, Mail, Smartphone, Briefcase, Video, MessageSquare,
+  Heart, UserPlus, Clock, Save, RotateCcw, Loader2
+} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useContext } from 'react';
 import { 
   getUserNotificationSettings, 
   updateNotificationSettings,
   testNotification 
 } from '../services/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 const NotificationSettingsPage = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   
   const [settings, setSettings] = useState({
     email_notifications: true,
@@ -73,8 +42,6 @@ const NotificationSettingsPage = () => {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [testDialog, setTestDialog] = useState(false);
   const [testType, setTestType] = useState('email');
 
@@ -89,28 +56,24 @@ const NotificationSettingsPage = () => {
       setSettings({ ...settings, ...response.data.settings });
     } catch (error) {
       console.error('Failed to fetch notification settings:', error);
-      setError('Failed to load notification settings');
+      toast({ description: "Failed to load settings", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
   const handleSettingChange = (setting, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [setting]: value
-    }));
+    setSettings(prev => ({ ...prev, [setting]: value }));
   };
 
   const handleSaveSettings = async () => {
     try {
       setSaving(true);
       await updateNotificationSettings(settings);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      toast({ description: "Settings saved successfully!" });
     } catch (error) {
       console.error('Failed to save notification settings:', error);
-      setError('Failed to save settings');
+      toast({ description: "Failed to save settings", variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -120,11 +83,10 @@ const NotificationSettingsPage = () => {
     try {
       await testNotification(testType);
       setTestDialog(false);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      toast({ description: "Test notification sent!" });
     } catch (error) {
       console.error('Failed to send test notification:', error);
-      setError('Failed to send test notification');
+      toast({ description: "Failed to send test", variant: "destructive" });
     }
   };
 
@@ -145,399 +107,344 @@ const NotificationSettingsPage = () => {
       quiet_hours_end: '08:00',
       notification_frequency: 'immediate'
     });
+    toast({ description: "Settings reset to defaults" });
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-        <CircularProgress />
-      </Box>
+      <div className="container mx-auto py-6 px-4 max-w-4xl">
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin text-purple-600" />
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box
-      sx={{
-        py: { xs: 2, md: 4 }, // Adjust padding for mobile
-        px: { xs: 2, md: 4 }, // Adjust padding for mobile
-        backgroundColor: theme.palette.background.default,
-      }}
-    >
-      <Container maxWidth="lg">
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{
-            fontWeight: "bold",
-            mb: { xs: 2, md: 4 },
-            fontSize: { xs: "1.5rem", md: "2rem" }, // Adjust font size for mobile
-          }}
-        >
-          Notification Settings
-        </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Customize how and when you receive notifications
-        </Typography>
+    <div className="container mx-auto py-6 px-4 max-w-4xl">
+      <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+        Notification Settings
+      </h1>
+      <p className="text-gray-600 mb-6">Customize how and when you receive notifications</p>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
+      <div className="space-y-6">
+        {/* Delivery Methods */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5 text-purple-600" />
+              Delivery Methods
+            </CardTitle>
+            <CardDescription>Choose how you want to receive notifications</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-cyan-600" />
+                <div>
+                  <Label className="font-medium">Email Notifications</Label>
+                  <p className="text-sm text-gray-600">Receive notifications via email</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.email_notifications}
+                onCheckedChange={(checked) => handleSettingChange('email_notifications', checked)}
+              />
+            </div>
 
-        {success && (
-          <Alert severity="success" sx={{ mb: 3 }}>
-            Settings saved successfully!
-          </Alert>
-        )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Bell className="h-5 w-5 text-purple-600" />
+                <div>
+                  <Label className="font-medium">Push Notifications</Label>
+                  <p className="text-sm text-gray-600">Receive push notifications</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.push_notifications}
+                onCheckedChange={(checked) => handleSettingChange('push_notifications', checked)}
+              />
+            </div>
 
-        <Grid container spacing={{ xs: 2, md: 4 }}>
-          {/* Delivery Methods */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  <Notifications sx={{ mr: 1, verticalAlign: 'middle' }} />
-                  Delivery Methods
-                </Typography>
-                
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={settings.email_notifications}
-                        onChange={(e) => handleSettingChange('email_notifications', e.target.checked)}
-                      />
-                    }
-                    label={
-                      <Box display="flex" alignItems="center">
-                        <Email sx={{ mr: 1 }} />
-                        Email Notifications
-                      </Box>
-                    }
-                  />
-                  
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={settings.push_notifications}
-                        onChange={(e) => handleSettingChange('push_notifications', e.target.checked)}
-                      />
-                    }
-                    label={
-                      <Box display="flex" alignItems="center">
-                        <Notifications sx={{ mr: 1 }} />
-                        Push Notifications
-                      </Box>
-                    }
-                  />
-                  
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={settings.sms_notifications}
-                        onChange={(e) => handleSettingChange('sms_notifications', e.target.checked)}
-                      />
-                    }
-                    label={
-                      <Box display="flex" alignItems="center">
-                        <Sms sx={{ mr: 1 }} />
-                        SMS Notifications
-                        <Chip label="Premium" size="small" color="primary" sx={{ ml: 1 }} />
-                      </Box>
-                    }
-                  />
-                </FormGroup>
-              </CardContent>
-            </Card>
-          </Grid>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Smartphone className="h-5 w-5 text-green-600" />
+                <div className="flex items-center gap-2">
+                  <Label className="font-medium">SMS Notifications</Label>
+                  <Badge className="bg-gradient-to-r from-purple-600 to-cyan-600">Premium</Badge>
+                </div>
+                <p className="text-sm text-gray-600">Receive notifications via SMS</p>
+              </div>
+              <Switch
+                checked={settings.sms_notifications}
+                onCheckedChange={(checked) => handleSettingChange('sms_notifications', checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Notification Types */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Notification Types
-                </Typography>
-                
-                <List>
-                  <ListItem>
-                    <ListItemText
-                      primary={
-                        <Box display="flex" alignItems="center">
-                          <Work sx={{ mr: 1 }} />
-                          Job Alerts
-                        </Box>
-                      }
-                      secondary="New job postings matching your preferences"
-                    />
-                    <ListItemSecondaryAction>
-                      <Switch
-                        checked={settings.job_alerts}
-                        onChange={(e) => handleSettingChange('job_alerts', e.target.checked)}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  
-                  <Divider />
-                  
-                  <ListItem>
-                    <ListItemText
-                      primary={
-                        <Box display="flex" alignItems="center">
-                          <VideoCall sx={{ mr: 1 }} />
-                          Interview Reminders
-                        </Box>
-                      }
-                      secondary="Reminders for upcoming interviews"
-                    />
-                    <ListItemSecondaryAction>
-                      <Switch
-                        checked={settings.interview_reminders}
-                        onChange={(e) => handleSettingChange('interview_reminders', e.target.checked)}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  
-                  <Divider />
-                  
-                  <ListItem>
-                    <ListItemText
-                      primary={
-                        <Box display="flex" alignItems="center">
-                          <Message sx={{ mr: 1 }} />
-                          Messages
-                        </Box>
-                      }
-                      secondary="New messages and chat notifications"
-                    />
-                    <ListItemSecondaryAction>
-                      <Switch
-                        checked={settings.message_notifications}
-                        onChange={(e) => handleSettingChange('message_notifications', e.target.checked)}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  
-                  <Divider />
-                  
-                  <ListItem>
-                    <ListItemText
-                      primary={
-                        <Box display="flex" alignItems="center">
-                          <Favorite sx={{ mr: 1 }} />
-                          Video Interactions
-                        </Box>
-                      }
-                      secondary="Likes, comments, and shares on your videos"
-                    />
-                    <ListItemSecondaryAction>
-                      <Switch
-                        checked={settings.video_interactions}
-                        onChange={(e) => handleSettingChange('video_interactions', e.target.checked)}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                  
-                  <Divider />
-                  
-                  <ListItem>
-                    <ListItemText
-                      primary={
-                        <Box display="flex" alignItems="center">
-                          <PersonAdd sx={{ mr: 1 }} />
-                          Connection Requests
-                        </Box>
-                      }
-                      secondary="New connection requests and acceptances"
-                    />
-                    <ListItemSecondaryAction>
-                      <Switch
-                        checked={settings.connection_requests}
-                        onChange={(e) => handleSettingChange('connection_requests', e.target.checked)}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
+        {/* Notification Types */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Notification Types</CardTitle>
+            <CardDescription>Select which types of notifications you want to receive</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between py-3 border-b last:border-0">
+              <div className="flex items-center gap-3">
+                <Briefcase className="h-5 w-5 text-purple-600" />
+                <div>
+                  <Label className="font-medium">Job Alerts</Label>
+                  <p className="text-sm text-gray-600">New job postings matching your preferences</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.job_alerts}
+                onCheckedChange={(checked) => handleSettingChange('job_alerts', checked)}
+              />
+            </div>
 
-          {/* Frequency and Timing */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  <Schedule sx={{ mr: 1, verticalAlign: 'middle' }} />
-                  Frequency & Timing
-                </Typography>
-                
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
-                      <InputLabel>Notification Frequency</InputLabel>
-                      <Select
-                        value={settings.notification_frequency}
-                        onChange={(e) => handleSettingChange('notification_frequency', e.target.value)}
-                        label="Notification Frequency"
-                      >
-                        <MenuItem value="immediate">Immediate</MenuItem>
-                        <MenuItem value="hourly">Hourly Digest</MenuItem>
-                        <MenuItem value="daily">Daily Digest</MenuItem>
-                        <MenuItem value="weekly">Weekly Digest</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  
-                  <Grid item xs={12} md={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={settings.weekly_digest}
-                          onChange={(e) => handleSettingChange('weekly_digest', e.target.checked)}
-                        />
-                      }
-                      label="Weekly Activity Digest"
-                    />
-                  </Grid>
-                </Grid>
-                
-                <Box mt={3}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={settings.quiet_hours_enabled}
-                        onChange={(e) => handleSettingChange('quiet_hours_enabled', e.target.checked)}
-                      />
-                    }
-                    label="Enable Quiet Hours"
-                  />
-                  
-                  {settings.quiet_hours_enabled && (
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                      <Grid item xs={6}>
-                        <TextField
-                          type="time"
-                          label="Start Time"
-                          value={settings.quiet_hours_start}
-                          onChange={(e) => handleSettingChange('quiet_hours_start', e.target.value)}
-                          fullWidth
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          type="time"
-                          label="End Time"
-                          value={settings.quiet_hours_end}
-                          onChange={(e) => handleSettingChange('quiet_hours_end', e.target.value)}
-                          fullWidth
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                    </Grid>
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+            <div className="flex items-center justify-between py-3 border-b last:border-0">
+              <div className="flex items-center gap-3">
+                <Video className="h-5 w-5 text-cyan-600" />
+                <div>
+                  <Label className="font-medium">Interview Reminders</Label>
+                  <p className="text-sm text-gray-600">Reminders for upcoming interviews</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.interview_reminders}
+                onCheckedChange={(checked) => handleSettingChange('interview_reminders', checked)}
+              />
+            </div>
 
-          {/* Marketing & Promotional */}
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Marketing & Promotional
-                </Typography>
-                
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={settings.marketing_emails}
-                        onChange={(e) => handleSettingChange('marketing_emails', e.target.checked)}
-                      />
-                    }
-                    label="Marketing Emails"
-                  />
-                </FormGroup>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  Receive updates about new features, tips, and promotional offers
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+            <div className="flex items-center justify-between py-3 border-b last:border-0">
+              <div className="flex items-center gap-3">
+                <MessageSquare className="h-5 w-5 text-blue-600" />
+                <div>
+                  <Label className="font-medium">Messages</Label>
+                  <p className="text-sm text-gray-600">New messages and chat notifications</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.message_notifications}
+                onCheckedChange={(checked) => handleSettingChange('message_notifications', checked)}
+              />
+            </div>
 
-          {/* Action Buttons */}
-          <Grid item xs={12}>
-            <Paper sx={{ p: 3 }}>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Button
-                    variant="outlined"
-                    startIcon={<RestoreFromTrash />}
-                    onClick={resetToDefaults}
-                    sx={{ mr: 2 }}
-                  >
-                    Reset to Defaults
-                  </Button>
-                  
-                  <Button
-                    variant="outlined"
-                    onClick={() => setTestDialog(true)}
-                  >
-                    Test Notification
-                  </Button>
-                </Box>
-                
-                <Button
-                  variant="contained"
-                  startIcon={<Save />}
-                  onClick={handleSaveSettings}
-                  disabled={saving}
-                >
-                  {saving ? <CircularProgress size={20} /> : 'Save Settings'}
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
+            <div className="flex items-center justify-between py-3 border-b last:border-0">
+              <div className="flex items-center gap-3">
+                <Heart className="h-5 w-5 text-pink-600" />
+                <div>
+                  <Label className="font-medium">Video Interactions</Label>
+                  <p className="text-sm text-gray-600">Likes, comments, and shares on your videos</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.video_interactions}
+                onCheckedChange={(checked) => handleSettingChange('video_interactions', checked)}
+              />
+            </div>
 
-        {/* Test Notification Dialog */}
-        <Dialog open={testDialog} onClose={() => setTestDialog(false)}>
-          <DialogTitle>Test Notification</DialogTitle>
-          <DialogContent>
-            <Typography paragraph>
-              Send a test notification to verify your settings are working correctly.
-            </Typography>
-            
-            <FormControl fullWidth>
-              <InputLabel>Notification Type</InputLabel>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center gap-3">
+                <UserPlus className="h-5 w-5 text-green-600" />
+                <div>
+                  <Label className="font-medium">Connection Requests</Label>
+                  <p className="text-sm text-gray-600">New connection requests and acceptances</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.connection_requests}
+                onCheckedChange={(checked) => handleSettingChange('connection_requests', checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Frequency & Timing */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-purple-600" />
+              Frequency & Timing
+            </CardTitle>
+            <CardDescription>Control when and how often you receive notifications</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label>Notification Frequency</Label>
               <Select
-                value={testType}
-                onChange={(e) => setTestType(e.target.value)}
-                label="Notification Type"
+                value={settings.notification_frequency}
+                onValueChange={(value) => handleSettingChange('notification_frequency', value)}
               >
-                <MenuItem value="email">Email</MenuItem>
-                <MenuItem value="push">Push Notification</MenuItem>
-                {settings.sms_notifications && (
-                  <MenuItem value="sms">SMS</MenuItem>
-                )}
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="immediate">Immediate</SelectItem>
+                  <SelectItem value="hourly">Hourly Digest</SelectItem>
+                  <SelectItem value="daily">Daily Digest</SelectItem>
+                  <SelectItem value="weekly">Weekly Digest</SelectItem>
+                </SelectContent>
               </Select>
-            </FormControl>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setTestDialog(false)}>Cancel</Button>
-            <Button onClick={handleTestNotification} variant="contained">
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="font-medium">Weekly Activity Digest</Label>
+                <p className="text-sm text-gray-600">Receive a weekly summary of your activity</p>
+              </div>
+              <Switch
+                checked={settings.weekly_digest}
+                onCheckedChange={(checked) => handleSettingChange('weekly_digest', checked)}
+              />
+            </div>
+
+            <div className="space-y-4 pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="font-medium">Enable Quiet Hours</Label>
+                  <p className="text-sm text-gray-600">Mute notifications during specific times</p>
+                </div>
+                <Switch
+                  checked={settings.quiet_hours_enabled}
+                  onCheckedChange={(checked) => handleSettingChange('quiet_hours_enabled', checked)}
+                />
+              </div>
+
+              {settings.quiet_hours_enabled && (
+                <div className="grid grid-cols-2 gap-4 pl-8">
+                  <div className="space-y-2">
+                    <Label htmlFor="start-time">Start Time</Label>
+                    <Input
+                      id="start-time"
+                      type="time"
+                      value={settings.quiet_hours_start}
+                      onChange={(e) => handleSettingChange('quiet_hours_start', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="end-time">End Time</Label>
+                    <Input
+                      id="end-time"
+                      type="time"
+                      value={settings.quiet_hours_end}
+                      onChange={(e) => handleSettingChange('quiet_hours_end', e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Marketing & Promotional */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Marketing & Promotional</CardTitle>
+            <CardDescription>Manage marketing and promotional communications</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="font-medium">Marketing Emails</Label>
+                <p className="text-sm text-gray-600">Receive updates about new features, tips, and promotional offers</p>
+              </div>
+              <Switch
+                checked={settings.marketing_emails}
+                onCheckedChange={(checked) => handleSettingChange('marketing_emails', checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-wrap gap-3 justify-between items-center">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={resetToDefaults}
+                  className="border-gray-300"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reset to Defaults
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setTestDialog(true)}
+                  className="border-purple-600 text-purple-600 hover:bg-purple-50"
+                >
+                  <Bell className="h-4 w-4 mr-2" />
+                  Test Notification
+                </Button>
+              </div>
+
+              <Button
+                onClick={handleSaveSettings}
+                disabled={saving}
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Settings
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Test Notification Dialog */}
+      <Dialog open={testDialog} onOpenChange={setTestDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Test Notification</DialogTitle>
+            <DialogDescription>
+              Send a test notification to verify your settings are working correctly
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Notification Type</Label>
+              <Select value={testType} onValueChange={setTestType}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="push">Push Notification</SelectItem>
+                  {settings.sms_notifications && (
+                    <SelectItem value="sms">SMS</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTestDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleTestNotification} className="bg-gradient-to-r from-purple-600 to-cyan-600">
               Send Test
             </Button>
-          </DialogActions>
-        </Dialog>
-      </Container>
-    </Box>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
 export default NotificationSettingsPage;
-
