@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Fab,
@@ -44,7 +44,7 @@ import {
   CloudUpload
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEmployerTabCategories } from '../config/employerTabsConfig';

@@ -1,6 +1,6 @@
-// AllVideosPage.jsx - Enhanced TikTok Style Vertical Video Feed
+﻿// AllVideosPage.jsx - Enhanced TikTok Style Vertical Video Feed
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useVideoContext } from '../contexts/VideoContext';
+import { useVideoContext } from '@/contexts/VideoContext';
 import { styled } from "@mui/material/styles";
 import {
   Box, Typography, IconButton, Fab, Snackbar, Alert,
@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { 
   getAllVideos, 
@@ -39,7 +39,7 @@ import {
   addVideoComment,
   getVideoComments,
   searchVideos
-} from '../services/api';
+} from '@/services/api';
 
 // Sample videos data generator function (will be called after t is available)
 const getSampleVideos = (t) => [

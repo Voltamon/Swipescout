@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, startTransition } from 'react';
+﻿import React, { useState, useCallback, useMemo, useEffect, startTransition } from 'react';
 import {
   Box,
   CssBaseline,
@@ -35,10 +35,10 @@ import { useTranslation } from 'react-i18next';
 import Header from '../components/Headers/admin/Header';
 import Footer from '../components/Headers/admin/Footer';
 import FloatingNavigationPanel from '../components/FloatingNavigationPanel';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { getEmployerTabCategories } from '../config/employerTabsConfig';
-import { getEmployerStats } from '../services/api';
+import { getEmployerStats } from '@/services/api';
 
 // Import Employer specific pages
 import CandidateSearchPage from './CandidateSearchPage';

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '../services/api';
+import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '@/services/api';
 import { toast } from 'react-toastify';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
@@ -191,7 +191,7 @@ const SwipeScoutBackground = () => (
   </div>
 );
 
-// VideoCard component (replace existing VideoCard with this)
+// VideoCard component - redesigned with Tailwind and shadcn/ui
 const VideoCard = React.memo(({
   video,
   isPlaying,
@@ -216,6 +216,7 @@ const VideoCard = React.memo(({
 }) => {
   const videoRef = useRef(null);
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   // Safely parse hashtags
   let hashtags = '';
@@ -224,13 +225,10 @@ const VideoCard = React.memo(({
       ? video.hashtags.join(' ')
       : JSON.parse(video.hashtags || '[]').join(' ');
   } catch (e) {
-    hashtags = ''; // Fallback to empty string if parsing fails
+    hashtags = '';
   }
 
-  // width reserved for action buttons (px)
-  const actionsWidth = 96; // adjust to match the actual buttons column width
-
-  // ensure autoplay works (temporarily mute to satisfy browser autoplay policies)
+  // Autoplay management
   useEffect(() => {
     if (!videoRef.current) return;
     if (!shouldLoad) {
@@ -239,50 +237,39 @@ const VideoCard = React.memo(({
     }
     const v = videoRef.current;
     if (isPlaying) {
-      // Temporarily ensure muted to allow autoplay, then restore according to isMuted.
       v.muted = true;
-      // call play and handle promise rejection
       const p = v.play();
       if (p && p.then) {
         p
           .then(() => {
-            // restore to UI-controlled mute state after playback started
             v.muted = !!isMuted;
           })
           .catch(() => {
-            // Autoplay blocked or other error — keep muted to avoid repeated rejections
             v.muted = true;
-            // swallow error (already expected in some browsers)
-            // console.debug('play() rejected', err);
           });
       } else {
-        // older browsers: fallback
         v.muted = !!isMuted;
       }
     } else {
       videoRef.current?.pause?.();
     }
-    // ...other side effects remain untouched...
   }, [isPlaying, isMuted, shouldLoad]);
 
   const handleVideoClick = () => {
-  if (isMaximized) return; // Prevent play/pause toggle when maximized
-  onTogglePlay(video.id);
-};
-  const handleMuteClick = (e) => { e.stopPropagation(); onToggleMute(video.id); };
+    if (isMaximized) return;
+    onTogglePlay(video.id);
+  };
 
-  // single margin used for top & bottom spacing — preserved
-  const marginSize = 12;
-  const videoHeightCalc = `calc(100vh - ${marginSize * 2}px)`;
-  // const videoWidthCalc = `calc(100wh - ${marginSize * 6}px)`;
+  const handleMuteClick = (e) => {
+    e.stopPropagation();
+    onToggleMute(video.id);
+  };
 
-  // submit helper reused by button and Enter
   const handleSubmitComment = (inputElem) => {
     if (!inputElem) return;
-    if (commentSubmitting) return; // ignore while submitting
+    if (commentSubmitting) return;
     const text = inputElem.value.trim();
     if (!text) return;
-    // clear input immediately so the text "goes" as soon as user submits
     inputElem.value = '';
     if (typeof inputElem.blur === 'function') {
       inputElem.blur();
@@ -291,255 +278,159 @@ const VideoCard = React.memo(({
   };
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        boxSizing: 'border-box',
-        marginBottom: `${marginSize}px`,
-       
-        position: 'relative'
-      }}
-    >
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: 1100,
-          display: 'flex',
-          gap: 2,
-          
-          alignItems: 'stretch',
-          px: { xs: 2, md: 3 },
-          boxSizing: 'border-box',
-          flexDirection: { xs: 'column', md: 'row' },
-          position: 'relative'
-        }}
-      >
-        {/* Left: Comments + Metadata: when maximized -> overlay (bottom-left), otherwise bottom-aligned column */}
-        <Box
-          sx={{
-            width: { xs: '100%', md: 280 },
-            flexShrink: 0,
-            order: { xs: 2, md: 0 },
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            justifyContent: 'flex-end',
-            minHeight: isMaximized ? 'auto' : '100vh',
-            boxSizing: 'border-box',
-            pb: { xs: 2, md: 3 },
-
-            // overlay styling when maximized - hide to prevent overlap
-            ...(isMaximized && {
-              display: 'none'
-            })
-          }}
-        >
-          {/* Comments panel (left) — only shown when toggled */}
+    <div className="w-full min-h-screen flex justify-center items-center relative mb-3">
+      <div className={cn(
+        "w-full max-w-7xl flex gap-4 items-stretch px-4 md:px-6",
+        "flex-col md:flex-row"
+      )}>
+        {/* Left: Comments + Metadata */}
+        <div className={cn(
+          "w-full md:w-80 flex-shrink-0 flex flex-col gap-4 justify-end",
+          "order-2 md:order-1 pb-4 md:pb-6",
+          isMaximized && "hidden"
+        )}>
+          {/* Comments panel */}
           {showComments && (
-            <Paper
-              elevation={1}
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                maxHeight: { xs: 220, md: 420 },
-                overflowY: 'auto',
-                bgcolor: 'rgba(255,255,255,0.1)',
-                color: '#fff',
-              }}
-            >
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-              Comments ({commentCount})
-            </Typography>
-            {commentsLoading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                <CircularProgress size={20} />
-              </Box>
-            ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {commentList.length > 0 ? (
-                  commentList.map((c) => (
-                    <Box
-                      key={c.id}
-                      sx={{
-                        display: 'flex',
-                        gap: 2,
-                        alignItems: 'flex-start',
-                        p: 1,
-                        borderRadius: 2,
-                        bgcolor: 'rgba(255,255,255,0.05)',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: '50%',
-                          bgcolor: 'grey.300',
-                          flexShrink: 0,
+            <Card className="bg-white/10 backdrop-blur-md border-white/20">
+              <CardContent className="p-4">
+                <h3 className="text-sm font-semibold text-white mb-3">
+                  Comments ({commentCount})
+                </h3>
+                <ScrollArea className="h-48 md:h-96 pr-4">
+                  {commentsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-white" />
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {commentList.length > 0 ? (
+                        commentList.map((c) => (
+                          <div
+                            key={c.id}
+                            className="flex gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                          >
+                            <Avatar className="h-9 w-9 flex-shrink-0">
+                              <AvatarImage src={c.user?.avatar} />
+                              <AvatarFallback className="bg-purple-500 text-white text-xs">
+                                {(c.user?.name || 'A')[0].toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-white">
+                                {c.user?.name || 'Anonymous'}
+                              </p>
+                              <p className="text-sm text-gray-200 break-words">
+                                {c.content}
+                              </p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                {new Date(c.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-gray-300 text-center py-8">
+                          No comments yet — be the first to comment!
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </ScrollArea>
+
+                {/* Comment input */}
+                <div className="mt-3 flex gap-2">
+                  {commentSubmitting ? (
+                    <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5">
+                      <Loader2 className="h-4 w-4 animate-spin text-white" />
+                      <span className="text-sm text-gray-300">Submitting...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <input
+                        aria-label="comment-input"
+                        placeholder="Add a comment..."
+                        className="flex-1 px-3 py-2 text-sm rounded-lg bg-white/90 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                        id={`comment-input-${video.id}`}
+                        onFocus={(e) => {
+                          const videoType = video?.videoType || video?.video_type || video?.type || null;
+                          const isUserLoggedIn = !!(user && user.role !== null);
+                          
+                          if (videoType !== 'sample' && !isUserLoggedIn) {
+                            e.target.blur();
+                            window.ensureLoggedInThen(() => {
+                              setTimeout(() => {
+                                const input = document.getElementById(`comment-input-${video.id}`);
+                                if (input) input.focus();
+                              }, 100);
+                            });
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSubmitComment(e.target);
+                          }
                         }}
                       />
-                      <Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          {c.user?.name || 'Anonymous'}
-                        </Typography>
-                        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                          {c.content}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {new Date(c.createdAt).toLocaleString()}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  ))
-                ) : (
-                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                    No comments yet — be the first to comment!
-                  </Typography>
-                )}
-              </Box>
-            )}
-
-            {/* Simple comment input / submitting placeholder */}
-            <Box sx={{ mt: 1, display: 'flex', gap: 1 }}>
-              {commentSubmitting ? (
-                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, px: 2, py: '8px', borderRadius: 1, bgcolor: 'background.default' }}>
-                  <CircularProgress size={20} />
-                  <Typography variant="body2" color="text.secondary">Submitting...</Typography>
-                </Box>
-              ) : (
-                <>
-                  <input
-                    aria-label="comment-input"
-                    placeholder={'Add a comment...'}
-                    style={{ 
-                      flex: 1, 
-                      padding: '8px 10px', 
-                      borderRadius: 6, 
-                      border: '1px solid #ccc',
-                      backgroundColor: '#fff',
-                      color: '#000',
-                      fontSize: '14px'
-                    }}
-                    id={`comment-input-${video.id}`}
-                    onFocus={(e) => {
-                      // Check if user needs to login for non-sample videos
-                      const videoType = video?.videoType || video?.video_type || video?.type || null;
-                      const isUserLoggedIn = !!(user && user.role !== null);
-                      
-                      if (videoType !== 'sample' && !isUserLoggedIn) {
-                        e.target.blur(); // Remove focus from input
-                        ensureLoggedInThen(() => {
-                          // After login, refocus the input
-                          setTimeout(() => {
-                            const input = document.getElementById(`comment-input-${video.id}`);
-                            if (input) input.focus();
-                          }, 100);
-                        });
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        const input = e.target;
-                        handleSubmitComment(input);
-                      }
-                    }}
-                  />
-                  <IconButton
-                    onClick={() => {
-                      const input = document.getElementById(`comment-input-${video.id}`);
-                      if (!input) return;
-                      handleSubmitComment(input);
-                    }}
-                    aria-label="post-comment"
-                  >
-                    <Comment />
-                  </IconButton>
-                </>
-              )}
-            </Box>
-          </Paper>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-white hover:bg-white/20"
+                        onClick={() => {
+                          const input = document.getElementById(`comment-input-${video.id}`);
+                          if (input) handleSubmitComment(input);
+                        }}
+                        aria-label="post-comment"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {/* Video info */}
-          <Paper
-            elevation={0}
-            sx={{
-              mt: 2,
-              p: 2,
-              borderRadius: 2,
-              bgcolor: 'rgba(255,255,255,0.1)',
-              color: '#fff',
-            }}
-          >
-            {video.videoTitle && (
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                {video.videoTitle}
-              </Typography>
-            )}
-            {hashtags && (
-              <Typography variant="body2" sx={{ mt: 1, color: 'rgba(255,255,255,0.8)' }}>
-                {hashtags}
-              </Typography>
-            )}
-            {video.views > 0 && (
-              <Typography variant="caption" sx={{ mt: 1, display: 'block', color: 'rgba(255,255,255,0.6)' }}>
-                {video.views} views
-              </Typography>
-            )}
-          </Paper>
-        </Box>
+          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+            <CardContent className="p-4 space-y-2">
+              {video.videoTitle && (
+                <h2 className="text-lg font-bold text-white leading-tight">
+                  {video.videoTitle}
+                </h2>
+              )}
+              {hashtags && (
+                <p className="text-sm text-purple-200">
+                  {hashtags}
+                </p>
+              )}
+              {video.views > 0 && (
+                <div className="flex items-center gap-1 text-xs text-gray-300">
+                  <Eye className="h-3 w-3" />
+                  <span>{video.views.toLocaleString()} views</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Center: Video */}
-        <Box sx={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          order: 1, 
-          justifyContent: 'center',
-          // When maximized, take full screen minus button space
-          ...(isMaximized && {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 1400,
-            width: '100vw',
-            height: '100vh',
-          })
-        }}>
-          <Box sx={{ 
-            width: '100%', 
-            maxWidth: isMaximized ? '100%' : 720, 
-            height: isMaximized ? '100vh' : 'auto',
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            position: 'relative'
-          }}>
-            <Box
+        {/* Center: Video Player */}
+        <div className={cn(
+          "flex-1 flex flex-col items-center justify-center order-1",
+          isMaximized && "fixed inset-0 z-[1400]"
+        )}>
+          <div className={cn(
+            "w-full flex flex-col items-center relative",
+            isMaximized ? "h-screen" : "max-w-3xl"
+          )}>
+            <div
               onClick={handleVideoClick}
-              sx={{
-                width: isMaximized ? 'calc(100vw - 120px)' : '100%', // Reserve 120px for right buttons when maximized
-                maxWidth: '100%',
-                height: isMaximized ? '100vh' : 'calc(100vh - 24px)',
-                bgcolor: 'black',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: isMaximized ? 'fixed' : 'relative',
-                top: isMaximized ? 0 : 'auto',
-                left: isMaximized ? 0 : 'auto',
-                borderRadius: isMaximized ? 0 : 2,
-                overflow: 'hidden',
-                zIndex: isMaximized ? 1400 : 'auto',
-              }}
+              className={cn(
+                "relative flex items-center justify-center bg-black overflow-hidden cursor-pointer group",
+                isMaximized 
+                  ? "w-[calc(100vw-120px)] h-screen rounded-none" 
+                  : "w-full h-[calc(100vh-24px)] rounded-xl shadow-2xl"
+              )}
             >
               <video
                 ref={videoRef}
@@ -550,177 +441,169 @@ const VideoCard = React.memo(({
                 muted={isMuted || !isPlaying}
                 preload={shouldLoad ? 'auto' : 'metadata'}
                 poster={video.thumbnail}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: isMaximized ? 'contain' : 'cover',
-                  backgroundColor: 'black',
-                }}
+                className={cn(
+                  "w-full h-full bg-black",
+                  isMaximized ? "object-contain" : "object-cover"
+                )}
               />
+              
+              {/* Sample badge */}
               {video.videoType === 'sample' && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    position: 'absolute',
-                    bottom: 8,
-                    left: 8,
-                    bgcolor: 'rgba(0,0,0,0.6)',
-                    color: '#fff',
-                    px: 1,
-                    py: 0.5,
-                    borderRadius: 1,
-                  }}
-                >
+                <Badge variant="secondary" className="absolute bottom-4 left-4 bg-black/60 text-white border-white/20">
                   Sample
-                </Typography>
+                </Badge>
               )}
 
-              {/* Maximize toggle button */}
-              <IconButton
+              {/* Maximize/minimize button */}
+              <Button
+                size="icon"
+                variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleMaximize(video.id);
                 }}
-                sx={{
-                  position: 'absolute',
-                  top: 12,
-                  right: 12,
-                  color: 'white',
-                  bgcolor: 'rgba(0,0,0,0.35)',
-                  '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
-                }}
+                className="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                 aria-label={isMaximized ? 'Exit fullscreen' : 'Maximize'}
               >
-                {isMaximized ? <FullscreenExit /> : <Fullscreen />}
-              </IconButton>
+                {isMaximized ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+              </Button>
 
-              {/* Mute toggle button */}
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleMute(video.id);
-                }}
-                sx={{
-                  position: 'absolute',
-                  bottom: 12,
-                  left: 12,
-                  color: 'white',
-                  bgcolor: 'rgba(0,0,0,0.35)',
-                  '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
-                }}
+              {/* Mute/unmute button */}
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={handleMuteClick}
+                className="absolute bottom-4 left-4 bg-black/40 hover:bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
               >
-                {isMuted ? <VolumeOff /> : <VolumeUp />}
-              </IconButton>
-            </Box>
-          </Box>
-        </Box>
+                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+              </Button>
+            </div>
+          </div>
+        </div>
 
-        {/* Right: Action buttons and stats */}
-        <Box
-          sx={{
-            flexShrink: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            order: { xs: 3, md: 2 },
-            position: isMaximized ? 'fixed' : 'relative',
-            right: isMaximized ? { xs: 4, md: 8 } : 'auto',
-            top: isMaximized ? '50%' : 'auto',
-            transform: isMaximized ? 'translateY(-50%)' : 'none',
-            zIndex: isMaximized ? 1450 : 1200,
-            pointerEvents: 'auto',
-            width: isMaximized ? { xs: '80px', md: '100px' } : { xs: '100%', md: 80 },
-            bgcolor: isMaximized ? 'rgba(0,0,0,0.3)' : 'transparent',
-            borderRadius: isMaximized ? 2 : 0,
-            py: isMaximized ? 2 : 0,
-          }}
-        >
-          <Stack spacing={1} alignItems="center" sx={{ justifyContent: 'center', width: '100%' }}>
-            <IconButton 
-              onClick={onPrev} 
-              size="large" 
+        {/* Right: Action buttons */}
+        <div className={cn(
+          "flex-shrink-0 flex justify-center order-3 md:order-2",
+          isMaximized && "fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-[1450]",
+          isMaximized ? "w-20 md:w-24 bg-black/30 backdrop-blur-sm rounded-xl py-4" : "w-full md:w-20"
+        )}>
+          <div className="flex flex-col items-center justify-center gap-4 w-full">
+            {/* Previous button */}
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={onPrev}
+              className={cn(
+                "rounded-full transition-all hover:scale-110",
+                isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
+              )}
               aria-label="previous"
-              sx={{ color: isMaximized ? '#fff' : 'inherit' }}
             >
-              <KeyboardArrowUp />
-            </IconButton>
+              <ChevronUp className="h-6 w-6" />
+            </Button>
 
-            <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton 
-                color={video.isLiked ? 'error' : 'default'} 
-                onClick={() => onLike(video.id)} 
+            {/* Like button */}
+            <div className="flex flex-col items-center gap-1">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => onLike(video.id)}
+                className={cn(
+                  "rounded-full transition-all hover:scale-110",
+                  video.isLiked 
+                    ? "text-red-500 hover:bg-red-500/20" 
+                    : isMaximized 
+                      ? "text-white hover:bg-white/20" 
+                      : "text-white hover:bg-white/20"
+                )}
                 aria-label="like"
-                sx={{ color: isMaximized && !video.isLiked ? '#fff' : undefined }}
               >
-                <Favorite />
-              </IconButton><br></br>
-              <Typography variant="caption" sx={{  
-  color: isMaximized ? '#fff' : '#ffffffff',
-  fontWeight: 'bold',
-  borderRadius: '12px',
-  px: 1,
-  py: .7, }}>{video.likesCount ?? 0}</Typography>
-            </Box>
+                <Heart className={cn("h-6 w-6", video.isLiked && "fill-current")} />
+              </Button>
+              <span className="text-xs font-bold text-white bg-black/40 px-2 py-0.5 rounded-full">
+                {video.likesCount ?? 0}
+              </span>
+            </div>
 
-            <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton 
-                onClick={() => onCommentToggle(video.id)} 
+            {/* Comment button */}
+            <div className="flex flex-col items-center gap-1">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => onCommentToggle(video.id)}
+                className={cn(
+                  "rounded-full transition-all hover:scale-110",
+                  isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
+                )}
                 aria-label="comment"
-                sx={{ color: isMaximized ? '#fff' : 'inherit' }}
               >
-                <Comment />
-              </IconButton><br></br>
-              <Typography variant="caption" sx={{  
-  color: isMaximized ? '#fff' : '#ffffffff',
-  fontWeight: 'bold',
-  borderRadius: '12px',
-  px: 1,
-  py: .7, }}>{commentCount}</Typography>
-            </Box>
+                <MessageCircle className="h-6 w-6" />
+              </Button>
+              <span className="text-xs font-bold text-white bg-black/40 px-2 py-0.5 rounded-full">
+                {commentCount}
+              </span>
+            </div>
 
-            <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton 
-                onClick={() => onShare(video.id)} 
+            {/* Share button */}
+            <div className="flex flex-col items-center gap-1">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => onShare(video.id)}
+                className={cn(
+                  "rounded-full transition-all hover:scale-110",
+                  isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
+                )}
                 aria-label="share"
-                sx={{ color: isMaximized ? '#fff' : 'inherit' }}
               >
-                <Share />
-              </IconButton><br></br>
-              <Typography variant="caption" sx={{  
-  color: isMaximized ? '#fff' : '#ffffffff',
-  fontWeight: 'bold',
-  borderRadius: '12px',
-  px: 1,
-  py: .7, }}>{video.sharesCount ?? 0}</Typography>
-            </Box>
+                <Share2 className="h-6 w-6" />
+              </Button>
+              <span className="text-xs font-bold text-white bg-black/40 px-2 py-0.5 rounded-full">
+                {video.sharesCount ?? 0}
+              </span>
+            </div>
 
-            <Box sx={{ textAlign: 'center', p: 1 }}>
-              <IconButton 
-                onClick={() => onSave(video.id)} 
-                aria-label="save" 
-                color={video.saved ? 'primary' : 'default'}
-                sx={{ color: isMaximized && !video.saved ? '#fff' : undefined }}
+            {/* Save button */}
+            <div className="flex flex-col items-center gap-1">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => onSave(video.id)}
+                className={cn(
+                  "rounded-full transition-all hover:scale-110",
+                  video.saved 
+                    ? "text-purple-400 hover:bg-purple-400/20" 
+                    : isMaximized 
+                      ? "text-white hover:bg-white/20" 
+                      : "text-white hover:bg-white/20"
+                )}
+                aria-label="save"
               >
-                <Bookmark />
-              </IconButton>
-              <Typography 
-                variant="caption"
-                sx={{ color: isMaximized ? '#fff' : 'inherit' }}
-              >{video.saved ? t('homePage.saved', 'Saved') : t('homePage.save', 'Save')}</Typography>
-            </Box>
+                <Bookmark className={cn("h-6 w-6", video.saved && "fill-current")} />
+              </Button>
+              <span className="text-xs font-semibold text-white">
+                {video.saved ? t('homePage.saved', 'Saved') : ''}
+              </span>
+            </div>
 
-            <IconButton 
-              onClick={onNext} 
-              size="large" 
+            {/* Next button */}
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={onNext}
+              className={cn(
+                "rounded-full transition-all hover:scale-110",
+                isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
+              )}
               aria-label="next"
-              sx={{ color: isMaximized ? '#fff' : 'inherit' }}
             >
-              <KeyboardArrowDown />
-            </IconButton>
-          </Stack>
-        </Box>
-      </Box>
-    </Box>
+              <ChevronDown className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 });
 
@@ -1466,87 +1349,71 @@ const Videos = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin text-purple-500" />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Box p={3} display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="100vh">
-        <Alert severity="error" sx={{ mb: 2, maxWidth: 600 }}>
-          <Typography variant="h6" gutterBottom>Oops!</Typography>
-          <Typography variant="body1">{error}</Typography>
-        </Alert>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Please try refreshing the page or contact support if the problem persists.
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <button 
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              fetchVideos(initialVideoId);
-            }}
-            style={{
-              padding: '10px 20px',
-              borderRadius: 6,
-              border: 'none',
-              backgroundColor: '#1976d2',
-              color: '#fff',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 600
-            }}
-          >
-            Try Again
-          </button>
-          <button 
-            onClick={() => window.location.href = '/'}
-            style={{
-              padding: '10px 20px',
-              borderRadius: 6,
-              border: '1px solid #ccc',
-              backgroundColor: '#fff',
-              color: '#000',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 600
-            }}
-          >
-            Go Home
-          </button>
-        </Box>
-      </Box>
+      <div className="flex flex-col items-center justify-center min-h-screen p-6">
+        <Card className="max-w-2xl w-full border-red-200 bg-red-50">
+          <CardContent className="p-6 space-y-4">
+            <h2 className="text-2xl font-bold text-red-800">Oops!</h2>
+            <p className="text-red-700">{error}</p>
+            <p className="text-sm text-gray-600">
+              Please try refreshing the page or contact support if the problem persists.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setError(null);
+                  setLoading(true);
+                  fetchVideos(initialVideoId);
+                }}
+                variant="default"
+              >
+                Try Again
+              </Button>
+              <Button
+                onClick={() => window.location.href = '/'}
+                variant="outline"
+              >
+                Go Home
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   if (!videos.length) {
     return (
-      <Box p={3} textAlign="center">
-        <Typography variant="h5">{t('homePage.noVideosAvailable', 'No videos available.')}</Typography>
-        <Typography variant="body1">{t('homePage.uploadPrompt', 'Start by uploading some videos!')}</Typography>
-      </Box>
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-8 space-y-3">
+            <h2 className="text-2xl font-bold text-gray-800">
+              {t('homePage.noVideosAvailable', 'No videos available.')}
+            </h2>
+            <p className="text-gray-600">
+              {t('homePage.uploadPrompt', 'Start by uploading some videos!')}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
     <>
       <SwipeScoutBackground />
-      <Box
+      <div
         ref={containerRef}
         data-main-container
-        sx={{
-          minHeight: '100vh',
-          overflowY: 'auto',
-          scrollSnapType: 'y mandatory',
-          position: 'relative',
-          zIndex: 1,
-          background: 'transparent',
-          '& > div': { scrollSnapAlign: 'start' },
-          '&::-webkit-scrollbar': { display: 'none' }
-        }}
+        className="min-h-screen overflow-y-auto scroll-smooth relative z-10 bg-transparent [&>div]:scroll-snap-align-start scrollbar-hide"
+        style={{ scrollSnapType: 'y mandatory' }}
       >
         {videos.map((video, index) => {
           const commentMeta = commentsByVideo[video.id] || {};
@@ -1558,7 +1425,7 @@ const Videos = () => {
           const shouldLoadVideo = shouldRenderCard || distanceFromActive <= 1 || isMaximized;
 
           return (
-            <Box key={video.id} sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', zIndex: 2 }}>
+            <div key={video.id} className="min-h-screen flex items-center justify-center relative z-20">
               {shouldRenderCard ? (
                 <VideoCard
                   video={video}
@@ -1583,23 +1450,14 @@ const Videos = () => {
                   shouldLoad={shouldLoadVideo}
                 />
               ) : (
-                <Box
-                  sx={{
-                    width: '100%',
-                    maxWidth: 720,
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <CircularProgress size={32} />
-                </Box>
+                <div className="w-full max-w-3xl min-h-screen flex items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                </div>
               )}
-            </Box>
+            </div>
           );
         })}
-      </Box>
+      </div>
       <ToastContainer position="bottom-right" />
     </>
   );

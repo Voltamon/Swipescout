@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+﻿import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Box,
   CssBaseline,
@@ -37,10 +37,10 @@ import { useTranslation } from 'react-i18next';
 import Header from '../components/Headers/admin/Header';
 import Footer from '../components/Headers/admin/Footer';
 import FloatingNavigationPanel from '../components/FloatingNavigationPanel';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { jobseekerTabCategories } from '../config/jobseekerTabsConfig';
-import { getJobseekerStats } from '../services/api';
+import { getJobseekerStats } from '@/services/api';
 
 // Import Job Seeker specific pages
 import JobSearchPage from './JobSearchPage';

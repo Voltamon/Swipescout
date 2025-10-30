@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -31,8 +31,8 @@ import {
   Warning,
   CheckCircle
 } from '@mui/icons-material';
-import { getUserAIAnalysis, getVideoAIAnalysis } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { getUserAIAnalysis, getVideoAIAnalysis } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 function TabPanel({ children, value, index, ...other }) {

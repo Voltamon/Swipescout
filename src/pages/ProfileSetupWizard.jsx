@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -60,7 +60,7 @@ import {
     Language as LanguageIcon,
     Star as StarIcon
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

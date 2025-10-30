@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { 
   getUserInterviews, 
@@ -9,7 +9,7 @@ import {
   rescheduleInterview,
   cancelInterview,
   joinInterview
-} from '../services/api';
+} from '@/services/api';
 import VideoCallInterface from '../components/VideoCallInterface';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

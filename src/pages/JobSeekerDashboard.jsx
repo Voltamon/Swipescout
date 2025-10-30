@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Eye, ThumbsUp, Briefcase, MessageSquare, Bell, TrendingUp,
     PlayCircle, Plus, ArrowRight, MapPin, Loader2
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { getJobSeekerDashboardStats, getRecentActivities, getJobRecommendations } from '../services/dashboardService';
-import { getSwipeStats, getVideoEngagement, addUserSkill, getSkills, createSkill } from '../services/api';
+import { getSwipeStats, getVideoEngagement, addUserSkill, getSkills, createSkill } from '@/services/api';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios'; // ADDED
 import {
   Box,
@@ -23,9 +23,9 @@ import {
   FullscreenExit
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '../services/api'; // removed getVideosForHomePage - using public endpoint directly
+import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '@/services/api'; // removed getVideosForHomePage - using public endpoint directly
 import { toast } from 'react-toastify';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';

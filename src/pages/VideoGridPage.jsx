@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback, useMemo  } from 'react';
+﻿import React, { useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 import {
   Box,
   Container,
@@ -56,7 +56,7 @@ import { styled } from '@mui/material/styles';
 import PerformanceOptimizedVideoGrid from '../components/PerformanceOptimizedVideoGrid';
 import { useInfiniteScroll } from '../hooks/useIntersectionObserver';
 import { createDebouncedFunction } from '../utils/performanceOptimizations';
-import api from '../services/api';
+import api from '@/services/api';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   maxWidth: '100% !important',

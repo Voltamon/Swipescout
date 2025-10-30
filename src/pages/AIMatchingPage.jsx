@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -30,8 +30,8 @@ import {
   TrendingUp,
   FilterList
 } from '@mui/icons-material';
-import { getMatchingVideos } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { getMatchingVideos } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
  
 const AIMatchingPage = () => {

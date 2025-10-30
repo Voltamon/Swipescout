@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+﻿import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
-import { getCurrentUser, updateCurrentUser } from '../services/api';
+import { getCurrentUser, updateCurrentUser } from '@/services/api';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();

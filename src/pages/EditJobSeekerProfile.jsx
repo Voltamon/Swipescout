@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef  } from 'react';
+﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Container,
@@ -80,7 +80,7 @@ import {
   deleteUserVideo,
   uploadProfileImage,
   getSkills,
-} from '../services/api';
+} from '@/services/api';
 import dayjs from 'dayjs';
 
 

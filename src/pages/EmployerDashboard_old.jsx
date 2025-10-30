@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -41,7 +41,7 @@ import {
     People as PeopleIcon,
     Assessment as AssessmentIcon
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import {
     getEmployerDashboardStats,

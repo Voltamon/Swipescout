@@ -1,6 +1,6 @@
-// AllVideosPage.jsx - TikTok Style Vertical Video Feed with Tailwind
+﻿// AllVideosPage.jsx - TikTok Style Vertical Video Feed with Tailwind
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useVideoContext } from '../contexts/VideoContext';
+import { useVideoContext } from '@/contexts/VideoContext';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,7 +9,7 @@ import {
   MessageCircle, Eye, Clock, ChevronUp, ChevronDown
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   getAllVideos, 
   getEmployerPublicVideos, 
@@ -18,7 +18,7 @@ import {
   saveVideo,
   connectWithUser,
   searchVideos
-} from '../services/api';
+} from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

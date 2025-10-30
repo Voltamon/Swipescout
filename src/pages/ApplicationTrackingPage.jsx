@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -53,8 +53,8 @@ import {
   TrendingUp,
   Assessment
 } from "@mui/icons-material";
-import { getUserApplications, withdrawApplication, getApplicationDetails } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { getUserApplications, withdrawApplication, getApplicationDetails } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 const applicationStatuses = {

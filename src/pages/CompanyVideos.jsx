@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
     getEmployerPublicVideos, 
     likeVideo, 
@@ -9,8 +9,8 @@ import {
     addVideoComment,
     getVideoComments,
     connectWithCandidate
-} from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+} from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

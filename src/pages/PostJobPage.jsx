@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect  } from 'react';
+﻿import React, { useContext, useState, useEffect  } from 'react';
 import {
   Box,
   Container,
@@ -46,7 +46,7 @@ import {
   getCategories,
   getSkills,
   updateJob // Assuming you have an updateJob API
-} from '../services/api';
+} from '@/services/api';
 import VideoUpload from './VideoUpload';
 import IconButton from '@mui/material/IconButton';
 

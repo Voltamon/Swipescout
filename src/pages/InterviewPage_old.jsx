@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material';
 import {
@@ -42,7 +42,7 @@ import {
   CheckCircle,
   Pending
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -52,7 +52,7 @@ import {
   rescheduleInterview,
   cancelInterview,
   joinInterview
-} from '../services/api';
+} from '@/services/api';
 import VideoCallInterface from '../components/VideoCallInterface';
 
 const InterviewPage = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -48,8 +48,8 @@ import {
   CheckCircle
 } from "@mui/icons-material";
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCandidateProfile, recruitCandidate, getJobPostings } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { getCandidateProfile, recruitCandidate, getJobPostings } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 const recruitmentSteps = [

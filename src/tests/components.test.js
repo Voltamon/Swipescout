@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+﻿import React, { useContext } from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "../contexts/AuthContext";
+import { AuthProvider } from '@/contexts/AuthContext';
 import VideoFeed from "../pages/VideoFeed";
 import Chat from "../pages/Chat";
 import Profile from "../pages/Profile";

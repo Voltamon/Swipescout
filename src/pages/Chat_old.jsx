@@ -1,4 +1,4 @@
-//complete Chat.jsx file with all the requested enhancements, incorporating better contrast, improved message time display, distinct sent/read indicators, refined online status presentation, and clear background differentiation for conversation and user lists.
+﻿//complete Chat.jsx file with all the requested enhancements, incorporating better contrast, improved message time display, distinct sent/read indicators, refined online status presentation, and clear background differentiation for conversation and user lists.
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
@@ -29,7 +29,7 @@ import {
   DoneAll as DoneAllIcon, // For read
   Refresh as RefreshIcon // For retry failed message
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   getConversations,
   getMessages,

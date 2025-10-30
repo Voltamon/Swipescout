@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect  } from 'react';
+﻿import React, { useContext, useState, useEffect  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Box, 
@@ -10,7 +10,7 @@ import {
   CircularProgress 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { resetPassword } from '../services/api';
+import { resetPassword } from '@/services/api';
 import Paper from '@mui/material/Paper';
 
 // Reuse the same styled components

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -43,13 +43,13 @@ import {
   Save,
   RestoreFromTrash
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { 
   getUserNotificationSettings, 
   updateNotificationSettings,
   testNotification 
-} from '../services/api';
+} from '@/services/api';
 
 const NotificationSettingsPage = () => {
   const { user } = useAuth();

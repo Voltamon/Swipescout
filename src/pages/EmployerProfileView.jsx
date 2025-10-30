@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef, useCallback  } from 'react';
+﻿import React, { useContext, useState, useEffect, useRef, useCallback  } from 'react';
 import {
   Box,
   Container,
@@ -40,7 +40,7 @@ import {
   Bookmark as BookmarkIcon
 } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
-import { getEmployerPublicProfile, getEmployerPublicVideos, getEmployerPublicJobs } from '../services/api';
+import { getEmployerPublicProfile, getEmployerPublicVideos, getEmployerPublicJobs } from '@/services/api';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 

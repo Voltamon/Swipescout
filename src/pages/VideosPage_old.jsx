@@ -1,6 +1,6 @@
-// VideosPage.jsx
+﻿// VideosPage.jsx
 import React, { useContext, useState, useEffect, useRef  } from 'react';
-import { useVideoContext } from '../contexts/VideoContext'; // Correct import
+import { useVideoContext } from '@/contexts/VideoContext'; // Correct import
 import { styled } from "@mui/material/styles";
 import {
   Container, Grid, Card, CardMedia, CardContent,
@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Error, CloudUpload, Replay, Delete } from '@mui/icons-material';
-import api, { deleteVideo } from '../services/api'; // Ensure deleteVideo is imported from your API service
+import api, { deleteVideo } from '@/services/api'; // Ensure deleteVideo is imported from your API service
 import { toast } from 'react-toastify';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { VolumeUp, VolumeOff } from '@mui/icons-material';

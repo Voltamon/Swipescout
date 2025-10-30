@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -39,14 +39,14 @@ import {
   Sort
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { 
   getUserSavedVideos, 
   unsaveVideo, 
   shareVideo,
   searchVideos 
-} from '../services/api';
+} from '@/services/api';
 import { toast } from 'react-toastify';
 import AllVideosPage from './AllVideosPage';
 

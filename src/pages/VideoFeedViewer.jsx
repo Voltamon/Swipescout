@@ -1,4 +1,4 @@
-// src/components/VideoFeedViewer.jsx
+﻿// src/components/VideoFeedViewer.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -24,8 +24,8 @@ import {
   FavoriteBorder,
   MoreVert
 } from "@mui/icons-material";
-import api from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import api from "@/services/api";
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import JobseekerProfileView from "./JobseekerProfileView";
 import EmployerProfileView from "./EmployerProfileView";

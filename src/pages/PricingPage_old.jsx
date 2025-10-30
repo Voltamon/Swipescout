@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -56,9 +56,9 @@ import {
   createSubscription, 
   purchaseService,
   getSubscriptionStatus 
-} from '../services/api';
+} from '@/services/api';
 
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 

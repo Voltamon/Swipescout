@@ -1,4 +1,4 @@
-import React, { useContext, useState  } from 'react';
+﻿import React, { useContext, useState  } from 'react';
 import { 
   Box, 
   Button, 
@@ -9,7 +9,7 @@ import {
   CircularProgress 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { forgotPassword } from '../services/api';
+import { forgotPassword } from '@/services/api';
 import Paper from '@mui/material/Paper';
 
 

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { uploadVideo, saveVideoMetadata ,getVideoStatus} from '../services/videoService';
-import api from '../services/api'; // Make sure this import is present if used in retryUpload
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+import { uploadVideo, saveVideoMetadata ,getVideoStatus} from '@/services/videoService';
+import api from '@/services/api'; // Make sure this import is present if used in retryUpload
 
 const VideoContext = createContext();
 

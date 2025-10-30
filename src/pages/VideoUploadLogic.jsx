@@ -2,14 +2,14 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { useVideoContext } from "../contexts/VideoContext";
+import { useVideoContext } from "@/contexts/VideoContext";
 import {
 
   checkUploadStatus
-} from "../services/api";
-import { uploadVideo, saveVideoMetadata } from "../services/videoService";
+} from "@/services/api";
+import { uploadVideo, saveVideoMetadata } from "@/services/videoService";
 
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 // This custom hook encapsulates all the logic for the video upload process.

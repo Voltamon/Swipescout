@@ -57,8 +57,8 @@ import {
   getCandidateRecommendations, 
   analyzeMatch,
   getMarketInsights 
-} from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+} from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useContext } from 'react';
 
 export default function SmartRecommendationsPage() {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
+﻿import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
 import {
   Box,
   Container,
@@ -48,7 +48,7 @@ import { Helmet } from "react-helmet";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import VolumeUp from "@mui/icons-material/VolumeUp";
 import VolumeOff from "@mui/icons-material/VolumeOff";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from '@/contexts/AuthContext';
 import { AlertCircle as AlertCircleIcon } from "lucide-react";
 import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
 

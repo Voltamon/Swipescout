@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -46,9 +46,9 @@ import {
   VolumeUp as VolumeUpIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
-import { getAllJobs, getJobById, getEmployerProfile, getCategories ,getAllJobsPosted } from '../services/api';
+import { getAllJobs, getJobById, getEmployerProfile, getCategories ,getAllJobsPosted } from '@/services/api';
 
 // Styled components
 const PageContainer = styled(Box)(({ theme }) => ({

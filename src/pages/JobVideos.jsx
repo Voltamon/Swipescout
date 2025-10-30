@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     Box,
     Grid,
@@ -29,7 +29,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BusinessIcon from '@mui/icons-material/Business';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CategoryIcon from '@mui/icons-material/Category';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 // import { getJobVideos } from '../services/jobService'; // Assuming this service exists
 

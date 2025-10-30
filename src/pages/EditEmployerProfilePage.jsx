@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef  } from 'react';
+﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Container,
@@ -66,7 +66,7 @@ import {
   deleteEmployerCategory,
   getCategories,
   createEmployerProfile
-} from '../services/api';
+} from '@/services/api';
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({

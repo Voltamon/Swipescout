@@ -40,8 +40,8 @@ import {
   ExpandMore,
   Upload
 } from "@mui/icons-material";
-import { uploadVideo, getAllVideos, deleteEditedVideo } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { uploadVideo, getAllVideos, deleteEditedVideo } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 // FFmpeg import with fallback for different versions

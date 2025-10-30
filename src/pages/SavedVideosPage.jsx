@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { getUserSavedVideos, unsaveVideo, shareVideo } from '../services/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { getUserSavedVideos, unsaveVideo, shareVideo } from '@/services/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

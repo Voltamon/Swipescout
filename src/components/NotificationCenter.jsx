@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   IconButton,
@@ -37,8 +37,8 @@ import {
   markNotificationAsRead, 
   markAllNotificationsAsRead,
   deleteNotification 
-} from '../services/api';
-import { AuthContext } from '../contexts/AuthContext';
+} from '@/services/api';
+import { AuthContext } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 export default function NotificationCenter() {

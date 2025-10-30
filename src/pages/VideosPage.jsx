@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useVideoContext } from '../contexts/VideoContext';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { useVideoContext } from '@/contexts/VideoContext';
 import { useNavigate } from 'react-router-dom';
-import api, { deleteVideo } from '../services/api';
+import api, { deleteVideo } from '@/services/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

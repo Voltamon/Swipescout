@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -41,7 +41,7 @@ import {
   BookmarkBorder
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { 
   getUserLikedVideos, 
@@ -49,7 +49,7 @@ import {
   saveVideo,
   unsaveVideo,
   shareVideo 
-} from '../services/api';
+} from '@/services/api';
 import { toast } from 'react-toastify';
 import AllVideosPage from './AllVideosPage';
 

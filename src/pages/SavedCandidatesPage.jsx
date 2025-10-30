@@ -22,9 +22,9 @@ import {
   TextField,
   Snackbar
 } from "@mui/material";
-import { 
-  LocationOn, 
-  WorkOutline, 
+import {
+  LocationOn,
+  WorkOutline,
   School,
   Star,
   Handshake as Connect,
@@ -35,8 +35,8 @@ import {
   Message,
   BookmarkRemove
 } from "@mui/icons-material";
-import { getSavedCandidates, unsaveCandidate, connectWithCandidate } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { getSavedCandidates, unsaveCandidate, connectWithCandidate } from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useContext } from 'react';
 
 export default function SavedCandidatesPage() {

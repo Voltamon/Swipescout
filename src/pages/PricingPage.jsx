@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -42,8 +42,8 @@ import {
   createSubscription, 
   purchaseService,
   getSubscriptionStatus 
-} from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+} from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 export default function PricingPage() {

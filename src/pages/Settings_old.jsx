@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -36,7 +36,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HelpIcon from '@mui/icons-material/Help';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { getUserSettings, updateUserSettings } from '../services/userService';
 

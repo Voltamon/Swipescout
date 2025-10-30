@@ -9982,7 +9982,7 @@ __metadata:
     recharts: "npm:^3.1.2"
     shadcn: "npm:^2.5.0"
     socket.io-client: "npm:^4.8.1"
-    tailwind-merge: "npm:^3.3.0"
+    tailwind-merge: "npm:^3.3.1"
     tailwind-variants: "npm:^1.0.0"
     tailwindcss: "npm:^3.4.0"
     tailwindcss-animate: "npm:^1.0.7"
@@ -10002,7 +10002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^3.3.0":
+"tailwind-merge@npm:^3.3.1":
   version: 3.3.1
   resolution: "tailwind-merge@npm:3.3.1"
   checksum: 10c0/b84c6a78d4669fa12bf5ab8f0cdc4400a3ce0a7c006511af4af4be70bb664a27466dbe13ee9e3b31f50ddf6c51d380e8192ce0ec9effce23ca729d71a9f63818

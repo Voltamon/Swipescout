@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { uploadVideo, saveVideoMetadata } from '../services/videoService';
-import { checkUploadStatus } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
-import { useVideoContext } from '../contexts/VideoContext';
+import { uploadVideo, saveVideoMetadata } from '@/services/videoService';
+import { checkUploadStatus } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { useVideoContext } from '@/contexts/VideoContext';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -45,7 +45,7 @@ import {
   VolumeUp as VolumeOnIcon
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getEmployerProfile, getVideoResume, getEmployerJobs ,getJobVideos} from '../services/api';
+import { getEmployerProfile, getVideoResume, getEmployerJobs ,getJobVideos} from '@/services/api';
 
 // Styled components
 const ProfileContainer = styled(Box)(({ theme }) => ({

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -46,8 +46,8 @@ import {
   Send
 } from "@mui/icons-material";
 import { useParams } from 'react-router-dom';
-import { getCompanyVideo, likeVideo, unlikeVideo, saveVideo, unsaveVideo } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { getCompanyVideo, likeVideo, unlikeVideo, saveVideo, unsaveVideo } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 export default function CompanyVideoPreviewPage() {

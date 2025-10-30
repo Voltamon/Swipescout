@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -14,7 +14,7 @@ import {
 import { Visibility, VisibilityOff, Google as GoogleIcon, LinkedIn as LinkedInIcon, PersonOutline as PersonOutlineIcon, Business as BusinessIcon } from '@mui/icons-material';
 import { AlertCircle as AlertCircleIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedirectPath }) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -66,8 +66,8 @@ import {
   previewResume, 
   saveResume, 
   getUserResumes 
-} from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+} from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 export default function ResumeBuilderPage() {

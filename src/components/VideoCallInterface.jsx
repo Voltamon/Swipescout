@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -29,7 +29,7 @@ import {
   Fullscreen,
   FullscreenExit
 } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 const VideoCallInterface = ({ 

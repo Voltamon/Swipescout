@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect  } from 'react';
+﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   Typography,
@@ -44,14 +44,14 @@ import {
   ArrowBack as ArrowBackIcon
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom"; // Add useParams
-import { uploadVideo, saveVideoMetadata } from '../services/videoService';
+import { uploadVideo, saveVideoMetadata } from '@/services/videoService';
 import { v4 as uuidv4 } from 'uuid';
-import { useVideoContext } from '../contexts/VideoContext';
+import { useVideoContext } from '@/contexts/VideoContext';
 import { 
   checkUploadStatus, 
 
-} from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+} from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Styled components (keep the same as before)
 const UploadBox = styled(Box)(({ theme }) => ({

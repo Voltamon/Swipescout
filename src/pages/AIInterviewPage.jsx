@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -39,8 +39,8 @@ import {
   getAutoInitialInterviewResults, 
   generateAIInterviewQuestions,
   getUserVideos 
-} from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+} from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react'; // Import the AuthContext contexts/AuthContext';
 
 const AIInterviewPage = () => {

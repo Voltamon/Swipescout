@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { searchJobs, applyToJob, getFilterOptions, saveVideo, unsaveVideo } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+﻿import React, { useState, useEffect } from 'react';
+import { searchJobs, applyToJob, getFilterOptions, saveVideo, unsaveVideo } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Box,
   IconButton,
@@ -42,7 +42,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { 
   likeVideo, 
@@ -52,7 +52,7 @@ import {
   getVideoComments, 
   addVideoComment,
   shareVideo 
-} from '../services/api';
+} from '@/services/api';
 
 // Styled Components
 const PlayerContainer = styled(Box)(({ theme }) => ({

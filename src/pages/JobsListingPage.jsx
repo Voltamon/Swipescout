@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { getAllJobsPosted, getCategories } from '../services/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { getAllJobsPosted, getCategories } from '@/services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

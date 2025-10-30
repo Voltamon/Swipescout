@@ -3,8 +3,8 @@ import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
 } from 'lucide-react';
-import { uploadVideo, getAllVideos, deleteEditedVideo } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { uploadVideo, getAllVideos, deleteEditedVideo } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

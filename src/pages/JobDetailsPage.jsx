@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -38,10 +38,10 @@ import {
   VolumeOff
 } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
-import { getJobDetails } from "../services/api";
-import { useAuth } from '../contexts/AuthContext';
+import { getJobDetails } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
-import { useVideoContext } from '../contexts/VideoContext';
+import { useVideoContext } from '@/contexts/VideoContext';
 import FeedIcon from '@mui/icons-material/Feed';
 
 // Styled components

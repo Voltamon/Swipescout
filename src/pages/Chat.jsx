@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   Search, Send, ArrowLeft, MoreVertical, Check, CheckCheck,
   RefreshCw, Loader2
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   getConversations,
   getMessages,
@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 const Chat = () => {
   const { user, loading: authLoading } = useAuth();

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Bell, Mail, Smartphone, Briefcase, Video, MessageSquare,
   Heart, UserPlus, Clock, Save, RotateCcw, Loader2
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   getUserNotificationSettings, 
   updateNotificationSettings,
   testNotification 
-} from '../services/api';
+} from '@/services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
