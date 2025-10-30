@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import beautiful Arabic fonts from Google Fonts - Cairo has excellent Arabic shaping */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Almarai:wght@400;700&family=Tajawal:wght@400;500;700&display=swap');
+
+/* Import Chinese fonts for better rendering */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -56,10 +62,90 @@
        keeping the intended styling (border color controlled by --border). */
     border-color: hsl(var(--border));
   }
+  
+  /* Universal font smoothing for non-Arabic text */
+  *:not([lang="ar"]):not([dir="rtl"] *):not(.font-arabic) {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+  }
+  
   body {
     /* Avoid using @apply for project-specific utilities until Tailwind setup is stable */
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    
+    /* Enhanced text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-smooth: always;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+  
+  /* Arabic language support with beautiful fonts and proper connected letters */
+  [lang="ar"],
+  [lang="ar"] *,
+  .font-arabic,
+  html[dir="rtl"],
+  html[dir="rtl"] * {
+    font-family: 'Cairo', 'Tajawal', 'Tahoma', 'Arial', sans-serif !important;
+    
+    /* Critical: Enable Arabic shaping and contextual forms */
+    font-feature-settings: "ccmp", "locl", "calt", "liga", "clig";
+    font-variant-ligatures: contextual common-ligatures;
+    
+    /* Smooth rendering */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Proper spacing for Arabic */
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+    line-height: 1.8;
+    
+    /* Ensure proper Unicode bidi algorithm */
+    unicode-bidi: embed;
+    direction: rtl;
+  }
+  
+  /* Chinese language support with smooth rendering */
+  [lang="zh"],
+  [lang="zh"] * {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Enhanced rendering for all headings */
+  h1, h2, h3, h4, h5, h6 {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  }
+  
+  /* Enhanced rendering for all text elements */
+  p, span, div, a, button, input, textarea, label {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* RTL support for Arabic */
+  html[dir="rtl"] {
+    direction: rtl;
+  }
+  
+  html[dir="rtl"] body {
+    text-align: right;
   }
 }
 
@@ -73,6 +159,40 @@ body{
   background:none;
   margin: 0;
   padding: 0;
+}
+
+/* Performance optimizations for faster rendering */
+* {
+  /* Enable GPU acceleration for smoother animations */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-perspective: 1000;
+}
+
+/* Optimize images for faster loading */
+img {
+  font-style: italic;
+  background-repeat: no-repeat;
+  background-size: cover;
+  shape-margin: 0.75rem;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Lazy loading hint for browsers */
+img[loading="lazy"] {
+  content-visibility: auto;
+}
+
+/* Reduce paint areas */
+.home-wrapper,
+.home-container,
+.home-content {
+  contain: layout style paint;
+  will-change: transform;
 }
 
 /* Undo accidental hiding applied to layout containers */
@@ -91,4 +211,37 @@ body{
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+/* Arabic text improvements */
+@layer utilities {
+  .font-arabic {
+    font-family: 'Cairo', 'Almarai', 'Tajawal', 'Tahoma', sans-serif !important;
+    letter-spacing: 0 !important;
+    word-spacing: normal !important;
+    font-feature-settings: "ccmp", "locl", "calt", "liga" !important;
+    text-rendering: optimizeLegibility !important;
+    direction: rtl;
+  }
+  
+  .text-arabic {
+    line-height: 1.8;
+    letter-spacing: normal !important;
+    font-variant-ligatures: contextual common-ligatures;
+    unicode-bidi: embed;
+  }
+  
+  /* Ensure proper Arabic rendering */
+  .rtl-text {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: embed;
+  }
+  
+  /* Force Arabic shaping for specific elements */
+  .arabic-shaped {
+    font-feature-settings: "ccmp" 1, "locl" 1, "calt" 1, "liga" 1, "clig" 1;
+    -webkit-font-feature-settings: "ccmp" 1, "locl" 1, "calt" 1, "liga" 1, "clig" 1;
+    -moz-font-feature-settings: "ccmp" 1, "locl" 1, "calt" 1, "liga" 1, "clig" 1;
+  }
 }

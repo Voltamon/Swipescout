@@ -1,4 +1,5 @@
-﻿import { Routes, Route, Navigate } from "react-router-dom";
+﻿import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
 import { Help } from "@mui/icons-material";
 
@@ -128,6 +129,29 @@ const cld = new Cloudinary({
 function App() {
   const { user, role, loading } = useAuth();
   const location = useLocation();
+
+  // Handle RTL direction and language attributes
+  React.useEffect(() => {
+    const currentLang = localStorage.getItem('i18nextLng') || 'en';
+    const html = document.documentElement;
+    
+    // Set language attribute
+    html.setAttribute('lang', currentLang);
+    
+    // Set direction for Arabic with proper font shaping
+    if (currentLang === 'ar') {
+      html.setAttribute('dir', 'rtl');
+      document.body.classList.add('font-arabic', 'text-arabic', 'arabic-shaped');
+      // Force browser to apply Arabic shaping
+      document.body.style.fontFeatureSettings = '"ccmp", "locl", "calt", "liga", "clig"';
+      document.body.style.fontFamily = "'Cairo', 'Almarai', 'Tajawal', 'Tahoma', sans-serif";
+    } else {
+      html.setAttribute('dir', 'ltr');
+      document.body.classList.remove('font-arabic', 'text-arabic', 'arabic-shaped');
+      document.body.style.fontFeatureSettings = '';
+      document.body.style.fontFamily = '';
+    }
+  }, []);
 
   if (loading) {
     return (

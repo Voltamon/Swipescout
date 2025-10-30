@@ -107,6 +107,21 @@ const Home = () => {
       }
     });
     console.log('[Home] hero.title preview:', t('home:hero.title'));
+    
+    // Handle RTL direction for Arabic
+    const html = document.documentElement;
+    html.setAttribute('lang', currentLang);
+    
+    if (currentLang === 'ar') {
+      html.setAttribute('dir', 'rtl');
+      document.body.classList.add('font-arabic', 'text-arabic', 'arabic-shaped');
+      // Force re-render to apply Arabic shaping
+      document.body.style.fontFeatureSettings = '"ccmp", "locl", "calt", "liga", "clig"';
+    } else {
+      html.setAttribute('dir', 'ltr');
+      document.body.classList.remove('font-arabic', 'text-arabic', 'arabic-shaped');
+      document.body.style.fontFeatureSettings = '';
+    }
   }, [i18n.language, t]);
 
   const handleTabChange = (event, newValue) => {
@@ -400,64 +415,78 @@ const Home = () => {
           <span className="home-brand-text">SwipeScout</span>
         </div>
         
-        {/* Language Switcher */}
-        <div className="home-language-switcher" style={{
-          display: 'flex',
-          gap: '8px',
-          alignItems: 'center',
-          marginLeft: 'auto',
-          marginRight: '20px'
-        }}>
+        {/* Language Switcher with SVG Flags */}
+        <div className="flex gap-2 items-center ml-auto mr-5">
           <button
             onClick={() => i18n.changeLanguage('en')}
-            style={{
-              padding: '8px 16px',
-              border: i18n.language === 'en' ? '2px solid #42B1BF' : '1px solid #ccc',
-              borderRadius: '8px',
-              background: i18n.language === 'en' ? '#42B1BF' : 'white',
-              color: i18n.language === 'en' ? 'white' : '#333',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: i18n.language === 'en' ? '600' : '400',
-              transition: 'all 0.3s ease'
-            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 hover:scale-105 ${
+              i18n.language === 'en' 
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg border-2 border-cyan-400' 
+                : 'bg-white text-gray-700 border border-gray-300 hover:border-cyan-400'
+            }`}
             title="English"
           >
-            🇬🇧 EN
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="16" fill="white"/>
+              <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+                <rect width="32" height="32" rx="16" fill="white"/>
+              </mask>
+              <g mask="url(#mask0)">
+                <rect width="32" height="32" fill="#0A17A7"/>
+                <path fillRule="evenodd" clipRule="evenodd" d="M0 0L32 21.3333V32L0 10.6667V0Z" fill="white"/>
+                <path d="M2.66667 0L32 19.5556V24.8889L0 3.55556V0H2.66667Z" fill="#C8102E"/>
+                <path fillRule="evenodd" clipRule="evenodd" d="M32 0L0 21.3333V32L32 10.6667V0Z" fill="white"/>
+                <path d="M29.3333 0L0 19.5556V24.8889L32 3.55556V0H29.3333Z" fill="#C8102E"/>
+                <path fillRule="evenodd" clipRule="evenodd" d="M13.3333 0H18.6667V32H13.3333V0ZM0 10.6667V21.3333H32V10.6667H0Z" fill="white"/>
+                <path fillRule="evenodd" clipRule="evenodd" d="M0 12.8V19.2H32V12.8H0ZM14.4 0V32H17.6V0H14.4Z" fill="#C8102E"/>
+              </g>
+            </svg>
+            <span>EN</span>
           </button>
+          
           <button
             onClick={() => i18n.changeLanguage('ar')}
-            style={{
-              padding: '8px 16px',
-              border: i18n.language === 'ar' ? '2px solid #42B1BF' : '1px solid #ccc',
-              borderRadius: '8px',
-              background: i18n.language === 'ar' ? '#42B1BF' : 'white',
-              color: i18n.language === 'ar' ? 'white' : '#333',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: i18n.language === 'ar' ? '600' : '400',
-              transition: 'all 0.3s ease'
-            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 hover:scale-105 ${
+              i18n.language === 'ar' 
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg border-2 border-cyan-400' 
+                : 'bg-white text-gray-700 border border-gray-300 hover:border-cyan-400'
+            }`}
             title="العربية"
           >
-            🇸🇦 AR
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="16" fill="white"/>
+              <mask id="mask-sa" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+                <rect width="32" height="32" rx="16" fill="white"/>
+              </mask>
+              <g mask="url(#mask-sa)">
+                <rect width="32" height="32" fill="#165e3c"/>
+                <path d="M8 11h16v3H8zm0 4h16v3H8zm3 4h10v2h2v-2h2v2h-2v2h-12v-2h-2v-2h2z" fill="white"/>
+              </g>
+            </svg>
+            <span className="font-arabic">AR</span>
           </button>
+          
           <button
             onClick={() => i18n.changeLanguage('zh')}
-            style={{
-              padding: '8px 16px',
-              border: i18n.language === 'zh' ? '2px solid #42B1BF' : '1px solid #ccc',
-              borderRadius: '8px',
-              background: i18n.language === 'zh' ? '#42B1BF' : 'white',
-              color: i18n.language === 'zh' ? 'white' : '#333',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: i18n.language === 'zh' ? '600' : '400',
-              transition: 'all 0.3s ease'
-            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 hover:scale-105 ${
+              i18n.language === 'zh' 
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg border-2 border-cyan-400' 
+                : 'bg-white text-gray-700 border border-gray-300 hover:border-cyan-400'
+            }`}
             title="中文"
           >
-            🇨🇳 ZH
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="16" fill="white"/>
+              <mask id="mask-cn" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+                <rect width="32" height="32" rx="16" fill="white"/>
+              </mask>
+              <g mask="url(#mask-cn)">
+                <rect width="32" height="32" fill="#DE2910"/>
+                <path d="M8 8l1.5 4.5h4.7l-3.8 2.8 1.5 4.5L8 17l-3.9 2.8 1.5-4.5L1.8 12.5h4.7L8 8z" fill="#FFDE00"/>
+                <path d="M14 6l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L14 6zm2 4l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L16 10zm-1 4l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L15 14zm-2 2l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L13 16z" fill="#FFDE00"/>
+              </g>
+            </svg>
+            <span>ZH</span>
           </button>
         </div>
       </div>
