@@ -19,7 +19,7 @@ import { Download, ArrowBack } from '@mui/icons-material';
 
 const EULA = () => {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('legal');
   
   const handleDownloadPDF = () => {
     window.open('/legal/eula.pdf', '_blank');

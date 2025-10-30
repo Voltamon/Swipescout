@@ -19,7 +19,7 @@ import { Download, ArrowBack } from '@mui/icons-material';
 
 const CopyrightAndIPTerms = () => {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('legal');
   const handleDownloadPDF = () => {
     window.open('/legal/copyright-ip-terms.pdf', '_blank');
   };

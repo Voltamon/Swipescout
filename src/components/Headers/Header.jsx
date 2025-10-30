@@ -26,18 +26,18 @@ const Header = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['header', 'navigation']);
   
   // Get authentication context
   const { user, isAuthenticated, logout } = useAuth() || {};
 
   const navLinks = [
-    { label: t('navigation.home'), href: '/' },
-    { label: t('header.exploreVideos'), href: '/videos/all' },
-    { label: t('navigation.blog'), href: '/blog' },
-    { label: t('navigation.pricing'), href: '/pricing' },
-    { label: t('navigation.about'), href: '/about' },
-    { label: t('navigation.contact'), href: '/contact' },
+    { label: t('navigation:home'), href: '/' },
+    { label: t('exploreVideos'), href: '/videos' },
+    { label: t('navigation:blog'), href: '/blog' },
+    { label: t('navigation:pricing'), href: '/pricing' },
+    { label: t('navigation:about'), href: '/about' },
+    { label: t('navigation:contact'), href: '/contact' },
   ];
 
   const handleNavigation = (path) => {
@@ -75,7 +75,7 @@ const Header = () => {
     if (user?.email) {
       return user.email;
     }
-    return t('header.welcome');
+    return t('welcome');
   };
 
   const getDashboardPath = () => {
@@ -135,6 +135,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation Links */}
+          
           <nav className="hidden md:flex gap-2 lg:gap-4">
             {navLinks.map((link) => (
               <button
@@ -142,7 +143,7 @@ const Header = () => {
                 onClick={() => handleNavigation(link.href)}
                 className={`px-3 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${homeThemeColors.text.link}`}
               >
-                {link.label}
+                {link.href === '/' ? <>{'\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'}{link.label}</> : link.label}
               </button>
             ))}
           </nav>
@@ -208,7 +209,7 @@ const Header = () => {
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
                     >
                       <Settings size={16} />
-                      {t('header.profileSettings')}
+                      {t('profileSettings')}
                     </button>
 
                     {/* Account */}
@@ -217,7 +218,7 @@ const Header = () => {
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
                     >
                       <UserCheck size={16} />
-                      {t('header.account')}
+                      {t('account')}
                     </button>
 
                     {/* Help Center */}
@@ -226,7 +227,7 @@ const Header = () => {
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
                     >
                       <HelpCircle size={16} />
-                      {t('header.helpCenter')}
+                      {t('helpCenter')}
                     </button>
 
                     <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
@@ -237,7 +238,7 @@ const Header = () => {
                       className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center gap-2 transition-colors"
                     >
                       <LogOut size={16} />
-                      {t('header.logout')}
+                      {t('logout')}
                     </button>
                   </div>
                 )}
@@ -249,13 +250,13 @@ const Header = () => {
                   to="/login"
                   className="hidden sm:inline-block px-4 py-2 rounded-lg text-sm font-semibold border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors"
                 >
-                  {t('header.login')}
+                  {t('login')}
                 </Link>
                 <Link
                   to="/register"
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg transition-shadow"
                 >
-                  {t('header.register')}
+                  {t('register')}
                 </Link>
               </>
             )}
@@ -279,7 +280,7 @@ const Header = () => {
                 onClick={() => handleNavigation(link.href)}
                 className="w-full text-left px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                {link.label}
+                {link.href === '/' ? <>{'\u00A0'}{link.label}</> : link.label}
               </button>
             ))}
           </nav>

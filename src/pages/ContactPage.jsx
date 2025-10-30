@@ -6,24 +6,24 @@ import Footer from "../components/Headers/Footer";
 import { homeThemeColors } from "../config/theme-colors-home";
 
 const ContactPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('contact');
   const discordLink = "https://discord.gg/mHcdMn6yMh";
 
   const contactOptions = [
     {
       icon: Mail,
-      title: t('contact.email.title'),
-      description: t('contact.email.description'),
+      title: t('email.title'),
+      description: t('email.description'),
       link: "mailto:info@swipescout.xyz",
       linkText: "info@swipescout.xyz",
       buttonClass: `bg-gradient-to-r ${homeThemeColors.gradients.button} hover:${homeThemeColors.gradients.buttonHover} text-white`,
     },
     {
       icon: MessageSquare,
-      title: t('contact.discord.title'),
-      description: t('contact.discord.description'),
+      title: t('discord.title'),
+      description: t('discord.description'),
       link: discordLink,
-      linkText: t('contact.discord.button'),
+      linkText: t('discord.button'),
       buttonClass: `bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white`,
     },
   ];
@@ -36,10 +36,10 @@ const ContactPage = () => {
           {/* Header Section */}
           <div className="text-center mb-12">
             <h1 className={`text-4xl sm:text-5xl font-extrabold mb-4 ${homeThemeColors.text.gradient}`}>
-              {t('contact.title')}
+              {t('title')}
             </h1>
             <p className={`text-lg ${homeThemeColors.text.secondary} max-w-2xl mx-auto`}>
-              {t('contact.description')}
+              {t('description')}
             </p>
           </div>
 

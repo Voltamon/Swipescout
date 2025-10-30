@@ -25,7 +25,7 @@ const ListItem = ({ children }) => (
 );
 
 const TermsOfService = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('legal');
 
   const handleDownloadPDF = () => {
     window.open('/legal/terms-of-service.pdf', '_blank');
@@ -183,7 +183,7 @@ const TermsOfService = () => {
             className={`inline-flex items-center mb-4 ${homeThemeColors.text.secondary} hover:text-blue-500 transition-colors`}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('legal.backToHome')}
+            {t('backToHome')}
           </Link>
           <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
             <h1 className={`text-4xl sm:text-5xl font-extrabold ${homeThemeColors.text.gradient}`}>

@@ -48,7 +48,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function PricingPage() {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t } = useTranslation('pricing');
   const { toast } = useToast();
   const [tabValue, setTabValue] = useState('job-seekers');
   const [isAnnual, setIsAnnual] = useState(false);
@@ -62,63 +62,63 @@ export default function PricingPage() {
     {
       id: 'basic',
       type: 'BASIC',
-      title: t('pricing.jobSeekerPlans.basic.title'),
-      price: t('pricing.jobSeekerPlans.basic.price'),
+      title: t('jobSeekerPlans.basic.title'),
+      price: t('jobSeekerPlans.basic.price'),
       monthlyPrice: 0,
       annualPrice: 0,
-      description: t('pricing.jobSeekerPlans.basic.description'),
+      description: t('jobSeekerPlans.basic.description'),
       features: [
-        t('pricing.jobSeekerPlans.basic.features.0'),
-        t('pricing.jobSeekerPlans.basic.features.1'),
-        t('pricing.jobSeekerPlans.basic.features.2'),
-        t('pricing.jobSeekerPlans.basic.features.3'),
-        t('pricing.jobSeekerPlans.basic.features.4')
+        t('jobSeekerPlans.basic.features.0'),
+        t('jobSeekerPlans.basic.features.1'),
+        t('jobSeekerPlans.basic.features.2'),
+        t('jobSeekerPlans.basic.features.3'),
+        t('jobSeekerPlans.basic.features.4')
       ],
-      buttonText: t('pricing.jobSeekerPlans.basic.buttonText'),
+      buttonText: t('jobSeekerPlans.basic.buttonText'),
       mostPopular: false
     },
     {
       id: 'professional',
       type: 'PROFESSIONAL',
-      title: t('pricing.jobSeekerPlans.professional.title'),
-      price: t('pricing.jobSeekerPlans.professional.price'),
+      title: t('jobSeekerPlans.professional.title'),
+      price: t('jobSeekerPlans.professional.price'),
       monthlyPrice: 9.99,
       annualPrice: 99.99,
       period: '/month',
-      description: t('pricing.jobSeekerPlans.professional.description'),
+      description: t('jobSeekerPlans.professional.description'),
       features: [
-        t('pricing.jobSeekerPlans.professional.features.0'),
-        t('pricing.jobSeekerPlans.professional.features.1'),
-        t('pricing.jobSeekerPlans.professional.features.2'),
-        t('pricing.jobSeekerPlans.professional.features.3'),
-        t('pricing.jobSeekerPlans.professional.features.4'),
-        t('pricing.jobSeekerPlans.professional.features.5'),
-        t('pricing.jobSeekerPlans.professional.features.6')
+        t('jobSeekerPlans.professional.features.0'),
+        t('jobSeekerPlans.professional.features.1'),
+        t('jobSeekerPlans.professional.features.2'),
+        t('jobSeekerPlans.professional.features.3'),
+        t('jobSeekerPlans.professional.features.4'),
+        t('jobSeekerPlans.professional.features.5'),
+        t('jobSeekerPlans.professional.features.6')
       ],
-      buttonText: t('pricing.jobSeekerPlans.professional.buttonText'),
+      buttonText: t('jobSeekerPlans.professional.buttonText'),
       highlight: true,
       mostPopular: true
     },
     {
       id: 'premium',
       type: 'PREMIUM',
-      title: t('pricing.jobSeekerPlans.premium.title'),
-      price: t('pricing.jobSeekerPlans.premium.price'),
+      title: t('jobSeekerPlans.premium.title'),
+      price: t('jobSeekerPlans.premium.price'),
       monthlyPrice: 19.99,
       annualPrice: 199.99,
       period: '/month',
-      description: t('pricing.jobSeekerPlans.premium.description'),
+      description: t('jobSeekerPlans.premium.description'),
       features: [
-        t('pricing.jobSeekerPlans.premium.features.0'),
-        t('pricing.jobSeekerPlans.premium.features.1'),
-        t('pricing.jobSeekerPlans.premium.features.2'),
-        t('pricing.jobSeekerPlans.premium.features.3'),
-        t('pricing.jobSeekerPlans.premium.features.4'),
-        t('pricing.jobSeekerPlans.premium.features.5'),
-        t('pricing.jobSeekerPlans.premium.features.6'),
-        t('pricing.jobSeekerPlans.premium.features.7')
+        t('jobSeekerPlans.premium.features.0'),
+        t('jobSeekerPlans.premium.features.1'),
+        t('jobSeekerPlans.premium.features.2'),
+        t('jobSeekerPlans.premium.features.3'),
+        t('jobSeekerPlans.premium.features.4'),
+        t('jobSeekerPlans.premium.features.5'),
+        t('jobSeekerPlans.premium.features.6'),
+        t('jobSeekerPlans.premium.features.7')
       ],
-      buttonText: t('pricing.jobSeekerPlans.premium.buttonText'),
+      buttonText: t('jobSeekerPlans.premium.buttonText'),
       mostPopular: false
     }
   ];
@@ -128,67 +128,67 @@ export default function PricingPage() {
     {
       id: 'starter',
       type: 'STARTER',
-      title: t('pricing.employerPlans.starter.title'),
-      price: t('pricing.employerPlans.starter.price'),
+      title: t('employerPlans.starter.title'),
+      price: t('employerPlans.starter.price'),
       monthlyPrice: 29.99,
       annualPrice: 299.99,
       period: '/month',
-      description: t('pricing.employerPlans.starter.description'),
+      description: t('employerPlans.starter.description'),
       features: [
-        t('pricing.employerPlans.starter.features.0'),
-        t('pricing.employerPlans.starter.features.1'),
-        t('pricing.employerPlans.starter.features.2'),
-        t('pricing.employerPlans.starter.features.3'),
-        t('pricing.employerPlans.starter.features.4'),
-        t('pricing.employerPlans.starter.features.5')
+        t('employerPlans.starter.features.0'),
+        t('employerPlans.starter.features.1'),
+        t('employerPlans.starter.features.2'),
+        t('employerPlans.starter.features.3'),
+        t('employerPlans.starter.features.4'),
+        t('employerPlans.starter.features.5')
       ],
-      buttonText: t('pricing.employerPlans.starter.buttonText'),
+      buttonText: t('employerPlans.starter.buttonText'),
       mostPopular: false
     },
     {
       id: 'business',
       type: 'BUSINESS',
-      title: t('pricing.employerPlans.business.title'),
-      price: t('pricing.employerPlans.business.price'),
+      title: t('employerPlans.business.title'),
+      price: t('employerPlans.business.price'),
       monthlyPrice: 79.99,
       annualPrice: 799.99,
       period: '/month',
-      description: t('pricing.employerPlans.business.description'),
+      description: t('employerPlans.business.description'),
       features: [
-        t('pricing.employerPlans.business.features.0'),
-        t('pricing.employerPlans.business.features.1'),
-        t('pricing.employerPlans.business.features.2'),
-        t('pricing.employerPlans.business.features.3'),
-        t('pricing.employerPlans.business.features.4'),
-        t('pricing.employerPlans.business.features.5'),
-        t('pricing.employerPlans.business.features.6'),
-        t('pricing.employerPlans.business.features.7')
+        t('employerPlans.business.features.0'),
+        t('employerPlans.business.features.1'),
+        t('employerPlans.business.features.2'),
+        t('employerPlans.business.features.3'),
+        t('employerPlans.business.features.4'),
+        t('employerPlans.business.features.5'),
+        t('employerPlans.business.features.6'),
+        t('employerPlans.business.features.7')
       ],
-      buttonText: t('pricing.employerPlans.business.buttonText'),
+      buttonText: t('employerPlans.business.buttonText'),
       highlight: true,
       mostPopular: true
     },
     {
       id: 'enterprise',
       type: 'ENTERPRISE',
-      title: t('pricing.employerPlans.enterprise.title'),
-      price: t('pricing.employerPlans.enterprise.price'),
+      title: t('employerPlans.enterprise.title'),
+      price: t('employerPlans.enterprise.price'),
       monthlyPrice: 199.99,
       annualPrice: 1999.99,
       period: '/month',
-      description: t('pricing.employerPlans.enterprise.description'),
+      description: t('employerPlans.enterprise.description'),
       features: [
-        t('pricing.employerPlans.enterprise.features.0'),
-        t('pricing.employerPlans.enterprise.features.1'),
-        t('pricing.employerPlans.enterprise.features.2'),
-        t('pricing.employerPlans.enterprise.features.3'),
-        t('pricing.employerPlans.enterprise.features.4'),
-        t('pricing.employerPlans.enterprise.features.5'),
-        t('pricing.employerPlans.enterprise.features.6'),
-        t('pricing.employerPlans.enterprise.features.7'),
-        t('pricing.employerPlans.enterprise.features.8')
+        t('employerPlans.enterprise.features.0'),
+        t('employerPlans.enterprise.features.1'),
+        t('employerPlans.enterprise.features.2'),
+        t('employerPlans.enterprise.features.3'),
+        t('employerPlans.enterprise.features.4'),
+        t('employerPlans.enterprise.features.5'),
+        t('employerPlans.enterprise.features.6'),
+        t('employerPlans.enterprise.features.7'),
+        t('employerPlans.enterprise.features.8')
       ],
-      buttonText: t('pricing.employerPlans.enterprise.buttonText'),
+      buttonText: t('employerPlans.enterprise.buttonText'),
       mostPopular: false
     }
   ];
@@ -198,61 +198,61 @@ export default function PricingPage() {
     {
       id: 'career-coaching',
       type: 'CAREER_COACHING',
-      title: t('pricing.jobSeekerServices.careerCoaching.title'),
-      price: t('pricing.jobSeekerServices.careerCoaching.price'),
-      description: t('pricing.jobSeekerServices.careerCoaching.description'),
+      title: t('jobSeekerServices.careerCoaching.title'),
+      price: t('jobSeekerServices.careerCoaching.price'),
+      description: t('jobSeekerServices.careerCoaching.description'),
       icon: <Briefcase className="h-10 w-10 text-green-600" />,
-      duration: t('pricing.jobSeekerServices.careerCoaching.duration'),
+      duration: t('jobSeekerServices.careerCoaching.duration'),
       features: [
-        t('pricing.jobSeekerServices.careerCoaching.features.0'),
-        t('pricing.jobSeekerServices.careerCoaching.features.1'),
-        t('pricing.jobSeekerServices.careerCoaching.features.2'),
-        t('pricing.jobSeekerServices.careerCoaching.features.3')
+        t('jobSeekerServices.careerCoaching.features.0'),
+        t('jobSeekerServices.careerCoaching.features.1'),
+        t('jobSeekerServices.careerCoaching.features.2'),
+        t('jobSeekerServices.careerCoaching.features.3')
       ]
     },
     {
       id: 'resume-review',
       type: 'RESUME_REVIEW',
-      title: t('pricing.jobSeekerServices.resumeReview.title'),
-      price: t('pricing.jobSeekerServices.resumeReview.price'),
-      description: t('pricing.jobSeekerServices.resumeReview.description'),
+      title: t('jobSeekerServices.resumeReview.title'),
+      price: t('jobSeekerServices.resumeReview.price'),
+      description: t('jobSeekerServices.resumeReview.description'),
       icon: <Star className="h-10 w-10 text-orange-600" />,
-      duration: t('pricing.jobSeekerServices.resumeReview.duration'),
+      duration: t('jobSeekerServices.resumeReview.duration'),
       features: [
-        t('pricing.jobSeekerServices.resumeReview.features.0'),
-        t('pricing.jobSeekerServices.resumeReview.features.1'),
-        t('pricing.jobSeekerServices.resumeReview.features.2'),
-        t('pricing.jobSeekerServices.resumeReview.features.3')
+        t('jobSeekerServices.resumeReview.features.0'),
+        t('jobSeekerServices.resumeReview.features.1'),
+        t('jobSeekerServices.resumeReview.features.2'),
+        t('jobSeekerServices.resumeReview.features.3')
       ]
     },
     {
       id: 'interview-prep',
       type: 'INTERVIEW_PREP',
-      title: t('pricing.jobSeekerServices.interviewPrep.title'),
-      price: t('pricing.jobSeekerServices.interviewPrep.price'),
-      description: t('pricing.jobSeekerServices.interviewPrep.description'),
+      title: t('jobSeekerServices.interviewPrep.title'),
+      price: t('jobSeekerServices.interviewPrep.price'),
+      description: t('jobSeekerServices.interviewPrep.description'),
       icon: <Sparkles className="h-10 w-10 text-blue-600" />,
-      duration: t('pricing.jobSeekerServices.interviewPrep.duration'),
+      duration: t('jobSeekerServices.interviewPrep.duration'),
       features: [
-        t('pricing.jobSeekerServices.interviewPrep.features.0'),
-        t('pricing.jobSeekerServices.interviewPrep.features.1'),
-        t('pricing.jobSeekerServices.interviewPrep.features.2'),
-        t('pricing.jobSeekerServices.interviewPrep.features.3')
+        t('jobSeekerServices.interviewPrep.features.0'),
+        t('jobSeekerServices.interviewPrep.features.1'),
+        t('jobSeekerServices.interviewPrep.features.2'),
+        t('jobSeekerServices.interviewPrep.features.3')
       ]
     },
     {
       id: 'linkedin-optimization',
       type: 'LINKEDIN_OPTIMIZATION',
-      title: t('pricing.jobSeekerServices.linkedinOptimization.title'),
-      price: t('pricing.jobSeekerServices.linkedinOptimization.price'),
-      description: t('pricing.jobSeekerServices.linkedinOptimization.description'),
+      title: t('jobSeekerServices.linkedinOptimization.title'),
+      price: t('jobSeekerServices.linkedinOptimization.price'),
+      description: t('jobSeekerServices.linkedinOptimization.description'),
       icon: <TrendingUp className="h-10 w-10 text-blue-700" />,
-      duration: t('pricing.jobSeekerServices.linkedinOptimization.duration'),
+      duration: t('jobSeekerServices.linkedinOptimization.duration'),
       features: [
-        t('pricing.jobSeekerServices.linkedinOptimization.features.0'),
-        t('pricing.jobSeekerServices.linkedinOptimization.features.1'),
-        t('pricing.jobSeekerServices.linkedinOptimization.features.2'),
-        t('pricing.jobSeekerServices.linkedinOptimization.features.3')
+        t('jobSeekerServices.linkedinOptimization.features.0'),
+        t('jobSeekerServices.linkedinOptimization.features.1'),
+        t('jobSeekerServices.linkedinOptimization.features.2'),
+        t('jobSeekerServices.linkedinOptimization.features.3')
       ]
     }
   ];
@@ -262,46 +262,46 @@ export default function PricingPage() {
     {
       id: 'recruitment-consulting',
       type: 'RECRUITMENT_CONSULTING',
-      title: t('pricing.employerServices.recruitmentConsulting.title'),
-      price: t('pricing.employerServices.recruitmentConsulting.price'),
-      description: t('pricing.employerServices.recruitmentConsulting.description'),
+      title: t('employerServices.recruitmentConsulting.title'),
+      price: t('employerServices.recruitmentConsulting.price'),
+      description: t('employerServices.recruitmentConsulting.description'),
       icon: <Users className="h-10 w-10 text-green-600" />,
-      duration: t('pricing.employerServices.recruitmentConsulting.duration'),
+      duration: t('employerServices.recruitmentConsulting.duration'),
       features: [
-        t('pricing.employerServices.recruitmentConsulting.features.0'),
-        t('pricing.employerServices.recruitmentConsulting.features.1'),
-        t('pricing.employerServices.recruitmentConsulting.features.2'),
-        t('pricing.employerServices.recruitmentConsulting.features.3')
+        t('employerServices.recruitmentConsulting.features.0'),
+        t('employerServices.recruitmentConsulting.features.1'),
+        t('employerServices.recruitmentConsulting.features.2'),
+        t('employerServices.recruitmentConsulting.features.3')
       ]
     },
     {
       id: 'employer-branding',
       type: 'EMPLOYER_BRANDING',
-      title: t('pricing.employerServices.employerBranding.title'),
-      price: t('pricing.employerServices.employerBranding.price'),
-      description: t('pricing.employerServices.employerBranding.description'),
+      title: t('employerServices.employerBranding.title'),
+      price: t('employerServices.employerBranding.price'),
+      description: t('employerServices.employerBranding.description'),
       icon: <Building className="h-10 w-10 text-orange-600" />,
-      duration: t('pricing.employerServices.employerBranding.duration'),
+      duration: t('employerServices.employerBranding.duration'),
       features: [
-        t('pricing.employerServices.employerBranding.features.0'),
-        t('pricing.employerServices.employerBranding.features.1'),
-        t('pricing.employerServices.employerBranding.features.2'),
-        t('pricing.employerServices.employerBranding.features.3')
+        t('employerServices.employerBranding.features.0'),
+        t('employerServices.employerBranding.features.1'),
+        t('employerServices.employerBranding.features.2'),
+        t('employerServices.employerBranding.features.3')
       ]
     },
     {
       id: 'team-training',
       type: 'TEAM_TRAINING',
-      title: t('pricing.employerServices.teamTraining.title'),
-      price: t('pricing.employerServices.teamTraining.price'),
-      description: t('pricing.employerServices.teamTraining.description'),
+      title: t('employerServices.teamTraining.title'),
+      price: t('employerServices.teamTraining.price'),
+      description: t('employerServices.teamTraining.description'),
       icon: <GraduationCap className="h-10 w-10 text-blue-600" />,
-      duration: t('pricing.employerServices.teamTraining.duration'),
+      duration: t('employerServices.teamTraining.duration'),
       features: [
-        t('pricing.employerServices.teamTraining.features.0'),
-        t('pricing.employerServices.teamTraining.features.1'),
-        t('pricing.employerServices.teamTraining.features.2'),
-        t('pricing.employerServices.teamTraining.features.3')
+        t('employerServices.teamTraining.features.0'),
+        t('employerServices.teamTraining.features.1'),
+        t('employerServices.teamTraining.features.2'),
+        t('employerServices.teamTraining.features.3')
       ]
     }
   ];
@@ -401,7 +401,7 @@ export default function PricingPage() {
         >
           {plan.mostPopular && (
             <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-cyan-600">
-              {t('pricing.mostPopular')}
+              {t('mostPopular')}
             </Badge>
           )}
 
@@ -509,10 +509,10 @@ export default function PricingPage() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-            {t('pricing.title') || 'Choose Your Plan'}
+            {t('title') || 'Choose Your Plan'}
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {t('pricing.subtitle') || 'Find the perfect plan for your needs'}
+            {t('subtitle') || 'Find the perfect plan for your needs'}
           </p>
         </div>
 
@@ -534,25 +534,25 @@ export default function PricingPage() {
         {/* Tabs */}
         <Tabs value={tabValue} onValueChange={setTabValue} className="max-w-7xl mx-auto">
           <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto mb-8">
-            <TabsTrigger value="job-seekers">{t('pricing.forJobSeekers') || 'For Job Seekers'}</TabsTrigger>
-            <TabsTrigger value="employers">{t('pricing.forEmployers') || 'For Employers'}</TabsTrigger>
+            <TabsTrigger value="job-seekers">{t('forJobSeekers') || 'For Job Seekers'}</TabsTrigger>
+            <TabsTrigger value="employers">{t('forEmployers') || 'For Employers'}</TabsTrigger>
           </TabsList>
 
           {/* Job Seekers Tab */}
           <TabsContent value="job-seekers" className="space-y-12">
             <div>
               <h2 className="text-3xl font-bold text-center mb-8">
-                {t('pricing.subscriptionPlans') || 'Subscription Plans'}
+                {t('subscriptionPlans') || 'Subscription Plans'}
               </h2>
               {renderPricingCards(jobSeekerPlans)}
             </div>
 
             <div className="border-t-4 border-purple-200 pt-12">
               <h2 className="text-3xl font-bold text-center mb-4">
-                {t('pricing.professionalServices') || 'Professional Services'}
+                {t('professionalServices') || 'Professional Services'}
               </h2>
               <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-                {t('pricing.professionalServicesDesc') || 'Enhance your job search with our expert services'}
+                {t('professionalServicesDesc') || 'Enhance your job search with our expert services'}
               </p>
               {renderServiceCards(jobSeekerServices)}
             </div>
@@ -562,17 +562,17 @@ export default function PricingPage() {
           <TabsContent value="employers" className="space-y-12">
             <div>
               <h2 className="text-3xl font-bold text-center mb-8">
-                {t('pricing.subscriptionPlans') || 'Subscription Plans'}
+                {t('subscriptionPlans') || 'Subscription Plans'}
               </h2>
               {renderPricingCards(employerPlans)}
             </div>
 
             <div className="border-t-4 border-purple-200 pt-12">
               <h2 className="text-3xl font-bold text-center mb-4">
-                {t('pricing.professionalServices') || 'Professional Services'}
+                {t('professionalServices') || 'Professional Services'}
               </h2>
               <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-                {t('pricing.professionalServicesDesc') || 'Expert solutions for your recruitment needs'}
+                {t('professionalServicesDesc') || 'Expert solutions for your recruitment needs'}
               </p>
               {renderServiceCards(employerServices)}
             </div>
@@ -584,10 +584,10 @@ export default function PricingPage() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle className="bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                {t('pricing.confirmSubscription') || 'Confirm Subscription'}
+                {t('confirmSubscription') || 'Confirm Subscription'}
               </DialogTitle>
               <DialogDescription>
-                {t('pricing.confirmSubscriptionDesc') || 'Complete your subscription to get started'}
+                {t('confirmSubscriptionDesc') || 'Complete your subscription to get started'}
               </DialogDescription>
             </DialogHeader>
 

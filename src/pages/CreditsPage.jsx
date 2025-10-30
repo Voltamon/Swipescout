@@ -5,7 +5,7 @@ import Footer from '../components/Headers/Footer';
 import { homeThemeColors } from '../config/theme-colors-home';
 
 const CreditsPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('credits');
 
   return (
     <>
@@ -14,28 +14,28 @@ const CreditsPage = () => {
         <main className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h1 className={`text-4xl font-bold ${homeThemeColors.titleText} mb-8 text-center`}>
-              {t('credits.title', 'Credits')}
+              {t('title', 'Credits')}
             </h1>
             <div className={`p-8 rounded-lg shadow-lg ${homeThemeColors.cardBackground}`}>
               <h2 className={`text-2xl font-semibold ${homeThemeColors.titleText} mb-4`}>
-                {t('credits.acknowledgements', 'Acknowledgements')}
+                {t('acknowledgements', 'Acknowledgements')}
               </h2>
               <p className="mb-4">
-                {t('credits.intro', 'This project was made possible by the hard work of many individuals and the use of fantastic open-source software. We would like to extend our gratitude to the following:')}
+                {t('intro', 'This project was made possible by the hard work of many individuals and the use of fantastic open-source software. We would like to extend our gratitude to the following:')}
               </p>
               
               <h3 className={`text-xl font-semibold ${homeThemeColors.titleText} mt-6 mb-3`}>
-                {t('credits.development_team', 'Development Team')}
+                {t('development_team', 'Development Team')}
               </h3>
               <ul className="list-disc list-inside space-y-2">
-                <li>{t('credits.lead_developer', 'Lead Developer - [Your Name/Team Name]')}</li>
-                <li>{t('credits.frontend_developers', 'Frontend Developers')}</li>
-                <li>{t('credits.backend_developers', 'Backend Developers')}</li>
-                <li>{t('credits.ui_ux_designers', 'UI/UX Designers')}</li>
+                <li>{t('lead_developer', 'Lead Developer - [Your Name/Team Name]')}</li>
+                <li>{t('frontend_developers', 'Frontend Developers')}</li>
+                <li>{t('backend_developers', 'Backend Developers')}</li>
+                <li>{t('ui_ux_designers', 'UI/UX Designers')}</li>
               </ul>
 
               <h3 className={`text-xl font-semibold ${homeThemeColors.titleText} mt-6 mb-3`}>
-                {t('credits.open_source', 'Open Source Libraries & Frameworks')}
+                {t('open_source', 'Open Source Libraries & Frameworks')}
               </h3>
               <ul className="list-disc list-inside space-y-2">
                 <li>React</li>
@@ -49,10 +49,10 @@ const CreditsPage = () => {
               </ul>
 
               <h3 className={`text-xl font-semibold ${homeThemeColors.titleText} mt-6 mb-3`}>
-                {t('credits.special_thanks', 'Special Thanks')}
+                {t('special_thanks', 'Special Thanks')}
               </h3>
               <p>
-                {t('credits.thanks_message', 'A special thank you to the open-source community for creating and maintaining the tools that power modern web development. Your contributions are invaluable.')}
+                {t('thanks_message', 'A special thank you to the open-source community for creating and maintaining the tools that power modern web development. Your contributions are invaluable.')}
               </p>
             </div>
           </div>

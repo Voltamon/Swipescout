@@ -19,21 +19,21 @@ const languages = [
     code: 'en',
     name: 'English',
     nativeName: 'English',
-    flag: 'ًں‡؛ًں‡¸',
+    flag: '🇺🇸',
     dir: 'ltr'
   },
   {
     code: 'ar',
     name: 'Arabic',
-    nativeName: 'ط§ظ„ط¹ط±ط¨ظٹط©',
-    flag: 'ًں‡¸ًں‡¦',
+    nativeName: 'العربية',
+    flag: '🇸🇦',
     dir: 'rtl'
   },
   {
     code: 'zh',
     name: 'Chinese',
-    nativeName: 'ن¸­و–‡',
-    flag: 'ًں‡¨ًں‡³',
+    nativeName: '中文',
+    flag: '🇨🇳',
     dir: 'ltr'
   }
 ];

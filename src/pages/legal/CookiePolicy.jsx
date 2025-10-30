@@ -25,7 +25,7 @@ const ListItem = ({ children }) => (
 );
 
 const CookiePolicy = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('legal');
 
   const handleDownloadPDF = () => {
     window.open('/legal/cookie-policy.pdf', '_blank');

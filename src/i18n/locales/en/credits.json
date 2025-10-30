@@ -1,0 +1,13 @@
+{
+  "title": "Credits",
+  "acknowledgements": "Acknowledgements",
+  "intro": "This project was made possible by the hard work of many individuals and the use of fantastic open-source software. We would like to extend our gratitude to the following:",
+  "development_team": "Development Team",
+  "lead_developer": "Lead Developer - Tareq Alsharif & Obaid Nieroukh",
+  "frontend_developers": "Frontend Developers",
+  "backend_developers": "Backend Developers",
+  "ui_ux_designers": "UI/UX Designers",
+  "open_source": "Open Source Libraries & Frameworks",
+  "special_thanks": "Special Thanks",
+  "thanks_message": "A special thank you to the open-source community for creating and maintaining the tools that power modern web development. Your contributions are invaluable."
+}

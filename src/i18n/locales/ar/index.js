@@ -7,6 +7,7 @@ import analysis from "./analysis.json";
 import auth from "./auth.json";
 import common from "./common.json";
 import contact from "./contact.json";
+import credits from "./credits.json";
 import employer from "./employer.json";
 import employerTabs from "./employerTabs.json";
 import errors from "./errors.json";
@@ -43,6 +44,7 @@ export default {
   auth,
   common,
   contact,
+  credits,
   employer,
   employerTabs,
   errors,

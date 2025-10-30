@@ -407,7 +407,7 @@ const Home = () => {
   
 
    return (
-    <div className="home-wrapper">
+    <div className="home-wrapper" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       {/* SwipeScout Header */}
       <div className="home-header">
         <div className="home-logo-container">
