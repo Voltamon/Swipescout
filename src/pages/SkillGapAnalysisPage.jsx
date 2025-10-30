@@ -47,6 +47,7 @@ const SkillGapAnalysisPage = () => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
+      case 'Critical': return 'bg-red-600 text-white';
       case 'High': return 'bg-red-100 text-red-800';
       case 'Medium': return 'bg-yellow-100 text-yellow-800';
       case 'Low': return 'bg-green-100 text-green-800';
@@ -105,11 +106,33 @@ const SkillGapAnalysisPage = () => {
         {analysis && (
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-              Analysis for: <span className="text-purple-700">{jobs.find(j => j.id === parseInt(selectedJob))?.title}</span>
+              Analysis for: <span className="text-purple-700">{analysis.job?.title || jobs.find(j => j.id === parseInt(selectedJob))?.title}</span>
             </h2>
             
+            {/* Summary Section */}
+            {analysis.summary && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-blue-50 p-4 rounded-lg text-center">
+                  <p className="text-sm text-gray-600">Total Gaps</p>
+                  <p className="text-2xl font-bold text-blue-600">{analysis.summary.total_gaps}</p>
+                </div>
+                <div className="bg-red-50 p-4 rounded-lg text-center">
+                  <p className="text-sm text-gray-600">Critical</p>
+                  <p className="text-2xl font-bold text-red-600">{analysis.summary.critical_gaps}</p>
+                </div>
+                <div className="bg-green-50 p-4 rounded-lg text-center">
+                  <p className="text-sm text-gray-600">Readiness</p>
+                  <p className="text-2xl font-bold text-green-600">{analysis.summary.readiness_score}%</p>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg text-center">
+                  <p className="text-sm text-gray-600">Est. Time</p>
+                  <p className="text-2xl font-bold text-purple-600">{analysis.summary.total_estimated_time}h</p>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-6">
-              {analysis.map(gap => (
+              {(analysis.gaps || []).map(gap => (
                 <div key={gap.skill.id} className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
                     <h3 className="font-bold text-xl text-gray-800">{gap.skill.name}</h3>

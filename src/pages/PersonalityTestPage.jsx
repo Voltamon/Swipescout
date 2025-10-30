@@ -162,13 +162,29 @@ const PersonalityTestPage = () => {
                 <h2 className="text-2xl font-semibold mb-4 text-gray-700">Recommended Career Paths</h2>
                 <div className="space-y-4">
                     {compatibleJobs.map(jobMatch => (
-                        <div key={jobMatch.job.id} className="border p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div key={jobMatch.jobCategory?.id} className="border p-4 rounded-lg hover:bg-gray-50 transition-colors">
                             <h3 className="font-bold text-lg text-gray-800 flex items-center">
                                 <Briefcase className="mr-2 text-blue-500"/>
-                                {jobMatch.job.title}
+                                {jobMatch.jobCategory?.name}
                             </h3>
-                            <p className="text-sm text-gray-500 mb-2">Compatibility Score: {jobMatch.compatibility_score}%</p>
-                            <p className="text-gray-600">{jobMatch.detailed_analysis}</p>
+                            <p className="text-sm text-gray-500 mb-2">Compatibility Score: {jobMatch.compatibilityScore}%</p>
+                            <p className="text-gray-600 mb-3">{jobMatch.compatibilityReason}</p>
+                            
+                            {/* Matching Factors */}
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3 text-xs">
+                              <div className="bg-blue-50 p-2 rounded">
+                                <p className="text-gray-600">Work Style</p>
+                                <p className="font-semibold text-blue-700">{jobMatch.matchingFactors?.workStyleMatch}%</p>
+                              </div>
+                              <div className="bg-green-50 p-2 rounded">
+                                <p className="text-gray-600">Skills</p>
+                                <p className="font-semibold text-green-700">{jobMatch.matchingFactors?.skillsAlignment}%</p>
+                              </div>
+                              <div className="bg-purple-50 p-2 rounded">
+                                <p className="text-gray-600">Interests</p>
+                                <p className="font-semibold text-purple-700">{jobMatch.matchingFactors?.interestsAlignment}%</p>
+                              </div>
+                            </div>
                         </div>
                     ))}
                 </div>
