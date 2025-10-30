@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 import { useTheme } from '../hooks/ThemeContext';
 
 const Header = () => {
@@ -20,7 +20,7 @@ const Header = () => {
         </nav>
         <div className="header-actions">
           <button onClick={toggleTheme} className="theme-toggle">
-            {theme === 'light' ? '🌙' : '☀️'}
+            {theme === 'light' ? 'ًںŒ™' : 'âک€ï¸ڈ'}
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import './cookie.css';
 
 const CookiePolicy = ({ isOpen, onClose }) => {
@@ -41,10 +41,10 @@ const CookiePolicy = ({ isOpen, onClose }) => {
             <h3>2. How We Use Cookies</h3>
             <p>SwipeScout uses cookies and similar tools to:</p>
             <ul>
-              <li><strong>Essential cookies</strong> – keep you logged in, enable swipe and video functions.</li>
-              <li><strong>Performance cookies</strong> – understand how users interact with the app (analytics, crash reports).</li>
-              <li><strong>Functionality cookies</strong> – remember preferences and settings.</li>
-              <li><strong>Advertising cookies (future use)</strong> – show relevant jobs or promotions (only if you consent).</li>
+              <li><strong>Essential cookies</strong> â€“ keep you logged in, enable swipe and video functions.</li>
+              <li><strong>Performance cookies</strong> â€“ understand how users interact with the app (analytics, crash reports).</li>
+              <li><strong>Functionality cookies</strong> â€“ remember preferences and settings.</li>
+              <li><strong>Advertising cookies (future use)</strong> â€“ show relevant jobs or promotions (only if you consent).</li>
             </ul>
           </section>
 

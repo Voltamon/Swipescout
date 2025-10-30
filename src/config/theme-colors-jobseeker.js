@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Centralized Theme Colors Configuration - JOBSEEKER DASHBOARD
  * 
  * Change colors here and they will be applied across all jobseeker pages.

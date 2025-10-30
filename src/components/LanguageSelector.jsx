@@ -1,4 +1,4 @@
-import React, { useContext, useState  } from 'react';
+﻿import React, { useContext, useState  } from 'react';
 import {
   FormControl,
   Select,
@@ -19,21 +19,21 @@ const languages = [
     code: 'en',
     name: 'English',
     nativeName: 'English',
-    flag: '🇺🇸',
+    flag: 'ًں‡؛ًں‡¸',
     dir: 'ltr'
   },
   {
     code: 'ar',
     name: 'Arabic',
-    nativeName: 'العربية',
-    flag: '🇸🇦',
+    nativeName: 'ط§ظ„ط¹ط±ط¨ظٹط©',
+    flag: 'ًں‡¸ًں‡¦',
     dir: 'rtl'
   },
   {
     code: 'zh',
     name: 'Chinese',
-    nativeName: '中文',
-    flag: '🇨🇳',
+    nativeName: 'ن¸­و–‡',
+    flag: 'ًں‡¨ًں‡³',
     dir: 'ltr'
   }
 ];

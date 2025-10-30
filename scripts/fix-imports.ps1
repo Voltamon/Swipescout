@@ -58,13 +58,13 @@ foreach ($file in $files) {
         Write-Host "  Fixed utils imports in $($file.Name)" -ForegroundColor Green
     }
     
-    # Fix UI component imports to add .jsx extension
+    # Fix UI component imports to use uppercase UI and add .jsx extension
     if ($content -match 'from [''"]@\/components\/ui\/([^''"]+)[''"]') {
         $originalContent2 = $content
-        $content = $content -replace "from (['\`"])@/components/ui/([a-zA-Z0-9-]+)(['\`"])", "from `$1@/components/ui/`$2.jsx`$3"
+        $content = $content -replace "from (['\`"])@/components/UI/([a-zA-Z0-9-]+)(['\`"])", "from `$1@/components/UI/`$2.jsx`$3"
         if ($content -ne $originalContent2) {
             $changed = $true
-            Write-Host "  Added .jsx extensions to UI component imports in $($file.Name)" -ForegroundColor Green
+            Write-Host "  Fixed UI component imports to uppercase in $($file.Name)" -ForegroundColor Green
         }
     }
     

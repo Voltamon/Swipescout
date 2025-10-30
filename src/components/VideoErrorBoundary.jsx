@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 
 class VideoErrorBoundary extends React.Component {
   constructor(props) {

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+﻿import React, { useContext } from "react";
 
 const JobCard = ({ job }) => {
   return (
@@ -10,7 +10,7 @@ const JobCard = ({ job }) => {
         {job.company} - {job.location}
       </p>
       <p>
-        {job.salary} • Posted {job.posted}
+        {job.salary} â€¢ Posted {job.posted}
       </p>
       <button>Apply Now</button>
       <button>Save</button>

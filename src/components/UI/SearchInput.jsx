@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   TextField,
   InputAdornment,
@@ -22,7 +22,7 @@ const SearchInput = ({
   value = '',
   onChange,
   onSearch,
-  placeholder = 'البحث...',
+  placeholder = 'ط§ظ„ط¨ط­ط«...',
   suggestions = [],
   recentSearches = [],
   trendingSearches = [],
@@ -125,7 +125,7 @@ const SearchInput = ({
       </Typography>
       
       {option.type === 'trending' && (
-        <Chip label="رائج" size="small" color="warning" variant="outlined" />
+        <Chip label="ط±ط§ط¦ط¬" size="small" color="warning" variant="outlined" />
       )}
     </Box>
   );
@@ -158,7 +158,7 @@ const SearchInput = ({
           {showHistory && (recentSearches.length > 0 || trendingSearches.length > 0) && (
             <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                البحث الأخير والرائج
+                ط§ظ„ط¨ط­ط« ط§ظ„ط£ط®ظٹط± ظˆط§ظ„ط±ط§ط¦ط¬
               </Typography>
             </Box>
           )}

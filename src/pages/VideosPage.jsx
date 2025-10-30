@@ -2,9 +2,9 @@
 import { useVideoContext } from '@/contexts/VideoContext';
 import { useNavigate } from 'react-router-dom';
 import api, { deleteVideo } from '@/services/api';
-import { Card, CardContent } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
+import { Card, CardContent } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog.jsx';
+} from '@/components/UI/dialog.jsx';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +23,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog.jsx';
+} from '@/components/UI/alert-dialog.jsx';
 import {
   Video,
   Upload,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   AppBar, 
   Toolbar, 
@@ -358,7 +358,7 @@ const Footer = () => {
         </Box>
         
         <Typography variant="body2" color="textSecondary" align="center">
-          © 2023 Swipscout. All rights reserved.
+          آ© 2023 Swipscout. All rights reserved.
         </Typography>
       </Container>
     </footer>

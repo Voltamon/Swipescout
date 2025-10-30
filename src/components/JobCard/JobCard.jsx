@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 import { Card, Typography, Box, Chip } from '@mui/material';
 import { People, LocationOn } from '@mui/icons-material';
 import { useStyles } from './JobCard.styles';
@@ -55,7 +55,7 @@ const JobCard = ({ job }) => {
         href="#"
         className={classes.viewLink}
       >
-        View Details →
+        View Details â†’
       </Typography>
     </Card>
   );

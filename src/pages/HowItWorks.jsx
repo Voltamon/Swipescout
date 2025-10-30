@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Video, Users, TrendingUp } from 'lucide-react';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';

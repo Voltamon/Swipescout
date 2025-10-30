@@ -266,11 +266,11 @@ const HeavyComponent = lazy(() => import('./HeavyComponent'));
 | File | Purpose |
 |------|---------|
 | `src/pages/Videos.jsx` | Main component |
-| `src/components/ui/button.jsx` | Button component |
-| `src/components/ui/card.jsx` | Card component |
-| `src/components/ui/avatar.jsx` | Avatar component |
-| `src/components/ui/badge.jsx` | Badge component |
-| `src/components/ui/scroll-area.jsx` | Scroll area |
+| `src/components/UI/button.jsx` | Button component |
+| `src/components/UI/card.jsx` | Card component |
+| `src/components/UI/avatar.jsx` | Avatar component |
+| `src/components/UI/badge.jsx` | Badge component |
+| `src/components/UI/scroll-area.jsx` | Scroll area |
 | `src/lib/utils.js` | Utility functions (cn) |
 | `src/index.css` | Global styles |
 | `tailwind.config.js` | Tailwind config |

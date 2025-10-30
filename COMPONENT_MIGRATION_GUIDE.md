@@ -156,10 +156,10 @@ import { Settings, LogOut, LayoutDashboard } from 'lucide-react';
 
 ### Using shadcn/ui components (already in place)
 ```jsx
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/UI/button";
+import { Card, CardContent } from "@/components/UI/card";
+import { Input } from "@/components/UI/input";
+import { Label } from "@/components/UI/label";
 
 // These components combine shadcn/ui with Tailwind
 <Button className="bg-indigo-600 hover:bg-indigo-700">Click me</Button>

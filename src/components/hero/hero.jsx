@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   Box,
   Container,
@@ -112,7 +112,7 @@ const Hero = () => {
           <Grid item xs={12} md={6} className="hero-content-left">
             <Chip 
               className="hero-chip"
-              label="🚀 AI-Powered Recruitment Platform"
+              label="ًںڑ€ AI-Powered Recruitment Platform"
             />
             <Typography
               variant="h1"

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
+﻿import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, browserLocalPersistence, signOut, setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
@@ -549,8 +549,8 @@ return (
   zIndex: 1000
 }}>
   <h4>Auth Debug</h4>
-  <div>Access Token: {localStorage.getItem('accessToken') ? '✅' : '❌'}</div>
-  <div>Refresh Token: {localStorage.getItem('refreshToken') ? '✅' : '❌'}</div>
+  <div>Access Token: {localStorage.getItem('accessToken') ? 'âœ…' : 'â‌Œ'}</div>
+  <div>Refresh Token: {localStorage.getItem('refreshToken') ? 'âœ…' : 'â‌Œ'}</div>
   <div>Token Expiry: {localStorage.getItem('accessExpiresTime') ? 
     new Date(parseInt(localStorage.getItem('accessExpiresTime'))).toLocaleString() : 'None'}</div>
   <div>Time Now: {new Date().toLocaleString()}</div>

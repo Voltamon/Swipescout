@@ -1,4 +1,4 @@
-export class Like {
+﻿export class Like {
   constructor(data = {}) {
     this.id = data.id || null;
     this.userId = data.userId || null;

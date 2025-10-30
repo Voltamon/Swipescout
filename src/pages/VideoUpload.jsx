@@ -5,13 +5,13 @@ import { checkUploadStatus } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { v4 as uuidv4 } from 'uuid';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Label } from '@/components/ui/label.jsx';
-import { Textarea } from '@/components/ui/textarea.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Progress } from '@/components/ui/progress.jsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Textarea } from '@/components/UI/textarea.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Progress } from '@/components/UI/progress.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select.jsx';
+} from '@/components/UI/select.jsx';
 import {
   Video,
   Upload,

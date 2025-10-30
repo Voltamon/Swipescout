@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { analyzeUserPersonality, findCompatibleJobs } from '../services/analysisApi';
 import { BarChart, Briefcase, CheckCircle, Loader, User, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';

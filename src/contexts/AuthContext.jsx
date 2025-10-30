@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
+﻿import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, browserLocalPersistence, signOut, setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
@@ -578,7 +578,7 @@ export const AuthProvider = ({ children }) => {
 					}
 				}
 			} catch (err) {
-				// getRedirectResult throws when no redirect happened — ignore harmless errors
+				// getRedirectResult throws when no redirect happened â€” ignore harmless errors
 				if (err && err.code !== 'auth/no-auth-event') {
 					console.error('Error processing redirect result', err);
 				}
@@ -698,7 +698,7 @@ export const AuthProvider = ({ children }) => {
 						}
 					}
 				} else if (data.type === 'LINKEDIN_AUTH_SUCCESS') {
-					// LinkedIn handler used elsewhere — no-op here since Linkedincallback posts directly
+					// LinkedIn handler used elsewhere â€” no-op here since Linkedincallback posts directly
 					console.info('LinkedIn success from popup', data.payload);
 				} else if (data.type === 'LINKEDIN_AUTH_ERROR') {
 					console.warn('LinkedIn auth error from popup', data);
@@ -729,8 +729,8 @@ export const AuthProvider = ({ children }) => {
 	zIndex: 1000
 }}>
 	<h4>Auth Debug</h4>
-	<div>Access Token: {localStorage.getItem('accessToken') ? '✅' : '❌'}</div>
-	<div>Refresh Token: {localStorage.getItem('refreshToken') ? '✅' : '❌'}</div>
+	<div>Access Token: {localStorage.getItem('accessToken') ? 'âœ…' : 'â‌Œ'}</div>
+	<div>Refresh Token: {localStorage.getItem('refreshToken') ? 'âœ…' : 'â‌Œ'}</div>
 	<div>Token Expiry: {localStorage.getItem('accessExpiresTime') ? 
 		new Date(parseInt(localStorage.getItem('accessExpiresTime'))).toLocaleString() : 'None'}</div>
 	<div>Time Now: {new Date().toLocaleString()}</div>

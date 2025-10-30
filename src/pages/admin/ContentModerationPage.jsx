@@ -1,8 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table.jsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/table.jsx';
 import { getReportedContent } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import { AlertCircle, Check, X } from 'lucide-react';

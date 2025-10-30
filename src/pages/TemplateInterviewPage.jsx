@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef  } from 'react';
+﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -414,10 +414,10 @@ const TemplateInterviewPage = () => {
                 {t('interview.instructions')}
               </h4>
               <ul className="text-blue-800 text-sm space-y-1">
-                <li>• {t('interview.instruction1')}</li>
-                <li>• {t('interview.instruction2')}</li>
-                <li>• {t('interview.instruction3')}</li>
-                <li>• {t('interview.instruction4')}</li>
+                <li>â€¢ {t('interview.instruction1')}</li>
+                <li>â€¢ {t('interview.instruction2')}</li>
+                <li>â€¢ {t('interview.instruction3')}</li>
+                <li>â€¢ {t('interview.instruction4')}</li>
               </ul>
             </div>
 

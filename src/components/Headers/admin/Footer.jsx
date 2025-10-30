@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 import {
   Box,
   Typography,
@@ -139,7 +139,7 @@ const Footer = () => {
                 textAlign: { xs: 'center', md: 'right' }
               }}
             >
-              © {new Date().getFullYear()} Swipscout. All rights reserved.
+              آ© {new Date().getFullYear()} Swipscout. All rights reserved.
             </Typography>
             <Box sx={{ 
               display: 'flex', 

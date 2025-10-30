@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
+﻿import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
 import {
   Box,
   Container,
@@ -252,7 +252,7 @@ const testimonials = [
     name: "Alex Rivera",
     role: "Talent Acquisition Lead",
     quote:
-      "SwipeScout helped us cut screening time in half while actually getting to know the person behind the resume. It’s now a core part of our hiring process.",
+      "SwipeScout helped us cut screening time in half while actually getting to know the person behind the resume. Itâ€™s now a core part of our hiring process.",
     avatar: "https://placehold.co/60x60/dbeafe/3b82f6?text=AR", // Placeholder image
     rating: 5, // Assuming a 5-star rating for this new testimonial
   },
@@ -553,7 +553,7 @@ const HomePage = () => {
                   <Chip sx={{ backgroundColor: 'rgba(66, 81, 107, 0.2)', color: 'white' , mt:-6,
                                                              backdropFilter: 'blur(10px)',
                                                              border: '1px solid rgba(255, 255, 255, 0.3) '}}
-                                                         label="🚀 AI-Powered Recruitment Platform"
+                                                         label="ًںڑ€ AI-Powered Recruitment Platform"
                                                         
                                                      />
                                                      <Typography
@@ -991,7 +991,7 @@ const HomePage = () => {
                           {video.video_title || "Untitled Video"}
                         </Typography>
                         <Typography variant="body2" sx={{ color: theme.palette.grey[300] }}>
-                          {video.video_type || "Uncategorized"} •{" "}
+                          {video.video_type || "Uncategorized"} â€¢{" "}
                           {Math.round(video.video_duration || 0)}s
                         </Typography>
                       </Box>
@@ -1261,7 +1261,7 @@ const HomePage = () => {
                   display: 'inline-block'
                 }}
               >
-                →
+                â†’
               </Box>
             </Button>
 

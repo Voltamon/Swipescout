@@ -2,13 +2,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { getAllJobsPosted, getCategories } from '@/services/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Label } from '@/components/ui/label.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog.jsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/UI/dialog.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   Search,

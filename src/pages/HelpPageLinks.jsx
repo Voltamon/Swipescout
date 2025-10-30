@@ -1,6 +1,6 @@
 ﻿import React from 'react';
-import { Card, CardContent } from "@/components/ui/card.jsx";
-import { Button } from "@/components/ui/button.jsx";
+import { Card, CardContent } from "@/components/UI/card.jsx";
+import { Button } from "@/components/UI/button.jsx";
 import { Mail, MessageCircle } from "lucide-react";
 
 // Custom Discord icon as an inline SVG component

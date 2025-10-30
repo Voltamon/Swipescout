@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 import { Card, Box, Typography, Avatar, Chip } from '@mui/material';
 import { useStyles } from './CandidateCard.styles';
 

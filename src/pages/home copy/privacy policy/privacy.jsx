@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import './privacy.css';
 
 const PrivacyPolicy = ({ isOpen, onClose }) => {
@@ -31,7 +31,7 @@ const PrivacyPolicy = ({ isOpen, onClose }) => {
           <section className="privacy-section">
             <h3>1. Who We Are</h3>
             <p>
-              SwipeScout Ltd (“SwipeScout”, “we”, “our”, “us”) operates a job-matching platform that uses short video resumes, swipe-based discovery, and AI-powered tools to connect job seekers with employers. We are the data controller of your personal information under UK GDPR and the Data Protection Act 2018.
+              SwipeScout Ltd (â€œSwipeScoutâ€‌, â€œweâ€‌, â€œourâ€‌, â€œusâ€‌) operates a job-matching platform that uses short video resumes, swipe-based discovery, and AI-powered tools to connect job seekers with employers. We are the data controller of your personal information under UK GDPR and the Data Protection Act 2018.
             </p>
           </section>
 
@@ -40,7 +40,7 @@ const PrivacyPolicy = ({ isOpen, onClose }) => {
             <h4>From Job Seekers</h4>
             <ul>
               <li>Name, email, phone, work history, education, skills</li>
-              <li>Video resumes (15–45 seconds)</li>
+              <li>Video resumes (15â€“45 seconds)</li>
               <li>Swipe and match activity</li>
               <li>Messages and interactions</li>
               <li>Device and usage data (IP address, browser, app version)</li>
@@ -104,7 +104,7 @@ const PrivacyPolicy = ({ isOpen, onClose }) => {
             <ul>
               <li>Access your data</li>
               <li>Correct inaccuracies</li>
-              <li>Request deletion (“right to be forgotten”)</li>
+              <li>Request deletion (â€œright to be forgottenâ€‌)</li>
               <li>Object or restrict processing</li>
               <li>Request a copy of your data (data portability)</li>
               <li>Withdraw consent at any time</li>
@@ -132,16 +132,16 @@ const PrivacyPolicy = ({ isOpen, onClose }) => {
           </section>
 
           <section className="privacy-section">
-            <h3>10. Children’s Privacy</h3>
+            <h3>10. Childrenâ€™s Privacy</h3>
             <p>
-              SwipeScout is not for individuals under 16. If we become aware that we’ve collected data from someone under 16 without parental consent, we will delete it.
+              SwipeScout is not for individuals under 16. If we become aware that weâ€™ve collected data from someone under 16 without parental consent, we will delete it.
             </p>
           </section>
 
           <section className="privacy-section">
             <h3>11. Changes to This Policy</h3>
             <p>
-              We may update this Privacy Policy as needed. If changes are significant, we’ll notify users through the app or email.
+              We may update this Privacy Policy as needed. If changes are significant, weâ€™ll notify users through the app or email.
             </p>
           </section>
 

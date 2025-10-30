@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+﻿import React, { useContext } from "react";
 import {
   Box,
   useTheme,
@@ -61,10 +61,10 @@ const MyApplications = () => {
           >
             <Typography variant="h6">{job.title}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {job.company} – {job.location}
+              {job.company} â€“ {job.location}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {job.salary} • Posted {job.posted}
+              {job.salary} â€¢ Posted {job.posted}
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
               <strong>Status:</strong> {job.status}

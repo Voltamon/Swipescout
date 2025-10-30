@@ -1,4 +1,4 @@
-import about from "./about.json";
+﻿import about from "./about.json";
 import admin from "./admin.json";
 import aiAnalysis from "./aiAnalysis.json";
 import aiInterview from "./aiInterview.json";

@@ -1,4 +1,4 @@
-import React, { useContext, useState  } from 'react';
+﻿import React, { useContext, useState  } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   Container, 
@@ -20,8 +20,8 @@ const TranslationTest = () => {
 
   const languages = [
     { code: 'en', name: 'English' },
-    { code: 'ar', name: 'العربية' },
-    { code: 'zh', name: '中文' }
+    { code: 'ar', name: 'ط§ظ„ط¹ط±ط¨ظٹط©' },
+    { code: 'zh', name: 'ن¸­و–‡' }
   ];
 
   const handleLanguageChange = (languageCode) => {

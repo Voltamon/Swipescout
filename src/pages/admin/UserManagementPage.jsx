@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
-} from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Input } from '@/components/ui/input.jsx';
+} from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Input } from '@/components/UI/input.jsx';
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table.jsx';
+} from '@/components/UI/table.jsx';
 import {
   Dialog,
   DialogContent,
@@ -22,13 +22,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog.jsx';
+} from '@/components/UI/dialog.jsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu.jsx';
+} from '@/components/UI/dropdown-menu.jsx';
 import { getUsers, deleteUser, banUser } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import {

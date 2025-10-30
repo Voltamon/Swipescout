@@ -1,9 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import { Box, CircularProgress, Typography, Fade } from '@mui/material';
 
 const LoadingSpinner = ({ 
   size = 40, 
-  message = 'جاري التحميل...', 
+  message = 'ط¬ط§ط±ظٹ ط§ظ„طھط­ظ…ظٹظ„...', 
   fullScreen = false,
   color = 'primary',
   variant = 'indeterminate'

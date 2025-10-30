@@ -10,10 +10,10 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { getBlogs, getBlogCategories, getBlogTags } from '@/services/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Button } from '@/components/ui/button.jsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Button } from '@/components/UI/button.jsx';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';
 

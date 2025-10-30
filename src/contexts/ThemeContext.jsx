@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+﻿import React, { createContext, useState, useContext } from 'react';
 
 // Utility function to get dynamic classes based on bright mode
 const getDynamicClasses = (isBrightMode) => ({

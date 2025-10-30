@@ -5,18 +5,18 @@ import {
 } from 'lucide-react';
 import { uploadVideo, getAllVideos, deleteEditedVideo } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Label } from '@/components/ui/label.jsx';
-import { Slider } from '@/components/ui/slider.jsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog.jsx';
-import { Textarea } from '@/components/ui/textarea.jsx';
-import { Progress } from '@/components/ui/progress.jsx';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Slider } from '@/components/UI/slider.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/UI/dialog.jsx';
+import { Textarea } from '@/components/UI/textarea.jsx';
+import { Progress } from '@/components/UI/progress.jsx';
 import { useToast } from '@/hooks/use-toast';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 
 // FFmpeg import with fallback
 let ffmpeg;

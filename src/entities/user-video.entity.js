@@ -1,4 +1,4 @@
-export class UserVideo3 {
+﻿export class UserVideo3 {
   constructor(data = {}) {
     this.id = data.id || null;
     this.userId = data.userId || null;

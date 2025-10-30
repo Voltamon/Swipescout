@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect  } from 'react';
+﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   IconButton,
@@ -53,7 +53,7 @@ const mockJobVideos = [
     tags: ['Python', 'Django', 'APIs', 'Finance'],
     description: 'Build robust and secure backend services for our financial trading platforms. Experience with high-frequency trading systems is a plus.',
     location: 'London, UK',
-    salary: '£70,000 - £100,000',
+    salary: 'آ£70,000 - آ£100,000',
     posted: '1 day ago',
     saved: false,
     liked: false
@@ -67,7 +67,7 @@ const mockJobVideos = [
     tags: ['SEO', 'Content', 'Social Media', 'Marketing'],
     description: 'Drive online presence and lead generation for our diverse client portfolio. A passion for creative campaigns and analytics is key.',
     location: 'Berlin, Germany',
-    salary: '€45,000 - €65,000',
+    salary: 'â‚¬45,000 - â‚¬65,000',
     posted: '3 weeks ago',
     saved: false,
     liked: false

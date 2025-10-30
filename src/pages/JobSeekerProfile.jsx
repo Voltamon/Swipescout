@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   getUserProfile, 
@@ -7,11 +7,11 @@ import {
   getUserExperiences, 
   getUserEducation 
 } from '../services/api.js';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   User,
@@ -329,7 +329,7 @@ export default function JobSeekerProfile() {
                   {skills.slice(0, 10).map((skill, index) => (
                     <Badge key={index} variant="secondary" className="bg-cyan-100 text-cyan-800">
                       {skill.name}
-                      {skill.level && <span className="ml-1 text-xs">• {skill.level}</span>}
+                      {skill.level && <span className="ml-1 text-xs">â€¢ {skill.level}</span>}
                     </Badge>
                   ))}
                 </div>
@@ -519,7 +519,7 @@ export default function JobSeekerProfile() {
                     >
                       {skill.name}
                       {skill.level && (
-                        <span className="ml-2 text-xs opacity-75">• {skill.level}</span>
+                        <span className="ml-2 text-xs opacity-75">â€¢ {skill.level}</span>
                       )}
                     </Badge>
                   ))}

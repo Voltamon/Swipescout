@@ -1,4 +1,4 @@
-
+﻿
 export const navigationLinks = {
   job_seeker: [
     { name: 'Job Listings', page: 'jobListings', icon: 'Home' },

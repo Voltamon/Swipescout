@@ -1,4 +1,4 @@
-import React, { useContext, useState  } from 'react';
+﻿import React, { useContext, useState  } from 'react';
 import {
   AppBar,
   Box,
@@ -39,9 +39,9 @@ const Header = ({ darkMode, setDarkMode }) => {
   const [languageAnchorEl, setLanguageAnchorEl] = useState(null);
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-    { code: 'zh', name: '中文', flag: '🇨🇳' }
+    { code: 'en', name: 'English', flag: 'ًں‡؛ًں‡¸' },
+    { code: 'ar', name: 'ط§ظ„ط¹ط±ط¨ظٹط©', flag: 'ًں‡¸ًں‡¦' },
+    { code: 'zh', name: 'ن¸­و–‡', flag: 'ًں‡¨ًں‡³' }
   ];
 
   const handleLanguageMenuOpen = (event) => {

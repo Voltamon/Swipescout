@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Headers/Header';
@@ -19,7 +19,7 @@ const Section = ({ title, children }) => (
 
 const ListItem = ({ children }) => (
   <li className="flex items-start">
-    <span className="mr-2 mt-1">•</span>
+    <span className="mr-2 mt-1">â€¢</span>
     <span>{children}</span>
   </li>
 );

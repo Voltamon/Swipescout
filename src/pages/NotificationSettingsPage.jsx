@@ -9,14 +9,14 @@ import {
   updateNotificationSettings,
   testNotification 
 } from '@/services/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Switch } from '@/components/ui/switch.jsx';
-import { Label } from '@/components/ui/label.jsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Switch } from '@/components/UI/switch.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/UI/dialog.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
 
 const NotificationSettingsPage = () => {

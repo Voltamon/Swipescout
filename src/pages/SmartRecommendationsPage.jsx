@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -247,7 +247,7 @@ export default function SmartRecommendationsPage() {
               </Typography>
             )}
             <Typography variant="body2" color="text.secondary">
-              {job.job_type} • Posted {new Date(job.created_at).toLocaleDateString()}
+              {job.job_type} â€¢ Posted {new Date(job.created_at).toLocaleDateString()}
             </Typography>
           </Box>
           

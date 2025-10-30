@@ -1,10 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button.jsx';
-import { Card, CardContent, CardHeader } from '@/components/ui/card.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Label } from '@/components/ui/label.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Card, CardContent, CardHeader } from '@/components/UI/card.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Label } from '@/components/UI/label.jsx';
 import { AlertCircle as AlertCircleIcon } from 'lucide-react';
 import AuthPage from '../AuthPage';
 import ContactUs from './contact us/contactus';

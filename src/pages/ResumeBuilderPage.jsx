@@ -7,20 +7,20 @@ import {
   getUserResumes
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Label } from '@/components/ui/label.jsx';
-import { Textarea } from '@/components/ui/textarea.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Textarea } from '@/components/UI/textarea.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion.jsx';
+} from '@/components/UI/accordion.jsx';
 import {
   Dialog,
   DialogContent,
@@ -28,8 +28,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog.jsx';
-import { Progress } from '@/components/ui/progress.jsx';
+} from '@/components/UI/dialog.jsx';
+import { Progress } from '@/components/UI/progress.jsx';
 import {
   Upload,
   Download,

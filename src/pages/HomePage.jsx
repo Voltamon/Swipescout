@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Container,
@@ -231,7 +231,7 @@ const HomePage = () => {
             }}
           >
             <Typography variant="h3" fontWeight={700} mb={2} sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.4rem' } }}>
-              🚀 SwipeScout is Coming Soon!
+              ًںڑ€ SwipeScout is Coming Soon!
             </Typography>
             <Typography variant="h6" color="text.secondary" mb={3} sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
               The next-generation video recruitment platform is almost here.<br />

@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+﻿import { initializeApp } from 'firebase/app';
 import { getAuth, setPersistence, browserLocalPersistence , GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {

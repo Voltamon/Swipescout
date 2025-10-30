@@ -4,8 +4,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog.jsx';
-import { Card, CardContent } from '@/components/ui/card.jsx';
+} from '@/components/UI/dialog.jsx';
+import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Mail, MessageCircle, Clock } from 'lucide-react';
 import { homeThemeColors } from '@/config/theme-colors-home';
 

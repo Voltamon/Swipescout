@@ -7,7 +7,7 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbPage,
-} from '@/components/ui/breadcrumb.jsx';
+} from '@/components/UI/breadcrumb.jsx';
 import { Home } from 'lucide-react';
 
 const BreadcrumbNav = ({ customBreadcrumbs }) => {

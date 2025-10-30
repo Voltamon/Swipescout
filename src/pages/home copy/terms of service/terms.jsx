@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import './terms.css';
 
 const TermsOfService = ({ isOpen, onClose }) => {
@@ -31,7 +31,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
           <section className="terms-section">
             <h3>1. Acceptance of Terms</h3>
             <p>
-              By creating an account or using SwipeScout (“we”, “our”, “us”), you agree to these Terms of Service. If you do not agree, do not use the platform.
+              By creating an account or using SwipeScout (â€œweâ€‌, â€œourâ€‌, â€œusâ€‌), you agree to these Terms of Service. If you do not agree, do not use the platform.
             </p>
           </section>
 
@@ -48,7 +48,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <h3>3. What SwipeScout Provides</h3>
             <p>SwipeScout is a hiring platform that allows:</p>
             <ul>
-              <li>Job seekers to create profiles and short video resumes (15–45 seconds).</li>
+              <li>Job seekers to create profiles and short video resumes (15â€“45 seconds).</li>
               <li>Employers to post jobs and discover candidates via video.</li>
               <li>Both parties to connect, swipe, and message for hiring purposes.</li>
             </ul>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { analyzeSkillGaps, getAllJobs } from '../services/analysisApi';
 import { Briefcase, Target, TrendingUp, Loader, AlertTriangle, BookOpen, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';

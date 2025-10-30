@@ -13,9 +13,9 @@ import {
   Bookmark,
 } from 'lucide-react';
 import { getBlog } from '@/services/api';
-import { Card, CardContent } from '@/components/ui/card.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Button } from '@/components/ui/button.jsx';
+import { Card, CardContent } from '@/components/UI/card.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Button } from '@/components/UI/button.jsx';
 import ReactMarkdown from 'react-markdown';
 
 const BlogDetailPage = () => {

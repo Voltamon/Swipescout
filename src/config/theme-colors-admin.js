@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Centralized Theme Colors for Admin Dashboard
  * 
  * This file contains all color definitions for the admin dashboard.

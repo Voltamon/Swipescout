@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Button } from '@/components/ui/button.jsx';
+} from '@/components/UI/card.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Button } from '@/components/UI/button.jsx';
 import { getAdminStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import {

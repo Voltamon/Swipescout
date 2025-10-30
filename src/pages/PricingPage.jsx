@@ -1,10 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card.jsx';
-import { Button } from '@/components/ui/button.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Switch } from '@/components/ui/switch.jsx';
-import { Label } from '@/components/ui/label.jsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Switch } from '@/components/UI/switch.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog.jsx';
-import { Input } from '@/components/ui/input.jsx';
+} from '@/components/UI/dialog.jsx';
+import { Input } from '@/components/UI/input.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   Check,

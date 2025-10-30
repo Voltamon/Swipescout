@@ -1,4 +1,4 @@
-// ./services/authService.js
+﻿// ./services/authService.js
 
 // Get the authentication token from storage (localStorage/sessionStorage)
 const getAuthToken = () => {

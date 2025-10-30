@@ -1,4 +1,4 @@
-export class Comment {
+﻿export class Comment {
   constructor(data = {}) {
     this.id = data.id || null;
     this.userId = data.userId || null;

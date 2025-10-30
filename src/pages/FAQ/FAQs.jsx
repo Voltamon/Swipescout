@@ -3,15 +3,15 @@ import Header from "../../components/Headers/Header";
 import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from "@/components/ui/card.jsx";
-import { Input } from "@/components/ui/input.jsx";
-import { Badge } from "@/components/ui/badge.jsx";
+import { Card, CardContent } from "@/components/UI/card.jsx";
+import { Input } from "@/components/UI/input.jsx";
+import { Badge } from "@/components/UI/badge.jsx";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion.jsx";
+} from "@/components/UI/accordion.jsx";
 import {
   Search,
   HelpCircle,

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect  } from 'react';
+﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   Container,
@@ -241,7 +241,7 @@ const FeedPage = () => {
           >
             <Box>
               <Typography variant="caption">
-                {currentVideo.views} views • {currentVideo.posted}
+                {currentVideo.views} views â€¢ {currentVideo.posted}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
@@ -367,7 +367,7 @@ const FeedPage = () => {
       >
         <IconButton color="primary">
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '1.5rem' }}>🎥</span>
+            <span style={{ fontSize: '1.5rem' }}>ًںژ¥</span>
             <Typography variant="caption" color="primary">
               Feed
             </Typography>
@@ -375,13 +375,13 @@ const FeedPage = () => {
         </IconButton>
         <IconButton color="inherit">
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '1.5rem' }}>💬</span>
+            <span style={{ fontSize: '1.5rem' }}>ًں’¬</span>
             <Typography variant="caption">Inbox</Typography>
           </Box>
         </IconButton>
         <IconButton color="inherit">
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '1.5rem' }}>👤</span>
+            <span style={{ fontSize: '1.5rem' }}>ًں‘¤</span>
             <Typography variant="caption">Profile</Typography>
           </Box>
         </IconButton>

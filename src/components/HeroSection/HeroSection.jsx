@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+﻿import React, { useContext } from "react";
 import { Box, Typography, Button, useMediaQuery, useTheme } from "@mui/material";
 import phoneImage from "../../assets/phone.png";
 
@@ -64,10 +64,10 @@ const HeroSection = () => {
             color: '#5D9BCF'
           }}
         >
-          SwipeScout replaces boring resumes with 15–45 second video pitches
+          SwipeScout replaces boring resumes with 15â€“45 second video pitches
           that let job seekers show off their personality, skills, and
           confidence. Employers swipe through talent fast, make smarter
-          decisions, and connect instantly—all in a format today's generation
+          decisions, and connect instantlyâ€”all in a format today's generation
           actually enjoys.
         </Typography>
         

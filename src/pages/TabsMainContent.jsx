@@ -1,4 +1,4 @@
-// This component renders the main content area, including tabs and content
+﻿// This component renders the main content area, including tabs and content
 // for each "page" of the application.
 
 import React, { useContext, useMemo, useState, useEffect  } from 'react';

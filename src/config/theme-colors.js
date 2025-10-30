@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Centralized Theme Colors Configuration
  * 
  * Change colors here and they will be applied across all pages.

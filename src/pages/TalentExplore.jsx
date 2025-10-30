@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef  } from 'react';
+﻿import React, { useContext, useState, useRef  } from 'react';
 import {
   Box,
   Grid,
@@ -363,7 +363,7 @@ const EmployerExplorePublic = () => {
                   <Typography variant="h6" gutterBottom>Experience</Typography>
                   <Box sx={{ pl: 2 }}>
                     <Typography fontWeight="bold">Senior Frontend Developer</Typography>
-                    <Typography color="text.secondary">TechCorp • 2020-Present</Typography>
+                    <Typography color="text.secondary">TechCorp â€¢ 2020-Present</Typography>
                     <Typography>
                       - Led the migration from Angular to React<br />
                       - Improved page load performance by 40%<br />

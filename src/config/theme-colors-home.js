@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Home Pages Theme Colors Configuration
  * 
  * Customizable color scheme for home-related components:

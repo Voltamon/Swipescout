@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect  } from 'react';
+﻿import React, { useContext, useState, useEffect  } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -44,10 +44,10 @@ const TemplateAnalysisPage = () => {
 
   const languages = [
     { code: 'en', name: 'English' },
-    { code: 'ar', name: 'العربية' },
-    { code: 'zh', name: '中文' },
-    { code: 'es', name: 'Español' },
-    { code: 'fr', name: 'Français' }
+    { code: 'ar', name: 'ط§ظ„ط¹ط±ط¨ظٹط©' },
+    { code: 'zh', name: 'ن¸­و–‡' },
+    { code: 'es', name: 'Espaأ±ol' },
+    { code: 'fr', name: 'Franأ§ais' }
   ];
 
   useEffect(() => {

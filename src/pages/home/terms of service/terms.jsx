@@ -4,9 +4,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { ScrollArea } from '@/components/ui/scroll-area.jsx';
+} from '@/components/UI/dialog.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { ScrollArea } from '@/components/UI/scroll-area.jsx';
 import { FileText, Calendar, Building2, UserCheck, Video, MessageSquare, ShieldAlert, Server, Scale, XCircle, RefreshCw } from 'lucide-react';
 import { homeThemeColors } from '@/config/theme-colors-home';
 

@@ -1,11 +1,11 @@
 ﻿import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import { Input } from "@/components/ui/input.jsx";
-import { Label } from "@/components/ui/label.jsx";
-import { Textarea } from "@/components/ui/textarea.jsx";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.jsx";
-import { Checkbox } from "@/components/ui/checkbox.jsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/UI/card.jsx";
+import { Button } from "@/components/UI/button.jsx";
+import { Input } from "@/components/UI/input.jsx";
+import { Label } from "@/components/UI/label.jsx";
+import { Textarea } from "@/components/UI/textarea.jsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/UI/select.jsx";
+import { Checkbox } from "@/components/UI/checkbox.jsx";
 import { useToast } from "@/hooks/use-toast";
 import { Briefcase, MapPin, DollarSign, Clock, FileText, CheckCircle, Loader2 } from "lucide-react";
 

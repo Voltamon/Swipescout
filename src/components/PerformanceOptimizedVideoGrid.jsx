@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useMemo  } from 'react';
+﻿import React, { useContext, useState, useCallback, useMemo  } from 'react';
 import {
   Box,
   Card,
@@ -189,7 +189,7 @@ const VideoCard = React.memo(({ video, onPlay, onLike, onSave, onShare, style })
               {video.views || 0} views
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              •
+              â€¢
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {formatTimeAgo(video.createdAt)}
