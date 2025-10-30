@@ -11,12 +11,12 @@ import {
   joinInterview
 } from '@/services/api';
 import VideoCallInterface from '../components/VideoCallInterface';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
 import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
 import {
   Dialog,
   DialogContent,
@@ -24,10 +24,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/dialog.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Label } from '@/components/ui/label.jsx';
+import { Textarea } from '@/components/ui/textarea.jsx';
 import {
   Video,
   Calendar,

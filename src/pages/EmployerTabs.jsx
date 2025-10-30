@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
 import { getEmployerTabCategories } from '@/config/employerTabsConfig';
 import { getEmployerStats } from '@/services/api';
 import themeColors from '@/config/theme-colors';

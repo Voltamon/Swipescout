@@ -2,10 +2,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserSavedVideos, unsaveVideo, shareVideo } from '@/services/api';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -13,7 +13,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/select.jsx';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +23,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog.jsx';
 import {
   Bookmark,
   BookmarkCheck,

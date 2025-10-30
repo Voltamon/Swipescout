@@ -1,9 +1,9 @@
-import React from "react";
+﻿import React from "react";
 import Header from "../../components/Headers/Header";
 import { Helmet } from "react-helmet";
 import Footer from "../../components/Headers/Footer";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card.jsx";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar.jsx";
 import {
   Users,
   Heart,

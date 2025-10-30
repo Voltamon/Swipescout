@@ -11,15 +11,15 @@ import {
     connectWithCandidate
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Label } from '@/components/ui/label.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog.jsx';
+import { Textarea } from '@/components/ui/textarea.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
     Play,

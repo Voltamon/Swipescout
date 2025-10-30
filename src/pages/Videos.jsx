@@ -22,11 +22,11 @@ import {
   Eye,
   Loader2
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button.jsx';
+import { Card, CardContent } from '@/components/ui/card.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { ScrollArea } from '@/components/ui/scroll-area.jsx';
 import { cn } from '@/lib/utils';
 
 // Ensure axios sends cookies by default (helps when backend uses session cookies)

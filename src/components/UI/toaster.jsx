@@ -1,11 +1,11 @@
-import {
+﻿import {
   Toast,
   ToastClose,
   ToastDescription,
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@/components/ui/toast"
+} from "@/components/ui/toast.jsx"
 import { useToast } from "@/hooks/use-toast"
 
 export function Toaster() {

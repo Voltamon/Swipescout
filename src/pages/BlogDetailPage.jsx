@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
@@ -13,9 +13,9 @@ import {
   Bookmark,
 } from 'lucide-react';
 import { getBlog } from '@/services/api';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Button } from '@/components/ui/button.jsx';
 import ReactMarkdown from 'react-markdown';
 
 const BlogDetailPage = () => {

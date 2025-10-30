@@ -1,9 +1,9 @@
 ﻿import React, { useState, useEffect } from "react";
 import { Bell, Briefcase, MessageSquare, Heart, UserPlus, Calendar, Check, Trash2, Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.jsx";
 import { useToast } from "@/hooks/use-toast";
 import { getNotifications, markNotificationAsRead, deleteNotification } from '@/services/api';
 

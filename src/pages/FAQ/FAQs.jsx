@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import Header from "../../components/Headers/Header";
 import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card.jsx";
+import { Input } from "@/components/ui/input.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/ui/accordion.jsx";
 import {
   Search,
   HelpCircle,

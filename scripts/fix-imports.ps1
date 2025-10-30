@@ -58,6 +58,16 @@ foreach ($file in $files) {
         Write-Host "  Fixed utils imports in $($file.Name)" -ForegroundColor Green
     }
     
+    # Fix UI component imports to add .jsx extension
+    if ($content -match 'from [''"]@\/components\/ui\/([^''"]+)[''"]') {
+        $originalContent2 = $content
+        $content = $content -replace "from (['\`"])@/components/ui/([a-zA-Z0-9-]+)(['\`"])", "from `$1@/components/ui/`$2.jsx`$3"
+        if ($content -ne $originalContent2) {
+            $changed = $true
+            Write-Host "  Added .jsx extensions to UI component imports in $($file.Name)" -ForegroundColor Green
+        }
+    }
+    
     # Save if changes were made
     if ($changed) {
         Set-Content -Path $file.FullName -Value $content -NoNewline -Encoding UTF8

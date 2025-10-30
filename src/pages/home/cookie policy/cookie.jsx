@@ -1,12 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+} from '@/components/ui/dialog.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { ScrollArea } from '@/components/ui/scroll-area.jsx';
 import { Cookie, Calendar, Building2, Settings, Shield, Users } from 'lucide-react';
 import { homeThemeColors } from '@/config/theme-colors-home';
 

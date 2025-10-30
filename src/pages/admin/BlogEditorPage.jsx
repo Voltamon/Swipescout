@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,18 +7,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Label } from '@/components/ui/label.jsx';
+import { Textarea } from '@/components/ui/textarea.jsx';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/select.jsx';
 import { createBlog, updateBlog, getBlog } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import { Save, ArrowLeft, Eye } from 'lucide-react';

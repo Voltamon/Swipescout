@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Breadcrumb,
@@ -7,7 +7,7 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbPage,
-} from '@/components/ui/breadcrumb';
+} from '@/components/ui/breadcrumb.jsx';
 import { Home } from 'lucide-react';
 
 const BreadcrumbNav = ({ customBreadcrumbs }) => {

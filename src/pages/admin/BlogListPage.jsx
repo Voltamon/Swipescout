@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+} from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Input } from '@/components/ui/input.jsx';
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui/table.jsx';
 import {
   Dialog,
   DialogContent,
@@ -26,13 +26,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/dialog.jsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu.jsx';
 import { getBlogs, deleteBlog, updateBlog } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import {

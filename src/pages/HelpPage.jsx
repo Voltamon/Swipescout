@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+﻿import React, { useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card.jsx";
+import { Input } from "@/components/ui/input.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { Badge } from "@/components/ui/badge.jsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.jsx";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/ui/accordion.jsx";
 import {
   Dialog,
   DialogContent,
@@ -17,16 +17,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/components/ui/dialog.jsx";
+import { Label } from "@/components/ui/label.jsx";
+import { Textarea } from "@/components/ui/textarea.jsx";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select.jsx";
 import {
   Search,
   HelpCircle,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,10 +10,10 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { getBlogs, getBlogCategories, getBlogTags } from '@/services/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Button } from '@/components/ui/button.jsx';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/card.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Button } from '@/components/ui/button.jsx';
 import { getAdminStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import {

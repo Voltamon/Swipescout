@@ -1,11 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Card, CardContent } from '@/components/ui/card';
+} from '@/components/ui/dialog.jsx';
+import { Card, CardContent } from '@/components/ui/card.jsx';
 import { Mail, MessageCircle, Clock } from 'lucide-react';
 import { homeThemeColors } from '@/config/theme-colors-home';
 

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Button } from '@/components/ui/button.jsx';
 import { getAdminTabCategories } from '@/config/adminTabsConfig';
 import { getAdminStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';

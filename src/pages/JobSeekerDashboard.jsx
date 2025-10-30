@@ -20,15 +20,15 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
+import { Progress } from '@/components/ui/progress.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Label } from '@/components/ui/label.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
 import { useToast } from '@/hooks/use-toast';
 
 // Register ChartJS components

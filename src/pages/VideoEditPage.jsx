@@ -1,22 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
 } from 'lucide-react';
 import { uploadVideo, getAllVideos, deleteEditedVideo } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import { Label } from '@/components/ui/label.jsx';
+import { Slider } from '@/components/ui/slider.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog.jsx';
+import { Textarea } from '@/components/ui/textarea.jsx';
+import { Progress } from '@/components/ui/progress.jsx';
 import { useToast } from '@/hooks/use-toast';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
 
 // FFmpeg import with fallback
 let ffmpeg;
