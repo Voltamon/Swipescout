@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { analyzeSkillGaps, getAllJobs } from '../services/analysisApi';
 import { Briefcase, Target, TrendingUp, Loader, AlertTriangle, BookOpen, Zap } from 'lucide-react';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 const SkillGapAnalysisPage = () => {
   const [jobs, setJobs] = useState([]);
@@ -32,12 +33,13 @@ const SkillGapAnalysisPage = () => {
     setAnalysis(null);
 
     try {
-      // Assuming userId is 1 for this example
-      const response = await analyzeSkillGaps(1, selectedJob);
+      // Authentication token is automatically included via interceptor
+      const response = await analyzeSkillGaps(selectedJob);
       setAnalysis(response.data);
+      setError(null);
     } catch (err) {
-      setError('Failed to perform skill gap analysis. Please try again.');
-      console.error(err);
+      console.error('Error analyzing skill gaps:', err);
+      setError('Failed to perform skill gap analysis. Please ensure the backend server is running and try again.');
     } finally {
       setLoading(false);
     }
@@ -53,8 +55,9 @@ const SkillGapAnalysisPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-5xl mx-auto">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center mb-4">
             <TrendingUp className="h-8 w-8 text-purple-600 mr-3" />
@@ -153,8 +156,9 @@ const SkillGapAnalysisPage = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 
