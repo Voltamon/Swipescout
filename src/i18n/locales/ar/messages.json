@@ -1,0 +1,17 @@
+{
+  "messages": "الرسائل",
+  "inbox": "صندوق الوارد",
+  "sent": "المرسلة",
+  "compose": "إنشاء",
+  "newMessage": "رسالة جديدة",
+  "to": "إلى",
+  "subject": "الموضوع",
+  "messageContent": "محتوى الرسالة",
+  "sendMessage": "إرسال رسالة",
+  "readMessage": "قراءة الرسالة",
+  "reply": "رد",
+  "forward": "إعادة توجيه",
+  "deleteMessage": "حذف الرسالة",
+  "markAsRead": "وضع علامة كمقروء",
+  "markAsUnread": "وضع علامة كغير مقروء"
+}

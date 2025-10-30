@@ -1,0 +1,47 @@
+{
+  "categories": {
+    "dashboard": "لوحة التحكم",
+    "jobSearch": "البحث عن وظيفة",
+    "profileContent": "الملف الشخصي والمحتوى",
+    "savedLiked": "المحفوظة والمعجب بها",
+    "activities": "الأنشطة",
+    "communication": "التواصل",
+    "videoManagement": "إدارة الفيديو"
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "analytics": "التحليلات",
+    "findJobs": "البحث عن وظائف",
+    "videoFeed": "موجز الفيديو",
+    "myProfile": "ملفي الشخصي",
+    "resumeBuilder": "منشئ السيرة الذاتية",
+    "myVideos": "فيدوهاتي",
+    "savedVideos": "الفيديوهات المحفوظة",
+    "likedVideos": "الفيديوهات المعجب بها",
+    "interviews": "المقابلات",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "notificationSettings": "إعدادات الإشعارات",
+    "chat": "الدردشة",
+    "videoUpload": "تحميل فيديو",
+    "videoEditor": "محرر الفيديو"
+  },
+  "descriptions": {
+    "overview": "نظرة عامة على لوحة تحكم الباحث عن عمل",
+    "analytics": "عرض التحليلات والرؤى",
+    "findJobs": "البحث عن فرص عمل",
+    "videoFeed": "تصفح الفيديوهات المتعلقة بالوظائف",
+    "myProfile": "إدارة ملفك الشخصي",
+    "resumeBuilder": "بناء سيرتك الذاتية",
+    "myVideos": "فيدوهاتك المحملة",
+    "savedVideos": "فيدوهاتك المحفوظة",
+    "likedVideos": "الفيديوهات التي أعجبتك",
+    "interviews": "إدارة المقابلات",
+    "notifications": "التحقق من الإشعارات",
+    "settings": "إعدادات الحساب",
+    "notificationSettings": "إدارة إعدادات الإشعارات",
+    "chat": "الدردشة مع أصحاب العمل والدعم",
+    "videoUpload": "تحميل فيديوهات جديدة إلى حسابك",
+    "videoEditor": "تعديل فيديوهاتك المحملة"
+  }
+}

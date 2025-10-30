@@ -7,18 +7,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/UI/card';
-import { Button } from '@/components/UI/button';
-import { Input } from '@/components/UI/input';
-import { Label } from '@/components/UI/label';
-import { Textarea } from '@/components/UI/textarea';
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/UI/select';
+} from '@/components/ui/select';
 import { createBlog, updateBlog, getBlog } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import { Save, ArrowLeft, Eye } from 'lucide-react';

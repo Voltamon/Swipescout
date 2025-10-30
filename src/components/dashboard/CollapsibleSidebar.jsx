@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/UI/button';
-import { ScrollArea } from '@/components/UI/scroll-area';
-import { Separator } from '@/components/UI/separator';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/UI/tooltip';
+} from '@/components/ui/tooltip';
 
 const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed, logo }) => {
   const navigate = useNavigate();

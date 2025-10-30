@@ -1,0 +1,28 @@
+{
+  "title": "SwipeScout - The Future of Video Recruitment",
+  "subtitle": "Connecting talent with opportunities through engaging video profiles",
+  "heroDescription": "Video resumes made fast, hiring made smarter.",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More",
+  "findJobs": "Find Jobs",
+  "findTalent": "Find Talent",
+  "exploreVideos": "Explore Videos",
+  "howItWorks": "How SwipeScout Works",
+  "seeInAction": "See SwipeScout in Action",
+  "experienceFuture": "Experience the Future of Hiring",
+  "experienceDescription": "Watch real professionals showcase their skills and see how companies present their culture - all in an engaging video format.",
+  "watchDemo": "Watch Demo",
+  "startSwiping": "Start Swiping",
+  "testimonials": "User Testimonials",
+  "readyToStart": "Ready to start your journey?",
+  "joinThousands": "Join us and find your dream job",
+  "signUpFree": "Sign Up Free",
+  "features": {
+    "videoProfiles": "Video Profiles",
+    "videoProfilesDesc": "Launch your video profile in minutes.",
+    "smartMatching": "Smart Matching",
+    "smartMatchingDesc": "Show your skills in 15 seconds",
+    "realTimeChat": "Real-time Chat",
+    "realTimeChatDesc": "Employers are already swiping" 
+  }
+}

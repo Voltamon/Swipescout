@@ -1,194 +1,135 @@
-import React, { useContext } from "react";
-import {
-  Box,
-  Typography,
-  Link,
-  IconButton,
-  useTheme,
-  useMediaQuery,
-  Grid
-} from "@mui/material";
-import {
-  Facebook,
-  Twitter,
-  LinkedIn,
-  Instagram,
-  CheckCircle,
-  TrendingUp,
-  People
-} from "@mui/icons-material";
-import { styled } from "@mui/system";
+import React from "react";
+import { Link as RouterLink } from 'react-router-dom';
+import { Facebook, Twitter, Linkedin, Instagram, CheckCircle, TrendingUp, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink } from 'react-router-dom'; // Import Router Link
-
-const StyledFooter = styled(Box)(({ theme }) => ({
-  background: theme.palette.primary.dark,
-  color: theme.palette.primary.contrastText,
-  padding: theme.spacing(6, 3),
-  textAlign: "center",
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[4],
-  margin: theme.spacing(2),
-  width: `calc(100% - ${theme.spacing(4)})`,
-  left: "50%",
-  transform: "translateX(-50%)",
-  position: "relative",
-  [theme.breakpoints.down("sm")]: {
-    width: `calc(100% - ${theme.spacing(2)})`,
-    margin: theme.spacing(1),
-  },
-}));
-
-// Update FooterLink to use RouterLink
-const FooterLink = styled(RouterLink)(({ theme }) => ({
-  color: theme.palette.primary.contrastText,
-  textDecoration: "none",
-  fontSize: "1rem",
-  fontWeight: 600,
-  transition: "color 0.2s ease-in-out",
-  "&:hover": {
-    color: theme.palette.secondary.light,
-  },
-}));
-
-const SocialButton = styled(IconButton)(({ theme }) => ({
-  color: theme.palette.primary.contrastText,
-  transition: "transform 0.2s ease-in-out",
-  "&:hover": {
-    transform: "scale(1.1)",
-    color: theme.palette.secondary.light,
-  },
-  backgroundColor: "rgba(255,255,255,0.1)",
-  borderRadius: theme.shape.borderRadius,
-}));
+import { homeThemeColors } from "../../config/theme-colors-home";
 
 const Footer = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { t } = useTranslation();
+  const currentYear = new Date().getFullYear();
+
+  const footerLinks = {
+    company: [
+      { label: t('footer.aboutUs'), href: '/about' },
+      { label: t('footer.howItWorks'), href: '/how-it-works' },
+      { label: t('footer.blog'), href: '/blog' },
+      { label: t('footer.faq'), href: '/FAQs' },
+      { label: t('footer.contactUs'), href: '/contact' },
+      { label: t('footer.customerSupport'), href: '/customer-support' },
+      { label: t('footer.credits'), href: '/credits' },
+    ],
+    legal: [
+      { label: t('footer.privacyPolicy'), href: '/privacy-policy' },
+      { label: t('footer.termsOfService'), href: '/terms-of-service' },
+      { label: t('footer.cookiePolicy'), href: '/cookie-policy' },
+      { label: t('footer.communityGuidelines'), href: '/community-guidelines' },
+      { label: t('footer.copyrightIpTerms'), href: '/copyright-ip-terms' },
+      { label: t('footer.eula'), href: '/eula' },
+    ]
+  };
+
+  const socialLinks = [
+    { icon: Facebook, label: 'Facebook', href: '#' },
+    { icon: Twitter, label: 'Twitter', href: '#' },
+    { icon: Linkedin, label: 'LinkedIn', href: '#' },
+    { icon: Instagram, label: 'Instagram', href: '#' },
+  ];
+
+  const stats = [
+    { icon: CheckCircle, label: t('footer.verifiedCompanies') },
+    { icon: TrendingUp, label: t('footer.successRate') },
+    { icon: Users, label: t('footer.support24_7') },
+  ];
 
   return (
-    <StyledFooter>
-      <Grid container spacing={isMobile ? 2 : 4} justifyContent="center" sx={{ mb: 4 }}>
-        {/* Company Column */}
-        <Grid item xs={12} sm={4} md={3}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: theme.palette.secondary.light }}>
-            {t('footer.company')}
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <FooterLink to="/about">{t('footer.aboutUs')}</FooterLink>
-            <FooterLink to="/how-it-works">{t('footer.howItWorks')}</FooterLink>
-            <FooterLink to="/blog">{t('footer.blog')}</FooterLink>
-            <FooterLink to="/FAQs">{t('footer.faq')}</FooterLink>
-            <FooterLink to="/contact">{t('footer.contactUs')}</FooterLink>
-            <FooterLink to="/customer-support">{t('footer.customerSupport')}</FooterLink>
-            <FooterLink to="/credits">{t('footer.credits')}</FooterLink>
-          </Box>
-        </Grid>
+    <footer className={`${homeThemeColors.backgrounds.card} border-t ${homeThemeColors.borders.default}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          {/* Company Column */}
+          <div>
+            <h3 className={`text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400`}>
+              {t('footer.company')}
+            </h3>
+            <nav className="space-y-3">
+              {footerLinks.company.map((link) => (
+                <RouterLink
+                  key={link.href}
+                  to={link.href}
+                  className={`block text-sm font-medium ${homeThemeColors.text.link} transition-colors duration-200`}
+                >
+                  {link.label}
+                </RouterLink>
+              ))}
+            </nav>
+          </div>
 
-        {/* Legal Column (Cluely-style) */}
-        <Grid item xs={12} sm={4} md={3}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: theme.palette.secondary.light }}>
-            {t('footer.legal')}
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <FooterLink to="/privacy-policy">{t('footer.privacyPolicy')}</FooterLink>
-            <FooterLink to="/terms-of-service">{t('footer.termsOfService')}</FooterLink>
-            <FooterLink to="/cookie-policy">{t('footer.cookiePolicy')}</FooterLink>
-            <FooterLink to="/community-guidelines">{t('footer.communityGuidelines')}</FooterLink>
-            <FooterLink to="/copyright-ip-terms">{t('footer.copyrightIpTerms')}</FooterLink>
-            <FooterLink to="/eula">{t('footer.eula')}</FooterLink>
-          </Box>
-        </Grid>
+          {/* Legal Column */}
+          <div>
+            <h3 className={`text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400`}>
+              {t('footer.legal')}
+            </h3>
+            <nav className="space-y-3">
+              {footerLinks.legal.map((link) => (
+                <RouterLink
+                  key={link.href}
+                  to={link.href}
+                  className={`block text-sm font-medium ${homeThemeColors.text.link} transition-colors duration-200`}
+                >
+                  {link.label}
+                </RouterLink>
+              ))}
+            </nav>
+          </div>
 
-        {/* Connect Column */}
-        <Grid item xs={12} sm={4} md={3}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: theme.palette.secondary.light }}>
-            {t('footer.connect')}
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-start", gap: 2, mt: 1 }}>
-            <SocialButton href="#" aria-label="Facebook">
-              <Facebook />
-            </SocialButton>
-            <SocialButton href="#" aria-label="Twitter">
-              <Twitter />
-            </SocialButton>
-            <SocialButton href="#" aria-label="LinkedIn">
-              <LinkedIn />
-            </SocialButton>
-            <SocialButton href="#" aria-label="Instagram">
-              <Instagram />
-            </SocialButton>
-          </Box>
-          <Typography
-            variant="body1"
-            sx={{ color: theme.palette.primary.contrastText + "CC", mt: 3 }}
-          >
-            {t('footer.joinCommunity')}
-          </Typography>
-        </Grid>
-      </Grid>
+          {/* Connect Column */}
+          <div>
+            <h3 className={`text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400`}>
+              {t('footer.connect')}
+            </h3>
+            <div className="flex gap-4 mb-6">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
+                    className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transform hover:scale-110 transition-all duration-200"
+                  >
+                    <Icon size={20} />
+                  </a>
+                );
+              })}
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t('footer.joinCommunity')}
+            </p>
+          </div>
+        </div>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: { xs: 2, md: 4 },
-          mb: 4,
-          flexWrap: "wrap",
-          borderTop: `1px solid ${theme.palette.primary.light}40`,
-          pt: 4,
-          mt: 4,
-        }}
-      >
-        <Typography
-          variant="caption"
-          sx={{
-            color: theme.palette.primary.contrastText + "CC",
-            display: "flex",
-            alignItems: "center"
-          }}
-        >
-          <CheckCircle
-            sx={{ color: theme.palette.success.main, mr: 1, fontSize: "1rem" }}
-          />
-          {t('footer.verifiedCompanies')}
-        </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            color: theme.palette.primary.contrastText + "CC",
-            display: "flex",
-            alignItems: "center"
-          }}
-        >
-          <TrendingUp
-            sx={{ color: theme.palette.info.main, mr: 1, fontSize: "1rem" }}
-          />
-          {t('footer.successRate')}
-        </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            color: theme.palette.primary.contrastText + "CC",
-            display: "flex",
-            alignItems: "center"
-          }}
-        >
-          <People
-            sx={{ color: theme.palette.warning.main, mr: 1, fontSize: "1rem" }}
-          />
-          {t('footer.support24_7')}
-        </Typography>
-      </Box>
+        {/* Divider */}
+        <div className={`border-t ${homeThemeColors.borders.light} my-8`}></div>
 
-      <Typography
-        variant="body2"
-        sx={{ color: theme.palette.primary.contrastText + "CC" }}
-      >
-        {t('footer.copyright', { year: new Date().getFullYear() })}
-      </Typography>
-    </StyledFooter>
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <Icon size={18} className="text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+                <span>{stat.label}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Copyright */}
+        <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <p>{t('footer.copyright', { year: currentYear })}</p>
+        </div>
+      </div>
+    </footer>
   );
 };
 

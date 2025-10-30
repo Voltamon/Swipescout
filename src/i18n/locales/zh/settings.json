@@ -1,0 +1,17 @@
+{
+  "settings": "设置",
+  "generalSettings": "常规设置",
+  "accountSettings": "账户设置",
+  "notificationSettings": "通知设置",
+  "privacySettings": "隐私设置",
+  "theme": "主题",
+  "lightMode": "浅色模式",
+  "darkMode": "深色模式",
+  "language": "语言",
+  "dateFormat": "日期格式",
+  "timeFormat": "时间格式",
+  "currency": "货币",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "deleteAccount": "删除账户"
+}

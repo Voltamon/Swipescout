@@ -1,0 +1,13 @@
+{
+  "title": "联系我们",
+  "description": "与SwipeScout团队联系。",
+  "email": {
+    "title": "电子邮件",
+    "description": "给我们发送电子邮件，我们会尽快回复。"
+  },
+  "discord": {
+    "title": "加入我们的Discord",
+    "description": "在Discord上与社区联系。",
+    "button": "加入Discord"
+  }
+}

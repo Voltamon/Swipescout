@@ -8,10 +8,10 @@ import {
   unsaveVideo,
   shareVideo 
 } from '../services/api';
-import { Card, CardContent } from '@/components/UI/card';
-import { Button } from '@/components/UI/button';
-import { Input } from '@/components/UI/input';
-import { Badge } from '@/components/UI/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import {
   Select,
@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/UI/select';
+} from '@/components/ui/select';
 import {
   Heart,
   Play,

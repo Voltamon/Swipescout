@@ -1,0 +1,14 @@
+{
+  "title": "AI分析",
+  "overallScore": "总分",
+  "recommendations": "建议",
+  "jobRecommendations": "工作建议",
+  "learningRecommendations": "学习建议",
+  "careerPath": "建议的职业道路",
+  "skillGaps": "技能差距",
+  "aiRecommendations": "AI建议",
+  "careerPathDescription": "根据分析建议的职业道路",
+  "noVideos": "没有可供分析的视频",
+  "videoAnalysis": "视频分析",
+  "videoAnalysisDescription": "对您的视频内容进行自动分析"
+}

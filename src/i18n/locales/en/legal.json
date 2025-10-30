@@ -1,0 +1,117 @@
+{
+  "backToHome": "Back to Home",
+  "downloadPDF": "Download PDF",
+  "lastUpdated": "Last updated",
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "introduction": {
+      "title": "Introduction",
+      "content": "SwipeScout (\"we,\" \"our,\" or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our video recruitment platform and related services."
+    },
+    "informationWeCollect": {
+      "title": "Information We Collect",
+      "personalInfo": {
+        "title": "Personal Information",
+        "accountInfo": "Account Information: Name, email address, phone number, profile picture"
+      }
+    }
+  },
+  "termsOfService": {
+    "title": "Terms of Service",
+    "introduction": {
+      "title": "Introduction",
+      "content": "Welcome to SwipeScout! These Terms of Service govern your use of our website and services."
+    },
+    "userObligations": {
+      "title": "User Obligations",
+      "content": "As a user, you agree to provide accurate information, maintain the security of your account, and use the service in compliance with applicable laws."
+    },
+    "intellectualProperty": {
+      "title": "Intellectual Property",
+      "content": "All content and materials on the SwipeScout platform are owned by SwipeScout or our licensors and are protected by intellectual property laws."
+    },
+    "termination": {
+      "title": "Termination",
+      "content": "We may suspend or terminate your access to the service at any time, with or without cause, and with or without notice."
+    },
+    "communityGuidelines": {
+      "title": "Community Guidelines",
+      "authenticityAccuracy": {
+        "title": "Authenticity & Accuracy",
+        "points": {
+          "accurateTruthful": "Be accurate and truthful",
+          "genuineJobPostings": "Post genuine job listings",
+          "noImpersonation": "No impersonation"
+        }
+      }
+    }
+  },
+  "cookiePolicy": {
+    "title": "Cookie Policy",
+    "introduction": {
+      "title": "Introduction",
+      "content": "SwipeScout uses cookies to enhance your experience on our platform. This Cookie Policy explains what cookies are, how we use them, and your choices regarding cookies."
+    },
+    "whatAreCookies": {
+      "title": "What Are Cookies?",
+      "content": "Cookies are small text files that are used to store small pieces of information. They are stored on your device when the website is loaded on your browser."
+    },
+    "howSwipeScoutUsesCookies": {
+      "title": "How SwipeScout Uses Cookies",
+      "content": "When you use and access the Service, we may place a number of cookies files in your web browser. We use cookies for the following purposes: Authentication, Security, Performance, and Analytics."
+    },
+    "yourChoices": {
+      "title": "Your Choices Regarding Cookies",
+      "content": "If you prefer to avoid the use of cookies on the Service, you must first disable the use of cookies in your browser and then delete the cookies saved in your browser associated with this service."
+    }
+  },
+  "communityGuidelines": {
+    "title": "Community Guidelines",
+    "introduction": {
+      "title": "Introduction",
+      "content": "At SwipeScout, we are committed to maintaining a respectful and inclusive community. These Community Guidelines outline the standards of behavior expected from all users."
+    },
+    "acceptableUse": {
+      "title": "Acceptable Use",
+      "content": "You agree to use the Service only for purposes that are legal and in accordance with these Community Guidelines. You must not use the Service in any way that could damage, disable, overburden, or impair the Service."
+    },
+    "userConduct": {
+      "title": "User Conduct",
+      "content": "You are solely responsible for your interactions with other users of the Service. We reserve the right to monitor disputes between you and other users and to terminate your account if you violate these guidelines."
+    }
+  },
+  "copyrightAndIPTerms": {
+    "title": "Copyright & IP Terms",
+    "introduction": {
+      "title": "Introduction",
+      "content": "SwipeScout respects intellectual property rights and expects users to do the same. This section outlines our policies regarding copyright and intellectual property."
+    },
+    "userGeneratedContent": {
+      "title": "User-Generated Content",
+      "content": "You retain ownership of the content you create and share on SwipeScout. However, by using our service, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, and display such content."
+    },
+    "reportingInfringements": {
+      "title": "Reporting Infringements",
+      "content": "If you believe that your copyright or intellectual property rights have been violated, please contact us immediately with the relevant details."
+    }
+  },
+  "eula": {
+    "title": "End User License Agreement (EULA)",
+    "introduction": {
+      "title": "Introduction",
+      "content": "This End User License Agreement (\"EULA\") is a legal agreement between you and SwipeScout regarding your use of our software and services."
+    },
+    "licenseGrant": {
+      "title": "License Grant",
+      "content": "Subject to your compliance with this EULA, SwipeScout grants you a limited, non-exclusive, non-transferable license to use the software and services for your personal or internal business purposes."
+    },
+    "restrictions": {
+      "title": "Restrictions",
+      "content": "You may not: (a) modify, adapt, or create derivative works based on the software; (b) reverse engineer, decompile, or disassemble the software; (c) distribute, sell, or lease the software to any third party."
+    },
+    "termination": {
+      "title": "Termination",
+      "content": "This EULA is effective until terminated by either party. You may terminate it at any time by discontinuing use of the software and services and deleting all copies in your possession. SwipeScout may terminate it if you breach any terms of this EULA."
+    }
+  }
+}

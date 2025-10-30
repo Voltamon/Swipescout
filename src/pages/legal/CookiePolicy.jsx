@@ -1,144 +1,122 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  Button,
-  useTheme
-} from '@mui/material';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Headers/Header';
 import Footer from '../../components/Headers/Footer';
-import { Download, ArrowBack } from '@mui/icons-material';
+import { Download, ArrowLeft } from 'lucide-react';
+import { homeThemeColors } from '../../config/theme-colors-home';
+
+const Section = ({ title, children }) => (
+  <section className="mb-8">
+    <h2 className={`text-2xl font-bold mb-4 ${homeThemeColors.text.primary}`}>
+      {title}
+    </h2>
+    <div className={`space-y-4 ${homeThemeColors.text.secondary}`}>
+      {children}
+    </div>
+  </section>
+);
+
+const ListItem = ({ children }) => (
+  <li className="flex items-start">
+    <span className="mr-2 mt-1">•</span>
+    <span>{children}</span>
+  </li>
+);
 
 const CookiePolicy = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   const handleDownloadPDF = () => {
     window.open('/legal/cookie-policy.pdf', '_blank');
   };
 
+  const sections = [
+    { id: 'whatAreCookies', title: t("legal.cookiePolicy.whatAreCookies.title"), content: <p>{t("legal.cookiePolicy.whatAreCookies.content")}</p> },
+    {
+      id: 'howWeUseCookies',
+      title: t("legal.cookiePolicy.howWeUseCookies.title"),
+      content: (
+        <>
+          <p>{t("legal.cookiePolicy.howWeUseCookies.content")}</p>
+          <ul className="list-disc list-inside space-y-2">
+            <ListItem>{t("legal.cookiePolicy.howWeUseCookies.points.essential")}</ListItem>
+            <ListItem>{t("legal.cookiePolicy.howWeUseCookies.points.performanceAnalytics")}</ListItem>
+            <ListItem>{t("legal.cookiePolicy.howWeUseCookies.points.functionality")}</ListItem>
+            <ListItem>{t("legal.cookiePolicy.howWeUseCookies.points.advertisingTargeting")}</ListItem>
+          </ul>
+        </>
+      )
+    },
+    { id: 'thirdPartyCookies', title: t("legal.cookiePolicy.thirdPartyCookies.title"), content: <p>{t("legal.cookiePolicy.thirdPartyCookies.content")}</p> },
+    {
+      id: 'yourChoices',
+      title: t("legal.cookiePolicy.yourChoices.title"),
+      content: (
+        <>
+          <p>{t("legal.cookiePolicy.yourChoices.content")}</p>
+          <ul className="list-disc list-inside space-y-2">
+            <ListItem>{t("legal.cookiePolicy.yourChoices.points.browserSettings")}</ListItem>
+            <ListItem>{t("legal.cookiePolicy.yourChoices.points.cookieConsentTool")}</ListItem>
+          </ul>
+        </>
+      )
+    },
+    { id: 'changesToPolicy', title: t("legal.cookiePolicy.changesToPolicy.title"), content: <p>{t("legal.cookiePolicy.changesToPolicy.content")}</p> },
+    {
+      id: 'contactUs',
+      title: t("legal.cookiePolicy.contactUs.title"),
+      content: (
+        <>
+          <p>{t("legal.cookiePolicy.contactUs.content")}</p>
+          <p>{t("legal.cookiePolicy.contactUs.email")}</p>
+        </>
+      )
+    },
+  ];
+
   return (
-    <>
+    <div className={`${homeThemeColors.backgrounds.page} ${homeThemeColors.text.primary} min-h-screen`}>
       <Header />
-      <Box sx={{ backgroundColor: theme.palette.background.default, minHeight: '100vh', py: 4 }}>
-        <Container maxWidth="md">
-          <Box sx={{ mb: 3 }}>
-            <Button
-              component={Link}
-              to="/"
-              startIcon={<ArrowBack />}
-              sx={{ mb: 2 }}
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="mb-8">
+          <Link
+            to="/"
+            className={`inline-flex items-center mb-4 ${homeThemeColors.text.secondary} hover:text-blue-500 transition-colors`}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Link>
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
+            <h1 className={`text-4xl sm:text-5xl font-extrabold ${homeThemeColors.text.gradient}`}>
+              {t("legal.cookiePolicy.title")}
+            </h1>
+            <button
+              onClick={handleDownloadPDF}
+              className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Back to Home
-            </Button>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h3" component="h1" gutterBottom>
-                {t("legal.cookiePolicy.title")}
-              </Typography>
-              <Button
-                variant="outlined"
-                startIcon={<Download />}
-                onClick={handleDownloadPDF}
-              >
-                {t("legal.downloadPDF")}
-              </Button>
-            </Box>
-            <Typography variant="body2" color="text.secondary">
-              {t("legal.lastUpdated")}: January 20, 2024
-            </Typography>
-          </Box>
+              <Download className="w-5 h-5 mr-2" />
+              {t("legal.downloadPDF")}
+            </button>
+          </div>
+          <p className={`${homeThemeColors.text.secondary}`}>
+            {t("legal.lastUpdated")}: January 20, 2024
+          </p>
+        </div>
 
-          <Paper sx={{ p: 4, mb: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              {t("legal.cookiePolicy.whatAreCookies.title")}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {t("legal.cookiePolicy.whatAreCookies.content")}
-            </Typography>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Typography variant="h5" gutterBottom>
-              {t("legal.cookiePolicy.howWeUseCookies.title")}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {t("legal.cookiePolicy.howWeUseCookies.content")}
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemText primary={t("legal.cookiePolicy.howWeUseCookies.points.essential")} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={t("legal.cookiePolicy.howWeUseCookies.points.performanceAnalytics")} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={t("legal.cookiePolicy.howWeUseCookies.points.functionality")} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={t("legal.cookiePolicy.howWeUseCookies.points.advertisingTargeting")} />
-              </ListItem>
-            </List>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Typography variant="h5" gutterBottom>
-              {t("legal.cookiePolicy.thirdPartyCookies.title")}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {t("legal.cookiePolicy.thirdPartyCookies.content")}
-            </Typography>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Typography variant="h5" gutterBottom>
-              {t("legal.cookiePolicy.yourChoices.title")}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {t("legal.cookiePolicy.yourChoices.content")}
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemText primary={t("legal.cookiePolicy.yourChoices.points.browserSettings")} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={t("legal.cookiePolicy.yourChoices.points.cookieConsentTool")} />
-              </ListItem>
-            </List>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Typography variant="h5" gutterBottom>
-              {t("legal.cookiePolicy.changesToPolicy.title")}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {t("legal.cookiePolicy.changesToPolicy.content")}
-            </Typography>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Typography variant="h5" gutterBottom>
-              {t("legal.cookiePolicy.contactUs.title")}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {t("legal.cookiePolicy.contactUs.content")}
-            </Typography>
-            <Typography variant="body1">
-              {t("legal.cookiePolicy.contactUs.email")}
-            </Typography>
-            <Divider sx={{ my: 3 }} />
-          </Paper>
-        </Container>
-      </Box>
+        <div className={`p-6 sm:p-10 rounded-2xl ${homeThemeColors.backgrounds.card} shadow-lg`}>
+          {sections.map((section, index) => (
+            <React.Fragment key={section.id}>
+              <Section title={section.title}>
+                {section.content}
+              </Section>
+              {index < sections.length - 1 && <hr className={`my-8 ${homeThemeColors.borders.default}`} />}
+            </React.Fragment>
+          ))}
+        </div>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

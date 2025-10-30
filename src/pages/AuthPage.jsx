@@ -15,8 +15,10 @@ import { Visibility, VisibilityOff, Google as GoogleIcon, LinkedIn as LinkedInIc
 import { AlertCircle as AlertCircleIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedirectPath }) => {
+  const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
   const { loginByEmailAndPassword, registerByEmailAndPassword, authenticateWithGoogle, authenticateWithLinkedIn, user } = useAuth();
@@ -95,12 +97,12 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
     setLoading({ ...loading, email: true });
     setError('');
     if (!formData.role) {
-      setError('Please select your role (Job Seeker or Employer)');
+      setError(t('auth:errors.selectRole'));
       setLoading({ ...loading, email: false });
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('auth:errors.passwordMismatch'));
       setLoading({ ...loading, email: false });
       return;
     }
@@ -198,7 +200,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     boxShadow: activeTab === 0 ? '0 6px 18px rgba(102,126,234,0.18)' : 'none',
                   }}
                 >
-                  Login
+                  {t('auth:tabs.login')}
                 </button>
                 <button
                   onClick={() => handleTabChange(1)}
@@ -214,29 +216,29 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     boxShadow: activeTab === 1 ? '0 6px 18px rgba(102,126,234,0.18)' : 'none',
                   }}
                 >
-                  Sign Up
+                  {t('auth:tabs.signUp')}
                 </button>
               </div>
 
               <Box className="home-auth-form-container">
                 {activeTab === 0 ? (
                   <Box component="form" onSubmit={handleEmailSignIn} className="home-auth-form">
-                    <TextField label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} />
-                    <TextField label="Password" type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+                    <TextField label={t('auth:fields.email')} type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} />
+                    <TextField label={t('auth:fields.password')} type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
                     <Box sx={{ textAlign: 'right', mt: 1 }}>
-                      <Typography component="span" sx={{ color: '#667eea', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }} onClick={() => navigate('/forgot-password')}>Forgot Password?</Typography>
+                      <Typography component="span" sx={{ color: '#667eea', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }} onClick={() => navigate('/forgot-password')}>{t('auth:labels.forgotPassword')}</Typography>
                     </Box>
-                    <Button type="submit" disabled={loading.email} variant="contained" fullWidth className="home-auth-button" sx={{ mt: 2 }}>{loading.email ? <CircularProgress size={24} color="inherit" /> : 'Log In'}</Button>
+                    <Button type="submit" disabled={loading.email} variant="contained" fullWidth className="home-auth-button" sx={{ mt: 2 }}>{loading.email ? <CircularProgress size={24} color="inherit" /> : t('auth:buttons.logIn')}</Button>
                   </Box>
                 ) : (
                   <Box component="form" onSubmit={handleEmailSignUp} className="home-auth-form">
                     <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                      <TextField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" />
-                      <TextField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" />
+                      <TextField label={t('auth:fields.firstName')} name="firstName" value={formData.firstName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" />
+                      <TextField label={t('auth:fields.lastName')} name="lastName" value={formData.lastName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" />
                     </Box>
 
                     <Box sx={{ mt: 2, mb: 2 }}>
-                      <Typography variant="body2" sx={{ color: '#374151', fontWeight: 600, mb: 1.5, fontSize: '0.9rem' }}>I am signing up as:</Typography>
+                      <Typography variant="body2" sx={{ color: '#374151', fontWeight: 600, mb: 1.5, fontSize: '0.9rem' }}>{t('auth:labels.signingUpAs')}</Typography>
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <Button
                           variant={formData.role === 'employer' ? 'contained' : 'outlined'}
@@ -244,7 +246,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                           startIcon={<BusinessIcon />}
                           sx={{ flex: 1 }}
                         >
-                          Employer
+                          {t('auth:labels.employer')}
                         </Button>
                         <Button
                           variant={formData.role === 'job_seeker' ? 'contained' : 'outlined'}
@@ -252,32 +254,32 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                           startIcon={<PersonOutlineIcon />}
                           sx={{ flex: 1 }}
                         >
-                          Job Seeker
+                          {t('auth:labels.jobSeeker')}
                         </Button>
                       </Box>
                     </Box>
 
-                    <TextField label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} />
-                    <TextField label="Password" type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
-                    <TextField label="Confirm Password" type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
-                    <Button type="submit" disabled={loading.email} variant="contained" fullWidth className="home-auth-button" sx={{ mt: 2 }}>{loading.email ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}</Button>
+                    <TextField label={t('auth:fields.email')} type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} />
+                    <TextField label={t('auth:fields.password')} type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+                    <TextField label={t('auth:fields.confirmPassword')} type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+                    <Button type="submit" disabled={loading.email} variant="contained" fullWidth className="home-auth-button" sx={{ mt: 2 }}>{loading.email ? <CircularProgress size={24} color="inherit" /> : t('auth:buttons.signUp')}</Button>
                   </Box>
                 )}
 
                 <Box className="home-social-divider" sx={{ mt: 3, mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#6b7280', textAlign: 'center', fontWeight: 500 }}>Or continue with</Typography>
+                  <Typography variant="body2" sx={{ color: '#6b7280', textAlign: 'center', fontWeight: 500 }}>{t('auth:labels.orContinueWith')}</Typography>
                 </Box>
 
                 <Box className="home-social-buttons" sx={{ display: 'flex', gap: 2 }}>
-                  <Button variant="outlined" onClick={(e) => setGoogleAnchorEl(e.currentTarget)} disabled={loading.google} startIcon={<GoogleIcon />} sx={{ flex: 1 }}>{loading.google ? <CircularProgress size={24} /> : 'Google'}</Button>
+                  <Button variant="outlined" onClick={(e) => setGoogleAnchorEl(e.currentTarget)} disabled={loading.google} startIcon={<GoogleIcon />} sx={{ flex: 1 }}>{loading.google ? <CircularProgress size={24} /> : t('auth:buttons.google')}</Button>
                   <Menu anchorEl={googleAnchorEl} open={Boolean(googleAnchorEl)} onClose={() => setGoogleAnchorEl(null)}>
-                    <MenuItem onClick={() => handleGoogleSignInWithRole('job_seeker')}>Sign up as Job Seeker</MenuItem>
-                    <MenuItem onClick={() => handleGoogleSignInWithRole('employer')}>Sign up as Employer</MenuItem>
+                    <MenuItem onClick={() => handleGoogleSignInWithRole('job_seeker')}>{t('auth:menu.signUpAsJobSeeker')}</MenuItem>
+                    <MenuItem onClick={() => handleGoogleSignInWithRole('employer')}>{t('auth:menu.signUpAsEmployer')}</MenuItem>
                   </Menu>
-                  <Button variant="outlined" onClick={(e) => setLinkedinAnchorEl(e.currentTarget)} disabled={loading.linkedin} startIcon={<LinkedInIcon />} sx={{ flex: 1 }}>{loading.linkedin ? <CircularProgress size={24} /> : 'LinkedIn'}</Button>
+                  <Button variant="outlined" onClick={(e) => setLinkedinAnchorEl(e.currentTarget)} disabled={loading.linkedin} startIcon={<LinkedInIcon />} sx={{ flex: 1 }}>{loading.linkedin ? <CircularProgress size={24} /> : t('auth:buttons.linkedin')}</Button>
                   <Menu anchorEl={linkedinAnchorEl} open={Boolean(linkedinAnchorEl)} onClose={() => setLinkedinAnchorEl(null)}>
-                    <MenuItem onClick={() => handleLinkedInSignInWithRole('job_seeker')}>Sign up as Job Seeker</MenuItem>
-                    <MenuItem onClick={() => handleLinkedInSignInWithRole('employer')}>Sign up as Employer</MenuItem>
+                    <MenuItem onClick={() => handleLinkedInSignInWithRole('job_seeker')}>{t('auth:menu.signUpAsJobSeeker')}</MenuItem>
+                    <MenuItem onClick={() => handleLinkedInSignInWithRole('employer')}>{t('auth:menu.signUpAsEmployer')}</MenuItem>
                   </Menu>
                 </Box>
 
@@ -293,7 +295,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
         </div>
 
         <div className="home-auth-dialog-footer">
-          <button className="home-auth-close-button" onClick={close}>Close</button>
+          <button className="home-auth-close-button" onClick={close}>{t('auth:buttons.close')}</button>
         </div>
       </div>
     </div>

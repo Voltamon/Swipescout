@@ -1,0 +1,14 @@
+{
+  "title": "AI Analysis",
+  "overallScore": "Overall Score",
+  "recommendations": "Recommendations",
+  "jobRecommendations": "Job Recommendations",
+  "learningRecommendations": "Learning Recommendations",
+  "careerPath": "Suggested Career Path",
+  "skillGaps": "Skill Gaps",
+  "aiRecommendations": "AI Recommendations",
+  "careerPathDescription": "Suggested career path based on analysis",
+  "noVideos": "No videos available for analysis",
+  "videoAnalysis": "Video Analysis",
+  "videoAnalysisDescription": "Automated analysis of your video content"
+}

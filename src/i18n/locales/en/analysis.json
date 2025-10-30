@@ -1,0 +1,33 @@
+{
+  "interviewAnalysis": "Interview Analysis",
+  "responseNotFound": "Response Not Found",
+  "backToTemplates": "Back to Templates",
+  "status": {
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "submitted": "Submitted",
+    "reviewed": "Reviewed"
+  },
+  "transcribed": "Transcribed",
+  "startTranscription": "Start Transcription",
+  "generateAnalysis": "Generate Analysis",
+  "transcriptionProgress": "Transcription Progress",
+  "analysisProgress": "Analysis Progress",
+  "overallPerformance": "Overall Performance",
+  "overallScore": "Overall Score",
+  "communicationScore": "Communication Score",
+  "technicalScore": "Technical Score",
+  "completenessScore": "Completeness Score",
+  "strengths": "Strengths",
+  "areasForImprovement": "Areas for Improvement",
+  "recommendations": "Recommendations",
+  "questionByQuestion": "Question-by-Question Analysis",
+  "question": "Question",
+  "videoNotSupported": "Your browser does not support video playback",
+  "transcript": "Transcript",
+  "textResponse": "Text Response",
+  "aiAnalysis": "AI Analysis",
+  "communicationQuality": "Communication Quality",
+  "keywordsFound": "Keywords Found",
+  "improvementSuggestions": "Improvement Suggestions"
+}

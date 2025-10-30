@@ -42,7 +42,7 @@ Different ones i think better
 Should analytics include comparison metrics (e.g., “+23% profile views vs last week”)?
 Yes Ok.
 🧩 Reusable Components & Integration
-Should I define a shared design system folder (like /components/UI/) for elements such as Card, MetricBox, ChartWidget, Toast, VideoPreview, etc.?
+Should I define a shared design system folder (like /components/ui/) for elements such as Card, MetricBox, ChartWidget, Toast, VideoPreview, etc.?
 Yes
 Do you want the Dashboard layout to live under a shared layout file (e.g., /app/dashboard/layout.tsx) so both dashboards reuse the same structure, or do you want two completely separate layouts (/dashboard/jobseeker/ and /dashboard/employer/)?
 To be two completely separate

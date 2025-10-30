@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "title": "The First Video Hiring App",
+    "subtitle": "Swipe through video resumes just like TikTok. The fastest, most interactive way to hire and be hired."
+  },
+  "heroTagline": "Video resumes made fast, hiring made smarter.",
+  "description": "Join us and find your dream job",
+  "features": {
+    "videoProfile": "Launch your video profile in minutes.",
+    "showSkills": "Show your skills in 15 seconds",
+    "employersSwiping": "Employers are already swiping",
+    "watchVideoFeeds": "Watch Video Feeds"
+  },
+  "buttons": {
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "footer": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "contactUs": "Contact Us",
+    "more": "More",
+    "blog": "Blog",
+    "social": {
+      "twitter": "Twitter",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn"
+    }
+  }
+}

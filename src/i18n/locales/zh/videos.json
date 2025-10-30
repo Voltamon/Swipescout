@@ -1,0 +1,15 @@
+{
+  "loadingVideos": "正在加载视频...",
+  "oops": "哎呀！",
+  "noVideosYet": "暂无视频",
+  "beTheFirstToShare": "成为第一个分享你故事的人",
+  "uploadVideo": "上传视频",
+  "addedToLikes": "已添加到喜欢",
+  "removedFromLikes": "已从喜欢中移除",
+  "savedToCollection": "已保存到收藏",
+  "removedFromSaved": "已从收藏中移除",
+  "linkCopied": "链接已复制",
+  "checkOutThisVideo": "看看这个视频：{{videoTitle}}",
+  "sampleVideoMessage": "这是一个用于演示的示例视频",
+  "connectionRequestSent": "已发送连接请求"
+}

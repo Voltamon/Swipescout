@@ -1,0 +1,13 @@
+{
+  "title": "Contact Us",
+  "description": "Get in touch with the SwipeScout team.",
+  "email": {
+    "title": "Email",
+    "description": "Send us an email and we'll get back to you as soon as possible."
+  },
+  "discord": {
+    "title": "Join our Discord",
+    "description": "Connect with the community on Discord.",
+    "button": "Join Discord"
+  }
+}

@@ -14,11 +14,11 @@ import {
 } from '../services/chatService';
 import { useSocket } from '../hooks/useSocket';
 import { formatDistanceToNow } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
-import { Button } from '@/components/UI/button';
-import { Input } from '@/components/UI/input';
-import { Badge } from '@/components/UI/badge';
-import { ScrollArea } from '@/components/UI/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '../lib/utils';
 

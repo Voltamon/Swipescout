@@ -1,0 +1,13 @@
+{
+  "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+  "videoUploaded": "تم تحميل الفيديو بنجاح!",
+  "applicationSubmitted": "تم تقديم الطلب بنجاح!",
+  "messagesSent": "تم إرسال الرسالة بنجاح!",
+  "interviewScheduled": "تم جدولة المقابلة بنجاح!",
+  "settingsSaved": "تم حفظ الإعدادات بنجاح!",
+  "passwordChanged": "تم تغيير كلمة المرور بنجاح!",
+  "accountDeleted": "تم حذف الحساب بنجاح!",
+  "dataExported": "تم تصدير البيانات بنجاح!",
+  "subscriptionUpdated": "تم تحديث الاشتراك بنجاح!",
+  "paymentProcessed": "تمت معالجة الدفع بنجاح!"
+}

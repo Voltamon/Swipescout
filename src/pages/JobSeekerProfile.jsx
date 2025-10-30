@@ -7,11 +7,11 @@ import {
   getUserExperiences, 
   getUserEducation 
 } from '../services/api.js';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card';
-import { Button } from '@/components/UI/button';
-import { Badge } from '@/components/UI/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
 import {
   User,

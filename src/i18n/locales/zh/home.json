@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "title": "首个视频招聘应用",
+    "subtitle": "像刷TikTok一样浏览视频简历。最快、最互动的招聘方式——无论是招人还是求职。"
+  },
+  "heroTagline": "视频简历变得快速，招聘变得更智能。",
+  "description": "加入我们，找到您的梦想工作",
+  "features": {
+    "videoProfile": "几分钟内启动您的视频资料。",
+    "showSkills": "15秒展示您的技能",
+    "employersSwiping": "雇主已经在浏览了",
+    "watchVideoFeeds": "观看视频动态"
+  },
+  "buttons": {
+    "login": "登录",
+    "signup": "注册"
+  },
+  "footer": {
+    "privacyPolicy": "隐私政策",
+    "termsOfService": "服务条款",
+    "cookiePolicy": "Cookie政策",
+    "contactUs": "联系我们",
+    "more": "更多",
+    "blog": "博客",
+    "social": {
+      "twitter": "推特",
+      "tiktok": "抖音",
+      "linkedin": "领英"
+    }
+  }
+}

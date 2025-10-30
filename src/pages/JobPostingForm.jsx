@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/UI/card";
-import { Button } from "@/components/UI/button";
-import { Input } from "@/components/UI/input";
-import { Label } from "@/components/UI/label";
-import { Textarea } from "@/components/UI/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/UI/select";
-import { Checkbox } from "@/components/UI/checkbox";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Briefcase, MapPin, DollarSign, Clock, FileText, CheckCircle, Loader2 } from "lucide-react";
 

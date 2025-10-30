@@ -1,0 +1,217 @@
+{
+  "choosePlan": "Choose Your Plan",
+  "features": "Whether you're looking for your dream job or the perfect candidate, we have the right plan for you.",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "year": "year",
+  "month": "month",
+  "savePercent": "Save {{percent}}%",
+  "mostPopular": "Most Popular",
+  "tabs": {
+    "jobSeekerPlans": "Job Seeker Plans",
+    "employerPlans": "Employer Plans"
+  },
+  "trustedBy": "Trusted by thousands of professionals",
+  "securePayments": "Secure Payments",
+  "support247": "24/7 Support",
+  "moneyBackGuarantee": "Money-back Guarantee",
+  "purchaseService": "Purchase Service",
+  "currentSubscription": {
+    "title": "Current Subscription",
+    "plan": "Plan",
+    "active": "Active",
+    "inactive": "Inactive",
+    "expires": "Expires"
+  },
+  "confirmSubscription": {
+    "title": "Confirm Subscription",
+    "plan": "Plan",
+    "button": "Confirm Subscription"
+  },
+  "jobSeekerPlans": {
+    "basic": {
+      "title": "Basic",
+      "price": "Free",
+      "description": "Perfect for individuals starting their job search.",
+      "features": {
+        "0": "Create 1 video resume",
+        "1": "Apply to 10 jobs/month",
+        "2": "Basic profile & messaging",
+        "3": "Community support",
+        "4": "Basic job search filters"
+      },
+      "buttonText": "Start Free"
+    },
+    "professional": {
+      "title": "Professional",
+      "price": "$9.99",
+      "description": "Ideal for active job seekers.",
+      "features": {
+        "0": "Create up to 5 video resumes",
+        "1": "Apply to 50 jobs/month",
+        "2": "Advanced analytics & profile views",
+        "3": "Priority support",
+        "4": "AI-powered job matching",
+        "5": "Video editing tools",
+        "6": "Enhanced profile visibility"
+      },
+      "buttonText": "Choose Professional"
+    },
+    "premium": {
+      "title": "Premium",
+      "price": "$19.99",
+      "description": "For serious job seekers.",
+      "features": {
+        "0": "Unlimited video resumes",
+        "1": "Unlimited job applications",
+        "2": "Career coaching access",
+        "3": "Interview preparation sessions",
+        "4": "Skill assessments & certifications",
+        "5": "Direct recruiter messaging",
+        "6": "LinkedIn profile optimization",
+        "7": "Resume optimization tools"
+      },
+      "buttonText": "Choose Premium"
+    }
+  },
+  "featureList": "Professional Services",
+  "jobAlerts": "Boost your job search with these services.",
+  "jobSeekerServices": {
+    "careerCoaching": {
+      "title": "Career Coaching Session",
+      "price": "$99.99",
+      "description": "1-hour expert session to guide your career path and strategy.",
+      "duration": "1 hour",
+      "features": {
+        "0": "Personalized career assessment",
+        "1": "Goal setting and action planning",
+        "2": "Industry insights and trends",
+        "3": "Networking strategies"
+      }
+    },
+    "resumeReview": {
+      "title": "Professional Resume Review",
+      "price": "$49.99",
+      "description": "Expert optimization of your resume for maximum impact.",
+      "duration": "3-5 business days",
+      "features": {
+        "0": "Comprehensive resume analysis",
+        "1": "ATS optimization",
+        "2": "Industry-specific recommendations",
+        "3": "Before/after comparison"
+      }
+    },
+    "interviewPrep": {
+      "title": "Interview Preparation Package",
+      "price": "$149.99",
+      "description": "Complete preparation package for your next big interview.",
+      "duration": "2 weeks",
+      "features": {
+        "0": "Mock interview sessions",
+        "1": "Question bank and answers",
+        "2": "Body language coaching",
+        "3": "Follow-up strategies"
+      }
+    },
+    "linkedinOptimization": {
+      "title": "LinkedIn Profile Optimization",
+      "price": "$79.99",
+      "description": "Professional LinkedIn profile makeover to attract recruiters.",
+      "duration": "5-7 business days",
+      "features": {
+        "0": "Profile headline optimization",
+        "1": "Summary and experience sections",
+        "2": "Keyword optimization",
+        "3": "Professional photo guidance"
+      }
+    }
+  },
+  "employerPlans": {
+    "starter": {
+      "title": "Starter",
+      "price": "$29.99",
+      "description": "Perfect for small businesses and startups.",
+      "features": {
+        "0": "Post up to 3 jobs",
+        "1": "Access to candidate database",
+        "2": "Basic candidate search filters",
+        "3": "Company profile creation",
+        "4": "Basic analytics",
+        "5": "Email support"
+      },
+      "buttonText": "Start Hiring"
+    },
+    "business": {
+      "title": "Business",
+      "price": "$79.99",
+      "description": "Ideal for growing companies.",
+      "features": {
+        "0": "Unlimited job postings",
+        "1": "Advanced candidate search & filters",
+        "2": "Boosted job visibility",
+        "3": "Advanced candidate analytics",
+        "4": "Video interview scheduling",
+        "5": "Priority customer support",
+        "6": "Team collaboration tools",
+        "7": "Applicant tracking system"
+      },
+      "buttonText": "Choose Business"
+    },
+    "enterprise": {
+      "title": "Enterprise",
+      "price": "$199.99",
+      "description": "For large organizations.",
+      "features": {
+        "0": "Everything in Business",
+        "1": "Dedicated account manager",
+        "2": "Custom integrations & API access",
+        "3": "White-label solutions",
+        "4": "Advanced reporting & analytics",
+        "5": "Priority job placement",
+        "6": "Custom branding",
+        "7": "24/7 phone support",
+        "8": "Training & onboarding"
+      },
+      "buttonText": "Contact Sales"
+    }
+  },
+  "employerServices": {
+    "recruitmentConsulting": {
+      "title": "Recruitment Strategy Consulting",
+      "price": "$299.99",
+      "description": "Expert consultation to optimize your hiring process.",
+      "duration": "2 hours",
+      "features": {
+        "0": "Hiring process audit",
+        "1": "Job description optimization",
+        "2": "Candidate sourcing strategies",
+        "3": "Interview process design"
+      }
+    },
+    "employerBranding": {
+      "title": "Employer Branding Package",
+      "price": "$499.99",
+      "description": "Build an attractive employer brand to attract top talent.",
+      "duration": "2-3 weeks",
+      "features": {
+        "0": "Company culture assessment",
+        "1": "Employer value proposition",
+        "2": "Social media strategy",
+        "3": "Content creation guidelines"
+      }
+    },
+    "teamTraining": {
+      "title": "Hiring Team Training",
+      "price": "$799.99",
+      "description": "Train your team on modern recruitment best practices.",
+      "duration": "1 day workshop",
+      "features": {
+        "0": "Video interview techniques",
+        "1": "Bias-free hiring practices",
+        "2": "Candidate experience optimization",
+        "3": "Technology platform training"
+      }
+    }
+  },
+  "contactSales": "Contact our sales team for more information."
+}

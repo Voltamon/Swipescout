@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "all": "全部",
+    "general": "常规",
+    "jobSeekers": "求职者",
+    "employers": "雇主",
+    "technical": "技术"
+  },
+  "questions": {
+    "whatIsSwipeScout": {
+      "question": "什么是SwipeScout？",
+      "answer": "SwipeScout是一个现代化的招聘平台，通过视频个人资料和AI驱动的匹配连接求职者和雇主。我们让招聘更具人情味和效率。"
+    },
+    "createVideoResume": {
+      "question": "如何创建视频简历？",
+      "answer": "导航到您的个人资料，然后点击“创建视频简历”。您可以直接录制或上传一个45秒的视频，展示您的技能和个性。"
+    },
+    "videoVisibility": {
+      "question": "我的视频简历是公开的吗？",
+      "answer": "您可以在设置中控制可见性。选择公开、仅对您申请的雇主可见，或私有直到您激活它。"
+    },
+    "jobPostingCost": {
+      "question": "发布职位需要多少钱？",
+      "answer": "我们提供免费的基本列表。具有高级功能的高级计划起价为每月99美元。企业客户可享受批量折扣。"
+    },
+    "videoFormats": {
+      "question": "支持哪些视频格式？",
+      "answer": "我们支持MP4、MOV和WebM格式，最大100MB。推荐分辨率为1080p（1920x1080）以获得最佳质量。"
+    },
+    "uploadFailing": {
+      "question": "为什么我的视频上传失败？",
+      "answer": "检查您的文件大小（<100MB）、格式和互联网连接。如果问题仍然存在，请尝试压缩视频或联系支持。"
+    },
+    "howMatching": {
+      "question": "匹配如何工作？",
+      "answer": "我们的AI分析职位要求和候选人资料，以建议最佳匹配。然后，雇主和候选人可以直接联系。"
+    },
+    "searchCandidates": {
+      "question": "我可以按技能搜索候选人吗？",
+      "answer": "是的！使用我们的高级搜索筛选器，按技能、经验水平、地点等查找候选人。"
+    }
+  }
+}

@@ -95,6 +95,7 @@ import Pricing from "./pages/PricingPage";
 import HelpPageLinks from "./pages/HelpPageLinks";
 import CustomerSupportPage from "./pages/CustomerSupportPage";
 import ContactPage from "./pages/ContactPage";
+import CreditsPage from "./pages/CreditsPage";
 import EmployerTabs from "./pages/EmployerTabs";
 import JobseekerTabs from "./pages/JobseekerTabs";
 import AdminTabs from "./pages/AdminTabs";
@@ -159,6 +160,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/credits" element={<CreditsPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
             
             {/* Blog Routes */}

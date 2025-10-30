@@ -1,0 +1,14 @@
+{
+  "title": "تحليل الذكاء الاصطناعي",
+  "overallScore": "الدرجة الإجمالية",
+  "recommendations": "التوصيات",
+  "jobRecommendations": "توصيات الوظائف",
+  "learningRecommendations": "توصيات التعلم",
+  "careerPath": "المسار الوظيفي المقترح",
+  "skillGaps": "فجوات المهارات",
+  "aiRecommendations": "توصيات الذكاء الاصطناعي",
+  "careerPathDescription": "المسار الوظيفي المقترح بناءً على التحليل",
+  "noVideos": "لا توجد فيديوهات متاحة للتحليل",
+  "videoAnalysis": "تحليل الفيديو",
+  "videoAnalysisDescription": "تحليل آلي لمحتوى الفيديو الخاص بك"
+}

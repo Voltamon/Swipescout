@@ -1,0 +1,28 @@
+{
+  "title": "SwipeScout - 视频招聘的未来",
+  "subtitle": "通过引人入胜的视频个人资料连接人才与机会",
+  "heroDescription": "通过我们创新的视频优先平台，发现您的下一个职业机会或找到完美的候选人。",
+  "getStarted": "开始",
+  "learnMore": "了解更多",
+  "findJobs": "寻找工作",
+  "findTalent": "寻找人才",
+  "exploreVideos": "探索视频",
+  "howItWorks": "SwipeScout如何运作",
+  "seeInAction": "观看SwipeScout的实际操作",
+  "experienceFuture": "体验招聘的未来",
+  "experienceDescription": "观看真实专业人士展示他们的技能，并了解公司如何展示他们的文化——所有这些都以引人入胜的视频形式呈现。",
+  "watchDemo": "观看演示",
+  "startSwiping": "开始滑动",
+  "testimonials": "用户评价",
+  "readyToStart": "准备好开始您的旅程了吗？",
+  "joinThousands": "加入成千上万已经在使用SwipeScout的专业人士和公司",
+  "signUpFree": "免费注册",
+  "features": {
+    "videoProfiles": "视频个人资料",
+    "videoProfilesDesc": "通过引人入胜的视频简历展示您的个性和技能",
+    "smartMatching": "智能匹配",
+    "smartMatchingDesc": "AI驱动的匹配将您与合适的机会联系起来",
+    "realTimeChat": "实时聊天",
+    "realTimeChatDesc": "立即与潜在雇主或候选人联系"
+  }
+}

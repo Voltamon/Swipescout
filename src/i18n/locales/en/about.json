@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "About SwipeScout | Our Mission and Team",
+    "description": "Learn about SwipeScout's mission to modernize hiring with video-first profiles and AI-driven matching.",
+    "keywords": "SwipeScout, video resume, recruitment, hiring, AI matching",
+    "ogDescription": "See how SwipeScout helps candidates and employers find better matches through video profiles and AI."
+  },
+  "hero": {
+    "title": "About SwipeScout",
+    "subtitle": "Revolutionizing the way people find jobs and companies find talent",
+    "description": "Founded in 2025, SwipeScout connects candidates and employers through short, authentic video profiles and smart matching."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "description1": "To make job searching as engaging and effective as social networking.",
+    "description2": "We believe video profiles let candidates showcase personality and communication alongside skills."
+  },
+  "stats": {
+    "jobsPosted": "Jobs Posted",
+    "candidatesHired": "Candidates Hired",
+    "partnerCompanies": "Partner Companies",
+    "satisfactionRate": "Satisfaction Rate"
+  },
+  "team": {
+    "title": "Meet Our Team",
+    "description": "Passionate professionals dedicated to transforming recruitment.",
+    "raj": {
+      "role": "Business Management Insights",
+      "bio": "Operations & strategy"
+    },
+    "varshal": {
+      "role": "Operations & Strategy",
+      "bio": "Marketing & generalist"
+    },
+    "tareq": {
+      "role": "Founder & CEO",
+      "bio": "Vision, product & growth"
+    },
+    "obaid": {
+      "role": "Co-founder & CTO",
+      "bio": "20+ yrs dev & systems architect"
+    },
+    "bahri": {
+      "role": "UI/UX Designer",
+      "bio": "Full‑stack dev & interface lead"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "all": "All",
+    "general": "General",
+    "jobSeekers": "Job Seekers",
+    "employers": "Employers",
+    "technical": "Technical"
+  },
+  "questions": {
+    "whatIsSwipeScout": {
+      "question": "What is SwipeScout?",
+      "answer": "SwipeScout is a modern recruitment platform that connects job seekers with employers through video profiles and AI-powered matching. We make hiring more personal and efficient."
+    },
+    "createVideoResume": {
+      "question": "How do I create a video resume?",
+      "answer": "Navigate to your profile and click \"Create Video Resume\". You can record directly or upload a 45-second video showcasing your skills and personality."
+    },
+    "videoVisibility": {
+      "question": "Is my video resume publicly visible?",
+      "answer": "You control visibility in Settings. Choose between public, only to employers you apply to, or private until you activate it."
+    },
+    "jobPostingCost": {
+      "question": "How much does it cost to post jobs?",
+      "answer": "We offer free basic listings. Premium plans with advanced features start at $99/month. Volume discounts available for enterprise clients."
+    },
+    "videoFormats": {
+      "question": "What video formats are supported?",
+      "answer": "We support MP4, MOV, and WebM formats up to 100MB. Recommended resolution is 1080p (1920x1080) for optimal quality."
+    },
+    "uploadFailing": {
+      "question": "Why is my video upload failing?",
+      "answer": "Check file size (<100MB), format, and internet connection. If issues persist, try compressing your video or contact support."
+    },
+    "howMatching": {
+      "question": "How does matching work?",
+      "answer": "Our AI analyzes job requirements and candidate profiles to suggest the best matches. Employers and candidates can then connect directly."
+    },
+    "searchCandidates": {
+      "question": "Can I search candidates by skills?",
+      "answer": "Yes! Use our advanced search filters to find candidates by skills, experience level, location, and more."
+    }
+  }
+}

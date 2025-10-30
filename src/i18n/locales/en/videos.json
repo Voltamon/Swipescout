@@ -1,0 +1,15 @@
+{
+  "loadingVideos": "Loading videos...",
+  "oops": "Oops!",
+  "noVideosYet": "No videos yet",
+  "beTheFirstToShare": "Be the first to share your story",
+  "uploadVideo": "Upload video",
+  "addedToLikes": "Added to likes",
+  "removedFromLikes": "Removed from likes",
+  "savedToCollection": "Saved to collection",
+  "removedFromSaved": "Removed from saved",
+  "linkCopied": "Link copied",
+  "checkOutThisVideo": "Check out this video: {{videoTitle}}",
+  "sampleVideoMessage": "This is a sample video for demonstration",
+  "connectionRequestSent": "Connection request sent"
+}

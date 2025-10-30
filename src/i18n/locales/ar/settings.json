@@ -1,0 +1,17 @@
+{
+  "settings": "الإعدادات",
+  "generalSettings": "الإعدادات العامة",
+  "accountSettings": "إعدادات الحساب",
+  "notificationSettings": "إعدادات الإشعارات",
+  "privacySettings": "إعدادات الخصوصية",
+  "theme": "المظهر",
+  "lightMode": "الوضع الفاتح",
+  "darkMode": "الوضع الداكن",
+  "language": "اللغة",
+  "dateFormat": "تنسيق التاريخ",
+  "timeFormat": "تنسيق الوقت",
+  "currency": "العملة",
+  "privacyPolicy": "سياسة الخصوصية",
+  "termsOfService": "شروط الخدمة",
+  "deleteAccount": "حذف الحساب"
+}

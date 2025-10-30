@@ -19,9 +19,9 @@ import {
   connectWithUser,
   searchVideos
 } from '../services/api';
-import { Button } from '@/components/UI/button';
-import { Badge } from '@/components/UI/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 

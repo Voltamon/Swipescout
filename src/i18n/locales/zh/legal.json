@@ -1,0 +1,168 @@
+{
+  "backToHome": "返回主页",
+  "downloadPDF": "下载PDF",
+  "lastUpdated": "最后更新",
+  "privacyPolicy": {
+    "title": "隐私政策",
+    "introduction": {
+      "title": "引言",
+      "content": "SwipeScout（“我们”、“我们的”或“我们”）致力于保护您的隐私。本隐私政策解释了当您使用我们的视频招聘平台和相关服务时，我们如何收集、使用、披露和保护您的信息。"
+    },
+    "informationWeCollect": {
+      "title": "我们收集的信息",
+      "personalInfo": {
+        "title": "个人信息",
+        "accountInfo": "账户信息：姓名、电子邮件地址、电话号码、个人资料图片",
+        "professionalInfo": "职业信息：简历、工作经验、技能、教育",
+        "videoContent": "视频内容：视频简历、公司视频及相关元数据",
+        "communicationData": "通信数据：消息、评论及其他互动"
+      },
+      "automaticInfoTitle": "自动收集的信息",
+      "usageData": "使用数据：您如何与平台互动、使用的功能、停留时间",
+      "deviceInfo": "设备信息：IP地址、浏览器类型、操作系统",
+      "analyticsData": "分析数据：性能指标、错误日志、用户行为模式"
+    },
+    "howWeUseInfo": {
+      "title": "我们如何使用信息",
+      "content": "我们使用信息来改进服务、与您沟通并个性化您的体验。",
+      "provideService": "提供和维护招聘服务",
+      "matchJobs": "为求职者匹配相关职位",
+      "enableCommunication": "实现用户之间的沟通",
+      "improvePlatform": "改进平台并开发新功能",
+      "sendUpdates": "发送重要更新和通知",
+      "ensureSecurity": "确保平台安全并防止欺诈"
+    },
+    "sharingDisclosure": {
+      "title": "信息共享与披露",
+      "content": "我们可能会与可信合作伙伴共享您的信息以提升服务或依法披露。",
+      "withUsers": "与其他用户",
+      "withUsersContent": "您的个人资料和视频内容可能根据隐私设置对其他用户可见。求职者信息可能与雇主共享，公司信息可能对求职者可见。",
+      "withProviders": "与服务提供商",
+      "withProvidersContent": "我们可能会与可信的第三方服务提供商共享信息，这些服务商协助我们运营平台，包括云存储、分析和支付处理服务。",
+      "legalRequirements": "法律要求",
+      "legalRequirementsContent": "如法律、法院命令要求，或为保护我们的权利、财产或安全，或用户及他人的安全，我们可能会披露信息。"
+    },
+    "dataSecurity": {
+      "title": "数据安全",
+      "content": "我们采取适当的技术和组织安全措施，保护您的个人信息免受未经授权的访问、修改、披露或销毁。但互联网传输方式并非百分之百安全。"
+    },
+    "yourRights": {
+      "title": "您的权利与选择",
+      "access": "访问：请求访问您的个人信息",
+      "correction": "更正：更新或更正不准确的信息",
+      "deletion": "删除：请求删除您的个人信息",
+      "portability": "可携性：请求以可携格式获取您的数据副本",
+      "optOut": "退订：取消订阅营销信息"
+    },
+    "cookies": {
+      "title": "Cookie与跟踪技术",
+      "content": "我们使用Cookie及类似跟踪技术提升您的体验、分析使用模式并提供个性化内容。您可通过浏览器设置管理Cookie。"
+    },
+    "internationalTransfers": {
+      "title": "国际数据传输",
+      "content": "您的信息可能会被转移至您所在国家以外的地区并进行处理。我们确保采取适当的保护措施，依据相关数据保护法律保护您的信息。"
+    },
+    "childrenPrivacy": {
+      "title": "儿童隐私",
+      "content": "我们的服务不面向16岁以下个人。我们不会故意收集16岁以下儿童的个人信息。如发现此类收集，将采取措施删除相关信息。"
+    }
+  },
+  "termsOfService": {
+    "title": "服务条款",
+    "introduction": {
+      "title": "引言",
+      "content": "欢迎来到SwipeScout！这些服务条款管辖您对我们网站和服务的使用。"
+    },
+    "userObligations": {
+      "title": "用户义务",
+      "content": "作为用户，您同意提供准确的信息，维护您账户的安全，并以符合适用法律的方式使用服务。"
+    },
+    "intellectualProperty": {
+      "title": "知识产权",
+      "content": "SwipeScout平台上的所有内容和材料均为SwipeScout或其许可方所有，并受知识产权法保护。"
+    },
+    "termination": {
+      "title": "终止",
+      "content": "我们可能随时暂停或终止您对服务的访问，无论有无原因，无论有无通知。"
+    },
+    "communityGuidelines": {
+      "title": "社区准则",
+      "authenticityAccuracy": {
+        "title": "真实性和准确性",
+        "points": {
+          "accurateTruthful": "准确真实",
+          "genuineJobPostings": "发布真实的职位列表",
+          "noImpersonation": "不得冒充"
+        }
+      }
+    }
+  },
+  "cookiePolicy": {
+    "title": "Cookie政策",
+    "introduction": {
+      "title": "引言",
+      "content": "SwipeScout使用cookie来增强您在我们平台上的体验。本Cookie政策解释了什么是cookie，我们如何使用它们，以及您对cookie的选择。"
+    },
+    "whatAreCookies": {
+      "title": "什么是Cookie？",
+      "content": "Cookie是用于存储少量信息的小文本文件。当网站在您的浏览器上加载时，它们会存储在您的设备上。"
+    },
+    "howSwipeScoutUsesCookies": {
+      "title": "SwipeScout如何使用Cookie",
+      "content": "当您使用和访问服务时，我们可能会在您的网络浏览器中放置多个cookie文件。我们使用cookie用于以下目的：身份验证、安全、性能和分析。"
+    },
+    "yourChoices": {
+      "title": "您对Cookie的选择",
+      "content": "如果您希望避免在服务上使用cookie，您必须首先在浏览器中禁用cookie的使用，然后删除与此服务关联的保存在浏览器中的cookie。"
+    }
+  },
+  "communityGuidelines": {
+    "title": "社区准则",
+    "introduction": {
+      "title": "引言",
+      "content": "在SwipeScout，我们致力于维护一个尊重和包容的社区。这些社区准则规定了所有用户应遵守的行为标准。"
+    },
+    "acceptableUse": {
+      "title": "可接受的使用",
+      "content": "您同意仅为合法目的并根据这些社区准则使用服务。您不得以任何可能损害、禁用、超载或损害服务的方式使用服务。"
+    },
+    "userConduct": {
+      "title": "用户行为",
+      "content": "您对与其他服务用户的互动负全部责任。我们保留监控您与其他用户之间争议的权利，如果您违反这些准则，我们有权终止您的账户。"
+    }
+  },
+  "copyrightAndIPTerms": {
+    "title": "版权和知识产权条款",
+    "introduction": {
+      "title": "引言",
+      "content": "SwipeScout尊重他人的知识产权，并希望我们的用户也这样做。本节概述了我们关于版权和知识产权的政策。"
+    },
+    "userGeneratedContent": {
+      "title": "用户生成内容",
+      "content": "您保留您在SwipeScout上创建和分享的内容的所有权。但是，通过使用我们的服务，您授予我们一个全球性的、非独家的、免版税的许可，以使用、复制和展示该内容。"
+    },
+    "reportingInfringements": {
+      "title": "报告侵权行为",
+      "content": "如果您认为您的版权或知识产权受到侵犯，请立即与我们联系并提供相关详细信息。"
+    }
+  },
+  "eula": {
+    "title": "最终用户许可协议（EULA）",
+    "introduction": {
+      "title": "引言",
+      "content": "本最终用户许可协议（“EULA”）是您与SwipeScout之间关于您使用我们软件和服务的法律协议。"
+    },
+    "licenseGrant": {
+      "title": "许可授予",
+      "content": "在您遵守本协议的前提下，SwipeScout授予您一个有限的、非独家的、不可转让的许可，以用于您的个人或内部商业目的使用软件和服务。"
+    },
+    "restrictions": {
+      "title": "限制",
+      "content": "您不得：（a）修改、改编或创建软件的衍生作品；（b）对软件进行逆向工程、反编译或反汇编；（c）向任何第三方分发、出售或出租软件。"
+    },
+    "termination": {
+      "title": "终止",
+      "content": "本协议在任何一方终止之前一直有效。您可以随时通过停止使用软件和服务并删除您拥有的所有副本来终止本协议。如果您违反本协议的任何条款，SwipeScout可以终止本协议。"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "dashboard": "لوحة التحكم",
+    "talentAcquisition": "استقطاب المواهب",
+    "jobManagement": "إدارة الوظائف",
+    "companyContent": "محتوى الشركة",
+    "managementSettings": "الإدارة والإعدادات",
+    "communication": "التواصل",
+    "videoManagement": "إدارة الفيديو"
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "analytics": "التحليلات",
+    "findCandidates": "البحث عن مرشحين",
+    "candidateVideos": "فيديوهات المرشحين",
+    "postNewJob": "نشر وظيفة جديدة",
+    "myJobListings": "قوائم وظائفي",
+    "companyProfile": "ملف الشركة",
+    "companyVideos": "فيديوهات الشركة",
+    "videoEditor": "محرر الفيديو",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "chat": "الدردشة",
+    "helpSupport": "المساعدة والدعم",
+    "videoUpload": "تحميل فيديو"
+  },
+  "descriptions": {
+    "overview": "نظرة عامة على لوحة تحكم صاحب العمل",
+    "analytics": "عرض التحليلات والتقارير",
+    "findCandidates": "البحث واكتشاف المرشحين",
+    "candidateVideos": "تصفح ملفات تعريف الفيديو للمرشحين",
+    "postNewJob": "إنشاء ونشر فرص عمل جديدة",
+    "myJobListings": "عرض وإدارة قوائم وظائفك",
+    "companyProfile": "تعديل وعرض ملف شركتك",
+    "companyVideos": "إدارة فيديوهات شركتك",
+    "videoEditor": "تعديل فيديوهات شركتك",
+    "notifications": "إدارة إعدادات الإشعارات",
+    "settings": "تكوين حسابك وإعدادات الشركة",
+    "chat": "الدردشة مع المرشحين والفريق",
+    "helpSupport": "الحصول على المساعدة والدعم",
+    "videoUpload": "تحميل فيديوهات جديدة إلى حسابك"
+  }
+}

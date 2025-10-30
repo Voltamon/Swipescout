@@ -1,0 +1,15 @@
+{
+  "genericError": "出错了",
+  "networkError": "网络错误。请检查您的连接。",
+  "serverError": "服务器错误。请稍后重试。",
+  "notFound": "页面未找到。",
+  "unauthorized": "您无权访问此页面。",
+  "forbidden": "禁止访问。",
+  "validationError": "请检查您的输入并重试。",
+  "fileUploadError": "文件上传失败。请重试。",
+  "videoUploadError": "视频上传失败。请重试。",
+  "loginRequired": "您必须登录才能执行此操作",
+  "sessionExpired": "您的会话已过期。请重新登录。",
+  "rateLimitExceeded": "请求过多。请稍后重试。",
+  "maintenanceMode": "系统目前正在维护中。请稍后重试。"
+}

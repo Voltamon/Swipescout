@@ -1,0 +1,33 @@
+{
+  "interviewAnalysis": "تحليل المقابلة",
+  "responseNotFound": "لم يتم العثور على الرد",
+  "backToTemplates": "العودة إلى النماذج",
+  "status": {
+    "in_progress": "قيد التقدم",
+    "completed": "مكتمل",
+    "submitted": "تم الإرسال",
+    "reviewed": "تمت المراجعة"
+  },
+  "transcribed": "تم نسخه",
+  "startTranscription": "بدء النسخ",
+  "generateAnalysis": "إنشاء تحليل",
+  "transcriptionProgress": "تقدم النسخ",
+  "analysisProgress": "تقدم التحليل",
+  "overallPerformance": "الأداء العام",
+  "overallScore": "الدرجة الإجمالية",
+  "communicationScore": "درجة التواصل",
+  "technicalScore": "الدرجة الفنية",
+  "completenessScore": "درجة الاكتمال",
+  "strengths": "نقاط القوة",
+  "areasForImprovement": "مجالات التحسين",
+  "recommendations": "التوصيات",
+  "questionByQuestion": "تحليل سؤال بسؤال",
+  "question": "سؤال",
+  "videoNotSupported": "متصفحك لا يدعم تشغيل الفيديو",
+  "transcript": "النسخة",
+  "textResponse": "الرد النصي",
+  "aiAnalysis": "تحليل الذكاء الاصطناعي",
+  "communicationQuality": "جودة التواصل",
+  "keywordsFound": "الكلمات الرئيسية التي تم العثور عليها",
+  "improvementSuggestions": "اقتراحات التحسين"
+}

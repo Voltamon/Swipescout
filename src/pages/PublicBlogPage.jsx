@@ -10,10 +10,12 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { getBlogs, getBlogCategories, getBlogTags } from '@/services/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card';
-import { Input } from '@/components/UI/input';
-import { Badge } from '@/components/UI/badge';
-import { Button } from '@/components/UI/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Header from '../components/Headers/Header';
+import Footer from '../components/Headers/Footer';
 
 const PublicBlogPage = () => {
   const { t, i18n } = useTranslation();
@@ -123,6 +125,8 @@ const PublicBlogPage = () => {
   const regularBlogs = blogs.filter((blog) => !blog.featured);
 
   return (
+    <>
+    <Header />
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
@@ -337,6 +341,8 @@ const PublicBlogPage = () => {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

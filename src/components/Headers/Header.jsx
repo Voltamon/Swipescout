@@ -1,109 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Box, 
-  Button, 
-  Avatar, 
   Menu, 
-  MenuItem, 
-  useTheme, 
-  useMediaQuery,
-  IconButton,
-  Divider,
-  ListItemIcon,
-  ListItemText
-} from '@mui/material';
-import { 
-  Link, 
-  useNavigate 
-} from 'react-router-dom';
-import { 
-  Person,
+  X, 
+  User,
   Settings,
-  HelpCenter,
-  Logout,
-  AccountBox,
-  Dashboard,
-  Work,
-  People,
-  VideoLibrary
-} from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+  HelpCircle,
+  LogOut,
+  UserCheck,
+  LayoutDashboard,
+  Briefcase,
+  Users,
+  Video,
+  ChevronDown
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../LanguageSelector';
-
 import { useAuth } from "../../contexts/AuthContext";
+import { homeThemeColors } from "../../config/theme-colors-home";
 
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5173';
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  background: theme.palette.background.paper,
-  backdropFilter: 'blur(8px)',
-  boxShadow: theme.shadows[2],
-  padding: theme.spacing(1, 0),
-  borderRadius: theme.shape.borderRadius,
-  width: '100%',
-  position: 'sticky',
-  top: 0,
-  zIndex: theme.zIndex.appBar,
-}));
-
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  justifyContent: 'space-between',
-  padding: theme.spacing(0, 3),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(0, 4),
-  },
-}));
-
-const Logo = styled(Typography)(({ theme }) => ({
-  fontWeight: 'bold',
-  fontSize: '1.5rem',
-  color: theme.palette.primary.main,
-  '& span': {
-    color: theme.palette.secondary.main,
-  },
-  '& .tagline': {
-    fontSize: '0.7rem',
-    marginLeft: theme.spacing(1),
-    color: theme.palette.text.secondary,
-  }
-}));
-
-const NavButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  fontWeight: '600',
-  borderRadius: theme.shape.borderRadius,
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-    color: theme.palette.primary.main,
-  },
-}));
-
 const Header = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
   
   // Get authentication context
   const { user, isAuthenticated, logout } = useAuth() || {};
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const navLinks = [
+    { label: t('navigation.home'), href: '/' },
+    { label: t('header.exploreVideos'), href: '/videos/all' },
+    { label: t('navigation.blog'), href: '/blog' },
+    { label: t('navigation.pricing'), href: '/pricing' },
+    { label: t('navigation.about'), href: '/about' },
+    { label: t('navigation.contact'), href: '/contact' },
+  ];
 
   const handleNavigation = (path) => {
     navigate(path);
-    handleMenuClose();
+    setMobileMenuOpen(false);
+    setUserMenuOpen(false);
   };
 
   const handleLogout = async () => {
@@ -115,7 +55,7 @@ const Header = () => {
     } catch (error) {
       console.error('Logout error:', error);
     }
-    handleMenuClose();
+    setUserMenuOpen(false);
   };
 
   const getUserInitials = () => {
@@ -159,13 +99,13 @@ const Header = () => {
     switch (user.role) {
       case 'job_seeker':
         return [
-          { icon: <Work />, label: t('jobSeeker.findJobs'), path: '/jobseeker-tabs?tab=jobs' },
-          { icon: <VideoLibrary />, label: t('jobSeeker.myVideos'), path: '/jobseeker-tabs?tab=videos' },
+          { icon: Briefcase, label: t('jobSeeker.findJobs'), path: '/jobseeker-tabs?tab=jobs' },
+          { icon: Video, label: t('jobSeeker.myVideos'), path: '/jobseeker-tabs?tab=videos' },
         ];
       case 'employer':
         return [
-          { icon: <People />, label: t('employer.findCandidates'), path: '/employer-tabs?tab=candidates' },
-          { icon: <Work />, label: t('employer.myJobs'), path: '/employer-tabs?tab=jobs' },
+          { icon: Users, label: t('employer.findCandidates'), path: '/employer-tabs?tab=candidates' },
+          { icon: Briefcase, label: t('employer.myJobs'), path: '/employer-tabs?tab=jobs' },
         ];
       default:
         return [];
@@ -173,199 +113,181 @@ const Header = () => {
   };
 
   return (
-    <StyledAppBar position="sticky">
-      <StyledToolbar>
-        {/* Logo Section */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box
-            component="img"
-            src={`${VITE_BASE_URL}/public/logoT.png`}
-            alt="SwipeScout Logo"
-            sx={{ height: 40, mr: 1, cursor: 'pointer' }}
-            onClick={() => navigate('/')}
-          />
-          <Logo variant="h6" component={Link} to="/" sx={{ textDecoration: 'none' }}>
-            Swipe<span>scout</span>
-            {!isMobile && (
-              <Typography component="span" className='tagline'>
+    <header className={`sticky top-0 z-50 ${homeThemeColors.backgrounds.card} backdrop-blur-md border-b ${homeThemeColors.borders.default}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo Section */}
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleNavigation('/')}>
+            <img 
+              src={`${VITE_BASE_URL}/public/logoT.png`} 
+              alt="SwipeScout Logo" 
+              className="h-10 w-10"
+            />
+            <div className="flex flex-col">
+              <span className="text-lg font-bold">
+                <span className="text-indigo-600 dark:text-indigo-400">Swipe</span>
+                <span className="text-blue-600 dark:text-blue-400">scout</span>
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
                 {t('homepage.subtitle')}
-              </Typography>
-            )}
-          </Logo>
-        </Box>
+              </span>
+            </div>
+          </div>
 
-        {/* Navigation Links (Hidden on small screens) */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, ml: 'auto' }}>
-          <NavButton component={Link} to="/">{t('navigation.home')}</NavButton>
-          <NavButton onClick={() => navigate('/videos/all')}>{t('header.exploreVideos')}</NavButton>
-          <NavButton component={Link} to="/blog">{t('navigation.blog')}</NavButton>
-          <NavButton component={Link} to="/pricing">{t('navigation.pricing')}</NavButton>
-          <NavButton component={Link} to="/about">{t('navigation.about')}</NavButton>
-          <NavButton component={Link} to="/contact">{t('navigation.contact')}</NavButton>
-        </Box>
-
-        {/* Right Side Actions */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: { xs: 'auto', md: 2 } }}>
-          {/* Language Selector */}
-          <LanguageSelector variant="menu" showLabel={!isMobile} />
-
-          {/* Authentication Section */}
-          {isAuthenticated && user ? (
-            <>
-              {/* Welcome Text (Desktop only) */}
-              {!isMobile && (
-                <Typography variant="body2" sx={{ mr: 1, color: 'text.secondary' }}>
-                  {t('header.welcome')}, {user.firstName || user.email?.split('@')[0]}
-                </Typography>
-              )}
-              
-              {/* User Avatar */}
-              <Avatar
-                sx={{
-                  bgcolor: theme.palette.secondary.light,
-                  cursor: 'pointer',
-                  color: theme.palette.secondary.contrastText,
-                  width: 36,
-                  height: 36,
-                  boxShadow: theme.shadows[1],
-                }}
-                onClick={handleMenuOpen}
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex gap-2 lg:gap-4">
+            {navLinks.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => handleNavigation(link.href)}
+                className={`px-3 py-2 rounded-lg font-semibold text-sm transition-colors duration-200 ${homeThemeColors.text.link}`}
               >
-                {getUserInitials()}
-              </Avatar>
-            </>
-          ) : (
-            <>
-              {/* Login/Register Buttons for non-authenticated users */}
-              <Button
-                variant="outlined"
-                size="small"
-                component={Link}
-                to="/login"
-                sx={{
-                  mr: 1,
-                  display: { xs: 'none', sm: 'flex' },
-                }}
-              >
-                {t('header.login')}
-              </Button>
-              <Button
-                variant="contained"
-                size="small"
-                component={Link}
-                to="/register"
-                sx={{
-                  bgcolor: theme.palette.primary.main,
-                  color: theme.palette.primary.contrastText,
-                  fontWeight: 600,
-                  px: 2,
-                  borderRadius: '20px',
-                  '&:hover': {
-                    bgcolor: theme.palette.primary.dark,
-                  },
-                }}
-              >
-                {t('header.register')}
-              </Button>
-            </>
-          )}
+                {link.label}
+              </button>
+            ))}
+          </nav>
 
-          {/* User Menu */}
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            PaperProps={{
-              sx: {
-                borderRadius: theme.shape.borderRadius,
-                boxShadow: theme.shadows[3],
-                minWidth: 220,
-                mt: 1,
-              }
-            }}
-          >
-            {isAuthenticated && user && (
+          {/* Right Side Actions */}
+          <div className="flex items-center gap-3 ml-auto">
+            {/* Language Selector */}
+            <LanguageSelector variant="menu" showLabel={false} />
+
+            {/* Authentication Section */}
+            {isAuthenticated && user ? (
+              // User authenticated - Show Avatar with Menu
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="p-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg transition-shadow"
+                >
+                  {getUserInitials()}
+                </button>
+
+                {/* User Dropdown Menu */}
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                    {/* User Info */}
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {getUserDisplayName()}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+
+                    {/* Dashboard */}
+                    <button
+                      onClick={() => handleNavigation(getDashboardPath())}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
+                    >
+                      <LayoutDashboard size={16} />
+                      {t('common.dashboard')}
+                    </button>
+
+                    {/* Quick Actions */}
+                    {getQuickActions().map((action) => {
+                      const Icon = action.icon;
+                      return (
+                        <button
+                          key={action.path}
+                          onClick={() => handleNavigation(action.path)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
+                        >
+                          <Icon size={16} />
+                          {action.label}
+                        </button>
+                      );
+                    })}
+
+                    <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+
+                    {/* Profile Settings */}
+                    <button
+                      onClick={() => handleNavigation('/profile/settings')}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
+                    >
+                      <Settings size={16} />
+                      {t('header.profileSettings')}
+                    </button>
+
+                    {/* Account */}
+                    <button
+                      onClick={() => handleNavigation('/account')}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
+                    >
+                      <UserCheck size={16} />
+                      {t('header.account')}
+                    </button>
+
+                    {/* Help Center */}
+                    <button
+                      onClick={() => handleNavigation('/help')}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
+                    >
+                      <HelpCircle size={16} />
+                      {t('header.helpCenter')}
+                    </button>
+
+                    <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+
+                    {/* Logout */}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center gap-2 transition-colors"
+                    >
+                      <LogOut size={16} />
+                      {t('header.logout')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Not authenticated - Show Login/Register buttons
               <>
-                {/* User Info Header */}
-                <MenuItem disabled sx={{ opacity: 1, cursor: 'default' }}>
-                  <ListItemIcon>
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-                      {getUserInitials()}
-                    </Avatar>
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={getUserDisplayName()}
-                    secondary={user.email}
-                    primaryTypographyProps={{ fontWeight: 600 }}
-                    secondaryTypographyProps={{ variant: 'caption' }}
-                  />
-                </MenuItem>
-                <Divider />
-
-                {/* Dashboard */}
-                <MenuItem onClick={() => handleNavigation(getDashboardPath())}>
-                  <ListItemIcon>
-                    <Dashboard />
-                  </ListItemIcon>
-                  <ListItemText primary={t('common.dashboard')} />
-                </MenuItem>
-
-                {/* Quick Actions based on user role */}
-                {getQuickActions().map((action, index) => (
-                  <MenuItem key={index} onClick={() => handleNavigation(action.path)}>
-                    <ListItemIcon>
-                      {action.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={action.label} />
-                  </MenuItem>
-                ))}
-
-                <Divider />
-
-                {/* Profile Settings */}
-                <MenuItem onClick={() => handleNavigation('/profile/settings')}>
-                  <ListItemIcon>
-                    <Settings />
-                  </ListItemIcon>
-                  <ListItemText primary={t('header.profileSettings')} />
-                </MenuItem>
-
-                {/* Account */}
-                <MenuItem onClick={() => handleNavigation('/account')}>
-                  <ListItemIcon>
-                    <AccountBox />
-                  </ListItemIcon>
-                  <ListItemText primary={t('header.account')} />
-                </MenuItem>
-
-                {/* Help Center */}
-                <MenuItem onClick={() => handleNavigation('/help')}>
-                  <ListItemIcon>
-                    <HelpCenter />
-                  </ListItemIcon>
-                  <ListItemText primary={t('header.helpCenter')} />
-                </MenuItem>
-
-                <Divider />
-
-                {/* Logout */}
-                <MenuItem onClick={handleLogout}>
-                  <ListItemIcon>
-                    <Logout />
-                  </ListItemIcon>
-                  <ListItemText primary={t('header.logout')} />
-                </MenuItem>
+                <Link
+                  to="/login"
+                  className="hidden sm:inline-block px-4 py-2 rounded-lg text-sm font-semibold border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors"
+                >
+                  {t('header.login')}
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg transition-shadow"
+                >
+                  {t('header.register')}
+                </Link>
               </>
             )}
-          </Menu>
-        </Box>
-      </StyledToolbar>
-    </StyledAppBar>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <nav className="md:hidden border-t border-gray-200 dark:border-gray-700 py-4 space-y-2">
+            {navLinks.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => handleNavigation(link.href)}
+                className="w-full text-left px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                {link.label}
+              </button>
+            ))}
+          </nav>
+        )}
+      </div>
+    </header>
   );
 };
 
 export default Header;
-// No code changes required in this frontend file for CORS fix.
 

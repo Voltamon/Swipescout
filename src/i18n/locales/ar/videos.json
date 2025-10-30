@@ -1,0 +1,15 @@
+{
+  "loadingVideos": "جارٍ تحميل الفيديوهات...",
+  "oops": "عفوًا!",
+  "noVideosYet": "لا توجد فيديوهات بعد",
+  "beTheFirstToShare": "كن أول من يشارك قصته",
+  "uploadVideo": "تحميل فيديو",
+  "addedToLikes": "تمت الإضافة إلى الإعجابات",
+  "removedFromLikes": "تمت الإزالة من الإعجابات",
+  "savedToCollection": "تم الحفظ في المجموعة",
+  "removedFromSaved": "تمت الإزالة من المحفوظات",
+  "linkCopied": "تم نسخ الرابط",
+  "checkOutThisVideo": "شاهد هذا الفيديو: {{videoTitle}}",
+  "sampleVideoMessage": "هذا فيديو نموذجي للعرض",
+  "connectionRequestSent": "تم إرسال طلب الاتصال"
+}

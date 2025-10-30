@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "dashboard": "仪表板",
+    "talentAcquisition": "人才招聘",
+    "jobManagement": "职位管理",
+    "companyContent": "公司内容",
+    "managementSettings": "管理和设置",
+    "communication": "沟通",
+    "videoManagement": "视频管理"
+  },
+  "tabs": {
+    "overview": "概览",
+    "analytics": "分析",
+    "findCandidates": "寻找候选人",
+    "candidateVideos": "候选人视频",
+    "postNewJob": "发布新职位",
+    "myJobListings": "我的职位列表",
+    "companyProfile": "公司简介",
+    "companyVideos": "公司视频",
+    "videoEditor": "视频编辑器",
+    "notifications": "通知",
+    "settings": "设置",
+    "chat": "聊天",
+    "helpSupport": "帮助与支持",
+    "videoUpload": "上传视频"
+  },
+  "descriptions": {
+    "overview": "雇主仪表板概览",
+    "analytics": "查看分析和报告",
+    "findCandidates": "搜索和发现候选人",
+    "candidateVideos": "浏览候选人视频个人资料",
+    "postNewJob": "创建和发布新的职位空缺",
+    "myJobListings": "查看和管理您的职位列表",
+    "companyProfile": "编辑和查看您的公司简介",
+    "companyVideos": "管理您的公司视频",
+    "videoEditor": "编辑您的公司视频",
+    "notifications": "管理通知设置",
+    "settings": "配置您的账户和公司设置",
+    "chat": "与候选人和团队聊天",
+    "helpSupport": "获取帮助和支持",
+    "videoUpload": "将新视频上传到您的账户"
+  }
+}

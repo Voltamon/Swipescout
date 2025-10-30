@@ -1,0 +1,33 @@
+{
+  "interviewAnalysis": "面试分析",
+  "responseNotFound": "未找到回复",
+  "backToTemplates": "返回模板",
+  "status": {
+    "in_progress": "进行中",
+    "completed": "已完成",
+    "submitted": "已提交",
+    "reviewed": "已审查"
+  },
+  "transcribed": "已转录",
+  "startTranscription": "开始转录",
+  "generateAnalysis": "生成分析",
+  "transcriptionProgress": "转录进度",
+  "analysisProgress": "分析进度",
+  "overallPerformance": "总体表现",
+  "overallScore": "总分",
+  "communicationScore": "沟通得分",
+  "technicalScore": "技术得分",
+  "completenessScore": "完整性得分",
+  "strengths": "优点",
+  "areasForImprovement": "改进领域",
+  "recommendations": "建议",
+  "questionByQuestion": "逐题分析",
+  "question": "问题",
+  "videoNotSupported": "您的浏览器不支持视频播放",
+  "transcript": "转录",
+  "textResponse": "文本回复",
+  "aiAnalysis": "AI分析",
+  "communicationQuality": "沟通质量",
+  "keywordsFound": "找到的关键词",
+  "improvementSuggestions": "改进建议"
+}

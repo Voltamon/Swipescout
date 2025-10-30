@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "dashboard": "Dashboard",
+    "talentAcquisition": "Talent Acquisition",
+    "jobManagement": "Job Management",
+    "companyContent": "Company Content",
+    "managementSettings": "Management & Settings",
+    "communication": "Communication",
+    "videoManagement": "Video Management"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "findCandidates": "Find Candidates",
+    "candidateVideos": "Candidate Videos",
+    "postNewJob": "Post New Job",
+    "myJobListings": "My Job Listings",
+    "companyProfile": "Company Profile",
+    "companyVideos": "Company Videos",
+    "videoEditor": "Video Editor",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "chat": "Chat",
+    "helpSupport": "Help & Support",
+    "videoUpload": "Video Upload"
+  },
+  "descriptions": {
+    "overview": "Your employer dashboard overview",
+    "analytics": "View analytics and reports",
+    "findCandidates": "Search and discover candidates",
+    "candidateVideos": "Browse candidate video profiles",
+    "postNewJob": "Create and post new job openings",
+    "myJobListings": "View and manage your job listings",
+    "companyProfile": "Edit and view your company profile",
+    "companyVideos": "Manage your company videos",
+    "videoEditor": "Edit your company videos",
+    "notifications": "Manage notification settings",
+    "settings": "Configure your account and company settings",
+    "chat": "Chat with candidates and team",
+    "helpSupport": "Get help and support",
+    "videoUpload": "Upload new videos to your account"
+  }
+}

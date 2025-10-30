@@ -1,0 +1,13 @@
+{
+  "profileUpdated": "个人资料更新成功！",
+  "videoUploaded": "视频上传成功！",
+  "applicationSubmitted": "申请提交成功！",
+  "messagesSent": "消息发送成功！",
+  "interviewScheduled": "面试安排成功！",
+  "settingsSaved": "设置保存成功！",
+  "passwordChanged": "密码更改成功！",
+  "accountDeleted": "账户删除成功！",
+  "dataExported": "数据导出成功！",
+  "subscriptionUpdated": "订阅更新成功！",
+  "paymentProcessed": "支付处理成功！"
+}

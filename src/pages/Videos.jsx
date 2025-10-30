@@ -142,7 +142,7 @@ const SwipeScoutBackground = () => (
       width: '100vw',
       height: '100vh',
       zIndex: 0,
-      background: 'linear-gradient(135deg, #83c9f1ff 0%, #2b2b4f 50%, #8585c4ff 100%)',
+      background: 'linear-gradient(135deg, #7a4e8bff 0%, #2b2b4f 50%, #8585c4ff 100%)',
       opacity: 1,
       pointerEvents: 'none',
     }}

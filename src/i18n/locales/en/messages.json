@@ -1,0 +1,17 @@
+{
+  "messages": "Messages",
+  "inbox": "Inbox",
+  "sent": "Sent",
+  "compose": "Compose",
+  "newMessage": "New Message",
+  "to": "To",
+  "subject": "Subject",
+  "messageContent": "Message Content",
+  "sendMessage": "Send Message",
+  "readMessage": "Read Message",
+  "reply": "Reply",
+  "forward": "Forward",
+  "deleteMessage": "Delete Message",
+  "markAsRead": "Mark as Read",
+  "markAsUnread": "Mark as Unread"
+}

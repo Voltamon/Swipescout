@@ -2,8 +2,8 @@ import React from "react";
 import Header from "../../components/Headers/Header";
 import { Helmet } from "react-helmet";
 import Footer from "../../components/Headers/Footer";
-import { Card, CardContent } from "@/components/UI/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Users,
   Heart,
@@ -16,6 +16,7 @@ import {
   Award
 } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { homeThemeColors } from "../../config/theme-colors-home";
 
 const AboutUs = () => {
   const { t } = useTranslation();
@@ -54,10 +55,17 @@ const AboutUs = () => {
   ];
 
   const stats = [
-    { value: "+", label: t('about.stats.jobsPosted'), icon: <Users className="h-10 w-10" /> },
-    { value: "+", label: t('about.stats.candidatesHired'), icon: <Heart className="h-10 w-10" /> },
-    { value: "+", label: t('about.stats.partnerCompanies'), icon: <Handshake className="h-10 w-10" /> },
-    { value: "95%", label: t('about.stats.satisfactionRate'), icon: <Lightbulb className="h-10 w-10" /> }
+    { value: "+", label: t('about.stats.jobsPosted'), icon: Users },
+    { value: "+", label: t('about.stats.candidatesHired'), icon: Heart },
+    { value: "+", label: t('about.stats.partnerCompanies'), icon: Handshake },
+    { value: "95%", label: t('about.stats.satisfactionRate'), icon: Lightbulb }
+  ];
+
+  const values = [
+    { icon: Target, title: "Innovation", desc: "Driving forward-thinking solutions" },
+    { icon: Award, title: "Excellence", desc: "Maintaining the highest standards" },
+    { icon: Heart, title: "Passion", desc: "Dedicated to our community" },
+    { icon: TrendingUp, title: "Growth", desc: "Continuous improvement mindset" }
   ];
 
   return (
@@ -73,97 +81,88 @@ const AboutUs = () => {
         <link rel="canonical" href="https://www.swipescout.xyz/about" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50">
+      <div className={`min-h-screen ${homeThemeColors.backgrounds.page}`}>
         <Header />
         
-        <div className="container mx-auto py-8 px-4 max-w-7xl">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className={`text-5xl font-bold mb-4 ${homeThemeColors.text.gradient}`}>
               {t('about.hero.title')}
             </h1>
-            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+            <h2 className="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">
               {t('about.hero.subtitle')}
             </h2>
-            <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto">
               {t('about.hero.description')}
             </p>
           </div>
 
-          <div className="border-t-4 border-purple-600 my-12"></div>
+          <div className="border-t-4 border-indigo-600 my-12"></div>
 
           {/* Mission Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+              <h2 className={`text-4xl font-bold mb-6 ${homeThemeColors.text.gradient}`}>
                 {t('about.mission.title')}
               </h2>
-              <p className="text-gray-700 mb-4 text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg leading-relaxed">
                 {t('about.mission.description1')}
               </p>
-              <p className="text-gray-700 text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
                 {t('about.mission.description2')}
               </p>
             </div>
-            <div className="flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-6">
-                <Card className="bg-gradient-to-br from-purple-100 to-purple-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
-                  <CardContent className="p-6 text-center">
-                    <Target className="h-12 w-12 mx-auto mb-3 text-purple-600" />
-                    <p className="font-semibold text-purple-900">Innovation</p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-cyan-100 to-cyan-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
-                  <CardContent className="p-6 text-center">
-                    <Award className="h-12 w-12 mx-auto mb-3 text-cyan-600" />
-                    <p className="font-semibold text-cyan-900">Excellence</p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-pink-100 to-pink-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
-                  <CardContent className="p-6 text-center">
-                    <Heart className="h-12 w-12 mx-auto mb-3 text-pink-600" />
-                    <p className="font-semibold text-pink-900">Passion</p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gradient-to-br from-green-100 to-green-200 border-none shadow-lg hover:shadow-xl transition-all duration-200">
-                  <CardContent className="p-6 text-center">
-                    <TrendingUp className="h-12 w-12 mx-auto mb-3 text-green-600" />
-                    <p className="font-semibold text-green-900">Growth</p>
-                  </CardContent>
-                </Card>
-              </div>
+
+            {/* Values Grid */}
+            <div className="grid grid-cols-2 gap-6">
+              {values.map((value) => {
+                const Icon = value.icon;
+                return (
+                  <Card key={value.title} className={`${homeThemeColors.backgrounds.card} border ${homeThemeColors.borders.primary} hover:shadow-lg transition-all duration-200 transform hover:-translate-y-2`}>
+                    <CardContent className="p-6 text-center">
+                      <Icon className="h-12 w-12 mx-auto mb-3 text-indigo-600 dark:text-indigo-400" />
+                      <p className="font-semibold text-gray-900 dark:text-white">{value.title}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{value.desc}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
 
           {/* Stats Section */}
-          <Card className="bg-gradient-to-r from-blue-100 to-cyan-100 border-none shadow-xl mb-16">
+          <Card className={`${homeThemeColors.backgrounds.highlight} border ${homeThemeColors.borders.primary} shadow-xl mb-16`}>
             <CardContent className="p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, index) => (
-                  <Card key={index} className="bg-white border-none shadow-md hover:shadow-lg transition-all duration-200">
-                    <CardContent className="p-6 text-center">
-                      <div className="text-purple-600 mb-4 flex justify-center">
-                        {stat.icon}
-                      </div>
-                      <div className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                        {stat.value}
-                      </div>
-                      <div className="text-gray-600 font-medium">
-                        {stat.label}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                {stats.map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <Card key={index} className={`${homeThemeColors.backgrounds.card} border ${homeThemeColors.borders.default} shadow-md hover:shadow-lg transition-all duration-200`}>
+                      <CardContent className="p-6 text-center">
+                        <div className="text-indigo-600 dark:text-indigo-400 mb-4 flex justify-center">
+                          <Icon className="h-10 w-10" />
+                        </div>
+                        <div className={`text-4xl font-bold mb-2 ${homeThemeColors.text.gradient}`}>
+                          {stat.value}
+                        </div>
+                        <div className="text-gray-600 dark:text-gray-400 font-medium">
+                          {stat.label}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
 
           {/* Team Section */}
           <div className="mb-16">
-            <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+            <h2 className={`text-4xl font-bold text-center mb-4 ${homeThemeColors.text.gradient}`}>
               {t('about.team.title')}
             </h2>
-            <p className="text-gray-600 text-center text-lg max-w-3xl mx-auto mb-12">
+            <p className="text-gray-600 dark:text-gray-300 text-center text-lg max-w-3xl mx-auto mb-12">
               {t('about.team.description')}
             </p>
 
@@ -171,22 +170,22 @@ const AboutUs = () => {
               {teamMembers.map((member, index) => (
                 <Card
                   key={index}
-                  className="bg-gradient-to-br from-blue-50 to-cyan-50 border-purple-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                  className={`${homeThemeColors.backgrounds.card} border ${homeThemeColors.borders.primary} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}
                 >
                   <CardContent className="p-6 flex flex-col items-center text-center">
-                    <Avatar className="h-32 w-32 mb-4 border-4 border-white shadow-lg">
+                    <Avatar className="h-32 w-32 mb-4 border-4 border-indigo-600 dark:border-indigo-400 shadow-lg">
                       <AvatarImage src={member.avatar} alt={member.name} />
-                      <AvatarFallback className="bg-gradient-to-r from-purple-600 to-cyan-600 text-white text-2xl">
+                      <AvatarFallback className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-2xl">
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
-                    <h3 className="text-lg font-semibold mb-1 text-gray-900">
+                    <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">
                       {member.name}
                     </h3>
-                    <p className="text-sm font-medium text-purple-600 mb-3">
+                    <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-3">
                       {member.role}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {member.bio}
                     </p>
                   </CardContent>
@@ -196,20 +195,28 @@ const AboutUs = () => {
           </div>
 
           {/* Contact Section */}
-          <Card className="bg-gradient-to-r from-purple-100 to-cyan-100 border-none shadow-xl">
+          <Card className={`${homeThemeColors.backgrounds.highlight} border ${homeThemeColors.borders.primary} shadow-xl`}>
             <CardContent className="p-8">
-              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+              <h2 className={`text-3xl font-bold text-center mb-8 ${homeThemeColors.text.gradient}`}>
                 Get In Touch
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md">
-                  <MapPin className="h-6 w-6 text-purple-600 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">Doha Qatar</span>
-                </div>
-                <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-md">
-                  <Mail className="h-6 w-6 text-purple-600 flex-shrink-0" />
-                  <span className="text-gray-700 font-medium">info@swipescout.xyz</span>
-                </div>
+                <a
+                  href="https://maps.google.com/?q=Doha+Qatar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center gap-4 ${homeThemeColors.backgrounds.card} p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow`}
+                >
+                  <MapPin className="h-6 w-6 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">Doha Qatar</span>
+                </a>
+                <a
+                  href="mailto:info@swipescout.xyz"
+                  className={`flex items-center gap-4 ${homeThemeColors.backgrounds.card} p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow`}
+                >
+                  <Mail className="h-6 w-6 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">info@swipescout.xyz</span>
+                </a>
               </div>
             </CardContent>
           </Card>

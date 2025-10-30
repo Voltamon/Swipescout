@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "关于SwipeScout | 我们的使命和团队",
+    "description": "了解SwipeScout通过视频优先的个人资料和AI驱动的匹配来革新招聘的使命。",
+    "keywords": "SwipeScout, 视频简历, 招聘, AI匹配",
+    "ogDescription": "了解SwipeScout如何通过视频个人资料和AI帮助候选人和雇主找到更好的匹配。"
+  },
+  "hero": {
+    "title": "关于SwipeScout",
+    "subtitle": "革新人们找工作和公司找人才的方式",
+    "description": "SwipeScout成立于2025年，通过简短、真实的视频个人资料和智能匹配连接候选人和雇主。"
+  },
+  "mission": {
+    "title": "我们的使命",
+    "description1": "让求职像社交网络一样引人入胜和高效。",
+    "description2": "我们相信视频个人资料让候选人能够展示个性和沟通能力以及技能。"
+  },
+  "stats": {
+    "jobsPosted": "发布的职位",
+    "candidatesHired": "招聘的候选人",
+    "partnerCompanies": "合作公司",
+    "satisfactionRate": "满意度"
+  },
+  "team": {
+    "title": "认识我们的团队",
+    "description": "致力于改变招聘的热情专业人士。",
+    "raj": {
+      "role": "业务管理洞察",
+      "bio": "运营与战略"
+    },
+    "varshal": {
+      "role": "运营与战略",
+      "bio": "市场营销与通才"
+    },
+    "tareq": {
+      "role": "创始人兼首席执行官",
+      "bio": "愿景、产品与增长"
+    },
+    "obaid": {
+      "role": "联合创始人兼首席技术官",
+      "bio": "20多年开发和系统架构经验"
+    },
+    "bahri": {
+      "role": "UI/UX设计师",
+      "bio": "全栈开发人员和前端负责人"
+    }
+  }
+}

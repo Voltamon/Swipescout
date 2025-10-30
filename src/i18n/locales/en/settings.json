@@ -1,0 +1,17 @@
+{
+  "settings": "Settings",
+  "generalSettings": "General Settings",
+  "accountSettings": "Account Settings",
+  "notificationSettings": "Notification Settings",
+  "privacySettings": "Privacy Settings",
+  "theme": "Theme",
+  "lightMode": "Light Mode",
+  "darkMode": "Dark Mode",
+  "language": "Language",
+  "dateFormat": "Date Format",
+  "timeFormat": "Time Format",
+  "currency": "Currency",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "deleteAccount": "Delete Account"
+}

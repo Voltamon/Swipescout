@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Card, CardContent } from "@/components/UI/card";
-import { Input } from "@/components/UI/input";
-import { Button } from "@/components/UI/button";
-import { Badge } from "@/components/UI/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/UI/accordion";
+} from "@/components/ui/accordion";
 import {
   Dialog,
   DialogContent,
@@ -17,16 +17,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/UI/dialog";
-import { Label } from "@/components/UI/label";
-import { Textarea } from "@/components/UI/textarea";
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/UI/select";
+} from "@/components/ui/select";
 import {
   Search,
   HelpCircle,

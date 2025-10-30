@@ -1,0 +1,13 @@
+{
+  "profileUpdated": "Profile updated successfully!",
+  "videoUploaded": "Video uploaded successfully!",
+  "applicationSubmitted": "Application submitted successfully!",
+  "messagesSent": "Message sent successfully!",
+  "interviewScheduled": "Interview scheduled successfully!",
+  "settingsSaved": "Settings saved successfully!",
+  "passwordChanged": "Password changed successfully!",
+  "accountDeleted": "Account deleted successfully!",
+  "dataExported": "Data exported successfully!",
+  "subscriptionUpdated": "Subscription updated successfully!",
+  "paymentProcessed": "Payment processed successfully!"
+}

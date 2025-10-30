@@ -190,16 +190,17 @@ export const AuthProvider = ({ children }) => {
 				"/video-feed/:vid",
 				 "/jobseeker-video-feed/:vid",
 			   "/forgot-password",
-				 "/reset-password/:oobCode",
-				  "/jobseeker-profile/:id",
-						"/employer-profile/:id",
-						"/videos/:pagetype",
+				"/reset-password/:oobCode",
+				"/jobseeker-profile/:id",
+				"/employer-profile/:id",
+				"/videos/:pagetype",
 				"/video-player/:id",
-						"/videos/all" ,
-						"/how-it-works",
-						"/pricing",
-						"/contact",
-						"/share"
+				"/videos/all" ,
+				"/how-it-works",
+				"/pricing",
+				"/contact",
+				"/share",
+				"/credits",
 			
 			];
 			
