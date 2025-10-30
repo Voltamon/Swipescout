@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Menu, 
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../LanguageSelector';
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from '@/contexts/AuthContext';
 import { homeThemeColors } from "../../config/theme-colors-home";
 
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5173';

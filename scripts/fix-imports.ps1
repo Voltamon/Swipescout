@@ -68,6 +68,20 @@ foreach ($file in $files) {
         }
     }
     
+    # Fix ../../lib/utils imports in UI components
+    if ($content -match 'from [''"]\.\.\/\.\.\/lib\/utils[''"]') {
+        $content = $content -replace 'from [''"]\.\.\/\.\.\/lib\/utils[''"]', "from '@/lib/utils'"
+        $changed = $true
+        Write-Host "  Fixed lib/utils imports in $($file.Name)" -ForegroundColor Green
+    }
+    
+    # Fix ../../contexts/ imports in UI components
+    if ($content -match 'from [''"]\.\.\/\.\.\/contexts\/') {
+        $content = $content -replace 'from [''"]\.\.\/\.\.\/contexts\/([^''"]+)[''"]', "from '@/contexts/`$1'"
+        $changed = $true
+        Write-Host "  Fixed contexts imports in $($file.Name)" -ForegroundColor Green
+    }
+    
     # Save if changes were made
     if ($changed) {
         Set-Content -Path $file.FullName -Value $content -NoNewline -Encoding UTF8

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -21,7 +21,7 @@ import {
 import { AlertCircle as AlertCircleIcon } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AuthPage from '../AuthPage';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import ContactUs from './contact us/contactus';
 import './home.css';
 import TermsOfService from './terms of service/terms';
