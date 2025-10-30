@@ -13,24 +13,24 @@
   BarChart3
 } from "lucide-react";
 
-import JobSearchPage from "../pages/JobSearchPage";
-import ResumeBuilderPage from "../pages/ResumeBuilderPage";
-import InterviewPage from "../pages/InterviewPage";
-import NotificationSettingsPage from "../pages/NotificationSettingsPage";
-import AllVideosPage from "../pages/AllVideosPage";
-import SavedVideosPage from "../pages/SavedVideosPage";
-import LikedVideosPage from "../pages/LikedVideosPage";
-import JobSeekerProfile from "../pages/JobSeekerProfile";
-import Settings from "../pages/Settings";
-import JobSeekerDashboard from "../pages/JobSeekerDashboard";
-import Chat from "../pages/Chat";
-import NotificationsPage from "../pages/NotificationsPage";
-import VideoUpload from "../pages/VideoUpload";
-import VideoEditPage from "../pages/VideoEditPage";
-import VideosPage from "../pages/VideosPage";
-import CareerAdvicePage from "../pages/CareerAdvicePage";
-import PersonalityTestPage from "../pages/PersonalityTestPage";
-import SkillGapAnalysisPage from "../pages/SkillGapAnalysisPage";
+import JobSearchPage from "../pages/JobSearchPage.jsx";
+import ResumeBuilderPage from "../pages/ResumeBuilderPage.jsx";
+import InterviewPage from "../pages/InterviewPage.jsx";
+import NotificationSettingsPage from "../pages/NotificationSettingsPage.jsx";
+import AllVideosPage from "../pages/AllVideosPage.jsx";
+import SavedVideosPage from "../pages/SavedVideosPage.jsx";
+import LikedVideosPage from "../pages/LikedVideosPage.jsx";
+import JobSeekerProfile from "../pages/JobSeekerProfile.jsx";
+import Settings from "../pages/Settings.jsx";
+import JobSeekerDashboard from "../pages/JobSeekerDashboard.jsx";
+import Chat from "../pages/Chat.jsx";
+import NotificationsPage from "../pages/NotificationsPage.jsx";
+import VideoUpload from "../pages/VideoUpload.jsx";
+import VideoEditPage from "../pages/VideoEditPage.jsx";
+import VideosPage from "../pages/VideosPage.jsx";
+import CareerAdvicePage from "../pages/CareerAdvicePage.jsx";
+import PersonalityTestPage from "../pages/PersonalityTestPage.jsx";
+import SkillGapAnalysisPage from "../pages/SkillGapAnalysisPage.jsx";
 
 import { useTranslation } from "react-i18next";
 

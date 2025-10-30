@@ -1,12 +1,12 @@
-﻿import AdminDashboard from "@/pages/AdminDashboard";
-import UserManagementPage from "@/pages/admin/UserManagementPage";
-import ContentModerationPage from "@/pages/admin/ContentModerationPage";
-import BlogListPage from "@/pages/admin/BlogListPage";
-import BlogEditorPage from "@/pages/admin/BlogEditorPage";
-import AdminAnalyticsPage from "@/pages/admin/AdminAnalyticsPage";
-import SystemSettingsPage from "@/pages/admin/SystemSettingsPage";
-import AdminJobsPage from "@/pages/admin/AdminJobsPage";
-import AdminVideosPage from "@/pages/admin/AdminVideosPage";
+﻿import AdminDashboard from "@/pages/adminDashboard.jsx";
+import UserManagementPage from "@/pages/admin/UserManagementPage.jsx";
+import ContentModerationPage from "@/pages/admin/ContentModerationPage.jsx";
+import BlogListPage from "@/pages/admin/BlogListPage.jsx";
+import BlogEditorPage from "@/pages/admin/BlogEditorPage.jsx";
+import AdminAnalyticsPage from "@/pages/admin/AdminAnalyticsPage.jsx";
+import SystemSettingsPage from "@/pages/admin/SystemSettingsPage.jsx";
+import AdminJobsPage from "@/pages/admin/AdminJobsPage.jsx";
+import AdminVideosPage from "@/pages/admin/AdminVideosPage.jsx";
 
 export const getAdminTabCategories = t => {
   return [

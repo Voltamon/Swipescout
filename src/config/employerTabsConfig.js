@@ -13,19 +13,19 @@
   HelpCircle
 } from "lucide-react";
 
-import CandidateSearchPage from "../pages/CandidateSearchPage";
-import JobPostingForm from "../pages/JobPostingForm";
-import CompanyVideos from "../pages/CompanyVideos";
-import NotificationSettingsPage from "../pages/NotificationSettingsPage";
-import AllVideosPage from "../pages/AllVideosPage";
-import VideoEditPage from "../pages/VideoEditPage";
-import JobsListingPage from "../pages/JobsListingPage";
-import EmployerProfilePage from "../pages/EmployerProfilePage";
-import Settings from "../pages/Settings";
-import Chat from "../pages/Chat";
-import HelpPageLinks from "../pages/HelpPageLinks";
-import EmployerDashboard from "../pages/EmployerDashboard";
-import VideoUpload from "../pages/VideoUpload"; // Import VideoUpload component
+import CandidateSearchPage from "../pages/CandidateSearchPage.jsx";
+import JobPostingForm from "../pages/JobPostingForm.jsx";
+import CompanyVideos from "../pages/CompanyVideos.jsx";
+import NotificationSettingsPage from "../pages/NotificationSettingsPage.jsx";
+import AllVideosPage from "../pages/AllVideosPage.jsx";
+import VideoEditPage from "../pages/VideoEditPage.jsx";
+import JobsListingPage from "../pages/JobsListingPage.jsx";
+import EmployerProfilePage from "../pages/EmployerProfilePage.jsx";
+import Settings from "../pages/Settings.jsx";
+import Chat from "../pages/Chat.jsx";
+import HelpPageLinks from "../pages/HelpPageLinks.jsx";
+import EmployerDashboard from "../pages/EmployerDashboard.jsx";
+import VideoUpload from "../pages/VideoUpload.jsx"; // Import VideoUpload component
 
 // Function to get translated employer tab categories
 export const getEmployerTabCategories = t => [
