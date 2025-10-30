@@ -1,35 +1,33 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import axios from 'axios'; // ADDED
-import {
-  Box,
-  IconButton,
-  Typography,
-  CircularProgress,
-  Alert,
-  Stack,
-  Paper
-} from '@mui/material';
-import {
-  PlayArrow,
-  VolumeUp,
-  VolumeOff,
-  Share,
-  Favorite,
-  Comment,
-  Bookmark,
-  KeyboardArrowUp,
-  KeyboardArrowDown,
-  Fullscreen,
-  FullscreenExit
-} from '@mui/icons-material';
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '../services/api'; // removed getVideosForHomePage - using public endpoint directly
+import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '../services/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../contexts/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
-import { yellow } from '@mui/material/colors';
+import { 
+  Heart, 
+  MessageCircle, 
+  Share2, 
+  Bookmark, 
+  ChevronUp, 
+  ChevronDown, 
+  Maximize, 
+  Minimize, 
+  Volume2, 
+  VolumeX,
+  Send,
+  Eye,
+  Loader2
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 // Ensure axios sends cookies by default (helps when backend uses session cookies)
 axios.defaults.withCredentials = true;
@@ -132,162 +130,64 @@ if (typeof window !== 'undefined' && !window.__fetchCredentialsPatched) {
   window.__fetchCredentialsPatched = true;
 }
 
-// Add SwipeScout background branding
+// Animated gradient background component
 const SwipeScoutBackground = () => (
-  <Box
-    sx={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      zIndex: 0,
-      background: 'linear-gradient(135deg, #7a4e8bff 0%, #2b2b4f 50%, #8585c4ff 100%)',
-      opacity: 1,
-      pointerEvents: 'none',
-    }}
-  >
-    <Typography
-      variant="h1"
-      sx={{
-        position: 'absolute',
-        top: '6%',
-        left: '16%',
-        transform: 'translateX(-50%)',
-        userSelect: 'none',
-        fontFamily: 'monospace',
-        // container-level will-change for smoother nested animations
-        willChange: 'transform, opacity',
-        // define both keyframes here so MUI injects them alongside styles
-        '@keyframes floatMain': {
-          '0%': { transform: 'translateY(0)', opacity: 0.96 },
-          '50%': { transform: 'translateY(-9px) scale(1.03)', opacity: 1 },
-          '100%': { transform: 'translateY(0)', opacity: 0.96 },
-        },
-        '@keyframes floatLabel': {
-          '0%': { transform: 'translateY(0)', opacity: 0.9 },
-          '50%': { transform: 'translateY(-6px)', opacity: 1 },
-          '100%': { transform: 'translateY(0)', opacity: 0.9 },
-        }
-      }}
-    >
-  <Box component="span" sx={{
-  display: 'inline-block',
-  mr: 1,
-  fontSize: { xs: '.9rem', md: '1.2rem' },
-  color: 'rgba(255,255,255,0.75)',
-  letterSpacing: '0.12em',
-  fontWeight: 500,
-  textTransform: 'uppercase',
-  textShadow: '0 1px 4px rgba(0,0,0,0.5)',
-  animation: 'floatLabel 6s ease-in-out infinite',
-}}>&copy;</Box>
-
-      <Box component="span" sx={{
-        display: 'inline-block',
-        fontSize: { xs: '1.6rem', md: '4rem' },
-        fontWeight: 900,
-        letterSpacing: '0.18em',
-        lineHeight: 1,
-        // gradient text fill with fallback color
-        background: 'linear-gradient(90deg, #ffffff 0%, #ffe7f0 30%, #ffd36b 70%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        color: 'rgba(255,255,255,0.98)',
-        // subtle stroke and crispness
-        textShadow: '0 1px 4px rgba(219, 152, 152, 0.55)',
-        // animate the word separately for a more organic feel
-        animation: 'floatMain 6s ease-in-out infinite',
-        // small transform to keep horizontal centering transformX from parent
-        transform: 'translateX(0)',
-      }}>
-        SwipeScout
-      </Box>
-    </Typography>
-  </Box>
-);
-
-// Tailwind-based full-screen background (uses project's Tailwind setup)
-const TailwindBackground = () => (
-  <div className="fixed inset-0 z-0 pointer-events-none">
+  <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
     <style>{`
       @keyframes floatGradient {
-        0% { transform: translate3d(-12%, 0, 0) scale(1); filter: saturate(1); }
-        25% { transform: translate3d(8%, -6%, 0) scale(1.04); filter: saturate(1.25); }
-        50% { transform: translate3d(12%, -2%, 0) scale(1.06); filter: saturate(1.35); }
-        75% { transform: translate3d(-6%, 6%, 0) scale(1.03); filter: saturate(1.2); }
-        100% { transform: translate3d(-12%, 0, 0) scale(1); filter: saturate(1); }
+        0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+        25% { transform: translate3d(5%, -3%, 0) scale(1.05); }
+        50% { transform: translate3d(-5%, 3%, 0) scale(1.08); }
+        75% { transform: translate3d(3%, -5%, 0) scale(1.03); }
       }
-      @keyframes patternMove {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
       }
-      @keyframes wordPulse {
-        0% { opacity: 0.06; transform: scale(1); }
-        50% { opacity: 0.18; transform: scale(1.06); }
-        100% { opacity: 0.06; transform: scale(1); }
-      }
-      @keyframes conicSpin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+      @keyframes float {
+        0%, 100% { transform: translateY(0) scale(1); opacity: 0.05; }
+        50% { transform: translateY(-20px) scale(1.05); opacity: 0.12; }
       }
     `}</style>
 
-    {/* vivid animated gradient layer */}
+    {/* Main gradient background */}
     <div
-      className="absolute inset-0"
+      className="absolute inset-0 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900"
       style={{
-        background: 'linear-gradient(120deg, rgba(34,211,238,0.95) 0%, rgba(124,58,237,0.92) 25%, rgba(236,72,153,0.95) 55%, rgba(251,191,36,0.95) 80%)',
-        filter: 'saturate(1.3) contrast(1.05) blur(6px) brightness(1.05)',
-        opacity: 1,
-        transformOrigin: '50% 50%',
-        animation: 'floatGradient 8s ease-in-out infinite'
+        animation: 'floatGradient 20s ease-in-out infinite'
       }}
     />
 
-    {/* fast moving pattern overlay (uses project's asset if present) */}
+    {/* Overlay gradient for depth */}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
+
+    {/* Shimmer effect */}
     <div
-      className="absolute inset-0 mix-blend-overlay"
+      className="absolute inset-0 opacity-30"
       style={{
-        backgroundImage: "url('/assets/pattern.svg')",
-        backgroundRepeat: 'repeat',
-        backgroundSize: '900px',
-        opacity: 0.22,
-        animation: 'patternMove 12s linear infinite'
+        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+        backgroundSize: '200% 100%',
+        animation: 'shimmer 8s linear infinite'
       }}
     />
 
-    {/* optional spinning conic highlight for extra color dynamics */}
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        background: 'conic-gradient(from 180deg at 50% 50%, rgba(255,255,255,0.04), rgba(255,255,255,0.02), transparent 40%)',
-        mixBlendMode: 'screen',
-        opacity: 0.6,
-        transformOrigin: '50% 50%',
-        animation: 'conicSpin 24s linear infinite'
-      }}
-    />
-
-    {/* centered large wordmark with stronger pulse */}
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div
-        className="text-white select-none"
+    {/* Floating brand text */}
+    <div className="absolute top-8 left-8 md:top-12 md:left-16">
+      <h1
+        className="text-2xl md:text-5xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-pink-200"
         style={{
-          fontSize: '3.5rem',
-          fontWeight: 900,
-          letterSpacing: '0.35em',
-          opacity: 0.06,
-          color: 'rgba(255,255,255,0.98)',
-          WebkitTextStroke: '0.5px rgba(0,0,0,0.12)',
-          transformOrigin: 'center',
-          animation: 'wordPulse 4s ease-in-out infinite'
+          animation: 'float 6s ease-in-out infinite',
+          textShadow: '0 2px 10px rgba(0,0,0,0.3)'
         }}
       >
+        <span className="text-xs md:text-base font-semibold text-white/70 tracking-wide mr-2">©</span>
         SwipeScout
-      </div>
+      </h1>
     </div>
+
+    {/* Decorative circles */}
+    <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+    <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
   </div>
 );
 
