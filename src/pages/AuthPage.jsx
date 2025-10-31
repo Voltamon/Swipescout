@@ -280,19 +280,15 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
               <button
                 type="submit"
                 disabled={loading.email}
-                className="w-full py-3 px-4 text-white font-semibold rounded-lg focus:ring-4 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                style={{ 
-                  background: homeThemeColors.gradients.button,
-                  boxShadow: homeThemeColors.shadows.button 
-                }}
+                className="w-full py-3 px-4 text-white font-semibold rounded-lg focus:ring-4 focus:ring-indigo-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/50"
               >
                 {loading.email ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Signing in...</span>
+                    <span>{t('auth:messages.signingIn', { defaultValue: 'Signing in...' })}</span>
                   </>
                 ) : (
-                  t('auth:buttons.logIn')
+                  t('auth:buttons.logIn', { defaultValue: 'Log in' })
                 )}
               </button>
             </form>
@@ -450,19 +446,15 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
               <button
                 type="submit"
                 disabled={loading.email}
-                className="w-full py-3 px-4 text-white font-semibold rounded-lg focus:ring-4 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                style={{ 
-                  background: homeThemeColors.gradients.button,
-                  boxShadow: homeThemeColors.shadows.button 
-                }}
+                className="w-full py-3 px-4 text-white font-semibold rounded-lg focus:ring-4 focus:ring-indigo-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/50"
               >
                 {loading.email ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Creating account...</span>
+                    <span>{t('auth:messages.creatingAccount', { defaultValue: 'Creating account...' })}</span>
                   </>
                 ) : (
-                  t('auth:buttons.signUp')
+                  t('auth:buttons.signUp', { defaultValue: 'Sign up' })
                 )}
               </button>
             </form>
@@ -493,7 +485,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 ) : (
                   <>
                     <Chrome className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform duration-300" />
-                    <span className="text-sm font-semibold">Google</span>
+                    <span className="text-sm font-semibold">{t('auth:buttons.google', { defaultValue: 'Google' })}</span>
                   </>
                 )}
               </button>
@@ -530,7 +522,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 ) : (
                   <>
                     <Linkedin className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform duration-300" />
-                    <span className="text-sm font-semibold">LinkedIn</span>
+                    <span className="text-sm font-semibold">{t('auth:buttons.linkedin', { defaultValue: 'LinkedIn' })}</span>
                   </>
                 )}
               </button>

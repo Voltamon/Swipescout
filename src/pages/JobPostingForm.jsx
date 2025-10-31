@@ -7,6 +7,8 @@ import { Textarea } from "@/components/UI/textarea.jsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/UI/select.jsx";
 import { Checkbox } from "@/components/UI/checkbox.jsx";
 import { useToast } from "@/hooks/use-toast";
+import { postJob } from "@/services/api";
+import themeColors from "@/config/theme-colors";
 import { Briefcase, MapPin, DollarSign, Clock, FileText, CheckCircle, Loader2 } from "lucide-react";
 
 const JobPostingForm = () => {
@@ -35,14 +37,25 @@ const JobPostingForm = () => {
     e.preventDefault();
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Form submitted:", formData);
+    try {
+      const jobData = {
+        title: formData.jobTitle,
+        description: formData.jobDescription,
+        location: formData.location,
+        minSalary: formData.minSalary ? parseInt(formData.minSalary) : undefined,
+        maxSalary: formData.maxSalary ? parseInt(formData.maxSalary) : undefined,
+        jobType: formData.employmentType,
+        requirements: formData.requirements,
+        remoteAllowed: formData.remoteWorkAllowed,
+      };
+
+      await postJob(jobData);
+      
       toast({
         title: "Success!",
         description: "Job posting created successfully!",
       });
-      setLoading(false);
+      
       // Reset form
       setFormData({
         jobTitle: "",
@@ -54,7 +67,16 @@ const JobPostingForm = () => {
         requirements: "",
         remoteWorkAllowed: false,
       });
-    }, 1500);
+    } catch (error) {
+      console.error("Error posting job:", error);
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to create job posting. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
