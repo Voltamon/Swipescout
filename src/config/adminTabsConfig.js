@@ -12,109 +12,94 @@ export const getAdminTabCategories = t => {
   return [
     {
       key: "dashboard",
-      label: t("admin.nav.overview", "Overview"),
+      label: t("adminTabs:categories.dashboard"),
       tabs: [
         {
-          label: t("admin.nav.dashboard", "Dashboard"),
+          label: t("adminTabs:tabs.overview"),
           icon: { name: "LayoutDashboard" },
           path: "overview",
           component: AdminDashboard,
-          description: t(
-            "admin.nav.dashboardDesc",
-            "Platform statistics and insights"
-          )
+          description: t("adminTabs:descriptions.overview")
+        },
+        {
+          label: t("adminTabs:tabs.analytics"),
+          icon: { name: "BarChart3" },
+          path: "analytics",
+          component: AdminAnalyticsPage,
+          description: t("adminTabs:descriptions.analytics")
         }
       ]
     },
     {
       key: "users",
-      label: t("admin.nav.userManagement", "User Management"),
+      label: t("adminTabs:categories.userManagement"),
       tabs: [
         {
-          label: t("admin.nav.allUsers", "All Users"),
+          label: t("adminTabs:tabs.users"),
           icon: { name: "Users" },
           path: "users",
           component: UserManagementPage,
-          description: t("admin.nav.allUsersDesc", "Manage all platform users")
+          description: t("adminTabs:descriptions.users")
         }
       ]
     },
     {
       key: "content",
-      label: t("admin.nav.contentManagement", "Content Management"),
+      label: t("adminTabs:categories.contentManagement"),
       tabs: [
         {
-          label: t("admin.nav.jobs", "Jobs"),
+          label: t("adminTabs:tabs.jobs"),
           icon: { name: "Briefcase" },
           path: "jobs",
           component: AdminJobsPage,
-          description: t("admin.nav.jobsDesc", "View and manage job postings")
+          description: t("adminTabs:descriptions.jobs")
         },
         {
-          label: t("admin.nav.videos", "Videos"),
+          label: t("adminTabs:tabs.videos"),
           icon: { name: "Film" },
           path: "videos",
           component: AdminVideosPage,
-          description: t("admin.nav.videosDesc", "Manage platform videos")
+          description: t("adminTabs:descriptions.videos")
         },
         {
-          label: t("admin.nav.moderation", "Moderation"),
+          label: t("adminTabs:tabs.reports"),
           icon: { name: "Shield" },
           path: "moderation",
           component: ContentModerationPage,
-          description: t("admin.nav.moderationDesc", "Review reported content")
+          description: t("adminTabs:descriptions.reports")
         }
       ]
     },
     {
       key: "blog",
-      label: t("admin.nav.blogManagement", "Blog Management"),
+      label: t("adminTabs:categories.blogManagement"),
       tabs: [
         {
-          label: t("admin.nav.allBlogs", "All Blogs"),
+          label: t("adminTabs:tabs.allBlogs"),
           icon: { name: "FileText" },
           path: "blogs",
           component: BlogListPage,
-          description: t("admin.nav.allBlogsDesc", "Manage blog posts")
+          description: t("adminTabs:descriptions.allBlogs")
         },
         {
-          label: t("admin.nav.createBlog", "Create Blog"),
+          label: t("adminTabs:tabs.createBlog"),
           icon: { name: "PenTool" },
           path: "blogs/new",
           component: BlogEditorPage,
-          description: t("admin.nav.createBlogDesc", "Write a new blog post")
-        }
-      ]
-    },
-    {
-      key: "analytics",
-      label: t("admin.nav.analytics", "Analytics"),
-      tabs: [
-        {
-          label: t("admin.nav.platformAnalytics", "Platform Analytics"),
-          icon: { name: "BarChart3" },
-          path: "analytics",
-          component: AdminAnalyticsPage,
-          description: t(
-            "admin.nav.platformAnalyticsDesc",
-            "Detailed platform metrics"
-          )
+          description: t("adminTabs:descriptions.createBlog")
         }
       ]
     },
     {
       key: "settings",
-      label: t("admin.nav.settings", "Settings"),
+      label: t("adminTabs:categories.platformSettings"),
       tabs: [
         {
-          label: t("admin.nav.systemSettings", "System Settings"),
+          label: t("adminTabs:tabs.settings"),
           icon: { name: "Settings" },
           path: "settings",
           component: SystemSettingsPage,
-          description: t(
-            "admin.nav.systemSettingsDesc",
-            "Configure platform settings"
-          )
+          description: t("adminTabs:descriptions.settings")
         }
       ]
     }

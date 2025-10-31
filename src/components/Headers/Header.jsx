@@ -151,7 +151,7 @@ const Header = () => {
           {/* Right Side Actions */}
           <div className="flex items-center gap-3 ml-auto">
             {/* Language Selector */}
-            <LanguageSelector variant="menu" showLabel={false} />
+            <LanguageSelector variant="menu" showLabel={true} />
 
             {/* Authentication Section */}
             {isAuthenticated && user ? (
@@ -209,7 +209,7 @@ const Header = () => {
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 transition-colors"
                     >
                       <Settings size={16} />
-                      {t('profileSettings')}
+                      {t('profileSettings')} 
                     </button>
 
                     {/* Account */}

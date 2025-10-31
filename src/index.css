@@ -149,11 +149,16 @@
   }
 }
 
-html, body, #root {
-  height: 100%;
+html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent body from scrolling */
+  min-height: 100vh;
+  height: auto;
+}
+
+#root {
+  min-height: 100%;
+  height: auto;
 }
 
 /* Performance optimizations for faster rendering */

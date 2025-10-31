@@ -1,0 +1,56 @@
+{
+  "viewingAs": "Viewing as:",
+  "returnToAdmin": "Return to Admin",
+  "title": "Admin Dashboard",
+  "subtitle": "Manage platform users, content, and settings from this central control panel.",
+  "totalUsers": "Total Users",
+  "newUsersThisWeek": "+{{count}} this week",
+  "activeUsers": "Active Users",
+  "activeUsersPercentage": "{{percentage}}% of total users",
+  "pendingReports": "Pending Reports",
+  "requiresAttention": "Requires attention",
+  "totalContent": "Total Content",
+  "contentBreakdown": "{{videos}} videos, {{jobs}} jobs",
+  "viewAsTitle": "View Platform As",
+  "viewAsDescription": "Switch to employer or jobseeker view to test the platform experience",
+  "viewAsEmployer": "View as Employer",
+  "viewAsJobSeeker": "View as Job Seeker",
+  "nav": {
+    "home": "Home"
+  },
+  "categories": {
+    "dashboard": "Dashboard",
+    "userManagement": "User Management",
+    "contentManagement": "Content Management",
+    "platformSettings": "Platform Settings",
+    "blogManagement": "Blog Management"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "users": "Users",
+    "roles": "Roles",
+    "videos": "Videos",
+    "jobs": "Jobs",
+    "reports": "Reports",
+    "categories": "Categories",
+    "skills": "Skills",
+    "settings": "Settings",
+    "allBlogs": "All Blogs",
+    "createBlog": "Create Blog"
+  },
+  "descriptions": {
+    "overview": "A summary of platform activity.",
+    "analytics": "Detailed platform analytics.",
+    "users": "Manage all users.",
+    "roles": "Manage user roles and permissions.",
+    "videos": "Manage all videos.",
+    "jobs": "Manage all job listings.",
+    "reports": "Review and manage user reports.",
+    "categories": "Manage job and video categories.",
+    "skills": "Manage platform skills.",
+    "settings": "Configure platform settings.",
+    "allBlogs": "Manage blog posts",
+    "createBlog": "Write a new blog post"
+  }
+}

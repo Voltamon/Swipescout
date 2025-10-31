@@ -16,6 +16,7 @@ import {
 import { Badge } from '@/components/UI/badge.jsx';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const DashboardLayout = ({
   children,
@@ -60,6 +61,7 @@ const DashboardLayout = ({
           <BreadcrumbNav customBreadcrumbs={customBreadcrumbs} />
 
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />

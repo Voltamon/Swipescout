@@ -9,6 +9,7 @@ import { Button } from '@/components/UI/button.jsx';
 import { getAdminTabCategories } from '@/config/adminTabsConfig';
 import { getAdminStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
+import LanguageSelector from '@/components/LanguageSelector';
 import {
   Home,
   LayoutDashboard,
@@ -165,23 +166,30 @@ const AdminTabs = () => {
             <div className="flex items-center gap-2">
               <Eye className="h-5 w-5 text-amber-600" />
               <span className={themeColors.text.primary}>
-                Viewing as: <Badge variant="outline">{viewingAs}</Badge>
+                {t('adminTabs:viewingAs')}{' '}
+                <Badge variant="outline">{viewingAs}</Badge>
               </span>
             </div>
             <Button onClick={handleReturnToAdmin} variant="outline" size="sm">
-              Return to Admin
+              {t('adminTabs:returnToAdmin')}
             </Button>
           </div>
         )}
 
         {/* Welcome Section */}
-        <div className="space-y-2">
-          <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
-            Admin Dashboard 🛡️
-          </h1>
-          <p className={themeColors.text.secondary}>
-            Manage platform users, content, and settings from this central control panel.
-          </p>
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
+              {t('adminTabs:title')} 🛡️
+            </h1>
+            <p className={themeColors.text.secondary}>
+              {t('adminTabs:subtitle')}
+            </p>
+          </div>
+          <div className="ml-4">
+            {/* Use the same LanguageSelector used in Header so both show flag + letters */}
+            <LanguageSelector variant="menu" showLabel={true} />
+          </div>
         </div>
 
         {/* Quick Stats Cards */}
@@ -189,47 +197,49 @@ const AdminTabs = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className={`border-l-4 ${themeColors.borders.primary} hover:shadow-lg transition-shadow`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('adminTabs:totalUsers')}</CardTitle>
                 <Users className={`h-4 w-4 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.totalUsers ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   <TrendingUp className="inline h-3 w-3 mr-1" />
-                  +{stats?.newUsersWeek ?? 0} this week
+                  {t('adminTabs:newUsersThisWeek', { count: stats?.newUsersWeek ?? 0 })}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-emerald-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('adminTabs:activeUsers')}</CardTitle>
                 <UserCheck className={`h-4 w-4 ${themeColors.iconBackgrounds.secondary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.activeUsers ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  {stats?.totalUsers > 0 ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0}% of total users
+                  {t('adminTabs:activeUsersPercentage', {
+                    percentage: stats?.totalUsers > 0 ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0,
+                  })}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-amber-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Reports</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('adminTabs:pendingReports')}</CardTitle>
                 <AlertCircle className={`h-4 w-4 ${themeColors.iconBackgrounds.warning.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.pendingReports ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  Requires attention
+                  {t('adminTabs:requiresAttention')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Content</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('adminTabs:totalContent')}</CardTitle>
                 <Film className={`h-4 w-4 ${themeColors.iconBackgrounds.info.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
@@ -237,7 +247,7 @@ const AdminTabs = () => {
                   {(stats?.totalVideos ?? 0) + (stats?.totalJobs ?? 0)}
                 </div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  {stats?.totalVideos ?? 0} videos, {stats?.totalJobs ?? 0} jobs
+                  {t('adminTabs:contentBreakdown', { videos: stats?.totalVideos ?? 0, jobs: stats?.totalJobs ?? 0 })}
                 </p>
               </CardContent>
             </Card>
@@ -248,9 +258,9 @@ const AdminTabs = () => {
         {tabParam === 'overview' && (
           <Card>
             <CardHeader>
-              <CardTitle>View Platform As</CardTitle>
+              <CardTitle>{t('adminTabs:viewAsTitle')}</CardTitle>
               <CardDescription>
-                Switch to employer or jobseeker view to test the platform experience
+                {t('adminTabs:viewAsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
@@ -260,7 +270,7 @@ const AdminTabs = () => {
                 className={`${themeColors.buttons.outline}`}
               >
                 <Briefcase className="mr-2 h-4 w-4" />
-                View as Employer
+                {t('adminTabs:viewAsEmployer')}
               </Button>
               <Button
                 onClick={() => handleViewAs('jobseeker')}
@@ -268,7 +278,7 @@ const AdminTabs = () => {
                 className={`${themeColors.buttons.outline}`}
               >
                 <Users className="mr-2 h-4 w-4" />
-                View as Job Seeker
+                {t('adminTabs:viewAsJobSeeker')}
               </Button>
             </CardContent>
           </Card>

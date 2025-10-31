@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Input } from '@/components/UI/input.jsx';
-import { Textarea } from '@/components/UI/textarea.jsx';
 import {
   Table,
   TableBody,
@@ -45,10 +47,6 @@ import {
   Calendar,
   Upload,
   Download,
-  Tag as TagIcon,
-  Folder,
-  FolderCog,
-  TagsIcon,
 } from 'lucide-react';
 
 const BlogListPage = () => {
@@ -78,7 +76,42 @@ const BlogListPage = () => {
       setBlogs(response.data.blogs || response.data || []);
     } catch (error) {
       console.error('Failed to fetch blogs:', error);
-      setBlogs([]);
+      // Mock data for development
+      setBlogs([
+        {
+          id: '1',
+          title: 'How to Create the Perfect Video Resume',
+          slug: 'how-to-create-perfect-video-resume',
+          excerpt: 'Learn the best practices for creating a compelling video resume that gets you noticed.',
+          status: 'published',
+          category: 'Career Tips',
+          author: { firstName: 'Admin', lastName: 'User' },
+          publishedAt: new Date('2024-03-15'),
+          views: 1250,
+        },
+        {
+          id: '2',
+          title: 'Top 10 Interview Questions for 2024',
+          slug: 'top-10-interview-questions-2024',
+          excerpt: 'Prepare for your next interview with these commonly asked questions.',
+          status: 'published',
+          category: 'Interview Prep',
+          author: { firstName: 'Admin', lastName: 'User' },
+          publishedAt: new Date('2024-03-10'),
+          views: 890,
+        },
+        {
+          id: '3',
+          title: 'Understanding SwipeScout Features',
+          slug: 'understanding-swipescout-features',
+          excerpt: 'A complete guide to all the features available on SwipeScout platform.',
+          status: 'draft',
+          category: 'Platform Guide',
+          author: { firstName: 'Admin', lastName: 'User' },
+          publishedAt: null,
+          views: 0,
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -111,74 +144,10 @@ const BlogListPage = () => {
     }
   };
 
-  const handleImportBlogs = async () => {
-    try {
-      setImporting(true);
-      const blogsData = JSON.parse(importData);
-      
-      if (!Array.isArray(blogsData)) {
-        alert('Invalid JSON format. Expected an array of blog objects.');
-        return;
-      }
-
-      const response = await bulkImportBlogs(blogsData);
-      const results = response.data.results;
-      
-      alert(`Import completed!\nSuccessful: ${results.successful}\nFailed: ${results.failed}${results.errors.length > 0 ? '\n\nErrors:\n' + results.errors.map(e => `- ${e.blog}: ${e.error}`).join('\n') : ''}`);
-      
-      setImportDialogOpen(false);
-      setImportData('');
-      fetchBlogs();
-    } catch (error) {
-      console.error('Failed to import blogs:', error);
-      alert(error.response?.data?.message || 'Failed to import blogs. Please check the JSON format.');
-    } finally {
-      setImporting(false);
-    }
-  };
-
-  const downloadSampleJSON = () => {
-    const sample = [
-      {
-        title: "Sample Blog Post",
-        titleAr: "مقال عينة",
-        titleZh: "示例博客文章",
-        content: "# This is a sample blog post\n\nWith some **markdown** content.",
-        contentAr: "# هذا مقال عينة",
-        contentZh: "# 这是一篇示例博客文章",
-        excerpt: "A brief description of the post",
-        featuredImage: "https://example.com/image.jpg",
-        categoryId: "uuid-of-category (optional)",
-        tags: ["technology", "career"],
-        status: "draft",
-        language: "en",
-        featured: false,
-        metaTitle: "Sample Post - SEO Title",
-        metaDescription: "SEO description for the sample post",
-        metaKeywords: ["sample", "blog", "post"],
-        relatedJobTitles: ["Software Developer", "Data Scientist"],
-        relatedSkills: ["JavaScript", "Python"],
-        targetAudience: ["job_seekers"],
-        experienceLevel: "mid"
-      }
-    ];
-    
-    const dataStr = JSON.stringify(sample, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'blog-import-sample.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
   const filteredBlogs = blogs.filter((blog) => {
     const matchesSearch =
-      blog.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.titleAr?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.titleZh?.toLowerCase().includes(searchTerm.toLowerCase());
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
@@ -200,25 +169,6 @@ const BlogListPage = () => {
     );
   };
 
-  const getLanguageBadge = (language) => {
-    const languageNames = {
-      en: 'English',
-      ar: 'العربية',
-      zh: '中文'
-    };
-    const colors = {
-      en: 'bg-blue-100 text-blue-800',
-      ar: 'bg-green-100 text-green-800',
-      zh: 'bg-purple-100 text-purple-800'
-    };
-    return (
-      <Badge variant="outline" className={colors[language] || 'bg-gray-100'}>
-        <Globe className="h-3 w-3 mr-1" />
-        {languageNames[language] || language}
-      </Badge>
-    );
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -229,39 +179,13 @@ const BlogListPage = () => {
             Manage all blog posts and articles
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/admin-tabs?group=blog&tab=categories')}
-            className="gap-2"
-          >
-            <FolderCog className="h-4 w-4" />
-            Categories
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/admin-tabs?group=blog&tab=tags')}
-            className="gap-2"
-          >
-            <TagsIcon className="h-4 w-4" />
-            Tags
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setImportDialogOpen(true)}
-            className="gap-2"
-          >
-            <Upload className="h-4 w-4" />
-            Import
-          </Button>
-          <Button
-            onClick={() => navigate('/admin-tabs?group=blog&tab=blogs/new')}
-            className={`${themeColors.buttons.primary} text-white`}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New Post
-          </Button>
-        </div>
+        <Button
+          onClick={() => navigate('/admin-tabs?group=blog&tab=blogs/new')}
+          className={`${themeColors.buttons.primary} text-white`}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          New Post
+        </Button>
       </div>
 
       {/* Filters */}
@@ -271,7 +195,7 @@ const BlogListPage = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search posts by title or excerpt..."
+                placeholder="Search posts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -312,8 +236,6 @@ const BlogListPage = () => {
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Category</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead>Language</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead>Published</TableHead>
@@ -324,7 +246,7 @@ const BlogListPage = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     <div className="flex items-center justify-center gap-2">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>
                       Loading blogs...
@@ -333,7 +255,7 @@ const BlogListPage = () => {
                 </TableRow>
               ) : filteredBlogs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <FileText className="h-12 w-12 text-gray-300" />
                       <p className={themeColors.text.muted}>No blog posts found</p>
@@ -343,66 +265,20 @@ const BlogListPage = () => {
               ) : (
                 filteredBlogs.map((blog) => (
                   <TableRow key={blog.id}>
-                    <TableCell className="font-medium max-w-xs">
+                    <TableCell className="font-medium">
                       <div>
-                        <div className={`${themeColors.text.primary} flex items-center gap-2`}>
-                          {blog.featured && (
-                            <Badge variant="secondary" className="text-xs">Featured</Badge>
-                          )}
-                          <span className="line-clamp-1">{blog.title}</span>
-                        </div>
+                        <div className={themeColors.text.primary}>{blog.title}</div>
                         <div className={`text-sm ${themeColors.text.muted} line-clamp-1`}>
                           {blog.excerpt}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {blog.category ? (
-                        <Badge 
-                          variant="outline" 
-                          style={{ 
-                            borderColor: blog.category.color, 
-                            color: blog.category.color 
-                          }}
-                        >
-                          <Folder className="h-3 w-3 mr-1" />
-                          {blog.category.name}
-                        </Badge>
-                      ) : (
-                        <span className={themeColors.text.muted}>-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {blog.blogTags && blog.blogTags.length > 0 ? (
-                          <>
-                            {blog.blogTags.slice(0, 2).map((blogTag) => (
-                              <Badge key={blogTag.tag.id} variant="secondary" className="text-xs">
-                                <TagIcon className="h-2 w-2 mr-1" />
-                                {blogTag.tag.name}
-                              </Badge>
-                            ))}
-                            {blog.blogTags.length > 2 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{blog.blogTags.length - 2}
-                              </Badge>
-                            )}
-                          </>
-                        ) : (
-                          <span className={themeColors.text.muted}>-</span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getLanguageBadge(blog.language)}
+                      <Badge variant="outline">{blog.category || 'Uncategorized'}</Badge>
                     </TableCell>
                     <TableCell>{getStatusBadge(blog.status)}</TableCell>
                     <TableCell>
-                      {blog.author ? (
-                        <span>{blog.author.firstName} {blog.author.lastName}</span>
-                      ) : (
-                        <span className={themeColors.text.muted}>Unknown</span>
-                      )}
+                      {blog.author?.firstName} {blog.author?.lastName}
                     </TableCell>
                     <TableCell>
                       {blog.publishedAt ? (
@@ -417,7 +293,7 @@ const BlogListPage = () => {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Eye className="h-3 w-3" />
-                        {blog.viewCount || 0}
+                        {blog.views || 0}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -439,12 +315,6 @@ const BlogListPage = () => {
                           <DropdownMenuItem onClick={() => handlePublishToggle(blog)}>
                             <Globe className="mr-2 h-4 w-4" />
                             {blog.status === 'published' ? 'Unpublish' : 'Publish'}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => window.open(`/blog/${blog.slug}`, '_blank')}
-                          >
-                            <Eye className="mr-2 h-4 w-4" />
-                            View
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
@@ -486,66 +356,6 @@ const BlogListPage = () => {
               className={`${themeColors.buttons.danger} text-white`}
             >
               Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Import Dialog */}
-      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" />
-              Bulk Import Blogs
-            </DialogTitle>
-            <DialogDescription>
-              Import multiple blog posts from JSON format. Each blog can include multi-language content.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-medium">JSON Data</label>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={downloadSampleJSON}
-                  className="gap-2"
-                >
-                  <Download className="h-3 w-3" />
-                  Download Sample
-                </Button>
-              </div>
-              <Textarea
-                value={importData}
-                onChange={(e) => setImportData(e.target.value)}
-                placeholder='Paste your JSON array here, e.g.: [{"title": "Post 1", "content": "..."}, ...]'
-                rows={12}
-                className="font-mono text-xs"
-              />
-              <p className="text-xs text-gray-500 mt-2">
-                Paste an array of blog objects. Download the sample to see the required format.
-              </p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setImportDialogOpen(false);
-                setImportData('');
-              }}
-              disabled={importing}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleImportBlogs}
-              disabled={importing || !importData.trim()}
-              className={`${themeColors.buttons.primary} text-white`}
-            >
-              {importing ? 'Importing...' : 'Import Blogs'}
             </Button>
           </DialogFooter>
         </DialogContent>

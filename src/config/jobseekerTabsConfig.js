@@ -35,200 +35,197 @@ import SkillGapAnalysisPage from "../pages/SkillGapAnalysisPage.jsx";
 import { useTranslation } from "react-i18next";
 
 export const jobseekerTabCategories = () => {
-  const { t } = useTranslation(); // Moved inside the function
+  const { t } = useTranslation();
 
   return [
     {
       key: "dashboard",
-      label: t("jobseekerTabs.dashboard", "Dashboard"),
+      label: t("jobseekerTabs:categories.dashboard"),
       tabs: [
         {
-          label: t("jobseekerTabs.overview", "Overview"),
+          label: t("jobseekerTabs:tabs.overview"),
           icon: { name: "Dashboard" },
           component: JobSeekerDashboard,
           path: "overview",
-          description: "Your job seeker dashboard overview."
+          description: t("jobseekerTabs:descriptions.overview")
         },
         {
-          label: t("jobseekerTabs.analytics", "Analytics"),
+          label: t("jobseekerTabs:tabs.analytics"),
           icon: { name: "AnalyticsIcon" },
           component: AllVideosPage,
           context: "analytics",
           path: "analytics",
-          description: "View analytics and insights."
+          description: t("jobseekerTabs:descriptions.analytics")
         }
       ]
     },
     {
       key: "jobSearch",
-      label: t("jobseekerTabs.jobSearch", "Job Search"),
+      label: t("jobseekerTabs:categories.jobSearch"),
       tabs: [
         {
-          label: t("jobseekerTabs.findJobs", "Find Jobs"),
+          label: t("jobseekerTabs:tabs.findJobs"),
           icon: { name: "Search" },
           component: JobSearchPage,
           path: "find-jobs",
-          description: "Search for job opportunities."
+          description: t("jobseekerTabs:descriptions.findJobs")
         },
         {
-          label: t("jobseekerTabs.videoFeed", "Video Feed"),
+          label: t("jobseekerTabs:tabs.videoFeed"),
           icon: { name: "VideoLibrary" },
           component: AllVideosPage,
           context: "jobseeker-feed",
           path: "video-feed",
-          description: "Browse job-related videos."
+          description: t("jobseekerTabs:descriptions.videoFeed")
         }
       ]
     },
     {
       key: "profileContent",
-      label: t("jobseekerTabs.profileContent", "Profile & Content"),
+      label: t("jobseekerTabs:categories.profileContent"),
       tabs: [
         {
-          label: t("jobseekerTabs.myProfile", "My Profile"),
+          label: t("jobseekerTabs:tabs.myProfile"),
           icon: { name: "Person" },
           component: JobSeekerProfile,
           path: "my-profile",
-          description: "Manage your profile."
+          description: t("jobseekerTabs:descriptions.myProfile")
         },
         {
-          label: t("jobseekerTabs.resumeBuilder", "Resume Builder"),
+          label: t("jobseekerTabs:tabs.resumeBuilder"),
           icon: { name: "Work" },
           component: ResumeBuilderPage,
           path: "resume-builder",
-          description: "Build your resume."
+          description: t("jobseekerTabs:descriptions.resumeBuilder")
         },
         {
-          label: t("jobseekerTabs.videoUpload", "Video Upload"),
+          label: t("jobseekerTabs:tabs.videoUpload"),
           icon: { name: "VideoLibrary" },
           component: VideoUpload,
           path: "video-upload",
-          description: "Upload a new video."
+          description: t("jobseekerTabs:descriptions.videoUpload")
         },
         {
-          label: t("jobseekerTabs.myVideos", "My Videos"),
+          label: t("jobseekerTabs:tabs.myVideos"),
           icon: { name: "VideoLibrary" },
           component: VideosPage,
           context: "my-videos",
           path: "my-videos",
-          description: "Your uploaded videos."
+          description: t("jobseekerTabs:descriptions.myVideos")
         }
       ]
     },
     {
       key: "savedLiked",
-      label: t("jobseekerTabs.savedLiked", "Saved & Liked"),
+      label: t("jobseekerTabs:categories.savedLiked"),
       tabs: [
         {
-          label: t("jobseekerTabs.savedVideos", "Saved Videos"),
+          label: t("jobseekerTabs:tabs.savedVideos"),
           icon: { name: "Bookmark" },
           component: SavedVideosPage,
           path: "saved-videos",
-          description: "Your saved videos."
+          description: t("jobseekerTabs:descriptions.savedVideos")
         },
         {
-          label: t("jobseekerTabs.likedVideos", "Liked Videos"),
+          label: t("jobseekerTabs:tabs.likedVideos"),
           icon: { name: "Favorite" },
           component: LikedVideosPage,
           path: "liked-videos",
-          description: "Videos you liked."
+          description: t("jobseekerTabs:descriptions.likedVideos")
         }
       ]
     },
     {
       key: "activities",
-      label: t("jobseekerTabs.activities", "Activities"),
+      label: t("jobseekerTabs:categories.activities"),
       tabs: [
         {
-          label: t("jobseekerTabs.settings", "Settings"),
+          label: t("jobseekerTabs:tabs.settings"),
           icon: { name: "Settings" },
           component: Settings,
           path: "settings",
-          description: "Account settings."
+          description: t("jobseekerTabs:descriptions.settings")
         },
         {
-          label: t(
-            "jobseekerTabs.notificationSettings",
-            "Notification Settings"
-          ),
+          label: t("jobseekerTabs:tabs.notificationSettings"),
           icon: { name: "Notifications" },
           component: NotificationSettingsPage,
           path: "notification-settings",
-          description: "Manage notification settings."
+          description: t("jobseekerTabs:descriptions.notificationSettings")
         }
       ]
     },
     {
       key: "resources",
-      label: t("jobseekerTabs.resources", "Resources"),
+      label: t("jobseekerTabs:categories.resources"),
       tabs: [
         {
-          label: t("jobseekerTabs.careerAdvice", "Career Advice"),
+          label: t("jobseekerTabs:tabs.careerAdvice"),
           icon: { name: "BookOpen" },
           component: CareerAdvicePage,
           path: "career-advice",
-          description: "Browse career tips and advice."
+          description: t("jobseekerTabs:descriptions.careerAdvice")
         },
         {
-          label: t("jobseekerTabs.personalityTest", "Personality Test"),
+          label: t("jobseekerTabs:tabs.personalityTest"),
           icon: { name: "Psychology" },
           component: PersonalityTestPage,
           path: "personality-test",
-          description: "Discover your personality type and ideal career match."
+          description: t("jobseekerTabs:descriptions.personalityTest")
         },
         {
-          label: t("jobseekerTabs.skillGap", "Skill Gap Analysis"),
+          label: t("jobseekerTabs:tabs.skillGap"),
           icon: { name: "TrendingUp" },
           component: SkillGapAnalysisPage,
           path: "skill-gap-analysis",
-          description: "Identify and bridge your skills gaps."
+          description: t("jobseekerTabs:descriptions.skillGap")
         }
       ]
     },
     {
       key: "communication",
-      label: t("jobseekerTabs.communication", "Communication"),
+      label: t("jobseekerTabs:categories.communication"),
       tabs: [
         {
-          label: t("jobseekerTabs.interviews", "Interviews"),
+          label: t("jobseekerTabs:tabs.interviews"),
           icon: { name: "CalendarToday" },
           component: InterviewPage,
           path: "interviews",
-          description: "Manage interviews."
+          description: t("jobseekerTabs:descriptions.interviews")
         },
         {
-          label: t("jobseekerTabs.notifications", "Notifications"),
+          label: t("jobseekerTabs:tabs.notifications"),
           icon: { name: "Notifications" },
           component: NotificationsPage,
           path: "notifications",
-          description: "Check notifications."
+          description: t("jobseekerTabs:descriptions.notifications")
         },
         {
-          label: t("jobseekerTabs.chat", "Chat"),
+          label: t("jobseekerTabs:tabs.chat"),
           icon: { name: "ChatIcon" },
           component: Chat,
           path: "chat",
-          description: "Chat with employers and support."
+          description: t("jobseekerTabs:descriptions.chat")
         }
       ]
     },
     {
       key: "videoManagement",
-      label: "Video Management",
+      label: t("jobseekerTabs:categories.videoManagement"),
       tabs: [
         {
-          label: "Video Upload",
+          label: t("jobseekerTabs:tabs.videoUpload"),
           icon: { name: "VideoLibrary" },
           component: VideoUpload,
           path: "video-upload",
-          description: "Upload new videos to your account."
+          description: t("jobseekerTabs:descriptions.videoUpload")
         },
         {
-          label: "Video Editor",
+          label: t("jobseekerTabs:tabs.videoEditor"),
           icon: { name: "VideoLibrary" },
           component: VideoEditPage,
           path: "video-editor",
-          description: "Edit your uploaded videos."
+          description: t("jobseekerTabs:descriptions.videoEditor")
         }
       ]
     }

@@ -317,11 +317,24 @@ export const handleReport = (id, data) => api.post(`/admin/reports/${id}/action`
 // Blog
 export const getBlogs = (params) => api.get('/blogs', { params });
 export const getBlog = (id) => api.get(`/blogs/${id}`);
+export const getFeaturedBlogs = (limit) => api.get('/blogs/featured', { params: { limit } });
+export const getRelatedBlogs = (id, limit) => api.get(`/blogs/${id}/related`, { params: { limit } });
 export const createBlog = (data) => api.post('/blogs', data);
 export const updateBlog = (id, data) => api.put(`/blogs/${id}`, data);
 export const deleteBlog = (id) => api.delete(`/blogs/${id}`);
+export const bulkImportBlogs = (blogs) => api.post('/blogs/bulk-import', { blogs });
+
+// Blog Categories
 export const getBlogCategories = () => api.get('/blogs/categories');
-export const getBlogTags = () => api.get('/blogs/tags');
+export const createBlogCategory = (data) => api.post('/blogs/categories', data);
+export const updateBlogCategory = (id, data) => api.put(`/blogs/categories/${id}`, data);
+export const deleteBlogCategory = (id) => api.delete(`/blogs/categories/${id}`);
+
+// Blog Tags
+export const getBlogTags = (limit) => api.get('/blogs/tags', { params: { limit } });
+export const createBlogTag = (data) => api.post('/blogs/tags', data);
+export const updateBlogTag = (id, data) => api.put(`/blogs/tags/${id}`, data);
+export const deleteBlogTag = (id) => api.delete(`/blogs/tags/${id}`);
 
 export default api;
 
