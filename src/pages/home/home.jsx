@@ -137,8 +137,8 @@ const Home = () => {
   };
 
   const handleOpenAuthDialog = (tabIndex = 0) => {
-    // Navigate to route-based auth pages so shared AuthPage component is used
-    navigate(tabIndex === 1 ? '/register' : '/login');
+    setActiveTab(tabIndex);
+    setShowAuthDialog(true);
   };
 
   const handleChange = (e) => {
@@ -617,12 +617,12 @@ const Home = () => {
 
             {/* End of New Section */}
 
-      {/* Authentication Route / Modal - AuthPage handles login/register UI */}
-      { (location.pathname === '/login' || location.pathname === '/register' || showAuthDialog) && (
+      {/* Auth Dialog */}
+      {showAuthDialog && (
         <AuthPage
-          open={true}
-          onClose={() => { setShowAuthDialog(false); navigate('/'); }}
-          initialTab={location.pathname === '/register' ? 1 : activeTab}
+          open={showAuthDialog}
+          onClose={() => setShowAuthDialog(false)}
+          initialTab={activeTab}
           redirectPath={redirectPath}
         />
       )}

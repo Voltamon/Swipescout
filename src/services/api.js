@@ -206,12 +206,12 @@ export const swipeJob = (jobId, direction) => api.post('/swipe', { jobId, direct
 export const getSwipeHistory = () => api.get('/swipe/history');
 export const getMatches = () => api.get('/swipe/matches');
 
-// Chat
-export const getConversations = () => api.get('/messages/conversations');
-export const getConversationById = (id) => api.get(`/messages/conversations/${id}`);
-export const getConversationMessages = (id) => api.get(`/messages/conversations/${id}/messages`);
-export const sendMessage = (conversationId, content) => api.post(`/messages/conversations/${conversationId}/messages`, { content });
-export const deleteMessage = (id) => api.delete(`/messages/${id}`);
+// Chat (Note: chat-related API calls are also in chatService.js)
+export const getConversations = () => api.get('/chat/conversations');
+export const getConversationById = (id) => api.get(`/chat/conversation/${id}`);
+export const getConversationMessages = (id) => api.get(`/chat/conversation/${id}`);
+export const sendMessage = (conversationId, content) => api.post(`/chat/send`, { conversationId, content });
+export const deleteMessage = (id) => api.delete(`/chat/message/${id}`);
 
 // Interviews
 export const scheduleInterview = (interviewData) => api.post('/interviews', interviewData);
@@ -260,6 +260,10 @@ export const deleteVideoComment = (videoId, commentId) => api.delete(`/videos/${
 export const getSavedVideos = () => api.get('/videos/saved');
 export const getLikedVideos = () => api.get('/videos/liked');
 
+// Added for consistency - using correct user-specific saved/liked videos endpoints
+export const getUserSavedVideosForUser = () => api.get('/videos/saved');
+export const getUserLikedVideosForUser = () => api.get('/videos/liked');
+
 
 // Payments
 export const getPlansAndServices = () => api.get('/payment/plans');
@@ -277,12 +281,12 @@ export const saveResume = (resumeData) => api.post('/resume/save', resumeData);
 export const getUserResumes = () => api.get('/resume/user');
 
 // Search & Connect
-export const searchJobs = (params) => api.get('/jobs/search', { params });
-export const searchCandidates = (params) => api.get('/candidates/search', { params });
-export const getFilterOptions = () => api.get('/search/filters');
+export const searchJobs = (params) => api.get('/job/search', { params });
+export const searchCandidates = (params) => api.get('/search/candidates/search', { params });
+export const getFilterOptions = () => api.get('/search/search/filters');
 export const connectWithCandidate = (candidateId, message) => api.post(`/employer/connect/${candidateId}`, { message });
-export const applyToJob = (jobId, applicationData) => api.post(`/job-seeker/apply/${jobId}`, applicationData);
-export const getApplications = () => api.get('/job-seeker/applications');
+export const applyToJob = (jobId, applicationData) => api.post(`/job/${jobId}/apply`, applicationData);
+export const getApplications = () => api.get('/job/applications');
 export const getJobApplications = (jobId) => api.get(`/employer/job/${jobId}/applications`);
 
 // Notifications

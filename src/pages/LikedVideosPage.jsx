@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
-  getUserLikedVideos, 
+  getLikedVideos, 
   unlikeVideo, 
   saveVideo,
   unsaveVideo,
@@ -56,7 +56,7 @@ export default function LikedVideosPage() {
   const fetchLikedVideos = async () => {
     try {
       setLoading(true);
-      const response = await getUserLikedVideos();
+      const response = await getLikedVideos();
       setLikedVideos(response.data.videos || []);
       
       // Track which videos are saved

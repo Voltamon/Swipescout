@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { getUserSavedVideos, unsaveVideo, shareVideo } from '@/services/api';
+import { getSavedVideos, unsaveVideo, shareVideo } from '@/services/api';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -62,7 +62,7 @@ export default function SavedVideosPage() {
   const fetchSavedVideos = async () => {
     try {
       setLoading(true);
-      const response = await getUserSavedVideos();
+      const response = await getSavedVideos();
       setSavedVideos(response.data.videos || []);
     } catch (error) {
       console.error('Failed to fetch saved videos:', error);

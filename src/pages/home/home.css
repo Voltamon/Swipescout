@@ -17,12 +17,14 @@ body:has(.home-wrapper) {
   padding: 0;
   background-color: var(--bg-very-dark);
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  overflow: hidden; /* Prevent body scroll */
+  /* Body overflow is controlled per-breakpoint so the homepage can
+     be non-scrollable on large screens but allow normal scrolling on
+     smaller (responsive) widths like 1024px and below. */
 }
 
 body:has(.home-wrapper) #root {
   height: 100vh;
-  overflow: hidden;
+  /* root overflow will be set in media queries below */
 }
 
 /* Arabic Font Support */
@@ -40,7 +42,9 @@ body:has(.home-wrapper) #root {
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Allow only the wrapper to scroll */
+  /* Default: keep the page non-scrollable on larger screens.
+     For responsive widths (<=1024px) scrolling is enabled below. */
+  overflow-y: hidden;
   overflow-x: hidden;
 }
 
@@ -244,11 +248,14 @@ body:has(.home-wrapper) #root {
   gap: 1.2rem;
   position: absolute;
   top: 58%;
-  right: clamp(1rem, 4vw, 2.5rem);
-  transform: translateY(-50%);
+  /* center horizontally */
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
   bottom: auto;
   z-index: 10;
-  align-items: flex-end;
+  /* center children horizontally */
+  align-items: center;
 }
 
 .home-login-button,
@@ -471,8 +478,8 @@ body:has(.home-wrapper) #root {
   box-shadow: 0 20px 56px rgba(56,189,248,0.18);
 }
 
-/* Auth Dialog Styles */
-.home-auth-dialog-overlay {
+/* Auth Dialog Styles - Only when shown within home-wrapper */
+.home-wrapper .home-auth-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -487,7 +494,7 @@ body:has(.home-wrapper) #root {
   padding: 1rem;
 }
 
-.home-auth-dialog {
+.home-wrapper .home-auth-dialog {
   background: rgba(10,8,18,0.6);
   backdrop-filter: blur(8px);
   border-radius: 16px;
@@ -500,7 +507,7 @@ body:has(.home-wrapper) #root {
   flex-direction: column;
 }
 
-.home-auth-dialog-content {
+.home-wrapper .home-auth-dialog-content {
   padding: 2rem;
   flex: 1;
   overflow-y: auto;
@@ -508,24 +515,24 @@ body:has(.home-wrapper) #root {
   scrollbar-color: rgba(248, 246, 246, 0.3) transparent;
 }
 
-.home-auth-dialog-content::-webkit-scrollbar {
+.home-wrapper .home-auth-dialog-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.home-auth-dialog-content::-webkit-scrollbar-track {
+.home-wrapper .home-auth-dialog-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.home-auth-dialog-content::-webkit-scrollbar-thumb {
+.home-wrapper .home-auth-dialog-content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
 
-.home-auth-dialog-content::-webkit-scrollbar-thumb:hover {
+.home-wrapper .home-auth-dialog-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.home-auth-dialog-footer {
+.home-wrapper .home-auth-dialog-footer {
   display: flex;
   justify-content: center;
   padding: 1rem 2rem 2rem 2rem;
@@ -533,7 +540,7 @@ body:has(.home-wrapper) #root {
   border-top: 1px solid rgba(255,255,255,0.03);
 }
 
-.home-auth-close-button {
+.home-wrapper .home-auth-close-button {
   background: none;
   border: none;
   color: var(--muted-text-2);
@@ -546,12 +553,12 @@ body:has(.home-wrapper) #root {
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-.home-auth-close-button:hover {
+.home-wrapper .home-auth-close-button:hover {
   color: white;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.home-auth-card {
+.home-wrapper .home-auth-card {
   background: rgba(18,16,26,0.75);
   backdrop-filter: blur(8px);
   border-radius: 20px;
@@ -565,7 +572,7 @@ body:has(.home-wrapper) #root {
   overflow: hidden;
 }
 
-.home-auth-card::before {
+.home-wrapper .home-auth-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -576,13 +583,13 @@ body:has(.home-wrapper) #root {
   pointer-events: none;
 }
 
-.home-auth-card-content {
+.home-wrapper .home-auth-card-content {
   padding: 2rem;
   position: relative;
   z-index: 1;
 }
 
-.home-auth-tabs {
+.home-wrapper .home-auth-tabs {
   display: flex;
   margin-bottom: 2rem;
   background: rgba(255,255,255,0.02);
@@ -591,7 +598,7 @@ body:has(.home-wrapper) #root {
   position: relative;
 }
 
-.home-tab {
+.home-wrapper .home-tab {
   flex: 1;
   padding: 12px 24px;
   border: none;
@@ -608,44 +615,44 @@ body:has(.home-wrapper) #root {
   z-index: 2;
 }
 
-.home-tab:hover {
+.home-wrapper .home-tab:hover {
   color: var(--accent-purple-2);
   background: rgba(124,58,237,0.06);
 }
 
-.home-tab.active {
+.home-wrapper .home-tab.active {
   color: var(--accent-purple-2);
   background: rgba(255,255,255,0.02);
   box-shadow: 0 6px 18px rgba(124,58,237,0.08);
   font-weight: 700;
 }
 
-.home-auth-form-container {
+.home-wrapper .home-auth-form-container {
   padding: 0 1rem;
 }
 
-.home-auth-form {
+.home-wrapper .home-auth-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
-.home-name-fields {
+.home-wrapper .home-name-fields {
   display: flex;
   gap: 1rem;
 }
 
-.home-name-field {
+.home-wrapper .home-name-field {
   flex: 1;
 }
 
-.home-input-field {
+.home-wrapper .home-input-field {
   margin-bottom: 0 !important;
 }
 
-.home-input-field input,
-.home-input-field textarea {
+.home-wrapper .home-input-field input,
+.home-wrapper .home-input-field textarea {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid rgba(255,255,255,0.04);
@@ -658,18 +665,18 @@ body:has(.home-wrapper) #root {
   outline: none;
 }
 
-.home-input-field input:focus,
-.home-input-field textarea:focus {
+.home-wrapper .home-input-field input:focus,
+.home-wrapper .home-input-field textarea:focus {
   border-color: var(--accent-purple);
   box-shadow: 0 0 0 6px rgba(124,58,237,0.06);
 }
 
-.home-input-field input:hover,
-.home-input-field textarea:hover {
+.home-wrapper .home-input-field input:hover,
+.home-wrapper .home-input-field textarea:hover {
   border-color: var(--accent-purple);
 }
 
-.home-input-field label {
+.home-wrapper .home-input-field label {
   display: block;
   margin-bottom: 8px;
   font-size: 0.9rem;
@@ -678,25 +685,25 @@ body:has(.home-wrapper) #root {
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-.home-input-field input::placeholder,
-.home-input-field textarea::placeholder {
+.home-wrapper .home-input-field input::placeholder,
+.home-wrapper .home-input-field textarea::placeholder {
   color: rgba(255,255,255,0.4);
   font-size: 0.9rem;
 }
 
-.home-input-field.error input,
-.home-input-field.error textarea {
+.home-wrapper .home-input-field.error input,
+.home-wrapper .home-input-field.error textarea {
   border-color: #ff6b6b;
   box-shadow: 0 0 0 4px rgba(255,107,107,0.08);
 }
 
-.home-input-field.success input,
-.home-input-field.success textarea {
+.home-wrapper .home-input-field.success input,
+.home-wrapper .home-input-field.success textarea {
   border-color: #28c76f;
   box-shadow: 0 0 0 4px rgba(40,199,111,0.06);
 }
 
-.home-forgot-password {
+.home-wrapper .home-forgot-password {
   color: var(--accent-purple-2);
   text-decoration: none;
   font-size: 0.9rem;
@@ -706,12 +713,12 @@ body:has(.home-wrapper) #root {
   transition: color 0.3s ease;
 }
 
-.home-forgot-password:hover {
+.home-wrapper .home-forgot-password:hover {
   color: #1565c0;
   text-decoration: underline;
 }
 
-.home-auth-button {
+.home-wrapper .home-auth-button {
   background: linear-gradient(45deg, var(--accent-purple), var(--accent-purple-2)) !important;
   color: #0b0620 !important;
   padding: 12px 24px !important;
@@ -723,19 +730,19 @@ body:has(.home-wrapper) #root {
   transition: all 0.3s ease !important;
 }
 
-.home-auth-button:hover {
+.home-wrapper .home-auth-button:hover {
   background: linear-gradient(45deg, var(--accent-purple-2), var(--accent-purple)) !important;
   box-shadow: 0 10px 28px rgba(124,58,237,0.22) !important;
   transform: translateY(-2px);
 }
 
-.home-social-divider {
+.home-wrapper .home-social-divider {
   position: relative;
   text-align: center;
   margin: 2rem 0;
 }
 
-.home-social-divider::before {
+.home-wrapper .home-social-divider::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -745,20 +752,20 @@ body:has(.home-wrapper) #root {
   background: rgba(255,255,255,0.03);
 }
 
-.home-social-divider-text {
+.home-wrapper .home-social-divider-text {
   background: transparent;
   padding: 0 1rem;
   color: #9aa1b2;
   font-size: 0.9rem;
 }
 
-.home-social-buttons {
+.home-wrapper .home-social-buttons {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.home-social-button {
+.home-wrapper .home-social-button {
   flex: 1;
   padding: 12px 16px !important;
   border-radius: 8px !important;
@@ -769,18 +776,18 @@ body:has(.home-wrapper) #root {
   transition: all 0.3s ease !important;
 }
 
-.home-social-button:hover {
+.home-wrapper .home-social-button:hover {
   border-color: var(--accent-purple) !important;
   background-color: rgba(124,58,237,0.04) !important;
   transform: translateY(-1px);
 }
 
-.home-error-alert {
+.home-wrapper .home-error-alert {
   margin-top: 1rem;
   border-radius: 8px !important;
 }
 
-.home-error-icon {
+.home-wrapper .home-error-icon {
   margin-right: 0.5rem;
 }
 
@@ -923,6 +930,12 @@ body:has(.home-wrapper) #root {
 
 /* Desktop Styles */
 @media (min-width: 1025px) {
+  /* Desktop / large screens: keep overall page non-scrollable so the
+     hero area fills the viewport without the document body scrolling. */
+  body:has(.home-wrapper) {
+    overflow: hidden;
+  }
+
   body:has(.home-wrapper) #root {
     min-height: 100vh;
     height: 100vh;
@@ -932,7 +945,7 @@ body:has(.home-wrapper) #root {
   .home-wrapper {
     min-height: 100vh;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
   
   .home-header {
@@ -962,10 +975,12 @@ body:has(.home-wrapper) #root {
   
   .home-action-buttons {
     position: absolute;
-    right: 47%;
+    /* Keep vertical placement but horizontally center */
+    left: 50%;
+    right: auto;
     top: 75%;
-    transform: translateY(-50%);
-    align-items: flex-start;
+    transform: translate(-50%, -50%);
+    align-items: center;
   }
 
   .home-header {
@@ -988,12 +1003,20 @@ body:has(.home-wrapper) #root {
 
 /* Tablet and Mobile Responsive */
 @media (max-width: 1024px) {
+  /* On tablet and smaller widths allow normal document scrolling so
+     users can reach content placed below the fold. */
+  body:has(.home-wrapper) {
+    overflow: auto;
+  }
+
   .home-wrapper {
     margin: 0;
     padding: 0;
     min-height: auto;
     height: auto;
     width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .home-feature-statement-secondary {
     font-size: 1.85rem;
