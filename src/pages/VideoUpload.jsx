@@ -122,8 +122,30 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
 
     try {
       chunksRef.current = [];
+      
+      // Try different codecs in order of preference until one is supported
+      const codecOptions = [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm;codecs=h264',
+        'video/webm',
+        'video/mp4'
+      ];
+      
+      let selectedMimeType = '';
+      for (const codec of codecOptions) {
+        if (MediaRecorder.isTypeSupported(codec)) {
+          selectedMimeType = codec;
+          break;
+        }
+      }
+      
+      if (!selectedMimeType) {
+        throw new Error('No supported video codec found');
+      }
+
       const mediaRecorder = new MediaRecorder(streamRef.current, {
-        mimeType: 'video/webm;codecs=vp9'
+        mimeType: selectedMimeType
       });
 
       mediaRecorder.ondataavailable = (event) => {
@@ -133,7 +155,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+        const blob = new Blob(chunksRef.current, { type: selectedMimeType });
         const url = URL.createObjectURL(blob);
         setRecordedVideo({ blob, url });
         stopCamera();
@@ -147,7 +169,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       console.error('Error starting recording:', error);
       toast({
         title: "Recording Error",
-        description: "Failed to start recording",
+        description: error.message || "Failed to start recording",
         variant: "destructive",
       });
     }

@@ -1,14 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import {
   Bell, Mail, Smartphone, Briefcase, Video, MessageSquare,
   Heart, UserPlus, Clock, Save, RotateCcw, Loader2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  getUserNotificationSettings, 
-  updateNotificationSettings,
-  testNotification 
-} from '@/services/api';
+import { testNotification } from '@/services/api';
+import { getUserSettings, updateUserSettings } from '@/services/userService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Switch } from '@/components/UI/switch.jsx';
@@ -45,22 +42,46 @@ const NotificationSettingsPage = () => {
   const [testDialog, setTestDialog] = useState(false);
   const [testType, setTestType] = useState('email');
 
-  useEffect(() => {
-    fetchNotificationSettings();
-  }, []);
-
-  const fetchNotificationSettings = async () => {
+  const fetchNotificationSettings = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getUserNotificationSettings();
-      setSettings({ ...settings, ...response.data.settings });
+      // Use consolidated settings fetch and normalize nested notification structure into this page's flat state
+      const response = await getUserSettings();
+      const data = response?.data || {};
+      const notif = data.notifications || {};
+      const email = notif.email || {};
+      const push = notif.push || {};
+      const inApp = notif.inApp || {};
+
+      const normalized = {
+        email_notifications: Object.values(email).some(Boolean) || false,
+        push_notifications: Object.values(push).some(Boolean) || false,
+        sms_notifications: false, // not supported by backend yet
+        job_alerts: !!(email.jobMatches || push.jobMatches || inApp.jobMatches),
+        interview_reminders: !!(email.applicationUpdates || push.applicationUpdates || inApp.applicationUpdates),
+        message_notifications: !!(email.newMessages || push.newMessages || inApp.newMessages),
+        video_interactions: false, // no direct mapping in backend; keep UI-only for now
+        connection_requests: false, // no direct mapping in backend
+        marketing_emails: !!email.marketingEmails,
+        weekly_digest: !!email.marketingEmails, // approximate via marketingEmails
+        quiet_hours_enabled: false,
+        quiet_hours_start: '22:00',
+        quiet_hours_end: '08:00',
+        notification_frequency: 'immediate'
+      };
+
+      setSettings(prev => ({ ...prev, ...normalized }));
     } catch (error) {
       console.error('Failed to fetch notification settings:', error);
       toast({ description: "Failed to load settings", variant: "destructive" });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchNotificationSettings();
+  }, [fetchNotificationSettings]);
 
   const handleSettingChange = (setting, value) => {
     setSettings(prev => ({ ...prev, [setting]: value }));
@@ -69,7 +90,16 @@ const NotificationSettingsPage = () => {
   const handleSaveSettings = async () => {
     try {
       setSaving(true);
-      await updateNotificationSettings(settings);
+      // Map this page's flat settings into the shape expected by userService.updateUserSettings
+      const mapped = {
+        messageNotifications: !!settings.message_notifications,
+        jobAlerts: !!settings.job_alerts,
+        interviewReminders: !!settings.interview_reminders,
+        weeklyDigest: !!settings.weekly_digest,
+        profileViews: false // no direct control on this page yet
+      };
+
+      await updateUserSettings({ notifications: mapped });
       toast({ description: "Settings saved successfully!" });
     } catch (error) {
       console.error('Failed to save notification settings:', error);
@@ -81,7 +111,14 @@ const NotificationSettingsPage = () => {
 
   const handleTestNotification = async () => {
     try {
-      await testNotification(testType);
+      // Build a payload expected by the backend test endpoint
+      const currentUserId = user?.id || user?.userId || user?.uid;
+      const payload = {
+        userId: currentUserId,
+        message: `Test ${testType} notification from UI`
+      };
+
+      await testNotification(payload);
       setTestDialog(false);
       toast({ description: "Test notification sent!" });
     } catch (error) {

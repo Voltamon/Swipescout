@@ -1,10 +1,12 @@
 ﻿import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api` : 'http://localhost:5000/api');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
+  // Send cookies and support same-site cookie auth when backend requires credentials
+  withCredentials: true
 });
 
 let token;
@@ -133,7 +135,8 @@ export const searchVideos = (formData) => api.post(`/videos/searchVideos`, formD
 export const connectWithUser = (id) => api.post(`/users/${id}/connectWithUser`);
 export const addComment = (id) => api.post(`/videos/${id}/addComment`);
 export const getVideosForHomePage = () => api.get(`/videos/getVideosForHomePage`);
-export const getUserNotificationSettings = (id) => api.get(`/notifications/${id}/settings`);
+// If id is provided returns public user settings endpoint, otherwise returns current user's settings
+export const getUserNotificationSettings = (id) => id ? api.get(`/notifications/${id}/settings`) : api.get('/notifications/settings');
 export const getUserSavedVideos = (id) => api.get(`/videos/${id}/getUserSavedVideos`);
 export const getUserLikedVideos = (id) => api.get(`/videos/${id}/getUserLikedVideos`);
  
@@ -239,6 +242,10 @@ export const getJobseekerStats = () => api.get('/analytics/jobseeker-stats');
 export const getEmployerStats = () => api.get('/analytics/employer-stats');
 export const getVideoEngagement = () => api.get('/analytics/video-engagement');
 
+// Profile
+export const getPublicProfile = (userId) => api.get(`/profile/${userId}`);
+export const getMyProfileViewStats = () => api.get('/profile/stats/views');
+
 // Video processing / Edit
 export const uploadVideo = (formData, onUploadProgress) => api.post('/job-seeker/video-resume', formData, {
   headers: { 'Content-Type': 'multipart/form-data' },
@@ -312,6 +319,8 @@ export const getVideoStats = (id) => api.get(`/videos/${id}/stats`);
 // Admin
 export const getAdminStats = () => api.get('/admin/stats');
 export const getPlatformAnalytics = (params) => api.get('/admin/analytics', { params });
+export const getAdminSettings = () => api.get('/admin/settings');
+export const updateAdminSettings = (settings) => api.put('/admin/settings', settings);
 export const getUsers = (params) => api.get('/admin/users', { params });
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
 export const banUser = (id, data) => api.post(`/admin/users/${id}/ban`, data);

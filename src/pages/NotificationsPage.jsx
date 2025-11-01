@@ -5,38 +5,18 @@ import { Button } from "@/components/UI/button.jsx";
 import { Badge } from "@/components/UI/badge.jsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/UI/avatar.jsx";
 import { useToast } from "@/hooks/use-toast";
-import { getNotifications, markNotificationAsRead, deleteNotification } from '@/services/api';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 const NotificationsPage = () => {
   const { toast } = useToast();
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { notifications, loading, refresh, markRead, remove, markAllRead } = useNotifications();
   const [filter, setFilter] = useState('all'); // all, unread, read
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      setLoading(true);
-      const response = await getNotifications();
-      const notifs = response?.data?.notifications || response?.notifications || [];
-      setNotifications(notifs);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-      toast({ description: "Failed to load notifications", variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => { refresh(); /* initial fetch handled in provider, but ensure */ }, []);
 
   const handleMarkAsRead = async (id) => {
     try {
-      await markNotificationAsRead(id);
-      setNotifications(prev => prev.map(n => 
-        n.id === id ? { ...n, read: true } : n
-      ));
+      await markRead(id);
       toast({ description: "Notification marked as read" });
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -46,8 +26,7 @@ const NotificationsPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      await deleteNotification(id);
-      setNotifications(prev => prev.filter(n => n.id !== id));
+      await remove(id);
       toast({ description: "Notification deleted" });
     } catch (error) {
       console.error('Error deleting notification:', error);
@@ -57,9 +36,7 @@ const NotificationsPage = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
-      await Promise.all(unreadIds.map(id => markNotificationAsRead(id)));
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      await markAllRead();
       toast({ description: "All notifications marked as read" });
     } catch (error) {
       console.error('Error marking all as read:', error);
@@ -212,7 +189,7 @@ const NotificationsPage = () => {
 
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm ${!notification.read ? 'font-semibold' : 'font-medium'}`}>
-                      {notification.title || notification.message}
+                      {notification.title || notification.body}
                     </p>
                     {notification.description && (
                       <p className="text-sm text-gray-600 mt-1">{notification.description}</p>

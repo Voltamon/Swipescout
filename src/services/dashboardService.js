@@ -27,10 +27,10 @@ export const getEmployerDashboardStats = () => {
 };
 
 /**
- * Get recent activities for employer
+ * Get recent activities for user (jobseeker or employer)
  */
-export const getRecentActivities = () => {
-  return api.get('/analytics/recent-activities');
+export const getRecentActivities = (role = 'jobseeker') => {
+  return api.get('/analytics/recent-activities', { params: { role } });
 };
 
 /**

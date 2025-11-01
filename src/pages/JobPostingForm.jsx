@@ -42,11 +42,11 @@ const JobPostingForm = () => {
         title: formData.jobTitle,
         description: formData.jobDescription,
         location: formData.location,
-        minSalary: formData.minSalary ? parseInt(formData.minSalary) : undefined,
-        maxSalary: formData.maxSalary ? parseInt(formData.maxSalary) : undefined,
-        jobType: formData.employmentType,
+        salary_min: formData.minSalary ? parseInt(formData.minSalary) : undefined,
+        salary_max: formData.maxSalary ? parseInt(formData.maxSalary) : undefined,
+        employment_type: formData.employmentType,
         requirements: formData.requirements,
-        remoteAllowed: formData.remoteWorkAllowed,
+        remote_ok: formData.remoteWorkAllowed,
       };
 
       await postJob(jobData);

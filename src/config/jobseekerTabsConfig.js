@@ -18,6 +18,7 @@ import ResumeBuilderPage from "../pages/ResumeBuilderPage.jsx";
 import InterviewPage from "../pages/InterviewPage.jsx";
 import NotificationSettingsPage from "../pages/NotificationSettingsPage.jsx";
 import AllVideosPage from "../pages/AllVideosPage.jsx";
+import AnalyticsJobseeker from "../pages/AnalyticsJobseeker.jsx";
 import SavedVideosPage from "../pages/SavedVideosPage.jsx";
 import LikedVideosPage from "../pages/LikedVideosPage.jsx";
 import JobSeekerProfile from "../pages/JobSeekerProfile.jsx";
@@ -52,7 +53,7 @@ export const jobseekerTabCategories = () => {
         {
           label: t("jobseekerTabs:tabs.analytics"),
           icon: { name: "AnalyticsIcon" },
-          component: AllVideosPage,
+          component: AnalyticsJobseeker,
           context: "analytics",
           path: "analytics",
           description: t("jobseekerTabs:descriptions.analytics")

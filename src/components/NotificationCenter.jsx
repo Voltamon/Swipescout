@@ -29,7 +29,12 @@ import {
   Message,
   Person,
   Star,
-  Info
+  Info,
+  ThumbUp,
+  ChatBubbleOutline,
+  Bookmark,
+  Share as ShareIcon,
+  Update as UpdateIcon
 } from '@mui/icons-material';
 import { 
   getNotifications, 
@@ -38,15 +43,13 @@ import {
   markAllNotificationsAsRead,
   deleteNotification 
 } from '@/services/api';
-import { AuthContext } from '@/contexts/AuthContext';
-import { useContext } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 export default function NotificationCenter() {
   const { user } = useAuth();
+  const { notifications, unreadCount, loading, refresh, markRead, markAllRead, remove } = useNotifications();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -56,49 +59,25 @@ export default function NotificationCenter() {
 
   useEffect(() => {
     if (user) {
-      loadUnreadCount();
-      // Set up polling for real-time updates
-      const interval = setInterval(loadUnreadCount, 30000); // Check every 30 seconds
+      // Best-effort refresh on mount
+      refresh();
+      // Optional periodic refresh as a fallback to sockets
+      const interval = setInterval(refresh, 30000);
       return () => clearInterval(interval);
     }
   }, [user]);
 
   useEffect(() => {
-    if (open && notifications.length === 0) {
-      loadNotifications();
+    if (open) {
+      refresh();
     }
   }, [open]);
 
-  const loadUnreadCount = async () => {
-    try {
-      const response = await getUnreadNotificationCount();
-      setUnreadCount(response.data.count);
-    } catch (error) {
-      console.error('Error loading unread count:', error);
-    }
-  };
-
-  const loadNotifications = async (pageNum = 1, reset = false) => {
-    if (loading) return;
-    
-    setLoading(true);
-    try {
-      const response = await getNotifications(pageNum, 10);
-      const newNotifications = response.data.notifications || [];
-      
-      if (reset || pageNum === 1) {
-        setNotifications(newNotifications);
-      } else {
-        setNotifications(prev => [...prev, ...newNotifications]);
-      }
-      
-      setHasMore(newNotifications.length === 10);
-      setPage(pageNum);
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-    } finally {
-      setLoading(false);
-    }
+  const loadNotifications = async (pageNum = 1) => {
+    // Context refresh pulls first page; simple hasMore heuristic
+    await refresh();
+    setHasMore(false);
+    setPage(pageNum);
   };
 
   const handleClick = (event) => {
@@ -114,33 +93,22 @@ export default function NotificationCenter() {
   const handleNotificationClick = async (notification) => {
     if (!notification.read_at) {
       try {
-        await markNotificationAsRead(notification.id);
-        setNotifications(prev => 
-          prev.map(n => 
-            n.id === notification.id 
-              ? { ...n, read_at: new Date().toISOString() }
-              : n
-          )
-        );
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        await markRead(notification.id);
       } catch (error) {
         console.error('Error marking notification as read:', error);
       }
     }
 
-    // Navigate to notification link if available
-    if (notification.link) {
-      window.open(notification.link, '_blank');
+    // Navigate to notification link if available (link or data.link)
+    const navLink = notification.link || notification?.data?.link;
+    if (navLink) {
+      window.open(navLink, '_blank');
     }
   };
 
   const handleMarkAllAsRead = async () => {
     try {
-      await markAllNotificationsAsRead();
-      setNotifications(prev => 
-        prev.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() }))
-      );
-      setUnreadCount(0);
+      await markAllRead();
     } catch (error) {
       console.error('Error marking all as read:', error);
     }
@@ -148,11 +116,7 @@ export default function NotificationCenter() {
 
   const handleDeleteNotification = async (notificationId) => {
     try {
-      await deleteNotification(notificationId);
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      if (selectedNotification && !selectedNotification.read_at) {
-        setUnreadCount(prev => Math.max(0, prev - 1));
-      }
+      await remove(notificationId);
       setMenuAnchor(null);
       setSelectedNotification(null);
     } catch (error) {
@@ -168,9 +132,19 @@ export default function NotificationCenter() {
 
   const getNotificationIcon = (type) => {
     switch (type) {
+      case 'video_like':
+        return <ThumbUp />;
+      case 'video_comment':
+        return <ChatBubbleOutline />;
+      case 'video_save':
+        return <Bookmark />;
+      case 'video_share':
+        return <ShareIcon />;
       case 'job_match':
       case 'job_application':
         return <Work />;
+      case 'application_update':
+        return <UpdateIcon />;
       case 'message':
         return <Message />;
       case 'profile_view':
@@ -184,10 +158,20 @@ export default function NotificationCenter() {
 
   const getNotificationColor = (type) => {
     switch (type) {
+      case 'video_like':
+        return '#1976d2';
+      case 'video_comment':
+        return '#00796b';
+      case 'video_save':
+        return '#5d4037';
+      case 'video_share':
+        return '#6a1b9a';
       case 'job_match':
         return '#4caf50';
       case 'job_application':
         return '#2196f3';
+      case 'application_update':
+        return '#009688';
       case 'message':
         return '#ff9800';
       case 'profile_view':
@@ -266,7 +250,7 @@ export default function NotificationCenter() {
             </Box>
           </Box>
 
-          {notifications.length === 0 && !loading ? (
+      {notifications.length === 0 && !loading ? (
             <Box textAlign="center" py={4}>
               <NotificationsNone sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
               <Typography variant="body2" color="text.secondary">
@@ -307,7 +291,7 @@ export default function NotificationCenter() {
                             fontWeight={notification.read_at ? 'normal' : 'bold'}
                             sx={{ flex: 1, mr: 1 }}
                           >
-                            {notification.title || notification.message}
+                            {notification.title || notification.body}
                           </Typography>
                           <IconButton
                             size="small"
@@ -323,9 +307,9 @@ export default function NotificationCenter() {
                       }
                       secondary={
                         <Box>
-                          {notification.title && (
+                          {notification.body && (
                             <Typography variant="body2" color="text.secondary" gutterBottom>
-                              {notification.message}
+                              {notification.body}
                             </Typography>
                           )}
                           <Box display="flex" justifyContent="space-between" alignItems="center">

@@ -78,6 +78,8 @@ import EmployerProfilePage from "./pages/EmployerProfilePage";
 import JobsListingPage from "./pages/JobsListingPage";
 import PostJobPage from "./pages/PostJobPage";
 import { VideoProvider } from "./contexts/VideoContext";
+import { SocketProvider } from "./contexts/SocketContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import VideosPage from "./pages/VideosPage";
 import VideoFeedViewer from "./pages/VideoFeedViewer";
 import EditEmployerProfilePage from "./pages/EditEmployerProfilePage";
@@ -86,6 +88,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import JobseekerProfileView from "./pages/JobseekerProfileView";
 import EmployerProfileView from "./pages/EmployerProfileView";
+import ProfileViewPage from "./pages/ProfileViewPage";
 import AllVideosPage from "./pages/AllVideosPage";
 import Home from "./pages/home/home.jsx";
 import Videos from "./pages/Videos";
@@ -100,6 +103,9 @@ import CreditsPage from "./pages/CreditsPage";
 import EmployerTabs from "./pages/EmployerTabs";
 import JobseekerTabs from "./pages/JobseekerTabs";
 import AdminTabs from "./pages/AdminTabs";
+import JobseekerPointsPage from "./pages/JobseekerPointsPage";
+import PointsSettingsPage from "./pages/admin/PointsSettingsPage";
+import UsersPointsPage from "./pages/admin/UsersPointsPage";
 
 // New enhanced pages
 import InterviewPage from "./pages/InterviewPage";
@@ -171,7 +177,9 @@ function App() {
   return (
     <AnimatePresence mode="wait">
       <Suspense fallback={<LinearProgress />}>
-        <VideoProvider>
+  <SocketProvider>
+  <NotificationProvider>
+  <VideoProvider>
           <Routes location={location} key={location.pathname}>
             {/* Public Routes */}
          
@@ -205,6 +213,7 @@ function App() {
             <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
             <Route path="/jobseeker-profile/:userId" element={<JobseekerProfileView />} />
             <Route path="/employer-profile/:userId" element={<EmployerProfileView />} />
+            <Route path="/profile/:userId" element={<ProfileViewPage />} />
             <Route path="/video-feed/:vid?" element={<VideoFeed />} />
             <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
             <Route path="/videos/:pagetype" element={<AllVideosPage />} />
@@ -300,6 +309,11 @@ function App() {
               <Route path="/edit-video/:id" element={<EditVideoPage />} />
               <Route path="/help" element={<HelpPageLinks />} />
 
+              {/* Points */}
+              <Route path="/points" element={<JobseekerPointsPage />} />
+              <Route path="/admin/points-settings" element={<PointsSettingsPage />} />
+              <Route path="/admin/users-points" element={<UsersPointsPage />} />
+
             </Route>
 
             {/* Catch all route */}
@@ -307,6 +321,8 @@ function App() {
           </Routes>
           <CookieConsentBanner />
         </VideoProvider>
+        </NotificationProvider>
+        </SocketProvider>
       </Suspense>
     </AnimatePresence>
   );

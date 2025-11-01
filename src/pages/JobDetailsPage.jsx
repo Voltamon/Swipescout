@@ -432,7 +432,7 @@ const handleMouseLeaveVideo = () => {
         sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
       >
         <BusinessIcon fontSize="small" sx={{ mr: 1 }} />
-        {job?.company_name}
+        {job?.company || job?.companyName || job?.employerProfile?.company_name}
       </Typography>
       <Typography
         variant="subtitle1"
@@ -530,7 +530,7 @@ const handleMouseLeaveVideo = () => {
 
      <CompanyCard elevation={3}>
        <Button 
-        onClick={() => navigate(`/employer-profile/${job.company.id}`)}
+        onClick={() => navigate(`/employer-profile/${job.employerProfile?.id || job.employerProfileId}`)}
         sx={{
           textTransform: 'none',
           p: 0,
@@ -542,10 +542,10 @@ const handleMouseLeaveVideo = () => {
         }}
       >
         <Typography variant="h5" component="h2" fontWeight="bold">
-          About {job.company_name}
+          About {job.company || job.companyName || job.employerProfile?.company_name}
         </Typography>  <Tooltip title="View company profile">
       <IconButton 
-        onClick={() => navigate(`/employer-profile/${job.company.userId}`)}
+        onClick={() => navigate(`/employer-profile/${job.employerProfile?.userId || job.employerProfileId}`)}
         sx={{ color: theme.palette.primary.main }}
       >
         <BusinessIcon />
@@ -562,7 +562,7 @@ const handleMouseLeaveVideo = () => {
                   Industry
                 </Typography>
                 <Typography variant="body1">
-                  {job.company.industry || "Not specified"}
+                  {job.employerProfile?.industry || "Not specified"}
                 </Typography>
               </Box>
             </DetailItem>
@@ -574,7 +574,7 @@ const handleMouseLeaveVideo = () => {
                   Company Location
                 </Typography>
                 <Typography variant="body1">
-                  {job.company.location || "Not specified"}
+                  {job.employerProfile?.location || "Not specified"}
                 </Typography>
               </Box>
             </DetailItem>
@@ -586,7 +586,7 @@ const handleMouseLeaveVideo = () => {
                   Company Size
                 </Typography>
                 <Typography variant="body1">
-                  {job.company.size || "Not specified"}
+                  {job.employerProfile?.size || "Not specified"}
                 </Typography>
               </Box>
             </DetailItem>
@@ -600,12 +600,12 @@ const handleMouseLeaveVideo = () => {
                   Established
                 </Typography>
                 <Typography variant="body1">
-                  {job.company.establish_year || "Not specified"}
+                  {job.employerProfile?.establish_year || "Not specified"}
                 </Typography>
               </Box>
             </DetailItem>
 
-            {job.company.website && (
+            {job.employerProfile?.website && (
               <DetailItem>
                 <DescriptionIcon />
                 <Box>
@@ -614,19 +614,19 @@ const handleMouseLeaveVideo = () => {
                   </Typography>
                   <Typography variant="body1">
                     <a 
-                      href={job.company.website} 
+                      href={job.employerProfile.website} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       style={{ color: theme.palette.primary.main }}
                     >
-                      {job.company.website}
+                      {job.employerProfile.website}
                     </a>
                   </Typography>
                 </Box>
               </DetailItem>
             )}
 
-            {job.company.description && (
+            {job.employerProfile?.description && (
               <DetailItem>
                 <InfoIcon />
                 <Box>
@@ -634,7 +634,7 @@ const handleMouseLeaveVideo = () => {
                     About
                   </Typography>
                   <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
-                    {job.company.description}
+                    {job.employerProfile.description}
                   </Typography>
                 </Box>
               </DetailItem>
@@ -642,42 +642,42 @@ const handleMouseLeaveVideo = () => {
           </Grid>
         </Grid>
 
-        {job.company.social && (
+        {job.employerProfile?.social && (
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
               Social Media
             </Typography>
             <Stack direction="row" spacing={2}>
-              {job.company.social.linkedin && (
+              {job.employerProfile.social.linkedin && (
                 <Button
                   variant="outlined"
                   size="small"
                   startIcon={<BusinessIcon />}
-                  href={job.company.social.linkedin}
+                  href={job.employerProfile.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   LinkedIn
                 </Button>
               )}
-              {job.company.social.twitter && (
+              {job.employerProfile.social.twitter && (
                 <Button
                   variant="outlined"
                   size="small"
                   startIcon={<BusinessIcon />}
-                  href={job.company.social.twitter}
+                  href={job.employerProfile.social.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Twitter
                 </Button>
               )}
-              {job.company.social.facebook && (
+              {job.employerProfile.social.facebook && (
                 <Button
                   variant="outlined"
                   size="small"
                   startIcon={<BusinessIcon />}
-                  href={job.company.social.facebook}
+                  href={job.employerProfile.social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

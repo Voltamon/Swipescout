@@ -337,7 +337,11 @@ export default function PricingPage() {
   const handleConfirmSubscription = async () => {
     setSubscribing(true);
     try {
-      await createSubscription(selectedPlan.type, user.id, isAnnual);
+      // Send data as object with planType and isAnnual
+      await createSubscription({ 
+        planType: selectedPlan.type,
+        isAnnual: isAnnual
+      });
       toast({
         title: t('success.subscriptionUpdated'),
       });
@@ -364,7 +368,10 @@ export default function PricingPage() {
     }
 
     try {
-      await purchaseService(service.type, user.id);
+      // Send data as object with serviceType
+      await purchaseService({ 
+        serviceType: service.type 
+      });
       toast({
         title: t('success.paymentProcessed'),
       });

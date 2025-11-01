@@ -22,6 +22,7 @@ import VideoEditPage from "../pages/VideoEditPage.jsx";
 import JobsListingPage from "../pages/JobsListingPage.jsx";
 import EmployerProfilePage from "../pages/EmployerProfilePage.jsx";
 import Settings from "../pages/Settings.jsx";
+import EmployerSettingsPage from "../pages/EmployerSettingsPage.jsx";
 import Chat from "../pages/Chat.jsx";
 import HelpPageLinks from "../pages/HelpPageLinks.jsx";
 import EmployerDashboard from "../pages/EmployerDashboard.jsx";
@@ -140,7 +141,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.settings"),
         icon: { name: "Settings" },
-        component: Settings,
+        component: EmployerSettingsPage,
         path: "settings",
         description: t("employerTabs:descriptions.settings")
       }

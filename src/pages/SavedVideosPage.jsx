@@ -1,7 +1,6 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { getSavedVideos, unsaveVideo, shareVideo } from '@/services/api';
+import { getSavedVideos, unsaveVideo } from '@/services/api';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -36,13 +35,52 @@ import {
   Filter,
   SortAsc
 } from 'lucide-react';
-import themeColors from '@/config/theme-colors-jobseeker';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
+// Helpers to normalize video objects returned by backend
+function normalizeVideo(v) {
+  return {
+    id: v.id || v.videoId || v.video_id,
+    // prefer friendly keys but fallback to DB column names
+    title: v.title || v.videoTitle || v.video_title || 'Untitled',
+    description: v.description || v.videoDescription || v.video_description || '',
+    videoUrl: v.videoUrl || v.video_url || v.video_url_full || v.secure_url || '',
+    thumbnail: v.thumbnail || v.thumbnailUrl || v.thumbnail_url || null,
+    uploaderName: v.uploaderName || v.uploader_name || (v.user && (v.user.displayName || v.user.display_name)) || null,
+    uploaderType: v.uploaderType || v.uploader_type || (v.user && v.user.role) || null,
+    savedAt: v.savedAt || v.saved_at || null,
+    createdAt: v.createdAt || v.submittedAt || v.submitted_at || null,
+    // keep original for any additional fields
+    _raw: v
+  };
+}
+
+function getTitle(v) {
+  return v.title || v.videoTitle || v.video_title || 'Untitled';
+}
+
+function getDescription(v) {
+  return v.description || v.videoDescription || v.video_description || '';
+}
+
+function getVideoSrc(v) {
+  const url = v.videoUrl || v.video_url || v._raw?.videoUrl || v._raw?.video_url || '';
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  // ensure leading slash
+  return `${VITE_API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
+function getThumbnailSrc(v) {
+  const thumb = v.thumbnail || v.thumbnailUrl || v._raw?.thumbnail || v._raw?.thumbnail_url || null;
+  if (!thumb) return undefined;
+  if (thumb.startsWith('http://') || thumb.startsWith('https://')) return thumb;
+  return `${VITE_API_BASE_URL}${thumb.startsWith('/') ? '' : '/'}${thumb}`;
+}
+
 export default function SavedVideosPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
   const videoRefs = useRef({});
 
@@ -55,15 +93,13 @@ export default function SavedVideosPage() {
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState(null);
 
-  useEffect(() => {
-    fetchSavedVideos();
-  }, []);
-
-  const fetchSavedVideos = async () => {
+  const fetchSavedVideos = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getSavedVideos();
-      setSavedVideos(response.data.videos || []);
+      // normalize videos for safer frontend usage
+      const videos = (response.data.videos || []).map(normalizeVideo);
+      setSavedVideos(videos);
     } catch (error) {
       console.error('Failed to fetch saved videos:', error);
       toast({
@@ -74,7 +110,11 @@ export default function SavedVideosPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchSavedVideos();
+  }, [fetchSavedVideos]);
 
   const handleUnsaveVideo = async () => {
     if (!videoToDelete) return;
@@ -153,8 +193,8 @@ export default function SavedVideosPage() {
   // Filter and sort videos
   const filteredVideos = savedVideos
     .filter(video => {
-      const matchesSearch = video.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          video.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = (getTitle(video) || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (getDescription(video) || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       if (filterType === 'all') return matchesSearch;
       if (filterType === 'jobseeker') return matchesSearch && video.uploaderType === 'jobseeker';
@@ -163,7 +203,7 @@ export default function SavedVideosPage() {
     })
     .sort((a, b) => {
       if (sortBy === 'saved_date') return new Date(b.savedAt) - new Date(a.savedAt);
-      if (sortBy === 'title') return a.title.localeCompare(b.title);
+      if (sortBy === 'title') return getTitle(a).localeCompare(getTitle(b));
       if (sortBy === 'upload_date') return new Date(b.createdAt) - new Date(a.createdAt);
       return 0;
     });
@@ -171,7 +211,7 @@ export default function SavedVideosPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+        <Loader2 className="h-12 w-12 animate-spin text-cyan-600" />
       </div>
     );
   }
@@ -180,7 +220,7 @@ export default function SavedVideosPage() {
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="`${themeColors.text.gradient} text-4xl font-bold  mb-2">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
           Saved Videos
         </h1>
         <p className="text-muted-foreground">
@@ -239,8 +279,8 @@ export default function SavedVideosPage() {
               <div className="relative aspect-[9/16] bg-black overflow-hidden">
                 <video
                   ref={el => videoRefs.current[video.id] = el}
-                  src={`${VITE_API_BASE_URL}${video.videoUrl}`}
-                  poster={video.thumbnailUrl ? `${VITE_API_BASE_URL}${video.thumbnailUrl}` : undefined}
+                  src={getVideoSrc(video)}
+                  poster={getThumbnailSrc(video)}
                   muted
                   loop
                   className="w-full h-full object-cover"
@@ -267,7 +307,7 @@ export default function SavedVideosPage() {
 
               {/* Video Info */}
               <CardContent className="p-4">
-                <h3 className="font-semibold line-clamp-1 mb-1">{video.title || 'Untitled'}</h3>
+                <h3 className="font-semibold line-clamp-1 mb-1">{getTitle(video)}</h3>
                 
                 {video.uploaderName && (
                   <p className="text-sm text-muted-foreground mb-2">
@@ -275,9 +315,9 @@ export default function SavedVideosPage() {
                   </p>
                 )}
 
-                {video.description && (
+                {(getDescription(video)) && (
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                    {video.description}
+                    {getDescription(video)}
                   </p>
                 )}
 
@@ -341,7 +381,7 @@ export default function SavedVideosPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Remove from Saved</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove "{videoToDelete?.title}" from your saved collection?
+              Are you sure you want to remove "{videoToDelete ? getTitle(videoToDelete) : ''}" from your saved collection?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

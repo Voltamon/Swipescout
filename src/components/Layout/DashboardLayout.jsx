@@ -19,7 +19,6 @@ import {
 } from '@mui/material';
 import {
   Menu as MenuIcon,
-  Notifications as NotificationsIcon,
   AccountCircle,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
@@ -28,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from '../../hooks/useTranslation';
 import LanguageSwitcher from '../LanguageSwitcher';
+import NotificationCenter from '@/components/NotificationCenter';
 
 const drawerWidth = 280;
 
@@ -151,13 +151,7 @@ const DashboardLayout = ({
           </Box>
 
           {/* Notifications */}
-          <Tooltip title={t('common.notifications')}>
-            <IconButton color="inherit" onClick={handleNotificationOpen}>
-              <Badge badgeContent={3} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Tooltip>
+          <NotificationCenter />
 
           {/* Profile Menu */}
           <Tooltip title={t('common.profile')}>
@@ -268,25 +262,7 @@ const DashboardLayout = ({
         </MenuItem>
       </Menu>
 
-      {/* Notifications Menu */}
-      <Menu
-        anchorEl={notificationAnchor}
-        open={Boolean(notificationAnchor)}
-        onClose={handleNotificationClose}
-        PaperProps={{
-          sx: { width: 320, maxHeight: 400 }
-        }}
-      >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h6">{t('common.notifications')}</Typography>
-        </Box>
-        <Divider />
-        <MenuItem onClick={handleNotificationClose}>
-          <Typography variant="body2">
-            {t('dashboard.jobSeeker.recentActivity.noActivity')}
-          </Typography>
-        </MenuItem>
-      </Menu>
+      {/* Notifications popover handled by NotificationCenter */}
     </Box>
   );
 };

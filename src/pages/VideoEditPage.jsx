@@ -3,7 +3,7 @@ import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
 } from 'lucide-react';
-import { uploadVideo, getAllVideos, deleteEditedVideo } from '@/services/api';
+import { uploadVideo, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
@@ -67,6 +67,8 @@ export default function VideoEditPage() {
   const [exporting, setExporting] = useState(false);
   const [myVideos, setMyVideos] = useState([]);
   const [selectedVideoFromList, setSelectedVideoFromList] = useState(null);
+  const [useServerProcessing, setUseServerProcessing] = useState(false);
+  const [isPro, setIsPro] = useState(false);
 
   // Video editing parameters
   const [videoTitle, setVideoTitle] = useState("");
@@ -79,6 +81,13 @@ export default function VideoEditPage() {
   const [blur, setBlur] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [crop, setCrop] = useState({ x: 0, y: 0, w: 0, h: 0 });
+  const [targetRes, setTargetRes] = useState({ w: 0, h: 0 });
+  const [segments, setSegments] = useState([]); // [{start,end}]
+  const [audioFile, setAudioFile] = useState(null);
+  const [watermarkFile, setWatermarkFile] = useState(null);
+  const [watermarkPos, setWatermarkPos] = useState('top-right');
+  const [watermarkOpacity, setWatermarkOpacity] = useState(100);
 
   // Preview and export
   const [previewDialog, setPreviewDialog] = useState(false);
@@ -114,6 +123,14 @@ export default function VideoEditPage() {
     
     loadFFmpeg();
     loadMyVideos();
+    // Load subscription status
+    if (user?.id) {
+      getSubscriptionStatus(user.id).then(r => {
+        const status = r.data;
+        // Consider active states
+        setIsPro(!!status?.active);
+      }).catch(() => setIsPro(false));
+    }
   }, []);
 
   useEffect(() => {
@@ -164,6 +181,13 @@ export default function VideoEditPage() {
     setPlaybackSpeed(1);
     setRotation(0);
     setTrimStart(0);
+    setSegments([]);
+    setCrop({ x: 0, y: 0, w: 0, h: 0 });
+    setTargetRes({ w: 0, h: 0 });
+    setAudioFile(null);
+    setWatermarkFile(null);
+    setWatermarkPos('top-right');
+    setWatermarkOpacity(100);
   };
 
   const handleFileUpload = (event) => {
@@ -271,8 +295,18 @@ export default function VideoEditPage() {
 
       let command = ['-i', inputFileName];
       let videoFilters = [];
+      // Multi-segment: client-side support is PRO-only and heavy, prefer server. We'll simulate by trimming range if multiple not available
+      if (segments.length > 1 && !isPro) {
+        toast({ description: 'Multi-segment editing is available for Pro users. Using first segment only.', variant: 'default' });
+      }
       
-      if (trimStart > 0 || trimEnd < duration) {
+      // If segments present (pro), use first segment locally; full multi-clip via server
+      if (segments.length > 0) {
+        const s = segments[0];
+        command.push('-ss', (s?.start ?? trimStart).toString());
+        const tEnd = (s?.end ?? trimEnd);
+        command.push('-t', Math.max(0, tEnd - (s?.start ?? trimStart)).toString());
+      } else if (trimStart > 0 || trimEnd < duration) {
         command.push('-ss', trimStart.toString());
         command.push('-t', (trimEnd - trimStart).toString());
       }
@@ -297,6 +331,15 @@ export default function VideoEditPage() {
           videoFilters.push(rotationMap[rotation]);
         }
       }
+
+      // Crop
+      if (crop.w && crop.h) {
+        videoFilters.push(`crop=${crop.w}:${crop.h}:${crop.x}:${crop.y}`);
+      }
+      // Scale
+      if (targetRes.w && targetRes.h) {
+        videoFilters.push(`scale=${targetRes.w}:${targetRes.h}`);
+      }
       
       if (playbackSpeed !== 1) {
         videoFilters.push(`setpts=${1/playbackSpeed}*PTS`);
@@ -307,7 +350,7 @@ export default function VideoEditPage() {
         command.push('-vf', videoFilters.join(','));
       }
       
-      command.push('-c:v', 'libx264');
+  command.push('-c:v', 'libx264');
       command.push('-preset', 'fast');
       command.push('-crf', '23');
       command.push(outputFileName);
@@ -339,6 +382,68 @@ export default function VideoEditPage() {
     } finally {
       setProcessing(false);
       setProcessingProgress(0);
+    }
+  };
+
+  const buildServerFormData = async () => {
+    const formData = new FormData();
+    // Prefer the original input video for server processing
+    if (videoFile) {
+      formData.append('video', videoFile);
+    } else if (selectedVideoFromList?.video_url) {
+      const resp = await fetch(selectedVideoFromList.video_url);
+      const blob = await resp.blob();
+      formData.append('video', new File([blob], selectedVideoFromList.video_title || 'video.mp4', { type: blob.type || 'video/mp4' }));
+    } else if (processedVideoUrl) {
+      const resp = await fetch(processedVideoUrl);
+      const blob = await resp.blob();
+      formData.append('video', new File([blob], `${videoTitle || 'edited_video'}.mp4`, { type: 'video/mp4' }));
+    }
+    formData.append('title', videoTitle || 'Edited Video');
+    formData.append('description', videoDescription || '');
+    formData.append('trimStart', String(trimStart));
+    formData.append('trimEnd', String(trimEnd || duration));
+    formData.append('brightness', String(100 + brightness)); // server expects 0-200
+    formData.append('contrast', String(contrast));
+    formData.append('saturation', String(saturation));
+    if (crop.w && crop.h) {
+      formData.append('cropX', String(crop.x));
+      formData.append('cropY', String(crop.y));
+      formData.append('cropW', String(crop.w));
+      formData.append('cropH', String(crop.h));
+    }
+    if (targetRes.w && targetRes.h) {
+      formData.append('targetWidth', String(targetRes.w));
+      formData.append('targetHeight', String(targetRes.h));
+    }
+    if (segments.length > 0) {
+      formData.append('segments', JSON.stringify(segments));
+    }
+    if (audioFile && isPro) {
+      formData.append('audio', audioFile);
+      formData.append('mixAudio', 'true');
+    }
+    if (watermarkFile && isPro) {
+      formData.append('watermark', watermarkFile);
+      formData.append('watermarkPos', watermarkPos);
+      formData.append('watermarkOpacity', String(watermarkOpacity / 100));
+    }
+    return formData;
+  };
+
+  const handleProcessOnServer = async () => {
+    try {
+      setProcessing(true);
+      const formData = await buildServerFormData();
+      const res = await editVideoApi(formData);
+      toast({ description: 'Video processed on server successfully.' });
+      setPreviewDialog(true);
+      // Optionally fetch back via getVideoInfo
+    } catch (e) {
+      console.error(e);
+      toast({ description: 'Server processing failed', variant: 'destructive' });
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -551,12 +656,22 @@ export default function VideoEditPage() {
                     rows={1}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label>Processing Mode</Label>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={useServerProcessing} onChange={(e) => setUseServerProcessing(e.target.checked)} />
+                      Use server processing {isPro ? <Badge className="ml-2">PRO</Badge> : <Badge variant="secondary" className="ml-2">Basic</Badge>}
+                    </label>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Editing Tools */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Trim & Segments */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -567,25 +682,46 @@ export default function VideoEditPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Start Time: {formatTime(trimStart)}</Label>
-                  <Slider
-                    value={[trimStart]}
-                    max={duration || 100}
-                    step={0.1}
-                    onValueChange={(val) => setTrimStart(val[0])}
-                  />
+                  <Slider value={[trimStart]} max={duration || 100} step={0.1} onValueChange={(val) => setTrimStart(val[0])} />
                 </div>
                 <div className="space-y-2">
                   <Label>End Time: {formatTime(trimEnd)}</Label>
-                  <Slider
-                    value={[trimEnd]}
-                    max={duration || 100}
-                    step={0.1}
-                    onValueChange={(val) => setTrimEnd(val[0])}
-                  />
+                  <Slider value={[trimEnd]} max={duration || 100} step={0.1} onValueChange={(val) => setTrimEnd(val[0])} />
+                </div>
+                <div className="pt-2 border-t">
+                  <div className="flex items-center justify-between mb-2">
+                    <Label>Segments {isPro ? <Badge className="ml-2">PRO</Badge> : <Badge variant="secondary" className="ml-2">PRO</Badge>}</Label>
+                    <Button variant="outline" size="sm" onClick={() => {
+                      if (!isPro) { toast({ description: 'Multi-segment editing is a PRO feature', variant: 'default' }); return; }
+                      const start = Math.max(0, currentTime - 2);
+                      const end = Math.min(duration, currentTime + 2);
+                      setSegments([...segments, { start, end }]);
+                    }}>Add segment at playhead</Button>
+                  </div>
+                  {segments.length === 0 ? (
+                    <p className="text-xs text-gray-500">No segments added.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {segments.map((s, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-sm">
+                          <span className="w-16">#{idx + 1}</span>
+                          <Input className="w-24" type="number" step="0.1" value={s.start} onChange={(e) => {
+                            const v = [...segments]; v[idx] = { ...v[idx], start: Number(e.target.value) }; setSegments(v);
+                          }} />
+                          <span>to</span>
+                          <Input className="w-24" type="number" step="0.1" value={s.end} onChange={(e) => {
+                            const v = [...segments]; v[idx] = { ...v[idx], end: Number(e.target.value) }; setSegments(v);
+                          }} />
+                          <Button size="icon" variant="ghost" onClick={() => { setSegments(segments.filter((_, i) => i !== idx)); }}><Trash2 className="h-4 w-4" /></Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
 
+            {/* Visual Adjustments */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -596,47 +732,24 @@ export default function VideoEditPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Brightness: {brightness}</Label>
-                  <Slider
-                    value={[brightness]}
-                    min={-100}
-                    max={100}
-                    step={1}
-                    onValueChange={(val) => setBrightness(val[0])}
-                  />
+                  <Slider value={[brightness]} min={-100} max={100} step={1} onValueChange={(val) => setBrightness(val[0])} />
                 </div>
                 <div className="space-y-2">
                   <Label>Contrast: {contrast}%</Label>
-                  <Slider
-                    value={[contrast]}
-                    min={0}
-                    max={200}
-                    step={1}
-                    onValueChange={(val) => setContrast(val[0])}
-                  />
+                  <Slider value={[contrast]} min={0} max={200} step={1} onValueChange={(val) => setContrast(val[0])} />
                 </div>
                 <div className="space-y-2">
                   <Label>Saturation: {saturation}%</Label>
-                  <Slider
-                    value={[saturation]}
-                    min={0}
-                    max={200}
-                    step={1}
-                    onValueChange={(val) => setSaturation(val[0])}
-                  />
+                  <Slider value={[saturation]} min={0} max={200} step={1} onValueChange={(val) => setSaturation(val[0])} />
                 </div>
                 <div className="space-y-2">
                   <Label>Blur: {blur}px</Label>
-                  <Slider
-                    value={[blur]}
-                    min={0}
-                    max={10}
-                    step={0.5}
-                    onValueChange={(val) => setBlur(val[0])}
-                  />
+                  <Slider value={[blur]} min={0} max={10} step={0.5} onValueChange={(val) => setBlur(val[0])} />
                 </div>
               </CardContent>
             </Card>
 
+            {/* Transform */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -648,9 +761,7 @@ export default function VideoEditPage() {
                 <div className="space-y-2">
                   <Label>Rotation</Label>
                   <Select value={rotation.toString()} onValueChange={(val) => setRotation(Number(val))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="0">0° (Normal)</SelectItem>
                       <SelectItem value="90">90° (Right)</SelectItem>
@@ -662,9 +773,7 @@ export default function VideoEditPage() {
                 <div className="space-y-2">
                   <Label>Playback Speed</Label>
                   <Select value={playbackSpeed.toString()} onValueChange={(val) => setPlaybackSpeed(Number(val))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="0.5">0.5x (Slow)</SelectItem>
                       <SelectItem value="1">1x (Normal)</SelectItem>
@@ -673,6 +782,60 @@ export default function VideoEditPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Crop (x,y,w,h)</Label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <Input type="number" placeholder="x" value={crop.x} onChange={(e) => setCrop({ ...crop, x: Number(e.target.value) })} />
+                      <Input type="number" placeholder="y" value={crop.y} onChange={(e) => setCrop({ ...crop, y: Number(e.target.value) })} />
+                      <Input type="number" placeholder="w" value={crop.w} onChange={(e) => setCrop({ ...crop, w: Number(e.target.value) })} />
+                      <Input type="number" placeholder="h" value={crop.h} onChange={(e) => setCrop({ ...crop, h: Number(e.target.value) })} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Target Resolution</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input type="number" placeholder="width" value={targetRes.w} onChange={(e) => setTargetRes({ ...targetRes, w: Number(e.target.value) })} />
+                      <Input type="number" placeholder="height" value={targetRes.h} onChange={(e) => setTargetRes({ ...targetRes, h: Number(e.target.value) })} />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Overlays & Audio */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sliders className="h-5 w-5 text-green-600" />
+                  Overlays & Audio {isPro ? <Badge className="ml-2">PRO</Badge> : <Badge variant="secondary" className="ml-2">PRO</Badge>}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Watermark (image)</Label>
+                  <Input type="file" accept="image/*" onChange={(e) => setWatermarkFile(e.target.files?.[0] || null)} />
+                  <div className="grid grid-cols-3 gap-2">
+                    <Select value={watermarkPos} onValueChange={setWatermarkPos}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="top-left">Top Left</SelectItem>
+                        <SelectItem value="top-right">Top Right</SelectItem>
+                        <SelectItem value="bottom-left">Bottom Left</SelectItem>
+                        <SelectItem value="bottom-right">Bottom Right</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Opacity: {watermarkOpacity}%</Label>
+                      <Slider value={[watermarkOpacity]} max={100} step={1} onValueChange={(v) => setWatermarkOpacity(v[0])} />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Background/Mix Audio</Label>
+                  <Input type="file" accept="audio/*" onChange={(e) => setAudioFile(e.target.files?.[0] || null)} />
+                </div>
+                {!isPro && <p className="text-xs text-gray-500">Overlays and audio mix are Pro features. You can still export without them.</p>}
               </CardContent>
             </Card>
           </div>
@@ -680,28 +843,19 @@ export default function VideoEditPage() {
           {/* Process Button */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex justify-center">
-                <Button
-                  onClick={handleProcessVideo}
-                  disabled={processing || loadingFFmpeg}
-                  className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 px-8 py-6 text-lg"
-                >
-                  {processing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Processing {processingProgress}%
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-5 w-5 mr-2" />
-                      Process Video
-                    </>
-                  )}
-                </Button>
+              <div className="flex justify-center gap-3 flex-wrap">
+                {!useServerProcessing && (
+                  <Button onClick={handleProcessVideo} disabled={processing || loadingFFmpeg} className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 px-8 py-6 text-lg">
+                    {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing {processingProgress}%</>) : (<><Sparkles className="h-5 w-5 mr-2" />Process Locally</>)}
+                  </Button>
+                )}
+                {useServerProcessing && (
+                  <Button onClick={handleProcessOnServer} disabled={processing} className="bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 px-8 py-6 text-lg">
+                    {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Sending to server...</>) : (<><Upload className="h-5 w-5 mr-2" />Process on Server</>)}
+                  </Button>
+                )}
               </div>
-              {processing && (
-                <Progress value={processingProgress} className="mt-4" />
-              )}
+              {processing && (<Progress value={processingProgress} className="mt-4" />)}
             </CardContent>
           </Card>
         </>
@@ -714,33 +868,15 @@ export default function VideoEditPage() {
             <DialogTitle>Preview Processed Video</DialogTitle>
             <DialogDescription>Review your edited video before uploading</DialogDescription>
           </DialogHeader>
-          
           {processedVideoUrl && (
             <div className="bg-black rounded-lg overflow-hidden">
               <video src={processedVideoUrl} controls className="w-full" />
             </div>
           )}
-
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPreviewDialog(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleUploadProcessedVideo}
-              disabled={exporting}
-              className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
-            >
-              {exporting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Video
-                </>
-              )}
+            <Button variant="outline" onClick={() => setPreviewDialog(false)}>Cancel</Button>
+            <Button onClick={handleUploadProcessedVideo} disabled={exporting} className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
+              {exporting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Uploading...</>) : (<><Upload className="h-4 w-4 mr-2" />Upload Video</>)}
             </Button>
           </DialogFooter>
         </DialogContent>

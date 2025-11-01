@@ -1,0 +1,124 @@
+{
+  "info": {
+    "name": "Notifications API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get notifications",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications?page=1&limit=20",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications"],
+          "query": [
+            {"key": "page", "value": "1"},
+            {"key": "limit", "value": "20"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Unread count",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications/unread-count",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications", "unread-count"]
+        }
+      }
+    },
+    {
+      "name": "Mark as read",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications/{{notificationId}}/read",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications", "{{notificationId}}", "read"]
+        }
+      }
+    },
+    {
+      "name": "Mark all read",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications/mark-all-read",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications", "mark-all-read"]
+        }
+      }
+    },
+    {
+      "name": "Create test notification",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"message\": \"Hello from Postman\"\n}"
+        },
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications/test",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications", "test"]
+        }
+      }
+    },
+    {
+      "name": "Get settings",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+        ],
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications/settings",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications", "settings"]
+        }
+      }
+    },
+    {
+      "name": "Update settings",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"settings\": {\n    \"email_notifications\": true\n  }\n}" },
+        "url": {
+          "raw": "{{API_BASE_URL}}/api/notifications/settings",
+          "host": ["{{API_BASE_URL}}"],
+          "path": ["api", "notifications", "settings"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "API_BASE_URL", "value": "http://localhost:5000" },
+    { "key": "accessToken", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "notificationId", "value": "" }
+  ]
+}
