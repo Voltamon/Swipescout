@@ -37,11 +37,14 @@ export const VideoProvider = ({ children }) => {
                   // Do not remove the local entry; instead update it so UI keeps showing the video
                   // and the video's URL is replaced with the server-provided URL. Mark it as not-local
                   // so it will be treated as a server-side/completed video in listings.
+                  // Prefer server-provided fields but set both snake_case and camelCase
+                  const serverVideoUrl = data.video_url || data.video?.video_url || data.video?.videoUrl || null;
                   return {
                     id: video.id,
                     updates: {
                       status: 'completed',
-                      video_url: data.video_url,
+                      video_url: serverVideoUrl,
+                      videoUrl: serverVideoUrl,
                       isLocal: false,
                       job_id: video.job_id,
                       // Merge any additional server-provided video metadata
@@ -103,8 +106,14 @@ export const VideoProvider = ({ children }) => {
   useEffect(() => {
     return () => {
       videos.forEach(video => {
-        if (video.isLocal && video.video_url?.startsWith('blob:')) {
-          URL.revokeObjectURL(video.video_url);
+        // Revoke either snake_case or camelCase blob URLs
+        if (video.isLocal) {
+          if (video.video_url?.startsWith('blob:')) {
+            URL.revokeObjectURL(video.video_url);
+          }
+          if (video.videoUrl?.startsWith('blob:')) {
+            URL.revokeObjectURL(video.videoUrl);
+          }
         }
       });
     };

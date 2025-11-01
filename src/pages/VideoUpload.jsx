@@ -42,7 +42,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, role } = useAuth();
-  const { addLocalVideo, updateVideoStatus } = useVideoContext();
+  const { addLocalVideo, updateVideoStatus, updateVideoServerId } = useVideoContext();
   
   // Refs
   const videoRef = useRef(null);
@@ -80,6 +80,18 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
     }
     return () => clearInterval(interval);
   }, [isRecording, isPaused]);
+
+  // Polling ref to allow cleanup
+  const uploadPollRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (uploadPollRef.current) {
+        clearInterval(uploadPollRef.current);
+        uploadPollRef.current = null;
+      }
+    };
+  }, []);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -262,19 +274,36 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
     setIsUploading(true);
     const videoId = uuidv4();
 
+    // Build a local video object that the VideosPage can render immediately
+    const blobUrl = recordedVideo?.url || (uploadedFile ? URL.createObjectURL(uploadedFile) : null);
+    const localVideo = {
+      id: videoId,
+      video_title: videoTitle,
+      title: videoTitle,
+      description: videoDescription,
+      video_description: videoDescription,
+      video_url: blobUrl,
+      videoUrl: blobUrl, // for VideosPage preview which expects video.videoUrl
+      isLocal: true,
+      status: 'uploading',
+      progress: 0,
+      hashtags: hashtags,
+      job_id: jobId || null,
+      submitted_at: new Date().toISOString()
+    };
+
     try {
-      // Add to local context immediately
+      // Add to local context immediately so VideosPage can show the uploading item
       if (addLocalVideo) {
-        addLocalVideo({
-          id: videoId,
-          title: videoTitle,
-          description: videoDescription,
-          status: 'uploading',
-          progress: 0
-        });
+        addLocalVideo(localVideo);
       }
 
-      // Prepare form data
+      // If not embedded, navigate to VideosPage immediately so user sees upload in list
+      if (!embedded) {
+        navigate('/jobseeker-tabs?group=videos&tab=my-videos');
+      }
+
+      // Prepare form data for upload
       const formData = new FormData();
       formData.append('video', recordedVideo?.blob || uploadedFile);
       formData.append('title', videoTitle);
@@ -285,61 +314,132 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       if (jobId) formData.append('jobId', jobId);
       formData.append('videoId', videoId);
 
-      // Upload video
-      const response = await uploadVideo(formData, (progressEvent) => {
+      // Start upload in background and update context with progress
+      uploadVideo(formData, (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         setUploadProgress(percentCompleted);
-        
         if (updateVideoStatus) {
           updateVideoStatus(videoId, {
             status: 'uploading',
             progress: percentCompleted
           });
         }
-      });
+      })
+      .then((response) => {
+        if (response.data && (response.data.uploadId || response.data.video?.id)) {
+          const serverId = response.data.uploadId || response.data.video?.id;
 
-      if (response.data.success) {
+          // Transition the temp/local ID to the server-provided ID and mark processing
+          if (updateVideoServerId) {
+            updateVideoServerId(videoId, serverId, {
+              status: 'processing',
+              isLocal: true,
+              progress: 100,
+              job_id: response.data.jobId || jobId || null
+            });
+          }
+
+          // If server returned an uploadId, start polling server-side upload status
+          if (response.data.uploadId) {
+            // Clear any existing poll
+            if (uploadPollRef.current) {
+              clearInterval(uploadPollRef.current);
+            }
+
+            const uploadId = response.data.uploadId;
+            // Poll every 1s
+            uploadPollRef.current = setInterval(async () => {
+              try {
+                const statusRes = await checkUploadStatus(uploadId);
+                const statusData = statusRes.data || {};
+                const status = statusData.status || '';
+                const progress = statusData.progress ?? 0;
+
+                // Update local context/progress
+                if (updateVideoStatus) {
+                  updateVideoStatus(videoId, {
+                    status: status === 'completed' ? 'completed' : status === 'failed' ? 'failed' : 'processing',
+                    progress
+                  });
+                }
+
+                // If completed, reconcile server id (if returned) and stop polling
+                if (status === 'completed') {
+                  if (statusData.video && updateVideoServerId) {
+                    const returnedId = statusData.video.id || statusData.video.videoId || uploadId;
+                    updateVideoServerId(videoId, returnedId, { status: 'completed', progress: 100 });
+                  } else if (updateVideoStatus) {
+                    updateVideoStatus(videoId, { status: 'completed', progress: 100 });
+                  }
+                  clearInterval(uploadPollRef.current);
+                  uploadPollRef.current = null;
+                }
+
+                if (status === 'failed') {
+                  if (updateVideoStatus) updateVideoStatus(videoId, { status: 'failed', progress: 0 });
+                  clearInterval(uploadPollRef.current);
+                  uploadPollRef.current = null;
+                }
+              } catch (err) {
+                // keep polling on transient errors; log for debug
+                console.error('Error polling upload status:', err?.message || err);
+              }
+            }, 1000);
+          }
+
+          // Optionally call onComplete with server video data
+          if (onComplete && response.data.video) {
+            onComplete(response.data.video);
+          }
+
+          toast({
+            title: "Upload started",
+            description: "Video uploaded and is being processed. It will appear when ready.",
+          });
+        } else if (response.data && response.data.success) {
+          // Fallback if server returns success without id
+          if (updateVideoStatus) {
+            updateVideoStatus(videoId, { status: 'processing', progress: 100 });
+          }
+          toast({ title: 'Upload started', description: 'Video is processing.' });
+        }
+      })
+      .catch((error) => {
+        console.error('Upload error:', error);
         toast({
-          title: "Success!",
-          description: "Video uploaded successfully",
+          title: "Upload failed",
+          description: error.response?.data?.message || "Failed to upload video",
+          variant: "destructive",
         });
-
         if (updateVideoStatus) {
           updateVideoStatus(videoId, {
-            status: 'completed',
-            progress: 100
+            status: 'failed',
+            error: error.message,
+            isLocal: true
           });
         }
-
-        if (onComplete) {
-          onComplete(response.data.video);
-        }
-
-        if (!embedded) {
-          setTimeout(() => {
-            navigate('/jobseeker-tabs?group=videos&tab=my-videos');
-          }, 1500);
-        } else {
-          // Reset form
-          resetForm();
-        }
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      
-      toast({
-        title: "Upload failed",
-        description: error.response?.data?.message || "Failed to upload video",
-        variant: "destructive",
+      })
+      .finally(() => {
+        setIsUploading(false);
       });
 
+      // If embedded, reset the form after starting upload
+      if (embedded) {
+        resetForm();
+      }
+    } catch (error) {
+      console.error('Upload error (sync):', error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload video",
+        variant: "destructive",
+      });
       if (updateVideoStatus) {
         updateVideoStatus(videoId, {
           status: 'failed',
           error: error.message
         });
       }
-    } finally {
       setIsUploading(false);
     }
   };

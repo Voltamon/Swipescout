@@ -288,7 +288,16 @@ export const saveResume = (resumeData) => api.post('/resume/save', resumeData);
 export const getUserResumes = () => api.get('/resume/user');
 
 // Search & Connect
-export const searchJobs = (params) => api.get('/job/search', { params });
+export const searchJobs = (params) => {
+  // Backend expects `search` parameter name for job searches in many endpoints.
+  // The UI sends `q` as the search term. Normalize here to avoid mismatches.
+  const mapped = { ...params };
+  if (mapped.q) {
+    mapped.search = mapped.q;
+    delete mapped.q;
+  }
+  return api.get('/job/search', { params: mapped });
+};
 export const searchCandidates = (params) => api.get('/search/candidates/search', { params });
 export const getFilterOptions = () => api.get('/search/search/filters');
 export const connectWithCandidate = (candidateId, message) => api.post(`/employer/connect/${candidateId}`, { message });

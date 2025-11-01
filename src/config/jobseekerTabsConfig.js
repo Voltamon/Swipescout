@@ -71,7 +71,7 @@ export const jobseekerTabCategories = () => {
           path: "find-jobs",
           description: t("jobseekerTabs:descriptions.findJobs")
         },
-        {
+        { 
           label: t("jobseekerTabs:tabs.videoFeed"),
           icon: { name: "VideoLibrary" },
           component: AllVideosPage,
