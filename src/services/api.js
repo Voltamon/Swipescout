@@ -289,17 +289,12 @@ export const getUserResumes = () => api.get('/resume/user');
 
 // Search & Connect
 export const searchJobs = (params) => {
-  // Backend expects `search` parameter name for job searches in many endpoints.
-  // The UI sends `q` as the search term. Normalize here to avoid mismatches.
-  const mapped = { ...params };
-  if (mapped.q) {
-    mapped.search = mapped.q;
-    delete mapped.q;
-  }
-  return api.get('/job/search', { params: mapped });
+  // Call the search controller mounted under /api/search (route: /search/jobs/search)
+  // Do not remap `q` — the backend expects `q`.
+  return api.get('/search/jobs/search', { params });
 };
 export const searchCandidates = (params) => api.get('/search/candidates/search', { params });
-export const getFilterOptions = () => api.get('/search/search/filters');
+export const getFilterOptions = () => api.get('/search/filters');
 export const connectWithCandidate = (candidateId, message) => api.post(`/employer/connect/${candidateId}`, { message });
 export const applyToJob = (jobId, applicationData) => api.post(`/job/${jobId}/apply`, applicationData);
 export const getApplications = () => api.get('/job/applications');
