@@ -39,6 +39,14 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
     setActiveTab(initialTab || 0);
   }, [initialTab]);
 
+  // SX to ensure MUI TextField input color is readable on the light card
+  const lightInputSx = {
+    '& .MuiInputBase-input': { color: '#111827' },
+    '& .MuiOutlinedInput-root': { backgroundColor: 'transparent' },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(0,0,0,0.08)' },
+    '& .MuiInputLabel-root': { color: '#374151' },
+  };
+
   if (open === false) return null;
 
   const getDefaultRoute = (role) => {
@@ -223,8 +231,8 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
               <Box className="home-auth-form-container">
                 {activeTab === 0 ? (
                   <Box component="form" onSubmit={handleEmailSignIn} className="home-auth-form">
-                    <TextField label={t('auth:fields.email')} type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} />
-                    <TextField label={t('auth:fields.password')} type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+                    <TextField label={t('auth:fields.email')} type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2, ...lightInputSx }} />
+                    <TextField label={t('auth:fields.password')} type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2, ...lightInputSx }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
                     <Box sx={{ textAlign: 'right', mt: 1 }}>
                       <Typography component="span" sx={{ color: '#667eea', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }} onClick={() => navigate('/forgot-password')}>{t('auth:labels.forgotPassword')}</Typography>
                     </Box>
@@ -233,8 +241,8 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 ) : (
                   <Box component="form" onSubmit={handleEmailSignUp} className="home-auth-form">
                     <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                      <TextField label={t('auth:fields.firstName')} name="firstName" value={formData.firstName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" />
-                      <TextField label={t('auth:fields.lastName')} name="lastName" value={formData.lastName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" />
+                      <TextField label={t('auth:fields.firstName')} name="firstName" value={formData.firstName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" sx={lightInputSx} />
+                      <TextField label={t('auth:fields.lastName')} name="lastName" value={formData.lastName} onChange={handleChange} required variant="outlined" className="home-input-field home-name-field" sx={lightInputSx} />
                     </Box>
 
                     <Box sx={{ mt: 2, mb: 2 }}>
@@ -259,9 +267,9 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                       </Box>
                     </Box>
 
-                    <TextField label={t('auth:fields.email')} type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} />
-                    <TextField label={t('auth:fields.password')} type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
-                    <TextField label={t('auth:fields.confirmPassword')} type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2 }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+                    <TextField label={t('auth:fields.email')} type="email" name="email" value={formData.email} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2, ...lightInputSx }} />
+                    <TextField label={t('auth:fields.password')} type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2, ...lightInputSx }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowPassword(!showPassword)} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+                    <TextField label={t('auth:fields.confirmPassword')} type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required variant="outlined" fullWidth className="home-input-field" sx={{ mt: 2, ...lightInputSx }} InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
                     <Button type="submit" disabled={loading.email} variant="contained" fullWidth className="home-auth-button" sx={{ mt: 2 }}>{loading.email ? <CircularProgress size={24} color="inherit" /> : t('auth:buttons.signUp')}</Button>
                   </Box>
                 )}
