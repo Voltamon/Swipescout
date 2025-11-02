@@ -4,6 +4,20 @@ import { getJobDetails } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVideoContext } from '@/contexts/VideoContext';
 import themeColors, { getButtonClass, getBadgeClass, getStatusClass } from '@/config/theme-colors-jobseeker';
+import { Button } from '@/components/UI/button.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Card } from '@/components/UI/card.jsx';
+import {
+  BuildingOfficeIcon,
+  MapPinIcon,
+  PlayIcon,
+  PauseIcon,
+  SpeakerWaveIcon,
+  SpeakerXIcon,
+  DocumentTextIcon,
+  CalendarIcon,
+  ClockIcon,
+} from '@/components/icons/heroicons';
 
 // Note: This page intentionally uses Tailwind utility classes for layout and
 // uses shared color utility helpers from theme-colors-jobseeker for consistency.
@@ -179,14 +193,14 @@ const handleMouseLeaveVideo = () => {
               <div className="mb-4">
                 <h1 className="text-3xl font-bold mb-1">{job?.title}</h1>
                 <div className="flex gap-4 text-sm text-white/80">
-                  <div className="flex items-center gap-2">
-                    <span>🏢</span>
-                    <span>{job?.company || job?.companyName || job?.employerProfile?.company_name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span>📍</span>
-                    <span>{job?.location}</span>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <BuildingOfficeIcon className="w-5 h-5 text-white/90" />
+                      <span>{job?.employer?.company_name || job?.company || job?.companyName || job?.employerProfile?.company_name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPinIcon className="w-5 h-5 text-white/90" />
+                      <span>{job?.location}</span>
+                    </div>
                 </div>
               </div>
 
@@ -200,8 +214,9 @@ const handleMouseLeaveVideo = () => {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); togglePlayback(); }}
                 className="p-2 rounded bg-white/10 hover:bg-white/20"
+                aria-label={isPlaying ? 'Pause video' : 'Play video'}
               >
-                {isPlaying ? '⏸' : '▶️'}
+                {isPlaying ? <PauseIcon className="w-5 h-5" /> : <PlayIcon className="w-5 h-5" />}
               </button>
 
               <div className="text-xs">
@@ -212,8 +227,9 @@ const handleMouseLeaveVideo = () => {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); toggleMute(); }}
                 className="p-2 rounded bg-white/10 hover:bg-white/20"
+                aria-label={isMuted ? 'Unmute' : 'Mute'}
               >
-                {isMuted ? '🔇' : '🔊'}
+                {isMuted ? <SpeakerXIcon className="w-5 h-5" /> : <SpeakerWaveIcon className="w-5 h-5" />}
               </button>
             </div>
           </>
@@ -238,7 +254,7 @@ const handleMouseLeaveVideo = () => {
 
             {video.status === 'failed' && (
               <>
-                <div className="text-6xl mb-2">⚠️</div>
+                <div className="text-6xl mb-2"><DocumentTextIcon className="w-12 h-12 text-yellow-400" /></div>
                 <h3 className="text-xl">Video upload failed</h3>
                 <p className="mt-1 text-sm">Please check the videos page for details or try again</p>
               </>
@@ -246,7 +262,7 @@ const handleMouseLeaveVideo = () => {
 
             {(!video.status || video.status === 'completed') && !videoUrl && (
               <>
-                <div className="text-6xl mb-2">ℹ️</div>
+                <div className="text-6xl mb-2"><DocumentTextIcon className="w-12 h-12 text-slate-300" /></div>
                 <h3 className="text-xl">Video content not available</h3>
               </>
             )}
@@ -291,20 +307,15 @@ const handleMouseLeaveVideo = () => {
   return (
     <div className="min-h-screen pt-12 pb-12">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-4">
-          <button
-            className={`px-4 py-2 rounded ${getButtonClass('outline')}`}
-            onClick={() => navigate("/jobs-Listing-Page")}
-          >
-            ← Back to Jobs
-          </button>
-        </div>
+          <div className="mb-4">
+            <Button variant="outline" onClick={() => navigate('/jobs-Listing-Page')}>Back to Jobs</Button>
+          </div>
 
         {hasVideo() && renderVideoHero()}
 
-        <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+        <Card className="bg-white rounded-2xl shadow-md p-6 mb-6">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl">📄</div>
+            <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl"><DocumentTextIcon className="w-8 h-8 text-indigo-600" /></div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div>
@@ -316,12 +327,9 @@ const handleMouseLeaveVideo = () => {
                   </div>
                 </div>
                 <div>
-                  <button
-                    onClick={() => navigate(`/employer-profile/${job.employerProfile?.id || job.employerProfileId}`)}
-                    className={`px-3 py-2 rounded ${getBadgeClass('primary')}`}
-                  >
-                    About {job.company || job.companyName || job.employerProfile?.company_name}
-                  </button>
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/employer-profile/${job.employer?.id || job.employerProfile?.id || job.employerProfileId}`)}>
+                    About {job.employer?.company_name || job.company || job.companyName || job.employerProfile?.company_name}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -336,7 +344,7 @@ const handleMouseLeaveVideo = () => {
 
               <div className="mb-4">
                 <div className="text-sm text-slate-500">Salary Range</div>
-                <div className="text-base">{job.salary_min || job.salary_max ? `${formatSalary(job.salary_min)} - ${formatSalary(job.salary_max)}` : 'Not specified'}</div>
+                <div className="text-base">{(job.salary_min || job.salary_max || job.salaryMin || job.salaryMax) ? `${formatSalary(job.salaryMin || job.salary_min)} - ${formatSalary(job.salaryMax || job.salary_max)}` : 'Not specified'}</div>
               </div>
 
               <div className="mb-4">
@@ -386,7 +394,7 @@ const handleMouseLeaveVideo = () => {
               <div className="text-sm text-slate-500 mb-2">Required Skills</div>
               <div className="flex flex-wrap gap-2">
                 {job.skills.map(s => (
-                  <span key={s.id} className={`px-2 py-1 rounded border ${getBadgeClass('gray')}`}>{s.name}</span>
+                  <Badge key={s.id} variant="outline" className="px-2 py-1">{s.name}</Badge>
                 ))}
               </div>
             </div>
@@ -396,17 +404,17 @@ const handleMouseLeaveVideo = () => {
             <div className="mt-6">
               <div className="text-sm text-slate-500 mb-2">Categories</div>
               <div className="flex flex-wrap gap-2">
-                {job.categories.map(c => (<span key={c.id} className={`px-2 py-1 rounded border ${getBadgeClass('secondary')}`}>{c.name}</span>))}
+                {job.categories.map(c => (<Badge key={c.id} variant="secondary" className="px-2 py-1">{c.name}</Badge>))}
               </div>
             </div>
           )}
 
           {role === 'job_seeker' && (
             <div className="flex justify-center mt-6">
-              <button onClick={() => navigate(`/apply/${job.id}`)} className={`${getButtonClass('primary')} text-white px-8 py-3 rounded-full`}>Apply Now</button>
+              <Button variant="default" size="lg" onClick={() => navigate(`/apply/${job.id}`)} className="rounded-full px-8">Apply Now</Button>
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
       {snackbar.open && (
