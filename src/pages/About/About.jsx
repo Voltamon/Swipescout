@@ -19,63 +19,45 @@ import { useTranslation } from 'react-i18next';
 import { homeThemeColors } from "../../config/theme-colors-home";
 
 const AboutUs = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('about');
 
   const teamMembers = [
     {
-      name: "Raj Singah",
-      role: t('about.team.raj.role'),
-      bio: t('about.team.raj.bio'),
-      avatar: "/images/raj_sin.jpg"
-    },
-    {
-      name: "Varshal Dubey",
-      role: t('about.team.varshal.role'),
-      bio: t('about.team.varshal.bio'),
-      avatar: "/images/varsha_dub.jpg"
-    },
-    {
       name: "Tareq Alsharif",
-      role: t('about.team.tareq.role'),
-      bio: t('about.team.tareq.bio'),
+      role: t('team.tareq.role'),
+      bio: t('team.tareq.bio'),
       avatar: "/images/tareq.jpg"
     },
     {
       name: "Obaid Nieroukh",
-      role: t('about.team.obaid.role'),
-      bio: t('about.team.obaid.bio'),
+      role: t('team.obaid.role'),
+      bio: t('team.obaid.bio'),
       avatar: "/images/obaid.jpg"
-    },
-    {
-      name: "Bahri Ayzabar",
-      role: t('about.team.bahri.role'),
-      bio: t('about.team.bahri.bio'),
-      avatar: "/images/bahr_ayzaba.jpg"
     }
   ];
 
   const stats = [
-    { value: "+", label: t('about.stats.jobsPosted'), icon: Users },
-    { value: "+", label: t('about.stats.candidatesHired'), icon: Heart },
-    { value: "+", label: t('about.stats.partnerCompanies'), icon: Handshake },
-    { value: "95%", label: t('about.stats.satisfactionRate'), icon: Lightbulb }
+    { value: "+", label: t('stats.jobsPosted'), icon: Users },
+    { value: "+", label: t('stats.candidatesHired'), icon: Heart },
+    { value: "+", label: t('stats.partnerCompanies'), icon: Handshake },
+    { value: "95%", label: t('stats.satisfactionRate'), icon: Lightbulb }
   ];
 
   const values = [
-    { icon: Target, title: "Innovation", desc: "Driving forward-thinking solutions" },
-    { icon: Award, title: "Excellence", desc: "Maintaining the highest standards" },
-    { icon: Heart, title: "Passion", desc: "Dedicated to our community" },
-    { icon: TrendingUp, title: "Growth", desc: "Continuous improvement mindset" }
+    { icon: Target, title: t('values.innovation.title'), desc: t('values.innovation.desc') },
+    { icon: Award, title: t('values.excellence.title'), desc: t('values.excellence.desc') },
+    { icon: Heart, title: t('values.passion.title'), desc: t('values.passion.desc') },
+    { icon: TrendingUp, title: t('values.growth.title'), desc: t('values.growth.desc') }
   ];
 
   return (
     <>
       <Helmet>
-        <title>{t('about.meta.title')}</title>
-        <meta name="description" content={t('about.meta.description')} />
-        <meta name="keywords" content={t('about.meta.keywords')} />
-        <meta property="og:title" content={t('about.meta.title')} />
-        <meta property="og:description" content={t('about.meta.ogDescription')} />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
+        <meta name="keywords" content={t('meta.keywords')} />
+        <meta property="og:title" content={t('meta.title')} />
+        <meta property="og:description" content={t('meta.ogDescription')} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.swipescout.xyz/about" />
         <link rel="canonical" href="https://www.swipescout.xyz/about" />
@@ -88,13 +70,13 @@ const AboutUs = () => {
           {/* Hero Section */}
           <div className="text-center mb-12">
             <h1 className={`text-5xl font-bold mb-4 ${homeThemeColors.text.gradient}`}>
-              {t('about.hero.title')}
+              {t('hero.title')}
             </h1>
             <h2 className="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">
-              {t('about.hero.subtitle')}
+              {t('hero.subtitle')}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto">
-              {t('about.hero.description')}
+              {t('hero.description')}
             </p>
           </div>
 
@@ -104,13 +86,13 @@ const AboutUs = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
             <div>
               <h2 className={`text-4xl font-bold mb-6 ${homeThemeColors.text.gradient}`}>
-                {t('about.mission.title')}
+                {t('mission.title')}
               </h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg leading-relaxed">
-                {t('about.mission.description1')}
+                {t('mission.description1')}
               </p>
               <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-                {t('about.mission.description2')}
+                {t('mission.description2')}
               </p>
             </div>
 
@@ -160,17 +142,17 @@ const AboutUs = () => {
           {/* Team Section */}
           <div className="mb-16">
             <h2 className={`text-4xl font-bold text-center mb-4 ${homeThemeColors.text.gradient}`}>
-              {t('about.team.title')}
+              {t('team.title')}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-center text-lg max-w-3xl mx-auto mb-12">
-              {t('about.team.description')}
+              {t('team.description')}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="flex flex-wrap justify-center gap-6">
               {teamMembers.map((member, index) => (
                 <Card
                   key={index}
-                  className={`${homeThemeColors.backgrounds.card} border ${homeThemeColors.borders.primary} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}
+                  className={`${homeThemeColors.backgrounds.card} border ${homeThemeColors.borders.primary} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 max-w-sm w-full`}
                 >
                   <CardContent className="p-6 flex flex-col items-center text-center">
                     <Avatar className="h-32 w-32 mb-4 border-4 border-indigo-600 dark:border-indigo-400 shadow-lg">
@@ -198,7 +180,7 @@ const AboutUs = () => {
           <Card className={`${homeThemeColors.backgrounds.highlight} border ${homeThemeColors.borders.primary} shadow-xl`}>
             <CardContent className="p-8">
               <h2 className={`text-3xl font-bold text-center mb-8 ${homeThemeColors.text.gradient}`}>
-                Get In Touch
+                {t('contact.title')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                 <a

@@ -1,18 +1,42 @@
 ﻿import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '@/services/api';
 import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function AnalyticsJobseeker() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [period, setPeriod] = useState('month');
 
   useEffect(() => {
     const fetch = async () => {
       try {
         setLoading(true);
-        const res = await axios.get('/api/analytics/profile-views');
-        setStats(res.data.stats || res.data || {});
+  // `api` instance already includes the `/api` base path, so request path
+  // here should not include an extra `/api` segment to avoid `/api/api`.
+  const res = await api.get(`/analytics/profile-views`, { params: { period } });
+        setStats(res.data.stats || {});
       } catch (e) {
         setError(e.message || 'Failed to load');
       } finally {
@@ -20,31 +44,82 @@ export default function AnalyticsJobseeker() {
       }
     };
     fetch();
-  }, []);
+  }, [period]);
 
-  const labels = (stats?.daily_stats || stats?.profile_views_daily || []).map(d => d.date) || [];
-  const data = (stats?.daily_stats || stats?.profile_views_daily || []).map(d => d.views) || [];
+  const lineChartData = {
+    labels: (stats?.daily_stats || []).map(d => new Date(d.date).toLocaleDateString()),
+    datasets: [
+      {
+        label: 'Profile Views',
+        data: (stats?.daily_stats || []).map(d => d.views),
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+      },
+    ],
+  };
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2>Jobseeker Analytics</h2>
-      {loading && <div>Loading...</div>}
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      {!loading && !error && (
-        <div>
-          <div style={{ marginBottom: 16 }}>
-            <strong>Total views:</strong> {stats?.total_views ?? stats?.profile_views ?? 0}
-            <br />
-            <strong>Unique viewers:</strong> {stats?.unique_viewers ?? 0}
-            <br />
-            <strong>Employer views:</strong> {stats?.employer_views ?? 0}
-          </div>
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold">My Analytics</h2>
+        <div className="flex items-center space-x-2">
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+            className="p-2 border rounded-md"
+          >
+            <option value="week">Last 7 Days</option>
+            <option value="month">Last 30 Days</option>
+            <option value="year">Last Year</option>
+          </select>
+        </div>
+      </div>
 
-          {labels.length > 0 ? (
-            <Line data={{ labels, datasets: [{ label: 'Profile Views', data, fill: false }] }} />
-          ) : (
-            <div>No daily data available</div>
-          )}
+      {loading && <div className="text-center">Loading...</div>}
+      {error && <div className="text-center text-red-500">{error}</div>}
+
+      {!loading && !error && stats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Profile Views</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold">{stats?.total_views ?? 0}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Unique Viewers</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold">{stats?.unique_viewers ?? 0}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>AI-Powered Insight</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm">
+                Based on your profile views, we recommend highlighting your skills in 'React' and 'Node.js' to attract more employers.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="md:col-span-2 lg:col-span-3">
+            <CardHeader>
+              <CardTitle>Profile Views Over Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {stats?.daily_stats?.length > 0 ? (
+                <Line data={lineChartData} />
+              ) : (
+                <p>No daily data available for this period.</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

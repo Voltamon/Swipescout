@@ -42,7 +42,14 @@ const PersonalityTestPage = () => {
       setError(null);
     } catch (err) {
       console.error('Error analyzing personality:', err);
-      setError('Failed to analyze personality. Please ensure you have completed all questions and the backend server is running.');
+      // If user is not authenticated, prompt to login
+      if (err?.response?.status === 401) {
+        setError('Please log in to take the personality assessment.');
+      } else if (err?.response?.status === 400) {
+        setError(err?.response?.data?.error || 'Invalid assessment data. Please review your answers.');
+      } else {
+        setError('Failed to analyze personality. Please ensure the backend server is running and try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -55,10 +62,16 @@ const PersonalityTestPage = () => {
         const response = await findCompatibleJobs();
         setCompatibleJobs(response.data);
         setError(null);
-    } catch (err) {
-        console.error('Error fetching compatible jobs:', err);
-        setError('Failed to fetch compatible jobs. Please try again later.');
-    } finally {
+  } catch (err) {
+    console.error('Error fetching compatible jobs:', err);
+    if (err?.response?.status === 401) {
+      setError('Please log in to view compatible jobs.');
+    } else if (err?.response?.status === 404) {
+      setError('No compatible jobs found. Try updating your profile or take the assessment first.');
+    } else {
+      setError('Failed to fetch compatible jobs. Please try again later.');
+    }
+  } finally {
         setLoadingJobs(false);
     }
   };

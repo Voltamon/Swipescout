@@ -1,0 +1,13 @@
+{
+  "title": "鸣谢",
+  "acknowledgements": "致谢",
+  "intro": "这个项目得以实现，要归功于许多人的辛勤工作以及出色的开源软件的使用。我们要感谢以下内容：",
+  "development_team": "开发团队",
+  "lead_developer": "首席开发者 - Tareq Alsharif 和 Obaid Nieroukh",
+  "frontend_developers": "前端开发人员",
+  "backend_developers": "后端开发人员",
+  "ui_ux_designers": "UI/UX设计师",
+  "open_source": "开源库和框架",
+  "special_thanks": "特别感谢",
+  "thanks_message": "特别感谢开源社区创建和维护支持现代Web开发的工具。你们的贡献是无价的。"
+}

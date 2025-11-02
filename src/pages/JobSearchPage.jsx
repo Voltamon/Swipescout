@@ -225,29 +225,29 @@ export default function JobSearchPage() {
             </div>
           )}
 
-          {job.jobType && (
+          {job.employment_type && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4" />
-              <span>{job.jobType}</span>
+              <span>{job.employment_type}</span>
             </div>
           )}
 
-          {job.experienceLevel && (
+          {job.experience_level && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Briefcase className="h-4 w-4" />
-              <span>{job.experienceLevel} level</span>
+              <span>{job.experience_level} level</span>
             </div>
           )}
 
-          {(job.minSalary || job.maxSalary) && (
+          {(job.salary_min || job.salary_max) && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <DollarSign className="h-4 w-4" />
               <span>
-                {job.minSalary && job.maxSalary 
-                  ? `$${job.minSalary.toLocaleString()} - $${job.maxSalary.toLocaleString()}`
-                  : job.minSalary 
-                    ? `From $${job.minSalary.toLocaleString()}`
-                    : `Up to $${job.maxSalary.toLocaleString()}`
+                {job.salary_min && job.salary_max 
+                  ? `$${job.salary_min.toLocaleString()} - $${job.salary_max.toLocaleString()}`
+                  : job.salary_min 
+                    ? `From $${job.salary_min.toLocaleString()}`
+                    : `Up to $${job.salary_max.toLocaleString()}`
                 }
               </span>
             </div>
@@ -292,9 +292,9 @@ export default function JobSearchPage() {
           </Button>
         </div>
 
-        {job.postedDate && (
+        {job.posted_at && (
           <p className="text-xs text-muted-foreground mt-3 text-center">
-            Posted {new Date(job.postedDate).toLocaleDateString()}
+            Posted {new Date(job.posted_at).toLocaleDateString()}
           </p>
         )}
       </CardContent>

@@ -1,12 +1,11 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { 
-  getUserLikedVideos, 
+  getLikedVideos, 
   unlikeVideo, 
   saveVideo,
   unsaveVideo,
-  shareVideo 
+  getSavedVideos
 } from '@/services/api';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
@@ -35,9 +34,46 @@ import {
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
+// Helpers to normalize video objects returned by backend
+function normalizeVideo(v) {
+  return {
+    id: v.id || v.videoId || v.video_id,
+    title: v.title || v.videoTitle || v.video_title || 'Untitled',
+    description: v.description || v.videoDescription || v.video_description || '',
+    videoUrl: v.videoUrl || v.video_url || v.secure_url || '',
+    thumbnail: v.thumbnail || v.thumbnailUrl || v.thumbnail_url || null,
+    uploaderName: v.uploaderName || v.uploader_name || (v.user && (v.user.displayName || v.user.display_name)) || null,
+    uploaderType: v.uploaderType || v.uploader_type || (v.user && v.user.role) || null,
+    likedAt: v.likedAt || v.liked_at || null,
+    createdAt: v.createdAt || v.submittedAt || v.submitted_at || null,
+    _raw: v
+  };
+}
+
+function getTitle(v) {
+  return v.title || v.videoTitle || v.video_title || 'Untitled';
+}
+
+function getDescription(v) {
+  return v.description || v.videoDescription || v.video_description || '';
+}
+
+function getVideoSrc(v) {
+  const url = v.videoUrl || v.video_url || v._raw?.videoUrl || v._raw?.video_url || '';
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${VITE_API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
+function getThumbnailSrc(v) {
+  const thumb = v.thumbnail || v.thumbnailUrl || v._raw?.thumbnail || v._raw?.thumbnail_url || null;
+  if (!thumb) return undefined;
+  if (thumb.startsWith('http://') || thumb.startsWith('https://')) return thumb;
+  return `${VITE_API_BASE_URL}${thumb.startsWith('/') ? '' : '/'}${thumb}`;
+}
+
 export default function LikedVideosPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
   const videoRefs = useRef({});
 
@@ -49,22 +85,16 @@ export default function LikedVideosPage() {
   const [hoveredVideo, setHoveredVideo] = useState(null);
   const [savedVideos, setSavedVideos] = useState(new Set());
 
-  useEffect(() => {
-    fetchLikedVideos();
-  }, []);
-
-  const fetchLikedVideos = async () => {
+  const fetchLikedVideos = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getUserLikedVideos();
-      setLikedVideos(response.data.videos || []);
-      
-      // Track which videos are saved
-      const saved = new Set(
-        response.data.videos
-          .filter(v => v.isSaved)
-          .map(v => v.id)
-      );
+      // fetch liked videos and current saved videos in parallel to mark saved state
+      const [likedRes, savedRes] = await Promise.all([getLikedVideos(), getSavedVideos()]);
+      const liked = (likedRes.data.videos || []).map(normalizeVideo);
+      const savedList = (savedRes.data.videos || []).map(v => v.id || v.videoId || v.video_id).filter(Boolean);
+      setLikedVideos(liked);
+
+      const saved = new Set(savedList);
       setSavedVideos(saved);
     } catch (error) {
       console.error('Failed to fetch liked videos:', error);
@@ -76,7 +106,11 @@ export default function LikedVideosPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchLikedVideos();
+  }, [fetchLikedVideos]);
 
   const handleUnlikeVideo = async (videoId) => {
     try {
@@ -181,8 +215,8 @@ export default function LikedVideosPage() {
   // Filter and sort videos
   const filteredVideos = likedVideos
     .filter(video => {
-      const matchesSearch = video.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          video.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = (getTitle(video) || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (getDescription(video) || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       if (filterType === 'all') return matchesSearch;
       if (filterType === 'jobseeker') return matchesSearch && video.uploaderType === 'jobseeker';
@@ -191,7 +225,7 @@ export default function LikedVideosPage() {
     })
     .sort((a, b) => {
       if (sortBy === 'liked_date') return new Date(b.likedAt) - new Date(a.likedAt);
-      if (sortBy === 'title') return a.title.localeCompare(b.title);
+      if (sortBy === 'title') return getTitle(a).localeCompare(getTitle(b));
       if (sortBy === 'upload_date') return new Date(b.createdAt) - new Date(a.createdAt);
       return 0;
     });
@@ -267,8 +301,8 @@ export default function LikedVideosPage() {
               <div className="relative aspect-[9/16] bg-black overflow-hidden">
                 <video
                   ref={el => videoRefs.current[video.id] = el}
-                  src={`${VITE_API_BASE_URL}${video.videoUrl}`}
-                  poster={video.thumbnailUrl ? `${VITE_API_BASE_URL}${video.thumbnailUrl}` : undefined}
+                  src={getVideoSrc(video)}
+                  poster={getThumbnailSrc(video)}
                   muted
                   loop
                   className="w-full h-full object-cover"
@@ -295,7 +329,7 @@ export default function LikedVideosPage() {
 
               {/* Video Info */}
               <CardContent className="p-4">
-                <h3 className="font-semibold line-clamp-1 mb-1">{video.title || 'Untitled'}</h3>
+                <h3 className="font-semibold line-clamp-1 mb-1">{getTitle(video)}</h3>
                 
                 {video.uploaderName && (
                   <p className="text-sm text-muted-foreground mb-2">
@@ -303,9 +337,9 @@ export default function LikedVideosPage() {
                   </p>
                 )}
 
-                {video.description && (
+                {(getDescription(video)) && (
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                    {video.description}
+                    {getDescription(video)}
                   </p>
                 )}
 

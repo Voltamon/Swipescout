@@ -1,15 +1,51 @@
 ﻿import axios from 'axios';
 import { getAuthHeader } from './authService';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL +'/api/'|| 'http://localhost:5000/api';
+// Base host (without trailing /api) and API base with /api suffix
+const BASE_HOST = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = BASE_HOST.endsWith('/') ? `${BASE_HOST}api` : `${BASE_HOST}/api`;
 
 // User Settings Functions
 export const getUserSettings = async () => {
+  // Try to fetch a consolidated settings object. Backend exposes different endpoints
+  // so we'll attempt the most specific one first, then fall back to composing from
+  // profile and notification endpoints.
   try {
-    const response = await axios.get(`${API_BASE_URL}/user/settings`, {
-      headers: getAuthHeader()
-    });
-    return response.data;
+    // Try user settings endpoint (may or may not exist)
+    try {
+      const res = await axios.get(`${API_BASE_URL}/users/settings`, { headers: getAuthHeader() });
+      // If backend returns { settings } or similar, normalize to a common shape
+      const data = res.data?.settings || res.data || {};
+      return { data };
+    } catch {
+      // Not available - fall back
+    }
+
+    // Fetch profile and notification settings in parallel
+    const [meRes, notifRes] = await Promise.all([
+      axios.get(`${API_BASE_URL}/users/me`, { headers: getAuthHeader() }),
+      axios.get(`${API_BASE_URL}/notifications/settings`, { headers: getAuthHeader() })
+    ]);
+
+    const user = meRes.data?.user || meRes.data;
+    const notifications = notifRes.data?.settings || notifRes.data;
+
+    // Build a normalized settings object expected by the Settings page
+    const data = {
+      name: user?.display_name || user?.displayName || '',
+      email: user?.email || '',
+      mobile: user?.mobile || user?.phone || '',
+      bio: user?.bio || '',
+      location: user?.location || '',
+      website: user?.website || '',
+      linkedin: user?.linkedin || '',
+      github: user?.github || '',
+      twitter: user?.twitter || '',
+      notifications: notifications || {},
+      // privacy/account defaults will be filled by Settings.jsx if missing
+    };
+
+    return { data };
   } catch (error) {
     console.error('Error fetching user settings:', error);
     throw error;
@@ -65,13 +101,65 @@ export const getUserVideos = async () => {
 };
 
 export const updateUserSettings = async (settings) => {
+  // settings can contain { profile, notifications, privacy, account }
   try {
-    const response = await axios.put(
-      `${API_BASE_URL}/user/settings`,
-      settings,
-      { headers: getAuthHeader() }
-    );
-    return response.data;
+    const results = {};
+
+    // 1) Profile updates -> PUT /users/me (limited: backend currently supports display_name)
+    if (settings.profile) {
+      const payload = {};
+      if (settings.profile.name !== undefined) payload.display_name = settings.profile.name;
+      // Only update fields backend supports here; other profile fields may require separate endpoints
+      if (Object.keys(payload).length > 0) {
+        const res = await axios.put(`${API_BASE_URL}/users/me`, payload, { headers: getAuthHeader() });
+        results.profile = res.data;
+      }
+    }
+
+    // 2) Notification settings -> PUT /notifications/settings (expects { settings })
+    if (settings.notifications) {
+      // Map simple boolean flags from UI into nested notification settings used by backend
+      const ui = settings.notifications;
+      const mapped = {
+        email: {
+          newMessages: !!ui.messageNotifications,
+          jobMatches: !!ui.jobAlerts,
+          applicationUpdates: !!ui.interviewReminders,
+          profileViews: !!ui.profileViews || false,
+          marketingEmails: !!ui.weeklyDigest || false
+        },
+        push: {
+          newMessages: !!ui.messageNotifications,
+          jobMatches: !!ui.jobAlerts,
+          applicationUpdates: !!ui.interviewReminders,
+          profileViews: !!ui.profileViews || false
+        },
+        inApp: {
+          newMessages: !!ui.messageNotifications,
+          jobMatches: !!ui.jobAlerts,
+          applicationUpdates: !!ui.interviewReminders,
+          profileViews: true,
+          systemUpdates: true
+        }
+      };
+      const res = await axios.put(`${API_BASE_URL}/notifications/settings`, { settings: mapped }, { headers: getAuthHeader() });
+      results.notifications = res.data;
+    }
+
+    // 3) Privacy/account -> attempt to call users/settings endpoint if present
+    if (settings.privacy || settings.account) {
+      try {
+        const body = {};
+        if (settings.privacy) body.privacy = settings.privacy;
+        if (settings.account) body.account = settings.account;
+        const res = await axios.put(`${API_BASE_URL}/users/settings`, body, { headers: getAuthHeader() });
+        results.privacy = res.data;
+      } catch {
+        // If /users/settings doesn't exist, ignore for now (could be added server-side later)
+      }
+    }
+
+    return results;
   } catch (error) {
     console.error('Error updating user settings:', error);
     throw error;

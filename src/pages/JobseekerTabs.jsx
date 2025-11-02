@@ -6,6 +6,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { jobseekerTabCategories } from '@/config/jobseekerTabsConfig';
+import EditJobSeekerProfile from '@/pages/EditJobSeekerProfile';
 import { getJobseekerStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-jobseeker';
 import {
@@ -142,10 +143,10 @@ const JobseekerTabs = () => {
         {/* Welcome Section */}
         <div className="space-y-2">
           <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
-            Welcome back, {user?.firstName || 'Job Seeker'}! 👋
+            {t('jobseekerTabs:welcome', { name: user?.firstName || t('jobseekerTabs:jobSeeker') })}
           </h1>
           <p className={themeColors.text.secondary}>
-            Manage your job search, profile, and career opportunities all in one place.
+            {t('jobseekerTabs:welcome_message')}
           </p>
         </div>
 
@@ -154,53 +155,53 @@ const JobseekerTabs = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className={`border-l-4 ${themeColors.borders.primary} hover:shadow-lg transition-shadow`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('jobseekerTabs:profile_views')}</CardTitle>
                 <Eye className={`h-4 w-4 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.profileViews ?? stats?.profile_views ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   <TrendingUp className="inline h-3 w-3 mr-1" />
-                  +12% from last month
+                  {t('jobseekerTabs:from_last_month', { percent: 12 })}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-cyan-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Matches</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('jobseekerTabs:matches')}</CardTitle>
                 <ThumbUp className={`h-4 w-4 ${themeColors.iconBackgrounds.secondary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.matches ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  Companies interested in you
+                  {t('jobseekerTabs:companies_interested')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Applications</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('jobseekerTabs:applications')}</CardTitle>
                 <Briefcase className={`h-4 w-4 ${themeColors.iconBackgrounds.warning.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.applications ?? stats?.applications_count ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  Active job applications
+                  {t('jobseekerTabs:active_applications')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Unread Messages</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('jobseekerTabs:unread_messages')}</CardTitle>
                 <Mail className={`h-4 w-4 ${themeColors.iconBackgrounds.info.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.unreadMessages ?? stats?.unread_messages ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  New messages waiting
+                  {t('jobseekerTabs:new_messages')}
                 </p>
               </CardContent>
             </Card>
@@ -221,9 +222,14 @@ const JobseekerTabs = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {currentTab.context
-              ? React.createElement(currentTab.component, { context: currentTab.context })
-              : React.createElement(currentTab.component)}
+            {/* If the current tab is the profile tab and mode=edit is present in the query, render the edit form */}
+            {currentTab.path === 'my-profile' && searchParams.get('mode') === 'edit' ? (
+              <EditJobSeekerProfile />
+            ) : currentTab.context ? (
+              React.createElement(currentTab.component, { context: currentTab.context })
+            ) : (
+              React.createElement(currentTab.component)
+            )}
           </CardContent>
         </Card>
       </div>

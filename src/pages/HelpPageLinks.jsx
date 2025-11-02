@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/UI/card.jsx";
 import { Button } from "@/components/UI/button.jsx";
 import { Mail, MessageCircle } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 // Custom Discord icon as an inline SVG component
 const DiscordIcon = () => (
@@ -21,18 +22,19 @@ const DiscordIcon = () => (
 );
 
 export default function HelpPageLinks() {
+  const { t } = useTranslation();
   const discordLink = "https://discord.gg/mHcdMn6yMh";
 
   return (
     <div className="container mx-auto py-12 px-4 max-w-6xl">
       {/* Main heading for the page */}
       <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-        Help Center
+        {t('help:title')}
       </h1>
 
       {/* Introduction text */}
       <p className="text-lg text-gray-600 mb-10 leading-relaxed">
-        We are here to help you get the most out of Swipescout. Whether you have a question, need technical support, or just want to connect with the community, you can reach out to us through the following channels.
+        {t('help:intro')}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -43,10 +45,10 @@ export default function HelpPageLinks() {
               <Mail className="h-16 w-16 text-purple-600" />
             </div>
             <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-              Email Support
+              {t('help:email_support')}
             </h2>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              For general inquiries and technical assistance, please send us an email.
+              {t('help:email_desc')}
             </p>
             <a
               href="mailto:info@swipescout.xyz"
@@ -66,10 +68,10 @@ export default function HelpPageLinks() {
               </div>
             </div>
             <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-              Join Our Discord
+              {t('help:discord_title')}
             </h2>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              Connect with the community, get real-time help, and stay updated on all things Swipescout.
+              {t('help:discord_desc')}
             </p>
             <Button
               asChild
@@ -81,7 +83,7 @@ export default function HelpPageLinks() {
                 rel="noopener noreferrer"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
-                Join Discord
+                {t('help:join_discord')}
               </a>
             </Button>
           </CardContent>
@@ -92,10 +94,10 @@ export default function HelpPageLinks() {
       <Card className="mt-12 bg-gradient-to-r from-purple-50 to-cyan-50 border-2 border-purple-200">
         <CardContent className="p-8 text-center">
           <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-            Need More Help?
+            {t('help:more_help')}
           </h3>
           <p className="text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-            Check out our comprehensive FAQ section, video tutorials, and documentation to find answers to common questions and learn how to make the most of SwipeScout's features.
+            {t('help:resources_desc')}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button
@@ -103,14 +105,14 @@ export default function HelpPageLinks() {
               className="border-purple-600 text-purple-600 hover:bg-purple-50"
               onClick={() => window.location.href = '/faq'}
             >
-              Visit FAQ
+              {t('help:visit_faq')}
             </Button>
             <Button
               variant="outline"
               className="border-cyan-600 text-cyan-600 hover:bg-cyan-50"
               onClick={() => window.location.href = '/help'}
             >
-              Help Documentation
+              {t('help:documentation')}
             </Button>
           </div>
         </CardContent>

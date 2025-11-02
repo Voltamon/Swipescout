@@ -1,10 +1,18 @@
 ﻿import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
+// Build a safe API base URL. Accept two forms in env:
+// - a host-only value like `http://localhost:5000`
+// - a host + path value like `http://localhost:5000/api`
+// We want the final base to always include a single `/api` path segment.
+const _raw = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const cleaned = String(_raw).replace(/\/+$/g, '');
+const API_BASE_URL = cleaned.match(/\/api(?:$|\/)/) ? cleaned : `${cleaned}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
+  // Send cookies and support same-site cookie auth when backend requires credentials
+  withCredentials: true
 });
 
 let token;
@@ -133,11 +141,12 @@ export const searchVideos = (formData) => api.post(`/videos/searchVideos`, formD
 export const connectWithUser = (id) => api.post(`/users/${id}/connectWithUser`);
 export const addComment = (id) => api.post(`/videos/${id}/addComment`);
 export const getVideosForHomePage = () => api.get(`/videos/getVideosForHomePage`);
-export const getUserNotificationSettings = (id) => api.get(`/notifications/${id}/settings`);
+// If id is provided returns public user settings endpoint, otherwise returns current user's settings
+export const getUserNotificationSettings = (id) => id ? api.get(`/notifications/${id}/settings`) : api.get('/notifications/settings');
 export const getUserSavedVideos = (id) => api.get(`/videos/${id}/getUserSavedVideos`);
 export const getUserLikedVideos = (id) => api.get(`/videos/${id}/getUserLikedVideos`);
  
-// Job seeker profile
+// Job seeker profile (mounted under /api/job-seeker on the backend)
 export const uploadProfileImage = (formData) => api.post('/job-seeker/upload-logo/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 export const updateUserProfile = (formData) => api.put('/job-seeker/', formData);
 export const getUserProfile = () => api.get('/job-seeker/');
@@ -206,12 +215,12 @@ export const swipeJob = (jobId, direction) => api.post('/swipe', { jobId, direct
 export const getSwipeHistory = () => api.get('/swipe/history');
 export const getMatches = () => api.get('/swipe/matches');
 
-// Chat
-export const getConversations = () => api.get('/messages/conversations');
-export const getConversationById = (id) => api.get(`/messages/conversations/${id}`);
-export const getConversationMessages = (id) => api.get(`/messages/conversations/${id}/messages`);
-export const sendMessage = (conversationId, content) => api.post(`/messages/conversations/${conversationId}/messages`, { content });
-export const deleteMessage = (id) => api.delete(`/messages/${id}`);
+// Chat (Note: chat-related API calls are also in chatService.js)
+export const getConversations = () => api.get('/chat/conversations');
+export const getConversationById = (id) => api.get(`/chat/conversation/${id}`);
+export const getConversationMessages = (id) => api.get(`/chat/conversation/${id}`);
+export const sendMessage = (conversationId, content) => api.post(`/chat/send`, { conversationId, content });
+export const deleteMessage = (id) => api.delete(`/chat/message/${id}`);
 
 // Interviews
 export const scheduleInterview = (interviewData) => api.post('/interviews', interviewData);
@@ -239,6 +248,10 @@ export const getJobseekerStats = () => api.get('/analytics/jobseeker-stats');
 export const getEmployerStats = () => api.get('/analytics/employer-stats');
 export const getVideoEngagement = () => api.get('/analytics/video-engagement');
 
+// Profile
+export const getPublicProfile = (userId) => api.get(`/profile/${userId}`);
+export const getMyProfileViewStats = () => api.get('/profile/stats/views');
+
 // Video processing / Edit
 export const uploadVideo = (formData, onUploadProgress) => api.post('/job-seeker/video-resume', formData, {
   headers: { 'Content-Type': 'multipart/form-data' },
@@ -260,6 +273,10 @@ export const deleteVideoComment = (videoId, commentId) => api.delete(`/videos/${
 export const getSavedVideos = () => api.get('/videos/saved');
 export const getLikedVideos = () => api.get('/videos/liked');
 
+// Added for consistency - using correct user-specific saved/liked videos endpoints
+export const getUserSavedVideosForUser = () => api.get('/videos/saved');
+export const getUserLikedVideosForUser = () => api.get('/videos/liked');
+
 
 // Payments
 export const getPlansAndServices = () => api.get('/payment/plans');
@@ -277,12 +294,16 @@ export const saveResume = (resumeData) => api.post('/resume/save', resumeData);
 export const getUserResumes = () => api.get('/resume/user');
 
 // Search & Connect
-export const searchJobs = (params) => api.get('/jobs/search', { params });
-export const searchCandidates = (params) => api.get('/candidates/search', { params });
+export const searchJobs = (params) => {
+  // Call the search controller mounted under /api/search (route: /search/jobs/search)
+  // Do not remap `q` — the backend expects `q`.
+  return api.get('/search/jobs/search', { params });
+};
+export const searchCandidates = (params) => api.get('/search/candidates/search', { params });
 export const getFilterOptions = () => api.get('/search/filters');
 export const connectWithCandidate = (candidateId, message) => api.post(`/employer/connect/${candidateId}`, { message });
-export const applyToJob = (jobId, applicationData) => api.post(`/job-seeker/apply/${jobId}`, applicationData);
-export const getApplications = () => api.get('/job-seeker/applications');
+export const applyToJob = (jobId, applicationData) => api.post(`/job/${jobId}/apply`, applicationData);
+export const getApplications = () => api.get('/job/applications');
 export const getJobApplications = (jobId) => api.get(`/employer/job/${jobId}/applications`);
 
 // Notifications
@@ -308,6 +329,8 @@ export const getVideoStats = (id) => api.get(`/videos/${id}/stats`);
 // Admin
 export const getAdminStats = () => api.get('/admin/stats');
 export const getPlatformAnalytics = (params) => api.get('/admin/analytics', { params });
+export const getAdminSettings = () => api.get('/admin/settings');
+export const updateAdminSettings = (settings) => api.put('/admin/settings', settings);
 export const getUsers = (params) => api.get('/admin/users', { params });
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
 export const banUser = (id, data) => api.post(`/admin/users/${id}/ban`, data);
@@ -317,11 +340,24 @@ export const handleReport = (id, data) => api.post(`/admin/reports/${id}/action`
 // Blog
 export const getBlogs = (params) => api.get('/blogs', { params });
 export const getBlog = (id) => api.get(`/blogs/${id}`);
+export const getFeaturedBlogs = (limit) => api.get('/blogs/featured', { params: { limit } });
+export const getRelatedBlogs = (id, limit) => api.get(`/blogs/${id}/related`, { params: { limit } });
 export const createBlog = (data) => api.post('/blogs', data);
 export const updateBlog = (id, data) => api.put(`/blogs/${id}`, data);
 export const deleteBlog = (id) => api.delete(`/blogs/${id}`);
+export const bulkImportBlogs = (blogs) => api.post('/blogs/bulk-import', { blogs });
+
+// Blog Categories
 export const getBlogCategories = () => api.get('/blogs/categories');
-export const getBlogTags = () => api.get('/blogs/tags');
+export const createBlogCategory = (data) => api.post('/blogs/categories', data);
+export const updateBlogCategory = (id, data) => api.put(`/blogs/categories/${id}`, data);
+export const deleteBlogCategory = (id) => api.delete(`/blogs/categories/${id}`);
+
+// Blog Tags
+export const getBlogTags = (limit) => api.get('/blogs/tags', { params: { limit } });
+export const createBlogTag = (data) => api.post('/blogs/tags', data);
+export const updateBlogTag = (id, data) => api.put(`/blogs/tags/${id}`, data);
+export const deleteBlogTag = (id) => api.delete(`/blogs/tags/${id}`);
 
 export default api;
 

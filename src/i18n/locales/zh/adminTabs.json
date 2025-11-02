@@ -1,0 +1,56 @@
+{
+  "viewingAs": "正在查看身份：",
+  "returnToAdmin": "返回管理员",
+  "title": "管理员仪表板",
+  "subtitle": "从此中央控制面板管理平台用户、内容和设置。",
+  "totalUsers": "总用户数",
+  "newUsersThisWeek": "本周 +{{count}}",
+  "activeUsers": "活跃用户",
+  "activeUsersPercentage": "占总用户的 {{percentage}}%",
+  "pendingReports": "待处理报告",
+  "requiresAttention": "需要注意",
+  "totalContent": "总内容",
+  "contentBreakdown": "{{videos}} 个视频，{{jobs}} 个职位",
+  "viewAsTitle": "以平台身份查看",
+  "viewAsDescription": "切换到雇主或求职者视图以测试平台体验",
+  "viewAsEmployer": "以雇主身份查看",
+  "viewAsJobSeeker": "以求职者身份查看",
+  "nav": {
+    "home": "主页"
+  },
+  "categories": {
+    "dashboard": "仪表板",
+    "userManagement": "用户管理",
+    "contentManagement": "内容管理",
+    "platformSettings": "平台设置",
+    "blogManagement": "博客管理"
+  },
+  "tabs": {
+    "overview": "概览",
+    "analytics": "分析",
+    "users": "用户",
+    "roles": "角色",
+    "videos": "视频",
+    "jobs": "职位",
+    "reports": "报告",
+    "categories": "类别",
+    "skills": "技能",
+    "settings": "设置",
+    "allBlogs": "所有博客",
+    "createBlog": "创建博客"
+  },
+  "descriptions": {
+    "overview": "平台活动摘要。",
+    "analytics": "详细的平台分析。",
+    "users": "管理所有用户。",
+    "roles": "管理用户角色和权限。",
+    "videos": "管理所有视频。",
+    "jobs": "管理所有职位列表。",
+    "reports": "审查和管理用户报告。",
+    "categories": "管理职位和视频类别。",
+    "skills": "管理平台技能。",
+    "settings": "配置平台设置。",
+    "allBlogs": "管理博客文章",
+    "createBlog": "撰写新的博客文章"
+  }
+}

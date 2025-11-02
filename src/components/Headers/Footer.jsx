@@ -5,26 +5,26 @@ import { useTranslation } from 'react-i18next';
 import { homeThemeColors } from "../../config/theme-colors-home";
 
 const Footer = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('footer');
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     company: [
-      { label: t('footer.aboutUs'), href: '/about' },
-      { label: t('footer.howItWorks'), href: '/how-it-works' },
-      { label: t('footer.blog'), href: '/blog' },
-      { label: t('footer.faq'), href: '/FAQs' },
-      { label: t('footer.contactUs'), href: '/contact' },
-      { label: t('footer.customerSupport'), href: '/customer-support' },
-      { label: t('footer.credits'), href: '/credits' },
+      { label: t('aboutUs'), href: '/about' },
+      { label: t('howItWorks'), href: '/how-it-works' },
+      { label: t('blog'), href: '/blog' },
+      { label: t('faq'), href: '/FAQs' },
+      { label: t('contactUs'), href: '/contact' },
+      { label: t('customerSupport'), href: '/customer-support' },
+      { label: t('credits'), href: '/credits' },
     ],
     legal: [
-      { label: t('footer.privacyPolicy'), href: '/privacy-policy' },
-      { label: t('footer.termsOfService'), href: '/terms-of-service' },
-      { label: t('footer.cookiePolicy'), href: '/cookie-policy' },
-      { label: t('footer.communityGuidelines'), href: '/community-guidelines' },
-      { label: t('footer.copyrightIpTerms'), href: '/copyright-ip-terms' },
-      { label: t('footer.eula'), href: '/eula' },
+      { label: t('privacyPolicy'), href: '/privacy-policy' },
+      { label: t('termsOfService'), href: '/terms-of-service' },
+      { label: t('cookiePolicy'), href: '/cookie-policy' },
+      { label: t('communityGuidelines'), href: '/community-guidelines' },
+      { label: t('copyrightIpTerms'), href: '/copyright-ip-terms' },
+      { label: t('eula'), href: '/eula' },
     ]
   };
 
@@ -36,9 +36,9 @@ const Footer = () => {
   ];
 
   const stats = [
-    { icon: CheckCircle, label: t('footer.verifiedCompanies') },
-    { icon: TrendingUp, label: t('footer.successRate') },
-    { icon: Users, label: t('footer.support24_7') },
+    { icon: CheckCircle, label: t('verifiedCompanies') },
+    { icon: TrendingUp, label: t('successRate') },
+    { icon: Users, label: t('support24_7') },
   ];
 
   return (
@@ -49,7 +49,7 @@ const Footer = () => {
           {/* Company Column */}
           <div>
             <h3 className={`text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400`}>
-              {t('footer.company')}
+              {t('company')}
             </h3>
             <nav className="space-y-3">
               {footerLinks.company.map((link) => (
@@ -67,7 +67,7 @@ const Footer = () => {
           {/* Legal Column */}
           <div>
             <h3 className={`text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400`}>
-              {t('footer.legal')}
+              {t('legal')}
             </h3>
             <nav className="space-y-3">
               {footerLinks.legal.map((link) => (
@@ -85,7 +85,7 @@ const Footer = () => {
           {/* Connect Column */}
           <div>
             <h3 className={`text-lg font-bold mb-6 text-indigo-600 dark:text-indigo-400`}>
-              {t('footer.connect')}
+              {t('connect')}
             </h3>
             <div className="flex gap-4 mb-6">
               {socialLinks.map((social) => {
@@ -103,7 +103,7 @@ const Footer = () => {
               })}
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('footer.joinCommunity')}
+              {t('joinCommunity')}
             </p>
           </div>
         </div>
@@ -126,7 +126,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>{t('footer.copyright', { year: currentYear })}</p>
+          <p>{t('copyright', { year: currentYear })}</p>
         </div>
       </div>
     </footer>

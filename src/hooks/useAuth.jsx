@@ -153,7 +153,7 @@ export const AuthProvider = ({ children }) => {
         '/jobseeker-profile/:id',
         '/employer-profile/:id',
         '/register-form',
-        '/home-page',
+        '/more-page',
         '/authpage',
         '/auth/linkedin/callback',
         '/check-it',

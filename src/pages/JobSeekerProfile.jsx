@@ -110,7 +110,10 @@ export default function JobSeekerProfile() {
   };
 
   const handleEditProfile = () => {
-    navigate('/jobseeker-tabs?group=profile&tab=edit-profile');
+    // Navigate to the profile tab inside the jobseeker-tabs layout
+    // `jobseekerTabsConfig` uses the group key `profileContent` and the tab path `my-profile`.
+    // Add mode=edit so the tab can open edit UI if implemented.
+    navigate('/jobseeker-tabs?group=profileContent&tab=my-profile&mode=edit');
   };
 
   if (loading) {

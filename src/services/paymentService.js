@@ -25,11 +25,11 @@ export const getSubscriptionStatus = async (userId) => {
 };
 
 // Create subscription
-export const createSubscription = async (planType, userId, isAnnual = false) => {
+export const createSubscription = async (planType, isAnnual = false) => {
     try {
+        // Backend gets userId from JWT token, only send planType and isAnnual
         const response = await api.post(`${PAYMENT_BASE_URL}/subscription`, {
             planType,
-            userId,
             isAnnual
         });
         return response.data;
@@ -40,11 +40,11 @@ export const createSubscription = async (planType, userId, isAnnual = false) => 
 };
 
 // Purchase one-time service
-export const purchaseService = async (serviceType, userId) => {
+export const purchaseService = async (serviceType) => {
     try {
+        // Backend gets userId from JWT token, only send serviceType
         const response = await api.post(`${PAYMENT_BASE_URL}/service`, {
-            serviceType,
-            userId
+            serviceType
         });
         return response.data;
     } catch (error) {
@@ -54,11 +54,10 @@ export const purchaseService = async (serviceType, userId) => {
 };
 
 // Cancel subscription
-export const cancelSubscription = async (userId) => {
+export const cancelSubscription = async () => {
     try {
-        const response = await api.post(`${PAYMENT_BASE_URL}/subscription/cancel`, {
-            userId
-        });
+        // Backend gets userId from JWT token
+        const response = await api.post(`${PAYMENT_BASE_URL}/subscription/cancel`);
         return response.data;
     } catch (error) {
         console.error('Error canceling subscription:', error);

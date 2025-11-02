@@ -117,9 +117,33 @@ export default function ResumeBuilderPage() {
       setProgress(100);
 
       if (response.data) {
+        const incoming = response.data;
+        const normalizedSkills = (incoming.skills || []).map(s => (typeof s === 'string' ? s : (s?.name || ''))).filter(Boolean);
+        const experiencesFromExtract = Array.isArray(incoming.experience) ? incoming.experience : [];
+
         setResumeData(prevData => ({
           ...prevData,
-          ...response.data
+          personalInfo: {
+            ...prevData.personalInfo,
+            ...incoming.personalInfo,
+            // keep UI top-level summary in sync
+            // but prefer extracted personalInfo.summary if provided
+          },
+          summary: incoming?.personalInfo?.summary || prevData.summary || '',
+          experiences: experiencesFromExtract.length ? experiencesFromExtract.map(exp => ({
+            title: exp.title || '',
+            company: exp.company || '',
+            location: exp.location || '',
+            startDate: exp.startDate || '',
+            endDate: exp.endDate || '',
+            current: !!exp.current,
+            description: exp.description || ''
+          })) : (prevData.experiences || []),
+          education: Array.isArray(incoming.education) ? incoming.education : (prevData.education || []),
+          skills: normalizedSkills.length ? normalizedSkills : (prevData.skills || []),
+          languages: Array.isArray(incoming.languages) ? incoming.languages : (prevData.languages || []),
+          certifications: Array.isArray(incoming.certifications) ? incoming.certifications : (prevData.certifications || []),
+          projects: Array.isArray(incoming.projects) ? incoming.projects : (prevData.projects || []),
         }));
         
         toast({
@@ -227,17 +251,21 @@ export default function ResumeBuilderPage() {
   const handleGenerateResume = async () => {
     setGenerating(true);
     try {
-      const response = await generateResume(resumeData);
-      
-      if (response.data.downloadUrl) {
-        // Download the generated resume
-        window.open(response.data.downloadUrl, '_blank');
-        
-        toast({
-          title: "Success",
-          description: "Resume generated successfully!",
-        });
-      }
+      // Map UI data to backend schema
+      const mapped = mapToBackendSchema(resumeData);
+      const payload = { data: mapped, template: 'modern', format: 'pdf' };
+
+      const response = await generateResume(payload);
+
+      // response is a Blob (application/pdf)
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+
+      toast({
+        title: "Success",
+        description: "Resume generated successfully!",
+      });
     } catch (error) {
       console.error('Error generating resume:', error);
       toast({
@@ -252,9 +280,18 @@ export default function ResumeBuilderPage() {
 
   const handlePreviewResume = async () => {
     try {
-      const response = await previewResume(resumeData);
-      if (response.data.previewUrl) {
-        window.open(response.data.previewUrl, '_blank');
+      const mapped = mapToBackendSchema(resumeData);
+      const payload = { data: mapped, template: 'modern' };
+      const response = await previewResume(payload);
+
+      // Expect { success, data: { html } }
+      const html = response?.data?.data?.html;
+      if (html) {
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      } else {
+        throw new Error('No preview HTML returned');
       }
     } catch (error) {
       console.error('Error previewing resume:', error);
@@ -269,7 +306,9 @@ export default function ResumeBuilderPage() {
   const handleSaveResume = async () => {
     setLoading(true);
     try {
-      await saveResume(resumeData);
+      const mapped = mapToBackendSchema(resumeData);
+      const payload = { data: mapped, template: 'modern' };
+      await saveResume(payload);
       
       toast({
         title: "Success",
@@ -287,6 +326,53 @@ export default function ResumeBuilderPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Map the client-side resume model to the backend template schema
+  const mapToBackendSchema = (data) => {
+    const personalInfo = {
+      ...data.personalInfo,
+      // Backend templates expect summary under personalInfo
+      summary: data.summary || data.personalInfo?.summary || '',
+      // Classic template uses address; map location to address if provided
+      address: data.personalInfo?.location || data.personalInfo?.address || ''
+    };
+
+    // Experience: backend expects `experience` array
+    const experience = (data.experiences || []).map(exp => ({
+      title: exp.title || '',
+      company: exp.company || '',
+      location: exp.location || '',
+      startDate: exp.startDate || '',
+      endDate: exp.current ? '' : (exp.endDate || ''),
+      current: !!exp.current,
+      description: exp.description || ''
+    }));
+
+    // Education: backend template references `graduationDate`
+    const education = (data.education || []).map(edu => ({
+      degree: edu.degree || '',
+      institution: edu.institution || '',
+      location: edu.location || '',
+      graduationDate: edu.endYear || edu.startYear || '',
+      gpa: edu.gpa || '',
+      description: edu.description || ''
+    }));
+
+    // Skills: template expects objects with { name, level }
+    const skills = (data.skills || []).map(s => (
+      typeof s === 'string' ? { name: s, level: 'Intermediate' } : (s.name ? s : { name: String(s), level: 'Intermediate' })
+    ));
+
+    return {
+      personalInfo,
+      experience,
+      education,
+      skills,
+      languages: data.languages || [],
+      certifications: data.certifications || [],
+      projects: data.projects || []
+    };
   };
 
   return (

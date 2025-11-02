@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserSettings, updateUserSettings } from '../services/userService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
@@ -43,7 +43,6 @@ import {
   MapPin,
   Camera
 } from 'lucide-react';
-import themeColors from '@/config/theme-colors';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -91,11 +90,7 @@ export default function Settings() {
     theme: 'light',
   });
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getUserSettings();
@@ -113,9 +108,32 @@ export default function Settings() {
         twitter: data.twitter || '',
       });
 
-      setNotificationSettings(data.notifications || notificationSettings);
-      setPrivacySettings(data.privacy || privacySettings);
-      setAccountSettings(data.account || accountSettings);
+      setNotificationSettings(
+        data.notifications || {
+          emailNotifications: true,
+          pushNotifications: true,
+          jobAlerts: true,
+          messageNotifications: true,
+          interviewReminders: true,
+          weeklyDigest: false,
+        }
+      );
+      setPrivacySettings(
+        data.privacy || {
+          profileVisibility: 'public',
+          showEmail: false,
+          showPhone: false,
+          allowMessages: true,
+          allowConnections: true,
+        }
+      );
+      setAccountSettings(
+        data.account || {
+          language: 'en',
+          timezone: 'UTC',
+          theme: 'light',
+        }
+      );
     } catch (error) {
       console.error('Failed to fetch settings:', error);
       toast({
@@ -126,7 +144,11 @@ export default function Settings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
 
   const handleSaveProfile = async () => {
     setSaving(true);

@@ -1,0 +1,56 @@
+{
+  "viewingAs": "المعاينة باسم:",
+  "returnToAdmin": "العودة إلى لوحة التحكم",
+  "title": "لوحة تحكم المسؤول",
+  "subtitle": "إدارة مستخدمي المنصة والمحتوى والإعدادات من لوحة التحكم المركزية هذه.",
+  "totalUsers": "إجمالي المستخدمين",
+  "newUsersThisWeek": "+{{count}} هذا الأسبوع",
+  "activeUsers": "المستخدمون النشطون",
+  "activeUsersPercentage": "{{percentage}}% من إجمالي المستخدمين",
+  "pendingReports": "التقارير المعلقة",
+  "requiresAttention": "تتطلب اهتمامًا",
+  "totalContent": "إجمالي المحتوى",
+  "contentBreakdown": "{{videos}} فيديوهات, {{jobs}} وظائف",
+  "viewAsTitle": "عرض المنصة باسم",
+  "viewAsDescription": "التبديل إلى عرض صاحب العمل أو الباحث عن عمل لاختبار تجربة المنصة",
+  "viewAsEmployer": "عرض كصاحب عمل",
+  "viewAsJobSeeker": "عرض كباحث عن عمل",
+  "nav": {
+    "home": "الرئيسية"
+  },
+  "categories": {
+    "dashboard": "لوحة التحكم",
+    "userManagement": "إدارة المستخدمين",
+    "contentManagement": "إدارة المحتوى",
+    "platformSettings": "إعدادات المنصة",
+    "blogManagement": "إدارة المدونة"
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "analytics": "التحليلات",
+    "users": "المستخدمون",
+    "roles": "الأدوار",
+    "videos": "الفيديوهات",
+    "jobs": "الوظائف",
+    "reports": "التقارير",
+    "categories": "الفئات",
+    "skills": "المهارات",
+    "settings": "الإعدادات",
+    "allBlogs": "كل التدوينات",
+    "createBlog": "إنشاء تدوينة"
+  },
+  "descriptions": {
+    "overview": "ملخص لنشاط المنصة.",
+    "analytics": "تحليلات مفصلة للمنصة.",
+    "users": "إدارة جميع المستخدمين.",
+    "roles": "إدارة أدوار المستخدمين والأذونات.",
+    "videos": "إدارة جميع الفيديوهات.",
+    "jobs": "إدارة جميع قوائم الوظائف.",
+    "reports": "مراجعة وإدارة تقارير المستخدمين.",
+    "categories": "إدارة فئات الوظائف والفيديو.",
+    "skills": "إدارة مهارات المنصة.",
+    "settings": "تكوين إعدادات المنصة.",
+    "allBlogs": "إدارة منشورات المدونة",
+    "createBlog": "كتابة منشور مدونة جديد"
+  }
+}

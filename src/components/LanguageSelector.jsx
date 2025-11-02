@@ -19,21 +19,21 @@ const languages = [
     code: 'en',
     name: 'English',
     nativeName: 'English',
-    flag: 'ًں‡؛ًں‡¸',
+    flag: '🇺🇸',
     dir: 'ltr'
   },
   {
     code: 'ar',
     name: 'Arabic',
-    nativeName: 'ط§ظ„ط¹ط±ط¨ظٹط©',
-    flag: 'ًں‡¸ًں‡¦',
+    nativeName: 'العربية',
+    flag: '🇸🇦',
     dir: 'rtl'
   },
   {
     code: 'zh',
     name: 'Chinese',
-    nativeName: 'ن¸­و–‡',
-    flag: 'ًں‡¨ًں‡³',
+    nativeName: '中文',
+    flag: '🇨🇳',
     dir: 'ltr'
   }
 ];
@@ -120,12 +120,31 @@ export default function LanguageSelector({ variant = 'menu', showLabel = true })
         }}
         aria-label={t('header.languageSelector')}
       >
-        <span style={{ fontSize: '1.1em' }}>{currentLanguage.flag}</span>
+        {/* Flag */}
+        <span style={{ fontSize: '1.2em', lineHeight: 1 }}>{currentLanguage.flag}</span>
+
+        {/* Small letters badge next to the flag */}
         {showLabel && (
-          <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: 28,
+              height: 20,
+              padding: '0 6px',
+              marginLeft: 6,
+              borderRadius: 9999,
+              background: 'rgba(0,0,0,0.06)',
+              fontSize: 12,
+              fontWeight: 600,
+            }}
+            aria-hidden
+          >
             {currentLanguage.code.toUpperCase()}
-          </Typography>
+          </span>
         )}
+
         <ExpandMore sx={{ fontSize: '1rem' }} />
       </IconButton>
 
@@ -163,8 +182,25 @@ export default function LanguageSelector({ variant = 'menu', showLabel = true })
               gap: 1.5
             }}
           >
-            <ListItemIcon sx={{ minWidth: 'auto' }}>
-              <span style={{ fontSize: '1.3em' }}>{language.flag}</span>
+            <ListItemIcon sx={{ minWidth: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <span style={{ fontSize: '1.25em', lineHeight: 1 }}>{language.flag}</span>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: 28,
+                  height: 20,
+                  padding: '0 6px',
+                  borderRadius: 9999,
+                  background: language.code === i18n.language ? 'rgba(0,0,0,0.12)' : 'transparent',
+                  fontSize: 12,
+                  fontWeight: language.code === i18n.language ? 700 : 500,
+                }}
+                aria-hidden
+              >
+                {language.code.toUpperCase()}
+              </span>
             </ListItemIcon>
             <ListItemText
               primary={language.nativeName}

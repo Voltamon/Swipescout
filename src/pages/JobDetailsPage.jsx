@@ -1,170 +1,20 @@
 ﻿import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Chip,
-  Divider,
-  Button,
-  Grid,
-  Avatar,
-  useTheme,
-  styled,
-  CircularProgress,
-  Alert,
-  Snackbar,
-  Stack,
-  IconButton,
-  LinearProgress,
-  Tooltip
-} from "@mui/material";
-import {
-  Work as WorkIcon,
-  LocationOn as LocationIcon,
-  AttachMoney as MoneyIcon,
-  Schedule as ScheduleIcon,
-  School as SchoolIcon,
-  Star as StarIcon,
-  Business as BusinessIcon,
-  PlayCircle as PlayIcon,
-  Pause as PauseIcon,
-  Event as EventIcon,
-  Description as DescriptionIcon,
-  List as ListIcon,
-  Info as InfoIcon,
-  Close as CloseIcon,
-  VolumeUp,
-  VolumeOff
-} from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { getJobDetails } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { useContext } from 'react';
 import { useVideoContext } from '@/contexts/VideoContext';
-import FeedIcon from '@mui/icons-material/Feed';
+import themeColors, { getButtonClass, getBadgeClass, getStatusClass } from '@/config/theme-colors-jobseeker';
 
-// Styled components
-const PageContainer = styled(Box)(({ theme }) => ({
-  //backgroundclr 
-  minHeight: "100vh",
-  paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(4),
-  pt: {
-    xs: 20,
-    sm: 16
-  }
-}));
-
-
-const VideoHeroContainer = styled(Box)(({ theme }) => ({
-  width: "100%",
-  height: "60vh",
-  minHeight: "400px",
-  maxHeight: "800px",
-  backgroundColor: "#000",
-  borderRadius: theme.shape.borderRadius * 2,
-  overflow: "hidden",
-  marginBottom: theme.spacing(3),
-  position: "relative",
-  boxShadow: theme.shadows[4],
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  '&:hover': {
-    cursor: 'pointer',
-  }
-}));
-
-const VideoOverlay = styled(Box)(({ theme }) => ({
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(4),
-  background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
-  color: "#fff",
-  zIndex: 2
-}));
-
-const VideoControls = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(1),
-  color:'rgba(248, 241, 241, 0.98)',
-  backgroundColor: 'rgba(226, 224, 224, 0.08)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  zIndex: 3
-}));
-
-
-const DetailCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.shape.borderRadius * 2,
-  boxShadow: theme.shadows[3],
-  marginBottom: theme.spacing(4),
-}));
-
-const DetailItem = styled(Box)(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-start",
-  marginBottom: theme.spacing(2),
-  "& .MuiSvgIcon-root": {
-    color: theme.palette.primary.main,
-    marginRight: theme.spacing(1.5),
-    marginTop: theme.spacing(0.5),
-  },
-}));
-
-const StatusBorder = styled('div')(({ status, theme }) => ({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  borderRadius: '8px',
-  border: `4px solid ${
-    status === 'uploading' ? 'rgb(46, 68, 194)' : 
-    status === 'processing' ? 'rgb(46, 68, 194)' : 
-    theme.palette.error.main
-  }`,
-  background: 'transparent',
-  zIndex: 2,
-  pointerEvents: 'none',
-  animation: 'pulse 2s infinite',
-  '@keyframes pulse': {
-    '0%': { opacity: 0.7 },
-    '50%': { opacity: 0.3 },
-    '100%': { opacity: 0.7 },
-  },
-}));
-
-const CompanyCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: theme.shape.borderRadius * 2,
-  boxShadow: theme.shadows[2],
-  marginBottom: theme.spacing(4),
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(2),
-}));
+// Note: This page intentionally uses Tailwind utility classes for layout and
+// uses shared color utility helpers from theme-colors-jobseeker for consistency.
 
 const JobDetailsPage = () => {
-  const theme = useTheme();
   const { id } = useParams();
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success"
-  });
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [showVideoInfo, setShowVideoInfo] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -172,7 +22,7 @@ const JobDetailsPage = () => {
   const { videos: localVideos } = useVideoContext();
   const videoRef = React.useRef(null);
   const [isHovering, setIsHovering] = useState(false);
-const [isMouseOverControls, setIsMouseOverControls] = useState(false);
+  const [isMouseOverControls, setIsMouseOverControls] = useState(false);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -185,11 +35,7 @@ const [isMouseOverControls, setIsMouseOverControls] = useState(false);
         console.error("Error fetching job details:", err);
         setError("Failed to load job details");
         setLoading(false);
-        setSnackbar({
-          open: true,
-          message: "Failed to load job details",
-          severity: "error"
-        });
+        setSnackbar({ open: true, message: "Failed to load job details", severity: "error" });
       }
     };
 
@@ -308,10 +154,12 @@ const handleMouseLeaveVideo = () => {
 
     
     return (
-      <VideoHeroContainer onClick={togglePlayback} 
-          onMouseEnter={handleMouseEnterVideo}
-    onMouseLeave={handleMouseLeaveVideo}
- >
+      <div
+        className="w-full relative rounded-2xl overflow-hidden shadow-lg mb-6 bg-black"
+        onClick={togglePlayback}
+        onMouseEnter={handleMouseEnterVideo}
+        onMouseLeave={handleMouseLeaveVideo}
+      >
         {videoUrl ? (
           <>
             <video
@@ -324,632 +172,250 @@ const handleMouseLeaveVideo = () => {
               onEnded={() => setIsPlaying(false)}
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                position: "absolute",
-                top: 0,
-                left: 0
-              }}
+              className="w-full h-[60vh] min-h-[400px] max-h-[800px] object-cover absolute inset-0"
             />
-            
-            <VideoControls>
-              <IconButton 
-                size="small" 
-                color="inherit" 
-                onClick={togglePlayback}
+
+            <div className="absolute left-0 right-0 bottom-0 p-4 bg-gradient-to-t from-black/90 to-transparent text-white z-10">
+              <div className="mb-4">
+                <h1 className="text-3xl font-bold mb-1">{job?.title}</h1>
+                <div className="flex gap-4 text-sm text-white/80">
+                  <div className="flex items-center gap-2">
+                    <span>🏢</span>
+                    <span>{job?.company || job?.companyName || job?.employerProfile?.company_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>📍</span>
+                    <span>{job?.location}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute top-4 right-4 max-w-xs transition-all">
+                <div className="text-sm">{displayVideo.video_title || "Video Title"}</div>
+              </div>
+            </div>
+
+            <div className="absolute left-0 right-0 bottom-0 flex items-center justify-between p-2 text-white/95 bg-black/20 z-20">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); togglePlayback(); }}
+                className="p-2 rounded bg-white/10 hover:bg-white/20"
               >
-                {isPlaying ? <PauseIcon /> : <PlayIcon />}
-              </IconButton>
-              <Typography variant="caption" color="inherit">
-                {videoRef.current ? formatTime(videoRef.current.currentTime) : '00:00'} / 
-                {videoRef.current ? formatTime(videoRef.current.duration) : '00:00'}
-              </Typography>
-              <IconButton 
-                size="small" 
-                color="inherit" 
-                onClick={toggleMute}
+                {isPlaying ? '⏸' : '▶️'}
+              </button>
+
+              <div className="text-xs">
+                {videoRef.current ? formatTime(videoRef.current.currentTime) : '00:00'} / {videoRef.current ? formatTime(videoRef.current.duration) : '00:00'}
+              </div>
+
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); toggleMute(); }}
+                className="p-2 rounded bg-white/10 hover:bg-white/20"
               >
-                {isMuted ? <VolumeOff /> : <VolumeUp />}
-              </IconButton>
-            </VideoControls>
+                {isMuted ? '🔇' : '🔊'}
+              </button>
+            </div>
           </>
         ) : (
-          <Box
-                onMouseEnter={() => setIsMouseOverControls(true)}
-      onMouseLeave={() => setIsMouseOverControls(false)}
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: theme.palette.grey[900],
-              color: theme.palette.common.white,
-              p: 3
-            }}
+          <div
+            onMouseEnter={() => setIsMouseOverControls(true)}
+            onMouseLeave={() => setIsMouseOverControls(false)}
+            className="w-full h-[60vh] min-h-[400px] max-h-[800px] flex flex-col items-center justify-center bg-gray-900 text-white p-6"
           >
             {(video.status === 'uploading' || video.status === 'processing') && (
               <>
-                <CircularProgress size={60} thickness={4} sx={{ mb: 2 }} />
-                <Typography variant="h5" align="center">
-                  {video.status === 'uploading' ? 
-                    `Uploading: ${video.progress || 0}%` : 
-                    "Processing your video..."}
-                </Typography>
+                <div className="loader mb-4" />
+                <h3 className="text-xl">{video.status === 'uploading' ? `Uploading: ${video.progress || 0}%` : 'Processing your video...'}</h3>
                 {video.status === 'uploading' && (
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={video.progress || 0} 
-                    sx={{ width: '80%', mt: 2 }}
-                  />
+                  <div className="w-4/5 bg-white/10 rounded-full mt-4 overflow-hidden">
+                    <div className="h-2 bg-indigo-600" style={{ width: `${video.progress || 0}%` }} />
+                  </div>
                 )}
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  This may take a few moments...
-                </Typography>
+                <p className="mt-2 text-sm">This may take a few moments...</p>
               </>
             )}
+
             {video.status === 'failed' && (
               <>
-                <Error color="error" sx={{ fontSize: 60, mb: 2 }} />
-                <Typography variant="h5" align="center">
-                  Video upload failed
-                </Typography>
-                <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-                  Please check the videos page for details or try again
-                </Typography>
+                <div className="text-6xl mb-2">⚠️</div>
+                <h3 className="text-xl">Video upload failed</h3>
+                <p className="mt-1 text-sm">Please check the videos page for details or try again</p>
               </>
             )}
+
             {(!video.status || video.status === 'completed') && !videoUrl && (
               <>
-                <InfoIcon color="disabled" sx={{ fontSize: 60, mb: 2 }} />
-                <Typography variant="h5" align="center">
-                  Video content not available
-                </Typography>
+                <div className="text-6xl mb-2">ℹ️</div>
+                <h3 className="text-xl">Video content not available</h3>
               </>
             )}
-          </Box>
+          </div>
         )}
 
         {(video.status === 'processing' || video.status === 'failed') && (
-          <StatusBorder status={video.status} />
+          <div className={`absolute inset-0 rounded border-4 ${video.status === 'processing' ? 'border-indigo-700' : 'border-red-600'} pointer-events-none`} />
         )}
-
-
-
-
-        <VideoOverlay>
-  {/* Job title and company info at the bottom */}
-  <Box sx={{ mb: 4 }}>
-    <Typography variant="h3" component="h1" sx={{ color: "#fff", mb: 1 }}>
-      {job?.title}
-    </Typography>
-    <Stack direction="row" spacing={2}>
-      <Typography
-        variant="subtitle1"
-        sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
-      >
-        <BusinessIcon fontSize="small" sx={{ mr: 1 }} />
-        {job?.company_name}
-      </Typography>
-      <Typography
-        variant="subtitle1"
-        sx={{ color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center" }}
-      >
-        <LocationIcon fontSize="small" sx={{ mr: 1 }} />
-        {job?.location}
-      </Typography>
-    </Stack>
-  </Box>
-
-  {/* Video info at the top */}
-  { displayVideo && (
-    <Box 
-      sx={{ 
-    position: "absolute",
-    top: theme.spacing(2),
-    right: theme.spacing(2),
-    padding: theme.spacing(1.5),
-    borderRadius: theme.shape.borderRadius,
-    maxWidth: "300px",
-    transition: 'all 0.3s ease',
-
-  }}
-    >
-      {/* <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-        Video Information
-      </Typography> */}
-      <Typography variant="body2">
-        <Box component="span" sx={{ opacity: 0.8 }}></Box> {displayVideo.video_title || "Video Title"}
-      </Typography>
-      {/* <Typography variant="body2">
-        <Box component="span" sx={{ opacity: 0.8 }}>Status:</Box> {displayVideo.status || "Not specified"}
-      </Typography>
-      {displayVideo.status === 'uploading' && (
-        <Typography variant="body2">
-          <Box component="span" sx={{ opacity: 0.8 }}>Progress:</Box> {displayVideo.progress || 0}%
-        </Typography>
-      )}
-      <Typography variant="body2">
-        <Box component="span" sx={{ opacity: 0.8 }}>Uploaded:</Box> {new Date(displayVideo.submitted_at).toLocaleDateString()}
-      </Typography> */}
-    </Box>
-  )}
-</VideoOverlay>
-      </VideoHeroContainer>
+      </div>
     );
   };
 
   if (loading) {
     return (
-      <PageContainer>
-        <Container maxWidth="lg">
-          <Box display="flex" justifyContent="center" my={4}>
-            <CircularProgress size={60} thickness={4} />
-          </Box>
-        </Container>
-      </PageContainer>
+      <div className="min-h-screen pt-16 pb-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex justify-center my-8">
+            <div className="loader" />
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (error || !job) {
     return (
-      <PageContainer>
-        <Container maxWidth="lg">
-          <Alert severity="error" sx={{ mt: 3 }}>
-            {error || "Job not found"}
-          </Alert>
-          <Button
-            variant="outlined"
-            startIcon={<WorkIcon />}
+      <div className="min-h-screen pt-16 pb-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded mb-4">{error || "Job not found"}</div>
+          <button
+            className={`px-4 py-2 rounded ${getButtonClass('outline')}`}
             onClick={() => navigate("/jobs-Listing-Page")}
-            sx={{ mt: 2 }}
           >
             Back to Jobs
-          </Button>
-        </Container>
-      </PageContainer>
+          </button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      <Container maxWidth="lg">
-        <Button
-          variant="outlined"
-          startIcon={<WorkIcon />}
-          onClick={() => navigate("/jobs-Listing-Page")}
-          sx={{ mb: 3 }}
-        >
-          Back to Jobs
-        </Button>
+    <div className="min-h-screen pt-12 pb-12">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-4">
+          <button
+            className={`px-4 py-2 rounded ${getButtonClass('outline')}`}
+            onClick={() => navigate("/jobs-Listing-Page")}
+          >
+            ← Back to Jobs
+          </button>
+        </div>
 
         {hasVideo() && renderVideoHero()}
 
-     <CompanyCard elevation={3}>
-       <Button 
-        onClick={() => navigate(`/employer-profile/${job.company.id}`)}
-        sx={{
-          textTransform: 'none',
-          p: 0,
-          justifyContent: 'flex-start',
-          '&:hover': {
-            background: 'transparent',
-            textDecoration: 'underline'
-          }
-        }}
-      >
-        <Typography variant="h5" component="h2" fontWeight="bold">
-          About {job.company_name}
-        </Typography>  <Tooltip title="View company profile">
-      <IconButton 
-        onClick={() => navigate(`/employer-profile/${job.company.userId}`)}
-        sx={{ color: theme.palette.primary.main }}
-      >
-        <BusinessIcon />
-      </IconButton>
-    </Tooltip>
-        </Button>
-      
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <DetailItem>
-              <BusinessIcon />
-              <Box>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Industry
-                </Typography>
-                <Typography variant="body1">
-                  {job.company.industry || "Not specified"}
-                </Typography>
-              </Box>
-            </DetailItem>
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-2xl">📄</div>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-slate-500">Job:</div>
+                  <h2 className="text-2xl font-bold">{job.title}</h2>
+                  <div className="flex gap-4 mt-2 text-sm text-slate-600">
+                    <div>Posted: {formatDate(job.posted_at)}</div>
+                    {job.deadline && <div>Expires: {formatDate(job.deadline)}</div>}
+                  </div>
+                </div>
+                <div>
+                  <button
+                    onClick={() => navigate(`/employer-profile/${job.employerProfile?.id || job.employerProfileId}`)}
+                    className={`px-3 py-2 rounded ${getBadgeClass('primary')}`}
+                  >
+                    About {job.company || job.companyName || job.employerProfile?.company_name}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <DetailItem>
-              <LocationIcon />
-              <Box>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Company Location
-                </Typography>
-                <Typography variant="body1">
-                  {job.company.location || "Not specified"}
-                </Typography>
-              </Box>
-            </DetailItem>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div>
+              <div className="mb-4">
+                <div className="text-sm text-slate-500">Location</div>
+                <div className="text-base">{job.location} {job.remote_ok ? "(Remote OK)" : ""}</div>
+              </div>
 
-            <DetailItem>
-              <WorkIcon />
-              <Box>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Company Size
-                </Typography>
-                <Typography variant="body1">
-                  {job.company.size || "Not specified"}
-                </Typography>
-              </Box>
-            </DetailItem>
-          </Grid>
+              <div className="mb-4">
+                <div className="text-sm text-slate-500">Salary Range</div>
+                <div className="text-base">{job.salary_min || job.salary_max ? `${formatSalary(job.salary_min)} - ${formatSalary(job.salary_max)}` : 'Not specified'}</div>
+              </div>
 
-          <Grid item xs={12} md={6}>
-            <DetailItem>
-              <EventIcon />
-              <Box>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Established
-                </Typography>
-                <Typography variant="body1">
-                  {job.company.establish_year || "Not specified"}
-                </Typography>
-              </Box>
-            </DetailItem>
+              <div className="mb-4">
+                <div className="text-sm text-slate-500">Employment Type</div>
+                <div className="text-base">{job.employment_type ? job.employment_type.replace('-', ' ').toUpperCase() : 'Not specified'}</div>
+              </div>
+            </div>
 
-            {job.company.website && (
-              <DetailItem>
-                <DescriptionIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Website
-                  </Typography>
-                  <Typography variant="body1">
-                    <a 
-                      href={job.company.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style={{ color: theme.palette.primary.main }}
-                    >
-                      {job.company.website}
-                    </a>
-                  </Typography>
-                </Box>
-              </DetailItem>
-            )}
+            <div>
+              <div className="mb-4">
+                <div className="text-sm text-slate-500">Experience Level</div>
+                <div className="text-base">{job.experience_level ? job.experience_level : 'Not specified'}</div>
+              </div>
 
-            {job.company.description && (
-              <DetailItem>
-                <InfoIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    About
-                  </Typography>
-                  <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
-                    {job.company.description}
-                  </Typography>
-                </Box>
-              </DetailItem>
-            )}
-          </Grid>
-        </Grid>
+              <div className="mb-4">
+                <div className="text-sm text-slate-500">Education Level</div>
+                <div className="text-base">{job.education_level ? job.education_level : 'Not specified'}</div>
+              </div>
+            </div>
+          </div>
 
-        {job.company.social && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
-              Social Media
-            </Typography>
-            <Stack direction="row" spacing={2}>
-              {job.company.social.linkedin && (
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<BusinessIcon />}
-                  href={job.company.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LinkedIn
-                </Button>
-              )}
-              {job.company.social.twitter && (
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<BusinessIcon />}
-                  href={job.company.social.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Twitter
-                </Button>
-              )}
-              {job.company.social.facebook && (
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<BusinessIcon />}
-                  href={job.company.social.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Facebook
-                </Button>
-              )}
-            </Stack>
-          </Box>
-        )}
-      </CompanyCard>
-        <DetailCard elevation={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Box display="flex" alignItems="center" mb={2}>
-                <Avatar
-                  sx={{
-                    bgcolor: theme.palette.primary.main,
-                    mr: 2,
-                    width: 60,
-                    height: 60
-                  }}
-                > 
-                  <FeedIcon fontSize="large" />
-                </Avatar>
-                <Box> <Typography variant="h6">Job:</Typography>
-                  <Typography variant="h3" component="h1" fontWeight="bold">
-                     {job.title}
-                  </Typography>
-                  <Stack direction="row" spacing={2} mt={1}>
-                    <Typography
-                      variant="subtitle1"
-                      color="text.secondary"
-                      sx={{ display: "flex", alignItems: "center" }}
-                    >
-                      <EventIcon fontSize="small" sx={{ mr: 1 }} />
-                      Posted: {formatDate(job.posted_at)}
-                    </Typography>
-                    {job.deadline && (
-                      <Typography
-                        variant="subtitle1"
-                        color="text.secondary"
-                        sx={{ display: "flex", alignItems: "center" }}
-                      >
-                        <EventIcon fontSize="small" sx={{ mr: 1 }} />
-                        Expires: {formatDate(job.deadline)}
-                      </Typography>
-                    )}
-                  </Stack>
-                </Box>
-              </Box>
-            </Grid>
+          <div className="mt-6">
+            <div className="text-sm text-slate-500 mb-2">Job Description</div>
+            <div className="whitespace-pre-line text-base text-slate-800">{job.description}</div>
+          </div>
 
-            <Grid item xs={12} md={6}>
-              <DetailItem>
-                <LocationIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Location
-                  </Typography>
-                  <Typography variant="body1">
-                    {job.location} {job.remote_ok ? "(Remote OK)" : ""}
-                  </Typography>
-                </Box>
-              </DetailItem>
+          {job.requirements && job.requirements.length > 0 && (
+            <div className="mt-6">
+              <div className="text-sm text-slate-500 mb-2">Requirements</div>
+              <ul className="list-disc pl-6">
+                {job.requirements.map((req, i) => <li key={i} className="mb-1">{req}</li>)}
+              </ul>
+            </div>
+          )}
 
-              <DetailItem>
-                <MoneyIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Salary Range
-                  </Typography>
-                  <Typography variant="body1">
-                    {job.salary_min || job.salary_max
-                      ? `${formatSalary(job.salary_min)} - ${formatSalary(job.salary_max)}`
-                      : "Not specified"}
-                  </Typography>
-                </Box>
-              </DetailItem>
+          {job.responsibilities && job.responsibilities.length > 0 && (
+            <div className="mt-6">
+              <div className="text-sm text-slate-500 mb-2">Responsibilities</div>
+              <ul className="list-disc pl-6">
+                {job.responsibilities.map((r, i) => <li key={i} className="mb-1">{r}</li>)}
+              </ul>
+            </div>
+          )}
 
-              <DetailItem>
-                <ScheduleIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Employment Type
-                  </Typography>
-                  <Typography variant="body1">
-                    {job.employment_type
-                      ? job.employment_type.replace("-", " ").toUpperCase()
-                      : "Not specified"}
-                  </Typography>
-                </Box>
-              </DetailItem>
-            </Grid>
+          {job.skills && job.skills.length > 0 && (
+            <div className="mt-6">
+              <div className="text-sm text-slate-500 mb-2">Required Skills</div>
+              <div className="flex flex-wrap gap-2">
+                {job.skills.map(s => (
+                  <span key={s.id} className={`px-2 py-1 rounded border ${getBadgeClass('gray')}`}>{s.name}</span>
+                ))}
+              </div>
+            </div>
+          )}
 
-            <Grid item xs={12} md={6}>
-              <DetailItem>
-                <StarIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Experience Level
-                  </Typography>
-                  <Typography variant="body1">
-                    {job.experience_level === "entry"
-                      ? "Entry Level"
-                      : job.experience_level === "mid"
-                      ? "Mid Level"
-                      : job.experience_level === "senior"
-                      ? "Senior Level"
-                      : job.experience_level === "executive"
-                      ? "Executive"
-                      : "Not specified"}
-                  </Typography>
-                </Box>
-              </DetailItem>
+          {job.categories && job.categories.length > 0 && (
+            <div className="mt-6">
+              <div className="text-sm text-slate-500 mb-2">Categories</div>
+              <div className="flex flex-wrap gap-2">
+                {job.categories.map(c => (<span key={c.id} className={`px-2 py-1 rounded border ${getBadgeClass('secondary')}`}>{c.name}</span>))}
+              </div>
+            </div>
+          )}
 
-              <DetailItem>
-                <SchoolIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Education Level
-                  </Typography>
-                  <Typography variant="body1">
-                    {job.education_level === "high_school"
-                      ? "High School"
-                      : job.education_level === "associate"
-                      ? "Associate Degree"
-                      : job.education_level === "bachelor"
-                      ? "Bachelor's Degree"
-                      : job.education_level === "master"
-                      ? "Master's Degree"
-                      : job.education_level === "phd"
-                      ? "PhD"
-                      : "Not specified"}
-                  </Typography>
-                </Box>
-              </DetailItem>
-            </Grid>
+          {role === 'job_seeker' && (
+            <div className="flex justify-center mt-6">
+              <button onClick={() => navigate(`/apply/${job.id}`)} className={`${getButtonClass('primary')} text-white px-8 py-3 rounded-full`}>Apply Now</button>
+            </div>
+          )}
+        </div>
+      </div>
 
-            <Grid item xs={12}>
-              <Divider sx={{ my: 3 }} />
-              <DetailItem>
-                <DescriptionIcon />
-                <Box>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Job Description
-                  </Typography>
-                  <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
-                    {job.description}
-                  </Typography>
-                </Box>
-              </DetailItem>
-            </Grid>
-
-            {job.requirements && job.requirements.length > 0 && (
-              <Grid item xs={12}>
-                <DetailItem>
-                  <ListIcon />
-                  <Box>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Requirements
-                    </Typography>
-                    <Box component="ul" sx={{ pl: 4, mt: 1 }}>
-                      {job.requirements.map((req, index) => (
-                        <Box component="li" key={index} sx={{ mb: 1 }}>
-                          <Typography variant="body1">{req}</Typography>
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
-                </DetailItem>
-              </Grid>
-            )}
-
-            {job.responsibilities && job.responsibilities.length > 0 && (
-              <Grid item xs={12}>
-                <DetailItem>
-                  <ListIcon />
-                  <Box>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Responsibilities
-                    </Typography>
-                    <Box component="ul" sx={{ pl: 4, mt: 1 }}>
-                      {job.responsibilities.map((resp, index) => (
-                        <Box component="li" key={index} sx={{ mb: 1 }}>
-                          <Typography variant="body1">{resp}</Typography>
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
-                </DetailItem>
-              </Grid>
-            )}
-
-            {job.skills && job.skills.length > 0 && (
-              <Grid item xs={12}>
-                <DetailItem>
-                  <StarIcon />
-                  <Box>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Required Skills
-                    </Typography>
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-                      {job.skills.map((skill) => (
-                        <Chip
-                          key={skill.id}
-                          label={skill.name}
-                          color="primary"
-                          variant="outlined"
-                          sx={{ fontSize: "0.875rem" }}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                </DetailItem>
-              </Grid>
-            )}
-
-            {job.categories && job.categories.length > 0 && (
-              <Grid item xs={12}>
-                <DetailItem>
-                  <ListIcon />
-                  <Box>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Categories
-                    </Typography>
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-                      {job.categories.map((category) => (
-                        <Chip
-                          key={category.id}
-                          label={category.name}
-                          color="secondary"
-                          variant="outlined"
-                          sx={{ fontSize: "0.875rem" }}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                </DetailItem>
-              </Grid>
-            )}
-          </Grid>
-        </DetailCard>
-
-        {role === "job_seeker" && (
-          <Box display="flex" justifyContent="center" mt={3}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => navigate(`/apply/${job.id}`)}
-              sx={{ px: 6, py: 1.5, fontSize: "1.1rem" }}
-            >
-              Apply Now
-            </Button>
-          </Box>
-        )}
-      </Container>
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
+      {snackbar.open && (
+        <div className={`fixed top-6 right-6 p-3 rounded ${snackbar.severity === 'error' ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-green-50 border border-green-200 text-green-800'}`}>
           {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </PageContainer>
+          <button className="ml-3 font-bold" onClick={() => setSnackbar({ ...snackbar, open: false })}>×</button>
+        </div>
+      )}
+    </div>
   );
 };
 

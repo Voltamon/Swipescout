@@ -1,5 +1,9 @@
 ﻿import about from "./about.json";
 import admin from "./admin.json";
+import adminTabs from "./adminTabs.json";
+import adminAnalytics from "./adminAnalytics.json";
+import adminJobs from "./adminJobs.json";
+import adminVideos from "./adminVideos.json";
 import aiAnalysis from "./aiAnalysis.json";
 import aiInterview from "./aiInterview.json";
 import aiMatching from "./aiMatching.json";
@@ -7,12 +11,14 @@ import analysis from "./analysis.json";
 import auth from "./auth.json";
 import common from "./common.json";
 import contact from "./contact.json";
+import credits from "./credits.json";
 import employer from "./employer.json";
 import employerTabs from "./employerTabs.json";
 import errors from "./errors.json";
 import faq from "./faq.json";
 import footer from "./footer.json";
 import header from "./header.json";
+import help from "./help.json";
 import home from "./home.json";
 import homepage from "./homepage.json";
 import interview from "./interview.json";
@@ -29,6 +35,7 @@ import profile from "./profile.json";
 import sampleVideos from "./sampleVideos.json";
 import search from "./search.json";
 import settings from "./settings.json";
+import systemSettings from "./systemSettings.json";
 import success from "./success.json";
 import templates from "./templates.json";
 import videos from "./videos.json";
@@ -36,6 +43,10 @@ import videos from "./videos.json";
 export default {
   about,
   admin,
+  adminTabs,
+  adminAnalytics,
+  adminJobs,
+  adminVideos,
   aiAnalysis,
   aiInterview,
   aiMatching,
@@ -43,12 +54,14 @@ export default {
   auth,
   common,
   contact,
+  credits,
   employer,
   employerTabs,
   errors,
   faq,
   footer,
   header,
+  help,
   home,
   homepage,
   interview,
@@ -65,6 +78,7 @@ export default {
   sampleVideos,
   search,
   settings,
+  systemSettings,
   success,
   templates,
   videos

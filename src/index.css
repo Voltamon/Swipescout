@@ -1,12 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Almarai:wght@400;700&family=Tajawal:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+/* Import fonts MUST be before any other statements (except @charset) */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import beautiful Arabic fonts from Google Fonts - Cairo has excellent Arabic shaping */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Almarai:wght@400;700&family=Tajawal:wght@400;500;700&display=swap');
-
-/* Import Chinese fonts for better rendering */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -149,16 +148,16 @@
   }
 }
 
-html, body, #root { /* Or whatever your root div id is */
-  height: auto;           /* allow document height to grow */
-  min-height: 100%;
-  overflow-y: auto !important; /* allow vertical scrolling */
-}
-
-body{
-  background:none;
+html, body {
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  height: auto;
+}
+
+#root {
+  min-height: 100%;
+  height: auto;
 }
 
 /* Performance optimizations for faster rendering */

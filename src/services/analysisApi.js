@@ -1,9 +1,9 @@
 ﻿import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api'; // Adjust this to your backend URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
 
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   }
@@ -67,5 +67,5 @@ export const generateCareerPathRecommendations = (userId) => {
  * @returns {Promise<any>} A list of all jobs.
  */
 export const getAllJobs = () => {
-    return apiClient.get('/job/all');
+    return apiClient.get('/job');
 }

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/UI/button.jsx';
@@ -124,6 +124,38 @@ const Home = () => {
     }
   }, [i18n.language, t]);
 
+  // Keep track of viewport width and when switching from mobile/tablet
+  // (<=1024px) to desktop (>=1025px) scroll to top so user sees the
+  // full desktop hero instead of remaining mid-scroll.
+  const prevWidthRef = useRef(typeof window !== 'undefined' ? window.innerWidth : 0);
+  useEffect(() => {
+    const handleResize = () => {
+      const prev = prevWidthRef.current || 0;
+      const curr = window.innerWidth;
+      // If we crossed from <=1024 to >=1025, scroll to top.
+      if (prev <= 1024 && curr >= 1025) {
+        try {
+          // immediate reset of document scroll positions
+          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+          if (document.documentElement) document.documentElement.scrollTop = 0;
+          if (document.body) document.body.scrollTop = 0;
+        } catch (e) {
+          // ignore
+        }
+        // Small timeout to ensure CSS reflows (optional)
+        setTimeout(() => {
+          try {
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+          } catch (e) {}
+        }, 40);
+      }
+      prevWidthRef.current = curr;
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
     setError("");
@@ -137,8 +169,8 @@ const Home = () => {
   };
 
   const handleOpenAuthDialog = (tabIndex = 0) => {
-    // Navigate to route-based auth pages so shared AuthPage component is used
-    navigate(tabIndex === 1 ? '/register' : '/login');
+    setActiveTab(tabIndex);
+    setShowAuthDialog(true);
   };
 
   const handleChange = (e) => {
@@ -407,7 +439,7 @@ const Home = () => {
   
 
    return (
-    <div className="home-wrapper">
+    <div className="home-wrapper" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       {/* SwipeScout Header */}
       <div className="home-header">
         <div className="home-logo-container">
@@ -617,12 +649,12 @@ const Home = () => {
 
             {/* End of New Section */}
 
-      {/* Authentication Route / Modal - AuthPage handles login/register UI */}
-      { (location.pathname === '/login' || location.pathname === '/register' || showAuthDialog) && (
+      {/* Auth Dialog */}
+      {showAuthDialog && (
         <AuthPage
-          open={true}
-          onClose={() => { setShowAuthDialog(false); navigate('/'); }}
-          initialTab={location.pathname === '/register' ? 1 : activeTab}
+          open={showAuthDialog}
+          onClose={() => setShowAuthDialog(false)}
+          initialTab={activeTab}
           redirectPath={redirectPath}
         />
       )}

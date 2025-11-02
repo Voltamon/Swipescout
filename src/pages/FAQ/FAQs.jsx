@@ -20,59 +20,59 @@ import {
 } from "lucide-react";
 
 const FAQPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('faq');
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
   const faqData = [
     {
       category: "general",
-      question: t('faq.questions.whatIsSwipeScout.question'),
-      answer: t('faq.questions.whatIsSwipeScout.answer')
+      question: t('questions.whatIsSwipeScout.question'),
+      answer: t('questions.whatIsSwipeScout.answer')
     },
     {
       category: "job-seekers",
-      question: t('faq.questions.createVideoResume.question'),
-      answer: t('faq.questions.createVideoResume.answer')
+      question: t('questions.createVideoResume.question'),
+      answer: t('questions.createVideoResume.answer')
     },
     {
       category: "job-seekers",
-      question: t('faq.questions.videoVisibility.question'),
-      answer: t('faq.questions.videoVisibility.answer')
+      question: t('questions.videoVisibility.question'),
+      answer: t('questions.videoVisibility.answer')
     },
     {
       category: "employers",
-      question: t('faq.questions.jobPostingCost.question'),
-      answer: t('faq.questions.jobPostingCost.answer')
+      question: t('questions.jobPostingCost.question'),
+      answer: t('questions.jobPostingCost.answer')
     },
     {
       category: "technical",
-      question: t('faq.questions.videoFormats.question'),
-      answer: t('faq.questions.videoFormats.answer')
+      question: t('questions.videoFormats.question'),
+      answer: t('questions.videoFormats.answer')
     },
     {
       category: "technical",
-      question: t('faq.questions.uploadFailing.question'),
-      answer: t('faq.questions.uploadFailing.answer')
+      question: t('questions.uploadFailing.question'),
+      answer: t('questions.uploadFailing.answer')
     },
     {
       category: "general",
-      question: t('faq.questions.howMatching.question'),
-      answer: t('faq.questions.howMatching.answer')
+      question: t('questions.howMatching.question'),
+      answer: t('questions.howMatching.answer')
     },
     {
       category: "employers",
-      question: t('faq.questions.searchCandidates.question'),
-      answer: t('faq.questions.searchCandidates.answer')
+      question: t('questions.searchCandidates.question'),
+      answer: t('questions.searchCandidates.answer')
     }
   ];
 
   const categories = [
-    { id: "all", label: t('faq.categories.all') },
-    { id: "general", label: t('faq.categories.general') },
-    { id: "job-seekers", label: t('faq.categories.jobSeekers') },
-    { id: "employers", label: t('faq.categories.employers') },
-    { id: "technical", label: t('faq.categories.technical') }
+    { id: "all", label: t('categories.all') },
+    { id: "general", label: t('categories.general') },
+    { id: "job-seekers", label: t('categories.jobSeekers') },
+    { id: "employers", label: t('categories.employers') },
+    { id: "technical", label: t('categories.technical') }
   ];
 
   const filteredFaqs = faqData.filter(faq => {

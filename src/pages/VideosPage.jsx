@@ -165,11 +165,18 @@ export default function VideosPage({ setVideoTab }) {
   const handleVideoHover = (videoId, isHovering) => {
     if (isHovering) {
       setHoveredVideo(videoId);
-      const videoEl = videoRefs.current[videoId];
-      if (videoEl) {
-        videoEl.currentTime = 0;
-        videoEl.play().catch(e => console.log('Autoplay prevented:', e));
-      }
+      // the video element may not be mounted yet (we render poster first), so wait briefly
+      setTimeout(() => {
+        const videoEl = videoRefs.current[videoId];
+        if (videoEl) {
+          try {
+            videoEl.currentTime = 0;
+            videoEl.play().catch(e => console.log('Autoplay prevented:', e));
+          } catch (e) {
+            console.warn('Failed to play video on hover', e);
+          }
+        }
+      }, 120);
     } else {
       const videoEl = videoRefs.current[videoId];
       if (videoEl && !videoEl.paused) {
@@ -190,9 +197,21 @@ export default function VideosPage({ setVideoTab }) {
     });
   };
 
+  // Normalize video fields so UI can rely on common keys (title, videoUrl, thumbnailUrl)
   const allVideos = [
     ...localVideos.map(v => ({ ...v, isLocal: true })),
-    ...serverVideos.map(v => ({ ...v, isLocal: false, status: v.status || 'completed' }))
+    ...serverVideos.map(v => ({
+      // preserve original server props but map common aliases
+      ...v,
+      isLocal: false,
+      status: v.status || 'completed',
+      // title aliases: title, video_title, videoTitle, name
+      title: v.title || v.video_title || v.videoTitle || v.name || v.original_name || v.videoName || v.videoTitle,
+      // video url aliases
+      videoUrl: v.videoUrl || v.video_url || v.secure_url || v.videoUrl || v.video_url_signed || v.file_url,
+      // thumbnail aliases
+      thumbnailUrl: v.thumbnailUrl || v.thumbnail_url || v.thumb || v.poster || v.preview_image,
+    }))
   ];
 
   const filteredVideos = allVideos.filter(video => {
@@ -397,21 +416,52 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
     >
       {/* Video Preview */}
       <div className="relative aspect-[9/16] bg-black overflow-hidden">
-        {video.thumbnailUrl || video.videoUrl ? (
-          <video
-            ref={el => videoRefs.current[video.id] = el}
-            src={`${VITE_API_BASE_URL}${video.videoUrl || video.thumbnailUrl}`}
-            poster={video.thumbnailUrl ? `${VITE_API_BASE_URL}${video.thumbnailUrl}` : undefined}
-            muted={isMuted}
-            loop
-            className="w-full h-full object-cover"
-            onClick={() => !isProcessing && !isFailed && onClick(video)}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Video className="h-16 w-16 text-gray-400" />
-          </div>
-        )}
+        {
+          // compute poster and video src safely (handle absolute or relative paths)
+        }
+        {(() => {
+          const posterUrl = video.thumbnailUrl
+            ? (video.thumbnailUrl.startsWith('http') ? video.thumbnailUrl : `${VITE_API_BASE_URL}${video.thumbnailUrl}`)
+            : null;
+          const videoSrc = video.videoUrl
+            ? (video.videoUrl.startsWith('http') ? video.videoUrl : `${VITE_API_BASE_URL}${video.videoUrl}`)
+            : null;
+
+          // If we have a poster and the card is not currently hovered, show the poster image
+          if (posterUrl && hoveredVideo !== video.id) {
+            return (
+              <img
+                src={posterUrl}
+                alt={video.title || 'Video thumbnail'}
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => !isProcessing && !isFailed && onClick(video)}
+              />
+            );
+          }
+
+          // Otherwise, if we have a video source, render the video element (plays on hover)
+          if (videoSrc) {
+            return (
+              <video
+                ref={el => (videoRefs.current[video.id] = el)}
+                src={videoSrc}
+                poster={posterUrl || undefined}
+                preload="metadata"
+                muted={isMuted}
+                loop
+                className="w-full h-full object-cover"
+                onClick={() => !isProcessing && !isFailed && onClick(video)}
+              />
+            );
+          }
+
+          // Fallback UI when no media is available
+          return (
+            <div className="w-full h-full flex items-center justify-center">
+              <Video className="h-16 w-16 text-gray-400" />
+            </div>
+          );
+        })()}
 
         {/* Processing Overlay */}
         {isProcessing && (

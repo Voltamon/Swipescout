@@ -136,10 +136,10 @@ const EmployerTabs = () => {
         {/* Welcome Section */}
         <div className="space-y-2">
           <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
-            Welcome back, {user?.companyName || 'Employer'}! 🏢
+            {t('employerTabs:welcome', { name: user?.companyName || 'Employer' })}
           </h1>
           <p className={themeColors.text.secondary}>
-            Manage your hiring process, company profile, and find the best talent for your team.
+            {t('employerTabs:welcome_message')}
           </p>
         </div>
 
@@ -148,53 +148,53 @@ const EmployerTabs = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className={`border-l-4 ${themeColors.borders.primary} hover:shadow-lg transition-shadow`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('employerTabs:active_jobs')}</CardTitle>
                 <Briefcase className={`h-4 w-4 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.activeJobs ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
                   <TrendingUp className="inline h-3 w-3 mr-1" />
-                  Currently hiring positions
+                  {t('employerTabs:currently_hiring')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-cyan-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">New Applications</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('employerTabs:new_applications')}</CardTitle>
                 <FileText className={`h-4 w-4 ${themeColors.iconBackgrounds.secondary.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.newApplications ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  Pending review
+                  {t('employerTabs:pending_review')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Shortlisted</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('employerTabs:shortlisted')}</CardTitle>
                 <UserPlus className={`h-4 w-4 ${themeColors.iconBackgrounds.warning.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.shortlisted ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  Candidates in pipeline
+                  {t('employerTabs:candidates_in_pipeline')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('employerTabs:profile_views')}</CardTitle>
                 <Eye className={`h-4 w-4 ${themeColors.iconBackgrounds.info.split(' ')[1]}`} />
               </CardHeader>
               <CardContent>
                 <div className={`text-2xl font-bold ${themeColors.text.primary}`}>{stats?.profileViews ?? 0}</div>
                 <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                  Company visibility
+                  {t('employerTabs:company_visibility')}
                 </p>
               </CardContent>
             </Card>
