@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 
 ChartJS.register(
   CategoryScale,
