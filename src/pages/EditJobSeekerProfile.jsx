@@ -1,72 +1,11 @@
-﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  TextField,
-  Button,
-  Avatar,
-  Chip,
-  IconButton,
-  Paper,
-  Divider,
-  Tab,
-  Tabs,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-  CircularProgress,
-  Snackbar,
-  Alert,
-  styled,
-  useTheme,
-  useMediaQuery,
-  InputAdornment,
-  Checkbox,
-  FormControlLabel
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Add as AddIcon,
-  Save as SaveIcon,
-  Cancel as CancelIcon,
-  PhotoCamera as PhotoCameraIcon,
-  VideoCall as VideoCallIcon,
-  Work as WorkIcon,
-  School as SchoolIcon,
-  LocationOn as LocationIcon,
-  Email as EmailIcon,
-  Phone as PhoneIcon,
-  Language as LanguageIcon,
-  LinkedIn as LinkedInIcon,
-  GitHub as GitHubIcon,
-  Twitter as TwitterIcon,
-  PlayArrow as PlayArrowIcon,
-  Person as PersonIcon,
-  Code as CodeIcon,
-  Business as BusinessIcon,
-  Book as BookIcon,
-  Videocam as VideocamIcon
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+﻿import React, { useState, useEffect, useRef  } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   getUserProfile,
   updateUserProfile,
   getUserSkills,
   addUserSkill,
-  updateUserSkill,
+  
   deleteUserSkill,
   getUserExperiences,
   addUserExperience,
@@ -84,94 +23,42 @@ import {
 import dayjs from 'dayjs';
 
 
-// Styled components
-const ProfileContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
-  minHeight: '100vh',
-  paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(4)
-}));
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Input } from '@/components/UI/input.jsx';
+import { Label } from '@/components/UI/label.jsx';
+import { Textarea } from '@/components/UI/textarea.jsx';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/UI/avatar.jsx';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/UI/tabs.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/UI/dialog.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Progress } from '@/components/UI/progress.jsx';
+import {
+  User,
+  MapPin,
+  Mail,
+  Phone,
+  Camera,
+  Video,
+  Play,
+  Pause,
+  Plus,
+  Edit,
+  Trash,
+  Save,
+  X,
+  RefreshCw
+} from 'lucide-react';
+import themeColors from '@/config/theme-colors-jobseeker';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-const ProfileAvatar = styled(Avatar)(({ theme }) => ({
-  width: 120,
-  height: 120,
-  border: `4px solid ${theme.palette.primary.main}`,
-  margin: '0 auto',
-  position: 'relative',
-}));
-
-const AvatarUploadButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  right: 0,
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
-  },
-}));
-
-const SectionPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  borderRadius: theme.shape.borderRadius * 2,
-  boxShadow: theme.shadows[2],
-}));
-
-const SkillChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.primary.light,
-  color: theme.palette.primary.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.primary.main,
-  }
-}));
-
-const VideoCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: theme.shape.borderRadius * 2,
-  overflow: 'hidden',
-  transition: 'transform 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[8],
-  }
-}));
-
-const VideoCardMedia = styled(CardMedia)(({ theme }) => ({
-  height: 0,
-  paddingTop: '56.25%', // 16:9 aspect ratio
-  position: 'relative',
-}));
-
-const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`profile-tabpanel-${index}`}
-      aria-labelledby={`profile-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-};
+// A tiny wrapper used by MUI-based code earlier. We use shadcn Tabs below instead.
 
 const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSaved = () => {} }) => {
-  const theme = useTheme();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const location = useLocation();
 
   // State for tabs
   const [tabValue, setTabValue] = useState(0);
@@ -204,7 +91,6 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState('');
   const [avatarPicture, setAvatarPicture] = useState('');
-  const [avatarVersion, setAvatarVersion] = useState(0); // Cache busting
 
 
   // State for experiences
@@ -244,7 +130,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     message: '',
     severity: 'success'
   });
-  const [dateError, setDateError] = useState(false);
+  
   const fileInputRef = useRef(null);
 
   // Add this helper function somewhere in your component (outside the main function)
@@ -312,6 +198,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
               profileResponse = await getUserProfile();
               setSnackbar({ open: true, message: 'Starter profile created..', severity: 'success' });
             } catch (err) {
+              console.error('Failed to create starter profile:', err);
               setSnackbar({ open: true, message: 'Failed to create starter profile ..', severity: 'error' });
             }
           } else {
@@ -333,8 +220,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
         setExperiences(experiencesResponse.data?.experiences || []);
         setEducation(educationResponse.data?.educations || []);
         setVideos(videosResponse.data?.videos || []);
-
-        setAvatarVersion(0);
+        
         const initialAvatarUrl = profileResponse.data?.profile_pic ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}` : '';
         try {
           if (initialAvatarUrl) await verifyImageAvailability(initialAvatarUrl);
@@ -354,16 +240,63 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     fetchUserData();
   }, [initialProfile]);
 
-  // Handle tab change
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  // Listen for query params so other pages can link directly to a tab or open a dialog
+  useEffect(() => {
+    if (!location) return;
+    const params = new URLSearchParams(location.search);
+    const tabParam = (params.get('tab') || params.get('openTab') || '').toLowerCase();
+    const action = (params.get('action') || params.get('open') || '').toLowerCase();
 
-  // Handle profile form change
+    const tabMap = {
+      'basic': 0,
+      'info': 0,
+      'profile': 0,
+      'skills': 1,
+      'experience': 2,
+      'education': 3,
+      'videos': 4,
+      'video-upload': 4,
+      'video_upload': 4,
+      'video': 4
+    };
+
+    let targetTab;
+    if (tabParam) {
+      if (tabMap.hasOwnProperty(tabParam)) targetTab = tabMap[tabParam];
+      else if (!Number.isNaN(parseInt(tabParam, 10))) targetTab = parseInt(tabParam, 10);
+    }
+
+    if (typeof targetTab === 'number') {
+      setTabValue(targetTab);
+    }
+
+    // Open specific dialogs when asked
+    if (tabParam === 'add-skill' || action === 'add-skill' || (tabParam === 'skills' && action === 'add')) {
+      setSkillDialogOpen(true);
+    }
+
+    if (tabParam === 'add-experience' || action === 'add-experience' || (tabParam === 'experience' && action === 'add')) {
+      handleOpenExperienceDialog();
+    }
+
+    if (tabParam === 'add-education' || action === 'add-education' || (tabParam === 'education' && action === 'add')) {
+      handleOpenEducationDialog();
+    }
+
+    if (tabParam === 'video-upload' || action === 'upload-video' || (tabParam === 'videos' && action === 'upload')) {
+      // trigger upload flow (existing helper will navigate to upload route)
+      handleUploadVideo();
+    }
+  }, [location.search]);
+
+  // Handle tab change (shadcn Tabs uses value strings)
+  const handleTabChange = (value) => setTabValue(value);
+
+  // Handle profile form change (compatible with Input/Textarea components)
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
 
-    if (name.includes('.')) {
+    if (name && name.includes('.')) {
       const [parent, child] = name.split('.');
       setProfile({
         ...profile,
@@ -372,11 +305,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           [child]: value
         }
       });
-    } else {
-      setProfile({
-        ...profile,
-        [name]: value
-      });
+    } else if (name) {
+      setProfile({ ...profile, [name]: value });
     }
   };
 
@@ -403,12 +333,14 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
       setProfile(updatedProfile);
       try {
         onSaved && onSaved(updatedProfile);
-      } catch (e) {
-        // ignore callback errors
+      } catch {
+        /* ignore callback errors */
       }
       try {
         onClose && onClose();
-      } catch (e) {}
+      } catch {
+        /* ignore */
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
       setSnackbar({
@@ -455,16 +387,17 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
         const newPic = response.data?.profile?.profile_pic || response.data.logo_url;
         if (newPic) setProfile(prev => ({ ...prev, profile_pic: newPic }));
         setAvatarPicture(serverUrl);
-        showSnackbar("Profile picture updated!", "success");
+        setSnackbar({ open: true, message: 'Profile picture updated!', severity: 'success' });
       } else {
-        showSnackbar("Uploaded! Refresh to see changes.", "info");
+        setSnackbar({ open: true, message: 'Uploaded! Refresh to see changes.', severity: 'info' });
       }
 
       // Clean up preview
       URL.revokeObjectURL(tempPreviewUrl);
 
     } catch (error) {
-      showSnackbar("Upload failed. Please try again.", "error");
+      console.error('Avatar upload error:', error);
+      setSnackbar({ open: true, message: 'Upload failed. Please try again.', severity: 'error' });
     } finally {
       setSaving(false);
     }
@@ -781,809 +714,384 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-
   return (
-    <ProfileContainer>
-      <Container maxWidth="lg">
-        {/* Page Header */}
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" component="h1" fontWeight="bold">
-            Edit My Profile
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<SaveIcon />}
-            onClick={handleSaveProfile}
-            disabled={saving}
-            sx={{ borderRadius: '20px', px: 3 }}
-          >
-            {saving ? 'Saving...' : 'Save Profile'}
-          </Button>
-        </Box>
+    <div className="container mx-auto py-6 px-4 max-w-6xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className={`text-3xl font-bold mb-1 ${themeColors.text.gradient}`}>Edit My Profile</h1>
+          <p className="text-sm text-muted-foreground">Update your profile details, skills, experience and videos.</p>
+        </div>
 
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            {/* Profile Avatar Section */}
-            <SectionPaper elevation={1}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Box sx={{ position: 'relative' }}>
-                  <ProfileAvatar
-                    src={avatarPicture}
-                    alt={`${profile.first_name} ${profile.last_name}`}
-                    sx={{
-                      '& .MuiAvatar-img': {
-                        display: avatarPicture ? 'block' : 'none'
-                      }
-                    }}
-                    imgProps={{
-                      onError: (e) => {
-                        e.target.style.display = 'none';
-                        // Automatically retry after delay
-                        if (avatarPicture && avatarPicture.startsWith(VITE_API_BASE_URL)) {
-                          setTimeout(() => {
-                            setAvatarPicture(`${avatarPicture.split('?')[0]}?retry=${Date.now()}`);
-                          }, 2000);
-                        }
-                      }
-                    }}
-                  >
-                    {!avatarPicture && `${profile.first_name?.charAt(0)}${profile.last_name?.charAt(0)}`}
-                  </ProfileAvatar>
+        <Button onClick={handleSaveProfile} className={`rounded-full px-4 ${themeColors.buttons.primary}`} disabled={saving}>
+          <Save className="h-4 w-4 mr-2" />
+          {saving ? 'Saving...' : 'Save Profile'}
+        </Button>
+      </div>
 
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-8 w-8 rounded-full border-4 border-gray-200 border-t-indigo-600"></div>
+        </div>
+      ) : (
+        <>
+          {/* Avatar Section */}
+          <Card className="mb-6">
+            <CardContent className="flex flex-col items-center gap-3 py-8">
+              <div className="relative">
+                <Avatar className="h-28 w-28">
+                  {avatarPicture ? (
+                    <AvatarImage src={avatarPicture} alt={`${profile.first_name} ${profile.last_name}`} />
+                  ) : (
+                    <AvatarFallback className="text-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 text-white">
+                      {`${(profile.first_name||'')?.charAt(0)}${(profile.last_name||'')?.charAt(0)}` || 'U'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
 
-                  <input
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    id="avatar-upload"
-                    type="file"
-                    onChange={handleAvatarUpload}
-                    ref={fileInputRef}
-                  />
-                  <label htmlFor="avatar-upload">
-                    <AvatarUploadButton
-                      component="span"
-                      size="small"
-                    >
-                      <PhotoCameraIcon fontSize="small" />
-                    </AvatarUploadButton>
-                  </label>
-                </Box>
-                <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
-                  {profile.first_name} {profile.last_name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {profile.title}
-                </Typography>
-              </Box>
-            </SectionPaper>
-
-            {/* Tabs Navigation */}
-            <Paper sx={{ mb: 3, borderRadius: '16px', overflow: 'hidden' }}>
-              <Tabs
-                value={tabValue}
-                onChange={handleTabChange}
-                indicatorColor="primary"
-                textColor="primary"
-                variant={isMobile ? "scrollable" : "fullWidth"}
-                scrollButtons={isMobile ? "auto" : false}
-                centered={!isMobile}
-                sx={{
-                  '& .MuiTab-root': {
-                    minHeight: 64,
-                    ...(isMobile ? { minWidth: 'auto', px: 1 } : {})
-                  }
-                }}
-              >
-                <Tab icon={<PersonIcon />} label="Basic Info" />
-                <Tab icon={<CodeIcon />} label="Skills" />
-                <Tab icon={<BusinessIcon />} label="Experience" />
-                <Tab icon={<BookIcon />} label="Education" />
-                <Tab icon={<VideocamIcon />} label="Videos" />
-              </Tabs>
-
-              {/* Basic Info Tab */}
-              <TabPanel value={tabValue} index={0}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="First Name"
-                      name="first_name"
-                      value={profile.first_name || ''}
-                      onChange={handleProfileChange}
-                      required
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PersonIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Second Name"
-                      name="Second_name"
-                      value={profile.Second_name || ''}
-                      onChange={handleProfileChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Last Name"
-                      name="last_name"
-                      value={profile.last_name || ''}
-                      onChange={handleProfileChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Professional Title"
-                      name="title"
-                      value={profile.title || ''}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Location"
-                      name="location"
-                      value={profile.location || ''}
-                      onChange={handleProfileChange}
-                      placeholder="City, Country"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LocationIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Bio"
-                      name="bio"
-                      value={profile.bio || ''}
-                      onChange={handleProfileChange}
-                      multiline
-                      rows={4}
-                      placeholder="Tell employers about yourself, your skills, and your experience"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={profile.email || ''}
-                      onChange={handleProfileChange}
-                      required
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <EmailIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Phone"
-                      name="phone"
-                      value={profile.phone || ''}
-                      onChange={handleProfileChange}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PhoneIcon color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Mobile"
-                      name="mobile"
-                      value={profile.mobile || ''}
-                      onChange={handleProfileChange}
-                    />
-                  </Grid>
-                </Grid>
-              </TabPanel>
-
-              {/* Skills Tab */}
-              <TabPanel value={tabValue} index={1}>
-                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6" fontWeight="bold">
-                    Your Skills
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={handleOpenSkillDialog}
-                    sx={{ borderRadius: '20px' }}
-                  >
-                    Add Skill
+                <input id="avatar-upload" accept="image/*" type="file" className="hidden" ref={fileInputRef} onChange={handleAvatarUpload} />
+                <label htmlFor="avatar-upload" className="absolute -bottom-2 -right-2">
+                  <Button size="icon" variant="outline" asChild>
+                    <span>
+                      <Camera className="h-4 w-4" />
+                    </span>
                   </Button>
-                </Box>
+                </label>
+              </div>
 
-                {skills.length === 0 ? (
-                  <Box sx={{
-                    border: '1px dashed',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    p: 4,
-                    textAlign: 'center'
-                  }}>
-                    <Typography variant="body1" color="textSecondary">
-                      No skills added yet. Click "Add Skill" to showcase your expertise.
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                    {skills.map((skill) => (
-                      <SkillChip
-                        key={skill.skill_id}
-                        label={skill.name}
-                        onDelete={() => handleDeleteSkill(skill.skill_id)}
-                        sx={{ borderRadius: '4px' }}
-                      />
-                    ))}
-                  </Box>
-                )}
-              </TabPanel>
+              <div className="text-center">
+                <div className="text-xl font-semibold">{profile.first_name} {profile.last_name}</div>
+                <div className="text-sm text-muted-foreground">{profile.title}</div>
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Experience Tab */}
-              <TabPanel value={tabValue} index={2}>
-                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6" fontWeight="bold">
-                    Work Experience
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => handleOpenExperienceDialog()}
-                    sx={{ borderRadius: '20px' }}
-                  >
-                    Add Experience
-                  </Button>
-                </Box>
+          {/* Tabs */}
+          <Tabs value={tabValue} onValueChange={handleTabChange} className="space-y-4">
+            <TabsList className="grid grid-cols-5 gap-2">
+              <TabsTrigger value={0}>Basic Info</TabsTrigger>
+              <TabsTrigger value={1}>Skills</TabsTrigger>
+              <TabsTrigger value={2}>Experience</TabsTrigger>
+              <TabsTrigger value={3}>Education</TabsTrigger>
+              <TabsTrigger value={4}>Videos</TabsTrigger>
+            </TabsList>
 
-                {experiences.length === 0 ? (
-                  <Box sx={{
-                    border: '1px dashed',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    p: 4,
-                    textAlign: 'center'
-                  }}>
-                    <Typography variant="body1" color="textSecondary">
-                      No work experience added yet. Click "Add Experience" to get started.
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {experiences.map((exp) => (
-                      <Card key={exp.id} sx={{ borderRadius: 2 }}>
-                        <CardContent>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Box>
-                              <Typography variant="h6" fontWeight="bold">
-                                {exp.position}
-                              </Typography>
-                              <Typography variant="subtitle1" color="primary">
-                                {exp.company_name}
-                              </Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)}
-                              </Typography>
-                              {exp.location && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                  <LocationIcon fontSize="small" color="action" />
-                                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                                    {exp.location}
-                                  </Typography>
-                                </Box>
-                              )}
-                            </Box>
-                            <Box>
-                              <IconButton
-                                onClick={() => handleOpenExperienceDialog(exp)}
-                                sx={{ color: 'primary.main' }}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                onClick={() => handleDeleteExperience(exp.id)}
-                                sx={{ color: 'error.main' }}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Box>
-                          </Box>
-                          {exp.description && (
-                            <Typography variant="body2" sx={{ mt: 2 }}>
-                              {exp.description}
-                            </Typography>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </Box>
-                )}
-              </TabPanel>
+            {/* Basic Info */}
+            <TabsContent value={0}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="first_name">First Name</Label>
+                  <Input id="first_name" name="first_name" value={profile.first_name || ''} onChange={handleProfileChange} />
+                </div>
 
-              {/* Education Tab */}
-              <TabPanel value={tabValue} index={3}>
-                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6" fontWeight="bold">
-                    Education
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => handleOpenEducationDialog()}
-                    sx={{ borderRadius: '20px' }}
-                  >
-                    Add Education
-                  </Button>
-                </Box>
+                <div>
+                  <Label htmlFor="Second_name">Second Name</Label>
+                  <Input id="Second_name" name="Second_name" value={profile.Second_name || ''} onChange={handleProfileChange} />
+                </div>
 
-                {education.length === 0 ? (
-                  <Box sx={{
-                    border: '1px dashed',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    p: 4,
-                    textAlign: 'center'
-                  }}>
-                    <Typography variant="body1" color="textSecondary">
-                      No education added yet. Click "Add Education" to get started.
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {education.map((edu) => (
-                      <Card key={edu.id} sx={{ borderRadius: 2 }}>
-                        <CardContent>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Box>
-                              <Typography variant="h6" fontWeight="bold">
-                                {edu.degree}
-                              </Typography>
-                              <Typography variant="subtitle1" color="primary">
-                                {edu.institution}
-                              </Typography>
-                              {edu.field && (
-                                <Typography variant="body2" color="textSecondary">
-                                  {edu.field}
-                                </Typography>
-                              )}
-                              <Typography variant="body2" color="textSecondary">
-                                {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : 'Present'}
-                              </Typography>
-                              {edu.location && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                  <LocationIcon fontSize="small" color="action" />
-                                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                                    {edu.location}
-                                  </Typography>
-                                </Box>
-                              )}
-                            </Box>
-                            <Box>
-                              <IconButton
-                                onClick={() => handleOpenEducationDialog(edu)}
-                                sx={{ color: 'primary.main' }}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                onClick={() => handleDeleteEducation(edu.id)}
-                                sx={{ color: 'error.main' }}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Box>
-                          </Box>
-                          {edu.description && (
-                            <Typography variant="body2" sx={{ mt: 2 }}>
-                              {edu.description}
-                            </Typography>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </Box>
-                )}
-              </TabPanel>
+                <div>
+                  <Label htmlFor="last_name">Last Name</Label>
+                  <Input id="last_name" name="last_name" value={profile.last_name || ''} onChange={handleProfileChange} />
+                </div>
 
-              {/* Videos Tab */}
-              <TabPanel value={tabValue} index={4}>
-                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6" fontWeight="bold">
-                    Your Videos
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<VideoCallIcon />}
-                    onClick={handleUploadVideo}
-                    sx={{ borderRadius: '20px' }}
-                  >
-                    Upload Video
-                  </Button>
-                </Box>
+                <div className="md:col-span-2">
+                  <Label htmlFor="title">Professional Title</Label>
+                  <Input id="title" name="title" value={profile.title || ''} onChange={handleProfileChange} />
+                </div>
 
-                {videos.length === 0 ? (
-                  <Box sx={{
-                    border: '1px dashed',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    p: 4,
-                    textAlign: 'center'
-                  }}>
-                    <Typography variant="body1" color="textSecondary">
-                      No videos uploaded yet. Click "Upload Video" to add your first video.
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Grid container spacing={2}>
-                    {videos.map((video) => (
-                      <Grid item xs={12} sm={6} md={4} key={video.id}>
-                        <VideoCard>
-                          <VideoCardMedia
-                            image={video.thumbnail}
-                            title={video.video_title}
-                          >
-                            <IconButton
-                              sx={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                color: '#fff',
-                                '&:hover': {
-                                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                },
-                              }}
-                            >
-                              <PlayArrowIcon fontSize="large" />
-                            </IconButton>
-                          </VideoCardMedia>
-                          <CardContent>
-                            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                              {video.video_title}
-                            </Typography>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <Typography variant="caption" color="textSecondary">
-                                {video.video_duration} sec
-                              </Typography>
-                              <Typography variant="caption" color="textSecondary">
-                                {video.views} views
-                              </Typography>
-                            </Box>
-                          </CardContent>
-                          <CardActions sx={{ justifyContent: 'space-between' }}>
-                            <Button
-                              size="small"
-                              color="primary"
-                              startIcon={<EditIcon />}
-                              onClick={() => handleEditVideo(video.id)}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              size="small"
-                              color="error"
-                              startIcon={<DeleteIcon />}
-                              onClick={() => handleDeleteVideo(video.id)}
-                            >
-                              Delete
-                            </Button>
-                          </CardActions>
-                        </VideoCard>
-                      </Grid>
-                    ))}
-                  </Grid>
-                )}
-              </TabPanel>
-            </Paper>
-          </>
-        )}
-      </Container>
+                <div className="md:col-span-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input id="location" name="location" value={profile.location || ''} onChange={handleProfileChange} placeholder="City, Country" />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea id="bio" name="bio" value={profile.bio || ''} onChange={handleProfileChange} rows={4} placeholder="Tell employers about yourself" />
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" name="email" type="email" value={profile.email || ''} onChange={handleProfileChange} />
+                </div>
+
+                <div>
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input id="phone" name="phone" value={profile.phone || ''} onChange={handleProfileChange} />
+                </div>
+
+                <div>
+                  <Label htmlFor="mobile">Mobile</Label>
+                  <Input id="mobile" name="mobile" value={profile.mobile || ''} onChange={handleProfileChange} />
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Skills */}
+            <TabsContent value={1}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Your Skills</h3>
+                <Button onClick={handleOpenSkillDialog} className={`rounded-full ${themeColors.buttons.secondary}`}>
+                  <Plus className="h-4 w-4 mr-2" /> Add Skill
+                </Button>
+              </div>
+
+              {skills.length === 0 ? (
+                <div className="border-2 border-dashed rounded-md p-8 text-center text-muted-foreground">No skills added yet. Click &quot;Add Skill&quot; to showcase your expertise.</div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {skills.map((skill) => (
+                    <Badge key={skill.skill_id} className="px-3 py-1 rounded-md bg-indigo-100 text-indigo-800 inline-flex items-center gap-2">
+                      {skill.name}
+                      <button onClick={() => handleDeleteSkill(skill.skill_id)} className="text-indigo-600"><Trash className="h-4 w-4" /></button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Experience */}
+            <TabsContent value={2}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Work Experience</h3>
+                <Button onClick={() => handleOpenExperienceDialog()} className={`rounded-full ${themeColors.buttons.secondary}`}>
+                  <Plus className="h-4 w-4 mr-2" /> Add Experience
+                </Button>
+              </div>
+
+              {experiences.length === 0 ? (
+                <div className="border-2 border-dashed rounded-md p-8 text-center text-muted-foreground">No work experience added yet. Click &quot;Add Experience&quot; to get started.</div>
+              ) : (
+                <div className="space-y-3">
+                  {experiences.map((exp) => (
+                    <Card key={exp.id} className="p-4">
+                      <CardContent>
+                        <div className="flex justify-between">
+                          <div>
+                            <div className="font-semibold">{exp.position}</div>
+                            <div className="text-sm text-indigo-600">{exp.company_name}</div>
+                            <div className="text-sm text-muted-foreground">{formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)}</div>
+                            {exp.location && <div className="text-sm text-muted-foreground mt-1"><MapPin className="inline-block h-4 w-4 mr-1"/>{exp.location}</div>}
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => handleOpenExperienceDialog(exp)}><Edit className="h-4 w-4"/></Button>
+                            <Button size="icon" variant="ghost" onClick={() => handleDeleteExperience(exp.id)}><Trash className="h-4 w-4 text-red-600"/></Button>
+                          </div>
+                        </div>
+                        {exp.description && <div className="mt-2 text-sm text-muted-foreground">{exp.description}</div>}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Education */}
+            <TabsContent value={3}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Education</h3>
+                <Button onClick={() => handleOpenEducationDialog()} className={`rounded-full ${themeColors.buttons.secondary}`}>
+                  <Plus className="h-4 w-4 mr-2" /> Add Education
+                </Button>
+              </div>
+
+              {education.length === 0 ? (
+                <div className="border-2 border-dashed rounded-md p-8 text-center text-muted-foreground">No education added yet. Click &quot;Add Education&quot; to get started.</div>
+              ) : (
+                <div className="space-y-3">
+                  {education.map((edu) => (
+                    <Card key={edu.id} className="p-4">
+                      <CardContent>
+                        <div className="flex justify-between">
+                          <div>
+                            <div className="font-semibold">{edu.degree}</div>
+                            <div className="text-sm text-indigo-600">{edu.institution}</div>
+                            <div className="text-sm text-muted-foreground">{formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : 'Present'}</div>
+                            {edu.location && <div className="text-sm text-muted-foreground mt-1"><MapPin className="inline-block h-4 w-4 mr-1"/>{edu.location}</div>}
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => handleOpenEducationDialog(edu)}><Edit className="h-4 w-4"/></Button>
+                            <Button size="icon" variant="ghost" onClick={() => handleDeleteEducation(edu.id)}><Trash className="h-4 w-4 text-red-600"/></Button>
+                          </div>
+                        </div>
+                        {edu.description && <div className="mt-2 text-sm text-muted-foreground">{edu.description}</div>}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Videos */}
+            <TabsContent value={4}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Your Videos</h3>
+                <Button onClick={handleUploadVideo} className={`rounded-full ${themeColors.buttons.secondary}`}>
+                  <Video className="h-4 w-4 mr-2" /> Upload Video
+                </Button>
+              </div>
+
+              {videos.length === 0 ? (
+                <div className="border-2 border-dashed rounded-md p-8 text-center text-muted-foreground">No videos uploaded yet. Click &quot;Upload Video&quot; to add your first video.</div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {videos.map((video) => (
+                    <Card key={video.id} className="overflow-hidden">
+                      <div className="relative bg-black aspect-video">
+                        <img src={video.thumbnail} alt={video.video_title} className="object-cover w-full h-full" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Button size="icon" variant="ghost" className="bg-black/40 text-white"><Play className="h-6 w-6"/></Button>
+                        </div>
+                      </div>
+                      <CardContent>
+                        <div className="font-semibold">{video.video_title}</div>
+                        <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                          <span>{video.video_duration} sec</span>
+                          <span>{video.views} views</span>
+                        </div>
+                      </CardContent>
+                      <div className="flex justify-between p-3">
+                        <Button size="sm" onClick={() => handleEditVideo(video.id)} className="">Edit</Button>
+                        <Button size="sm" onClick={() => handleDeleteVideo(video.id)} className="text-red-600">Delete</Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
 
       {/* Skill Dialog */}
-      <Dialog open={skillDialogOpen} onClose={handleCloseSkillDialog}>
-        <DialogTitle>Add New Skill</DialogTitle>
-        <DialogContent sx={{ minWidth: 400 }}>
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel id="skill-select-label">Select Skill</InputLabel>
-            <Select
-              labelId="skill-select-label"
-              value={selectedSkill}
-              onChange={(e) => setSelectedSkill(e.target.value)}
-              label="Select Skill"
-            >
-              {availableSkills.map((skill) => (
-                <MenuItem key={skill.id} value={skill.id}>
-                  {skill.name}
-                </MenuItem>
-              ))}
+      <Dialog open={skillDialogOpen} onOpenChange={setSkillDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Skill</DialogTitle>
+            <DialogDescription>Select a skill to add to your profile.</DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-2">
+            <Select value={selectedSkill} onValueChange={(v) => setSelectedSkill(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Skill" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableSkills.map((skill) => (
+                  <SelectItem key={skill.id} value={skill.id}>{skill.name}</SelectItem>
+                ))}
+              </SelectContent>
             </Select>
-          </FormControl>
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={handleCloseSkillDialog}>Cancel</Button>
+            <Button onClick={handleSaveSkill} disabled={!selectedSkill || saving} className={themeColors.buttons.primary}>{saving ? 'Saving...' : 'Save'}</Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseSkillDialog} color="inherit">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveSkill}
-            color="primary"
-            disabled={!selectedSkill || saving}
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
-        </DialogActions>
       </Dialog>
 
       {/* Experience Dialog */}
-      <Dialog
-        open={experienceDialogOpen}
-        onClose={handleCloseExperienceDialog}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>
-          {experienceForm.id ? 'Edit Experience' : 'Add Experience'}
-        </DialogTitle>
+      <Dialog open={experienceDialogOpen} onOpenChange={setExperienceDialogOpen}>
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Company Name"
-                name="company_name"
-                value={experienceForm.company_name}
-                onChange={handleExperienceFormChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Position"
-                name="position"
-                value={experienceForm.position}
-                onChange={handleExperienceFormChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Location"
-                name="location"
-                value={experienceForm.location}
-                onChange={handleExperienceFormChange}
-                placeholder="City, Country"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Start Date"
-                name="start_date"
-                type="date"
-                value={experienceForm.start_date}
-                onChange={handleExperienceFormChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="End Date"
-                name="end_date"
-                type="date"
-                value={experienceForm.end_date}
-                onChange={handleExperienceFormChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled={experienceForm.currently_working}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={experienceForm.currently_working}
-                    onChange={handleExperienceFormChange}
-                    name="currently_working"
-                    color="primary"
-                  />
-                }
-                label="I currently work here"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Description"
-                name="description"
-                value={experienceForm.description}
-                onChange={handleExperienceFormChange}
-                multiline
-                rows={4}
-                placeholder="Describe your responsibilities and achievements"
-              />
-            </Grid>
-          </Grid>
+          <DialogHeader>
+            <DialogTitle>{experienceForm.id ? 'Edit Experience' : 'Add Experience'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 gap-3 mt-2">
+            <div>
+              <Label>Company Name</Label>
+              <Input name="company_name" value={experienceForm.company_name} onChange={handleExperienceFormChange} />
+            </div>
+            <div>
+              <Label>Position</Label>
+              <Input name="position" value={experienceForm.position} onChange={handleExperienceFormChange} />
+            </div>
+            <div>
+              <Label>Location</Label>
+              <Input name="location" value={experienceForm.location} onChange={handleExperienceFormChange} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Start Date</Label>
+                <Input name="start_date" type="date" value={experienceForm.start_date} onChange={handleExperienceFormChange} />
+              </div>
+              <div>
+                <Label>End Date</Label>
+                <Input name="end_date" type="date" value={experienceForm.end_date} onChange={handleExperienceFormChange} disabled={experienceForm.currently_working} />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input id="currently_working" type="checkbox" name="currently_working" checked={experienceForm.currently_working} onChange={handleExperienceFormChange} />
+              <label htmlFor="currently_working">I currently work here</label>
+            </div>
+            <div>
+              <Label>Description</Label>
+              <Textarea name="description" rows={4} value={experienceForm.description} onChange={handleExperienceFormChange} />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={handleCloseExperienceDialog}>Cancel</Button>
+            <Button onClick={handleSaveExperience} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseExperienceDialog} color="inherit">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveExperience}
-            color="primary"
-            disabled={saving}
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
-        </DialogActions>
       </Dialog>
 
       {/* Education Dialog */}
-      <Dialog
-        open={educationDialogOpen}
-        onClose={handleCloseEducationDialog}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>
-          {educationForm.id ? 'Edit Education' : 'Add Education'}
-        </DialogTitle>
+      <Dialog open={educationDialogOpen} onOpenChange={setEducationDialogOpen}>
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Institution"
-                name="institution"
-                value={educationForm.institution}
-                onChange={handleEducationFormChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Degree"
-                name="degree"
-                value={educationForm.degree}
-                onChange={handleEducationFormChange}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Field of Study"
-                name="field"
-                value={educationForm.field}
-                onChange={handleEducationFormChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Location"
-                name="location"
-                value={educationForm.location}
-                onChange={handleEducationFormChange}
-                placeholder="City, Country"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Start Date"
-                name="startDate"
-                type="date"
-                value={educationForm.startDate}
-                onChange={handleEducationFormChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="End Date"
-                name="endDate"
-                type="date"
-                value={educationForm.endDate}
-                onChange={handleEducationFormChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Description"
-                name="description"
-                value={educationForm.description}
-                onChange={handleEducationFormChange}
-                multiline
-                rows={4}
-                placeholder="Describe your studies, achievements, and projects"
-              />
-            </Grid>
-          </Grid>
+          <DialogHeader>
+            <DialogTitle>{educationForm.id ? 'Edit Education' : 'Add Education'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 gap-3 mt-2">
+            <div>
+              <Label>Institution</Label>
+              <Input name="institution" value={educationForm.institution} onChange={handleEducationFormChange} />
+            </div>
+            <div>
+              <Label>Degree</Label>
+              <Input name="degree" value={educationForm.degree} onChange={handleEducationFormChange} />
+            </div>
+            <div>
+              <Label>Field of Study</Label>
+              <Input name="field" value={educationForm.field} onChange={handleEducationFormChange} />
+            </div>
+            <div>
+              <Label>Location</Label>
+              <Input name="location" value={educationForm.location} onChange={handleEducationFormChange} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Start Date</Label>
+                <Input name="startDate" type="date" value={educationForm.startDate} onChange={handleEducationFormChange} />
+              </div>
+              <div>
+                <Label>End Date</Label>
+                <Input name="endDate" type="date" value={educationForm.endDate} onChange={handleEducationFormChange} />
+              </div>
+            </div>
+            <div>
+              <Label>Description</Label>
+              <Textarea name="description" rows={4} value={educationForm.description} onChange={handleEducationFormChange} />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={handleCloseEducationDialog}>Cancel</Button>
+            <Button onClick={handleSaveEducation} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEducationDialog} color="inherit">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveEducation}
-            color="primary"
-            disabled={saving}
-          >
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
-        </DialogActions>
       </Dialog>
 
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-          elevation={6}
-          variant="filled"
-        >
+      {/* Snackbar / toast fallback - we keep the existing snackbar state but use toast hook for nicer UI elsewhere */}
+      {snackbar.open && (
+        <div className={`fixed bottom-6 right-6 p-4 rounded-md ${snackbar.severity === 'success' ? 'bg-green-600 text-white' : snackbar.severity === 'error' ? 'bg-red-600 text-white' : 'bg-indigo-600 text-white'}`}>
           {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </ProfileContainer>
+          <button onClick={handleCloseSnackbar} className="ml-3"><X className="inline-block h-4 w-4" /></button>
+        </div>
+      )}
+    </div>
   );
 };
 

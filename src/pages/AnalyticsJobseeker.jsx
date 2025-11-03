@@ -33,9 +33,9 @@ export default function AnalyticsJobseeker() {
     const fetch = async () => {
       try {
         setLoading(true);
-  // `api` instance already includes the `/api` base path, so request path
-  // here should not include an extra `/api` segment to avoid `/api/api`.
-  const res = await api.get(`/analytics/profile-views`, { params: { period } });
+        // api instance already includes the `/api` base path, so request path
+        // here should not include an extra `/api` segment to avoid `/api/api`.
+        const res = await api.get(`/analytics/profile-views`, { params: { period } });
         setStats(res.data.stats || {});
       } catch (e) {
         setError(e.message || 'Failed to load');
@@ -122,6 +122,7 @@ export default function AnalyticsJobseeker() {
           </Card>
         </div>
       )}
+      
     </div>
   );
 }
