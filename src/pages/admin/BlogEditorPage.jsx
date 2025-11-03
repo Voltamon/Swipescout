@@ -629,13 +629,13 @@ const BlogEditorPageEnhanced = () => {
                   <Label htmlFor="experienceLevel">Experience Level</Label>
                   <Select
                     value={formData.experienceLevel}
-                    onValueChange={(value) => handleChange('experienceLevel', value)}
+                    onValueChange={(value) => handleChange('experienceLevel', value === '__none' ? '' : value)}
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="__none">None</SelectItem>
                       <SelectItem value="entry">Entry Level</SelectItem>
                       <SelectItem value="junior">Junior</SelectItem>
                       <SelectItem value="mid">Mid Level</SelectItem>
@@ -771,13 +771,13 @@ const BlogEditorPageEnhanced = () => {
             <CardContent>
               <Select
                 value={formData.categoryId}
-                onValueChange={(value) => handleChange('categoryId', value)}
+                onValueChange={(value) => handleChange('categoryId', value === '__none' ? '' : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="__none">None</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -797,22 +797,22 @@ const BlogEditorPageEnhanced = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex gap-2">
-                <Input
-                  value={formData.tagInput}
-                  onChange={(e) => handleChange('tagInput', e.target.value)}
-                  placeholder="Add tag"
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                />
-                <Button type="button" onClick={addTag} size="sm">Add</Button>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                {formData.selectedTags.map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="gap-1">
-                    {tag}
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => removeTag(tag)} />
-                  </Badge>
-                ))}
+                  <Select
+                    value={formData.experienceLevel}
+                    onValueChange={(value) => handleChange('experienceLevel', value === '__none' ? '' : value)}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none">None</SelectItem>
+                      <SelectItem value="entry">Entry Level</SelectItem>
+                      <SelectItem value="junior">Junior</SelectItem>
+                      <SelectItem value="mid">Mid Level</SelectItem>
+                      <SelectItem value="senior">Senior</SelectItem>
+                      <SelectItem value="executive">Executive</SelectItem>
+                    </SelectContent>
+                  </Select>
               </div>
 
               {availableTags.length > 0 && (
