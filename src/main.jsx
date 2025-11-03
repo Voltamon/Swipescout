@@ -2,6 +2,7 @@
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.jsx"; // explicitly import .jsx to avoid Vite resolving App.js
 import "./index.css";
 
@@ -20,7 +21,9 @@ root.render(
     }}
   >
     <AuthProvider>
-      <App />
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
     </AuthProvider>
   </BrowserRouter>
 );

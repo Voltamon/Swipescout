@@ -12,14 +12,15 @@ import {
   ArrowLeft,
   Bookmark,
 } from 'lucide-react';
-import { getBlog } from '@/services/api';
+import { toast } from 'react-toastify';
+import { getBlog, saveBlog, unsaveBlog, checkBlogSaved } from '@/services/api';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import ReactMarkdown from 'react-markdown';
 
 const BlogDetailPage = () => {
-  const { slug } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
@@ -29,17 +30,23 @@ const BlogDetailPage = () => {
 
   useEffect(() => {
     fetchBlog();
-  }, [slug]);
+  }, [id]);
 
   const fetchBlog = async () => {
     try {
       setLoading(true);
-      const response = await getBlog(slug);
-      setBlog(response.data);
+  const response = await getBlog(id);
+  setBlog(response.data);
       // Fetch related blogs based on category/tags
       // TODO: Implement related blogs API call
     } catch (error) {
-      console.error('Failed to fetch blog:', error);
+      // Handle 404 (not found) gracefully and avoid noisy object logs
+      if (error?.response?.status === 404) {
+        console.warn(`Blog not found: ${id}`);
+        setBlog(null);
+      } else {
+        console.error('Failed to fetch blog:', error?.message || error);
+      }
     } finally {
       setLoading(false);
     }
@@ -62,20 +69,104 @@ const BlogDetailPage = () => {
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: getLocalizedField(blog, 'title'),
-          text: getLocalizedField(blog, 'excerpt'),
-          url: window.location.href,
-        });
-      } catch (error) {
-        console.error('Error sharing:', error);
-      }
-    } else {
+    // Open the SharePage (centralized share UI) in a new window/tab so the user can choose platform
+    try {
+      const shareUrl = blog?.canonicalUrl || window.location.href;
+      const sharePage = `${window.location.origin}/share?link=${encodeURIComponent(shareUrl)}`;
+      window.open(sharePage, '_blank', 'noopener,noreferrer,width=800,height=600');
+    } catch (error) {
+      console.error('Error opening share page:', error);
       // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert(t('blog.link_copied', 'Link copied to clipboard!'));
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success(t('blog.link_copied', 'Link copied to clipboard!'));
+      } catch (err) {
+        console.error('Failed to copy to clipboard:', err);
+        toast.error(t('blog.link_copy_failed', 'Failed to copy link'));
+      }
+    }
+  };
+
+  // Save / bookmark handling via API (with localStorage fallback if API fails)
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    const check = async () => {
+      if (!blog?.id) return setIsSaved(false);
+      try {
+        const resp = await checkBlogSaved(blog.id);
+        if (resp?.data?.saved) setIsSaved(true);
+        else setIsSaved(false);
+      } catch (err) {
+        // fallback to localStorage when API unreachable
+        try {
+          const saved = JSON.parse(localStorage.getItem('savedBlogs') || '[]');
+          setIsSaved(Array.isArray(saved) ? saved.includes(blog.id) : false);
+        } catch (e) {
+          setIsSaved(false);
+        }
+      }
+    };
+    check();
+  }, [blog?.id]);
+
+  const toggleSave = async () => {
+    if (!blog?.id) return;
+    try {
+      if (!isSaved) {
+        await saveBlog(blog.id);
+        setIsSaved(true);
+        toast.success(t('blog.saved_success', 'Saved for later'));
+      } else {
+        await unsaveBlog(blog.id);
+        setIsSaved(false);
+        toast.info(t('blog.unsaved', 'Removed from saved'));
+      }
+    } catch (err) {
+      console.error('Error toggling save via API:', err);
+      // If user is not authenticated (401) or API returns 403, fallback to local save and inform user
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) {
+        try {
+          const raw = localStorage.getItem('savedBlogs');
+          const arr = raw ? JSON.parse(raw) : [];
+          const idx = arr.indexOf(blog.id);
+          if (idx === -1) {
+            arr.push(blog.id);
+            localStorage.setItem('savedBlogs', JSON.stringify(arr));
+            setIsSaved(true);
+            toast.info(t('blog.saved_local', 'You are not logged in — saved locally'));
+          } else {
+            arr.splice(idx, 1);
+            localStorage.setItem('savedBlogs', JSON.stringify(arr));
+            setIsSaved(false);
+            toast.info(t('blog.unsaved_local', 'Removed local saved post'));
+          }
+          return;
+        } catch (e) {
+          console.error('Local fallback failed:', e);
+        }
+      }
+      // other errors: try previous localStorage fallback behavior
+      try {
+        const raw = localStorage.getItem('savedBlogs');
+        const arr = raw ? JSON.parse(raw) : [];
+        const idx = arr.indexOf(blog.id);
+        if (idx === -1) {
+          arr.push(blog.id);
+          localStorage.setItem('savedBlogs', JSON.stringify(arr));
+          setIsSaved(true);
+          toast.success(t('blog.saved_success', 'Saved for later'));
+        } else {
+          arr.splice(idx, 1);
+          localStorage.setItem('savedBlogs', JSON.stringify(arr));
+          setIsSaved(false);
+          toast.info(t('blog.unsaved', 'Removed from saved'));
+        }
+      } catch (e) {
+        console.error('Local fallback failed:', e);
+        toast.error(t('blog.save_failed', 'Failed to update saved state'));
+      }
     }
   };
 
@@ -228,7 +319,7 @@ const BlogDetailPage = () => {
                       <p className="font-semibold mb-2">{t('blog.job_titles', 'Relevant Job Titles')}:</p>
                       <div className="flex flex-wrap gap-2">
                         {blog.relatedJobTitles.map((title, index) => (
-                          <Badge key={index} variant="outline">{title}</Badge>
+              <Badge key={title || index} variant="outline">{title}</Badge>
                         ))}
                       </div>
                     </div>
@@ -238,7 +329,7 @@ const BlogDetailPage = () => {
                       <p className="font-semibold mb-2">{t('blog.skills', 'Key Skills')}:</p>
                       <div className="flex flex-wrap gap-2">
                         {blog.relatedSkills.map((skill, index) => (
-                          <Badge key={index} variant="secondary">{skill}</Badge>
+                          <Badge key={skill || index} variant="secondary">{skill}</Badge>
                         ))}
                       </div>
                     </div>
@@ -271,9 +362,9 @@ const BlogDetailPage = () => {
                   <Share2 className="mr-2 h-4 w-4" />
                   {t('blog.share', 'Share')}
                 </Button>
-                <Button variant="outline">
-                  <Bookmark className="mr-2 h-4 w-4" />
-                  {t('blog.save', 'Save for Later')}
+                <Button onClick={toggleSave} variant={isSaved ? 'default' : 'outline'}>
+                  <Bookmark className={`mr-2 h-4 w-4 ${isSaved ? 'text-white' : ''}`} />
+                  {isSaved ? t('blog.saved', 'Saved') : t('blog.save', 'Save for Later')}
                 </Button>
               </div>
             </CardContent>
@@ -288,7 +379,7 @@ const BlogDetailPage = () => {
                   <Card
                     key={relatedBlog.id}
                     className="cursor-pointer hover:shadow-lg transition-shadow"
-                    onClick={() => navigate(`/blog/${relatedBlog.slug}`)}
+                    onClick={() => navigate(`/blog/${relatedBlog.id}`)}
                   >
                     {relatedBlog.featuredImage && (
                       <img

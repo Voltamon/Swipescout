@@ -347,6 +347,17 @@ export const updateBlog = (id, data) => api.put(`/blogs/${id}`, data);
 export const deleteBlog = (id) => api.delete(`/blogs/${id}`);
 export const bulkImportBlogs = (blogs) => api.post('/blogs/bulk-import', { blogs });
 
+// Saves (bookmarks) - generic endpoints for multiple target types (blog, employer, jobseeker, etc.)
+export const saveItem = (targetId, type) => api.post('/saves', { targetId, type });
+export const unsaveItem = (targetId, type) => api.delete('/saves', { params: { targetId, type } });
+export const checkSaved = (targetId, type) => api.get('/saves/check', { params: { targetId, type } });
+// convenience helpers for blog saves
+export const saveBlog = (blogId) => saveItem(blogId, 'blog');
+export const unsaveBlog = (blogId) => unsaveItem(blogId, 'blog');
+export const checkBlogSaved = (blogId) => checkSaved(blogId, 'blog');
+export const getSavedItems = (type) => api.get('/saves', { params: type ? { type } : {} });
+export const getSavedBlogs = () => getSavedItems('blog');
+
 // Blog Categories
 export const getBlogCategories = () => api.get('/blogs/categories');
 export const createBlogCategory = (data) => api.post('/blogs/categories', data);

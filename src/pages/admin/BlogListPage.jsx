@@ -441,7 +441,7 @@ const BlogListPage = () => {
                             {blog.status === 'published' ? 'Unpublish' : 'Publish'}
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => window.open(`/blog/${blog.slug}`, '_blank')}
+                            onClick={() => window.open(`/blog/${blog.id}`, '_blank')}
                           >
                             <Eye className="mr-2 h-4 w-4" />
                             View

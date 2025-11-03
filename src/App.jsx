@@ -117,6 +117,7 @@ import AnalyticsEmployer from "./pages/AnalyticsEmployer";
 import AnalyticsAdmin from "./pages/AnalyticsAdmin";
 import "./i18n/index.js"; // Import i18n configuration
 import SharePage from "./pages/SharePage"; // Import the new SharePage component
+import SavedBlogsPage from "./pages/SavedBlogsPage";
 import VideosFeed from "./pages/VideosFeed"; // Import the new SharePage component
 
 // Blog Pages
@@ -185,6 +186,7 @@ function App() {
          
             <Route path="/" element={<Home />} />
             <Route path="/share" element={<SharePage />} /> {/* Add route for SharePage */}
+            <Route path="/saved" element={<SavedBlogsPage />} />
             <Route path="/login" element={<AuthPage initialTab={0} />} />
             <Route path="/register" element={<AuthPage initialTab={1} />} />
             <Route path="/translation-test" element={<TranslationTest />} />
@@ -197,7 +199,7 @@ function App() {
             
             {/* Blog Routes */}
             <Route path="/blog" element={<PublicBlogPage />} />
-            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
             
             
             <Route path="/how-it-works" element={<HowItWorksPage />} />

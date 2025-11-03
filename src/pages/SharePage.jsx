@@ -1,25 +1,9 @@
 ﻿import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  IconButton,
-  Tooltip,
-  Paper,
-  Stack,
-  TextField,
-  Button,
-  useTheme
-} from "@mui/material";
-import {
-  Facebook,
-  Twitter,
-  LinkedIn,
-  WhatsApp,
-  ContentCopy,
-  Close
-} from "@mui/icons-material";
-import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Button } from "@/components/UI/button.jsx";
+import { Share2, ExternalLink } from "lucide-react";
+import { getHomeGradient } from "@/config/theme-colors-home";
 
 const PLATFORM = {
   facebook: { color: "#1877F2", url: (l) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(l)}` },
@@ -31,7 +15,6 @@ const PLATFORM = {
 const SharePage = () => {
   const [searchParams] = useSearchParams();
   const [shareableLink, setShareableLink] = useState("");
-  const theme = useTheme();
 
   useEffect(() => {
     const link = searchParams.get("link");
@@ -55,6 +38,7 @@ const SharePage = () => {
   };
 
   const openSocialMedia = (url) => {
+    if (!url) return;
     window.open(url, "_blank", "noopener,noreferrer,width=800,height=600");
   };
 
@@ -62,150 +46,78 @@ const SharePage = () => {
     try { window.close(); } catch (e) { /* ignore */ }
   };
 
-  const iconSize = 32;
-
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.default",
-        p: 2
-      }}
-    >
-      <Paper
-        elevation={6}
-        sx={{
-          width: "100%",
-          maxWidth: 560,
-          borderRadius: 2,
-          p: { xs: 2, md: 3 },
-          textAlign: "center",
-          position: "relative"
-        }}
-      >
-        <IconButton
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+      <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-lg shadow-lg p-6 relative">
+        <button
           onClick={closeWindow}
           aria-label="close"
-          size="large"
-          sx={{ position: "absolute", top: 8, right: 8 }}
+          className="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
         >
-          <Close />
-        </IconButton>
+          <ExternalLink className="h-5 w-5" />
+        </button>
 
-        <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-          Share this video
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Share the video using your preferred app or copy the link.
-        </Typography>
+        <div className="text-center mb-4">
+          <h2 className="text-lg font-semibold">Share</h2>
+          <p className="text-sm text-slate-500">Share this item using your preferred app or copy the link.</p>
+        </div>
 
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
-          <TextField
+        <div className="flex gap-2 items-center mb-4">
+          <input
+            readOnly
             value={shareableLink}
             placeholder="Shareable link"
-            variant="outlined"
-            size="small"
-            fullWidth
-            InputProps={{
-              readOnly: true,
-              sx: { pr: 0 }
-            }}
+            className="flex-1 px-3 py-2 rounded-md border border-slate-200 bg-slate-50 text-sm"
           />
-          <Tooltip title="Copy link">
-            <IconButton
-              onClick={handleCopyLink}
-              color="primary"
-              sx={{
-                bgcolor: theme.palette.mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
-                "&:hover": { bgcolor: theme.palette.mode === "dark" ? "rgba(255,255,255,0.09)" : "rgba(0,0,0,0.06)" }
-              }}
-              aria-label="copy-link"
-              size="large"
-            >
-              <ContentCopy sx={{ fontSize: 22 }} />
-            </IconButton>
-          </Tooltip>
-        </Box>
-
-        <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" sx={{ mb: 2, flexWrap: "wrap" }}>
-          <Tooltip title="Share on Facebook">
-            <IconButton
-              onClick={() => openSocialMedia(PLATFORM.facebook.url(shareableLink))}
-              aria-label="facebook"
-              sx={{
-                bgcolor: PLATFORM.facebook.color,
-                color: "#fff",
-                width: 64,
-                height: 64,
-                "&:hover": { bgcolor: "#145dbf" }
-              }}
-            >
-              <Facebook sx={{ fontSize: iconSize }} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Share on Twitter">
-            <IconButton
-              onClick={() => openSocialMedia(PLATFORM.twitter.url(shareableLink))}
-              aria-label="twitter"
-              sx={{
-                bgcolor: PLATFORM.twitter.color,
-                color: "#fff",
-                width: 64,
-                height: 64,
-                "&:hover": { bgcolor: "#1997e8" }
-              }}
-            >
-              <Twitter sx={{ fontSize: iconSize }} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Share on LinkedIn">
-            <IconButton
-              onClick={() => openSocialMedia(PLATFORM.linkedin.url(shareableLink))}
-              aria-label="linkedin"
-              sx={{
-                bgcolor: PLATFORM.linkedin.color,
-                color: "#fff",
-                width: 64,
-                height: 64,
-                "&:hover": { bgcolor: "#0958a8" }
-              }}
-            >
-              <LinkedIn sx={{ fontSize: iconSize }} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Share on WhatsApp">
-            <IconButton
-              onClick={() => openSocialMedia(PLATFORM.whatsapp.url(shareableLink))}
-              aria-label="whatsapp"
-              sx={{
-                bgcolor: PLATFORM.whatsapp.color,
-                color: "#fff",
-                width: 64,
-                height: 64,
-                "&:hover": { bgcolor: "#1ecb5b" }
-              }}
-            >
-              <WhatsApp sx={{ fontSize: iconSize }} />
-            </IconButton>
-          </Tooltip>
-        </Stack>
-
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-          <Button variant="contained" onClick={handleCopyLink} startIcon={<ContentCopy />} size="large">
-            Copy Link
+          <Button variant="outline" size="icon" onClick={handleCopyLink} aria-label="Copy link">
+            <Share2 className="h-4 w-4" />
           </Button>
-          <Button variant="outlined" onClick={closeWindow} size="large">
-            Close
-          </Button>
-        </Box>
-      </Paper>
-    </Box>
+        </div>
+
+        <div className="flex gap-3 justify-center flex-wrap mb-4">
+          <button
+            aria-label="facebook"
+            onClick={() => openSocialMedia(PLATFORM.facebook.url(shareableLink))}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
+            style={{ backgroundColor: PLATFORM.facebook.color }}
+          >
+            Facebook
+          </button>
+
+          <button
+            aria-label="twitter"
+            onClick={() => openSocialMedia(PLATFORM.twitter.url(shareableLink))}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
+            style={{ backgroundColor: PLATFORM.twitter.color }}
+          >
+            Twitter
+          </button>
+
+          <button
+            aria-label="linkedin"
+            onClick={() => openSocialMedia(PLATFORM.linkedin.url(shareableLink))}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
+            style={{ backgroundColor: PLATFORM.linkedin.color }}
+          >
+            LinkedIn
+          </button>
+
+          <button
+            aria-label="whatsapp"
+            onClick={() => openSocialMedia(PLATFORM.whatsapp.url(shareableLink))}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
+            style={{ backgroundColor: PLATFORM.whatsapp.color }}
+          >
+            WhatsApp
+          </button>
+        </div>
+
+        <div className="flex justify-center gap-3">
+          <Button variant="default" onClick={handleCopyLink}>Copy Link</Button>
+          <Button variant="ghost" onClick={closeWindow}>Close</Button>
+        </div>
+      </div>
+    </div>
   );
 };
 

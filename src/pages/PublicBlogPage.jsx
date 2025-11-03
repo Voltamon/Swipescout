@@ -199,12 +199,12 @@ const PublicBlogPage = () => {
                 <div className="flex flex-wrap gap-2">
                   {tags.map((tag) => (
                     <Badge
-                      key={tag.tag}
-                      variant={selectedTag === tag.tag ? 'default' : 'outline'}
+                      key={tag.tag ?? tag.id}
+                      variant={selectedTag === (tag.tag ?? tag.id) ? 'default' : 'outline'}
                       className="cursor-pointer"
-                      onClick={() => handleTagFilter(tag.tag === selectedTag ? '' : tag.tag)}
+                      onClick={() => handleTagFilter((tag.tag ?? tag.id) === selectedTag ? '' : (tag.tag ?? tag.id))}
                     >
-                      {tag.tag} ({tag.count})
+                      {tag.tag ?? tag.name ?? tag.id} ({tag.count ?? ''})
                     </Badge>
                   ))}
                 </div>
@@ -226,7 +226,7 @@ const PublicBlogPage = () => {
                     <Card
                       key={blog.id}
                       className="cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => navigate(`/blog/${blog.slug}`)}
+                      onClick={() => navigate(`/blog/${blog.id}`)}
                     >
                       {blog.featuredImage && (
                         <img
@@ -271,7 +271,7 @@ const PublicBlogPage = () => {
                     <Card
                       key={blog.id}
                       className="cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => navigate(`/blog/${blog.slug}`)}
+                      onClick={() => navigate(`/blog/${blog.id}`)}
                     >
                       {blog.featuredImage && (
                         <img
