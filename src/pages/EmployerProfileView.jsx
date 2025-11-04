@@ -1,830 +1,298 @@
-﻿import React, { useContext, useState, useEffect, useRef, useCallback  } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Avatar,
-  Chip,
-  Tabs,
-  Tab,
-  Card,
-  CardContent,
-  IconButton,
-  Divider,
-  Paper,
-  styled,
-  useTheme,
-  useMediaQuery,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Tooltip
-} from '@mui/material';
-import {
-  PlayArrow as PlayArrowIcon,
-  Pause as PauseIcon,
-  VolumeOff as VolumeOffIcon,
-  VolumeUp as VolumeOnIcon,
-  Work as WorkIcon,
-  Email as EmailIcon,
-  Phone as PhoneIcon,
-  Language as LanguageIcon,
-  LocationOn as LocationIcon,
-  LinkedIn as LinkedInIcon,
-  Facebook as FacebookIcon,
-  Twitter as TwitterIcon,
-  Favorite as FavoriteIcon,
-  Share as ShareIcon,
-  Bookmark as BookmarkIcon
-} from '@mui/icons-material';
-import { useParams } from 'react-router-dom';
-import { getEmployerPublicProfile, getEmployerPublicVideos, getEmployerPublicJobs } from '@/services/api';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Button } from '@/components/UI/button.jsx';
+import { Badge } from '@/components/UI/badge.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
+import { useToast } from '@/hooks/use-toast';
+import { Play, Pause, Volume2, VolumeX, MapPin, Briefcase, ExternalLink, Loader2 } from 'lucide-react';
+import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs } from '@/services/api';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-// Enhanced styled components (same as original)
-const ProfileContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  minHeight: '100vh',
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(6)
-}));
+export default function EmployerPublicProfile({ userId: propUserId }) {
+  const { userId: routeId } = useParams();
+  const id = routeId || propUserId;
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-const ProfileHeader = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  marginBottom: theme.spacing(4),
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(3),
-  [theme.breakpoints.up('md')]: {
-    flexDirection: 'row',
-    gap: theme.spacing(4)
-  }
-}));
-
-const ProfileInfo = styled(Box)(({ theme }) => ({
-  flex: 1,
-  padding: theme.spacing(3),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.default,
-  boxShadow: theme.shadows[1],
-  [theme.breakpoints.up('md')]: {
-    paddingRight: theme.spacing(4)
-  }
-}));
-
-const MainVideoContainer = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: 300,
-  borderRadius: theme.shape.borderRadius,
-  overflow: 'hidden',
-  position: 'relative',
-  backgroundColor: theme.palette.grey[900],
-  boxShadow: theme.shadows[4],
-  [theme.breakpoints.up('md')]: {
-    width: 350,
-    height: 450,
-    flexShrink: 0
-  }
-}));
-
-const VideoControls = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: theme.spacing(1),
-  backgroundColor: 'rgba(253, 251, 251, 0.7)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  transition: 'opacity 0.3s ease'
-}));
-
-const VideoActions = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  right: theme.spacing(2),
-  top: theme.spacing(2),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: theme.spacing(2),
-  color: theme.palette.common.white,
-  opacity: 0.8,
-  '&:hover': {
-    opacity: 1
-  }
-}));
-
-const CompanyLogo = styled(Avatar)(({ theme }) => ({
-  width: 120,
-  height: 120,
-  border: `4px solid ${theme.palette.primary.main}`,
-  marginRight: theme.spacing(3),
-  boxShadow: theme.shadows[4]
-}));
-
-const CategoryChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.secondary.light,
-  color: theme.palette.secondary.contrastText,
-  fontWeight: 500,
-  '&:hover': {
-    backgroundColor: theme.palette.secondary.main,
-    transform: 'translateY(-2px)'
-  }
-}));
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`profile-tabpanel-${index}`}
-      aria-labelledby={`profile-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
-
-const VideoCard = styled(Card)(({ theme }) => ({
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: theme.shape.borderRadius,
-  overflow: 'hidden',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: theme.shadows[8]
-  }
-}));
-
-const VideoCardMedia = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  height: '400px',
-  backgroundColor: '#000',
-  overflow: 'hidden',
-  '& video': {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    cursor: 'pointer'
-  }
-}));
-
-const JobCard = styled(Card)(({ theme }) => ({
-  marginBottom: theme.spacing(3),
-  borderLeft: `4px solid ${theme.palette.primary.main}`,
-  transition: 'transform 0.3s ease',
-  '&:hover': {
-    transform: 'translateX(5px)'
-  }
-}));
-
-const EmployerPublicProfile = ({userId:propUserId}) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { userId } = useParams();
-
-  const id = userId || propUserId;
-
-  // State
-  const [tabValue, setTabValue] = useState(0);
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
 
-  // Video states
-  const [mainVideoState, setMainVideoState] = useState({
-    isPlaying: false,
-    isMuted: true
-  });
-  
-  const [videoStates, setVideoStates] = useState({});
-
-  // Refs
   const mainVideoRef = useRef(null);
-  const videoRefs = useRef({});
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
-  // Fetch employer public data
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchEmployerData = async () => {
-      if (!isMounted) return;
-
+    let mounted = true;
+    const fetchData = async () => {
+      if (!id) return;
       try {
         setLoading(true);
-
-        // Fetch profile
-        const profileResponse = await getEmployerPublicProfile(id);
-        if (isMounted) setProfile(profileResponse.data);
-
-        // Fetch company videos
-        const videosResponse = await getEmployerPublicVideos(id);
-        if (isMounted) setVideos(videosResponse.data?.videos || []);
-
-        // Fetch jobs
-        const jobsResponse = await getEmployerPublicJobs(id);
-        if (isMounted) setJobs(jobsResponse.data?.jobs || []);
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching employer data:', error);
-        setLoading(false);
+        const [pRes, vRes, jRes] = await Promise.all([
+          getEmployerPublicProfile(id),
+          getUserVideosByUserId(id),
+          getEmployerPublicJobs(id)
+        ]);
+        if (!mounted) return;
+        setProfile(pRes.data);
+        setVideos(vRes.data?.videos || []);
+        setJobs(jRes.data?.jobs || []);
+      } catch (err) {
+        console.error('Error fetching employer public data', err);
+        toast({ title: 'Error', description: 'Failed to load employer data', variant: 'destructive' });
+      } finally {
+        if (mounted) setLoading(false);
       }
     };
+    fetchData();
+    return () => { mounted = false; };
+  }, [id, toast]);
 
-    if (id) {
-      fetchEmployerData();
-    }
+  const togglePlay = () => {
+    if (!mainVideoRef.current) return;
+    if (isPlaying) mainVideoRef.current.pause(); else mainVideoRef.current.play();
+    setIsPlaying(!isPlaying);
+  };
 
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
-
-  // Handle tab change
-  const handleTabChange = useCallback((event, newValue) => {
-    setTabValue(newValue);
-  }, []);
-
-  // Main video controls
-  const toggleMainVideoPlayback = useCallback(() => {
-    if (mainVideoRef.current) {
-      if (mainVideoState.isPlaying) {
-        mainVideoRef.current.pause();
-      } else {
-        mainVideoRef.current.play();
-      }
-      setMainVideoState(prev => ({
-        ...prev,
-        isPlaying: !prev.isPlaying
-      }));
-    }
-  }, [mainVideoState.isPlaying]);
-
-  const toggleMainVideoMute = useCallback(() => {
-    if (mainVideoRef.current) {
-      mainVideoRef.current.muted = !mainVideoState.isMuted;
-      setMainVideoState(prev => ({
-        ...prev,
-        isMuted: !prev.isMuted
-      }));
-    }
-  }, [mainVideoState.isMuted]);
-
-  const handleMainVideoEnded = useCallback(() => {
-    setMainVideoState(prev => ({
-      ...prev,
-      isPlaying: false
-    }));
-  }, []);
-
-  // Gallery video controls
-  const toggleVideoPlayback = useCallback((videoId) => {
-    const videoRef = videoRefs.current[videoId];
-    if (videoRef) {
-      if (videoStates[videoId]?.isPlaying) {
-        videoRef.pause();
-      } else {
-        videoRef.play();
-      }
-      setVideoStates(prev => ({
-        ...prev,
-        [videoId]: {
-          ...prev[videoId],
-          isPlaying: !prev[videoId]?.isPlaying
-        }
-      }));
-    }
-  }, [videoStates]);
-
-  const toggleVideoMute = useCallback((videoId) => {
-    const videoRef = videoRefs.current[videoId];
-    if (videoRef) {
-      videoRef.muted = !videoStates[videoId]?.isMuted;
-      setVideoStates(prev => ({
-        ...prev,
-        [videoId]: {
-          ...prev[videoId],
-          isMuted: !prev[videoId]?.isMuted
-        }
-      }));
-    }
-  }, [videoStates]);
-
-  const handleVideoEnded = useCallback((videoId) => {
-    setVideoStates(prev => ({
-      ...prev,
-      [videoId]: {
-        ...prev[videoId],
-        isPlaying: false
-      }
-    }));
-  }, []);
-
-  // Format date
-  const formatDate = useCallback((dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }, []);
-
-  // Format duration
-  const formatDuration = useCallback((seconds) => {
-    if (!seconds) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }, []);
-
-  // Find main video
-  const getMainVideo = useCallback(() => {
-    return videos.find((video) => video.video_position === 'main') || videos[0];
-  }, [videos]);
+  const toggleMute = () => {
+    if (!mainVideoRef.current) return;
+    mainVideoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
 
   if (loading) {
     return (
-      <ProfileContainer sx={{
-        //backgroundclr 
-        padding: theme.spacing(2),
-        height: '100vh',
-        mt: 2,
-        mb: 0,
-        paddingBottom: 4,
-      }}>
-        <Container maxWidth="lg">
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <Typography variant="h6">Loading profile...</Typography>
-          </Box>
-        </Container>
-      </ProfileContainer>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin text-cyan-600" />
+      </div>
     );
   }
 
   if (!profile) {
     return (
-      <ProfileContainer sx={{
-        //backgroundclr 
-        padding: theme.spacing(2),
-        height: '100vh',
-        mt: 2,
-        mb: 0,
-        paddingBottom: 4,
-      }}>
-        <Container maxWidth="lg">
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <Typography variant="h6">Profile not found</Typography>
-          </Box>
-        </Container>
-      </ProfileContainer>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h2 className="text-2xl font-semibold">Employer not found</h2>
+        <p className="text-muted-foreground">The requested employer profile doesn't exist.</p>
+      </div>
     );
   }
 
-  const mainVideo = getMainVideo();
-  const otherVideos = videos.filter(video => video.id !== mainVideo?.id);
+  const mainVideo = videos.find(v => v.video_position === 'main') || videos[0];
 
   return (
-    <ProfileContainer sx={{
-      //backgroundclr 
-      padding: theme.spacing(2),
-      minHeight: '100vh',
-      pt: 5,
-      mb: 0,
-      paddingBottom: 0,
-    }}>
-      <Container maxWidth="lg" height="100%" sx={{mt:isMobile?'0px':0}}>
-        {/* Profile Header */}
-        <ProfileHeader>
-          <ProfileInfo>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <CompanyLogo src={`${VITE_API_BASE_URL}${profile.logo}`} alt={profile.name} />
-              <Box>
-                <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-                  {profile.name}
-                </Typography>
-                <Typography variant="h6" color="primary" fontWeight="medium">
-                  {profile.industry}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                  <LocationIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                    {profile.location}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
+    <div className="container mx-auto py-6 px-4 max-w-7xl">
+      <div className="mb-8">
+        <Card className="border-l-4 border-l-purple-500">
+          <CardContent className="p-8">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <Avatar className="h-32 w-32">
+                  <AvatarImage src={profile.logo ? `${VITE_API_BASE_URL}${profile.logo}` : ''} alt={profile.companyName} />
+                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-4xl">
+                    {profile.companyName?.charAt(0) || 'C'}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
 
-            <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
-              {profile.description}
-            </Typography>
+              <div className="flex-grow">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h1 className="text-4xl font-bold mb-2">{profile.companyName}</h1>
+                    <p className="text-lg text-muted-foreground">{profile.industry}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={() => navigate(`/employer-tabs?group=companyContent&tab=company-profile&edit=true`)} className="bg-purple-600 text-white">
+                      Edit Profile
+                    </Button>
+                  </div>
+                </div>
 
-            {/* Categories displayed inline with other info */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                Categories
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                {profile.categories?.map((category, index) => (
-                  <CategoryChip key={index} label={category.name || category} sx={{ mb: 1, mr: 1 }} />
-                ))}
-              </Box>
-            </Box>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  {profile.location && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span>{profile.location}</span>
+                    </div>
+                  )}
 
-            <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Typography variant="body2">
-                  <Box component="span" fontWeight="bold">Founded:</Box> {profile.founded}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Typography variant="body2">
-                  <Box component="span" fontWeight="bold">Size:</Box> {profile.size}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Typography variant="body2">
-                  <Box component="span" fontWeight="bold">Active Jobs:</Box> {jobs.length}
-                </Typography>
-              </Grid>
-            </Grid>
+                  {profile.companySize && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Briefcase className="h-4 w-4 text-muted-foreground" />
+                      <span>{profile.companySize} employees</span>
+                    </div>
+                  )}
 
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-              {profile.email && (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <EmailIcon fontSize="small" color="action" />
-                  <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {profile.email}
-                  </Typography>
-                </Box>
-              )}
-              {profile.phone && (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <PhoneIcon fontSize="small" color="action" />
-                  <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {profile.phone}
-                  </Typography>
-                </Box>
-              )}
-              {profile.website && (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <LanguageIcon fontSize="small" color="action" />
-                  <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {profile.website}
-                  </Typography>
-                </Box>
-              )}
-            </Box>
+                  {profile.email && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <a href={`mailto:${profile.email}`} className="hover:text-cyan-600">{profile.email}</a>
+                    </div>
+                  )}
 
-            <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
-              {profile.social?.linkedin && (
-                <Tooltip title="LinkedIn">
-                  <IconButton 
-                    color="primary" 
-                    aria-label="LinkedIn" 
-                    href={profile.social.linkedin} 
-                    target="_blank"
-                  >
-                    <LinkedInIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {profile.social?.facebook && (
-                <Tooltip title="Facebook">
-                  <IconButton 
-                    color="primary" 
-                    aria-label="Facebook" 
-                    href={profile.social.facebook} 
-                    target="_blank"
-                  >
-                    <FacebookIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {profile.social?.twitter && (
-                <Tooltip title="Twitter">
-                  <IconButton 
-                    color="primary" 
-                    aria-label="Twitter" 
-                    href={profile.social.twitter} 
-                    target="_blank"
-                  >
-                    <TwitterIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </Box>
-          </ProfileInfo>
+                  {profile.website && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                      <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 flex items-center gap-1">
+                        Visit Website
+                      </a>
+                    </div>
+                  )}
+                </div>
 
-          {/* Main Video */}
-          {mainVideo?.video_url && (
-            <MainVideoContainer>
-              <video
-                ref={mainVideoRef}
-                src={mainVideo.video_url}
-                width="100%"
-                height="100%"
-                muted={mainVideoState.isMuted}
-                onEnded={handleMainVideoEnded}
-                onClick={toggleMainVideoPlayback}
-                style={{ objectFit: 'cover', cursor: 'pointer' }}
-              />
+                {profile.description && (
+                  <div className="mt-3 text-muted-foreground whitespace-pre-line">{profile.description}</div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-              <VideoControls>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <IconButton size="small" color="inherit" onClick={toggleMainVideoPlayback}>
-                    {mainVideoState.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-                  </IconButton>
-                  <IconButton size="small" color="inherit" onClick={toggleMainVideoMute}>
-                    {mainVideoState.isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
-                  </IconButton>
-                </Box>
-                <Typography variant="caption" color="inherit" noWrap sx={{ maxWidth: '60%' }}>
-                  {mainVideo.video_title || 'Company Introduction'}
-                </Typography>
-              </VideoControls>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="jobs">Jobs ({jobs.length})</TabsTrigger>
+          <TabsTrigger value="videos">Videos</TabsTrigger>
+        </TabsList>
 
-              <VideoActions>
-                <Tooltip title="Like">
-                  <IconButton color="inherit">
-                    <FavoriteIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Share">
-                  <IconButton color="inherit">
-                    <ShareIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Save">
-                  <IconButton color="inherit">
-                    <BookmarkIcon />
-                  </IconButton>
-                </Tooltip>
-              </VideoActions>
-            </MainVideoContainer>
-          )}
-        </ProfileHeader>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
+                <p className="text-xs text-muted-foreground mt-1">Job postings</p>
+              </CardContent>
+            </Card>
 
-    
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{jobs.reduce((sum, j) => sum + (j.applicants_count || 0), 0)}</div>
+                <p className="text-xs text-muted-foreground mt-1">Candidates applied</p>
+              </CardContent>
+            </Card>
 
-        {/* Tabs Section - Simplified with only Jobs and About tabs */}
-        <Paper sx={{ mb: 4, borderRadius: theme.shape.borderRadius, overflow: 'hidden', boxShadow: theme.shadows[3] }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant={isMobile ? "scrollable" : "fullWidth"}
-            scrollButtons={isMobile ? "auto" : false}
-            centered={!isMobile}
-            sx={{
-              '& .MuiTab-root': {
-                fontSize: isMobile ? '0.875rem' : '1rem',
-                fontWeight: 500,
-                minHeight: 48
-              }
-            }}
-          >
-            <Tab label="About" icon={isMobile ? null : <WorkIcon />} iconPosition="start" />
-            <Tab label="Jobs" icon={isMobile ? null : <WorkIcon />} iconPosition="start" />
-          </Tabs>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{profile.profileViews || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">In the last 30 days</p>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
-          {/* About Tab */}
-          <TabPanel value={tabValue} index={0}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Company Overview
-                </Typography>
-                <Typography variant="body1" paragraph sx={{ lineHeight: 1.8 }}>
-                  {profile.description}
-                </Typography>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Industry
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  {profile.industry}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Founded
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  {profile.founded}
-                </Typography>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Headquarters
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  {profile.location}
-                </Typography>
-              </Grid>
-            </Grid>
-          </TabPanel>
-
-          {/* Jobs Tab */}
-          <TabPanel value={tabValue} index={1}>
-            <Typography variant="h6" gutterBottom fontWeight="medium">
-              Open Positions
-            </Typography>
-
-            {jobs.length > 0 ? (
-              jobs.map((job) => (
-                <JobCard key={job.id} sx={{ mb: 3 }}>
+        <TabsContent value="jobs" className="space-y-6">
+          {jobs.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {jobs.map(job => (
+                <Card key={job.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{job.title}</CardTitle>
+                    <div className="text-sm text-muted-foreground flex items-center gap-2"><MapPin className="h-3 w-3" />{job.location}</div>
+                  </CardHeader>
                   <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        <Typography variant="h6" component="h3" fontWeight="medium">
-                          {job.title}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                          <LocationIcon fontSize="small" color="action" />
-                          <Typography variant="body2" color="textSecondary" sx={{ ml: 0.5 }}>
-                            {job.location}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box>
-                        <Typography variant="body2" color="textSecondary">
-                          <Box component="span" fontWeight="bold">Posted:</Box> {formatDate(job.posted_at)}
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                      <Chip label={job.employment_type} size="small" color="primary" variant="outlined" />
-                      <Chip
-                        label={`${job.salary_min || 0} - ${job.salary_max || 0}`}
-                        size="small"
-                        color="secondary"
-                        variant="outlined"
-                      />
-                    </Box>
-
-                    <Typography variant="body1" sx={{ mt: 2, lineHeight: 1.7 }}>
-                      {job.description}
-                    </Typography>
-
-                    {job.requirements?.length > 0 && (
-                      <>
-                        <Typography variant="subtitle1" sx={{ mt: 2 }} fontWeight="medium">
-                          Requirements:
-                        </Typography>
-                        <List dense sx={{ listStyleType: 'disc', pl: 2 }}>
-                          {job.requirements.map((req, idx) => (
-                            <ListItem key={idx} sx={{ display: 'list-item', pl: 1 }}>
-                              <ListItemText primary={req} />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </>
-                    )}
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>{job.status}</Badge>
+                        <Badge variant="outline">{job.jobType}</Badge>
+                      </div>
+                      {job.description && <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>}
+                      <Button variant="outline" className="w-full" onClick={() => navigate(`/job/${job.id}`)}>View Details</Button>
+                    </div>
                   </CardContent>
-                </JobCard>
-              ))
-            ) : (
-              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
-                No job postings available
-              </Typography>
-            )}
-          </TabPanel>
-        </Paper>
-            {/* Other Videos Section - Displayed as cards below the main content */}
-        {otherVideos.length > 0 && (
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">
-              Employer Videos
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-            <Grid container spacing={3}>
-              {otherVideos.map((video) => (
-                <Grid item xs={12} sm={6} md={4} key={video.id}>
-                  <VideoCard>
-                    <VideoCardMedia onClick={() => toggleVideoPlayback(video.id)}>
-                      <video
-                        ref={el => {
-                          if (el) {
-                            videoRefs.current[video.id] = el;
-                            el.muted = videoStates[video.id]?.isMuted ?? true;
-                          }
-                        }}
-                        src={video.video_url}
-                        onEnded={() => handleVideoEnded(video.id)}
-                      />
-                      
-                      {/* Title overlapping on video */}
-                      <Box sx={{
-                        position: 'absolute',
-                        bottom: 35,
-                        left: 0,
-                        right: 0,
-                        padding: '16px',
-                      }}>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            color: 'white',
-                            fontWeight: 'bold'
-                          }}
-                        >
-                          {video.video_title || 'Untitled Video'}
-                        </Typography>
-                      </Box>
-
-                      {/* Play/Pause overlay */}
-                      <Box sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'rgba(0,0,0,0.3)',
-                        opacity: videoStates[video.id]?.isPlaying ? 0 : 1,
-                        transition: 'opacity 0.3s ease',
-                        pointerEvents: 'none'
-                      }}>
-                        <PlayArrowIcon sx={{ fontSize: 50, color: 'white' }} />
-                      </Box>
-                      
-                      {/* Video controls */}
-                      <Box sx={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '12px',
-                        backgroundColor: 'rgba(0,0,0,0.7)'
-                      }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <IconButton 
-                            size="small" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleVideoPlayback(video.id);
-                            }}
-                            sx={{ 
-                              color: 'white',
-                              '&:hover': {
-                                backgroundColor: 'rgba(255,255,255,0.3)'
-                              }
-                            }}
-                          >
-                            {videoStates[video.id]?.isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-                          </IconButton>
-                          
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleVideoMute(video.id);
-                            }}
-                            sx={{ 
-                              color: 'white',
-                              '&:hover': {
-                                backgroundColor: 'rgba(255,255,255,0.3)'
-                              }
-                            }}
-                          >
-                            {videoStates[video.id]?.isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
-                          </IconButton>
-                          
-                          
-                        </Box>
-                        
-                        {/* <Typography variant="caption" sx={{ color: 'white' }}>
-                          {video.views || 0} views
-                        </Typography> */}
-                      </Box>
-                    </VideoCardMedia>
-                  </VideoCard>
-                </Grid>
+                </Card>
               ))}
-            </Grid>
-          </Box>
-        )}
-      </Container>
-    </ProfileContainer>
-  );
-};
+            </div>
+          ) : (
+            <Card className="text-center py-12">
+              <CardContent>
+                <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No jobs posted yet</h3>
+                <p className="text-muted-foreground mb-4">Start attracting candidates by posting your first job</p>
+                <Button onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')} className="bg-cyan-600 text-white">Post a Job</Button>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
-export default EmployerPublicProfile;
+        <TabsContent value="videos" className="space-y-6">
+          {mainVideo ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{mainVideo.video_title || 'Company Video'}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <div className="relative bg-black aspect-video">
+                      <video
+                        ref={mainVideoRef}
+                        src={mainVideo.video_url || mainVideo.videoUrl || ''}
+                        className="w-full h-full object-cover"
+                        muted={isMuted}
+                        onClick={togglePlay}
+                      />
+
+                      <div className="absolute inset-0 flex items-end p-4 pointer-events-none">
+                        <div className="w-full flex justify-between items-center pointer-events-auto">
+                          <div className="flex gap-2">
+                            <Button size="icon" variant="ghost" onClick={togglePlay} className="bg-white/20 text-white">
+                              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                            </Button>
+                            <Button size="icon" variant="ghost" onClick={toggleMute} className="bg-white/20 text-white">
+                              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                            </Button>
+                          </div>
+                          <div className="text-white text-sm">{mainVideo.viewsCount || 0} views</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="space-y-3">
+                {videos.filter(v => v.id !== mainVideo.id).map(v => (
+                  <Card key={v.id} className="overflow-hidden cursor-pointer" onClick={() => { /* optionally open modal */ }}>
+                    <div className="relative bg-black aspect-video">
+                      <video src={v.video_url || v.videoUrl} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Play className="h-10 w-10 text-white" />
+                      </div>
+                    </div>
+                    <CardContent>
+                      <h3 className="font-semibold truncate">{v.video_title || v.title}</h3>
+                      {v.description && <p className="text-sm text-muted-foreground truncate mt-1">{v.description}</p>}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <Card className="text-center py-12">
+              <CardContent>
+                <Play className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No videos</h3>
+                <p className="text-muted-foreground">This employer hasn't uploaded any videos yet.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+   

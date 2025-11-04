@@ -75,7 +75,7 @@ export default function EmployerProfilePage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+        <Loader2 className={`h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
       </div>
     );
   }
@@ -130,7 +130,7 @@ export default function EmployerProfilePage() {
                   {profile?.email && (
                     <div className="flex items-center gap-2 text-sm">
                       <Mail className="h-4 w-4 text-muted-foreground" />
-                      <a href={`mailto:${profile.email}`} className="hover:${themeColors.iconBackgrounds.primary.split(' ')[1]}">
+                      <a href={`mailto:${profile.email}`} className="hover:text-cyan-600">
                         {profile.email}
                       </a>
                     </div>
@@ -150,7 +150,7 @@ export default function EmployerProfilePage() {
                         href={profile.website} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="hover:${themeColors.iconBackgrounds.primary.split(' ')[1]} flex items-center gap-1"
+                        className="hover:text-cyan-600 flex items-center gap-1"
                       >
                         Visit Website
                         <ExternalLink className="h-3 w-3" />

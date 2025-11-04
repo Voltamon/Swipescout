@@ -186,9 +186,9 @@ export const getEmployerPublicProfile = (id) => api.get(`/employer/employer-prof
 export const updateEmployerProfile = (companyData) => api.put(`/employer/employer-profile/`, companyData);
 export const createEmployerProfile = (companyData) => api.post(`/employer/employer-profile/`, companyData);
 export const uploadCompanyLogo = (formData) => api.post(`/employer/upload-logo/`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-export const getEmployerJobs = () => api.get('employer/jobs/');
-export const getEmployerPublicJobs = (id) => api.get(`employer/jobs/${id}`);
-export const getJobDetails = (id) => api.get(`employer/job/${id}`);
+export const getEmployerJobs = () => api.get('/employer/jobs/');
+export const getEmployerPublicJobs = (id) => api.get(`/employer/jobs/${id}`);
+export const getJobDetails = (id) => api.get(`/employer/job/${id}`);
 export const getEmployerVideos = () => api.get(`/videos/`);
 
 // Jobs CRUD
@@ -334,6 +334,7 @@ export const updateAdminSettings = (settings) => api.put('/admin/settings', sett
 export const getUsers = (params) => api.get('/admin/users', { params });
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
 export const banUser = (id, data) => api.post(`/admin/users/${id}/ban`, data);
+export const updateUserRole = (id, data) => api.patch(`/admin/users/${id}/role`, data);
 export const getReportedContent = (params) => api.get('/admin/reports', { params });
 export const handleReport = (id, data) => api.post(`/admin/reports/${id}/action`, data);
 

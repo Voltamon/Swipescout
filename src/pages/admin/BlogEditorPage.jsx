@@ -31,8 +31,10 @@ import {
   createBlog, 
   updateBlog, 
   getBlogCategories, 
-  getBlogTags 
+  getBlogTags, 
+  createBlogTag
 } from '../../services/api';
+import TagSelector from '../../components/admin/TagSelector';
 import themeColors from '@/config/theme-colors-admin';
 
 const BlogEditorPageEnhanced = () => {
@@ -218,6 +220,30 @@ const BlogEditorPageEnhanced = () => {
         metaKeywords: [...prev.metaKeywords, prev.keywordInput.trim()],
         keywordInput: ''
       }));
+    }
+  };
+
+  const toggleTag = (tagName) => {
+    setFormData(prev => {
+      const exists = prev.selectedTags.includes(tagName);
+      return {
+        ...prev,
+        selectedTags: exists ? prev.selectedTags.filter(t => t !== tagName) : [...prev.selectedTags, tagName]
+      };
+    });
+  };
+
+  const createNewTag = async (tagName) => {
+    try {
+      const payload = { name: tagName };
+      const response = await createBlogTag(payload);
+      const created = response?.data || { id: Date.now(), name: tagName };
+      // Add to availableTags and select it
+      setAvailableTags(prev => [created, ...prev.filter(t => t.name !== created.name)]);
+      setFormData(prev => ({ ...prev, selectedTags: Array.from(new Set([...(prev.selectedTags || []), created.name])) }));
+    } catch (error) {
+      console.error('Failed to create tag:', error);
+      alert('Failed to create tag');
     }
   };
 
@@ -820,25 +846,7 @@ const BlogEditorPageEnhanced = () => {
                   <Separator />
                   <div>
                     <p className="text-sm font-medium mb-2">Popular Tags:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {availableTags.slice(0, 10).map((tag) => (
-                        <Badge
-                          key={tag.id}
-                          variant="outline"
-                          className="cursor-pointer hover:bg-slate-100"
-                          onClick={() => {
-                            if (!formData.selectedTags.includes(tag.name)) {
-                              setFormData(prev => ({
-                                ...prev,
-                                selectedTags: [...prev.selectedTags, tag.name]
-                              }));
-                            }
-                          }}
-                        >
-                          {tag.name}
-                        </Badge>
-                      ))}
-                    </div>
+                    <TagSelector availableTags={availableTags} selectedTags={formData.selectedTags} onToggleTag={toggleTag} onAddTag={createNewTag} />
                   </div>
                 </>
               )}

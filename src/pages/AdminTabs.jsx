@@ -177,20 +177,23 @@ const AdminTabs = () => {
         )}
 
         {/* Welcome Section */}
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
-              {t('adminTabs:title')} 🛡️
-            </h1>
-            <p className={themeColors.text.secondary}>
-              {t('adminTabs:subtitle')}
-            </p>
+        {/* Hide the main header when viewing the dashboard overview route (group=dashboard & tab=overview) */}
+        {(tabCategoryKey === 'dashboard' && tabParam === 'overview') && (
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
+                {t('adminTabs:title')} 🛡️
+              </h1>
+              <p className={themeColors.text.secondary}>
+                {t('adminTabs:subtitle')}
+              </p>
+            </div>
+            <div className="ml-4">
+              {/* Use the same LanguageSelector used in Header so both show flag + letters */}
+              <LanguageSelector variant="menu" showLabel={true} />
+            </div>
           </div>
-          <div className="ml-4">
-            {/* Use the same LanguageSelector used in Header so both show flag + letters */}
-            <LanguageSelector variant="menu" showLabel={true} />
-          </div>
-        </div>
+        )}
 
         {/* Quick Stats Cards */}
         {tabParam === 'overview' && (

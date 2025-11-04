@@ -148,14 +148,18 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm overflow-y-auto overflow-x-hidden"
+      className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm"
       onClick={close}
     >
-      {/* Dialog Container */}
+      {/* Modal centered in the viewport (fixed + transform) */}
+      {/* Dialog Container (fixed to viewport) */}
       <div
-        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-scale-in border border-gray-100 my-auto max-h-[95vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed left-[50vw] top-[50vh] z-[100000] w-full max-w-md p-4 transform -translate-x-1/2 -translate-y-1/2"
       >
+        <div
+          className="relative w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-scale-in border border-gray-100 max-h-[95vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Close Button */}
         <button
           onClick={close}
@@ -560,7 +564,8 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
           )}
         </div>
       </div>
-    </div>
+      </div>
+      </div>
   );
 };
 

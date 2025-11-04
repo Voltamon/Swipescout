@@ -29,7 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/UI/dropdown-menu.jsx';
-import { getUsers, deleteUser, banUser } from '@/services/api';
+import { getUsers, deleteUser, banUser, updateUserRole } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
 import {
   Search,
@@ -65,36 +65,8 @@ const UserManagementPage = () => {
       setUsers(response.data.users || response.data || []);
     } catch (error) {
       console.error('Failed to fetch users:', error);
-      // Mock data
-      setUsers([
-        {
-          id: '1',
-          firstName: 'John',
-          lastName: 'Doe',
-          email: 'john@example.com',
-          role: 'job_seeker',
-          status: 'active',
-          created_at: '2024-01-15',
-        },
-        {
-          id: '2',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          email: 'jane@example.com',
-          role: 'employer',
-          status: 'active',
-          created_at: '2024-01-20',
-        },
-        {
-          id: '3',
-          firstName: 'Bob',
-          lastName: 'Johnson',
-          email: 'bob@example.com',
-          role: 'job_seeker',
-          status: 'suspended',
-          created_at: '2024-02-01',
-        },
-      ]);
+      // On error, clear list and let UI show empty state. Do not fall back to mock data.
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -112,6 +84,13 @@ const UserManagementPage = () => {
       switch (actionDialog.type) {
         case 'ban':
           await banUser(selectedUser.id, { reason: 'Violation of terms' });
+          break;
+        case 'make_admin':
+          await updateUserRole(selectedUser.id, { role: 'admin' });
+          break;
+        case 'revoke_admin':
+          // Default demotion to job_seeker. Adjust if you need to restore a previous role.
+          await updateUserRole(selectedUser.id, { role: 'job_seeker' });
           break;
         case 'delete':
           await deleteUser(selectedUser.id);
@@ -147,10 +126,40 @@ const UserManagementPage = () => {
     );
   };
 
+  // Dialog labels & classes for different actions
+  const actionButtonLabel = actionDialog.type === 'ban'
+    ? 'Suspend'
+    : actionDialog.type === 'delete'
+    ? 'Delete'
+    : actionDialog.type === 'make_admin'
+    ? 'Make Admin'
+    : actionDialog.type === 'revoke_admin'
+    ? 'Revoke Admin'
+    : 'Confirm';
+
+  const actionButtonClass = actionDialog.type === 'delete'
+    ? themeColors.buttons.danger
+    : actionDialog.type === 'ban'
+    ? themeColors.buttons.warning
+    : actionDialog.type === 'make_admin'
+    ? themeColors.buttons.primary
+    : themeColors.buttons.warning;
+
   const getRoleBadge = (role) => {
+    // Normalize role which may be stored as a string, an array, or null
+    let label = 'no role';
+    if (Array.isArray(role)) {
+      label = role.join(', ');
+    } else if (role) {
+      label = role;
+    }
+
+    // Replace underscores with spaces for display
+    label = String(label).replace(/_/g, ' ');
+
     return (
       <Badge variant="outline">
-        {role.replace('_', ' ')}
+        {label}
       </Badge>
     );
   };
@@ -199,6 +208,13 @@ const UserManagementPage = () => {
                 size="sm"
               >
                 Employers
+              </Button>
+              <Button
+                variant={roleFilter === 'admin' ? 'default' : 'outline'}
+                onClick={() => setRoleFilter('admin')}
+                size="sm"
+              >
+                Admins
               </Button>
             </div>
           </div>
@@ -273,6 +289,13 @@ const UserManagementPage = () => {
                             <Ban className="mr-2 h-4 w-4" />
                             {user.status === 'active' ? 'Suspend' : 'Unsuspend'}
                           </DropdownMenuItem>
+                          {/* Make / Revoke Admin */}
+                          <DropdownMenuItem
+                            onClick={() => handleAction(user, Array.isArray(user.role) ? (user.role.includes('admin') ? 'revoke_admin' : 'make_admin') : (user.role === 'admin' ? 'revoke_admin' : 'make_admin'))}
+                          >
+                            <Shield className="mr-2 h-4 w-4" />
+                            {Array.isArray(user.role) ? (user.role.includes('admin') ? 'Revoke Admin' : 'Make Admin') : (user.role === 'admin' ? 'Revoke Admin' : 'Make Admin')}
+                          </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleAction(user, 'delete')}
                             className="text-red-600"
@@ -296,12 +319,13 @@ const UserManagementPage = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionDialog.type === 'ban' ? 'Suspend User' : 'Delete User'}
+              {actionDialog.type === 'ban' ? 'Suspend User' : actionDialog.type === 'delete' ? 'Delete User' : actionDialog.type === 'make_admin' ? 'Make Admin' : actionDialog.type === 'revoke_admin' ? 'Revoke Admin' : ''}
             </DialogTitle>
             <DialogDescription>
-              {actionDialog.type === 'ban'
-                ? `Are you sure you want to suspend ${selectedUser?.firstName} ${selectedUser?.lastName}?`
-                : `Are you sure you want to delete ${selectedUser?.firstName} ${selectedUser?.lastName}? This action cannot be undone.`}
+              {actionDialog.type === 'ban' && `Are you sure you want to suspend ${selectedUser?.firstName} ${selectedUser?.lastName}?`}
+              {actionDialog.type === 'delete' && `Are you sure you want to delete ${selectedUser?.firstName} ${selectedUser?.lastName}? This action cannot be undone.`}
+              {actionDialog.type === 'make_admin' && `Are you sure you want to make ${selectedUser?.firstName} ${selectedUser?.lastName} an admin?`}
+              {actionDialog.type === 'revoke_admin' && `Are you sure you want to revoke admin privileges from ${selectedUser?.firstName} ${selectedUser?.lastName}?`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -310,9 +334,9 @@ const UserManagementPage = () => {
             </Button>
             <Button
               onClick={executeAction}
-              className={`${actionDialog.type === 'delete' ? themeColors.buttons.danger : themeColors.buttons.warning} text-white`}
+              className={`${actionButtonClass} text-white`}
             >
-              {actionDialog.type === 'ban' ? 'Suspend' : 'Delete'}
+              {actionButtonLabel}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,4 +1,5 @@
 ﻿import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Menu, 
@@ -296,13 +297,14 @@ const Header = () => {
         )}
       </div>
 
-      {/* Auth Dialog */}
-      {showAuthDialog && (
+      {/* Auth Dialog (render via portal so it's not trapped inside header stacking context) */}
+      {showAuthDialog && createPortal(
         <AuthPage
           open={showAuthDialog}
           onClose={() => setShowAuthDialog(false)}
           initialTab={authTab}
-        />
+        />,
+        document.body
       )}
     </header>
   );
