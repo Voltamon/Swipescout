@@ -42,6 +42,7 @@ const AdminDashboard = () => {
     },
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchStats();
@@ -52,25 +53,12 @@ const AdminDashboard = () => {
       const response = await getAdminStats();
       if (response?.data?.stats) {
         setStats(response.data.stats);
+        setError(null);
       }
-    } catch (error) {
-      console.error('Failed to fetch admin stats:', error);
-      // Mock data for development
-      setStats({
-        totalUsers: 1250,
-        activeUsers: 890,
-        bannedUsers: 15,
-        totalVideos: 3420,
-        totalJobs: 890,
-        activeJobs: 650,
-        pendingReports: 12,
-        totalApplications: 4567,
-        recentActivity: {
-          newUsersWeek: 45,
-          newVideosWeek: 128,
-          newJobsWeek: 32,
-        },
-      });
+    } catch (err) {
+      console.error('Failed to fetch admin stats:', err);
+      // Set an error message and keep stats as-is (defaults remain)
+      setError(err?.response?.data?.message || err.message || 'Failed to load admin stats');
     } finally {
       setLoading(false);
     }
@@ -86,6 +74,14 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="p-3 rounded bg-red-50 border border-red-100 text-red-700 flex items-center justify-between">
+          <div>{error}</div>
+          <div className="ml-4">
+            <Button variant="ghost" onClick={fetchStats}>Retry</Button>
+          </div>
+        </div>
+      )}
       {/* Welcome Section */}
       <div>
         <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { getBlog, saveBlog, unsaveBlog, checkBlogSaved } from '@/services/api';
+import ReportButton from '@/components/ReportButton.jsx';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Button } from '@/components/UI/button.jsx';
@@ -366,6 +367,7 @@ const BlogDetailPage = () => {
                   <Bookmark className={`mr-2 h-4 w-4 ${isSaved ? 'text-white' : ''}`} />
                   {isSaved ? t('blog.saved', 'Saved') : t('blog.save', 'Save for Later')}
                 </Button>
+                <ReportButton contentType="blog" contentId={blog.id} className="ml-2" />
               </div>
             </CardContent>
           </Card>

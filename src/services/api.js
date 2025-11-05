@@ -172,7 +172,17 @@ export const deleteUserEducation = (id) => api.delete(`/education/${id}`);
 
 // Video listings & paginator
 export const getUserVideos = () => api.get('/videos');
-export const getAllVideos = (page = 1, limit = 10) => api.get('/videos/all', { params: { page, limit } });
+// Allow optional filter params to be passed (e.g. { title, uploader, status })
+export const getAllVideos = (page = 1, limit = 10, filters = {}) => {
+  // Remove empty/null/undefined filter values so backend doesn't receive blank params
+  const cleanedFilters = Object.keys(filters || {}).reduce((acc, key) => {
+    const v = filters[key];
+    if (v !== undefined && v !== null && String(v).trim() !== '') acc[key] = v;
+    return acc;
+  }, {});
+
+  return api.get('/videos/all', { params: { page, limit, ...cleanedFilters } });
+};
 export const getUserVideosByUserId = (id) => api.get(`/videos/user/${id}`);
 export const getJobSeekersVideos = (page = 1, limit = 10) => api.get('/videos/jobseekers', { params: { page, limit } });
 export const getEmployerPublicVideos = (page = 1, limit = 10) => api.get('/videos/employers', { params: { page, limit } });
@@ -337,6 +347,9 @@ export const banUser = (id, data) => api.post(`/admin/users/${id}/ban`, data);
 export const updateUserRole = (id, data) => api.patch(`/admin/users/${id}/role`, data);
 export const getReportedContent = (params) => api.get('/admin/reports', { params });
 export const handleReport = (id, data) => api.post(`/admin/reports/${id}/action`, data);
+// Public reporting endpoints (for normal users)
+export const reportContent = (payload) => api.post('/reports', payload);
+export const getMyReports = (params) => api.get('/reports/mine', { params });
 
 // Blog
 export const getBlogs = (params) => api.get('/blogs', { params });

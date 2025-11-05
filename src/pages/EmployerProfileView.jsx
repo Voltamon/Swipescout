@@ -2,6 +2,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
+import ReportButton from '@/components/ReportButton.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
@@ -109,6 +110,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                     <Button onClick={() => navigate(`/employer-tabs?group=companyContent&tab=company-profile&edit=true`)} className="bg-purple-600 text-white">
                       Edit Profile
                     </Button>
+                    <ReportButton contentType="user" contentId={profile.id} className="bg-white/5 text-white hover:bg-white/20" />
                   </div>
                 </div>
 

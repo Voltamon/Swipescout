@@ -22,6 +22,7 @@ import {
   Eye,
   Loader2
 } from 'lucide-react';
+import ReportButton from '@/components/ReportButton.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
@@ -232,9 +233,11 @@ const VideoCard = React.memo(({
   useEffect(() => {
     if (!videoRef.current) return;
     if (!shouldLoad) {
+      console.log('Video not loading - shouldLoad is false for video:', video.id);
       videoRef.current?.pause?.();
       return;
     }
+    console.log('Video loading:', video.id, 'videoUrl:', video.videoUrl, 'src:', videoRef.current?.src, 'isPlaying:', isPlaying, 'shouldLoad:', shouldLoad);
     const v = videoRef.current;
     if (isPlaying) {
       v.muted = true;
@@ -441,6 +444,9 @@ const VideoCard = React.memo(({
                 muted={isMuted || !isPlaying}
                 preload={shouldLoad ? 'auto' : 'metadata'}
                 poster={video.thumbnail}
+                onError={(e) => console.error('Video error for', video.id, ':', e.target.error, 'src:', video.videoUrl)}
+                onLoadStart={() => console.log('Video load started:', video.id, 'src:', video.videoUrl)}
+                onCanPlay={() => console.log('Video can play:', video.id)}
                 className={cn(
                   "w-full h-full bg-black",
                   isMaximized ? "object-contain" : "object-cover"
@@ -564,6 +570,12 @@ const VideoCard = React.memo(({
               </span>
             </div>
 
+            {/* Report button */}
+            <div className="flex flex-col items-center gap-1">
+              <ReportButton contentType="video" contentId={video.id} className={cn("rounded-full transition-all hover:scale-110", isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20")} />
+              <span className="text-xs font-bold text-white bg-black/40 px-2 py-0.5 rounded-full"> &nbsp; </span>
+            </div>
+
             {/* Save button */}
             <div className="flex flex-col items-center gap-1">
               <Button
@@ -626,7 +638,12 @@ const Videos = () => {
   const wheelTimeoutRef = useRef(null);
   const touchStartYRef = useRef(0);
   const touchDeltaYRef = useRef(0);
-  const { id: initialVideoId } = useParams();
+  // `useParams` returns route params as strings. Normalize when comparing to
+  // video ids (which may be numbers or strings) to avoid strict-equality type
+  // mismatches when route is `/videos/:id`.
+  const params = useParams();
+  const { id: initialVideoId } = params;
+  const normalizedInitialVideoId = initialVideoId ? String(initialVideoId) : null;
 
   useEffect(() => {
     fetchVideos(initialVideoId);
@@ -755,10 +772,12 @@ const Videos = () => {
 
       const normalized = rawList.map((v) => {
         const n = normalizeVideoFromApi(v);
-        return {
+        const video = {
           ...n,
           id: n?.id ?? v?.id,
         };
+        console.log('Normalized video:', video.id, 'videoUrl:', video.videoUrl);
+        return video;
       });
 
       // Restore anonymous user interaction state from localStorage
@@ -826,17 +845,26 @@ const Videos = () => {
 
   useEffect(() => {
     if (initialVideoId && videos.length > 0) {
-      const index = videos.findIndex((v) => v.id === initialVideoId);
+      // Compare ids as strings to handle numeric ids returned by the API
+      const index = videos.findIndex((v) => String(v.id) === normalizedInitialVideoId);
+      console.log('Looking for video with ID:', normalizedInitialVideoId, 'found at index:', index, 'out of', videos.length, 'videos');
       if (index !== -1) {
+        console.log('Setting current video index to:', index, 'video:', videos[index]);
         setCurrentVideoIndex(index);
         setPlayingVideoId(videos[index].id);
-        setMutedVideoId(videos[index].id);
+        // Note: `setMutedVideoId` did not exist and caused a runtime error.
+        // Removing that call fixes the route handling for `/videos/:id`.
         const container = containerRef.current;
         const child = container?.children[index];
-        if (child) child.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (child) {
+          console.log('Scrolling to video at index:', index);
+          child.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        console.warn('Video ID not found in videos array:', normalizedInitialVideoId);
       }
     }
-  }, [initialVideoId, videos]);
+  }, [initialVideoId, videos, normalizedInitialVideoId]);
 
   // Navigation helpers
   const goToIndex = useCallback((idx) => {
@@ -1370,7 +1398,7 @@ const Videos = () => {
                 onClick={() => {
                   setError(null);
                   setLoading(true);
-                  fetchVideos(initialVideoId);
+                  fetchVideos(id);
                 }}
                 variant="default"
               >
@@ -1423,6 +1451,17 @@ const Videos = () => {
           const isMaximized = maximizedVideoId === video.id;
           const shouldRenderCard = distanceFromActive <= 2 || isActive || isMaximized;
           const shouldLoadVideo = shouldRenderCard || distanceFromActive <= 1 || isMaximized;
+          
+          if (index === 0 || isActive) {
+            console.log(`Video ${index} (${video.id}):`, {
+              distanceFromActive,
+              currentVideoIndex,
+              isActive,
+              shouldRenderCard,
+              shouldLoadVideo,
+              videoUrl: video.videoUrl
+            });
+          }
 
           return (
             <div key={video.id} className="min-h-screen flex items-center justify-center relative z-20">

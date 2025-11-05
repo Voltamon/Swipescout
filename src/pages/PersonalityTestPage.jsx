@@ -1,4 +1,5 @@
 ﻿import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { analyzeUserPersonality, findCompatibleJobs } from '../services/analysisApi';
 import { BarChart, Briefcase, CheckCircle, Loader, User, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -19,6 +20,24 @@ const PersonalityTestPage = () => {
   const [results, setResults] = useState(null);
   const [compatibleJobs, setCompatibleJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(false);
+  const { i18n } = useTranslation();
+
+  const localize = (value) => {
+    if (value == null) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object') {
+      // prefer full locale (e.g. en-US) then base language (en)
+      const lang = i18n?.language || '';
+      if (lang && value[lang]) return value[lang];
+      const base = lang.split && lang.split('-')[0];
+      if (base && value[base]) return value[base];
+      if (value.en) return value.en;
+      // return first available translation
+      const firstKey = Object.keys(value)[0];
+      return value[firstKey] || '';
+    }
+    return String(value);
+  };
 
   const handleAnswerChange = (questionId, answer) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
@@ -142,13 +161,13 @@ const PersonalityTestPage = () => {
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="font-semibold text-lg mb-2 text-gray-800">Strengths</h3>
                         <ul className="list-disc list-inside text-gray-600 space-y-1">
-                            {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={i}>{s}</li>) : <li>{results.personality_type.strengths}</li>}
+                  {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={i}>{localize(s)}</li>) : <li>{localize(results.personality_type.strengths)}</li>}
                         </ul>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="font-semibold text-lg mb-2 text-gray-800">Areas for Growth</h3>
                         <ul className="list-disc list-inside text-gray-600 space-y-1">
-                            {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={i}>{w}</li>) : <li>{results.personality_type.weaknesses}</li>}
+                            {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={i}>{localize(w)}</li>) : <li>{localize(results.personality_type.weaknesses)}</li>}
                         </ul>
                     </div>
                 </div>
@@ -178,10 +197,10 @@ const PersonalityTestPage = () => {
                         <div key={jobMatch.jobCategory?.id} className="border p-4 rounded-lg hover:bg-gray-50 transition-colors">
                             <h3 className="font-bold text-lg text-gray-800 flex items-center">
                                 <Briefcase className="mr-2 text-blue-500"/>
-                                {jobMatch.jobCategory?.name}
+                                {localize(jobMatch.jobCategory?.name)}
                             </h3>
                             <p className="text-sm text-gray-500 mb-2">Compatibility Score: {jobMatch.compatibilityScore}%</p>
-                            <p className="text-gray-600 mb-3">{jobMatch.compatibilityReason}</p>
+                            <p className="text-gray-600 mb-3">{localize(jobMatch.compatibilityReason)}</p>
                             
                             {/* Matching Factors */}
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3 text-xs">

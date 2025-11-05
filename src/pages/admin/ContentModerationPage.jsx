@@ -10,6 +10,7 @@ import { AlertCircle, Check, X } from 'lucide-react';
 const ContentModerationPage = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchReports();
@@ -20,13 +21,11 @@ const ContentModerationPage = () => {
       setLoading(true);
       const response = await getReportedContent({ status: 'pending', limit: 50 });
       setReports(response.data.reports || response.data || []);
+      setError(null);
     } catch (error) {
       console.error('Failed to fetch reports:', error);
-      // Fallback mock data
-      setReports([
-        { id: '1', type: 'video', reason: 'Inappropriate content', reporter: 'User123', status: 'pending' },
-        { id: '2', type: 'user', reason: 'Spam behavior', reporter: 'User456', status: 'investigating' },
-      ]);
+      setError(error?.response?.data?.message || error.message || 'Failed to load reports');
+      setReports([]);
     } finally {
       setLoading(false);
     }
@@ -45,6 +44,14 @@ const ContentModerationPage = () => {
   return (
     <div className="space-y-6">
       <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>Content Moderation</h2>
+      {error && (
+        <div className="p-3 rounded bg-red-50 border border-red-100 text-red-700 flex items-center justify-between">
+          <div>{error}</div>
+          <div className="ml-4">
+            <Button variant="ghost" onClick={fetchReports}>Retry</Button>
+          </div>
+        </div>
+      )}
       <Card>
         <CardContent className="p-0">
           <Table>
@@ -58,20 +65,28 @@ const ContentModerationPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {reports.map((report) => (
-                <TableRow key={report.id}>
-                  <TableCell><Badge variant="outline">{report.type}</Badge></TableCell>
-                  <TableCell>{report.reason}</TableCell>
-                  <TableCell>{report.reporter}</TableCell>
-                  <TableCell><Badge className={themeColors.status.pending}>{report.status}</Badge></TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => takeAction(report.id, 'remove')}><Check className="h-3 w-3" /></Button>
-                      <Button size="sm" variant="outline" onClick={() => takeAction(report.id, 'dismiss')}><X className="h-3 w-3" /></Button>
-                    </div>
+              {reports.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6 text-sm text-slate-500">
+                    {loading ? 'Loading reports...' : 'No pending reports.'}
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                reports.map((report) => (
+                  <TableRow key={report.id}>
+                    <TableCell><Badge variant="outline">{report.type}</Badge></TableCell>
+                    <TableCell>{report.reason}</TableCell>
+                    <TableCell>{report.reporter}</TableCell>
+                    <TableCell><Badge className={themeColors.status.pending}>{report.status}</Badge></TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => takeAction(report.id, 'remove')}><Check className="h-3 w-3" /></Button>
+                        <Button size="sm" variant="outline" onClick={() => takeAction(report.id, 'dismiss')}><X className="h-3 w-3" /></Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

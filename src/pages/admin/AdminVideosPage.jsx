@@ -16,6 +16,7 @@ const AdminVideosPage = () => {
   const { t } = useTranslation('adminVideos');
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({ title: '', uploader: '' });
 
   useEffect(() => {
     fetchVideos();
@@ -24,14 +25,29 @@ const AdminVideosPage = () => {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const response = await getAllVideos(1, 50);
+      // pass current filters to API helper
+      const response = await getAllVideos(1, 50, filters);
       setVideos(response.data.videos || response.data || []);
     } catch (error) {
-      console.error('Failed to fetch videos:', error);
+      // Log detailed server response when available to help diagnose 500 errors
+      console.error('Failed to fetch videos:', error.response?.status, error.response?.data || error.message || error);
       setVideos([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleApplyFilters = async () => {
+    await fetchVideos();
+  };
+
+  const handleClearFilters = async () => {
+    setFilters({ title: '', uploader: '' });
+    await fetchVideos();
   };
 
   const handleDelete = async (id) => {
@@ -50,6 +66,36 @@ const AdminVideosPage = () => {
       <div>
         <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>{t('title')}</h2>
         <p className={themeColors.text.secondary}>{t('description')}</p>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 items-end">
+        <div className="w-64">
+          <label className="block text-sm text-gray-600">Title</label>
+          <input
+            type="text"
+            value={filters.title}
+            onChange={(e) => handleFilterChange('title', e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            placeholder="Filter by title"
+          />
+        </div>
+
+        <div className="w-64">
+          <label className="block text-sm text-gray-600">Uploader</label>
+          <input
+            type="text"
+            value={filters.uploader}
+            onChange={(e) => handleFilterChange('uploader', e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            placeholder="Filter by uploader name"
+          />
+        </div>
+
+        <div className="flex gap-2 ml-auto">
+          <Button size="sm" variant="outline" onClick={handleApplyFilters}>Apply</Button>
+          <Button size="sm" onClick={handleClearFilters}>Clear</Button>
+        </div>
       </div>
 
       <Card>

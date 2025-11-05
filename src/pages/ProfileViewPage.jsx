@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Card, CardContent, CardHeader, CardTitle 
 } from '@/components/UI/card.jsx';
+import ReportButton from '@/components/ReportButton.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
@@ -326,6 +327,7 @@ export default function ProfileViewPage() {
                                 <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
                                   <Share2 className="h-5 w-5" />
                                 </Button>
+                                <ReportButton contentType="user" contentId={profile.id} className="text-white hover:bg-white/20" />
                               </div>
                               <Button 
                                 size="icon" 

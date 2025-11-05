@@ -218,9 +218,9 @@ function App() {
             <Route path="/profile/:userId" element={<ProfileViewPage />} />
             <Route path="/video-feed/:vid?" element={<VideoFeed />} />
             <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />
+            <Route path="/videos/:id" element={<Videos />} />
             <Route path="/videos/:pagetype" element={<AllVideosPage />} />
             <Route path="/videos" element={<Videos />} />
-            <Route path="/videos/:id" element={<Videos />} />
             <Route path="/video-player/:id" element={<VideoFeedViewer />} />
             <Route path="/video-player" element={<VideoPlayerPage />} />
 
