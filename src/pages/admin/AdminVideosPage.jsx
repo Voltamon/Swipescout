@@ -15,6 +15,7 @@ import { getAllVideos, deleteVideo } from '@/services/api';
 const AdminVideosPage = () => {
   const { t } = useTranslation('adminVideos');
   const [videos, setVideos] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,11 +25,21 @@ const AdminVideosPage = () => {
   const fetchVideos = async () => {
     try {
       setLoading(true);
+      setErrorMessage(null);
       const response = await getAllVideos(1, 50);
       setVideos(response.data.videos || response.data || []);
     } catch (error) {
-      console.error('Failed to fetch videos:', error);
+      // Log rich Axios error information to help debug 500 responses
+      try {
+        // axios error may contain response with body and status
+        console.error('Failed to fetch videos - axios response:', error.response ? error.response.data : null);
+        console.error('Failed to fetch videos - axios status:', error.response ? error.response.status : null);
+      } catch (e) {
+        // ignore logging errors
+      }
+      console.error('Failed to fetch videos (full error):', error);
       setVideos([]);
+      setErrorMessage(error?.response?.data?.message || error?.message || 'Failed to fetch videos');
     } finally {
       setLoading(false);
     }
@@ -68,6 +79,10 @@ const AdminVideosPage = () => {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-8">Loading videos...</TableCell>
+                </TableRow>
+              ) : errorMessage ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-red-600">{errorMessage}</TableCell>
                 </TableRow>
               ) : videos.length === 0 ? (
                 <TableRow>

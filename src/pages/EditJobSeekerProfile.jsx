@@ -56,7 +56,7 @@ const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost
 
 // A tiny wrapper used by MUI-based code earlier. We use shadcn Tabs below instead.
 
-const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSaved = () => {} }) => {
+const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSaved = () => {}, openTab = null, action = null }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -176,15 +176,43 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     }
   }
 
+  // Normalize backend profile response so UI fields (snake_case) are present
+  const normalizeProfile = (p = {}) => {
+    if (!p || typeof p !== 'object') return p || {};
+    const normalized = {
+      ...p,
+      first_name: p.first_name ?? p.firstName ?? p.first ?? p.name ?? '',
+      Second_name: p.Second_name ?? p.second_name ?? p.secondName ?? '',
+      last_name: p.last_name ?? p.lastName ?? p.last ?? '',
+      title: p.title ?? p.professional_title ?? p.professionalTitle ?? '',
+      location: p.location ?? p.city ?? '',
+      bio: p.bio ?? p.description ?? p.about ?? '',
+      email: p.email ?? p.emailAddress ?? '',
+      phone: p.phone ?? p.phoneNumber ?? '',
+      mobile: p.mobile ?? p.mobileNumber ?? '',
+      website: p.website ?? p.websiteUrl ?? '',
+      profile_pic: p.profile_pic ?? p.profilePicture ?? p.profile_picture_url ?? p.logo_url ?? '',
+      address: p.address ?? p.street ?? '',
+      preferred_job_title: p.preferred_job_title ?? p.preferredJobTitle ?? '',
+      social: {
+        linkedin_url: p.social?.linkedin_url ?? p.social?.linkedin ?? p.linkedin_url ?? p.linkedin ?? '',
+        github: p.social?.github ?? p.social?.github_url ?? p.github ?? '',
+        twitter: p.social?.twitter ?? p.social?.twitter_url ?? p.twitter ?? ''
+      }
+    };
+    return normalized;
+  };
+
   // Fetch user data (or use initialProfile passed by parent)
   useEffect(() => {
     const fetchUserData = async () => {
       if (initialProfile) {
-        setProfile(initialProfile);
-        setAvatarPicture(initialProfile.profile_pic ? `${VITE_API_BASE_URL}${initialProfile.profile_pic}?t=${Date.now()}` : '');
-        setLoading(false);
-        return;
-      }
+          const norm = normalizeProfile(initialProfile);
+          setProfile(norm);
+          setAvatarPicture(norm.profile_pic ? `${VITE_API_BASE_URL}${norm.profile_pic}?t=${Date.now()}` : '');
+          setLoading(false);
+          return;
+        }
 
       let profileResponse;
       try {
@@ -214,14 +242,15 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           getUserVideos()
         ]);
 
-        setProfile(profileResponse.data);
+  const normProfile = normalizeProfile(profileResponse.data);
+  setProfile(normProfile);
         setSkills(skillsResponse.data?.skills || []);
         setAvailableSkills(availableSkillsResponse.data?.skills || []);
         setExperiences(experiencesResponse.data?.experiences || []);
         setEducation(educationResponse.data?.educations || []);
         setVideos(videosResponse.data?.videos || []);
         
-        const initialAvatarUrl = profileResponse.data?.profile_pic ? `${VITE_API_BASE_URL}${profileResponse.data.profile_pic}?t=${Date.now()}` : '';
+  const initialAvatarUrl = normProfile?.profile_pic ? `${VITE_API_BASE_URL}${normProfile.profile_pic}?t=${Date.now()}` : '';
         try {
           if (initialAvatarUrl) await verifyImageAvailability(initialAvatarUrl);
           setAvatarPicture(initialAvatarUrl);
@@ -230,7 +259,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           setAvatarPicture('');
         }
 
-        setLoading(false);
+          setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
         setLoading(false);
@@ -244,8 +273,9 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   useEffect(() => {
     if (!location) return;
     const params = new URLSearchParams(location.search);
-    const tabParam = (params.get('tab') || params.get('openTab') || '').toLowerCase();
-    const action = (params.get('action') || params.get('open') || '').toLowerCase();
+    // prefer props passed in (openTab/action) so parent components can control the inner tab/dialog
+    const tabParam = (openTab || params.get('openTab') || params.get('tab') || '').toLowerCase();
+    const actionParam = (action || params.get('action') || params.get('open') || '').toLowerCase();
 
     const tabMap = {
       'basic': 0,
@@ -271,23 +301,23 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     }
 
     // Open specific dialogs when asked
-    if (tabParam === 'add-skill' || action === 'add-skill' || (tabParam === 'skills' && action === 'add')) {
+    if (tabParam === 'add-skill' || actionParam === 'add-skill' || (tabParam === 'skills' && actionParam === 'add')) {
       setSkillDialogOpen(true);
     }
 
-    if (tabParam === 'add-experience' || action === 'add-experience' || (tabParam === 'experience' && action === 'add')) {
+    if (tabParam === 'add-experience' || actionParam === 'add-experience' || (tabParam === 'experience' && actionParam === 'add')) {
       handleOpenExperienceDialog();
     }
 
-    if (tabParam === 'add-education' || action === 'add-education' || (tabParam === 'education' && action === 'add')) {
+    if (tabParam === 'add-education' || actionParam === 'add-education' || (tabParam === 'education' && actionParam === 'add')) {
       handleOpenEducationDialog();
     }
 
-    if (tabParam === 'video-upload' || action === 'upload-video' || (tabParam === 'videos' && action === 'upload')) {
+    if (tabParam === 'video-upload' || actionParam === 'upload-video' || (tabParam === 'videos' && actionParam === 'upload')) {
       // trigger upload flow (existing helper will navigate to upload route)
       handleUploadVideo();
     }
-  }, [location.search]);
+  }, [location.search, openTab, action]);
 
   // Handle tab change (shadcn Tabs uses value strings)
   const handleTabChange = (value) => setTabValue(value);
@@ -316,7 +346,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
       setSaving(true);
       console.log("profile::::22222",profile);
       const response = await updateUserProfile(profile);
-      let updatedProfile = response?.data || response;
+  let updatedProfile = response?.data || response;
+  updatedProfile = normalizeProfile(updatedProfile);
       // Normalize backend picture field to frontend expected field
       if (updatedProfile && updatedProfile.profile_picture_url && !updatedProfile.profile_pic) {
         updatedProfile = { ...updatedProfile, profile_pic: updatedProfile.profile_picture_url };
@@ -330,7 +361,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
 
       // Update local state and inform parent so the profile page refreshes
       setSaving(false);
-      setProfile(updatedProfile);
+  setProfile(updatedProfile);
       try {
         onSaved && onSaved(updatedProfile);
       } catch {

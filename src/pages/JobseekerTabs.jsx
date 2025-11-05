@@ -140,15 +140,17 @@ const JobseekerTabs = () => {
   return (
     <DashboardLayout navigationItems={navigationItems}>
       <div className="space-y-6">
-        {/* Welcome Section */}
-        <div className="space-y-2">
-          <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
-            {t('jobseekerTabs:welcome', { name: user?.firstName || t('jobseekerTabs:jobSeeker') })}
-          </h1>
-          <p className={themeColors.text.secondary}>
-            {t('jobseekerTabs:welcome_message')}
-          </p>
-        </div>
+        {/* Welcome Section - only show on overview tab */}
+        {tabParam === 'overview' && (
+          <div className="space-y-2">
+            <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
+              {t('jobseekerTabs:welcome', { name: user?.firstName || t('jobseekerTabs:jobSeeker') })}
+            </h1>
+            <p className={themeColors.text.secondary}>
+              {t('jobseekerTabs:welcome_message')}
+            </p>
+          </div>
+        )}
 
         {/* Quick Stats Cards - OpenVC Style */}
         {tabParam === 'overview' && (
@@ -224,7 +226,7 @@ const JobseekerTabs = () => {
           <CardContent>
             {/* If the current tab is the profile tab and mode=edit is present in the query, render the edit form */}
             {currentTab.path === 'my-profile' && searchParams.get('mode') === 'edit' ? (
-              <EditJobSeekerProfile />
+              <EditJobSeekerProfile openTab={searchParams.get('openTab')} action={searchParams.get('action')} />
             ) : currentTab.context ? (
               React.createElement(currentTab.component, { context: currentTab.context })
             ) : (
