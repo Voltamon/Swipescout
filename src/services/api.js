@@ -336,6 +336,9 @@ export const getVideoAIAnalysis = (videoId) => api.get(`/ai/video-analysis/${vid
 export const generateAIInterviewQuestions = (userId, jobId) => api.post('/ai/generate-interview-questions', { userId, jobId });
 export const getVideoStats = (id) => api.get(`/videos/${id}/stats`);
 
+// Career advice content (frontend reads all grouped content)
+export const getCareerAdvice = () => api.get('/career-advice');
+
 // Admin
 export const getAdminStats = () => api.get('/admin/stats');
 export const getPlatformAnalytics = (params) => api.get('/admin/analytics', { params });
