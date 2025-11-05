@@ -109,11 +109,16 @@ export default function JobSeekerProfile() {
     }
   };
 
-  const handleEditProfile = () => {
+  const handleEditProfile = (openTab = '', action = '') => {
     // Navigate to the profile tab inside the jobseeker-tabs layout
     // `jobseekerTabsConfig` uses the group key `profileContent` and the tab path `my-profile`.
-    // Add mode=edit so the tab can open edit UI if implemented.
-    navigate('/jobseeker-tabs?group=profileContent&tab=my-profile&mode=edit');
+    // Add mode=edit so the tab renders the edit form.
+    // Optionally pass openTab and action so EditJobSeekerProfile can select a specific inner tab
+    // and open the add dialog (e.g. openTab=skills&action=add).
+    let url = '/jobseeker-tabs?group=profileContent&tab=my-profile&mode=edit';
+    if (openTab) url += `&openTab=${encodeURIComponent(openTab)}`;
+    if (action) url += `&action=${encodeURIComponent(action)}`;
+    navigate(url);
   };
 
   if (loading) {
@@ -441,7 +446,7 @@ export default function JobSeekerProfile() {
                   Add your work experience to showcase your professional journey
                 </p>
                 <Button 
-                  onClick={handleEditProfile}
+                  onClick={() => handleEditProfile('experience', 'add')}
                   className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
                 >
                   Add Experience
@@ -492,7 +497,7 @@ export default function JobSeekerProfile() {
                   Add your educational background to complete your profile
                 </p>
                 <Button 
-                  onClick={handleEditProfile}
+                  onClick={() => handleEditProfile('education', 'add')}
                   className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
                 >
                   Add Education
@@ -538,7 +543,7 @@ export default function JobSeekerProfile() {
                   Add your skills to help employers find you
                 </p>
                 <Button 
-                  onClick={handleEditProfile}
+                  onClick={() => handleEditProfile('skills', 'add')}
                   className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
                 >
                   Add Skills

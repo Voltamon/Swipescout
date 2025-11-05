@@ -15,6 +15,7 @@ import { getAllVideos, deleteVideo } from '@/services/api';
 const AdminVideosPage = () => {
   const { t } = useTranslation('adminVideos');
   const [videos, setVideos] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ title: '', uploader: '' });
 
@@ -32,6 +33,7 @@ const AdminVideosPage = () => {
       // Log detailed server response when available to help diagnose 500 errors
       console.error('Failed to fetch videos:', error.response?.status, error.response?.data || error.message || error);
       setVideos([]);
+      setErrorMessage(error?.response?.data?.message || error?.message || 'Failed to fetch videos');
     } finally {
       setLoading(false);
     }
@@ -114,6 +116,10 @@ const AdminVideosPage = () => {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-8">Loading videos...</TableCell>
+                </TableRow>
+              ) : errorMessage ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-red-600">{errorMessage}</TableCell>
                 </TableRow>
               ) : videos.length === 0 ? (
                 <TableRow>

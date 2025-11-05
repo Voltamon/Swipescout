@@ -156,19 +156,26 @@ html, body {
 }
 
 #root {
-  min-height: 100%;
+  /* Use viewport units so root reliably fills at least the viewport height.
+     Percent-based min-height can be fragile depending on parent heights. */
+  min-height: 100vh;
   height: auto;
 }
 
-/* Performance optimizations for faster rendering */
-* {
-  /* Enable GPU acceleration for smoother animations */
+/* Performance optimizations: DO NOT apply globally.
+   Forcing every element onto its own compositing layer (via transform/perspective)
+   is expensive and can create layout/overflow quirks (including the white area
+   at the bottom). Apply GPU acceleration to specific elements instead using
+   the utility classes below when you actually need them. */
+.force-composite,
+.force-gpu {
+  /* Scoped GPU / compositing helpers */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  perspective: 1000;
-  -webkit-perspective: 1000;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
 }
 
 /* Optimize images for faster loading */
@@ -197,8 +204,10 @@ img[loading="lazy"] {
 /* Undo accidental hiding applied to layout containers */
 .app-root, /* if you have a wrapper id/class */ 
 .main-wrapper {
-  overflow: visible !important;
-  min-height: auto !important;
+  /* Avoid forcing overflow/min-height globally with !important — this can
+     hide layout issues and allow children to overflow the page. Keep overflow
+     visible by default but let components control their own size when needed. */
+  overflow: visible;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
