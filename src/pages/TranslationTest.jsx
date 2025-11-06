@@ -12,6 +12,7 @@ import {
   Divider
 } from '@mui/material';
 import { jobseekerTabCategories } from '../config/jobseekerTabsConfig';
+import localize from '../utils/localize';
 import { getEmployerTabCategories } from '../config/employerTabsConfig';
 
 const TranslationTest = () => {
@@ -77,7 +78,7 @@ const TranslationTest = () => {
             <div key={category.key}>
               <ListItem>
                 <ListItemText 
-                  primary={category.label}
+                  primary={localize(category.label)}
                   secondary={`Key: ${category.key}`}
                 />
               </ListItem>
@@ -85,8 +86,8 @@ const TranslationTest = () => {
                 {category.tabs.map((tab) => (
                   <ListItem key={tab.path}>
                     <ListItemText 
-                      primary={tab.label}
-                      secondary={tab.description}
+                      primary={localize(tab.label)}
+                      secondary={localize(tab.description)}
                     />
                   </ListItem>
                 ))}
@@ -107,7 +108,7 @@ const TranslationTest = () => {
             <div key={category.key}>
               <ListItem>
                 <ListItemText 
-                  primary={category.label}
+                  primary={localize(category.label)}
                   secondary={`Key: ${category.key}`}
                 />
               </ListItem>
@@ -115,8 +116,8 @@ const TranslationTest = () => {
                 {category.tabs.map((tab) => (
                   <ListItem key={tab.path}>
                     <ListItemText 
-                      primary={tab.label}
-                      secondary={tab.description}
+                      primary={localize(tab.label)}
+                      secondary={localize(tab.description)}
                     />
                   </ListItem>
                 ))}

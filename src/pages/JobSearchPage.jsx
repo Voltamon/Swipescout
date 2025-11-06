@@ -29,6 +29,7 @@ import {
   PlayCircle
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors-jobseeker';
+import localize from '../utils/localize';
 
 export default function JobSearchPage() {
   const { user } = useAuth();
@@ -118,7 +119,7 @@ export default function JobSearchPage() {
 
   const handleApply = (job) => {
     setApplyDialog({ open: true, job });
-    setApplicationMessage(`Dear Hiring Manager,\n\nI am very interested in the ${job.title} position at ${job.company}. I believe my skills and experience make me a great fit for this role.\n\nBest regards,\n${user?.firstName} ${user?.lastName}`);
+    setApplicationMessage(`Dear Hiring Manager,\n\nI am very interested in the ${localize(job.title)} position at ${localize(job.company)}. I believe my skills and experience make me a great fit for this role.\n\nBest regards,\n${user?.firstName} ${user?.lastName}`);
   };
 
   const handleSendApplication = async () => {
@@ -182,12 +183,12 @@ export default function JobSearchPage() {
               </AvatarFallback>
             </Avatar>
             <div className="flex-grow min-w-0">
-              <h3 className="font-bold text-lg truncate">{job.title}</h3>
+              <h3 className="font-bold text-lg truncate">{localize(job.title)}</h3>
               <p 
                 className={`text-sm text-muted-foreground ${job.companyVideoId ? `cursor-pointer hover:${themeColors.iconBackgrounds.primary.split(' ')[1]}` : ''} flex items-center gap-1`}
                 onClick={() => job.companyVideoId && window.open(`/company-video/${job.companyVideoId}`, '_blank')}
               >
-                {job.company}
+                {localize(job.company)}
                 {job.companyVideoId && (
                   <Badge variant="outline" className="ml-1 text-xs h-5">
                     <PlayCircle className="h-3 w-3 mr-1" />
@@ -211,31 +212,31 @@ export default function JobSearchPage() {
           </Button>
         </div>
 
-        {job.description && (
+            {job.description && (
           <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-            {job.description}
+            {localize(job.description)}
           </p>
         )}
 
         <div className="space-y-2 mb-4">
-          {job.location && (
+              {job.location && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>{job.location}</span>
+              <span>{localize(job.location)}</span>
             </div>
           )}
 
           {job.employment_type && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4" />
-              <span>{job.employment_type}</span>
+              <span>{localize(job.employment_type)}</span>
             </div>
           )}
 
           {job.experience_level && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Briefcase className="h-4 w-4" />
-              <span>{job.experience_level} level</span>
+              <span>{localize(job.experience_level)} level</span>
             </div>
           )}
 
@@ -260,7 +261,7 @@ export default function JobSearchPage() {
             <div className="flex flex-wrap gap-1">
               {job.skills.slice(0, 4).map((skill, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
-                  {skill.name || skill}
+                  {localize(skill.name || skill)}
                 </Badge>
               ))}
               {job.skills.length > 4 && (

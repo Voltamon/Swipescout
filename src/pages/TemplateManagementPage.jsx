@@ -1,5 +1,6 @@
 ﻿import React, { useContext, useState, useEffect  } from 'react';
 import { useTranslation } from 'react-i18next';
+import localize from '../utils/localize';
 import { 
   Plus, 
   Edit, 
@@ -363,7 +364,7 @@ const TemplateManagementPage = () => {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <BarChart3 className="w-4 h-4" />
-                    <span>{template.category}</span>
+                    <span>{localize(template.category)}</span>
                   </div>
                 </div>
 

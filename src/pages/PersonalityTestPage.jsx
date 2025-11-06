@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import localize from '../utils/localize';
 import { analyzeUserPersonality, findCompatibleJobs } from '../services/analysisApi';
 import { BarChart, Briefcase, CheckCircle, Loader, User, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -20,24 +21,7 @@ const PersonalityTestPage = () => {
   const [results, setResults] = useState(null);
   const [compatibleJobs, setCompatibleJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(false);
-  const { i18n } = useTranslation();
-
-  const localize = (value) => {
-    if (value == null) return '';
-    if (typeof value === 'string') return value;
-    if (typeof value === 'object') {
-      // prefer full locale (e.g. en-US) then base language (en)
-      const lang = i18n?.language || '';
-      if (lang && value[lang]) return value[lang];
-      const base = lang.split && lang.split('-')[0];
-      if (base && value[base]) return value[base];
-      if (value.en) return value.en;
-      // return first available translation
-      const firstKey = Object.keys(value)[0];
-      return value[firstKey] || '';
-    }
-    return String(value);
-  };
+  // localize helper is imported from ../utils/localize
 
   const handleAnswerChange = (questionId, answer) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
@@ -79,8 +63,15 @@ const PersonalityTestPage = () => {
     try {
         // Authentication token is automatically included via interceptor
         const response = await findCompatibleJobs();
-        setCompatibleJobs(response.data);
-        setError(null);
+        // Some backends may return 204 No Content when there are no matches.
+        // Normalize that to an empty array and show a friendly message.
+        if (response.status === 204 || !response.data) {
+          setCompatibleJobs([]);
+          setError('No compatible jobs found for your profile yet.');
+        } else {
+          setCompatibleJobs(response.data || []);
+          setError(null);
+        }
   } catch (err) {
     console.error('Error fetching compatible jobs:', err);
     if (err?.response?.status === 401) {
@@ -151,8 +142,8 @@ const PersonalityTestPage = () => {
                     <div className="flex items-center">
                         <BarChart className="h-10 w-10 text-blue-600 mr-4"/>
                         <div>
-                            <p className="font-bold text-2xl text-blue-800">{results.personality_type.name} ({results.personality_type.code})</p>
-                            <p className="text-gray-600">{results.personality_type.description}</p>
+                            <p className="font-bold text-2xl text-blue-800">{localize(results.personality_type.name)} ({results.personality_type.code})</p>
+                            <p className="text-gray-600">{localize(results.personality_type.description)}</p>
                         </div>
                     </div>
                 </div>

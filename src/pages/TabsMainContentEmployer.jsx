@@ -27,6 +27,7 @@ import PricingPage from "./PricingPage";
 
 // Import the shared tab config
 import { employerTabCategories } from '../config/employerTabsConfig';
+import localize from '../utils/localize';
 
 const MainContent = ({ 
   currentPage, 
@@ -77,7 +78,7 @@ const MainContent = ({
             <Tab key={index} label={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {React.createElement(tab.icon)}
-                <span>{tab.label}</span>
+                <span>{localize(tab.label)}</span>
               </Box>
             } />
           ))}
@@ -100,7 +101,7 @@ const MainContent = ({
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={dashboardTab} onChange={onDashboardTabChange} variant="fullWidth">
             {filteredTabs.map((tab, index) => (
-              <Tab key={index} label={tab.label} />
+              <Tab key={index} label={localize(tab.label)} />
             ))}
           </Tabs>
         </Box>

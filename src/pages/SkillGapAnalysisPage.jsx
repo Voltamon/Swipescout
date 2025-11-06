@@ -2,6 +2,7 @@
 import { analyzeSkillGaps, getAllJobs } from '../services/analysisApi';
 import { Briefcase, Target, TrendingUp, Loader, AlertTriangle, BookOpen, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
+import localize from '../utils/localize';
 
 const SkillGapAnalysisPage = () => {
   const [jobs, setJobs] = useState([]);
@@ -14,7 +15,21 @@ const SkillGapAnalysisPage = () => {
     const fetchJobs = async () => {
       try {
         const response = await getAllJobs();
-        setJobs(response.data);
+        // Backend may return different shapes, commonly:
+        // { jobs: [...] } or { message: '..', jobs: [...] } or an array directly
+        const data = response?.data;
+        if (Array.isArray(data)) {
+          setJobs(data);
+        } else if (data && Array.isArray(data.jobs)) {
+          setJobs(data.jobs);
+        } else if (data && Array.isArray(data.data)) {
+          setJobs(data.data);
+        } else {
+          // Unexpected shape (possibly an error object like { message: 'Unauthorized' })
+          console.warn('Unexpected jobs response shape:', data);
+          setJobs([]);
+          if (data && data.message) setError(data.message);
+        }
       } catch (err) {
         setError('Failed to fetch jobs list.');
         console.error(err);
@@ -78,11 +93,11 @@ const SkillGapAnalysisPage = () => {
                 value={selectedJob}
                 onChange={(e) => setSelectedJob(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                disabled={jobs.length === 0}
+                disabled={!Array.isArray(jobs) || jobs.length === 0}
               >
                 <option value="">-- Select a Job --</option>
-                {jobs.map(job => (
-                  <option key={job.id} value={job.id}>{job.title}</option>
+                {Array.isArray(jobs) && jobs.map(job => (
+                  <option key={job.id} value={job.id}>{localize(job.title)}</option>
                 ))}
               </select>
             </div>
@@ -106,7 +121,7 @@ const SkillGapAnalysisPage = () => {
         {analysis && (
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-              Analysis for: <span className="text-purple-700">{analysis.job?.title || jobs.find(j => j.id === parseInt(selectedJob))?.title}</span>
+              Analysis for: <span className="text-purple-700">{localize(analysis.job?.title || (Array.isArray(jobs) && jobs.find(j => j.id === parseInt(selectedJob))?.title))}</span>
             </h2>
             
             {/* Summary Section */}
@@ -135,7 +150,7 @@ const SkillGapAnalysisPage = () => {
               {(analysis.gaps || []).map(gap => (
                 <div key={gap.skill.id} className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                    <h3 className="font-bold text-xl text-gray-800">{gap.skill.name}</h3>
+                    <h3 className="font-bold text-xl text-gray-800">{localize(gap.skill.name)}</h3>
                     <span className={`px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(gap.priority)}`}>
                       {gap.priority} Priority
                     </span>
@@ -161,14 +176,14 @@ const SkillGapAnalysisPage = () => {
                       <BookOpen className="mr-2 text-purple-600" />
                       Development Plan
                     </h4>
-                    <p className="text-gray-600 mb-2">{gap.development_plan.description}</p>
+                    <p className="text-gray-600 mb-2">{localize(gap.development_plan.description)}</p>
                     <p className="text-sm text-gray-500 mb-2">Estimated learning time: {gap.estimated_learning_time} hours</p>
                     <h5 className="font-medium text-gray-700 mt-3">Suggested Resources:</h5>
                     <ul className="list-disc list-inside text-blue-600 space-y-1 mt-1">
                       {gap.learning_resources.map((res, index) => (
                         <li key={index}>
                           <a href={res.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                            {res.name} ({res.type})
+                            {localize(res.name)} ({res.type})
                           </a>
                         </li>
                       ))}

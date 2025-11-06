@@ -52,6 +52,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import localize from '../utils/localize';
 import { styled } from '@mui/material/styles';
 import PerformanceOptimizedVideoGrid from '../components/PerformanceOptimizedVideoGrid';
 import { useInfiniteScroll } from '../hooks/useIntersectionObserver';
@@ -462,7 +463,7 @@ const sortOptions = [
                   <ListItemIcon sx={{ color: 'inherit' }}>
                     {category.icon}
                   </ListItemIcon>
-                  <ListItemText primary={category.label} />
+                  <ListItemText primary={localize(category.label)} />
                 </ListItem>
               ))}
             </List>
@@ -479,7 +480,7 @@ const sortOptions = [
                   {subcategories[selectedCategory].map((sub) => (
                     <Chip
                       key={sub.id}
-                      label={sub.label}
+                      label={localize(sub.label)}
                       variant={selectedSubcategory === sub.id ? 'filled' : 'outlined'}
                       color={selectedSubcategory === sub.id ? 'primary' : 'default'}
                       onClick={() => handleSubcategoryChange(sub.id)}
@@ -508,7 +509,7 @@ const sortOptions = [
                   <Tab
                     key={category.id}
                     value={category.id}
-                    label={category.label}
+                    label={localize(category.label)}
                     icon={category.icon}
                     iconPosition="start"
                   />

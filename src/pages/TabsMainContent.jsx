@@ -27,6 +27,7 @@ import ResumeBuilderPage from "./ResumeBuilderPage";
 import NotificationSettingsPage from "./NotificationSettingsPage";
 import PricingPage from "./PricingPage";
 import { jobseekerTabCategories } from '../config/jobseekerTabsConfig';
+import localize from '../utils/localize';
 
 const MainContent = ({ 
   currentPage, 
@@ -141,7 +142,7 @@ const MainContent = ({
             <Tab key={index} label={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {React.createElement(tab.icon)}
-                <span>{tab.label}</span>
+                <span>{localize(tab.label)}</span>
               </Box>
             } />
           ))}
@@ -164,7 +165,7 @@ const MainContent = ({
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={employerTab} onChange={onEmployerTabChange} variant="fullWidth">
             {employersTabsConfig.map((tab, index) => (
-              <Tab key={index} label={tab.label} />
+              <Tab key={index} label={localize(tab.label)} />
             ))}
           </Tabs>
         </Box>
