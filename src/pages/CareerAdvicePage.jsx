@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { getFeaturedBlogs, getVideosForHomePage, getQuickTips, getCareerPaths } from '../services/api';
 import {
   BookOpen,
   Video,
@@ -33,130 +34,79 @@ import {
   Globe
 } from 'lucide-react';
 
-// Sample data for career advice content
-const featuredArticles = [
+// Default sample data (used as a fallback until the API returns data)
+// These are kept so the page still renders when backend isn't available.
+const sampleFeaturedArticles = [
   {
     id: 1,
-    title: 'ظƒظٹظپظٹط© ط¥ظ†ط´ط§ط، ظپظٹط¯ظٹظˆ طھط¹ط±ظٹظپظٹ ظ…ط¤ط«ط± ظپظٹ 2024',
-    description: 'ط¯ظ„ظٹظ„ ط´ط§ظ…ظ„ ظ„ط¥ظ†ط´ط§ط، ظپظٹط¯ظٹظˆ طھط¹ط±ظٹظپظٹ ظٹط¬ط°ط¨ ط§ظ†طھط¨ط§ظ‡ ط£طµط­ط§ط¨ ط§ظ„ط¹ظ…ظ„ ظˆظٹط¨ط±ط² ظ…ظ‡ط§ط±ط§طھظƒ ط¨ط£ظپط¶ظ„ ط´ظƒظ„ ظ…ظ…ظƒظ†.',
-    category: 'ط¥ظ†ط´ط§ط، ط§ظ„ظ…ط­طھظˆظ‰',
-    readTime: '8 ط¯ظ‚ط§ط¦ظ‚',
-    author: 'ط³ط§ط±ط© ط£ط­ظ…ط¯',
-    authorRole: 'ط®ط¨ظٹط±ط© ط§ظ„طھظˆط¸ظٹظپ',
+    title: 'How to Identify Your Ideal Career Path',
+    description: 'A short intro to using personality tests to find a good career match.',
+    category: 'Career Advice',
+    readTime: '8 mins',
+    author: 'Sample Author',
+    authorRole: 'Career Expert',
     publishedAt: '2024-10-08',
     views: 2450,
     likes: 189,
-    image: 'https://via.placeholder.com/400x250/667eea/ffffff?text=Video+Tips',
-    tags: ['ظپظٹط¯ظٹظˆ', 'ط³ظٹط±ط© ط°ط§طھظٹط©', 'طھط³ظˆظٹظ‚ ط´ط®طµظٹ'],
+    image: 'https://via.placeholder.com/400x250/667eea/ffffff?text=Career+Tips',
+    tags: ['personality', 'career-growth'],
     featured: true,
-    difficulty: 'ظ…ط¨طھط¯ط¦'
-  },
-  {
-    id: 2,
-    title: 'ط£ظ‡ظ… ط§ظ„ظ…ظ‡ط§ط±ط§طھ ط§ظ„طھظ‚ظ†ظٹط© ط§ظ„ظ…ط·ظ„ظˆط¨ط© ظپظٹ 2024',
-    description: 'طھط¹ط±ظپ ط¹ظ„ظ‰ ط£ظƒط«ط± ط§ظ„ظ…ظ‡ط§ط±ط§طھ ط§ظ„طھظ‚ظ†ظٹط© ط·ظ„ط¨ط§ظ‹ ظپظٹ ط³ظˆظ‚ ط§ظ„ط¹ظ…ظ„ ظˆظƒظٹظپظٹط© طھط·ظˆظٹط±ظ‡ط§ ظ„طھط­ط³ظٹظ† ظپط±طµظƒ ط§ظ„ظ…ظ‡ظ†ظٹط©.',
-    category: 'طھط·ظˆظٹط± ط§ظ„ظ…ظ‡ط§ط±ط§طھ',
-    readTime: '12 ط¯ظ‚ظٹظ‚ط©',
-    author: 'ط£ط­ظ…ط¯ ظ…ط­ظ…ط¯',
-    authorRole: 'ظ…ط·ظˆط± ط£ظˆظ„',
-    publishedAt: '2024-10-07',
-    views: 3120,
-    likes: 267,
-    image: 'https://via.placeholder.com/400x250/4ecdc4/ffffff?text=Tech+Skills',
-    tags: ['ظ…ظ‡ط§ط±ط§طھ طھظ‚ظ†ظٹط©', 'ط¨ط±ظ…ط¬ط©', 'طھط·ظˆظٹط± ظ…ظ‡ظ†ظٹ'],
-    featured: true,
-    difficulty: 'ظ…طھظˆط³ط·'
-  },
-  {
-    id: 3,
-    title: 'ط§ط³طھط±ط§طھظٹط¬ظٹط§طھ ط§ظ„طھظپط§ظˆط¶ ط¹ظ„ظ‰ ط§ظ„ط±ط§طھط¨',
-    description: 'ظ†طµط§ط¦ط­ ط¹ظ…ظ„ظٹط© ظ„ظ„طھظپط§ظˆط¶ ط¹ظ„ظ‰ ط±ط§طھط¨ ط£ظپط¶ظ„ ظˆط­ط²ظ…ط© ظ…ط²ط§ظٹط§ ظ…ظ†ط§ط³ط¨ط© ط¹ظ†ط¯ ط§ظ„طھظ‚ط¯ظ… ظ„ظˆط¸ظٹظپط© ط¬ط¯ظٹط¯ط©.',
-    category: 'ط§ظ„طھظپط§ظˆط¶ ط§ظ„ظ…ظ‡ظ†ظٹ',
-    readTime: '10 ط¯ظ‚ط§ط¦ظ‚',
-    author: 'ظپط§ط·ظ…ط© ط¹ظ„ظٹ',
-    authorRole: 'ظ…ط³طھط´ط§ط±ط© ظ…ظ‡ظ†ظٹط©',
-    publishedAt: '2024-10-06',
-    views: 1890,
-    likes: 156,
-    image: 'https://via.placeholder.com/400x250/96ceb4/ffffff?text=Salary+Tips',
-    tags: ['ط±ط§طھط¨', 'طھظپط§ظˆط¶', 'ظ…ظ‚ط§ط¨ظ„ط© ط¹ظ…ظ„'],
-    featured: true,
-    difficulty: 'ظ…طھظ‚ط¯ظ…'
+    difficulty: 'Intermediate'
   }
 ];
 
-const videoTutorials = [
+// (removed original inline multilingual videoTutorials) - using sampleVideoTutorials as fallback
+
+const sampleVideoTutorials = [
   {
     id: 1,
-    title: 'ظƒظٹظپظٹط© طھط­ط¶ظٹط± ظ…ظ‚ط§ط¨ظ„ط© ط§ظ„ط¹ظ…ظ„ ط§ظ„ظ…ط«ط§ظ„ظٹط©',
-    description: 'ط´ط±ط­ ظ…ظپطµظ„ ظ„ط£ظ‡ظ… ط§ظ„ظ†طµط§ط¦ط­ ظˆط§ظ„ط§ط³طھط±ط§طھظٹط¬ظٹط§طھ ظ„ظ„ظ†ط¬ط§ط­ ظپظٹ ظ…ظ‚ط§ط¨ظ„ط§طھ ط§ظ„ط¹ظ…ظ„',
+    title: 'Interview Preparation Basics',
+    description: 'Short tips to prepare for interviews.',
     duration: '15:30',
     views: 5420,
-    instructor: 'ط®ط§ظ„ط¯ ط§ظ„ط¹ظ„ظٹ',
-    level: 'ظ…ط¨طھط¯ط¦',
+    instructor: 'Instructor A',
+    level: 'Beginner',
     thumbnail: 'https://via.placeholder.com/300x200/ff6b6b/ffffff?text=Interview+Tips',
-    category: 'ظ…ظ‚ط§ط¨ظ„ط§طھ ط§ظ„ط¹ظ…ظ„'
-  },
-  {
-    id: 2,
-    title: 'ط¨ظ†ط§ط، ط§ظ„ط´ط¨ظƒط© ط§ظ„ظ…ظ‡ظ†ظٹط© ط§ظ„ظپط¹ط§ظ„ط©',
-    description: 'طھط¹ظ„ظ… ظƒظٹظپظٹط© ط¨ظ†ط§ط، ط¹ظ„ط§ظ‚ط§طھ ظ…ظ‡ظ†ظٹط© ظ‚ظˆظٹط© طھط³ط§ط¹ط¯ظƒ ظپظٹ طھط·ظˆظٹط± ظ…ط³ظٹط±طھظƒ ط§ظ„ظ…ظ‡ظ†ظٹط©',
-    duration: '22:45',
-    views: 3890,
-    instructor: 'ظ…ط±ظٹظ… ط³ط§ظ„ظ…',
-    level: 'ظ…طھظˆط³ط·',
-    thumbnail: 'https://via.placeholder.com/300x200/45b7d1/ffffff?text=Networking',
-    category: 'ط§ظ„طھط·ظˆظٹط± ط§ظ„ظ…ظ‡ظ†ظٹ'
-  },
-  {
-    id: 3,
-    title: 'ط¥ط¯ط§ط±ط© ط§ظ„ظˆظ‚طھ ظ„ظ„ظ…ط­طھط±ظپظٹظ†',
-    description: 'ط§ط³طھط±ط§طھظٹط¬ظٹط§طھ ط¹ظ…ظ„ظٹط© ظ„ط¥ط¯ط§ط±ط© ط§ظ„ظˆظ‚طھ ظˆط²ظٹط§ط¯ط© ط§ظ„ط¥ظ†طھط§ط¬ظٹط© ظپظٹ ط¨ظٹط¦ط© ط§ظ„ط¹ظ…ظ„',
-    duration: '18:20',
-    views: 2760,
-    instructor: 'ظٹظˆط³ظپ ط­ط³ظ†',
-    level: 'ظ…طھظˆط³ط·',
-    thumbnail: 'https://via.placeholder.com/300x200/feca57/ffffff?text=Time+Management',
-    category: 'ط§ظ„ط¥ظ†طھط§ط¬ظٹط©'
+    category: 'Interview Skills'
   }
 ];
 
 const careerPaths = [
   {
     id: 1,
-    title: 'ظ…ط·ظˆط± ط§ظ„ظˆط§ط¬ظ‡ط§طھ ط§ظ„ط£ظ…ط§ظ…ظٹط©',
-    description: 'ظ…ط³ط§ط± ظ…ظ‡ظ†ظٹ ط´ط§ظ…ظ„ ظ„طھطµط¨ط­ ظ…ط·ظˆط± ظˆط§ط¬ظ‡ط§طھ ط£ظ…ط§ظ…ظٹط© ظ…ط­طھط±ظپ',
+    title: 'Front-end Developer',
+    description: 'Learn to build web user interfaces using modern frameworks.',
     steps: 6,
-    duration: '6-12 ط´ظ‡ط±',
-    difficulty: 'ظ…ط¨طھط¯ط¦ ط¥ظ„ظ‰ ظ…طھظˆط³ط·',
-    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'Vue.js'],
-    salary: '8,000 - 15,000 ط±ظٹط§ظ„',
-    demand: 'ط¹ط§ظ„ظٹ',
-    icon: 'ًں’»'
+    duration: '6-12 months',
+    difficulty: 'Beginner to Intermediate',
+    skills: ['HTML', 'CSS', 'JavaScript', 'React'],
+    salary: '8,000 - 15,000',
+    demand: 'High',
+    icon: '💻'
   },
   {
     id: 2,
-    title: 'ظ…ط­ظ„ظ„ ط§ظ„ط¨ظٹط§ظ†ط§طھ',
-    description: 'طھط¹ظ„ظ… طھط­ظ„ظٹظ„ ط§ظ„ط¨ظٹط§ظ†ط§طھ ظˆط§ط³طھط®ط±ط§ط¬ ط§ظ„ط±ط¤ظ‰ ط§ظ„ظ‚ظٹظ…ط© ظ„ظ„ط´ط±ظƒط§طھ',
+    title: 'Data Analyst',
+    description: 'Analyze datasets to extract actionable insights for businesses.',
     steps: 8,
-    duration: '8-15 ط´ظ‡ط±',
-    difficulty: 'ظ…طھظˆط³ط·',
-    skills: ['Python', 'SQL', 'Excel', 'Tableau', 'Statistics'],
-    salary: '10,000 - 18,000 ط±ظٹط§ظ„',
-    demand: 'ط¹ط§ظ„ظٹ ط¬ط¯ط§ظ‹',
-    icon: 'ًں“ٹ'
+    duration: '8-15 months',
+    difficulty: 'Intermediate',
+    skills: ['Python', 'SQL', 'Excel', 'Tableau'],
+    salary: '10,000 - 18,000',
+    demand: 'High',
+    icon: '📊'
   },
   {
     id: 3,
-    title: 'ظ…طµظ…ظ… UX/UI',
-    description: 'ظ…ط³ط§ط± ظ„طھطµط¨ط­ ظ…طµظ…ظ… طھط¬ط±ط¨ط© ظˆظ…ط¸ظ‡ط± ط§ظ„ظ…ط³طھط®ط¯ظ… ظ…ط­طھط±ظپ',
+    title: 'UX/UI Designer',
+    description: 'Design product experiences and interfaces with user-centered methods.',
     steps: 7,
-    duration: '4-10 ط´ظ‡ط±',
-    difficulty: 'ظ…ط¨طھط¯ط¦ ط¥ظ„ظ‰ ظ…طھظˆط³ط·',
+    duration: '4-10 months',
+    difficulty: 'Beginner to Intermediate',
     skills: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
-    salary: '7,000 - 14,000 ط±ظٹط§ظ„',
-    demand: 'ظ…طھظˆط³ط· ط¥ظ„ظ‰ ط¹ط§ظ„ظٹ',
-    icon: 'ًںژ¨'
+    salary: '7,000 - 14,000',
+    demand: 'Moderate to High',
+    icon: '🎨'
   }
 ];
 
@@ -196,6 +146,87 @@ const CareerAdvicePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarkedItems, setBookmarkedItems] = useState([]);
   const [selectedPath, setSelectedPath] = useState(null);
+  const [featuredArticlesState, setFeaturedArticlesState] = useState(sampleFeaturedArticles);
+  const [videoTutorialsState, setVideoTutorialsState] = useState(sampleVideoTutorials);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [quickTipsState, setQuickTipsState] = useState(quickTips);
+  const [careerPathsState, setCareerPathsState] = useState(careerPaths);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadData() {
+      setLoading(true);
+      try {
+        // Fetch featured blogs (backend returns array)
+        const res = await getFeaturedBlogs(6);
+        if (mounted && res && res.data) {
+          // API returns either object or array depending on controller implementation
+          const data = Array.isArray(res.data) ? res.data : (res.data.blogs || res.data);
+          if (Array.isArray(data) && data.length) {
+            setFeaturedArticlesState(data.map(d => ({
+              id: d.id,
+              title: d.title,
+              description: d.excerpt || d.content?.slice?.(0, 200) || '',
+              category: d.categoryName || d.category || (d.categoryId ? 'Article' : ''),
+              readTime: d.readingTime || d.readTime || `${d.readingTime || 8} mins`,
+              author: d.authorName || d.author || 'Author',
+              authorRole: d.authorRole || '',
+              publishedAt: d.publishedAt,
+              views: d.views || d.viewCount || 0,
+              likes: d.likes || 0,
+              image: d.image || d.thumbnail || 'https://via.placeholder.com/400x250/667eea/ffffff?text=Career+Tips',
+              tags: d.tags || [],
+              featured: d.featured || false,
+              difficulty: d.difficulty || 'Intermediate'
+            })));
+          }
+        }
+
+        // Fetch videos for home page
+        const vRes = await getVideosForHomePage();
+        if (mounted && vRes && vRes.data) {
+          const videos = vRes.data.videos || (Array.isArray(vRes.data) ? vRes.data : []);
+          if (Array.isArray(videos) && videos.length) {
+            setVideoTutorialsState(videos.map(v => ({
+              id: v.id,
+              title: v.title || v.video_title || v.videoTitle || 'Video',
+              description: v.description || v.excerpt || '',
+              duration: v.duration || v.videoDuration || '0:30',
+              views: v.views || v.viewCount || 0,
+              instructor: v.userDisplayName || v.uploader || 'Instructor',
+              level: v.level || 'Beginner',
+              thumbnail: v.secure_url || v.thumbnail || 'https://via.placeholder.com/300x200/ff6b6b/ffffff?text=Video',
+              category: v.category || 'Video'
+            })));
+          }
+        }
+
+        // fetch quick tips & career paths in parallel
+        try {
+          const [tipsRes, pathsRes] = await Promise.all([getQuickTips(8), getCareerPaths(12)]);
+          if (mounted && tipsRes?.data) {
+            setQuickTipsState(Array.isArray(tipsRes.data.tips) ? tipsRes.data.tips : (tipsRes.data || []));
+          }
+          if (mounted && pathsRes?.data) {
+            setCareerPathsState(Array.isArray(pathsRes.data.paths) ? pathsRes.data.paths : (pathsRes.data || []));
+          }
+        } catch (innerErr) {
+          console.warn('Failed to load quick tips / career paths', innerErr);
+        }
+
+        setError(null);
+      } catch (err) {
+        console.error('Failed to load career advice data:', err);
+        setError(err.message || 'Failed to load data');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+
+    loadData();
+    return () => { mounted = false; };
+  }, []);
 
   const categories = [
     { id: 'all', label: 'ط¬ظ…ظٹط¹ ط§ظ„ظ…ظˆط§ط¶ظٹط¹', icon: Globe },
@@ -295,7 +326,7 @@ const CareerAdvicePage = () => {
             ظ†طµط§ط¦ط­ ط³ط±ظٹط¹ط© ظ„طھط·ظˆظٹط± ظ…ط³ظٹط±طھظƒ ط§ظ„ظ…ظ‡ظ†ظٹط©
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {quickTips.map((tip) => {
+            {quickTipsState.map((tip) => {
               const Icon = tip.icon;
               return (
                 <div key={tip.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
@@ -324,7 +355,7 @@ const CareerAdvicePage = () => {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {featuredArticles.map((article) => (
+            {featuredArticlesState.map((article) => (
               <div key={article.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative">
                   <img
@@ -422,7 +453,7 @@ const CareerAdvicePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videoTutorials.map((video) => (
+            {videoTutorialsState.map((video) => (
               <div key={video.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative">
                   <img
@@ -485,7 +516,7 @@ const CareerAdvicePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {careerPaths.map((path) => (
+            {careerPathsState.map((path) => (
               <div key={path.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">{path.icon}</div>

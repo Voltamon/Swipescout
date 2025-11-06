@@ -387,5 +387,21 @@ export const createBlogTag = (data) => api.post('/blogs/tags', data);
 export const updateBlogTag = (id, data) => api.put(`/blogs/tags/${id}`, data);
 export const deleteBlogTag = (id) => api.delete(`/blogs/tags/${id}`);
 
+// Career advice quick tips & career paths
+export const getQuickTips = (limit = 20) => api.get('/career-advice/quick-tips', { params: { limit } });
+export const getCareerPaths = (limit = 20) => api.get('/career-advice/career-paths', { params: { limit } });
+
+// Admin CRUD (requires auth)
+export const createQuickTip = (payload) => api.post('/career-advice/quick-tips', payload);
+export const updateQuickTip = (id, payload) => api.put(`/career-advice/quick-tips/${id}`, payload);
+export const deleteQuickTip = (id) => api.delete(`/career-advice/quick-tips/${id}`);
+
+export const createCareerPath = (payload) => api.post('/career-advice/career-paths', payload);
+export const updateCareerPath = (id, payload) => api.put(`/career-advice/career-paths/${id}`, payload);
+export const deleteCareerPath = (id) => api.delete(`/career-advice/career-paths/${id}`);
+
+// Career advice (quick tips & career paths)
+// (duplicates removed) getQuickTips/getCareerPaths are defined above with default params
+
 export default api;
 

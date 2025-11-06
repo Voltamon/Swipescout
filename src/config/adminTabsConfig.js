@@ -7,6 +7,8 @@ import AdminAnalyticsPage from "@/pages/admin/AdminAnalyticsPage.jsx";
 import SystemSettingsPage from "@/pages/admin/SystemSettingsPage.jsx";
 import AdminJobsPage from "@/pages/admin/AdminJobsPage.jsx";
 import AdminVideosPage from "@/pages/admin/AdminVideosPage.jsx";
+import QuickTipsAdminPage from "@/pages/admin/QuickTipsAdminPage.jsx";
+import CareerPathsAdminPage from "@/pages/admin/CareerPathsAdminPage.jsx";
 
 export const getAdminTabCategories = t => {
   return [
@@ -60,6 +62,20 @@ export const getAdminTabCategories = t => {
           path: "videos",
           component: AdminVideosPage,
           description: t("adminTabs:descriptions.videos")
+        },
+        {
+          label: t("adminTabs:tabs.quickTips"),
+          icon: { name: "Lightbulb" },
+          path: "quick-tips",
+          component: QuickTipsAdminPage,
+          description: t("adminTabs:descriptions.quickTips")
+        },
+        {
+          label: t("adminTabs:tabs.careerPaths"),
+          icon: { name: "Map" },
+          path: "career-paths",
+          component: CareerPathsAdminPage,
+          description: t("adminTabs:descriptions.careerPaths")
         },
         {
           label: t("adminTabs:tabs.reports"),

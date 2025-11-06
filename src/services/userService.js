@@ -161,7 +161,12 @@ export const updateUserSettings = async (settings) => {
 
     return results;
   } catch (error) {
+    // Log detailed info for easier debugging in dev tools
     console.error('Error updating user settings:', error);
+    if (error?.response) {
+      console.error('Response status:', error.response.status);
+      console.error('Response data:', error.response.data);
+    }
     throw error;
   }
 };
@@ -173,7 +178,7 @@ export const uploadProfilePicture = async (file) => {
     formData.append('avatar', file);
     
     const response = await axios.post(
-      `${API_BASE_URL}/user/upload-avatar`,
+      `${API_BASE_URL}/users/me/avatar`,
       formData,
       {
         headers: {
@@ -193,7 +198,7 @@ export const uploadProfilePicture = async (file) => {
 export const changePassword = async (currentPassword, newPassword) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/user/change-password`,
+      `${API_BASE_URL}/users/me/change-password`,
       { currentPassword, newPassword },
       { headers: getAuthHeader() }
     );
@@ -222,7 +227,7 @@ export const enableTwoFactorAuth = async () => {
 export const deleteAccount = async () => {
   try {
     const response = await axios.delete(
-      `${API_BASE_URL}/user/account`,
+      `${API_BASE_URL}/users/me`,
       { headers: getAuthHeader() }
     );
     return response.data;
