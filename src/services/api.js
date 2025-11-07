@@ -1,4 +1,5 @@
 ﻿import axios from 'axios';
+import i18n from '../i18n';
 
 // Build a safe API base URL. Accept two forms in env:
 // - a host-only value like `http://localhost:5000`
@@ -34,6 +35,12 @@ api.interceptors.request.use(
   (config) => {
     token = localStorage.getItem('accessToken');
     if (token) config.headers['Authorization'] = `Bearer ${token}`;
+    
+    // Add language header for multilingual support
+    const currentLanguage = i18n.language || 'en';
+    config.headers['x-language'] = currentLanguage;
+    config.headers['Accept-Language'] = currentLanguage;
+    
     return config;
   },
   (error) => Promise.reject(error)

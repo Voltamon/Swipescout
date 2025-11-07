@@ -1,6 +1,9 @@
 ﻿import axios from 'axios';
+import i18n from '../i18n';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
+
+console.log('🔧 Analysis API Base URL:', API_BASE_URL);
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -9,13 +12,31 @@ const apiClient = axios.create({
   }
 });
 
-// Add request interceptor to include auth token
+// Add request interceptor to include auth token and language preference
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add language header for multilingual support
+    const currentLanguage = i18n.language || 'en';
+    config.headers['x-language'] = currentLanguage;
+    config.headers['Accept-Language'] = currentLanguage;
+    
+    console.log('📤 API Request:', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      baseURL: config.baseURL,
+      fullURL: `${config.baseURL}${config.url}`,
+      headers: {
+        Authorization: config.headers.Authorization ? 'Bearer ***' : 'none',
+        'x-language': config.headers['x-language'],
+        'Accept-Language': config.headers['Accept-Language']
+      }
+    });
+    
     return config;
   },
   (error) => {

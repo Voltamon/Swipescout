@@ -69,6 +69,7 @@ const PersonalityTestPage = () => {
           setCompatibleJobs([]);
           setError('No compatible jobs found for your profile yet.');
         } else {
+          console.log('Compatible jobs response:', response.data);
           setCompatibleJobs(response.data || []);
           setError(null);
         }
@@ -129,7 +130,9 @@ const PersonalityTestPage = () => {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center disabled:bg-blue-400"
             >
-              {loading ? <Loader className="animate-spin mr-2" /> : <CheckCircle className="mr-2" />}
+              <span className="inline-flex items-center">
+                {loading ? <Loader className="animate-spin mr-2" /> : <CheckCircle className="mr-2" />}
+              </span>
               Submit & Analyze
             </button>
           </form>
@@ -152,13 +155,13 @@ const PersonalityTestPage = () => {
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="font-semibold text-lg mb-2 text-gray-800">Strengths</h3>
                         <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={i}>{localize(s)}</li>) : <li>{localize(results.personality_type.strengths)}</li>}
+                  {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={`strength-${i}-${s}`}>{localize(s)}</li>) : <li key="strength-single">{localize(results.personality_type.strengths)}</li>}
                         </ul>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="font-semibold text-lg mb-2 text-gray-800">Areas for Growth</h3>
                         <ul className="list-disc list-inside text-gray-600 space-y-1">
-                            {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={i}>{localize(w)}</li>) : <li>{localize(results.personality_type.weaknesses)}</li>}
+                            {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={`weakness-${i}-${w}`}>{localize(w)}</li>) : <li key="weakness-single">{localize(results.personality_type.weaknesses)}</li>}
                         </ul>
                     </div>
                 </div>
@@ -173,7 +176,9 @@ const PersonalityTestPage = () => {
                     disabled={loadingJobs}
                     className="bg-purple-600 text-white py-3 px-8 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center disabled:bg-purple-400 mx-auto"
                 >
-                    {loadingJobs ? <Loader className="animate-spin mr-2" /> : <Zap className="mr-2" />}
+                    <span className="inline-flex items-center">
+                      {loadingJobs ? <Loader className="animate-spin mr-2" /> : <Zap className="mr-2" />}
+                    </span>
                     Find Compatible Jobs
                 </button>
             </div>
@@ -184,32 +189,97 @@ const PersonalityTestPage = () => {
             <div className="mt-8 bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-2xl font-semibold mb-4 text-gray-700">Recommended Career Paths</h2>
                 <div className="space-y-4">
-                    {compatibleJobs.map(jobMatch => (
-                        <div key={jobMatch.jobCategory?.id} className="border p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                    {compatibleJobs.map((jobMatch, index) => {
+                      // Extract job name from various possible locations
+                      const jobName = jobMatch.jobCategory?.name || 
+                                     jobMatch.jobCategory?.title || 
+                                     jobMatch.job?.name || 
+                                     jobMatch.job?.title ||
+                                     'Career Opportunity';
+                      
+                      const jobDescription = jobMatch.jobCategory?.description || 
+                                            jobMatch.job?.description || 
+                                            '';
+                      
+                      return (
+                        <div key={jobMatch.jobCategory?.id || jobMatch.job?.id || `job-${index}`} className="border p-4 rounded-lg hover:bg-gray-50 transition-colors">
                             <h3 className="font-bold text-lg text-gray-800 flex items-center">
                                 <Briefcase className="mr-2 text-blue-500"/>
-                                {localize(jobMatch.jobCategory?.name)}
+                                {localize(jobName)}
                             </h3>
-                            <p className="text-sm text-gray-500 mb-2">Compatibility Score: {jobMatch.compatibilityScore}%</p>
+                            
+                            {jobDescription && (
+                              <p className="text-sm text-gray-600 mb-2 italic">{localize(jobDescription)}</p>
+                            )}
+                            
+                            <div className="flex gap-4 mb-2">
+                              <p className="text-sm text-gray-500">
+                                <span className="font-semibold">Compatibility:</span> {jobMatch.compatibilityScore || 0}%
+                              </p>
+                              {jobMatch.satisfactionPrediction && (
+                                <p className="text-sm text-gray-500">
+                                  <span className="font-semibold">Satisfaction:</span> {jobMatch.satisfactionPrediction}%
+                                </p>
+                              )}
+                              {jobMatch.performancePrediction && (
+                                <p className="text-sm text-gray-500">
+                                  <span className="font-semibold">Performance:</span> {jobMatch.performancePrediction}%
+                                </p>
+                              )}
+                            </div>
+                            
                             <p className="text-gray-600 mb-3">{localize(jobMatch.compatibilityReason)}</p>
                             
                             {/* Matching Factors */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3 text-xs">
-                              <div className="bg-blue-50 p-2 rounded">
-                                <p className="text-gray-600">Work Style</p>
-                                <p className="font-semibold text-blue-700">{jobMatch.matchingFactors?.workStyleMatch}%</p>
+                            {jobMatch.matchingFactors && (
+                              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 mt-3 text-xs">
+                                {jobMatch.matchingFactors.workStyleMatch !== undefined && (
+                                  <div className="bg-blue-50 p-2 rounded">
+                                    <p className="text-gray-600">Work Style</p>
+                                    <p className="font-semibold text-blue-700">{jobMatch.matchingFactors.workStyleMatch}%</p>
+                                  </div>
+                                )}
+                                {jobMatch.matchingFactors.skillsAlignment !== undefined && (
+                                  <div className="bg-green-50 p-2 rounded">
+                                    <p className="text-gray-600">Skills</p>
+                                    <p className="font-semibold text-green-700">{jobMatch.matchingFactors.skillsAlignment}%</p>
+                                  </div>
+                                )}
+                                {jobMatch.matchingFactors.interestsAlignment !== undefined && (
+                                  <div className="bg-purple-50 p-2 rounded">
+                                    <p className="text-gray-600">Interests</p>
+                                    <p className="font-semibold text-purple-700">{jobMatch.matchingFactors.interestsAlignment}%</p>
+                                  </div>
+                                )}
+                                {jobMatch.matchingFactors.valuesAlignment !== undefined && (
+                                  <div className="bg-yellow-50 p-2 rounded">
+                                    <p className="text-gray-600">Values</p>
+                                    <p className="font-semibold text-yellow-700">{jobMatch.matchingFactors.valuesAlignment}%</p>
+                                  </div>
+                                )}
+                                {jobMatch.matchingFactors.environmentMatch !== undefined && (
+                                  <div className="bg-pink-50 p-2 rounded">
+                                    <p className="text-gray-600">Environment</p>
+                                    <p className="font-semibold text-pink-700">{jobMatch.matchingFactors.environmentMatch}%</p>
+                                  </div>
+                                )}
                               </div>
-                              <div className="bg-green-50 p-2 rounded">
-                                <p className="text-gray-600">Skills</p>
-                                <p className="font-semibold text-green-700">{jobMatch.matchingFactors?.skillsAlignment}%</p>
+                            )}
+                            
+                            {/* Success Factors */}
+                            {jobMatch.successFactors && jobMatch.successFactors.length > 0 && (
+                              <div className="mt-3 p-2 bg-green-50 rounded">
+                                <p className="text-xs font-semibold text-green-800 mb-1">✓ Success Factors:</p>
+                                <ul className="text-xs text-green-700 list-disc list-inside">
+                                  {jobMatch.successFactors.slice(0, 3).map((factor, i) => (
+                                    <li key={`success-${index}-${i}`}>{factor}</li>
+                                  ))}
+                                </ul>
                               </div>
-                              <div className="bg-purple-50 p-2 rounded">
-                                <p className="text-gray-600">Interests</p>
-                                <p className="font-semibold text-purple-700">{jobMatch.matchingFactors?.interestsAlignment}%</p>
-                              </div>
-                            </div>
+                            )}
                         </div>
-                    ))}
+                      );
+                    })}
                 </div>
             </div>
         )}

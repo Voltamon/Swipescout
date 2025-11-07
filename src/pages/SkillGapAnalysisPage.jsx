@@ -1,8 +1,18 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { analyzeSkillGaps, getAllJobs } from '../services/analysisApi';
 import { Briefcase, Target, TrendingUp, Loader, AlertTriangle, BookOpen, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import localize from '../utils/localize';
+
+// Stable icon component wrapper to prevent React reconciliation errors
+const IconWrapper = React.memo(({ children, className = '' }) => (
+  <span className={`inline-flex items-center justify-center ${className}`}>
+    {children}
+  </span>
+));
+
+// Use a stable mounted ref and regular state for loading.
+// This is simpler and avoids timing-related DOM insertion issues.
 
 const SkillGapAnalysisPage = () => {
   const [jobs, setJobs] = useState([]);
@@ -11,13 +21,28 @@ const SkillGapAnalysisPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Mounted ref to avoid state updates after unmount
+  const isMountedRef = useRef(true);
   useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+  let isFetchActive = true;
+    
     const fetchJobs = async () => {
       try {
         const response = await getAllJobs();
         // Backend may return different shapes, commonly:
         // { jobs: [...] } or { message: '..', jobs: [...] } or an array directly
         const data = response?.data;
+        
+  // Only update state if component is still mounted
+  if (!isFetchActive || !isMountedRef.current) return;
+        
         if (Array.isArray(data)) {
           setJobs(data);
         } else if (data && Array.isArray(data.jobs)) {
@@ -31,32 +56,118 @@ const SkillGapAnalysisPage = () => {
           if (data && data.message) setError(data.message);
         }
       } catch (err) {
+  if (!isFetchActive || !isMountedRef.current) return;
         setError('Failed to fetch jobs list.');
         console.error(err);
       }
     };
+    
     fetchJobs();
+    
+    // Cleanup function to cancel pending state updates
+    return () => {
+      isFetchActive = false;
+    };
   }, []);
 
   const handleAnalyze = async () => {
+    console.log('🔍 Analyze clicked! Selected job:', selectedJob);
+    console.log('🔍 isMountedRef.current:', isMountedRef.current);
+    
     if (!selectedJob) {
+      console.log('❌ No job selected');
       setError('Please select a job to analyze.');
       return;
     }
+    
+    // avoid doing work if component unmounted
+    if (!isMountedRef.current) {
+      console.log('❌ Component unmounted, aborting');
+      return;
+    }
+
+    console.log('✅ Starting analysis request for job ID:', selectedJob);
     setLoading(true);
     setError(null);
     setAnalysis(null);
 
     try {
       // Authentication token is automatically included via interceptor
+      console.log('📡 Calling analyzeSkillGaps API...');
       const response = await analyzeSkillGaps(selectedJob);
-      setAnalysis(response.data);
+      console.log('✅ Analysis response received:', response.data);
+
+      // Only update state if component is still mounted
+      if (!isMountedRef.current) return;
+
+      // sanitize analysis data to avoid showing '[object Object]' when templates
+      // accidentally concatenated objects into strings on the backend
+      const sanitizeAnalysis = (raw) => {
+        if (!raw) return raw;
+        // deep clone to avoid mutating original
+        const a = JSON.parse(JSON.stringify(raw));
+        if (Array.isArray(a.gaps)) {
+          a.gaps = a.gaps.map((gap) => {
+            try {
+              const skillName = localize(gap?.skill?.name) || '';
+
+              // development_plan.description may contain the literal '[object Object]'
+              if (gap.development_plan && typeof gap.development_plan.description === 'string') {
+                gap.development_plan.description = gap.development_plan.description.split('[object Object]').join(skillName);
+              }
+
+              // learning_resources: fix names and urls that include the placeholder
+              if (Array.isArray(gap.learning_resources)) {
+                gap.learning_resources = gap.learning_resources.map((res) => {
+                  if (res && typeof res.name === 'string' && res.name.includes('[object Object]')) {
+                    res.name = res.name.split('[object Object]').join(skillName);
+                  }
+                  if (res && typeof res.url === 'string' && res.url.includes('%5Bobject%20Object%5D')) {
+                    // replace encoded [object Object] with encoded skill name
+                    const encoded = encodeURIComponent(skillName);
+                    res.url = res.url.split('%5Bobject%20Object%5D').join(encoded);
+                  }
+                  return res;
+                });
+              }
+
+              // milestones: titles sometimes contain the placeholder
+              if (Array.isArray(gap.milestones)) {
+                gap.milestones = gap.milestones.map((m) => {
+                  if (m && typeof m.title === 'string' && m.title.includes('[object Object]')) {
+                    m.title = m.title.split('[object Object]').join(skillName);
+                  }
+                  return m;
+                });
+              }
+
+            } catch (e) {
+              // swallow – do best-effort sanitization
+              console.warn('Sanitize gap failed', e);
+            }
+            return gap;
+          });
+        }
+        return a;
+      };
+
+      const sanitized = sanitizeAnalysis(response.data);
+      setAnalysis(sanitized);
       setError(null);
     } catch (err) {
-      console.error('Error analyzing skill gaps:', err);
+      if (!isMountedRef.current) return;
+
+      console.error('❌ Error analyzing skill gaps:', err);
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       setError('Failed to perform skill gap analysis. Please ensure the backend server is running and try again.');
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -102,12 +213,19 @@ const SkillGapAnalysisPage = () => {
               </select>
             </div>
             <button
+              key="analyze-button"
               onClick={handleAnalyze}
               disabled={loading || !selectedJob}
-              className="bg-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center disabled:bg-purple-400"
+              className="bg-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center disabled:bg-purple-400 disabled:cursor-not-allowed"
             >
-              {loading ? <Loader className="animate-spin mr-2" /> : <Zap className="mr-2" />}
-              Analyze
+              <IconWrapper className="mr-2">
+                {loading ? (
+                  <Loader className="w-5 h-5 animate-spin" key="loader-icon" />
+                ) : (
+                  <Zap className="w-5 h-5" key="zap-icon" />
+                )}
+              </IconWrapper>
+              <span>{loading ? 'Analyzing...' : 'Analyze'}</span>
             </button>
           </div>
           {error && (
@@ -121,7 +239,7 @@ const SkillGapAnalysisPage = () => {
         {analysis && (
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-              Analysis for: <span className="text-purple-700">{localize(analysis.job?.title || (Array.isArray(jobs) && jobs.find(j => j.id === parseInt(selectedJob))?.title))}</span>
+              Analysis for: <span className="text-purple-700">{localize(analysis.job?.title || (Array.isArray(jobs) && jobs.find(j => j.id === selectedJob)?.title))}</span>
             </h2>
             
             {/* Summary Section */}

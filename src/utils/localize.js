@@ -28,14 +28,27 @@ export default function localize(value) {
     return value;
   }
   if (typeof value === "object") {
+    // Arrays: localize each element and join with commas
+    if (Array.isArray(value)) {
+      const parts = value.map((v) => localize(v)).filter(Boolean);
+      return parts.join(', ');
+    }
+
     const lang = (i18n && i18n.language) || "";
-    if (lang && value[lang]) return value[lang];
-    const base =
-      typeof lang === "string" && lang.split ? lang.split("-")[0] : null;
-    if (base && value[base]) return value[base];
-    if (value.en) return value.en;
+    // If the selected language value is itself a complex type, recursively localize it
+    const pick = (k) => {
+      const v = value[k];
+      if (v == null) return null;
+      if (typeof v === 'object') return localize(v);
+      return String(v);
+    };
+
+    if (lang && value[lang] != null) return pick(lang);
+    const base = typeof lang === "string" && lang.split ? lang.split("-")[0] : null;
+    if (base && value[base] != null) return pick(base);
+    if (value.en != null) return pick('en');
     const firstKey = Object.keys(value)[0];
-    return value[firstKey] || "";
+    return pick(firstKey) || "";
   }
   return String(value);
 }
