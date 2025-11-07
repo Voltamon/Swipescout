@@ -48,7 +48,7 @@ import {
 } from 'lucide-react';
 
 const CategoryManagementPage = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation(); // Removed: unused variable
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);

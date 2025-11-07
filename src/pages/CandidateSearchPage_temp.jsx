@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export default function CandidateSearchPage() {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState("");

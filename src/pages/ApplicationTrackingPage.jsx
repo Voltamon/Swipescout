@@ -70,7 +70,7 @@ const applicationStatuses = {
 
 export default function ApplicationTrackingPage() {
   const theme = useTheme();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   
   const [applications, setApplications] = useState([]);
   const [filteredApplications, setFilteredApplications] = useState([]);

@@ -1,4 +1,5 @@
-﻿import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
+﻿/* eslint-disable react-refresh/only-export-components -- TODO: move non-component exports/constants to helpers */
+import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
 import {
   Box,
   Container,
@@ -304,7 +305,7 @@ export const mockVideoResumes = [
 ];
 const HomePage = () => {
   const theme = useTheme(); // Access theme
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Use theme breakpoint
+  // const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Use theme breakpoint // Removed: unused variable
   const [hoveredVideo, setHoveredVideo] = useState(null);
   const [isPlayVideo, setIsPlayVideo] = useState(null);
   const [isMuted, setIsMuted] = useState(true);

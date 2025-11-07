@@ -1,0 +1,692 @@
+ESLint aggregated report (via Node API) - generated: 2025-11-07T11:43:56.536Z
+Total messages parsed: 660
+
+RULE: no-unused-vars  —  540 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\scripts\extract-i18n-strings.js:109:9  error  'baseName' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\scripts\extract-i18n-strings.js:112:25  error  'index' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\App.js:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\App.jsx:54:27  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\App.jsx:130:7  error  'cld' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\App.jsx:137:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\CandidateCard\CandidateCard.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\CookieConsentBanner.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\dashboard\CollapsibleSidebar.jsx:1:17  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\ErrorBoundary.jsx:9:35  error  'error' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\FAQAccordion\FAQAccordion.jsx:38:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Feature\Feature.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\FeatureCard.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\FloatingNavigationPanel.jsx:1:27  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\FloatingNavigationPanel.jsx:48:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\FloatingNavigationPanel.jsx:55:25  error  'setNotifications' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\FloatingNavigationPanel.jsx:56:20  error  'setMessages' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\FloatingNavigationPanel.jsx:60:14  error  'i18n' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Header.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Headers\admin\Footer.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Headers\admin\Footer.jsx:103:39  error  'Icon' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\Headers\admin\Header.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\hero\hero.jsx:13:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\hero\hero.jsx:67:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\components\hero\hero.jsx:84:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\components\hero\hero.jsx:101:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\components\HeroSection\HeroSection.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\icons\GoogleIcon.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\icons\LinkedInIcon.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\icons copy\GoogleIcon.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\icons copy\LinkedInIcon.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\JobCard\JobCard.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\JobCard.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\LanguageSelector.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\LanguageSelector.jsx:8:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Layout\DashboardLayout.jsx:16:3  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Layout\DashboardLayout.jsx:42:9  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Layout\DashboardLayout.jsx:48:10  error  'notificationAnchor' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Layout\DashboardLayout.jsx:62:9  error  'handleNotificationOpen' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Layout\DashboardLayout.jsx:66:9  error  'handleNotificationClose' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\Layout\SidebarItem.jsx:25:3  error  'divider' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\LazyComponents.jsx:2:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\LazyImage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\LazyVideo.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\LinkedInCallback.jsx:1:22  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\MobileNavigation.jsx:15:13  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:40:3  error  'getNotifications' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:41:3  error  'getUnreadNotificationCount' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:42:3  error  'markNotificationAsRead' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:43:3  error  'markAllNotificationsAsRead' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:44:3  error  'deleteNotification' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationItem\NotificationItem.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\NotificationItem copy\NotificationItem.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\PerformanceOptimizedVideoGrid.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\PerformanceOptimizedVideoGrid.jsx:1:52  error  'useMemo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\PerformanceOptimizedVideoGrid.jsx:255:5  error  'totalHeight' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\RoleCard.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\SearchBar.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\TabPanel.jsx:4:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\TestimonialCard.jsx:2:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\UI\breadcrumb.jsx:36:55  error  'asChild' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\UI\button.jsx:32:62  error  'asChild' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\UI\SearchInput.jsx:29:3  error  'showSuggestions' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\UI\SearchInput.jsx:42:19  error  'setLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\UI\SearchInput.jsx:77:9  error  'handleSuggestionClick' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\VideoCallInterface.jsx:33:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\components\VideoCallInterface.jsx:36:3  error  'interviewId' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\VideoCallInterface.jsx:38:3  error  'meetingLink' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\components\VideoErrorBoundary.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\context\VideoContext.jsx:3:23  error  'saveVideoMetadata' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\context\VideoContext.jsx:4:8  error  'api' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:3:19  error  'signInWithCustomToken' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:29:13  error  'e' is defined but never used.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:62:16  error  'setError' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:292:8  error  'handleAuthSuccess' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:292:137  error  'persistentToken' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:547:75  error  'e' is defined but never used.
+ D:\_projts\frontend\src\contexts\ThemeContext.js:2:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\contexts\VideoContext.jsx:3:23  error  'saveVideoMetadata' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\contexts\VideoContext.jsx:4:8  error  'api' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\use-toast.js:6:7  error  'actionTypes' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:3:19  error  'signInWithCustomToken' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:31:17  error  'setError' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:32:10  error  'fallbackMode' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:241:9  error  'storeAuthData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:261:132  error  'persistentToken' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\hooks\useIntersectionObserver.js:1:40  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useVirtualization.js:1:20  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useVirtualization.js:1:54  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\hooks\useWindowSize.js:1:32  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\About\About_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\About\About_old.jsx:15:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\About\About_old.jsx:16:3  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\BlogEditorPage.jsx:41:11  error  't' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\BlogEditorPage.jsx:199:9  error  'addTag' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\BlogEditorPage.jsx:209:9  error  'removeTag' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\BlogListPage.jsx:3:10  error  'useTranslation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\CategoryManagementPage.jsx:2:10  error  'useTranslation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\TagManagementPage.jsx:49:11  error  't' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\admin\UserManagementPage.jsx:2:10  error  'useTranslation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\adminDashboard.jsx:2:10  error  'useTranslation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AdminTabs.jsx:34:24  error  'setSearchParams' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AIAnalysisPage.jsx:36:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AIAnalysisPage.jsx:57:10  error  'videoAnalyses' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AIAnalysisPage.jsx:57:25  error  'setVideoAnalyses' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AIAnalysisPage.jsx:78:9  error  'fetchVideoAnalysis' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AIInterviewPage.jsx:44:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AIInterviewPage.jsx:97:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\AIInterviewPage.jsx:108:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\AIMatchingPage.jsx:35:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:17:3  error  'likeVideo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:18:3  error  'saveVideo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:19:3  error  'connectWithUser' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:100:3  error  'filterType' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:101:3  error  'showSidebar' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:102:3  error  'showHeader' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:103:3  error  'fullScreen' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:106:19  error  'localVideos' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:116:9  error  'containerRef' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:7:44  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:12:19  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:14:36  error  'useSearchParams' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:31:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:36:3  error  'likeVideo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:37:3  error  'saveVideo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:38:3  error  'connectWithUser' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:39:3  error  'addVideoComment' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:40:3  error  'getVideoComments' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:113:39  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:165:44  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:227:3  error  'filterType' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:228:3  error  'showSidebar' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:229:3  error  'showHeader' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:230:3  error  'fullScreen' is assigned a value but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:233:19  error  'localVideos' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AnalyticsAdmin.jsx:24:20  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\ApplicationTrackingPage.jsx:57:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ApplicationTrackingPage.jsx:58:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\AuthPage.jsx:75:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\AuthPage.jsx:112:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\AuthPage.jsx:127:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\AuthPage.jsx:142:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\BlogDetailPage.jsx:30:24  error  'setRelatedBlogs' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\BlogDetailPage.jsx:101:16  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\BlogDetailPage.jsx:106:18  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\CandidateSearchPage.jsx:3:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CandidateSearchPage.jsx:46:10  error  'filterOptions' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CandidateSearchPage_temp.jsx:3:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CandidateSearchPage_temp.jsx:45:10  error  'filterOptions' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CareerAdvicePage.jsx:62:10  error  'selectedPath' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CareerAdvicePage.jsx:73:9  error  'handleBookmark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CareerAdvicePage.jsx:82:9  error  'isBookmarked' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat.jsx:16:10  error  'formatDistanceToNow' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat.jsx:26:26  error  'authLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat.jsx:39:10  error  'isTyping' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat.jsx:39:20  error  'setIsTyping' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat.jsx:44:9  error  'typingTimeoutRef' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat.jsx:68:14  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:42:10  error  'formatDistanceToNow' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:43:10  error  'enUS' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:248:10  error  'isConnected' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:329:16  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:459:13  error  'receiverId' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:9:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:50:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:51:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:61:10  error  'isPlaying' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:61:21  error  'setIsPlaying' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:62:10  error  'isMuted' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:62:19  error  'setIsMuted' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:66:23  error  'setRelatedJobs' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:133:14  error  'error' is defined but never used.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:8:5  error  'shareVideo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:13:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:44:8  error  'themeColors' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EditEmployerProfilePage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EditEmployerProfilePage.jsx:138:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EditEmployerProfilePage.jsx:293:26  error  'error' is defined but never used.
+ D:\_projts\frontend\src\pages\EditEmployerProfilePage.jsx:399:19  error  'profileToUpdate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EditEmployerProfilePage.jsx:402:13  error  'response' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EditeVideoPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EditeVideoPage.jsx:14:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerDashboard_old.jsx:45:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerDashboard_old.jsx:96:49  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\EmployerExploreSidebar.jsx:1:35  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerExploreSidebar.jsx:151:9  error  'drawerWidthDesktop' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerExploreSidebar.jsx:152:9  error  'drawerWidthMobile' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerExploreSidebar.jsx:154:9  error  'toggleDrawer' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerExploreSidebar.jsx:158:9  error  'drawerContent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfile.jsx:48:63  error  'getJobVideos' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfile.jsx:162:45  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\EmployerProfile.jsx:168:47  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\EmployerProfile.jsx:197:10  error  'loading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfile.jsx:211:15  error  'videosResponse' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfilePage.jsx:1:38  error  'useRef' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfilePage_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfilePage_old.jsx:45:30  error  'getVideoResume' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerProfilePage_old.jsx:180:39  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\EmployerSetupWizard.jsx:69:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerSetupWizard.jsx:81:7  error  'useAuth' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerSetupWizard.jsx:102:34  error  'formData' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\EmployerTabs_OLD.jsx:39:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerViedoExamples.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerViedoExamples.jsx:1:47  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerViedoExamples.jsx:151:9  error  'drawerWidthDesktop' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerViedoExamples.jsx:152:9  error  'drawerWidthMobile' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerViedoExamples.jsx:154:9  error  'toggleDrawer' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\EmployerViedoExamples.jsx:158:9  error  'drawerContent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ExploreJobs.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ExploreJobs.jsx:1:47  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ExploreJobs.jsx:72:36  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\FAQ\FAQs_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\FeedPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ForgotPasswordPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HelpPageLinks_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HelpPage_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:22:9  error  'location' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:39:10  error  'showPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:39:24  error  'setShowPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:40:10  error  'showConfirmPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:40:31  error  'setShowConfirmPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:46:10  error  'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:47:10  error  'googleAnchorEl' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:48:10  error  'linkedinAnchorEl' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:49:10  error  'selectedRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:49:24  error  'setSelectedRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:142:18  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:149:20  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:159:9  error  'handleTabChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:176:9  error  'handleChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:183:9  error  'handleRoleSelect' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:190:9  error  'handleEmailSignIn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:207:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:214:9  error  'handleEmailSignUp' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:250:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:257:9  error  'handleGoogleSignIn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:273:9  error  'handleGoogleSignUp' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:289:9  error  'handleGoogleSignInWithRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:301:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:308:9  error  'handleLinkedInLogin' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:324:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:331:9  error  'handleLinkedInMenuOpen' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:335:9  error  'handleLinkedInMenuClose' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:339:9  error  'handleLinkedInSignInWithRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:352:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home\home.jsx:359:9  error  'handleGoogleMenuOpen' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home\home.jsx:363:9  error  'handleGoogleMenuClose' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:32:120  error  'role' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:51:10  error  'showPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:51:24  error  'setShowPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:52:10  error  'showConfirmPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:52:31  error  'setShowConfirmPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:58:10  error  'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:59:10  error  'googleAnchorEl' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:60:10  error  'linkedinAnchorEl' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:61:10  error  'selectedRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:61:24  error  'setSelectedRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:108:9  error  'handleTabChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:125:9  error  'handleChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:132:9  error  'handleRoleSelect' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:139:9  error  'handleEmailSignIn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:156:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:163:9  error  'handleEmailSignUp' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:199:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:206:9  error  'handleGoogleSignIn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:222:9  error  'handleGoogleSignUp' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:238:9  error  'handleGoogleSignInWithRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:250:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:257:9  error  'handleLinkedInLogin' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:273:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:280:9  error  'handleLinkedInMenuOpen' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:284:9  error  'handleLinkedInMenuClose' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:288:9  error  'handleLinkedInSignInWithRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:301:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:308:9  error  'handleGoogleMenuOpen' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\home copy\home.jsx:312:9  error  'handleGoogleMenuClose' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:14:3  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:53:10  error  'bold' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:63:38  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:75:38  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:309:10  error  'hoveredVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:310:10  error  'isPlayVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:310:23  error  'setIsPlayVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:326:10  error  'loading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:331:10  error  'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:336:10  error  'showPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:336:24  error  'setShowPassword' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:359:9  error  'handleChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:367:9  error  'handleEmailSignIn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:390:9  error  'handleGoogleSignIn' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:408:9  error  'handleLinkedInLogin' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage4.jsx:441:26  error  'videoId' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:15:3  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:57:7  error  'stats' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:64:38  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:76:38  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:311:10  error  'hoveredVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:312:10  error  'isPlayVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:312:23  error  'setIsPlayVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:428:9  error  'handleVideoHover' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_act.jsx:443:26  error  'videoId' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:15:3  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:57:7  error  'stats' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:64:38  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:76:38  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:311:10  error  'hoveredVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:312:10  error  'isPlayVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:312:23  error  'setIsPlayVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:428:9  error  'handleVideoHover' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\HomePage_old.jsx:443:26  error  'videoId' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\InterviewPage.jsx:8:3  error  'updateInterviewStatus' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage.jsx:51:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:46:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:51:3  error  'updateInterviewStatus' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:60:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:69:10  error  'error' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:70:10  error  'tabValue' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:70:20  error  'setTabValue' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:72:10  error  'rescheduleDialog' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:73:10  error  'cancelDialog' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:76:10  error  'anchorEl' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:76:20  error  'setAnchorEl' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:123:9  error  'handleReschedule' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:141:9  error  'handleCancel' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\InterviewPage_old.jsx:178:9  error  'filterInterviews' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobDetailsPage.jsx:6:8  error  'themeColors' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobDetailsPage.jsx:6:39  error  'getBadgeClass' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobDetailsPage.jsx:6:54  error  'getStatusClass' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobDetailsPage.jsx:32:10  error  'showVideoInfo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobDetailsPage.jsx:32:25  error  'setShowVideoInfo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobDetailsPage.jsx:38:10  error  'isHovering' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSearchPage.jsx:43:20  error  'setIndustry' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSearchPage.jsx:49:10  error  'filterOptions' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSearchPage.jsx:76:9  error  'handleJobTypeChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard.jsx:7:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard.jsx:86:30  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard.jsx:207:22  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard.jsx:215:26  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard_old.jsx:46:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard_old.jsx:93:49  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard_old.jsx:163:30  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard_old.jsx:287:22  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\JobSeekerDashboard_old.jsx:296:26  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\JobseekerExploreSidebar.jsx:1:35  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerExploreSidebar.jsx:217:9  error  'drawerWidthDesktop' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerExploreSidebar.jsx:218:9  error  'drawerWidthMobile' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerExploreSidebar.jsx:220:9  error  'toggleDrawer' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerExploreSidebar.jsx:224:9  error  'drawerContent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerProfile.jsx:40:8  error  'themeColors' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerProfile.jsx:60:29  error  'setCurrentVideoIndex' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerProfileView.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerProfile_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobSeekerProfile_old.jsx:183:39  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobSeekerProfile_old.jsx:212:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerTabs_OLD.jsx:1:47  error  'useCallback' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerTabs_OLD.jsx:35:10  error  'useTranslation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerTabs_OLD.jsx:41:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerTabs_OLD.jsx:132:14  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\JobseekerTabs_OLD.jsx:273:9  error  'handleVideoUpload' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerTabs_OLD.jsx:281:13  error  'response' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoExamples.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoExamples.jsx:1:47  error  'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoExamples.jsx:217:9  error  'drawerWidthDesktop' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoExamples.jsx:218:9  error  'drawerWidthMobile' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoExamples.jsx:220:9  error  'toggleDrawer' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoExamples.jsx:224:9  error  'drawerContent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobseekerVideoFeed.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobsListingPage.jsx:3:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobsListingPage.jsx:40:10  error  'categories' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobsListingPage.jsx:88:14  error  'error' is defined but never used.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:50:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:51:22  error  'getJobById' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:51:34  error  'getEmployerProfile' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:91:47  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:117:47  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:148:53  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobVideos.jsx:32:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobVideos.jsx:33:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\JobVideos.jsx:65:45  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobVideos.jsx:70:42  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\JobVideos.jsx:101:24  error  'setCategories' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\legal\CommunityGuidelines.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\legal\CopyrightAndIPTerms.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\legal\EULA.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\LikedVideosPage_old.jsx:45:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\LikedVideosPage_old.jsx:58:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Linkedincallback.jsx:2:22  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\LinkedInLoginButton.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\LoginPage.jsx:190:52  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\LoginPage.jsx:201:54  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\LoginPage.jsx:287:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\LoginPage.jsx:303:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\LoginPage.jsx:319:14  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\MaintenanceDashboard.jsx:79:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MaintenanceDashboard.jsx:80:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MaintenanceDashboard.jsx:123:10  error  'confirmDialog' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MaintenanceDashboard.jsx:123:25  error  'setConfirmDialog' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MaintenanceDashboard.jsx:124:10  error  'confirmAction' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MaintenanceDashboard.jsx:124:25  error  'setConfirmAction' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MyApplications.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\MyApplications.jsx:4:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\NotificationSettingsPage_old.jsx:46:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\NotificationSettingsPage_old.jsx:47:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\NotificationsPage.jsx:81:14  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\NotificationsPage_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\NotificationsPage_old.jsx:4:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\NotificationsPage_old.jsx:12:7  error  'appliedJobs' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PersonalityTestPage.jsx:2:10  error  'useTranslation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PostJobPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PostJobPage.jsx:29:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PostJobPage.jsx:131:10  error  'isChildUploading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage.jsx:41:3  error  'getPlansAndServices' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage.jsx:58:10  error  'currentSubscription' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:55:3  error  'getPlansAndServices' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:62:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:90:10  error  'plans' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:90:17  error  'setPlans' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:91:10  error  'services' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:91:20  error  'setServices' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:92:10  error  'loading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:92:19  error  'setLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:448:9  error  'getPrice' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\PrivateRoute.jsx:2:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Profile.jsx:3:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Profile.jsx:4:10  error  'getCurrentUser' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ProfileSetupWizard.jsx:63:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ProfileSetupWizard.jsx:64:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ProfileViewPage.jsx:125:9  error  'currentVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\RecruitCandidatePage.jsx:14:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\RecruitCandidatePage.jsx:52:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\RecruitCandidatePage.jsx:53:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\RegisterForm\RegisterForm.jsx:211:52  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\RegisterForm\RegisterForm.jsx:222:54  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\RegisterForm\RegisterForm.jsx:256:5  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\RegisterForm\RegisterForm.jsx:257:5  error  'logout' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResetPasswordPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage.jsx:9:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage.jsx:51:8  error  'themeColors' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage_old.jsx:70:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage_old.jsx:71:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage_old.jsx:78:10  error  'loading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage_old.jsx:78:19  error  'setLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\ResumeBuilderPage_old.jsx:104:10  error  'uploadedFile' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SavedCandidatesPage.jsx:39:10  error  'useAuth' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SavedCandidatesPage.jsx:40:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SavedVideosPage_old.jsx:43:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SavedVideosPage_old.jsx:48:3  error  'searchVideos' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SavedVideosPage_old.jsx:55:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SearchPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Settings_old.jsx:40:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Settings_old.jsx:91:12  error  'settings' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SharePage.jsx:6:10  error  'getHomeGradient' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SharePage.jsx:46:36  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\SignupPage.jsx:159:46  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\SignupPage.jsx:170:48  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\SmartRecommendationsPage.jsx:62:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\SmartRecommendationsPage.jsx:66:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TabsMainContent.jsx:4:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:4:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:46:9  error  'handleOpenVideos' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TalentExplore.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TalentExplore.jsx:81:36  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:39:10  error  'selectedResponse' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:39:28  error  'setSelectedResponse' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:40:10  error  'showTranscript' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:40:26  error  'setShowTranscript' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:336:42  error  'Icon' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\TemplateInterviewPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateInterviewPage.jsx:43:10  error  'responses' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TemplateManagementPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\TranslationTest.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Unauthorized.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage.jsx:6:37  error  'deleteEditedVideo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage.jsx:6:98  error  'exportVideoApi' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage.jsx:375:16  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\VideoEditPage.jsx:438:13  error  'res' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage_old.jsx:30:3  error  'useMediaQuery' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage_old.jsx:45:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage_old.jsx:79:9  error  'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoEditPage_old.jsx:425:16  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\VideoFeed.jsx:1:46  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeed.jsx:46:48  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:29:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:163:10  error  'mutedStates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:163:23  error  'setMutedStates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:164:10  error  'playingStates' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:170:11  error  'role' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:170:17  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:365:27  error  'index' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoGridPage.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoGridPage.jsx:62:46  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoGridPage.jsx:98:36  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoGridPage.jsx:126:9  error  'location' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:46:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:95:37  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:134:44  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:215:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:218:33  error  'context' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\Videos.jsx:126:14  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\Videos.jsx:228:12  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\Videos.jsx:807:27  error  'prev' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\Videos.jsx:1180:16  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\Videos.jsx:1209:67  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:56:14  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:583:27  error  'prev' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:710:16  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:751:16  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:774:16  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:882:16  error  'err' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:938:67  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\VideosPage.jsx:45:38  error  'setVideoTab' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideosPage_old.jsx:2:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideosPage_old.jsx:19:22  error  'setVideoTab' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideosPage_old.jsx:28:10  error  'hoveredVideo' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideosPage_old.jsx:32:10  error  'snackbar' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideosPage_old.jsx:416:42  error  'e' is defined but never used.
+ D:\_projts\frontend\src\pages\VideoUpload.jsx:2:23  error  'useParams' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUpload.jsx:3:23  error  'saveVideoMetadata' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUpload.jsx:41:61  error  'onStatusChange' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoUpload.jsx:44:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUploadLogic.jsx:13:10  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUploadLogic.jsx:37:23  error  'setIsAudioOnly' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUploadLogic.jsx:43:9  error  'intervalRef' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUploadLogic.jsx:48:11  error  'uploadStatus' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUploadStyles.js:14:27  error  'theme' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoUpload_old.jsx:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUpload_old.jsx:28:3  error  'useTheme' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUpload_old.jsx:46:23  error  'useParams' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUpload_old.jsx:47:23  error  'saveVideoMetadata' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\pages\VideoUpload_old.jsx:139:61  error  'embedded' is defined but never used. Allowed unused args must match /^_/u.
+ D:\_projts\frontend\src\pages\VideoUpload_old.jsx:145:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\services\chatService.js:1:8  error  'axios' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\services\videoService.js:1:8  error  'axios' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\tests\components.test.js:1:17  error  'useContext' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\tests\components.test.js:2:26  error  'fireEvent' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\theme.js:4:7  error  'theme3' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\theme.js:53:23  error  'red' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\theme.js:55:7  error  'theme22' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+ D:\_projts\frontend\src\utils\localize.js:23:16  error  'e' is defined but never used.
+
+RULE: react-hooks/exhaustive-deps  —  86 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:68:6  warning  React Hook useEffect has a missing dependency: 'refresh'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\components\NotificationCenter.jsx:74:6  warning  React Hook useEffect has a missing dependency: 'refresh'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\components\VideoCallInterface.jsx:208:6  warning  React Hook useEffect has a missing dependency: 'api'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\context\VideoContext.jsx:121:6  warning  React Hook useEffect has a missing dependency: 'videos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:65:8  warning  The 'storeTokens' function makes the dependencies of useEffect Hook (at line 718) change on every render. To fix this, wrap the definition of 'storeTokens' in its own useCallback() Hook.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:268:5  warning  React Hook useCallback has a missing dependency: 'TOKEN_REFRESH_BUFFER'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:270:8  warning  The 'storeAuthData' function makes the dependencies of useMemo Hook (at line 646) change on every render. Move it inside the useMemo callback. Alternatively, wrap the definition of 'storeAuthData' in its own useCallback() Hook.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:346:5  warning  React Hook useCallback has a missing dependency: 'storeTokens'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:406:5  warning  React Hook useCallback has a missing dependency: 'storeTokens'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:471:5  warning  React Hook useCallback has a missing dependency: 'storeTokens'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:512:5  warning  React Hook useCallback has a missing dependency: 'storeTokens'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\AuthContext.jsx:615:5  warning  React Hook useEffect has a missing dependency: 'TOKEN_REFRESH_BUFFER'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\NotificationContext.jsx:94:6  warning  React Hook useEffect has a missing dependency: 'refresh'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\NotificationContext.jsx:110:114  warning  React Hook useMemo has a missing dependency: 'refresh'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\contexts\VideoContext.jsx:128:6  warning  React Hook useEffect has a missing dependency: 'videos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:239:6  warning  React Hook useCallback has a missing dependency: 'TOKEN_REFRESH_BUFFER'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\hooks\useAuth.jsx:500:4  warning  React Hook useEffect has a missing dependency: 'TOKEN_REFRESH_BUFFER'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\admin\AdminVideosPage.jsx:24:6  warning  React Hook useEffect has a missing dependency: 'fetchVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\admin\BlogEditorPage.jsx:112:6  warning  React Hook useEffect has a missing dependency: 'fetchBlog'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\admin\BlogListPage.jsx:69:6  warning  React Hook useEffect has a missing dependency: 'fetchBlogs'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\admin\SystemSettingsPage.jsx:21:6  warning  React Hook useEffect has a missing dependency: 'fetchSettings'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\admin\UserManagementPage.jsx:56:6  warning  React Hook useEffect has a missing dependency: 'fetchUsers'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\admin\UsersPointsPage.jsx:19:33  warning  React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\AIAnalysisPage.jsx:63:6  warning  React Hook useEffect has a missing dependency: 'fetchUserAnalysis'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\AIMatchingPage.jsx:51:6  warning  React Hook useEffect has a missing dependency: 'fetchVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:209:6  warning  React Hook useEffect has a missing dependency: 'fetchServerVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\AllVideosPage.jsx:296:6  warning  React Hook useEffect has missing dependencies: 'toggleMute' and 'togglePlayPause'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:345:6  warning  React Hook useEffect has a missing dependency: 'fetchServerVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\AllVideosPage_old.jsx:440:6  warning  React Hook useEffect has missing dependencies: 'toggleMute' and 'togglePlayPause'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\ApplicationTrackingPage.jsx:100:6  warning  React Hook useEffect has a missing dependency: 'filterApplications'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\BlogDetailPage.jsx:34:6  warning  React Hook useEffect has a missing dependency: 'fetchBlog'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\CandidateSearchPage.jsx:67:6  warning  React Hook useEffect has a missing dependency: 'fetchCandidates'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\CandidateSearchPage_temp.jsx:66:6  warning  React Hook useEffect has a missing dependency: 'fetchCandidates'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\Chat.jsx:224:6  warning  React Hook useEffect has a missing dependency: 'normalizeConversation'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:411:6  warning  React Hook useEffect has a missing dependency: 'normalizeConversation'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:440:6  warning  React Hook useEffect has a missing dependency: 'socket'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\Chat_old.jsx:508:6  warning  React Hook useEffect has a missing dependency: 'handleTyping'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\CompanyVideoPreviewPage.jsx:72:6  warning  React Hook useEffect has a missing dependency: 'fetchVideoData'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:92:8  warning  React Hook useEffect has a missing dependency: 'fetchVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\EditEmployerProfilePage.jsx:363:4  warning  React Hook useEffect has a missing dependency: 'createStarterProfile'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\EditJobSeekerProfile.jsx:320:6  warning  React Hook useEffect has missing dependencies: 'handleUploadVideo' and 'location'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\EmployerProfilePage.jsx:43:6  warning  React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\EmployerSetupWizard.jsx:305:6  warning  React Hook useEffect has a missing dependency: 'fetchInitialData'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\EmployerSetupWizard.jsx:311:5  warning  React Hook useEffect has a missing dependency: 'calculateCompleteness'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\FeedPage.jsx:105:6  warning  React Hook useEffect has missing dependencies: 'nextVideo', 'prevVideo', and 'togglePlay'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\home\home.jsx:125:6  warning  React Hook useEffect has an unnecessary dependency: 'i18n.language'. Either exclude it or remove the dependency array. Outer scope values like 'i18n.language' aren't valid dependencies because mutating them doesn't re-render the component.
+ D:\_projts\frontend\src\pages\InterviewPage.jsx:71:6  warning  React Hook useEffect has missing dependencies: 'fetchInterviewDetails' and 'fetchInterviews'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\JobSearchPage.jsx:65:6  warning  React Hook useEffect has a missing dependency: 'fetchJobs'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\JobSeekerProfile.jsx:64:6  warning  React Hook useEffect has a missing dependency: 'fetchProfileData'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\JobseekerVideoFeed.jsx:389:6  warning  React Hook useEffect has missing dependencies: 'handleSwipeDown', 'handleSwipeUp', and 'togglePlay'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\JobsListingPage.jsx:47:6  warning  React Hook useEffect has a missing dependency: 'fetchJobs'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\JobsListingPage_old.jsx:236:6  warning  React Hook useEffect has a missing dependency: 'role'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\NotificationSettingsPage_old.jsx:83:6  warning  React Hook useEffect has a missing dependency: 'fetchNotificationSettings'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\NotificationsPage.jsx:15:87  warning  React Hook useEffect has a missing dependency: 'refresh'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\PricingPage.jsx:313:6  warning  React Hook useEffect has a missing dependency: 'loadCurrentSubscription'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\PricingPage_old.jsx:364:6  warning  React Hook useEffect has a missing dependency: 'loadCurrentSubscription'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\ProfileSetupWizard.jsx:218:8  warning  React Hook useEffect has a missing dependency: 'fetchInitialData'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\ProfileSetupWizard.jsx:222:8  warning  React Hook useEffect has a missing dependency: 'calculateCompleteness'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\ProfileViewPage.jsx:61:6  warning  React Hook useEffect has a missing dependency: 'fetchProfile'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\PublicBlogPage.jsx:39:6  warning  React Hook useEffect has a missing dependency: 'fetchBlogs'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\RecruitCandidatePage.jsx:113:6  warning  React Hook useEffect has a missing dependency: 'fetchCandidateData'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\SmartRecommendationsPage.jsx:96:6  warning  React Hook useEffect has a missing dependency: 'fetchJobRecommendations'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\TabsMainContent.jsx:292:6  warning  React Hook useMemo has missing dependencies: 'dashboardTabsConfig', 'employersTabsConfig', and 'videosTabsConfig'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:227:6  warning  React Hook useMemo has a missing dependency: 'filteredTabs'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:56:6  warning  React Hook useEffect has missing dependencies: 'fetchTemplateResponse' and 'fetchTranscriptionStatus'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\TemplateAnalysisPage.jsx:68:6  warning  React Hook useEffect has a missing dependency: 'fetchTranscriptionStatus'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\TemplateInterviewPage.jsx:61:68  warning  The ref value 'questionTimerRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'questionTimerRef.current' to a variable inside the effect, and use that variable in the cleanup function.
+ D:\_projts\frontend\src\pages\TemplateInterviewPage.jsx:63:6  warning  React Hook useEffect has missing dependencies: 'fetchTemplate' and 'stopRecording'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoEditPage.jsx:134:6  warning  React Hook useEffect has missing dependencies: 'loadMyVideos', 'toast', and 'user.id'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoEditPage_old.jsx:152:6  warning  React Hook useEffect has a missing dependency: 'loadMyVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoFeed.jsx:131:9  warning  The 'allVideos' array makes the dependencies of useEffect Hook (at line 160) change on every render. To fix this, wrap the initialization of 'allVideos' in its own useMemo() Hook.
+ D:\_projts\frontend\src\pages\VideoFeed.jsx:257:6  warning  React Hook useEffect has missing dependencies: 'handleSwipeDown', 'handleSwipeUp', and 'togglePlay'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoFeedViewer.jsx:247:5  warning  React Hook useEffect has a missing dependency: 'loadNextPage'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoGridPage.jsx:214:5  warning  React Hook useMemo has a missing dependency: 'loadVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoGridPage.jsx:260:6  warning  React Hook useEffect has a missing dependency: 'loadVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:253:6  warning  React Hook useEffect has a missing dependency: 'loadComments'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoPlayerPage.jsx:419:6  warning  React Hook useEffect has missing dependencies: 'handleMuteToggle' and 'handleVideoClick'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\Videos.jsx:259:6  warning  React Hook useEffect has missing dependencies: 'video.id' and 'video.videoUrl'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\Videos.jsx:650:6  warning  React Hook useEffect has a missing dependency: 'fetchVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\Videos.jsx:844:6  warning  React Hook useEffect has a missing dependency: 'handleScroll'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\Videos.jsx:1346:6  warning  React Hook useEffect has missing dependencies: 'currentVideoIndex' and 'videos'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\Videos.jsx:1353:6  warning  React Hook useEffect has missing dependencies: 'fetchStatsForVideos' and 'videos'. Either include them or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:482:6  warning  React Hook useEffect has a missing dependency: 'fetchVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:619:6  warning  React Hook useEffect has a missing dependency: 'handleScroll'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideosPage.jsx:151:6  warning  React Hook useEffect has a missing dependency: 'fetchServerVideos'. Either include it or remove the dependency array.
+ D:\_projts\frontend\src\pages\VideoUploadLogic.jsx:105:5  warning  React Hook useEffect has a missing dependency: 'stopRecording'. Either include it or remove the dependency array.
+
+RULE: no-undef  —  23 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\components\notifications\TopNotificationBanner.jsx:1:1  error  'TopNotificationBanner' is not defined.
+ D:\_projts\frontend\src\components\notifications copy\TopNotificationBanner.jsx:1:1  error  'TopNotificationBanner' is not defined.
+ D:\_projts\frontend\src\entities\user-video.entity.js:20:16  error  'UserVideo' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:334:40  error  'setDrawerOpen' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:390:53  error  'setAnchorEl' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:391:53  error  'setMenuVideo' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:511:27  error  'drawerOpen' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:512:36  error  'setDrawerOpen' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:613:31  error  'anchorEl' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:614:35  error  'anchorEl' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:615:36  error  'setAnchorEl' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:617:59  error  'menuVideo' is not defined.
+ D:\_projts\frontend\src\pages\CompanyVideos.jsx:621:70  error  'menuVideo' is not defined.
+ D:\_projts\frontend\src\pages\NotificationSettingsPage_old.jsx:163:26  error  'theme' is not defined.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:123:14  error  'candidatesTabsConfig' is not defined.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:128:10  error  'candidatesTabsConfig' is not defined.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:141:14  error  'videosTabsConfig' is not defined.
+ D:\_projts\frontend\src\pages\TabsMainContentEmployer.jsx:146:10  error  'videosTabsConfig' is not defined.
+ D:\_projts\frontend\src\pages\Videos.jsx:1401:31  error  'id' is not defined.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:627:9  error  'setMutedVideoId' is not defined.
+ D:\_projts\frontend\src\services\authService.js:28:30  error  'axios' is not defined.
+ D:\_projts\frontend\src\services\authService.js:53:30  error  'axios' is not defined.
+ D:\_projts\frontend\src\services\authService.js:64:30  error  'axios' is not defined.
+
+RULE: no-empty  —  3 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\pages\home\home.jsx:149:23  error  Empty block statement.
+ D:\_projts\frontend\src\pages\Videos.jsx:1209:70  error  Empty block statement.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:938:70  error  Empty block statement.
+
+RULE: react-hooks/rules-of-hooks  —  2 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\config\jobseekerTabsConfig.js:39:17  error  React Hook "useTranslation" is called in function "jobseekerTabCategories" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use".
+ D:\_projts\frontend\src\pages\LoginPage.jsx:252:3  error  React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render.
+
+RULE: no-dupe-else-if  —  2 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\pages\Videos.jsx:1106:18  error  This branch can never execute. Its condition is a duplicate or covered by previous conditions in the if-else-if chain.
+ D:\_projts\frontend\src\pages\VideosFeed.jsx:808:18  error  This branch can never execute. Its condition is a duplicate or covered by previous conditions in the if-else-if chain.
+
+RULE: no-dupe-keys  —  1 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\components\Layout\DashboardLayout.jsx:123:11  error  Duplicate key 'ml'.
+
+RULE: no-prototype-builtins  —  1 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\pages\EditJobSeekerProfile.jsx:295:18  error  Do not access Object.prototype method 'hasOwnProperty' from target object.
+
+RULE: no-irregular-whitespace  —  1 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\pages\home copy\home.jsx:372:47  error  Irregular whitespace not allowed.
+
+RULE: no-case-declarations  —  1 occurrences
+------------------------------------------------------------
+ D:\_projts\frontend\src\pages\RecruitCandidatePage.jsx:429:9  error  Unexpected lexical declaration in case block.

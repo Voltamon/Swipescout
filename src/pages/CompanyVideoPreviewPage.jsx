@@ -51,9 +51,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 
 export default function CompanyVideoPreviewPage() {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
   const { videoId } = useParams();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);

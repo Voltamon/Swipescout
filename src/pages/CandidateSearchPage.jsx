@@ -31,7 +31,7 @@ import {
 import themeColors from '@/config/theme-colors';
 
 export default function CandidateSearchPage() {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState("");

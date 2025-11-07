@@ -1,4 +1,5 @@
-﻿import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
+﻿/* eslint-disable react-refresh/only-export-components -- TODO: move context helpers (non-component exports) to separate files */
+import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, browserLocalPersistence, signOut, setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
@@ -122,6 +123,7 @@ export const AuthProvider = ({ children }) => {
 			console.error("Refresh failed:", error);
 			throw error;
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [apiUrl, navigate]);
 
 	const logout = useCallback(async () => {

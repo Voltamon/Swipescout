@@ -105,7 +105,7 @@ const statusColors = {
 
 export default function MaintenanceDashboard() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   
   const [tasks, setTasks] = useState([]);
   const [results, setResults] = useState([]);

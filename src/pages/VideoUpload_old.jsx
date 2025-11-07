@@ -137,7 +137,7 @@ const HashtagChip = styled(Chip)(({ theme }) => ({
 
 // Modify the component props to include onStatusChange
 const VideoUpload = ({newjobid, onComplete, onStatusChange, embedded}) => {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
   const navigate = useNavigate();
   const [uploadStatus, setUploadStatus] = useState(null);
   // Destructure addLocalVideo and updateVideoStatus from context

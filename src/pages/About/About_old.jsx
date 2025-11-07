@@ -29,7 +29,7 @@ import { useTranslation } from 'react-i18next';
 const AboutUs = () => {
   const { t } = useTranslation();
 //   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  // //   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Removed: unused variable
 
   const teamMembers = [
     {

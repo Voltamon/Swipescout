@@ -83,7 +83,7 @@ const a11yProps = (index) => {
 };
 
 const JobseekerTabs = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation(); // Removed: unused variable
   const [darkMode, setDarkMode] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
   const { user, role } = useAuth();

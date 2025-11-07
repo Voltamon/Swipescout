@@ -43,7 +43,7 @@ import {
 } from 'lucide-react';
 
 const UserManagementPage = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation(); // Removed: unused variable
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

@@ -41,7 +41,7 @@ import { useContext } from 'react';
 
 export default function SavedCandidatesPage() {
   const theme = useTheme();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

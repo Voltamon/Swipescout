@@ -44,7 +44,7 @@ import {
 import themeColors from '@/config/theme-colors';
 
 export default function CompanyVideos() {
-    const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
     const { toast } = useToast();
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);

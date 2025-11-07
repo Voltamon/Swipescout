@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+/* eslint-disable react-refresh/only-export-components -- TODO: split non-component helpers into their own module */
 import { useSocket } from './SocketContext';
 import { useToast } from '@/hooks/use-toast';
 import {

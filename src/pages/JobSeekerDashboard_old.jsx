@@ -119,7 +119,7 @@ const ActivityItem = styled(ListItem)(({ theme }) => ({
 }));
 
 const JobSeekerDashboard = () => {
-    const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
     const navigate = useNavigate(); // <--- existing
     const theme = useTheme(); // <--- moved here (before any early returns / JSX)
     const [stats, setStats] = useState(null);

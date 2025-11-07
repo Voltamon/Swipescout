@@ -78,7 +78,7 @@ const FormCard = styled(Card)(({ theme }) => ({
 const EditVideoPage = () => {
   const { videoId } = useParams();
   const navigate = useNavigate();
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
   
   // State
   const [video, setVideo] = useState({

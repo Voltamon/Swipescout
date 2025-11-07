@@ -1,4 +1,5 @@
-﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿/* eslint-disable react-refresh/only-export-components -- TODO: move provider helpers to separate modules */
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { uploadVideo, saveVideoMetadata ,getVideoStatus} from '@/services/videoService';
 import api from '@/services/api'; // Make sure this import is present if used in retryUpload
 

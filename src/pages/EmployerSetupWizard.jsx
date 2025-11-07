@@ -147,7 +147,7 @@ const ProgressCard = styled(Card)(({ theme }) => ({
 }));
 
 const EmployerSetupWizard = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(new Set());

@@ -52,7 +52,7 @@ import {
 } from 'lucide-react';
 
 const BlogListPage = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation(); // Removed: unused variable
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);

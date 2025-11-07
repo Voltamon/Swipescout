@@ -40,7 +40,7 @@ const DashboardLayout = ({
   isDarkMode = false
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  // const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Removed: unused variable
   const { t, isRTL } = useTranslation();
   
   const [mobileOpen, setMobileOpen] = useState(false);

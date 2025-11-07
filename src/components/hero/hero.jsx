@@ -27,7 +27,7 @@ const VITE_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5173';
 
 
 const Hero = () => {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
   const { loginByEmailAndPassword, authenticateWithGoogle, authenticateWithLinkedIn } = useAuth();
   
   const [formData, setFormData] = useState({

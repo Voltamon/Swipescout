@@ -1,4 +1,5 @@
-﻿import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
+﻿/* eslint-disable react-refresh/only-export-components -- TODO: refactor heavy hook/provider to separate module */
+import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, browserLocalPersistence, signOut, setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";

@@ -91,7 +91,7 @@ const SkillChip = styled(Chip)(({ theme }) => ({
 }));
 
 const JobVideos = () => {
-    const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState('all');

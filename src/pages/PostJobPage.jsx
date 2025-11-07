@@ -93,7 +93,7 @@ const StyledSnackbar = styled(Snackbar)(({ theme }) => ({
 }));
 
 const PostJobPage = () => {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
   const navigate = useNavigate();
   
   const [jobForm, setJobForm] = useState({

@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation(); // Removed: unused variable
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalUsers: 0,

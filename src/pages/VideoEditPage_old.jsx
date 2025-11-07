@@ -77,7 +77,7 @@ function initializeFFmpeg() {
 
 export default function VideoEditPage() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  // const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Removed: unused variable
   const { user } = useAuth();
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);

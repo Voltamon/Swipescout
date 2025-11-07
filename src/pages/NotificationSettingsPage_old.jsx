@@ -52,7 +52,7 @@ import {
 } from '@/services/api';
 
 const NotificationSettingsPage = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   
   const [settings, setSettings] = useState({
     email_notifications: true,

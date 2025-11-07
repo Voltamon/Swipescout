@@ -72,7 +72,7 @@ import { useContext } from 'react';
 
 export default function ResumeBuilderPage() {
   const theme = useTheme();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const [activeStep, setActiveStep] = useState(0);
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(false);

@@ -248,7 +248,7 @@ const AllVideosPage = ({
   const { pagetype: urlPagetype } = useParams();
   const pagetype = propPagetype || urlPagetype;
   const { user } = useAuth();
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
 
   // Get context from navigation state (from VideoGridPage)
   const navigationContext = location.state?.context;

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState 
 import { io } from 'socket.io-client';
 import { useAuth } from '@/contexts/AuthContext';
 
+/* eslint-disable react-refresh/only-export-components -- TODO: move non-component helpers to separate modules */
 const SocketContext = createContext({ socket: null, isConnected: false });
 
 export const SocketProvider = ({ children }) => {

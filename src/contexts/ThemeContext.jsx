@@ -1,4 +1,5 @@
-﻿import React, { createContext, useState, useContext } from 'react';
+﻿/* eslint-disable react-refresh/only-export-components -- TODO: separate theme helpers from React exports */
+import React, { createContext, useState, useContext } from 'react';
 
 // Utility function to get dynamic classes based on bright mode
 const getDynamicClasses = (isBrightMode) => ({

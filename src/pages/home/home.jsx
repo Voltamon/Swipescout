@@ -397,14 +397,14 @@ const Home = () => {
     } catch (err) {
       // Log and attempt a safe fallback; avoid throwing unhandled exceptions
       // that could break UI handlers.
-      // eslint-disable-next-line no-console
+       
       console.error('handleVideoFeatureClick error:', err);
       try {
         const fallbackRole = user ? (Array.isArray(user.role) ? user.role[0] : user.role) : null;
         navigate(getDefaultRoute(fallbackRole) || '/');
       } catch (e) {
         // swallow secondary navigation errors
-        // eslint-disable-next-line no-console
+         
         console.error('fallback navigation failed:', e);
       }
     }

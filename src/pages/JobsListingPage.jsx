@@ -30,7 +30,7 @@ import {
 import themeColors from '@/config/theme-colors';
 
 export default function JobsListingPage() {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const { toast } = useToast();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);

@@ -1,4 +1,5 @@
-﻿import React, { useContext, lazy, Suspense  } from 'react';
+﻿/* eslint-disable react-refresh/only-export-components -- TODO: move helpers/lazy-exports to a separate file to support fast refresh */
+import React, { useContext, lazy, Suspense  } from 'react';
 import { Box, CircularProgress, Skeleton, Typography } from '@mui/material';
 
 // Lazy load heavy components

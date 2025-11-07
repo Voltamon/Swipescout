@@ -29,7 +29,7 @@ const appliedJobs = [
 ];
 
 const NotificationsPage = () => {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
 
   return (
     <Box

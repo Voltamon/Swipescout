@@ -51,7 +51,7 @@ import {
 import themeColors from '@/config/theme-colors-jobseeker';
 
 export default function ResumeBuilderPage() {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   const { toast } = useToast();
   
   const [activeTab, setActiveTab] = useState('build');

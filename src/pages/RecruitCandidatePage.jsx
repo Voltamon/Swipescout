@@ -59,10 +59,10 @@ const recruitmentSteps = [
 ];
 
 export default function RecruitCandidatePage() {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
   const { candidateId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
   
   const [candidate, setCandidate] = useState(null);
   const [jobs, setJobs] = useState([]);

@@ -45,7 +45,7 @@ ChartJS.register(
 );
 
 const JobSeekerDashboard = () => {
-    const { user } = useAuth();
+  // const { user } = useAuth(); // Removed: unused variable
     const navigate = useNavigate();
     const { toast } = useToast();
     const [stats, setStats] = useState(null);

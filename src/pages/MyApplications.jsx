@@ -29,7 +29,7 @@ const appliedJobs = [
 ];
 
 const MyApplications = () => {
-  const theme = useTheme();
+  // const theme = useTheme(); // Removed: unused variable
 
   return (
     <Box
