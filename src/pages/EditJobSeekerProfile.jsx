@@ -21,6 +21,7 @@ import {
   getSkills,
 } from '@/services/api';
 import dayjs from 'dayjs';
+import localize from '@/utils/localize';
 
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
@@ -121,6 +122,12 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
 
   // State for videos
   const [videos, setVideos] = useState([]);
+
+  // Use `localize` utility to pick the right language string from localized fields
+  const renderSkillName = (skill) => {
+    const val = skill == null ? '' : (skill.name ?? skill);
+    return localize(val);
+  };
 
   // UI state
   const [loading, setLoading] = useState(true);
@@ -234,7 +241,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           }
         }
 
-        const [skillsResponse, availableSkillsResponse, experiencesResponse, educationResponse, videosResponse] = await Promise.all([
+        const allResults = await Promise.allSettled([
           getUserSkills(),
           getSkills(),
           getUserExperiences(),
@@ -242,8 +249,34 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           getUserVideos()
         ]);
 
-  const normProfile = normalizeProfile(profileResponse.data);
-  setProfile(normProfile);
+        // Map settled results to expected response-shape, falling back to empty lists when a call failed
+        const [
+          skillsResult,
+          availableSkillsResult,
+          experiencesResult,
+          educationResult,
+          videosResult
+        ] = allResults;
+
+        const skillsResponse = skillsResult.status === 'fulfilled' ? skillsResult.value : { data: { skills: [] } };
+        const availableSkillsResponse = availableSkillsResult.status === 'fulfilled' ? availableSkillsResult.value : { data: { skills: [] } };
+        const experiencesResponse = experiencesResult.status === 'fulfilled' ? experiencesResult.value : { data: { experiences: [] } };
+        const educationResponse = educationResult.status === 'fulfilled' ? educationResult.value : { data: { educations: [] } };
+        const videosResponse = videosResult.status === 'fulfilled' ? videosResult.value : { data: { videos: [] } };
+
+        // Log any rejected results for easier debugging
+        allResults.forEach((r, idx) => {
+          if (r.status === 'rejected') {
+            const names = ['getUserSkills','getSkills','getUserExperiences','getUserEducation','getUserVideos'];
+            console.error(`Failed to fetch ${names[idx]}:`, r.reason || r);
+          }
+        });
+
+        // Some backend responses wrap the actual profile under `data.profile`.
+        // Accept both shapes: `response.data` or `response.data.profile`.
+        const rawProfile = profileResponse?.data?.profile ?? profileResponse?.data ?? {};
+        const normProfile = normalizeProfile(rawProfile);
+        setProfile(normProfile);
         setSkills(skillsResponse.data?.skills || []);
         setAvailableSkills(availableSkillsResponse.data?.skills || []);
         setExperiences(experiencesResponse.data?.experiences || []);
@@ -872,7 +905,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 <div className="flex flex-wrap gap-2">
                   {skills.map((skill) => (
                     <Badge key={skill.skill_id} className="px-3 py-1 rounded-md bg-indigo-100 text-indigo-800 inline-flex items-center gap-2">
-                      {skill.name}
+                      {renderSkillName(skill)}
                       <button onClick={() => handleDeleteSkill(skill.skill_id)} className="text-indigo-600"><Trash className="h-4 w-4" /></button>
                     </Badge>
                   ))}
@@ -1008,7 +1041,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
               </SelectTrigger>
               <SelectContent>
                 {availableSkills.map((skill) => (
-                  <SelectItem key={skill.id} value={skill.id}>{skill.name}</SelectItem>
+                  <SelectItem key={skill.id} value={skill.id}>{renderSkillName(skill)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

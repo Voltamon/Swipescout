@@ -400,9 +400,9 @@ const JobVideos = () => {
                                 <Grid item xs={12} sm={6}>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <CategoryIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
-                                        <Typography variant="body2">
-                        {selectedVideo.job.category?.name || 'Not specified'}
-                      </Typography>
+                                                                                <Typography variant="body2">
+                                                                                        {selectedVideo.job.categoryRelations?.[0]?.category?.name || selectedVideo.job.category?.name || 'Not specified'}
+                                                                                </Typography>
                       
                       </Box>
                                 </Grid>
