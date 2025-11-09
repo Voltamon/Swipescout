@@ -207,7 +207,42 @@ export default function VideoEditPage() {
         description: v.description || v.desc || ''
       }));
 
-      setMyVideos(mapped || []);
+      // Client-side filter: ensure we only show videos that belong to the current user
+      // or that appear to be fully uploaded/ready (to avoid showing temporary/partial uploads)
+      const userIdStr = user?.id ? String(user.id) : null;
+      const filtered = (mapped || []).filter(v => {
+        if (!v || !v.id) return false; // skip entries without id
+
+        // Collect possible owner/uploader fields that backends sometimes use
+        const ownerCandidates = [v.userId, v.user_id, v.ownerId, v.owner_id, v.uploaderId, v.uploader_id, v.createdBy, v.created_by, v.uploader];
+        const hasMatchingOwner = userIdStr && ownerCandidates.some(o => o && String(o) === userIdStr);
+        if (hasMatchingOwner) return true;
+
+        // If owner not present or doesn't match, only include if the video looks finalized:
+        // - status is completed/ready, or progress is >= 100
+        // - and there is an accessible videoUrl
+        const readyStatus = typeof v.status === 'string' && ['completed', 'ready', 'available'].includes(v.status.toLowerCase());
+        const progressOk = Number(v.progress) >= 100;
+        const hasUrl = !!v.videoUrl;
+        if ((readyStatus || progressOk) && hasUrl) return true;
+
+        // Otherwise treat as temporary/other-user and filter out
+        console.debug('Filtered out non-user/temporary video in editor library', { video: v });
+        return false;
+      });
+
+      // Remove duplicates by id just in case
+      const uniqueById = [];
+      const seen = new Set();
+      for (const vid of filtered) {
+        const key = String(vid.id);
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueById.push(vid);
+        }
+      }
+
+      setMyVideos(uniqueById || []);
     } catch (error) {
       console.error('Error loading my videos:', error);
     }
