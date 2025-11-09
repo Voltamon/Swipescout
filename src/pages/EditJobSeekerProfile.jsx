@@ -891,7 +891,9 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   };
 
   const handleEditVideo = (videoId) => {
-    navigate(`/jobseeker-tabs?page=edit-video/${videoId}`);
+    // Navigate to the Video Editor tab inside the jobseeker tabs layout.
+    // Include the videoId as a query param so the editor page can optionally pre-select it.
+    navigate(`/jobseeker-tabs?group=videoManagement&tab=video-editor&videoId=${encodeURIComponent(videoId)}`);
   };
 
   // Format date for display

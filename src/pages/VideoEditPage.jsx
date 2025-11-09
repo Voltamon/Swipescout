@@ -1,4 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
@@ -52,8 +53,11 @@ export default function VideoEditPage() {
   const { toast } = useToast();
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
+  const previewRef = useRef(null);
   
   const [activeTab, setActiveTab] = useState('upload');
+  const [searchParams] = useSearchParams();
+  const [initialVideoId, setInitialVideoId] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
@@ -123,6 +127,13 @@ export default function VideoEditPage() {
     
     loadFFmpeg();
     loadMyVideos();
+    // Capture initial videoId param so we can auto-select after videos load
+    try {
+      const vid = searchParams.get('videoId') || searchParams.get('videoid') || searchParams.get('id');
+      if (vid) setInitialVideoId(String(vid));
+    } catch (e) {
+      // ignore
+    }
     // Load subscription status
     if (user?.id) {
       getSubscriptionStatus(user.id).then(r => {
@@ -132,6 +143,31 @@ export default function VideoEditPage() {
       }).catch(() => setIsPro(false));
     }
   }, []);
+
+  // When videos load and an initialVideoId was provided, auto-select that video
+  useEffect(() => {
+    if (!initialVideoId) return;
+    if (!myVideos || myVideos.length === 0) return;
+
+    // Try to find a matching video by normalized id or alternate fields
+    const match = myVideos.find(v => {
+      if (!v) return false;
+      return String(v.id) === String(initialVideoId) || String(v.video_id) === String(initialVideoId) || String(v._id) === String(initialVideoId) || String(v.videoId) === String(initialVideoId);
+    });
+
+    if (match) {
+      // switch to library tab so user sees selection
+      setActiveTab('library');
+      // small delay to ensure UI updated before selecting / scrolling
+      setTimeout(() => {
+        handleSelectVideoFromList(match);
+        // Scroll preview into view after selection
+        if (previewRef.current && typeof previewRef.current.scrollIntoView === 'function') {
+          previewRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 350);
+    }
+  }, [initialVideoId, myVideos]);
 
   useEffect(() => {
     if (videoFile) {
@@ -158,7 +194,20 @@ export default function VideoEditPage() {
   const loadMyVideos = async () => {
     try {
       const response = await getAllVideos(1, 50, { userId: user?.id });
-      setMyVideos(response.data?.videos || []);
+      const raw = response.data?.videos || [];
+      // Normalize server video objects to a common shape used by the UI
+      const mapped = (raw || []).map(v => ({
+        ...v,
+        id: v.id || v._id || v.video_id || v.videoId,
+        title: v.title || v.video_title || v.videoTitle || v.name || v.original_name || v.videoName,
+        videoUrl: v.videoUrl || v.video_url || v.secure_url || v.video_url_signed || v.file_url,
+        thumbnailUrl: v.thumbnailUrl || v.thumbnail_url || v.thumb || v.poster || v.preview_image,
+        status: v.status || 'completed',
+        progress: v.progress || v.upload_progress || 0,
+        description: v.description || v.desc || ''
+      }));
+
+      setMyVideos(mapped || []);
     } catch (error) {
       console.error('Error loading my videos:', error);
     }
@@ -166,9 +215,9 @@ export default function VideoEditPage() {
 
   const handleSelectVideoFromList = (video) => {
     setSelectedVideoFromList(video);
-    setVideoUrl(video.video_url);
-    setVideoTitle(video.video_title || '');
-    setVideoDescription(video.description || '');
+    setVideoUrl(video.videoUrl || video.video_url || video.secure_url || '');
+    setVideoTitle(video.title || video.video_title || video.name || '');
+    setVideoDescription(video.description || video.desc || '');
     setVideoFile(null);
     resetEditingParameters();
   };
@@ -288,9 +337,14 @@ export default function VideoEditPage() {
       if (videoFile) {
         ffmpeg.FS('writeFile', inputFileName, await fetchFile(videoFile));
       } else if (selectedVideoFromList) {
-        const response = await fetch(selectedVideoFromList.video_url);
-        const blob = await response.blob();
-        ffmpeg.FS('writeFile', inputFileName, await fetchFile(blob));
+        const videoFetchUrl = selectedVideoFromList.videoUrl || selectedVideoFromList.video_url || selectedVideoFromList.secure_url || '';
+        if (videoFetchUrl) {
+          const response = await fetch(videoFetchUrl);
+          const blob = await response.blob();
+          ffmpeg.FS('writeFile', inputFileName, await fetchFile(blob));
+        } else {
+          throw new Error('Selected video has no accessible URL');
+        }
       }
 
       let command = ['-i', inputFileName];
@@ -390,10 +444,11 @@ export default function VideoEditPage() {
     // Prefer the original input video for server processing
     if (videoFile) {
       formData.append('video', videoFile);
-    } else if (selectedVideoFromList?.video_url) {
-      const resp = await fetch(selectedVideoFromList.video_url);
+    } else if (selectedVideoFromList?.videoUrl || selectedVideoFromList?.video_url) {
+      const videoFetchUrl = selectedVideoFromList.videoUrl || selectedVideoFromList.video_url;
+      const resp = await fetch(videoFetchUrl);
       const blob = await resp.blob();
-      formData.append('video', new File([blob], selectedVideoFromList.video_title || 'video.mp4', { type: blob.type || 'video/mp4' }));
+      formData.append('video', new File([blob], selectedVideoFromList.video_title || selectedVideoFromList.title || 'video.mp4', { type: blob.type || 'video/mp4' }));
     } else if (processedVideoUrl) {
       const resp = await fetch(processedVideoUrl);
       const blob = await resp.blob();
@@ -562,10 +617,14 @@ export default function VideoEditPage() {
                       onClick={() => handleSelectVideoFromList(video)}
                     >
                       <div className="aspect-video bg-gray-900 rounded-t-lg overflow-hidden">
-                        <video src={video.video_url} className="w-full h-full object-cover" />
+                        {video.videoUrl ? (
+                          <video src={video.videoUrl} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={video.thumbnailUrl ? (video.thumbnailUrl.startsWith('http') ? video.thumbnailUrl : `${VITE_API_BASE_URL}${video.thumbnailUrl}`) : ''} alt={video.title || 'Video'} className="w-full h-full object-cover" />
+                        )}
                       </div>
                       <CardContent className="p-3">
-                        <p className="font-medium truncate">{video.video_title}</p>
+                        <p className="font-medium truncate">{video.title}</p>
                         <p className="text-xs text-gray-600 truncate">{video.description || 'No description'}</p>
                       </CardContent>
                     </Card>
@@ -580,7 +639,7 @@ export default function VideoEditPage() {
       {videoUrl && (
         <>
           {/* Video Player */}
-          <Card className="mb-6">
+          <Card ref={previewRef} className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-purple-600" />
