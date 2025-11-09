@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/UI/input.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Button } from '@/components/UI/button.jsx';
+import localize from '@/utils/localize';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';
 
@@ -282,7 +283,7 @@ const PublicBlogPage = () => {
                       )}
                       <CardContent className="pt-4">
                         {blog.category && (
-                          <Badge className="mb-2">{blog.category.name}</Badge>
+                          <Badge className="mb-2">{localize(blog.category.name)}</Badge>
                         )}
                         <h3 className="font-bold text-xl mb-2 line-clamp-2">
                           {getLocalizedField(blog, 'title')}

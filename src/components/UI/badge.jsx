@@ -23,9 +23,10 @@ const badgeVariants = cva(
   }
 )
 
-function Badge({ className, variant, ...props }) {
+function Badge({ className, variant, children, ...props }) {
+  // Strict rendering: callers must pass displayable children (string/number/element).
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <div className={cn(badgeVariants({ variant }), className)} {...props}>{children}</div>
   )
 }
 

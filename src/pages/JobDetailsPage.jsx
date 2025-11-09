@@ -6,6 +6,7 @@ import { useVideoContext } from '@/contexts/VideoContext';
 import themeColors, { getButtonClass, getBadgeClass, getStatusClass } from '@/config/theme-colors-jobseeker';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Card } from '@/components/UI/card.jsx';
 import {
   BuildingOfficeIcon,
@@ -394,7 +395,7 @@ const handleMouseLeaveVideo = () => {
               <div className="text-sm text-slate-500 mb-2">Required Skills</div>
               <div className="flex flex-wrap gap-2">
                 {job.skills.map(s => (
-                  <Badge key={s.id} variant="outline" className="px-2 py-1">{s.name}</Badge>
+                  <Badge key={s.id} variant="outline" className="px-2 py-1">{localize(s.name)}</Badge>
                 ))}
               </div>
             </div>
@@ -404,7 +405,7 @@ const handleMouseLeaveVideo = () => {
             <div className="mt-6">
               <div className="text-sm text-slate-500 mb-2">Categories</div>
               <div className="flex flex-wrap gap-2">
-                {job.categories.map(c => (<Badge key={c.id} variant="secondary" className="px-2 py-1">{c.name}</Badge>))}
+                {job.categories.map(c => (<Badge key={c.id} variant="secondary" className="px-2 py-1">{localize(c.name)}</Badge>))}
               </div>
             </div>
           )}

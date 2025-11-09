@@ -61,6 +61,36 @@ const JobSeekerDashboard = () => {
     const [newSkillLevel, setNewSkillLevel] = useState("Intermediate");
     const [newSkillYears, setNewSkillYears] = useState(0);
     const [addingSkill, setAddingSkill] = useState(false);
+    const [skillsList, setSkillsList] = useState([]);
+    const [skillCategories, setSkillCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [skillSearchLoading, setSkillSearchLoading] = useState(false);
+    const [selectedSkillId, setSelectedSkillId] = useState(null);
+
+    // Helper to safely get a localized string from value that may be a string or an object
+    const localize = (val, preferred = 'en') => {
+        if (val == null) return '';
+        if (typeof val === 'string') return val;
+        if (typeof val === 'number') return String(val);
+        if (typeof val === 'object') {
+            try {
+                if (preferred && val[preferred]) return val[preferred];
+                // try navigator language if available
+                if (typeof navigator !== 'undefined') {
+                    const lang = (navigator.language || navigator.userLanguage || '').split('-')[0];
+                    if (lang && val[lang]) return val[lang];
+                }
+                // fallback to first string value
+                for (const k of Object.keys(val)) {
+                    if (typeof val[k] === 'string') return val[k];
+                }
+                return JSON.stringify(val);
+            } catch (e) {
+                return String(val);
+            }
+        }
+        return String(val);
+    };
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -104,7 +134,22 @@ const JobSeekerDashboard = () => {
                 const recsPayload = recommendationsResponse?.recommendations ?? recommendationsResponse?.data ?? recommendationsResponse;
                 setRecommendations(Array.isArray(recsPayload) ? recsPayload : (recsPayload?.recommendations || []));
             } catch (error) {
-                console.error('Error fetching dashboard data:', error);
+                // Improved logging for Axios and other errors
+                try {
+                    // Prefer structured server message when available
+                    const serverData = error?.response?.data ?? error;
+                    const serverMsg = serverData?.error || serverData?.message || (typeof serverData === 'string' ? serverData : null);
+                    const msg = serverMsg ? serverMsg : (error?.message || String(error));
+                    console.error('Error fetching dashboard data:', serverData);
+                    toast({ description: `Failed to load dashboard: ${msg}`, variant: 'destructive' });
+                } catch (logErr) {
+                    console.error('Error fetching dashboard data:', error);
+                    toast({ description: `Failed to load dashboard`, variant: 'destructive' });
+                }
+                // provide safe defaults
+                setStats({});
+                setActivities([]);
+                setRecommendations([]);
             } finally {
                 setLoading(false);
             }
@@ -172,11 +217,11 @@ const JobSeekerDashboard = () => {
 
     const skillsSource = stats?.skills_chart ?? stats?.skillsChart ?? [];
     const skillsChartData = {
-        labels: (skillsSource || []).map(s => s.name) || ['React','JavaScript'],
+        labels: (skillsSource || []).map(s => String(localize(s?.name))) || ['React','JavaScript'],
         datasets: [
             {
                 label: 'Skill Level',
-                data: (skillsSource || []).map(s => s.level) || [85,90],
+                data: (skillsSource || []).map(s => s.level ?? 0) || [85,90],
                 backgroundColor: 'rgba(147,51,234,0.6)',
                 borderColor: '#9333ea',
                 borderWidth: 2
@@ -188,6 +233,31 @@ const JobSeekerDashboard = () => {
         setNewSkillName("");
         setNewSkillLevel("Intermediate");
         setNewSkillYears(0);
+        setSelectedCategory(null);
+        setSelectedSkillId(null);
+        // fetch available skills for suggestions and categories
+        (async () => {
+            setSkillSearchLoading(true);
+            try {
+                const res = await getSkills();
+                const list = (res?.data?.skills || res?.skills || res || []).map(s => ({
+                    id: s.id ?? s._id ?? s.skill_id ?? null,
+                    name: s.name ?? s.skill ?? '',
+                    category: s.category ?? s.group ?? null,
+                    raw: s
+                }));
+                setSkillsList(list);
+                const cats = Array.from(new Set(list.map(s => s.category).filter(Boolean)));
+                setSkillCategories(cats);
+            } catch (e) {
+                console.warn('Failed to load skills for suggestions:', e);
+                setSkillsList([]);
+                setSkillCategories([]);
+            } finally {
+                setSkillSearchLoading(false);
+            }
+        })();
+
         setOpenAddSkillDialog(true);
     };
 
@@ -199,36 +269,15 @@ const JobSeekerDashboard = () => {
         if (!newSkillName.trim()) return;
         setAddingSkill(true);
         try {
-            let skillId = null;
-            try {
-                const searchRes = await getSkills(newSkillName);
-                const found = (searchRes?.data?.skills || searchRes?.skills || []).find(s => s.name?.toLowerCase() === newSkillName.trim().toLowerCase());
-                if (found) skillId = found.id;
-            } catch (e) {
-                // ignore
-            }
-
-            if (!skillId) {
-                try {
-                    const createRes = await createSkill({ name: newSkillName });
-                    skillId = createRes?.data?.skill?.id || createRes?.skill?.id;
-                } catch (err) {
-                    try {
-                        const retry = await getSkills(newSkillName);
-                        const found2 = (retry?.data?.skills || retry?.skills || []).find(s => s.name?.toLowerCase() === newSkillName.trim().toLowerCase());
-                        if (found2) skillId = found2.id;
-                    } catch (e2) {
-                        console.error('Failed to create or find skill:', e2);
-                    }
-                }
-            }
-
-            if (!skillId) {
-                throw new Error('Unable to resolve skill id for: ' + newSkillName);
+            // Only allow adding when a skill from suggestions (with id) is selected
+            if (!selectedSkillId) {
+                toast({ description: 'Please select a skill from the suggestions before adding.', variant: 'destructive' });
+                setAddingSkill(false);
+                return;
             }
 
             const payload = {
-                skill_id: skillId,
+                skill_id: selectedSkillId,
                 level: newSkillLevel,
                 years_experience: Number(newSkillYears || 0)
             };
@@ -463,14 +512,14 @@ const JobSeekerDashboard = () => {
                                         <div key={job.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                             <Avatar>
                                                 <AvatarImage src={job.company?.logo_url} />
-                                                <AvatarFallback>{job.company?.name?.charAt(0) || 'C'}</AvatarFallback>
+                                                <AvatarFallback>{(String(localize(job.company?.name)) || 'C').charAt(0)}</AvatarFallback>
                                             </Avatar>
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-medium text-sm truncate">{job.title}</p>
-                                                <p className="text-xs text-gray-600 truncate">{job.company?.name}</p>
+                                                <p className="font-medium text-sm truncate">{String(localize(job.title))}</p>
+                                                <p className="text-xs text-gray-600 truncate">{String(localize(job.company?.name))}</p>
                                                 <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
                                                     <MapPin className="h-3 w-3" />
-                                                    {job.location}
+                                                    {String(localize(job.location))}
                                                 </div>
                                             </div>
                                             <Badge className="bg-gradient-to-r from-purple-600 to-cyan-600">
@@ -562,9 +611,55 @@ const JobSeekerDashboard = () => {
                             <Input
                                 id="skill-name"
                                 value={newSkillName}
-                                onChange={(e) => setNewSkillName(e.target.value)}
+                                onChange={(e) => {
+                                    setNewSkillName(e.target.value);
+                                    // clear selected id when user types freely
+                                    setSelectedSkillId(null);
+                                }}
                                 placeholder="e.g. React, Python"
                             />
+                            {newSkillName && !selectedSkillId && (
+                                <div className="text-xs text-yellow-600 mt-1">Please select a skill from the suggestions below to enable adding.</div>
+                            )}
+                            {/* Category filter and suggestions */}
+                            <div className="mt-2">
+                                {skillSearchLoading ? (
+                                    <div className="text-sm text-gray-500">Loading skills...</div>
+                                ) : (
+                                    <>
+                                        {skillCategories.length > 0 && (
+                                            <div className="flex gap-2 mb-2 flex-wrap">
+                                                <button type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === null ? 'bg-purple-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(null)}>All</button>
+                                                {skillCategories.map(cat => (
+                                                    <button key={cat} type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === cat ? 'bg-purple-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(cat)}>{cat}</button>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        <div className="max-h-40 overflow-auto border rounded bg-white">
+                                            {skillsList.filter(s => {
+                                                if (!s || !s.name) return false;
+                                                if (selectedCategory && s.category !== selectedCategory) return false;
+                                                if (!newSkillName) return true;
+                                                try {
+                                                    const name = typeof s.name === 'string' ? s.name : String(localize(s.name));
+                                                    return name.toLowerCase().includes(newSkillName.trim().toLowerCase());
+                                                } catch (e) {
+                                                    return String(localize(s.name)).toLowerCase().includes(newSkillName.trim().toLowerCase());
+                                                }
+                                                }).slice(0, 50).map(s => (
+                                                <div key={s.id || (typeof s.name === 'string' ? s.name : JSON.stringify(s.name))} className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex justify-between" onClick={() => { setNewSkillName(String(localize(s.name))); setSelectedSkillId(s.id ?? s._id ?? null); setSelectedCategory(s.category ?? null); }}>
+                                                    <div>{String(localize(s.name))}</div>
+                                                    {s.category && <div className="text-xs text-gray-400">{s.category}</div>}
+                                                </div>
+                                            ))}
+                                            {skillsList.length === 0 && !skillSearchLoading && (
+                                                <div className="px-3 py-2 text-sm text-gray-500">No suggestions available</div>
+                                            )}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
                         <div>
                             <Label htmlFor="skill-level">Level</Label>
@@ -595,7 +690,7 @@ const JobSeekerDashboard = () => {
                         <Button variant="outline" onClick={handleCloseAddSkill} disabled={addingSkill}>
                             Cancel
                         </Button>
-                        <Button onClick={handleConfirmAddSkill} disabled={addingSkill}>
+                        <Button onClick={handleConfirmAddSkill} disabled={addingSkill || !selectedSkillId}>
                             {addingSkill ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add Skill"}
                         </Button>
                     </DialogFooter>
@@ -618,15 +713,15 @@ const JobSeekerDashboard = () => {
                                 <div key={job.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50">
                                     <Avatar>
                                         <AvatarImage src={job.company?.logo_url} />
-                                        <AvatarFallback>{job.company?.name?.charAt(0) || 'C'}</AvatarFallback>
+                                        <AvatarFallback>{(String(localize(job.company?.name)) || 'C').charAt(0)}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1">
-                                        <p className="font-medium">{job.title}</p>
+                                        <p className="font-medium">{String(localize(job.title))}</p>
                                         <p className="text-sm text-gray-600">
-                                            {job.company?.name}{job.location ? ` • ${job.location}` : ''}
+                                            {String(localize(job.company?.name))}{job.location ? ` • ${String(localize(job.location))}` : ''}
                                         </p>
                                     </div>
-                                    <Badge>{job.match_percentage ? `${job.match_percentage}%` : job.score ? Math.round(job.score) + '%' : '—'}</Badge>
+                                            <Badge>{String(localize(job.match_percentage ? `${job.match_percentage}%` : job.score ? Math.round(job.score) + '%' : '—'))}</Badge>
                                 </div>
                             ))
                         )}

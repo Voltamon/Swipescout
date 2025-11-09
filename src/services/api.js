@@ -227,6 +227,10 @@ export const getSkills = (search) => api.get('/skills', { params: search ? { sea
 export const createSkill = (skill) => api.post('/skills', skill);
 export const getJobSeekerSkills = (id) => api.get(`/skills/user/${id}`);
 
+// Locations (countries & cities)
+export const getCountries = () => api.get('/locations/countries');
+export const getCities = (countryId) => api.get('/locations/cities', { params: countryId ? { countryId } : {} });
+
 // Swipe
 export const swipeJob = (jobId, direction) => api.post('/swipe', { jobId, direction });
 export const getSwipeHistory = () => api.get('/swipe/history');

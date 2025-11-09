@@ -145,8 +145,8 @@ const PersonalityTestPage = () => {
                     <div className="flex items-center">
                         <BarChart className="h-10 w-10 text-blue-600 mr-4"/>
                         <div>
-                            <p className="font-bold text-2xl text-blue-800">{localize(results.personality_type.name)} ({results.personality_type.code})</p>
-                            <p className="text-gray-600">{localize(results.personality_type.description)}</p>
+                            <p className="font-bold text-2xl text-blue-800">{String(localize(results.personality_type.name))} ({results.personality_type.code})</p>
+                            <p className="text-gray-600">{String(localize(results.personality_type.description))}</p>
                         </div>
                     </div>
                 </div>
@@ -154,15 +154,15 @@ const PersonalityTestPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="font-semibold text-lg mb-2 text-gray-800">Strengths</h3>
-                        <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={`strength-${i}-${s}`}>{localize(s)}</li>) : <li key="strength-single">{localize(results.personality_type.strengths)}</li>}
-                        </ul>
+        <ul className="list-disc list-inside text-gray-600 space-y-1">
+      {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={`strength-${i}-${JSON.stringify(s)}`}>{String(localize(s))}</li>) : <li key="strength-single">{String(localize(results.personality_type.strengths))}</li>}
+        </ul>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h3 className="font-semibold text-lg mb-2 text-gray-800">Areas for Growth</h3>
-                        <ul className="list-disc list-inside text-gray-600 space-y-1">
-                            {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={`weakness-${i}-${w}`}>{localize(w)}</li>) : <li key="weakness-single">{localize(results.personality_type.weaknesses)}</li>}
-                        </ul>
+            <ul className="list-disc list-inside text-gray-600 space-y-1">
+              {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={`weakness-${i}-${JSON.stringify(w)}`}>{String(localize(w))}</li>) : <li key="weakness-single">{String(localize(results.personality_type.weaknesses))}</li>}
+            </ul>
                     </div>
                 </div>
               </>
@@ -205,11 +205,11 @@ const PersonalityTestPage = () => {
                         <div key={jobMatch.jobCategory?.id || jobMatch.job?.id || `job-${index}`} className="border p-4 rounded-lg hover:bg-gray-50 transition-colors">
                             <h3 className="font-bold text-lg text-gray-800 flex items-center">
                                 <Briefcase className="mr-2 text-blue-500"/>
-                                {localize(jobName)}
+                                {String(localize(jobName))}
                             </h3>
                             
                             {jobDescription && (
-                              <p className="text-sm text-gray-600 mb-2 italic">{localize(jobDescription)}</p>
+                              <p className="text-sm text-gray-600 mb-2 italic">{String(localize(jobDescription))}</p>
                             )}
                             
                             <div className="flex gap-4 mb-2">
@@ -228,7 +228,7 @@ const PersonalityTestPage = () => {
                               )}
                             </div>
                             
-                            <p className="text-gray-600 mb-3">{localize(jobMatch.compatibilityReason)}</p>
+                            <p className="text-gray-600 mb-3">{String(localize(jobMatch.compatibilityReason))}</p>
                             
                             {/* Matching Factors */}
                             {jobMatch.matchingFactors && (

@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   Bookmark,
 } from 'lucide-react';
+import localize from '@/utils/localize';
 import { toast } from 'react-toastify';
 import { getBlog, saveBlog, unsaveBlog, checkBlogSaved } from '@/services/api';
 import ReportButton from '@/components/ReportButton.jsx';
@@ -320,7 +321,7 @@ const BlogDetailPage = () => {
                       <p className="font-semibold mb-2">{t('blog.job_titles', 'Relevant Job Titles')}:</p>
                       <div className="flex flex-wrap gap-2">
                         {blog.relatedJobTitles.map((title, index) => (
-              <Badge key={title || index} variant="outline">{title}</Badge>
+              <Badge key={title || index} variant="outline">{localize(title)}</Badge>
                         ))}
                       </div>
                     </div>
@@ -330,7 +331,7 @@ const BlogDetailPage = () => {
                       <p className="font-semibold mb-2">{t('blog.skills', 'Key Skills')}:</p>
                       <div className="flex flex-wrap gap-2">
                         {blog.relatedSkills.map((skill, index) => (
-                          <Badge key={skill || index} variant="secondary">{skill}</Badge>
+                          <Badge key={skill || index} variant="secondary">{localize(skill)}</Badge>
                         ))}
                       </div>
                     </div>
@@ -350,7 +351,7 @@ const BlogDetailPage = () => {
                         className="cursor-pointer"
                         onClick={() => navigate(`/blog?tag=${blogTag.tag.slug}`)}
                       >
-                        {blogTag.tag.name}
+                        {localize(blogTag.tag.name)}
                       </Badge>
                     ))}
                   </div>

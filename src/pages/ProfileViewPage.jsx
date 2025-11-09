@@ -6,6 +6,7 @@ import {
 import ReportButton from '@/components/ReportButton.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
@@ -391,7 +392,7 @@ export default function ProfileViewPage() {
                     <div className="flex flex-wrap gap-2">
                       {profile.skills.slice(0, 10).map((skill, index) => (
                         <Badge key={index} variant="secondary" className="bg-cyan-100 text-cyan-800">
-                          {skill.name}
+                          {localize(skill.name)}
                           {skill.level && <span className="ml-1 text-xs">• {skill.level}</span>}
                         </Badge>
                       ))}
@@ -490,7 +491,7 @@ export default function ProfileViewPage() {
                     <span className="font-semibold">Categories:</span>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {profile.categories.map((cat, index) => (
-                        <Badge key={index} variant="secondary">{cat.name}</Badge>
+                        <Badge key={index} variant="secondary">{localize(cat.name)}</Badge>
                       ))}
                     </div>
                   </div>
@@ -564,7 +565,7 @@ export default function ProfileViewPage() {
                         </div>
                         {edu.fieldOfStudy && (
                           <div className="flex items-center gap-2 text-sm mt-1">
-                            <Badge variant="outline">{edu.fieldOfStudy}</Badge>
+                            <Badge variant="outline">{localize(edu.fieldOfStudy)}</Badge>
                           </div>
                         )}
                       </div>
@@ -716,7 +717,7 @@ export default function ProfileViewPage() {
                     <div className="flex flex-wrap gap-2 mt-2">
                       {profile.categories.map((cat, index) => (
                         <Badge key={index} variant="secondary" className="bg-green-100 text-green-800">
-                          {cat.name}
+                          {localize(cat.name)}
                         </Badge>
                       ))}
                     </div>

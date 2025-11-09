@@ -10,6 +10,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
@@ -148,7 +149,7 @@ export default function JobSeekerProfile() {
                       alt={profile?.fullName}
                     />
                     <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-purple-500 text-white text-3xl">
-                      {profile?.fullName?.charAt(0) || 'U'}
+                      {(String(localize(profile?.fullName)) || 'U').charAt(0)}
                     </AvatarFallback>
                   </Avatar>
 
@@ -156,8 +157,8 @@ export default function JobSeekerProfile() {
                   <div className="flex-grow">
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h1 className="text-4xl font-bold mb-2">{profile?.fullName || 'User Name'}</h1>
-                        <p className="text-xl text-muted-foreground">{profile?.headline || 'Professional Title'}</p>
+                        <h1 className="text-4xl font-bold mb-2">{String(localize(profile?.fullName || 'User Name'))}</h1>
+                        <p className="text-xl text-muted-foreground">{String(localize(profile?.headline || 'Professional Title'))}</p>
                       </div>
                       <Button onClick={handleEditProfile} className="bg-cyan-600 hover:bg-cyan-700">
                         <Edit className="h-4 w-4 mr-2" />
@@ -170,7 +171,7 @@ export default function JobSeekerProfile() {
                       {profile?.location && (
                         <div className="flex items-center gap-2 text-sm">
                           <MapPin className="h-4 w-4 text-muted-foreground" />
-                          <span>{profile.location}</span>
+                          <span>{String(localize(profile.location))}</span>
                         </div>
                       )}
 
@@ -336,7 +337,7 @@ export default function JobSeekerProfile() {
                 <div className="flex flex-wrap gap-2">
                   {skills.slice(0, 10).map((skill, index) => (
                     <Badge key={index} variant="secondary" className="bg-cyan-100 text-cyan-800">
-                      {skill.name}
+                      {String(localize(skill.name))}
                       {skill.level && <span className="ml-1 text-xs">â€¢ {skill.level}</span>}
                     </Badge>
                   ))}
@@ -473,8 +474,8 @@ export default function JobSeekerProfile() {
                         </span>
                       </div>
                       {edu.fieldOfStudy && (
-                        <div className="flex items-center gap-2 text-sm mt-1">
-                          <Badge variant="outline">{edu.fieldOfStudy}</Badge>
+                          <div className="flex items-center gap-2 text-sm mt-1">
+                            <Badge variant="outline">{String(localize(edu.fieldOfStudy))}</Badge>
                         </div>
                       )}
                     </div>
@@ -525,7 +526,7 @@ export default function JobSeekerProfile() {
                       variant="secondary" 
                       className="bg-gradient-to-r from-cyan-100 to-purple-100 text-gray-800 px-4 py-2 text-sm"
                     >
-                      {skill.name}
+                      {String(localize(skill.name))}
                       {skill.level && (
                         <span className="ml-2 text-xs opacity-75">â€¢ {skill.level}</span>
                       )}

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.j
 import { Button } from '@/components/UI/button.jsx';
 import ReportButton from '@/components/ReportButton.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
@@ -208,8 +209,8 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex gap-2">
-                        <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>{job.status}</Badge>
-                        <Badge variant="outline">{job.jobType}</Badge>
+                        <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>{localize(job.status)}</Badge>
+                        <Badge variant="outline">{localize(job.jobType)}</Badge>
                       </div>
                       {job.description && <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>}
                       <Button variant="outline" className="w-full" onClick={() => navigate(`/job/${job.id}`)}>View Details</Button>

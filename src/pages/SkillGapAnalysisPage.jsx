@@ -208,7 +208,7 @@ const SkillGapAnalysisPage = () => {
               >
                 <option value="">-- Select a Job --</option>
                 {Array.isArray(jobs) && jobs.map(job => (
-                  <option key={job.id} value={job.id}>{localize(job.title)}</option>
+                  <option key={job.id} value={job.id}>{String(localize(job.title))}</option>
                 ))}
               </select>
             </div>
@@ -239,7 +239,7 @@ const SkillGapAnalysisPage = () => {
         {analysis && (
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-              Analysis for: <span className="text-purple-700">{localize(analysis.job?.title || (Array.isArray(jobs) && jobs.find(j => j.id === selectedJob)?.title))}</span>
+              Analysis for: <span className="text-purple-700">{String(localize(analysis.job?.title || (Array.isArray(jobs) && jobs.find(j => j.id === selectedJob)?.title)))}</span>
             </h2>
             
             {/* Summary Section */}
@@ -268,7 +268,7 @@ const SkillGapAnalysisPage = () => {
               {(analysis.gaps || []).map(gap => (
                 <div key={gap.skill.id} className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                    <h3 className="font-bold text-xl text-gray-800">{localize(gap.skill.name)}</h3>
+                    <h3 className="font-bold text-xl text-gray-800">{String(localize(gap.skill.name))}</h3>
                     <span className={`px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(gap.priority)}`}>
                       {gap.priority} Priority
                     </span>
@@ -294,14 +294,14 @@ const SkillGapAnalysisPage = () => {
                       <BookOpen className="mr-2 text-purple-600" />
                       Development Plan
                     </h4>
-                    <p className="text-gray-600 mb-2">{localize(gap.development_plan.description)}</p>
+                    <p className="text-gray-600 mb-2">{String(localize(gap.development_plan.description))}</p>
                     <p className="text-sm text-gray-500 mb-2">Estimated learning time: {gap.estimated_learning_time} hours</p>
                     <h5 className="font-medium text-gray-700 mt-3">Suggested Resources:</h5>
                     <ul className="list-disc list-inside text-blue-600 space-y-1 mt-1">
-                      {gap.learning_resources.map((res, index) => (
+                            {gap.learning_resources.map((res, index) => (
                         <li key={index}>
                           <a href={res.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                            {localize(res.name)} ({res.type})
+                            {String(localize(res.name))} ({res.type})
                           </a>
                         </li>
                       ))}

@@ -6,6 +6,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Button } from '@/components/UI/button.jsx';
+import localize from '@/utils/localize';
 import { getAdminTabCategories } from '@/config/adminTabsConfig';
 import { getAdminStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
@@ -167,7 +168,7 @@ const AdminTabs = () => {
               <Eye className="h-5 w-5 text-amber-600" />
               <span className={themeColors.text.primary}>
                 {t('adminTabs:viewingAs')}{' '}
-                <Badge variant="outline">{viewingAs}</Badge>
+                <Badge variant="outline">{localize(viewingAs)}</Badge>
               </span>
             </div>
             <Button onClick={handleReturnToAdmin} variant="outline" size="sm">

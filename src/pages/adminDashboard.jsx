@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Button } from '@/components/UI/button.jsx';
 import { getAdminStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-admin';
@@ -199,15 +200,15 @@ const AdminDashboard = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className={`text-sm ${themeColors.text.secondary}`}>Active</span>
-                <Badge className={themeColors.status.active}>{stats.activeUsers}</Badge>
+                <Badge className={themeColors.status.active}>{localize(stats.activeUsers)}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className={`text-sm ${themeColors.text.secondary}`}>Suspended</span>
-                <Badge className={themeColors.status.suspended}>{stats.bannedUsers}</Badge>
+                <Badge className={themeColors.status.suspended}>{localize(stats.bannedUsers)}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className={`text-sm ${themeColors.text.secondary}`}>Total</span>
-                <Badge variant="outline">{stats.totalUsers}</Badge>
+                <Badge variant="outline">{localize(stats.totalUsers)}</Badge>
               </div>
             </div>
           </CardContent>

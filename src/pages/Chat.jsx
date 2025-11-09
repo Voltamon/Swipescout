@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx'
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { ScrollArea } from '@/components/UI/scroll-area.jsx';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -377,7 +378,7 @@ const Chat = () => {
                     <p className="text-sm text-gray-600 truncate">{conv.last_message?.content || 'No messages yet'}</p>
                   </div>
                   {conv.unread_count > 0 && (
-                    <Badge className="bg-purple-600">{conv.unread_count}</Badge>
+                    <Badge className="bg-purple-600">{localize(conv.unread_count)}</Badge>
                   )}
                 </div>
               ))}

@@ -4,6 +4,7 @@ import { getEmployerProfile, getEmployerJobs } from '@/services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
@@ -325,7 +326,7 @@ export default function EmployerProfilePage() {
                         <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>
                           {job.status}
                         </Badge>
-                        <Badge variant="outline">{job.jobType}</Badge>
+                        <Badge variant="outline">{localize(job.jobType)}</Badge>
                       </div>
 
                       {job.description && (

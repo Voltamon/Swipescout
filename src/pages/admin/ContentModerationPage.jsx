@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import localize from '@/utils/localize';
 import { Button } from '@/components/UI/button.jsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/table.jsx';
 import { getReportedContent, handleReport } from '@/services/api';
@@ -74,10 +75,10 @@ const ContentModerationPage = () => {
               ) : (
                 reports.map((report) => (
                   <TableRow key={report.id}>
-                    <TableCell><Badge variant="outline">{report.type}</Badge></TableCell>
+                    <TableCell><Badge variant="outline">{localize(report.type)}</Badge></TableCell>
                     <TableCell>{report.reason}</TableCell>
                     <TableCell>{report.reporter}</TableCell>
-                    <TableCell><Badge className={themeColors.status.pending}>{report.status}</Badge></TableCell>
+                    <TableCell><Badge className={themeColors.status.pending}>{localize(report.status)}</Badge></TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => takeAction(report.id, 'remove')}><Check className="h-3 w-3" /></Button>

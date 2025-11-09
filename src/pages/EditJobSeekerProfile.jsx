@@ -19,6 +19,8 @@ import {
   deleteUserVideo,
   uploadProfileImage,
   getSkills,
+  getCountries,
+  getCities,
 } from '@/services/api';
 import dayjs from 'dayjs';
 import localize from '@/utils/localize';
@@ -67,9 +69,12 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   // State for profile data
   const [profile, setProfile] = useState({
     first_name: '',
-    Second_name: '',
+    second_name: '',
     last_name: '',
     title: '',
+    // Use explicit country/city/address fields so we can render dropdowns
+    country_id: '',
+    city_id: '',
     location: '',
     bio: '',
     email: '',
@@ -79,6 +84,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     profile_pic: '',
     address: '',
     preferred_job_title: '',
+    current_job_title: '',
     social: {
       linkedin_url: '',
       github: '',
@@ -86,12 +92,23 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     }
   });
 
+  // Countries / cities for dropdowns
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+
   // State for skills
   const [skills, setSkills] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [skillDialogOpen, setSkillDialogOpen] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState('');
+  const [selectedSkillName, setSelectedSkillName] = useState('');
+  const [skillCategories, setSkillCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [skillSearchLoading, setSkillSearchLoading] = useState(false);
   const [avatarPicture, setAvatarPicture] = useState('');
+  // New states for skill level and years when adding a skill
+  const [selectedSkillLevel, setSelectedSkillLevel] = useState('Intermediate');
+  const [selectedSkillYears, setSelectedSkillYears] = useState(1);
 
 
   // State for experiences
@@ -126,7 +143,19 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   // Use `localize` utility to pick the right language string from localized fields
   const renderSkillName = (skill) => {
     const val = skill == null ? '' : (skill.name ?? skill);
-    return localize(val);
+    // Ensure we always return a string to avoid React complaining about objects
+    const localized = localize(val);
+    return (localized === null || localized === undefined) ? '' : String(localized);
+  };
+
+  // Helper to get a stable skill id from different shapes
+  const getSkillId = (s) => s?.id ?? s?.skill_id ?? s?._id ?? s?.skillId ?? null;
+
+  // Helper to test whether a suggestion is already added
+  const isSkillAlreadyAdded = (sugg) => {
+    const sid = getSkillId(sugg);
+    if (!sid) return false;
+    return (skills || []).some(sk => getSkillId(sk) === sid);
   };
 
   // UI state
@@ -189,9 +218,12 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     const normalized = {
       ...p,
       first_name: p.first_name ?? p.firstName ?? p.first ?? p.name ?? '',
-      Second_name: p.Second_name ?? p.second_name ?? p.secondName ?? '',
+      second_name: p.second_name ?? p.Second_name ?? p.secondName ?? '',
       last_name: p.last_name ?? p.lastName ?? p.last ?? '',
       title: p.title ?? p.professional_title ?? p.professionalTitle ?? '',
+      // Accept different shapes for country/city
+      country_id: p.country_id ?? p.countryId ?? p.country?.id ?? '',
+      city_id: p.city_id ?? p.cityId ?? p.city?.id ?? '',
       location: p.location ?? p.city ?? '',
       bio: p.bio ?? p.description ?? p.about ?? '',
       email: p.email ?? p.emailAddress ?? '',
@@ -201,6 +233,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
       profile_pic: p.profile_pic ?? p.profilePicture ?? p.profile_picture_url ?? p.logo_url ?? '',
       address: p.address ?? p.street ?? '',
       preferred_job_title: p.preferred_job_title ?? p.preferredJobTitle ?? '',
+  // Accept different shapes for current job title (backend may return currentJobName)
+  current_job_title: p.current_job_title ?? p.currentJobTitle ?? p.currentJobName ?? p.currentTitle ?? '',
       social: {
         linkedin_url: p.social?.linkedin_url ?? p.social?.linkedin ?? p.linkedin_url ?? p.linkedin ?? '',
         github: p.social?.github ?? p.social?.github_url ?? p.github ?? '',
@@ -277,6 +311,23 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
         const rawProfile = profileResponse?.data?.profile ?? profileResponse?.data ?? {};
         const normProfile = normalizeProfile(rawProfile);
         setProfile(normProfile);
+        // Fetch countries & cities via API helpers (mounted under /api/locations)
+        try {
+          const c = await getCountries();
+          setCountries(c?.data || []);
+        } catch (e) {
+          console.warn('Could not fetch countries', e);
+        }
+
+        try {
+          const countryId = normProfile.country_id || normProfile.countryId || normProfile.country?.id || '';
+          if (countryId) {
+            const ct = await getCities(countryId);
+            setCities(ct?.data || []);
+          }
+        } catch (e) {
+          console.warn('Could not fetch cities', e);
+        }
         setSkills(skillsResponse.data?.skills || []);
         setAvailableSkills(availableSkillsResponse.data?.skills || []);
         setExperiences(experiencesResponse.data?.experiences || []);
@@ -373,13 +424,41 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
     }
   };
 
+  // Fetch cities for a given country id (best-effort)
+  const fetchCitiesForCountry = async (countryId) => {
+    if (!countryId) {
+      setCities([]);
+      return;
+    }
+    try {
+      const resp = await getCities(countryId);
+      setCities(resp?.data || []);
+    } catch (e) {
+      console.warn('Could not fetch cities for country', countryId, e);
+    }
+  };
+
   // Handle profile save
   const handleSaveProfile = async () => {
     try {
       setSaving(true);
-      console.log("profile::::22222",profile);
-      const response = await updateUserProfile(profile);
-  let updatedProfile = response?.data || response;
+      // Map frontend field names to backend entity property names where necessary
+      const payload = {
+        ...profile,
+        // Backend entity expects property `currentJobName`
+        currentJobName: profile.current_job_title || profile.currentJobName || profile.currentJob || undefined,
+        // Backend entity property for city is `cityId`
+        cityId: profile.city_id || profile.cityId || undefined,
+        // linkedin_url column exists; populate top-level key too for convenience
+        linkedin_url: profile.social?.linkedin_url || profile.linkedin_url || undefined
+      };
+
+      // Remove undefined keys so backend doesn't get explicit undefined
+      Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
+
+      console.log("profile payload:", payload);
+      const response = await updateUserProfile(payload);
+      let updatedProfile = response?.data || response;
   updatedProfile = normalizeProfile(updatedProfile);
       // Normalize backend picture field to frontend expected field
       if (updatedProfile && updatedProfile.profile_picture_url && !updatedProfile.profile_pic) {
@@ -469,20 +548,61 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
 
   // Skill dialog handlers
   const handleOpenSkillDialog = () => {
+    // prepare suggestion list and categories from availableSkills
+    setSelectedSkill('');
+    setSelectedSkillName('');
+    setSelectedCategory(null);
+    // set defaults for new skill entries
+    setSelectedSkillLevel('Intermediate');
+    setSelectedSkillYears(1);
+    try {
+      // Build categories from availableSkills but prefer category objects whose types include 'skill'.
+      const catsSet = new Set();
+      (availableSkills || []).forEach(s => {
+        if (!s) return;
+        const rawCat = s.category ?? s.group ?? s.rawCategory ?? null;
+        if (!rawCat) return;
+
+        // If category is an object try to use name only when it is intended for skills
+        if (typeof rawCat === 'object') {
+          const cName = rawCat.name ?? rawCat.title ?? null;
+          const types = rawCat.types ?? rawCat.type ?? null;
+          if (cName && (!types || (Array.isArray(types) ? types.includes('skill') : String(types).toLowerCase() === 'skill'))) {
+            catsSet.add(cName);
+          }
+        } else if (typeof rawCat === 'string') {
+          // Keep string categories
+          catsSet.add(rawCat);
+        }
+      });
+      setSkillCategories(Array.from(catsSet));
+    } catch (e) {
+      setSkillCategories([]);
+    }
     setSkillDialogOpen(true);
   };
 
   const handleCloseSkillDialog = () => {
     setSkillDialogOpen(false);
     setSelectedSkill('');
+    // reset temp fields
+    setSelectedSkillLevel('Intermediate');
+    setSelectedSkillYears(1);
   };
+
 
   const handleSaveSkill = async () => {
     if (!selectedSkill) return;
 
     try {
       setSaving(true);
-      await addUserSkill({ skill_id: selectedSkill });
+      // include level and years of experience (default years = 1)
+      const payload = {
+        skill_id: selectedSkill,
+        level: selectedSkillLevel,
+        years_experience: Number(selectedSkillYears) || 1
+      };
+      await addUserSkill(payload);
 
       // Refresh skills
       const response = await getUserSkills() || [];
@@ -498,11 +618,17 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
       setSaving(false);
     } catch (error) {
       console.error('Error saving skill:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error saving skill',
-        severity: 'error'
-      });
+      // Try to provide a friendlier message when backend rejects duplicate
+      const status = error?.response?.status || error?.status;
+      const msg = error?.response?.data?.message || error?.message || '';
+      if (status === 400 && /exist|already|duplicate|added/i.test(msg)) {
+        setSnackbar({ open: true, message: 'Skill already added to your profile', severity: 'info' });
+        // refresh skills list to ensure UI is up-to-date
+        try { const resp = await getUserSkills(); setSkills(resp.data.skills || []); } catch (e) { /* ignore */ }
+        handleCloseSkillDialog();
+      } else {
+        setSnackbar({ open: true, message: 'Error saving skill', severity: 'error' });
+      }
       setSaving(false);
     }
   };
@@ -849,8 +975,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 </div>
 
                 <div>
-                  <Label htmlFor="Second_name">Second Name</Label>
-                  <Input id="Second_name" name="Second_name" value={profile.Second_name || ''} onChange={handleProfileChange} />
+                  <Label htmlFor="second_name">Second Name</Label>
+                  <Input id="second_name" name="second_name" value={profile.second_name || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
@@ -864,8 +990,46 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input id="location" name="location" value={profile.location || ''} onChange={handleProfileChange} placeholder="City, Country" />
+                  <Label htmlFor="country_id">Country</Label>
+                  <Select value={profile.country_id || ''} onValueChange={(val) => { setProfile({ ...profile, country_id: val, city_id: '' }); fetchCitiesForCountry(val); }}>
+                    <SelectTrigger id="country_id">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(countries || []).map(c => (
+                        <SelectItem key={c.id || c.code || JSON.stringify(c.name)} value={c.id || c.code || ''}>{String(typeof c.name === 'string' ? c.name : (localize(c.name) || c.name?.en || c.code || c.id))}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <div className="mt-2">
+                    <Label htmlFor="city_id">City</Label>
+                    <Select value={profile.city_id || ''} onValueChange={(val) => setProfile({ ...profile, city_id: val })}>
+                      <SelectTrigger id="city_id">
+                        <SelectValue placeholder="Select city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(cities || []).map(city => (
+                          <SelectItem key={city.id || JSON.stringify(city.name)} value={city.id || ''}>{String(typeof city.name === 'string' ? city.name : (localize(city.name) || city.name?.en || city.name?.value || city.id))}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="mt-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input id="address" name="address" value={profile.address || ''} onChange={handleProfileChange} placeholder="Street address" />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="preferred_job_title">Preferred Job Title</Label>
+                  <Input id="preferred_job_title" name="preferred_job_title" value={profile.preferred_job_title || ''} onChange={handleProfileChange} />
+                </div>
+
+                <div>
+                  <Label htmlFor="current_job_title">Current Job Title</Label>
+                  <Input id="current_job_title" name="current_job_title" value={profile.current_job_title || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div className="md:col-span-2">
@@ -886,6 +1050,16 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 <div>
                   <Label htmlFor="mobile">Mobile</Label>
                   <Input id="mobile" name="mobile" value={profile.mobile || ''} onChange={handleProfileChange} />
+                </div>
+                
+                <div>
+                  <Label htmlFor="website">Website</Label>
+                  <Input id="website" name="website" value={profile.website || ''} onChange={handleProfileChange} />
+                </div>
+
+                <div>
+                  <Label htmlFor="social.linkedin_url">LinkedIn URL</Label>
+                  <Input id="social.linkedin_url" name="social.linkedin_url" value={profile.social?.linkedin_url || ''} onChange={handleProfileChange} />
                 </div>
               </div>
             </TabsContent>
@@ -1035,16 +1209,77 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           </DialogHeader>
 
           <div className="mt-2">
-            <Select value={selectedSkill} onValueChange={(v) => setSelectedSkill(v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Skill" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableSkills.map((skill) => (
-                  <SelectItem key={skill.id} value={skill.id}>{renderSkillName(skill)}</SelectItem>
+            <Label htmlFor="skill-search">Skill</Label>
+            <Input
+              id="skill-search"
+              value={selectedSkillName}
+              onChange={(e) => { setSelectedSkillName(e.target.value); setSelectedSkill(''); }}
+              placeholder="Type to search or click a suggestion"
+            />
+
+            {/* Category filter */}
+            {skillCategories.length > 0 && (
+              <div className="flex gap-2 mt-2 flex-wrap">
+                <button type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === null ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(null)}>All</button>
+                {skillCategories.map(cat => (
+                  <button key={cat} type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(cat)}>{cat}</button>
                 ))}
-              </SelectContent>
-            </Select>
+              </div>
+            )}
+
+            <div className="max-h-40 overflow-auto border rounded bg-white mt-2">
+              {(skillSearchLoading ? [] : (availableSkills || [])).filter(s => {
+                if (!s) return false;
+                // hide skills already added to the user's profile
+                if (isSkillAlreadyAdded(s)) return false;
+
+                const name = typeof s.name === 'string' ? s.name : (s.name?.en || s.name?.value || String(s.name || ''));
+                // category filter: support category as string or object
+                const catName = typeof s.category === 'string' ? s.category : (s.category?.name ?? s.group ?? s.rawCategory ?? null);
+                if (selectedCategory && catName !== selectedCategory) return false;
+                if (!selectedSkillName) return true;
+                try {
+                  return name.toLowerCase().includes(selectedSkillName.trim().toLowerCase());
+                } catch (e) {
+                  return String(name).toLowerCase().includes(selectedSkillName.trim().toLowerCase());
+                }
+              }).slice(0,50).map(s => (
+                <div key={getSkillId(s) ?? renderSkillName(s)} className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex justify-between" onClick={() => { setSelectedSkill(getSkillId(s)); setSelectedSkillName(renderSkillName(s)); setSelectedCategory(typeof s.category === 'string' ? s.category : (s.category?.name ?? s.group ?? null)); }}>
+                  <div>{renderSkillName(s)}</div>
+                  { ((typeof s.category === 'string' ? s.category : (s.category?.name ?? s.group)) ) && <div className="text-xs text-gray-400">{typeof s.category === 'string' ? s.category : (s.category?.name ?? s.group)}</div> }
+                </div>
+              ))}
+              {((availableSkills || []).filter(s => !isSkillAlreadyAdded(s)).length === 0) && !skillSearchLoading && (
+                <div className="px-3 py-2 text-sm text-gray-500">No suggestions available</div>
+              )}
+            </div>
+
+            {/* Level & Years inputs */}
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <div>
+                <Label htmlFor="skill-level">Level</Label>
+                <Select value={selectedSkillLevel} onValueChange={(val) => setSelectedSkillLevel(val)}>
+                  <SelectTrigger id="skill-level">
+                    <SelectValue placeholder="Select level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Beginner">Beginner</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Advanced">Advanced</SelectItem>
+                    <SelectItem value="Expert">Expert</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="skill-years">Years of experience</Label>
+                <Input id="skill-years" type="number" min={0} value={selectedSkillYears} onChange={(e) => setSelectedSkillYears(Number(e.target.value))} />
+              </div>
+            </div>
+
+            {selectedSkillName && !selectedSkill && (
+              <div className="text-xs text-yellow-600 mt-1">Please select a skill from the suggestions to enable saving.</div>
+            )}
           </div>
 
           <DialogFooter>
