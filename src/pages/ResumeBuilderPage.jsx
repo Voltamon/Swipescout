@@ -4,7 +4,14 @@ import {
   generateResume,
   previewResume,
   saveResume,
-  getUserResumes
+  getUserResumes,
+  getUserProfile,
+  getUserExperiences,
+  getUserEducation,
+  getUserSkills,
+  getSkills,
+  createSkill,
+  addUserSkill
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
@@ -63,6 +70,9 @@ export default function ResumeBuilderPage() {
   // Resume data
   const [resumeData, setResumeData] = useState({
     personalInfo: {
+      first_name: '',
+      second_name: '',
+      last_name: '',
       fullName: '',
       email: '',
       phone: '',
@@ -81,105 +91,251 @@ export default function ResumeBuilderPage() {
 
   const [savedResumes, setSavedResumes] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [openExp, setOpenExp] = useState(null);
+  const [openEdu, setOpenEdu] = useState(null);
 
-  useEffect(() => {
-    fetchSavedResumes();
-  }, []);
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [skillInput, setSkillInput] = useState('');
+  const [skillCategoryFilter, setSkillCategoryFilter] = useState('');
 
-  const fetchSavedResumes = async () => {
+  // Helper: extract a display name for a skill object (handles multiple shapes & translations)
+  const extractSkillName = (s) => {
+    if (!s) return '';
+    if (typeof s === 'string') return s;
+    // common direct properties
+    if (typeof s.name === 'string' && s.name.trim()) return s.name;
+    // localized name object
+    if (s.name && typeof s.name === 'object') {
+      const lang = (typeof navigator !== 'undefined' && navigator.language) ? navigator.language.split('-')[0] : 'en';
+      if (s.name[lang]) return s.name[lang];
+      if (s.name.en) return s.name.en;
+      const first = Object.values(s.name).find(v => typeof v === 'string' && v.trim());
+      if (first) return first;
+    }
+    // nested skill object
+    if (s.skill && typeof s.skill.name === 'string') return s.skill.name;
+    if (s.skill && typeof s.skill.name === 'object') {
+      const lang = (typeof navigator !== 'undefined' && navigator.language) ? navigator.language.split('-')[0] : 'en';
+      if (s.skill.name[lang]) return s.skill.name[lang];
+      if (s.skill.name.en) return s.skill.name.en;
+      const first = Object.values(s.skill.name).find(v => typeof v === 'string' && v.trim());
+      if (first) return first;
+    }
+    if (typeof s.skill_name === 'string' && s.skill_name.trim()) return s.skill_name;
+    if (typeof s.title === 'string' && s.title.trim()) return s.title;
+    if (typeof s.label === 'string' && s.label.trim()) return s.label;
+    if (Array.isArray(s.translations)) {
+      const lang = (typeof navigator !== 'undefined' && navigator.language) ? navigator.language.split('-')[0] : 'en';
+      const t = s.translations.find(t => t.lang === lang) || s.translations.find(t => t.lang === 'en') || s.translations[0];
+      if (t && (t.value || t.text)) return t.value || t.text;
+    }
+    // fallback: first string-valued property
+    for (const k of Object.keys(s)) {
+      if (typeof s[k] === 'string' && s[k].trim()) return s[k];
+    }
+    return JSON.stringify(s);
+  };
+
+  // Fetch available canonical skills list
+  const fetchAvailableSkills = async () => {
     try {
-      const response = await getUserResumes();
-      setSavedResumes(response.data.resumes || []);
-    } catch (error) {
-      console.error('Error fetching resumes:', error);
+      const res = await getSkills();
+      const arr = Array.isArray(res?.data) ? res.data : (Array.isArray(res?.data?.data) ? res.data.data : []);
+      setAvailableSkills(arr || []);
+    } catch (err) {
+      console.warn('Failed to fetch available skills', err);
+      setAvailableSkills([]);
     }
   };
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  // Fetch saved resumes for the Saved tab
+  const fetchSavedResumes = async () => {
+    try {
+      const res = await getUserResumes();
+      const arr = Array.isArray(res?.data) ? res.data : (res?.data?.resumes || []);
+      setSavedResumes(arr || []);
+    } catch (err) {
+      console.warn('Failed to fetch saved resumes', err);
+      setSavedResumes([]);
+    }
+  };
 
+  // On mount: populate from profile and fetch reference lists
+  useEffect(() => {
+    populateFromProfile();
+    fetchAvailableSkills();
+    fetchSavedResumes();
+  }, []);
+
+  const handleFileUpload = async (e) => {
+    const file = e?.target?.files?.[0];
+    if (!file) return;
     setSelectedFile(file);
     setExtracting(true);
     setProgress(0);
 
+    const form = new FormData();
+    form.append('file', file);
+
     try {
-      const formData = new FormData();
-      formData.append('cv', file);
+      const res = await extractCVData(form);
+      const data = res?.data || res;
 
-      const progressInterval = setInterval(() => {
-        setProgress(prev => Math.min(prev + 10, 90));
-      }, 200);
-
-      const response = await extractCVData(formData);
-      
-      clearInterval(progressInterval);
-      setProgress(100);
-
-      if (response.data) {
-        const incoming = response.data;
-        const normalizedSkills = (incoming.skills || []).map(s => (typeof s === 'string' ? s : (s?.name || ''))).filter(Boolean);
-        const experiencesFromExtract = Array.isArray(incoming.experience) ? incoming.experience : [];
-
-        setResumeData(prevData => ({
-          ...prevData,
-          personalInfo: {
-            ...prevData.personalInfo,
-            ...incoming.personalInfo,
-            // keep UI top-level summary in sync
-            // but prefer extracted personalInfo.summary if provided
-          },
-          summary: incoming?.personalInfo?.summary || prevData.summary || '',
-          experiences: experiencesFromExtract.length ? experiencesFromExtract.map(exp => ({
-            title: exp.title || '',
-            company: exp.company || '',
-            location: exp.location || '',
-            startDate: exp.startDate || '',
-            endDate: exp.endDate || '',
-            current: !!exp.current,
-            description: exp.description || ''
-          })) : (prevData.experiences || []),
-          education: Array.isArray(incoming.education) ? incoming.education : (prevData.education || []),
-          skills: normalizedSkills.length ? normalizedSkills : (prevData.skills || []),
-          languages: Array.isArray(incoming.languages) ? incoming.languages : (prevData.languages || []),
-          certifications: Array.isArray(incoming.certifications) ? incoming.certifications : (prevData.certifications || []),
-          projects: Array.isArray(incoming.projects) ? incoming.projects : (prevData.projects || []),
-        }));
-        
-        toast({
-          title: "Success",
-          description: "CV data extracted successfully!",
-        });
+      // Try to merge returned data into resumeData safely
+      if (data) {
+        // If API returns profile/resume wrapper
+        if (data.profile) {
+          setResumeData(prev => ({ ...prev, ...data.profile }));
+        } else if (data.resume) {
+          setResumeData(prev => ({ ...prev, ...data.resume }));
+        } else {
+          // Merge known keys defensively
+          setResumeData(prev => ({
+            ...prev,
+            personalInfo: data.personalInfo || data.personal || prev.personalInfo,
+            summary: data.summary || prev.summary,
+            experiences: Array.isArray(data.experiences) ? data.experiences : prev.experiences,
+            education: Array.isArray(data.education) ? data.education : prev.education,
+            skills: Array.isArray(data.skills) ? data.skills : prev.skills,
+            languages: Array.isArray(data.languages) ? data.languages : prev.languages,
+            certifications: Array.isArray(data.certifications) ? data.certifications : prev.certifications,
+            projects: Array.isArray(data.projects) ? data.projects : prev.projects,
+          }));
+        }
       }
-    } catch (error) {
-      console.error('Error extracting CV:', error);
-      toast({
-        title: "Error",
-        description: "Failed to extract CV data",
-        variant: "destructive",
-      });
+      toast({ title: 'Extraction complete', description: 'CV data extracted', variant: 'default' });
+    } catch (err) {
+      console.error('Error extracting CV:', err);
+      toast({ title: 'Error', description: 'Failed to extract CV data', variant: 'destructive' });
     } finally {
       setExtracting(false);
       setProgress(0);
     }
   };
+  const extractSkillCategory = (s) => {
+    if (!s) return '';
+    // category may be a string or object
+    const cand = s.category || s.ctg || s.type || (s.skill && s.skill.category) || (s.categories && Array.isArray(s.categories) && s.categories[0]);
+    if (!cand) return '';
+    if (typeof cand === 'string') return cand;
+    if (typeof cand === 'object') {
+      if (typeof cand.name === 'string') return cand.name;
+      if (typeof cand.title === 'string') return cand.title;
+      if (cand.name && typeof cand.name === 'object') {
+        const lang = (typeof navigator !== 'undefined' && navigator.language) ? navigator.language.split('-')[0] : 'en';
+        if (cand.name[lang]) return cand.name[lang];
+        if (cand.name.en) return cand.name.en;
+        const first = Object.values(cand.name).find(v => typeof v === 'string' && v.trim());
+        if (first) return first;
+      }
+      // fallback
+      for (const k of Object.keys(cand)) {
+        if (typeof cand[k] === 'string' && cand[k].trim()) return cand[k];
+      }
+    }
+    return '';
+  };
+
+  const handleAddSkill = async (skill) => {
+    if (!skill) return;
+
+    const normalizedInput = (String(skill || '')).trim();
+    const alreadyNames = new Set((resumeData.skills || []).map(s => extractSkillName(s).toLowerCase()));
+
+    // try to find canonical skill object in availableSkills by name
+    let match = Array.isArray(availableSkills) ? availableSkills.find(s => extractSkillName(s).toLowerCase() === normalizedInput.toLowerCase()) : null;
+
+    try {
+      // if no match, try server-side search
+      if (!match) {
+        const searchRes = await getSkills(normalizedInput);
+        const cand = (searchRes?.data && Array.isArray(searchRes.data)) ? searchRes.data[0] : (searchRes?.data?.data && Array.isArray(searchRes.data.data) ? searchRes.data.data[0] : null);
+        if (cand) match = cand;
+      }
+
+      let toAdd = match ? match : normalizedInput;
+
+      // prevent duplicates
+      if (alreadyNames.has(extractSkillName(toAdd).toLowerCase())) {
+        console.debug('[ResumeBuilder] handleAddSkill: already added', { skill, toAdd });
+        return;
+      }
+
+      // If we have a canonical skill object with id, add it to the user's profile first
+      if (match && (match.id || match._id || match.skill_id)) {
+        const skillId = match.id || match._id || match.skill_id;
+        try {
+          await addUserSkill({ skill_id: skillId, level: 'Intermediate', years_experience: 1 });
+        } catch (err) {
+          console.error('Failed to add user skill (existing):', err);
+          // continue and still add to UI
+        }
+        // add canonical object to UI
+        setResumeData(prev => ({ ...prev, skills: [...(prev.skills || []), match] }));
+        return;
+      }
+
+      // If not matched, attempt to create the skill on the server then attach
+      if (!match) {
+        try {
+          const createRes = await createSkill({ name: { en: normalizedInput } });
+          const created = createRes?.data || createRes;
+          const createdId = created?.id || created?._id || created?.skill_id;
+          if (createdId) {
+            // add to user's skills
+            try {
+              await addUserSkill({ skill_id: createdId, level: 'Intermediate', years_experience: 1 });
+            } catch (err) {
+              console.error('Failed to add user skill (created):', err);
+            }
+            // add created object to UI list
+            setResumeData(prev => ({ ...prev, skills: [...(prev.skills || []), created] }));
+            // refresh availableSkills list to include created skill
+            try {
+              const refreshed = await getSkills();
+              const arr = Array.isArray(refreshed?.data) ? refreshed.data : (Array.isArray(refreshed?.data?.data) ? refreshed.data.data : []);
+              setAvailableSkills(arr);
+            } catch (err) {
+              console.warn('Failed to refresh skills after create', err);
+            }
+            return;
+          }
+        } catch (err) {
+          console.error('createSkill failed:', err);
+        }
+      }
+
+      // Fallback: add raw string to UI only
+      setResumeData(prev => ({ ...prev, skills: [...(prev.skills || []), normalizedInput] }));
+    } catch (err) {
+      console.error('[ResumeBuilder] handleAddSkill error', err);
+      // fallback to optimistic add
+      setResumeData(prev => ({ ...prev, skills: [...(prev.skills || []), skill] }));
+    }
+  };
+  
 
   const handleAddExperience = () => {
-    setResumeData(prev => ({
-      ...prev,
-      experiences: [
-        ...prev.experiences,
-        {
-          title: '',
-          company: '',
-          location: '',
-          startDate: '',
-          endDate: '',
-          current: false,
-          description: ''
-        }
-      ]
-    }));
+    setResumeData(prev => {
+      const idx = prev.experiences.length;
+      const newExp = {
+        title: '',
+        company: '',
+        location: '',
+        startDate: '',
+        endDate: '',
+        current: false,
+        description: ''
+      };
+      const next = { ...prev, experiences: [...prev.experiences, newExp] };
+      // schedule UI open/scroll after React updates
+      setTimeout(() => {
+        const id = `exp-${idx}`;
+        setOpenExp(id);
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      return next;
+    });
   };
 
   const handleRemoveExperience = (index) => {
@@ -199,21 +355,25 @@ export default function ResumeBuilderPage() {
   };
 
   const handleAddEducation = () => {
-    setResumeData(prev => ({
-      ...prev,
-      education: [
-        ...prev.education,
-        {
-          degree: '',
-          institution: '',
-          location: '',
-          startYear: '',
-          endYear: '',
-          gpa: '',
-          description: ''
-        }
-      ]
-    }));
+    setResumeData(prev => {
+      const idx = prev.education.length;
+      const newEdu = {
+        degree: '',
+        institution: '',
+        location: '',
+        startYear: '',
+        endYear: '',
+        gpa: '',
+        description: ''
+      };
+      const next = { ...prev, education: [...prev.education, newEdu] };
+      setTimeout(() => {
+        const id = `edu-${idx}`;
+        setOpenEdu(id);
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      return next;
+    });
   };
 
   const handleRemoveEducation = (index) => {
@@ -232,14 +392,7 @@ export default function ResumeBuilderPage() {
     }));
   };
 
-  const handleAddSkill = (skill) => {
-    if (skill && !resumeData.skills.includes(skill)) {
-      setResumeData(prev => ({
-        ...prev,
-        skills: [...prev.skills, skill]
-      }));
-    }
-  };
+  
 
   const handleRemoveSkill = (skill) => {
     setResumeData(prev => ({
@@ -251,11 +404,9 @@ export default function ResumeBuilderPage() {
   const handleGenerateResume = async () => {
     setGenerating(true);
     try {
-      // Map UI data to backend schema
-      const mapped = mapToBackendSchema(resumeData);
-      const payload = { data: mapped, template: 'modern', format: 'pdf' };
-
-      const response = await generateResume(payload);
+  // Always generate from live profile
+  const payload = { fromProfile: true, template: 'modern', format: 'pdf' };
+  const response = await generateResume(payload);
 
       // response is a Blob (application/pdf)
       const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -280,9 +431,9 @@ export default function ResumeBuilderPage() {
 
   const handlePreviewResume = async () => {
     try {
-      const mapped = mapToBackendSchema(resumeData);
-      const payload = { data: mapped, template: 'modern' };
-      const response = await previewResume(payload);
+  // Always preview from live profile
+  const payload = { fromProfile: true, template: 'modern' };
+  const response = await previewResume(payload);
 
       // Expect { success, data: { html } }
       const html = response?.data?.data?.html;
@@ -306,9 +457,9 @@ export default function ResumeBuilderPage() {
   const handleSaveResume = async () => {
     setLoading(true);
     try {
-      const mapped = mapToBackendSchema(resumeData);
-      const payload = { data: mapped, template: 'modern' };
-      await saveResume(payload);
+  // Always save a snapshot from the live profile
+  const payload = { fromProfile: true, template: 'modern' };
+  await saveResume(payload);
       
       toast({
         title: "Success",
@@ -330,8 +481,12 @@ export default function ResumeBuilderPage() {
 
   // Map the client-side resume model to the backend template schema
   const mapToBackendSchema = (data) => {
+    // Combine name parts into a single fullName for backend templates
+    const combinedFullName = ([data.personalInfo?.first_name, data.personalInfo?.second_name, data.personalInfo?.last_name].filter(Boolean).join(' ') || data.personalInfo?.fullName || '').trim();
+
     const personalInfo = {
       ...data.personalInfo,
+      fullName: combinedFullName,
       // Backend templates expect summary under personalInfo
       summary: data.summary || data.personalInfo?.summary || '',
       // Classic template uses address; map location to address if provided
@@ -375,6 +530,73 @@ export default function ResumeBuilderPage() {
     };
   };
 
+  // Populate the local form from the user's profile and related entities
+  const populateFromProfile = async () => {
+    try {
+      const [profileRes, expRes, eduRes, skillsRes] = await Promise.all([
+        getUserProfile(),
+        getUserExperiences(),
+        getUserEducation(),
+        getUserSkills()
+      ]);
+
+      const profile = profileRes?.data || {};
+      const experiences = Array.isArray(expRes?.data) ? expRes.data : (expRes?.data?.experiences || []);
+      const education = Array.isArray(eduRes?.data) ? eduRes.data : (eduRes?.data?.education || []);
+      const userSkills = Array.isArray(skillsRes?.data) ? skillsRes.data : (skillsRes?.data?.skills || []);
+
+      // Map server profile shape to local resumeData structure
+      const personalInfo = {
+        first_name: profile.first_name || '',
+        second_name: profile.second_name || '',
+        last_name: profile.last_name || '',
+        // keep combined fullName for downstream mapping
+        fullName: [profile.first_name, profile.second_name, profile.last_name].filter(Boolean).join(' ') || profile.fullName || '',
+        email: profile.email || '',
+        phone: profile.mobile || profile.phone || '',
+        location: profile.city?.name || profile.address || '',
+        linkedin: profile.linkedin_url || (profile.social && profile.social.linkedin) || '',
+        website: profile.website || ''
+      };
+
+      const mappedExperiences = (experiences || []).map(e => ({
+        title: e.position || e.title || '',
+        company: e.company_name || '',
+        location: e.location || '',
+        startDate: e.start_date ? e.start_date.slice(0,7) : (e.startDate ? e.startDate : ''),
+        endDate: e.end_date ? e.end_date.slice(0,7) : (e.endDate ? e.endDate : ''),
+        current: !!e.currently_working,
+        description: e.description || ''
+      }));
+
+      const mappedEducation = (education || []).map(ed => ({
+        degree: ed.degree || '',
+        institution: ed.institution || '',
+        location: ed.location || '',
+        startYear: ed.startDate ? (ed.startDate.slice(0,4)) : (ed.startYear || ''),
+        endYear: ed.endDate ? (ed.endDate.slice(0,4)) : (ed.endYear || ''),
+        gpa: ed.gpa || '',
+        description: ed.description || ''
+      }));
+
+      const mappedSkills = (userSkills || []).map(s => (typeof s === 'string' ? s : (s.skill_name || s.name?.en || s.name || s.skill?.name || ''))).filter(Boolean);
+
+      setResumeData(prev => ({
+        ...prev,
+        personalInfo,
+        experiences: mappedExperiences,
+        education: mappedEducation,
+        skills: mappedSkills
+      }));
+      console.debug('[ResumeBuilder] mappedSkills from profile:', mappedSkills);
+
+      toast({ title: 'Profile loaded', description: 'Form populated from your profile data.' });
+    } catch (err) {
+      console.error('Error loading profile data:', err);
+      toast({ title: 'Error', description: 'Failed to load profile data', variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       {/* Header */}
@@ -407,6 +629,7 @@ export default function ResumeBuilderPage() {
               <Eye className="h-4 w-4" />
               Preview
             </Button>
+            {/* Form is always populated from profile and always uses live profile for operations */}
             <Button 
               onClick={handleSaveResume}
               variant="outline"
@@ -436,17 +659,43 @@ export default function ResumeBuilderPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name *</Label>
-                  <Input
-                    id="fullName"
-                    value={resumeData.personalInfo.fullName}
-                    onChange={(e) => setResumeData(prev => ({
-                      ...prev,
-                      personalInfo: { ...prev.personalInfo, fullName: e.target.value }
-                    }))}
-                    placeholder="John Doe"
-                  />
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First name</Label>
+                    <Input
+                      id="firstName"
+                      value={resumeData.personalInfo.first_name}
+                      onChange={(e) => setResumeData(prev => ({
+                        ...prev,
+                        personalInfo: { ...prev.personalInfo, first_name: e.target.value }
+                      }))}
+                      placeholder="First"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="secondName">Second name</Label>
+                    <Input
+                      id="secondName"
+                      value={resumeData.personalInfo.second_name}
+                      onChange={(e) => setResumeData(prev => ({
+                        ...prev,
+                        personalInfo: { ...prev.personalInfo, second_name: e.target.value }
+                      }))}
+                      placeholder="Second"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Family name</Label>
+                    <Input
+                      id="lastName"
+                      value={resumeData.personalInfo.last_name}
+                      onChange={(e) => setResumeData(prev => ({
+                        ...prev,
+                        personalInfo: { ...prev.personalInfo, last_name: e.target.value }
+                      }))}
+                      placeholder="Family"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>
@@ -546,13 +795,23 @@ export default function ResumeBuilderPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {resumeData.experiences.map((exp, index) => (
-                <Accordion key={index} type="single" collapsible>
-                  <AccordionItem value={`exp-${index}`}>
-                    <AccordionTrigger>
-                      {exp.title || `Experience ${index + 1}`} {exp.company && `at ${exp.company}`}
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-4 pt-4">
+              {resumeData.experiences.length > 0 ? (
+                <Accordion type="single" collapsible value={openExp} onValueChange={setOpenExp}>
+                  {resumeData.experiences.map((exp, index) => (
+                    <AccordionItem key={index} value={`exp-${index}`}>
+                      <div id={`exp-${index}`}>
+                        <AccordionTrigger>
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full">
+                            <div>
+                              <div className="font-medium">{exp.title || `Experience ${index + 1}`}{exp.company ? ` — ${exp.company}` : ''}</div>
+                              <div className="text-xs text-muted-foreground">{exp.location || ''}</div>
+                            </div>
+                            <div className="text-sm text-muted-foreground mt-2 sm:mt-0">
+                              {exp.startDate ? exp.startDate : ''}{exp.startDate && ' - '}{exp.current ? 'Present' : (exp.endDate || '')}
+                            </div>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="space-y-4 pt-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Job Title *</Label>
@@ -624,15 +883,16 @@ export default function ResumeBuilderPage() {
                         Remove
                       </Button>
                     </AccordionContent>
-                  </AccordionItem>
+                      </div>
+                    </AccordionItem>
+                  ))}
                 </Accordion>
-              ))}
-              
-              {resumeData.experiences.length === 0 && (
+              ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   No work experience added yet. Click "Add Experience" to get started.
                 </div>
               )}
+              
             </CardContent>
           </Card>
 
@@ -651,92 +911,98 @@ export default function ResumeBuilderPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {resumeData.education.map((edu, index) => (
-                <Accordion key={index} type="single" collapsible>
-                  <AccordionItem value={`edu-${index}`}>
-                    <AccordionTrigger>
-                      {edu.degree || `Education ${index + 1}`} {edu.institution && `from ${edu.institution}`}
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-4 pt-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Degree *</Label>
-                          <Input
-                            value={edu.degree}
-                            onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                            placeholder="Bachelor of Science"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Institution *</Label>
-                          <Input
-                            value={edu.institution}
-                            onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
-                            placeholder="University Name"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Location</Label>
-                          <Input
-                            value={edu.location}
-                            onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
-                            placeholder="City, Country"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Start Year</Label>
-                          <Input
-                            type="number"
-                            value={edu.startYear}
-                            onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
-                            placeholder="2018"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>End Year</Label>
-                          <Input
-                            type="number"
-                            value={edu.endYear}
-                            onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
-                            placeholder="2022"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>GPA (Optional)</Label>
-                          <Input
-                            value={edu.gpa}
-                            onChange={(e) => handleEducationChange(index, 'gpa', e.target.value)}
-                            placeholder="3.8/4.0"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Additional Details</Label>
-                        <Textarea
-                          value={edu.description}
-                          onChange={(e) => handleEducationChange(index, 'description', e.target.value)}
-                          placeholder="Relevant coursework, honors, etc..."
-                          rows={3}
-                        />
-                      </div>
-                      <Button 
-                        onClick={() => handleRemoveEducation(index)}
-                        variant="destructive"
-                        size="sm"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Remove
-                      </Button>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              ))}
-              
-              {resumeData.education.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  No education added yet. Click "Add Education" to get started.
-                </div>
-              )}
+                  {resumeData.education.length > 0 ? (
+                    <Accordion type="single" collapsible value={openEdu} onValueChange={setOpenEdu}>
+                      {resumeData.education.map((edu, index) => (
+                        <AccordionItem key={index} value={`edu-${index}`}>
+                          <div id={`edu-${index}`}>
+                            <AccordionTrigger>
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full">
+                                <div>
+                                  <div className="font-medium">{edu.degree || `Education ${index + 1}`}{edu.institution ? ` — ${edu.institution}` : ''}</div>
+                                  <div className="text-xs text-muted-foreground">{edu.location || ''}</div>
+                                </div>
+                                <div className="text-sm text-muted-foreground mt-2 sm:mt-0">
+                                  {edu.startYear ? edu.startYear : ''}{edu.startYear && ' - '}{edu.endYear || ''}
+                                </div>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="space-y-4 pt-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label>Degree *</Label>
+                                  <Input
+                                    value={edu.degree}
+                                    onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
+                                    placeholder="Bachelor of Science"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Institution *</Label>
+                                  <Input
+                                    value={edu.institution}
+                                    onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
+                                    placeholder="University Name"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Location</Label>
+                                  <Input
+                                    value={edu.location}
+                                    onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
+                                    placeholder="City, Country"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Start Year</Label>
+                                  <Input
+                                    type="number"
+                                    value={edu.startYear}
+                                    onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
+                                    placeholder="2018"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>End Year</Label>
+                                  <Input
+                                    type="number"
+                                    value={edu.endYear}
+                                    onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
+                                    placeholder="2022"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>GPA (Optional)</Label>
+                                  <Input
+                                    value={edu.gpa}
+                                    onChange={(e) => handleEducationChange(index, 'gpa', e.target.value)}
+                                    placeholder="3.8/4.0"
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Additional Details</Label>
+                                <Textarea
+                                  value={edu.description}
+                                  onChange={(e) => handleEducationChange(index, 'description', e.target.value)}
+                                  placeholder="Relevant coursework, honors, etc..."
+                                  rows={3}
+                                />
+                              </div>
+                              <Button 
+                                onClick={() => handleRemoveEducation(index)}
+                                variant="destructive"
+                                size="sm"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Remove
+                              </Button>
+                            </AccordionContent>
+                          </div>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  ) : null}
             </CardContent>
           </Card>
 
@@ -749,31 +1015,66 @@ export default function ResumeBuilderPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                {/* Category filter (if categories exist on skills) */}
+                {Array.isArray(availableSkills) && (() => {
+                  const cats = Array.from(new Set(availableSkills.map(s => extractSkillCategory(s)).filter(Boolean)));
+                  if (cats.length === 0) return null;
+                  return (
+                    <select
+                      value={skillCategoryFilter}
+                      onChange={(e) => setSkillCategoryFilter(e.target.value)}
+                      className="border rounded px-2 py-1 text-sm"
+                      aria-label="Filter skills by category"
+                    >
+                      <option value="">All categories</option>
+                      {cats.map((c, i) => <option key={i} value={c}>{c}</option>)}
+                    </select>
+                  );
+                })()}
+
                 <Input
                   id="skillInput"
-                  placeholder="Type a skill and press Enter"
+                  list="skills-list"
+                  value={skillInput}
+                  onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      handleAddSkill(e.target.value);
-                      e.target.value = '';
+                      e.preventDefault();
+                      if (skillInput) { handleAddSkill(skillInput); setSkillInput(''); }
                     }
                   }}
+                  placeholder="Select or type a skill"
                 />
+                <datalist id="skills-list">
+                  {Array.isArray(availableSkills) ? availableSkills
+                    .filter(s => {
+                      if (!skillCategoryFilter) return true;
+                      const c = extractSkillCategory(s);
+                      return String(c) === String(skillCategoryFilter);
+                    })
+                    .map((s, i) => {
+                      const val = extractSkillName(s) || '';
+                      return <option key={i} value={val} />;
+                    }) : null}
+                </datalist>
+                <Button size="sm" onClick={() => { if (skillInput) { handleAddSkill(skillInput); setSkillInput(''); } }}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add
+                </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {resumeData.skills.map((skill, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="secondary"
-                    className="gap-2 px-3 py-1"
-                  >
-                    {skill}
-                    <button onClick={() => handleRemoveSkill(skill)}>
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
+                {Array.isArray(resumeData.skills) && resumeData.skills.map((skill, index) => {
+                    const display = extractSkillName(skill) || 'Unnamed Skill';
+                    return (
+                      <Badge key={index} variant="secondary" className="gap-2 px-3 py-1">
+                        {display}
+                        <button onClick={() => handleRemoveSkill(skill)}>
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    );
+                  })}
               </div>
               {resumeData.skills.length === 0 && (
                 <div className="text-center py-4 text-muted-foreground text-sm">
