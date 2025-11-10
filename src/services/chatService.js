@@ -28,7 +28,11 @@ export const getMessages = conversationId => {
  * @returns {Promise} Promise object with all users data
  */
 export const getAllUsers = () => {
-  return api.get("/chat/users/all"); // Backend endpoint for all users
+  return api.get("/chat/users/all"); // Backend endpoint now returns connected users for current user
+};
+
+export const getConnections = () => {
+  return api.get(`/connections`);
 };
 
 /**

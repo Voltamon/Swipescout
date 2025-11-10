@@ -12,6 +12,7 @@ import {
   getSkills,
   createSkill,
   getCategories,
+  getSkillTypes,
   addUserSkill
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,6 +56,7 @@ import {
   Loader2,
   File,
   ChevronDown
+  ,Zap, Layers, Heart
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors-jobseeker';
 
@@ -105,7 +107,8 @@ export default function ResumeBuilderPage() {
   const [allSkillTypes, setAllSkillTypes] = useState([]);
 
   // localize helper: safely extract localized string from string/object
-  const localize = (val, preferred = 'en') => {
+  // Default 'preferred' is undefined so we prefer the page/browser language when available
+  const localize = (val, preferred = undefined) => {
     if (val == null) return '';
     if (typeof val === 'string') return val;
     if (typeof val === 'number') return String(val);
@@ -125,6 +128,29 @@ export default function ResumeBuilderPage() {
       }
     }
     return String(val);
+  };
+
+  // Type label translations (provide English and some common translations as a helpful default).
+  const TYPE_LABELS = {
+    hard: { en: 'Hard', ar: 'صعب', fr: 'Dur' },
+    hybrid: { en: 'Hybrid', ar: 'هجين', fr: 'Hybride' },
+    soft: { en: 'Soft', ar: 'ناعِم', fr: 'Souple' }
+  };
+
+  const getTypeLabel = (type) => {
+    if (!type) return '';
+    const key = String(type).toLowerCase();
+    if (TYPE_LABELS[key]) return localize(TYPE_LABELS[key]);
+    // fallback: try to localize raw string or return as-is
+    return localize(type) || String(type);
+  };
+
+  const getTypeIcon = (type) => {
+    const key = String(type || '').toLowerCase();
+    if (key === 'hard') return Zap;
+    if (key === 'hybrid') return Layers;
+    if (key === 'soft') return Heart;
+    return Award;
   };
 
   // Helper: extract a display name for a skill object (handles multiple shapes & translations)
@@ -205,13 +231,36 @@ export default function ResumeBuilderPage() {
         }, {});
         setCategoriesMap(map);
         // derive all distinct skill_type values from categories and expose them
-        try {
+          try {
           const typesSet = new Set();
+          // derive types from categories map
           for (const k of Object.keys(map)) {
             const cat = map[k];
             const t = cat?.skill_type || cat?.type;
             if (t) typesSet.add(String(t));
           }
+          // also derive types from the available skills themselves as a fallback
+          try {
+            const skillsArr = arr || [];
+            for (const s of skillsArr) {
+              // attempt to find a type from the skill's category reference or its own fields
+              const cand = s?.category ?? s?.ctg ?? (s?.skill && s.skill.category) ?? (Array.isArray(s?.categories) ? s.categories[0] : null);
+              let tp = '';
+              if (!cand) {
+                tp = extractSkillType(s);
+              } else if (typeof cand === 'string') {
+                const catObj = map[cand];
+                if (catObj && (catObj.skill_type || catObj.type)) tp = String(catObj.skill_type || catObj.type);
+                else tp = String(cand);
+              } else if (typeof cand === 'object') {
+                tp = String(cand.skill_type || cand.type || extractSkillType(s) || '');
+              }
+              if (tp) typesSet.add(String(tp));
+            }
+          } catch (e) {
+            console.warn('Failed to derive types from availableSkills', e);
+          }
+
           const arrTypes = Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b)));
           setAllSkillTypes(arrTypes);
         } catch (e) {
@@ -252,7 +301,59 @@ export default function ResumeBuilderPage() {
     populateFromProfile();
     fetchAvailableSkills();
     fetchSavedResumes();
+    // Also ensure we fetch distinct skill types from backend via getSkillTypes
+    loadSkillTypes();
   }, []);
+
+  // Load distinct skill_type values from backend using the dedicated endpoint
+  const loadSkillTypes = async () => {
+    try {
+      const res = await getSkillTypes();
+      let arr = [];
+      // Accept many possible shapes returned by different backends
+      if (Array.isArray(res)) arr = res;
+      else if (Array.isArray(res?.data)) arr = res.data;
+      else if (Array.isArray(res?.data?.types)) arr = res.data.types;
+      else if (Array.isArray(res?.data?.data)) arr = res.data.data;
+      else if (Array.isArray(res?.data?.rows)) arr = res.data.rows;
+      else if (Array.isArray(res?.data?.result)) arr = res.data.result;
+      else if (Array.isArray(res?.data?.data?.rows)) arr = res.data.data.rows;
+
+      // normalize and dedupe but keep original casing from first occurrence
+      const map = new Map();
+      for (const t of (arr || [])) {
+        try {
+          const key = String(t).toLowerCase();
+          if (!map.has(key)) map.set(key, String(t));
+        } catch (e) {
+          // skip malformed
+        }
+      }
+      const normalized = Array.from(map.values()).sort((a,b) => String(a).localeCompare(String(b)));
+
+      // If nothing returned, fall back to deriving types from categories if available
+      if (!normalized || normalized.length === 0) {
+        try {
+          const catsRes = await getCategories();
+          const catsArr = Array.isArray(catsRes?.data) ? catsRes.data : (Array.isArray(catsRes?.data?.data) ? catsRes.data.data : []);
+          const typesSet = new Set();
+          for (const c of (catsArr || [])) {
+            const t = c?.skill_type || c?.type;
+            if (t) typesSet.add(String(t));
+          }
+          setAllSkillTypes(Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b))));
+          return;
+        } catch (e) {
+          // ignore and continue with empty types
+          console.debug('No types from getSkillTypes and categories fallback failed', e);
+        }
+      }
+
+      setAllSkillTypes(normalized);
+    } catch (err) {
+      console.warn('Failed to load skill types via getSkillTypes:', err);
+    }
+  };
 
   // Derived lists for category/type filters and a set of already-added skill names
   const availableSkillCategories = useMemo(() => {
@@ -308,6 +409,59 @@ export default function ResumeBuilderPage() {
   }, [categoriesMap, availableSkills]);
 
   const addedSkillNames = useMemo(() => new Set((resumeData.skills || []).map(s => String(extractSkillName(s) || '').toLowerCase())), [resumeData.skills]);
+
+  // Helper: compute how many available skills match a given type (and current category filter)
+  const getTypeCount = (type) => {
+    if (!type || !Array.isArray(availableSkills)) return 0;
+    try {
+      return availableSkills.filter(s => {
+        // determine type for this skill using categoriesMap when category is an id
+        const cand = s?.category ?? s?.ctg ?? (s?.skill && s.skill.category) ?? (Array.isArray(s?.categories) ? s.categories[0] : null);
+        let tp = '';
+        if (!cand) {
+          tp = extractSkillType(s) || '';
+        } else if (typeof cand === 'string') {
+          const catObj = categoriesMap[cand];
+          if (catObj && (catObj.skill_type || catObj.type)) tp = String(catObj.skill_type || catObj.type);
+          else tp = String(cand);
+        } else if (typeof cand === 'object') {
+          tp = String(cand.skill_type || cand.type || extractSkillType(s) || '');
+        }
+  if (!tp) return false;
+  if (String(tp).toLowerCase() !== String(type).toLowerCase()) return false;
+
+        // if a category filter is active, ensure this skill also matches that category
+        if (skillCategoryFilter) {
+          let catName = '';
+          if (cand) {
+            if (typeof cand === 'string') {
+              const catObj = categoriesMap[cand];
+              catName = catObj ? localize(catObj.name) : cand;
+            } else if (typeof cand === 'object') {
+              catName = localize(cand.name ?? cand.title ?? cand.label) || extractSkillCategory(s);
+            }
+          }
+          if (String(catName).toLowerCase() !== String(skillCategoryFilter).toLowerCase()) return false;
+        }
+
+        return true;
+      }).length;
+    } catch (e) {
+      return 0;
+    }
+  };
+
+  // If a type is selected but currently has 0 matching skills (given filters), clear the selection and any skill input
+  useEffect(() => {
+    if (skillTypeFilter) {
+      const cnt = getTypeCount(skillTypeFilter);
+      if (cnt === 0) {
+        // keep the selected type but clear the skill input so the skills dropdown becomes empty
+        // this will leave the type visible/selected but the skill list will have no entries
+        setSkillInput('');
+      }
+    }
+  }, [skillTypeFilter, skillCategoryFilter, availableSkills, categoriesMap]);
 
   const handleFileUpload = async (e) => {
     const file = e?.target?.files?.[0];
@@ -1199,28 +1353,40 @@ export default function ResumeBuilderPage() {
                   )}
                 </select>
 
-                {/* Skill type filter (always render; disabled when no types available) */}
-                <select
-                  value={skillTypeFilter}
-                  onChange={(e) => setSkillTypeFilter(e.target.value)}
-                  className="border rounded px-2 py-1 text-sm"
-                  aria-label="Filter skills by type"
-                  disabled={allSkillTypes.length === 0}
-                >
-                  <option value="">All types</option>
+                {/* Skill type filter rendered as icon buttons (uses types returned by getSkillTypes) */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSkillTypeFilter('')}
+                    className={`px-2 py-1 rounded border text-sm ${skillTypeFilter === '' ? 'bg-gray-100' : ''}`}
+                    aria-label="Show all types"
+                    disabled={allSkillTypes.length === 0}
+                  >
+                    {localize('All types')}
+                  </button>
                   {allSkillTypes.length === 0 ? (
-                    <option value="" disabled>— no types —</option>
+                    <div className="text-sm text-muted-foreground">— no types —</div>
                   ) : (
-                    allSkillTypes.map((t, i) => <option key={i} value={t}>{t}</option>)
+                    allSkillTypes.map((t, i) => {
+                      const count = getTypeCount(t);
+                      const Icon = getTypeIcon(t);
+                      const label = getTypeLabel(t);
+                      return (
+                        <button
+                          type="button"
+                          key={i}
+                          onClick={() => setSkillTypeFilter(t)}
+                          className={`flex items-center gap-2 px-2 py-1 rounded border text-sm ${String(skillTypeFilter) === String(t) ? 'bg-gray-100' : ''}`}
+                          aria-pressed={String(skillTypeFilter) === String(t)}
+                        >
+                          <Icon className="h-4 w-4" />
+                          <span>{label}{count === 0 ? ` (${count})` : ''}</span>
+                        </button>
+                      );
+                    })
                   )}
-                </select>
-                {/* If no categories/types detected, show a small hint with a sample skill for debugging */}
-                {availableSkillCategories.length === 0 && availableSkillTypes.length === 0 && Array.isArray(availableSkills) && (
-                  <div className="text-sm text-muted-foreground ml-2">
-                    No categories/types detected from skills. Sample skill:&nbsp;
-                    <code className="break-words">{availableSkills[0] ? JSON.stringify(availableSkills[0]).slice(0,200) + (JSON.stringify(availableSkills[0]).length>200? '...':'') : 'none'}</code>
-                  </div>
-                )}
+                </div>
+                {/* Debug hint removed: no need to display sample skill when categories/types are missing */}
 
                 {/* Dropdown select populated from availableSkills (filtered) */}
                 <div className="flex items-center gap-2">

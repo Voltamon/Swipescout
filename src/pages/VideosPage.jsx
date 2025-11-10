@@ -38,12 +38,15 @@ import {
   VolumeX,
   Eye
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { sendConnection } from '@/services/connectionService.js';
 import themeColors from '@/config/theme-colors';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export default function VideosPage({ setVideoTab }) {
   const { videos: localVideos, retryUpload, removeVideo } = useVideoContext();
+  const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const videoRefs = useRef({});
@@ -536,6 +539,35 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                 <Eye className="h-3 w-3 mr-1" />
                 View
               </Button>
+              {/* Connect button - only show if we can infer an owner */}
+              {(() => {
+                const ownerId = video.userId || video.user_id || video.ownerId || (video.user && video.user.id);
+                if (ownerId && ownerId !== (user && user.id)) {
+                  return (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!user) {
+                          toast({ description: 'Please log in to connect', variant: 'default' });
+                          return navigate('/login');
+                        }
+                        try {
+                          await sendConnection(ownerId);
+                          toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
+                        } catch (err) {
+                          console.error('Connection failed', err);
+                          toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
+                        }
+                      }}
+                    >
+                      Connect
+                    </Button>
+                  );
+                }
+                return null;
+              })()}
               <Button
                 variant="outline"
                 size="sm"

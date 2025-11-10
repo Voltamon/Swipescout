@@ -96,14 +96,16 @@ const Chat = () => {
     unread_count: c.unread_count ?? c.unreadCount ?? 0,
   });
 
-  const fetchAllUsers = async () => {
+  // Fetch only connected users for the current user
+  const fetchConnections = async () => {
     try {
       setUsersLoading(true);
+      // Backend: /chat/users/all now returns only connections for the current user
       const response = await getAllUsers();
-      const users = (response.data.users || []).map(normalizeUser);
+      const users = (response.data.users || response.data.connections || []).map(normalizeUser);
       setAllUsers(users);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching connections:', error);
     } finally {
       setUsersLoading(false);
     }
@@ -304,11 +306,11 @@ const Chat = () => {
               size="sm"
               onClick={() => {
                 setShowAllUsers(true);
-                if (allUsers.length === 0) fetchAllUsers();
+                if (allUsers.length === 0) fetchConnections();
               }}
               className="flex-1"
             >
-              All Users
+              Connections
             </Button>
           </div>
         </div>

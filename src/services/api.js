@@ -217,6 +217,8 @@ export const updateJob = (id, jobData) => api.put(`/employer/job/${id}`, jobData
 export const deleteJob = (id) => api.delete(`/employer/job/${id}`);
 export const getJobCategories = (id) => api.get(`/categorie/job/${id}`);
 export const getCategories = () => api.get('/categories');
+// Optional endpoint that backend may expose to return distinct skill_type values
+export const getSkillTypes = () => api.get('/categories/types');
 export const getEmployerCategories = () => api.get('/employer/categories');
 export const addEmployerCategory = (id) => api.post(`/employer/category/${id}`);
 export const deleteEmployerCategory = (id) => api.delete(`/employer/category/${id}`);

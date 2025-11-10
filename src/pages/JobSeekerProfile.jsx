@@ -7,6 +7,8 @@ import {
   getUserExperiences, 
   getUserEducation 
 } from '../services/api.js';
+import { useAuth } from '@/contexts/AuthContext';
+import { sendConnection } from '@/services/connectionService.js';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
@@ -46,6 +48,7 @@ export default function JobSeekerProfile() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const videoRef = useRef(null);
+  const { user } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -160,10 +163,29 @@ export default function JobSeekerProfile() {
                         <h1 className="text-4xl font-bold mb-2">{String(localize(profile?.fullName || 'User Name'))}</h1>
                         <p className="text-xl text-muted-foreground">{String(localize(profile?.headline || 'Professional Title'))}</p>
                       </div>
-                      <Button onClick={handleEditProfile} className="bg-cyan-600 hover:bg-cyan-700">
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit Profile
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button onClick={handleEditProfile} className="bg-cyan-600 hover:bg-cyan-700">
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Profile
+                        </Button>
+                        {/* Show Connect when viewing someone else */}
+                        {profile?.id && user?.id && profile.id !== user.id && (
+                          <Button
+                            variant="outline"
+                            onClick={async () => {
+                              try {
+                                await sendConnection(profile.id);
+                                toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
+                              } catch (err) {
+                                console.error('Connection failed', err);
+                                toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
+                              }
+                            }}
+                          >
+                            Connect
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Contact Info Grid */}
