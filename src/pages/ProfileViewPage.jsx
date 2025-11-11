@@ -10,6 +10,8 @@ import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { sendConnection } from '@/services/connectionService.js';
 import {
   User,
   MapPin,
@@ -44,6 +46,7 @@ export default function ProfileViewPage() {
   const { userId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const videoRef = useRef(null);
 
   const [profile, setProfile] = useState(null);
@@ -174,9 +177,28 @@ export default function ProfileViewPage() {
                           <span>{profile.profileViews || 0} profile views</span>
                         </div>
                       </div>
-                      <Badge className={isEmployer ? "bg-green-600" : "bg-blue-600"}>
-                        {isEmployer ? 'Employer' : 'Job Seeker'}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge className={isEmployer ? "bg-green-600" : "bg-blue-600"}>
+                          {isEmployer ? 'Employer' : 'Job Seeker'}
+                        </Badge>
+                        {/* Show Connect when viewing another user's profile */}
+                        {profile?.id && user?.id && profile.id !== user.id && (
+                          <Button
+                            variant="outline"
+                            onClick={async () => {
+                              try {
+                                await sendConnection(profile.id);
+                                toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
+                              } catch (err) {
+                                console.error('Connection failed', err);
+                                toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
+                              }
+                            }}
+                          >
+                            Connect
+                          </Button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Contact Info Grid */}

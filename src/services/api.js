@@ -314,6 +314,7 @@ export const extractCVData = (formData) => api.post('/resume/extract', formData,
 export const generateResume = (resumeData) => api.post('/resume/generate', resumeData, { responseType: 'blob' });
 export const previewResume = (resumeData) => api.post('/resume/preview', resumeData);
 export const saveResume = (resumeData) => api.post('/resume/save', resumeData);
+export const updateResume = (id, resumeData) => api.put(`/resume/${id}`, resumeData);
 export const getUserResumes = () => api.get('/resume/user');
 
 // Search & Connect

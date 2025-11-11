@@ -8,7 +8,6 @@ import {
   getUserEducation 
 } from '../services/api.js';
 import { useAuth } from '@/contexts/AuthContext';
-import { sendConnection } from '@/services/connectionService.js';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
@@ -168,23 +167,7 @@ export default function JobSeekerProfile() {
                           <Edit className="h-4 w-4 mr-2" />
                           Edit Profile
                         </Button>
-                        {/* Show Connect when viewing someone else */}
-                        {profile?.id && user?.id && profile.id !== user.id && (
-                          <Button
-                            variant="outline"
-                            onClick={async () => {
-                              try {
-                                await sendConnection(profile.id);
-                                toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
-                              } catch (err) {
-                                console.error('Connection failed', err);
-                                toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
-                              }
-                            }}
-                          >
-                            Connect
-                          </Button>
-                        )}
+                        {/* Connect button intentionally omitted on the logged-in user's own JobSeeker profile */}
                       </div>
                     </div>
 

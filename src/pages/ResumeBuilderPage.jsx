@@ -1,9 +1,10 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   extractCVData,
   generateResume,
   previewResume,
   saveResume,
+  updateResume,
   getUserResumes,
   getUserProfile,
   getUserExperiences,
@@ -13,7 +14,12 @@ import {
   createSkill,
   getCategories,
   getSkillTypes,
-  addUserSkill
+  addUserSkill,
+  updateUserProfile,
+  updateUserEducation,
+  updateUserExperience,
+  addUserEducation,
+  addUserExperience
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
@@ -103,8 +109,22 @@ export default function ResumeBuilderPage() {
   const [skillInput, setSkillInput] = useState('');
   const [skillCategoryFilter, setSkillCategoryFilter] = useState('');
   const [skillTypeFilter, setSkillTypeFilter] = useState('');
+  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
+  const typeDropdownRef = useRef(null);
   const [categoriesMap, setCategoriesMap] = useState({});
   const [allSkillTypes, setAllSkillTypes] = useState([]);
+
+  // Template selection state
+  const [selectedTemplate, setSelectedTemplate] = useState('modern');
+
+  // Edit mode state
+  const [editingResumeId, setEditingResumeId] = useState(null);
+  const [editingResumeTitle, setEditingResumeTitle] = useState('');
+  const [isEditingSnapshot, setIsEditingSnapshot] = useState(false);
+
+  // CV Extraction dialog state
+  const [extractionDialogOpen, setExtractionDialogOpen] = useState(false);
+  const [extractedData, setExtractedData] = useState(null);
 
   // localize helper: safely extract localized string from string/object
   // Default 'preferred' is undefined so we prefer the page/browser language when available
@@ -231,38 +251,68 @@ export default function ResumeBuilderPage() {
         }, {});
         setCategoriesMap(map);
         // derive all distinct skill_type values from categories and expose them
+        try {
+          // Prefer authoritative list from backend when available
           try {
-          const typesSet = new Set();
-          // derive types from categories map
-          for (const k of Object.keys(map)) {
-            const cat = map[k];
-            const t = cat?.skill_type || cat?.type;
-            if (t) typesSet.add(String(t));
-          }
-          // also derive types from the available skills themselves as a fallback
-          try {
-            const skillsArr = arr || [];
-            for (const s of skillsArr) {
-              // attempt to find a type from the skill's category reference or its own fields
-              const cand = s?.category ?? s?.ctg ?? (s?.skill && s.skill.category) ?? (Array.isArray(s?.categories) ? s.categories[0] : null);
-              let tp = '';
-              if (!cand) {
-                tp = extractSkillType(s);
-              } else if (typeof cand === 'string') {
-                const catObj = map[cand];
-                if (catObj && (catObj.skill_type || catObj.type)) tp = String(catObj.skill_type || catObj.type);
-                else tp = String(cand);
-              } else if (typeof cand === 'object') {
-                tp = String(cand.skill_type || cand.type || extractSkillType(s) || '');
+            const typesRes = await getSkillTypes();
+            // Try many possible shapes
+            const tData = typesRes?.data ?? typesRes;
+            let tArr = [];
+            if (Array.isArray(tData)) tArr = tData;
+            else if (Array.isArray(tData?.types)) tArr = tData.types;
+            else if (Array.isArray(tData?.data)) tArr = tData.data;
+            else if (Array.isArray(tData?.rows)) tArr = tData.rows;
+            else if (Array.isArray(tData?.result)) tArr = tData.result;
+
+            if (Array.isArray(tArr) && tArr.length) {
+              // normalize and dedupe
+              const mapTypes = new Map();
+              for (const tt of tArr) {
+                try { mapTypes.set(String(tt).toLowerCase(), String(tt)); } catch (e) {}
               }
-              if (tp) typesSet.add(String(tp));
+              const resolved = Array.from(mapTypes.values()).sort((a,b) => String(a).localeCompare(String(b)));
+              console.debug('[ResumeBuilder] getSkillTypes returned:', resolved);
+              setAllSkillTypes(resolved);
+            } else {
+              // fallback to deriving from categories/skills
+              const typesSet = new Set();
+              for (const k of Object.keys(map)) {
+                const cat = map[k];
+                const t = cat?.skill_type || cat?.type;
+                if (t) typesSet.add(String(t));
+              }
+              try {
+                const skillsArr = arr || [];
+                for (const s of skillsArr) {
+                  const cand = s?.category ?? s?.ctg ?? (s?.skill && s.skill.category) ?? (Array.isArray(s?.categories) ? s.categories[0] : null);
+                  let tp = '';
+                  if (!cand) tp = extractSkillType(s);
+                  else if (typeof cand === 'string') {
+                    const catObj = map[cand];
+                    if (catObj && (catObj.skill_type || catObj.type)) tp = String(catObj.skill_type || catObj.type);
+                    else tp = String(cand);
+                  } else if (typeof cand === 'object') {
+                    tp = String(cand.skill_type || cand.type || extractSkillType(s) || '');
+                  }
+                  if (tp) typesSet.add(String(tp));
+                }
+              } catch (e) {
+                console.warn('Failed to derive types from availableSkills', e);
+              }
+              // set derived types (no intermediate arrTypes variable)
+              setAllSkillTypes(Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b))));
+              console.debug('[ResumeBuilder] derived types from categories/skills:', Array.from(typesSet));
             }
           } catch (e) {
-            console.warn('Failed to derive types from availableSkills', e);
+            console.warn('getSkillTypes failed inside fetchAvailableSkills, deriving types instead', e);
+            const typesSet = new Set();
+            for (const k of Object.keys(map)) {
+              const cat = map[k];
+              const t = cat?.skill_type || cat?.type;
+              if (t) typesSet.add(String(t));
+            }
+            setAllSkillTypes(Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b))));
           }
-
-          const arrTypes = Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b)));
-          setAllSkillTypes(arrTypes);
         } catch (e) {
           console.warn('Failed to derive types from categoriesMap', e);
           setAllSkillTypes([]);
@@ -309,17 +359,18 @@ export default function ResumeBuilderPage() {
   const loadSkillTypes = async () => {
     try {
       const res = await getSkillTypes();
-      let arr = [];
-      // Accept many possible shapes returned by different backends
-      if (Array.isArray(res)) arr = res;
-      else if (Array.isArray(res?.data)) arr = res.data;
-      else if (Array.isArray(res?.data?.types)) arr = res.data.types;
-      else if (Array.isArray(res?.data?.data)) arr = res.data.data;
-      else if (Array.isArray(res?.data?.rows)) arr = res.data.rows;
-      else if (Array.isArray(res?.data?.result)) arr = res.data.result;
-      else if (Array.isArray(res?.data?.data?.rows)) arr = res.data.data.rows;
 
-      // normalize and dedupe but keep original casing from first occurrence
+      // Normalize various response shapes returned by different backends.
+      const data = res?.data ?? res;
+      let arr = [];
+
+      if (Array.isArray(data)) arr = data;
+      else if (Array.isArray(data?.types)) arr = data.types;
+      else if (Array.isArray(data?.data)) arr = data.data;
+      else if (Array.isArray(data?.rows)) arr = data.rows;
+      else if (Array.isArray(data?.result)) arr = data.result;
+
+      // normalize and dedupe (preserve first-seen casing)
       const map = new Map();
       for (const t of (arr || [])) {
         try {
@@ -329,29 +380,33 @@ export default function ResumeBuilderPage() {
           // skip malformed
         }
       }
-      const normalized = Array.from(map.values()).sort((a,b) => String(a).localeCompare(String(b)));
+      let normalized = Array.from(map.values()).sort((a,b) => String(a).localeCompare(String(b)));
 
-      // If nothing returned, fall back to deriving types from categories if available
-      if (!normalized || normalized.length === 0) {
+      // fallback: try categories endpoint for types
+      if (!normalized.length) {
         try {
           const catsRes = await getCategories();
-          const catsArr = Array.isArray(catsRes?.data) ? catsRes.data : (Array.isArray(catsRes?.data?.data) ? catsRes.data.data : []);
+          const catsArr = Array.isArray(catsRes?.data) ? catsRes.data : (Array.isArray(catsRes) ? catsRes : []);
           const typesSet = new Set();
           for (const c of (catsArr || [])) {
             const t = c?.skill_type || c?.type;
             if (t) typesSet.add(String(t));
           }
-          setAllSkillTypes(Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b))));
-          return;
+          normalized = Array.from(typesSet).sort((a,b) => String(a).localeCompare(String(b)));
         } catch (e) {
-          // ignore and continue with empty types
-          console.debug('No types from getSkillTypes and categories fallback failed', e);
+          console.debug('categories fallback for types failed', e);
         }
       }
+
+      // final fallback to sensible defaults so UI always shows the three known types
+      const defaultTypes = ['hard', 'hybrid', 'soft'];
+      if (!normalized.length) normalized = defaultTypes;
 
       setAllSkillTypes(normalized);
     } catch (err) {
       console.warn('Failed to load skill types via getSkillTypes:', err);
+      // Ensure UI still shows sane defaults
+      setAllSkillTypes(['hard', 'hybrid', 'soft']);
     }
   };
 
@@ -463,6 +518,17 @@ export default function ResumeBuilderPage() {
     }
   }, [skillTypeFilter, skillCategoryFilter, availableSkills, categoriesMap]);
 
+  // Close the type dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (typeDropdownRef?.current && !typeDropdownRef.current.contains(e.target)) {
+        setTypeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const handleFileUpload = async (e) => {
     const file = e?.target?.files?.[0];
     if (!file) return;
@@ -477,35 +543,109 @@ export default function ResumeBuilderPage() {
       const res = await extractCVData(form);
       const data = res?.data || res;
 
-      // Try to merge returned data into resumeData safely
-      if (data) {
-        // If API returns profile/resume wrapper
-        if (data.profile) {
-          setResumeData(prev => ({ ...prev, ...data.profile }));
-        } else if (data.resume) {
-          setResumeData(prev => ({ ...prev, ...data.resume }));
-        } else {
-          // Merge known keys defensively
-          setResumeData(prev => ({
-            ...prev,
-            personalInfo: data.personalInfo || data.personal || prev.personalInfo,
-            summary: data.summary || prev.summary,
-            experiences: Array.isArray(data.experiences) ? data.experiences : prev.experiences,
-            education: Array.isArray(data.education) ? data.education : prev.education,
-            skills: Array.isArray(data.skills) ? data.skills : prev.skills,
-            languages: Array.isArray(data.languages) ? data.languages : prev.languages,
-            certifications: Array.isArray(data.certifications) ? data.certifications : prev.certifications,
-            projects: Array.isArray(data.projects) ? data.projects : prev.projects,
-          }));
-        }
-      }
-      toast({ title: 'Extraction complete', description: 'CV data extracted', variant: 'default' });
+      console.log('[ResumeBuilder] CV extraction result:', data);
+
+      // Store extracted data and show dialog
+      setExtractedData(data);
+      setExtractionDialogOpen(true);
+      
+      toast({ title: 'Extraction complete', description: 'Review the extracted data and choose an action', variant: 'default' });
     } catch (err) {
       console.error('Error extracting CV:', err);
       toast({ title: 'Error', description: 'Failed to extract CV data', variant: 'destructive' });
     } finally {
       setExtracting(false);
       setProgress(0);
+    }
+  };
+
+  // Handle "Populate to Profile" action from extraction dialog
+  const handlePopulateToProfile = async () => {
+    if (!extractedData) return;
+    
+    setLoading(true);
+    try {
+      // Map extracted data to resumeData format
+      const mappedData = {
+        personalInfo: extractedData.personalInfo || extractedData.personal || {},
+        summary: extractedData.summary || '',
+        experiences: extractedData.experiences || [],
+        education: extractedData.education || [],
+        skills: extractedData.skills || [],
+        languages: extractedData.languages || [],
+        certifications: extractedData.certifications || [],
+        projects: extractedData.projects || []
+      };
+      
+      // Set in form
+      setResumeData(mappedData);
+      
+      // Sync to profile immediately - need to wait for state update
+      // Use the mapped data directly instead of relying on state
+      await syncProfileFromData(mappedData);
+      
+      setExtractionDialogOpen(false);
+      setActiveTab('build');
+      
+      toast({
+        title: "Success",
+        description: "CV data populated to your profile!",
+      });
+    } catch (error) {
+      console.error('Error populating to profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to populate profile",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle "Save as New Resume" action from extraction dialog
+  const handleSaveAsNewResume = async () => {
+    if (!extractedData) return;
+    
+    setLoading(true);
+    try {
+      // Map extracted data to backend schema
+      const mappedData = {
+        personalInfo: extractedData.personalInfo || extractedData.personal || {},
+        summary: extractedData.summary || '',
+        experience: extractedData.experiences || extractedData.experience || [],
+        education: extractedData.education || [],
+        skills: extractedData.skills || [],
+        languages: extractedData.languages || [],
+        certifications: extractedData.certifications || [],
+        projects: extractedData.projects || []
+      };
+      
+      const payload = { 
+        data: mappedData, 
+        template: 'modern',
+        title: 'Extracted CV - ' + new Date().toLocaleDateString()
+      };
+      
+      await saveResume(payload);
+      
+      setExtractionDialogOpen(false);
+      fetchSavedResumes();
+      setActiveTab('saved');
+      
+      toast({
+        title: "Success",
+        description: "Resume saved successfully!",
+      });
+    } catch (error) {
+      console.error('Error saving resume:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save resume",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
   function extractSkillCategory(s) {
@@ -721,12 +861,268 @@ export default function ResumeBuilderPage() {
     }));
   };
 
+  // Sync resume form data back to profile entities (education, experience, personal info)
+  const syncProfileFromResumeData = async () => {
+    await syncProfileFromData(resumeData);
+  };
+
+  // Helper function that syncs data to profile (can accept data parameter)
+  const syncProfileFromData = async (data) => {
+    try {
+      // Update personal info in job seeker profile
+      await updateUserProfile({
+        first_name: data.personalInfo.first_name,
+        second_name: data.personalInfo.second_name,
+        last_name: data.personalInfo.last_name,
+        phone: data.personalInfo.phone,
+        location: data.personalInfo.location,
+        linkedin: data.personalInfo.linkedin,
+        website: data.personalInfo.website,
+        summary: data.summary
+      });
+
+      // Sync experiences - for simplicity, we'll update existing ones by position
+      const existingExperiences = await getUserExperiences();
+      const existingExpArray = existingExperiences?.data?.experiences || existingExperiences?.data || [];
+      
+      for (let i = 0; i < data.experiences.length; i++) {
+        const exp = data.experiences[i];
+        const payload = {
+          title: exp.title,
+          company: exp.company,
+          location: exp.location,
+          start_date: exp.startDate,
+          end_date: exp.current ? null : exp.endDate,
+          current: exp.current,
+          description: exp.description
+        };
+        
+        if (existingExpArray[i]?.id) {
+          // Update existing
+          await updateUserExperience(existingExpArray[i].id, payload);
+        } else {
+          // Create new
+          await addUserExperience(payload);
+        }
+      }
+
+      // Sync education
+      const existingEducation = await getUserEducation();
+      const existingEduArray = existingEducation?.data?.educations || existingEducation?.data || [];
+      
+      for (let i = 0; i < data.education.length; i++) {
+        const edu = data.education[i];
+        const payload = {
+          degree: edu.degree,
+          institution: edu.institution,
+          location: edu.location || '',
+          startDate: edu.startYear ? `${edu.startYear}-01-01` : null,
+          endDate: edu.endYear ? `${edu.endYear}-12-31` : null,
+          description: edu.description || ''
+        };
+        
+        if (existingEduArray[i]?.id) {
+          // Update existing
+          await updateUserEducation(existingEduArray[i].id, payload);
+        } else {
+          // Create new
+          await addUserEducation(payload);
+        }
+      }
+
+      console.log('Profile synced successfully');
+    } catch (err) {
+      console.error('Error syncing profile:', err);
+      throw err;
+    }
+  };
+
+  // Handle "Update Profile" button click in edit mode
+  const handleUpdateProfile = async () => {
+    setLoading(true);
+    try {
+      await syncProfileFromResumeData();
+      toast({
+        title: "Success",
+        description: "Profile updated successfully!",
+      });
+      // Exit edit mode
+      setIsEditingSnapshot(false);
+      setEditingResumeId(null);
+      setEditingResumeTitle('');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle edit button click for saved resumes
+  const handleEditResume = (resume) => {
+    try {
+      // Load saved resume content into form
+      // Backend stores resume.content as a JSON string - parse when necessary
+      const raw = resume.content;
+      let content = {};
+      try {
+        content = typeof raw === 'string' && raw ? JSON.parse(raw) : (raw || {});
+      } catch (e) {
+        console.warn('Failed to parse resume.content, falling back to raw value', e);
+        content = raw || {};
+      }
+      
+      console.log('[ResumeBuilder] Loading resume for edit:', { resume, content });
+      
+      setResumeData({
+        personalInfo: {
+          first_name: content.personalInfo?.first_name || '',
+          second_name: content.personalInfo?.second_name || '',
+          last_name: content.personalInfo?.last_name || '',
+          fullName: content.personalInfo?.fullName || '',
+          email: content.personalInfo?.email || '',
+          phone: content.personalInfo?.phone || '',
+          location: content.personalInfo?.location || content.personalInfo?.address || '',
+          linkedin: content.personalInfo?.linkedin || '',
+          website: content.personalInfo?.website || ''
+        },
+        summary: content.personalInfo?.summary || content.summary || '',
+        experiences: (content.experience || content.experiences || []).map(exp => ({
+          title: exp.title || '',
+          company: exp.company || '',
+          location: exp.location || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          current: exp.current || false,
+          description: exp.description || ''
+        })),
+        education: (content.education || []).map(edu => ({
+          degree: edu.degree || '',
+          institution: edu.institution || '',
+          location: edu.location || '',
+          startYear: edu.startYear || (edu.graduationDate ? edu.graduationDate.slice(0, 4) : ''),
+          endYear: edu.graduationDate || edu.endYear || '',
+          gpa: edu.gpa || '',
+          description: edu.description || ''
+        })),
+        skills: content.skills || [],
+        languages: content.languages || [],
+        certifications: content.certifications || [],
+        projects: content.projects || []
+      });
+
+      // Set edit mode state
+      setEditingResumeId(resume.id);
+      setEditingResumeTitle(resume.title || 'Untitled Resume');
+      setIsEditingSnapshot(true);
+      setSelectedTemplate(resume.template || 'modern');
+
+      // Switch to build tab
+      setActiveTab('build');
+
+      toast({
+        title: "Editing Resume",
+        description: `Now editing: ${resume.title || 'Untitled Resume'}`,
+      });
+    } catch (error) {
+      console.error('Error loading resume for edit:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load resume",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle preview button click for saved resumes
+  const handlePreviewSaved = async (resume) => {
+    try {
+      // Parse saved content if it's a JSON string
+      const raw = resume.content;
+      let content = {};
+      try {
+        content = typeof raw === 'string' && raw ? JSON.parse(raw) : (raw || {});
+      } catch (e) {
+        console.warn('Failed to parse resume.content for preview, using raw value', e);
+        content = raw || {};
+      }
+      const template = resume.template || 'modern';
+      
+      console.log('[ResumeBuilder] Preview saved resume:', { content, template });
+      
+      // Generate preview HTML from saved content
+      const payload = { data: content, template };
+      const response = await previewResume(payload);
+
+      const html = response?.data?.data?.html;
+      if (html) {
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      } else {
+        throw new Error('No preview HTML returned');
+      }
+    } catch (error) {
+      console.error('Error previewing saved resume:', error);
+      toast({
+        title: "Error",
+        description: "Failed to preview resume",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle download PDF for saved resumes
+  const handleDownloadSaved = async (resume) => {
+    try {
+      // Parse saved content which may be stored as string in DB
+      const raw = resume.content;
+      let content = {};
+      try {
+        content = typeof raw === 'string' && raw ? JSON.parse(raw) : (raw || {});
+      } catch (e) {
+        console.warn('Failed to parse resume.content for download, using raw value', e);
+        content = raw || {};
+      }
+      const template = resume.template || 'modern';
+      
+      const payload = { data: content, template, format: 'pdf' };
+      const response = await generateResume(payload);
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${resume.title || 'resume'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Success",
+        description: "PDF downloaded successfully!",
+      });
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast({
+        title: "Error",
+        description: "Failed to download PDF",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleGenerateResume = async () => {
     setGenerating(true);
     try {
-  // Always generate from live profile
-  const payload = { fromProfile: true, template: 'modern', format: 'pdf' };
-  const response = await generateResume(payload);
+      // Always generate from live profile
+      const payload = { fromProfile: true, template: selectedTemplate, format: 'pdf' };
+      const response = await generateResume(payload);
 
       // response is a Blob (application/pdf)
       const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -751,9 +1147,9 @@ export default function ResumeBuilderPage() {
 
   const handlePreviewResume = async () => {
     try {
-  // Always preview from live profile
-  const payload = { fromProfile: true, template: 'modern' };
-  const response = await previewResume(payload);
+      // Always preview from live profile
+      const payload = { fromProfile: true, template: selectedTemplate };
+      const response = await previewResume(payload);
 
       // Expect { success, data: { html } }
       const html = response?.data?.data?.html;
@@ -777,13 +1173,33 @@ export default function ResumeBuilderPage() {
   const handleSaveResume = async () => {
     setLoading(true);
     try {
-  // Always save a snapshot from the live profile
-  const payload = { fromProfile: true, template: 'modern' };
-  await saveResume(payload);
+      // Save the current form (mapped to backend schema) so edits (education, experience, etc.) persist
+      const mapped = mapToBackendSchema(resumeData);
+      
+      // If editing a snapshot, update that specific resume instead of creating new
+      if (isEditingSnapshot && editingResumeId) {
+        const payload = {
+          data: mapped,
+          template: selectedTemplate,
+          title: editingResumeTitle || undefined
+        };
+        console.log('[ResumeBuilder] Updating existing resume id=', editingResumeId, 'payload=', payload);
+        await updateResume(editingResumeId, payload);
+      } else {
+        // Create new resume snapshot
+        const payload = { data: mapped, template: selectedTemplate };
+        console.log('[ResumeBuilder] Creating new snapshot:', payload);
+        await saveResume(payload);
+      }
+
+      // Also update profile entities if not in edit mode
+      if (!isEditingSnapshot) {
+        await syncProfileFromResumeData();
+      }
       
       toast({
         title: "Success",
-        description: "Resume saved successfully!",
+        description: isEditingSnapshot ? "Resume snapshot updated successfully!" : "Resume saved successfully!",
       });
       
       fetchSavedResumes();
@@ -862,7 +1278,7 @@ export default function ResumeBuilderPage() {
 
       const profile = profileRes?.data || {};
       const experiences = Array.isArray(expRes?.data) ? expRes.data : (expRes?.data?.experiences || []);
-      const education = Array.isArray(eduRes?.data) ? eduRes.data : (eduRes?.data?.education || []);
+      const education = Array.isArray(eduRes?.data) ? eduRes.data : (eduRes?.data?.educations || eduRes?.data?.education || []);
       const userSkills = Array.isArray(skillsRes?.data) ? skillsRes.data : (skillsRes?.data?.skills || []);
 
       // Map server profile shape to local resumeData structure
@@ -893,8 +1309,8 @@ export default function ResumeBuilderPage() {
         degree: ed.degree || '',
         institution: ed.institution || '',
         location: ed.location || '',
-        startYear: ed.startDate ? (ed.startDate.slice(0,4)) : (ed.startYear || ''),
-        endYear: ed.endDate ? (ed.endDate.slice(0,4)) : (ed.endYear || ''),
+        startYear: ed.start_year || (ed.startDate ? String(ed.startDate).slice(0, 4) : ''),
+        endYear: ed.end_year || (ed.endDate ? String(ed.endDate).slice(0, 4) : ''),
         gpa: ed.gpa || '',
         description: ed.description || ''
       }));
@@ -940,8 +1356,33 @@ export default function ResumeBuilderPage() {
 
         {/* Build Resume Tab */}
         <TabsContent value="build" className="space-y-6">
+          {/* Edit Mode Banner */}
+          {isEditingSnapshot && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Edit className="h-5 w-5 text-amber-600" />
+                <div>
+                  <p className="font-semibold text-amber-900">Editing Resume Snapshot</p>
+                  <p className="text-sm text-amber-700">{editingResumeTitle}</p>
+                </div>
+              </div>
+              <Button
+                onClick={() => {
+                  setIsEditingSnapshot(false);
+                  setEditingResumeId(null);
+                  setEditingResumeTitle('');
+                  populateFromProfile(); // Reload from profile
+                }}
+                variant="outline"
+                size="sm"
+              >
+                Cancel Editing
+              </Button>
+            </div>
+          )}
+
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
             <Button 
               onClick={handlePreviewResume}
               variant="outline"
@@ -950,24 +1391,56 @@ export default function ResumeBuilderPage() {
               <Eye className="h-4 w-4" />
               Preview
             </Button>
-            {/* Form is always populated from profile and always uses live profile for operations */}
-            <Button 
-              onClick={handleSaveResume}
-              variant="outline"
-              className="gap-2"
-              disabled={loading}
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Save
-            </Button>
-            <Button 
-              onClick={handleGenerateResume}
-              className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 gap-2 ml-auto"
-              disabled={generating}
-            >
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Generate PDF
-            </Button>
+
+            {/* Template Selector */}
+            <div className="flex items-center gap-2">
+              <Label htmlFor="templateSelect" className="text-sm whitespace-nowrap">Template:</Label>
+              <select
+                id="templateSelect"
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value)}
+                className="border rounded px-3 py-2 text-sm"
+              >
+                <option value="modern">Modern</option>
+                <option value="classic">Classic</option>
+                <option value="minimal">Minimal</option>
+                <option value="creative">Creative</option>
+              </select>
+            </div>
+
+            {/* Right-aligned action group: Save + Generate */}
+            <div className="ml-auto flex items-center gap-3">
+              {/* Show Update Profile button when editing a snapshot */}
+              {isEditingSnapshot && (
+                <Button 
+                  onClick={handleUpdateProfile}
+                  className="gap-2 bg-amber-600 hover:bg-amber-700"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  Update Profile
+                </Button>
+              )}
+
+              <Button 
+                onClick={handleSaveResume}
+                variant="outline"
+                className="gap-2"
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                Save
+              </Button>
+
+              <Button 
+                onClick={handleGenerateResume}
+                className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 gap-2"
+                disabled={generating}
+              >
+                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                Generate PDF
+              </Button>
+            </div>
           </div>
 
           {/* Personal Information */}
@@ -1353,37 +1826,58 @@ export default function ResumeBuilderPage() {
                   )}
                 </select>
 
-                {/* Skill type filter rendered as icon buttons (uses types returned by getSkillTypes) */}
-                <div className="flex items-center gap-2">
+                {/* Skill type filter rendered as a dropdown with icons */}
+                <div className="relative" ref={typeDropdownRef}>
                   <button
                     type="button"
-                    onClick={() => setSkillTypeFilter('')}
-                    className={`px-2 py-1 rounded border text-sm ${skillTypeFilter === '' ? 'bg-gray-100' : ''}`}
-                    aria-label="Show all types"
+                    onClick={() => setTypeDropdownOpen(v => !v)}
+                    className={`flex items-center gap-2 px-3 py-1 rounded border text-sm ${typeDropdownOpen ? 'bg-gray-100' : ''}`}
+                    aria-haspopup="listbox"
+                    aria-expanded={typeDropdownOpen}
                     disabled={allSkillTypes.length === 0}
                   >
-                    {localize('All types')}
+                    {skillTypeFilter ? (
+                      <>
+                        {(() => { const Icon = getTypeIcon(skillTypeFilter); return <Icon className="h-4 w-4" />; })()}
+                        <span>{getTypeLabel(skillTypeFilter)}</span>
+                      </>
+                    ) : (
+                      <span>{localize('All types')}</span>
+                    )}
+                    <ChevronDown className="h-4 w-4 ml-2 text-muted-foreground" />
                   </button>
-                  {allSkillTypes.length === 0 ? (
-                    <div className="text-sm text-muted-foreground">— no types —</div>
-                  ) : (
-                    allSkillTypes.map((t, i) => {
-                      const count = getTypeCount(t);
-                      const Icon = getTypeIcon(t);
-                      const label = getTypeLabel(t);
-                      return (
+
+                  {/* Dropdown menu */}
+                  {typeDropdownOpen && (
+                    <div className="absolute mt-2 bg-white border rounded shadow z-50 min-w-[200px]">
+                      <div className="flex flex-col">
                         <button
                           type="button"
-                          key={i}
-                          onClick={() => setSkillTypeFilter(t)}
-                          className={`flex items-center gap-2 px-2 py-1 rounded border text-sm ${String(skillTypeFilter) === String(t) ? 'bg-gray-100' : ''}`}
-                          aria-pressed={String(skillTypeFilter) === String(t)}
+                          onClick={() => { setSkillTypeFilter(''); setTypeDropdownOpen(false); }}
+                          className={`text-left px-3 py-2 hover:bg-gray-50 ${skillTypeFilter === '' ? 'bg-gray-100' : ''} text-xs`}
                         >
-                          <Icon className="h-4 w-4" />
-                          <span>{label}{count === 0 ? ` (${count})` : ''}</span>
+                          <span className="text-xs">All types</span>
                         </button>
-                      );
-                    })
+                        {allSkillTypes.map((t, i) => {
+                          const Icon = getTypeIcon(t);
+                          const label = getTypeLabel(t);
+                          const count = getTypeCount(t);
+                          return (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => { setSkillTypeFilter(t); setTypeDropdownOpen(false); }}
+                              className={`text-left px-3 py-2 hover:bg-gray-50 ${String(skillTypeFilter) === String(t) ? 'bg-gray-100' : ''}`}
+                            >
+                              <div className="flex items-center gap-2">
+                                  <Icon className="h-3 w-3" />
+                                  <span className="text-xs">{label}{count === 0 ? ` (${count})` : ''}</span>
+                                </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   )}
                 </div>
                 {/* Debug hint removed: no need to display sample skill when categories/types are missing */}
@@ -1569,16 +2063,31 @@ export default function ResumeBuilderPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handlePreviewSaved(resume)}
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         View
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleEditResume(resume)}
+                      >
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </Button>
                     </div>
-                    <Button variant="outline" size="sm" className="w-full">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => handleDownloadSaved(resume)}
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
                     </Button>
@@ -1605,6 +2114,133 @@ export default function ResumeBuilderPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* CV Extraction Results Dialog */}
+      <Dialog open={extractionDialogOpen} onOpenChange={setExtractionDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>CV Extraction Results</DialogTitle>
+            <DialogDescription>
+              Review the extracted information and choose how to proceed
+            </DialogDescription>
+          </DialogHeader>
+          
+          {extractedData && (
+            <div className="space-y-6">
+              {/* Personal Info Section */}
+              {extractedData.personalInfo && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Personal Information
+                  </h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
+                    {extractedData.personalInfo.fullName && (
+                      <p><span className="font-medium">Name:</span> {extractedData.personalInfo.fullName}</p>
+                    )}
+                    {extractedData.personalInfo.email && (
+                      <p><span className="font-medium">Email:</span> {extractedData.personalInfo.email}</p>
+                    )}
+                    {extractedData.personalInfo.phone && (
+                      <p><span className="font-medium">Phone:</span> {extractedData.personalInfo.phone}</p>
+                    )}
+                    {extractedData.personalInfo.location && (
+                      <p><span className="font-medium">Location:</span> {extractedData.personalInfo.location}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Summary Section */}
+              {extractedData.summary && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg">Summary</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg text-sm">
+                    <p>{extractedData.summary}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Experience Section */}
+              {extractedData.experiences && extractedData.experiences.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" />
+                    Experience ({extractedData.experiences.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {extractedData.experiences.map((exp, idx) => (
+                      <div key={idx} className="bg-gray-50 p-4 rounded-lg text-sm">
+                        <p className="font-medium">{exp.title} {exp.company && `at ${exp.company}`}</p>
+                        {exp.startDate && <p className="text-gray-600">{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</p>}
+                        {exp.description && <p className="mt-2">{exp.description}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Education Section */}
+              {extractedData.education && extractedData.education.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <GraduationCap className="h-5 w-5" />
+                    Education ({extractedData.education.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {extractedData.education.map((edu, idx) => (
+                      <div key={idx} className="bg-gray-50 p-4 rounded-lg text-sm">
+                        <p className="font-medium">{edu.degree}</p>
+                        <p className="text-gray-600">{edu.institution} {edu.graduationDate && `• ${edu.graduationDate}`}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Skills Section */}
+              {extractedData.skills && extractedData.skills.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <Award className="h-5 w-5" />
+                    Skills ({extractedData.skills.length})
+                  </h3>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex flex-wrap gap-2">
+                      {extractedData.skills.map((skill, idx) => (
+                        <Badge key={idx} variant="secondary">
+                          {typeof skill === 'string' ? skill : skill.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  onClick={handlePopulateToProfile}
+                  className="flex-1 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                  Populate to Profile
+                </Button>
+                <Button
+                  onClick={handleSaveAsNewResume}
+                  variant="outline"
+                  className="flex-1"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save as New Resume
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
