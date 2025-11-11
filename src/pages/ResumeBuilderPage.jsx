@@ -5,6 +5,7 @@ import {
   previewResume,
   saveResume,
   updateResume,
+  deleteResume,
   getUserResumes,
   getUserProfile,
   getUserExperiences,
@@ -43,6 +44,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from '@/components/UI/dialog.jsx';
 import { Progress } from '@/components/UI/progress.jsx';
 import {
@@ -125,6 +127,11 @@ export default function ResumeBuilderPage() {
   // CV Extraction dialog state
   const [extractionDialogOpen, setExtractionDialogOpen] = useState(false);
   const [extractedData, setExtractedData] = useState(null);
+
+  // Delete confirmation dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [resumeToDelete, setResumeToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // localize helper: safely extract localized string from string/object
   // Default 'preferred' is undefined so we prefer the page/browser language when available
@@ -340,9 +347,25 @@ export default function ResumeBuilderPage() {
       const res = await getUserResumes();
       const arr = Array.isArray(res?.data) ? res.data : (res?.data?.resumes || []);
       setSavedResumes(arr || []);
+      // If the user previously saved a resume in this browser session, restore edit mode
+      try {
+        const lastId = typeof window !== 'undefined' ? window.localStorage.getItem('resumeBuilder.lastSavedResumeId') : null;
+        if (lastId && arr && arr.length) {
+          const found = (arr || []).find(r => String(r.id) === String(lastId) || String(r._id) === String(lastId));
+          if (found) {
+            // Load into edit mode so subsequent saves will update unless user clicks New
+            // Reuse existing handler to populate form and enter edit snapshot mode
+            handleEditResume(found);
+          }
+        }
+      } catch (e) {
+        // non-fatal
+      }
+      return arr || [];
     } catch (err) {
       console.warn('Failed to fetch saved resumes', err);
       setSavedResumes([]);
+      return [];
     }
   };
 
@@ -630,7 +653,25 @@ export default function ResumeBuilderPage() {
       await saveResume(payload);
       
       setExtractionDialogOpen(false);
-      fetchSavedResumes();
+      const arr = await fetchSavedResumes();
+      // If we didn't get an id from API response above, try to pick the most-recently-updated resume
+      if (!editingResumeId && Array.isArray(arr) && arr.length) {
+        try {
+          const sorted = arr.slice().sort((a,b) => {
+            const ta = a?.updatedAt || a?.updated_at || a?.createdAt || a?.created_at || 0;
+            const tb = b?.updatedAt || b?.updated_at || b?.createdAt || b?.created_at || 0;
+            return new Date(tb) - new Date(ta);
+          });
+          const latest = sorted[0];
+          if (latest) {
+            // enter edit mode for the latest resume
+            handleEditResume(latest);
+            try { if (typeof window !== 'undefined' && window.localStorage) window.localStorage.setItem('resumeBuilder.lastSavedResumeId', String(latest.id || latest._id || '')); } catch (e) {}
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
       setActiveTab('saved');
       
       toast({
@@ -1117,6 +1158,56 @@ export default function ResumeBuilderPage() {
     }
   };
 
+  // Handle delete button click for saved resumes - opens confirmation dialog
+  const handleDeleteResume = (resume) => {
+    setResumeToDelete(resume);
+    setDeleteDialogOpen(true);
+  };
+
+  // Confirm and execute the delete
+  const confirmDeleteResume = async () => {
+    if (!resumeToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const resumeId = resumeToDelete.id || resumeToDelete._id;
+      await deleteResume(resumeId);
+      
+      // If we're currently editing this resume, clear the editing state
+      if (editingResumeId === resumeId) {
+        setEditingResumeId(null);
+        setEditingResumeTitle('');
+        setIsEditingSnapshot(false);
+        try {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            window.localStorage.removeItem('resumeBuilder.lastSavedResumeId');
+          }
+        } catch (e) {}
+      }
+      
+      // Refresh the saved resumes list
+      await fetchSavedResumes();
+      
+      // Close dialog
+      setDeleteDialogOpen(false);
+      setResumeToDelete(null);
+      
+      toast({
+        title: "Success",
+        description: "Resume deleted successfully!",
+      });
+    } catch (error) {
+      console.error('Error deleting resume:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete resume",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleGenerateResume = async () => {
     setGenerating(true);
     try {
@@ -1189,20 +1280,56 @@ export default function ResumeBuilderPage() {
         // Create new resume snapshot
         const payload = { data: mapped, template: selectedTemplate };
         console.log('[ResumeBuilder] Creating new snapshot:', payload);
-        await saveResume(payload);
-      }
-
-      // Also update profile entities if not in edit mode
-      if (!isEditingSnapshot) {
+        const res = await saveResume(payload);
+        
+        // Also update profile entities since this is a new save
         await syncProfileFromResumeData();
+        
+        // Fetch saved resumes to find the newly created one
+        const arr = await fetchSavedResumes();
+        
+        // Try to extract the created resume id/title from common response shapes
+        const created = res?.data || res;
+        let newId = created?.id || created?._id || created?.resume?.id || created?.resume?._id || null;
+        let newTitle = created?.title || payload.title || (created?.resume && created.resume.title) || `Resume ${new Date().toLocaleString()}`;
+        
+        // If we didn't get an id from API response, pick the most-recently-updated resume
+        if (!newId && Array.isArray(arr) && arr.length) {
+          try {
+            const sorted = arr.slice().sort((a,b) => {
+              const ta = a?.updatedAt || a?.updated_at || a?.createdAt || a?.created_at || 0;
+              const tb = b?.updatedAt || b?.updated_at || b?.createdAt || b?.created_at || 0;
+              return new Date(tb) - new Date(ta);
+            });
+            const latest = sorted[0];
+            if (latest) {
+              newId = latest.id || latest._id;
+              newTitle = latest.title || newTitle;
+            }
+          } catch (e) {
+            console.warn('Failed to find latest resume', e);
+          }
+        }
+        
+        // Set editing state so UI switches to New+Update buttons
+        if (newId) {
+          setEditingResumeId(newId);
+          setEditingResumeTitle(newTitle);
+          setIsEditingSnapshot(true);
+          try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+              window.localStorage.setItem('resumeBuilder.lastSavedResumeId', String(newId));
+            }
+          } catch (e) {
+            // ignore storage errors
+          }
+        }
       }
       
       toast({
         title: "Success",
         description: isEditingSnapshot ? "Resume snapshot updated successfully!" : "Resume saved successfully!",
       });
-      
-      fetchSavedResumes();
     } catch (error) {
       console.error('Error saving resume:', error);
       toast({
@@ -1422,15 +1549,47 @@ export default function ResumeBuilderPage() {
                 </Button>
               )}
 
-              <Button 
-                onClick={handleSaveResume}
-                variant="outline"
-                className="gap-2"
-                disabled={loading}
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Save
-              </Button>
+              {/* When we have a saved resume loaded (editingResumeId), show New + Update
+                  Otherwise show the one-shot Save button for creating a new resume */}
+              {editingResumeId ? (
+                <>
+                  <Button
+                    onClick={() => {
+                      // switch to creating a new resume (do not clear form)
+                      setEditingResumeId(null);
+                      setIsEditingSnapshot(false);
+                      setEditingResumeTitle('');
+                      try {
+                        if (typeof window !== 'undefined' && window.localStorage) window.localStorage.removeItem('resumeBuilder.lastSavedResumeId');
+                      } catch (e) {}
+                    }}
+                    variant="outline"
+                    className="gap-2"
+                    disabled={loading}
+                  >
+                    New
+                  </Button>
+
+                  <Button
+                    onClick={handleSaveResume}
+                    className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                    disabled={loading}
+                  >
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Update
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  onClick={handleSaveResume}
+                  variant="outline"
+                  className="gap-2"
+                  disabled={loading}
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  Save
+                </Button>
+              )}
 
               <Button 
                 onClick={handleGenerateResume}
@@ -2082,15 +2241,26 @@ export default function ResumeBuilderPage() {
                         Edit
                       </Button>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full"
-                      onClick={() => handleDownloadSaved(resume)}
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download PDF
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleDownloadSaved(resume)}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleDeleteResume(resume)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))
@@ -2239,6 +2409,55 @@ export default function ResumeBuilderPage() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <Trash2 className="h-5 w-5" />
+              Delete Resume
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              Are you sure you want to delete{' '}
+              <span className="font-semibold text-foreground">
+                "{resumeToDelete?.title || 'Untitled Resume'}"
+              </span>
+              ? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setResumeToDelete(null);
+              }}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteResume}
+              disabled={isDeleting}
+              className="gap-2"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </>
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

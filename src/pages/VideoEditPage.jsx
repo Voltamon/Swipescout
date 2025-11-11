@@ -4,7 +4,7 @@ import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
 } from 'lucide-react';
-import { uploadVideo, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus } from '@/services/api';
+import { uploadVideo, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus, getVideoInfo } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
@@ -21,30 +21,46 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 // FFmpeg import with fallback
 let ffmpeg;
-let createFFmpeg;
+let FFmpegClass;
 let fetchFile;
+let toBlobURL;
+
+console.log('VideoEditPage: Starting FFmpeg import...');
 
 try {
   import('@ffmpeg/ffmpeg').then(module => {
-    createFFmpeg = module.createFFmpeg;
-    fetchFile = module.fetchFile;
+    console.log('FFmpeg module loaded successfully');
+    FFmpegClass = module.FFmpeg;
+
+    // Provide a lightweight fetchFile polyfill (works for Blob/File or remote URL)
+    fetchFile = async (file) => {
+      if (file instanceof File || file instanceof Blob) {
+        return new Uint8Array(await file.arrayBuffer());
+      }
+      const response = await fetch(file);
+      return new Uint8Array(await response.arrayBuffer());
+    };
+
+    // toBlobURL not required; rely on ffmpeg.load() defaults from @ffmpeg/core package
     initializeFFmpeg();
-  }).catch(async () => {
-    const ffmpegModule = await import('@ffmpeg/ffmpeg');
-    createFFmpeg = ffmpegModule.default?.createFFmpeg || ffmpegModule.createFFmpeg;
-    fetchFile = ffmpegModule.default?.fetchFile || ffmpegModule.fetchFile;
-    initializeFFmpeg();
+  }).catch(err => {
+    console.error('Failed to load FFmpeg:', err);
   });
 } catch (error) {
   console.error('Failed to load FFmpeg:', error);
 }
 
 function initializeFFmpeg() {
-  if (createFFmpeg) {
-    ffmpeg = createFFmpeg({ 
-      log: true,
-      corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
-    });
+  console.log('initializeFFmpeg called, FFmpegClass exists:', !!FFmpegClass);
+  if (FFmpegClass) {
+    try {
+      ffmpeg = new FFmpegClass();
+      console.log('FFmpeg instance created:', ffmpeg);
+    } catch (err) {
+      console.error('Failed to create FFmpeg instance:', err);
+    }
+  } else {
+    console.error('FFmpegClass is not available');
   }
 }
 
@@ -99,28 +115,83 @@ export default function VideoEditPage() {
 
   useEffect(() => {
     async function loadFFmpeg() {
+      console.log('loadFFmpeg effect running, ffmpeg:', ffmpeg, 'loaded:', ffmpeg?.loaded);
       try {
-        if (ffmpeg && !ffmpeg.isLoaded()) {
-          ffmpeg.setProgress(({ ratio }) => {
-            setProcessingProgress(Math.round(ratio * 100));
-          });
-          await ffmpeg.load();
-          setLoadingFFmpeg(false);
+        if (ffmpeg && !ffmpeg.loaded) {
+          console.log('FFmpeg exists but not loaded, loading now...');
+
+          // Create a load task that first tries CDN then falls back to bundled
+          const loadTask = (async () => {
+            // Try a local-hosted core first (serve from public/ffmpeg) - this avoids
+            // Vite's transformed worker files which sometimes have bad MIME headers.
+            const localCore = '/ffmpeg/ffmpeg-core.js';
+            const localWasm = '/ffmpeg/ffmpeg-core.wasm';
+            try {
+              console.log('Attempting to load FFmpeg core from local path:', localCore);
+              await ffmpeg.load({ coreURL: localCore, wasmURL: localWasm });
+              console.log('Loaded FFmpeg core from local path');
+              return;
+            } catch (localErr) {
+              console.warn('Local core load failed, trying CDN...', localErr);
+            }
+
+            try {
+              console.log('Attempting to load FFmpeg core from CDN');
+              await ffmpeg.load({
+                coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.js',
+                wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.wasm'
+              });
+              console.log('Loaded FFmpeg core from CDN');
+            } catch (cdnErr) {
+              console.warn('CDN load failed, falling back to bundled load:', cdnErr);
+              // Try bundled load; if this hangs or fails it will be handled by the timeout below
+              await ffmpeg.load();
+            }
+          })();
+
+          // Timeout guard: if load doesn't complete in a reasonable time, give up and
+          // disable FFmpeg so the UI can continue in basic mode instead of being stuck.
+          const timeoutMs = 12000; // 12s
+          try {
+            await Promise.race([
+              loadTask,
+              new Promise((_, reject) => setTimeout(() => reject(new Error('FFmpeg load timeout')), timeoutMs))
+            ]);
+            console.log('FFmpeg loaded successfully!');
+            setLoadingFFmpeg(false);
+          } catch (loadErr) {
+            console.error('FFmpeg failed to load (timeout or error):', loadErr);
+            // Ensure we don't keep a partly-initialized ffmpeg instance around
+            try { ffmpeg = null; } catch (e) { /* ignore */ }
+            setLoadingFFmpeg(false);
+            toast({
+              description: 'FFmpeg failed to load or timed out. Editor will run in basic mode.',
+              variant: 'destructive'
+            });
+          }
+
         } else if (!ffmpeg) {
+          console.log('FFmpeg instance does not exist, waiting briefly then continuing in basic mode...');
           setTimeout(() => {
+            console.log('FFmpeg still not available after delay, ffmpeg:', ffmpeg);
             setLoadingFFmpeg(false);
             toast({ 
-              description: "FFmpeg failed to load. Some features may not work.",
-              variant: "destructive"
+              description: 'FFmpeg not available. Editor will run in basic mode.',
+              variant: 'destructive'
             });
           }, 3000);
+        } else {
+          console.log('FFmpeg already loaded');
+          setLoadingFFmpeg(false);
         }
       } catch (error) {
         console.error('Failed to load FFmpeg:', error);
+        // Defensive: clear ffmpeg so other code falls back to basic mode
+        try { ffmpeg = null; } catch (e) { /* ignore */ }
         setLoadingFFmpeg(false);
         toast({
-          description: "Failed to load video editor. Basic editing may still work.",
-          variant: "destructive"
+          description: 'Failed to initialize video editor. Basic editing may still work.',
+          variant: 'destructive'
         });
       }
     }
@@ -341,12 +412,14 @@ export default function VideoEditPage() {
   };
 
   const handleProcessVideo = async () => {
+    console.log('=== handleProcessVideo called ===');
     if (!videoUrl) {
       toast({ description: "Please select a video first", variant: "destructive" });
       return;
     }
 
-    if (!ffmpeg || !ffmpeg.isLoaded()) {
+    if (!ffmpeg || !ffmpeg.loaded) {
+      console.log('FFmpeg not loaded, using basic mode (setting original URL)');
       setProcessing(true);
       try {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -362,6 +435,7 @@ export default function VideoEditPage() {
       return;
     }
 
+    console.log('FFmpeg is loaded, starting real processing...');
     setProcessing(true);
     setProcessingProgress(0);
     
@@ -369,14 +443,15 @@ export default function VideoEditPage() {
       const inputFileName = 'input.mp4';
       const outputFileName = 'output.mp4';
 
+      console.log('Writing input file to FFmpeg...');
       if (videoFile) {
-        ffmpeg.FS('writeFile', inputFileName, await fetchFile(videoFile));
+        await ffmpeg.writeFile(inputFileName, await fetchFile(videoFile));
       } else if (selectedVideoFromList) {
         const videoFetchUrl = selectedVideoFromList.videoUrl || selectedVideoFromList.video_url || selectedVideoFromList.secure_url || '';
         if (videoFetchUrl) {
           const response = await fetch(videoFetchUrl);
           const blob = await response.blob();
-          ffmpeg.FS('writeFile', inputFileName, await fetchFile(blob));
+          await ffmpeg.writeFile(inputFileName, await fetchFile(blob));
         } else {
           throw new Error('Selected video has no accessible URL');
         }
@@ -402,8 +477,12 @@ export default function VideoEditPage() {
       
       const contrastVal = contrast / 100;
       const saturationVal = saturation / 100;
-      if (brightness !== 0 || contrastVal !== 1 || saturationVal !== 1) {
-        videoFilters.push(`eq=brightness=${brightness}:contrast=${contrastVal}:saturation=${saturationVal}`);
+      // Frontend `brightness` is a relative value (0 = no change). FFmpeg eq expects
+      // a brightness offset where 0 = no change (range approx -1..1). Map the
+      // UI brightness to FFmpeg by dividing by 100 (so 50 -> 0.5, -20 -> -0.2).
+      const brightnessVal = brightness / 100;
+      if (brightnessVal !== 0 || contrastVal !== 1 || saturationVal !== 1) {
+        videoFilters.push(`eq=brightness=${brightnessVal}:contrast=${contrastVal}:saturation=${saturationVal}`);
       }
       
       if (blur > 0) {
@@ -444,23 +523,36 @@ export default function VideoEditPage() {
       command.push('-crf', '23');
       command.push(outputFileName);
 
-      await ffmpeg.run(...command);
+      console.log('Running FFmpeg command:', command.join(' '));
+      await ffmpeg.exec(command);
 
-      const data = ffmpeg.FS('readFile', outputFileName);
-      const processedBlob = new Blob([data.buffer], { type: 'video/mp4' });
+      console.log('FFmpeg processing complete, reading output file...');
+      const data = await ffmpeg.readFile(outputFileName);
+      const processedBlob = new Blob([data.buffer || data], { type: 'video/mp4' });
       const processedUrl = URL.createObjectURL(processedBlob);
       
+      console.log('Local processing complete. Blob size:', processedBlob.size, 'URL:', processedUrl);
+      console.log('Current processedVideoUrl before update:', processedVideoUrl);
+      console.log('Current videoUrl (original):', videoUrl);
+      
       if (processedVideoUrl) {
+        console.log('Revoking old processedVideoUrl:', processedVideoUrl);
         URL.revokeObjectURL(processedVideoUrl);
       }
       
       setProcessedVideoUrl(processedUrl);
-      setPreviewDialog(true);
-      toast({ description: "Video processed successfully!" });
+      console.log('Set new processedVideoUrl to:', processedUrl);
+      
+      // Small delay to ensure state updates before opening dialog
+      setTimeout(() => {
+        console.log('Opening preview dialog');
+        setPreviewDialog(true);
+        toast({ description: "Video processed successfully!" });
+      }, 100);
 
       try {
-        ffmpeg.FS('unlink', inputFileName);
-        ffmpeg.FS('unlink', outputFileName);
+        await ffmpeg.deleteFile(inputFileName);
+        await ffmpeg.deleteFile(outputFileName);
       } catch (e) {
         // Ignore cleanup errors
       }
@@ -526,9 +618,35 @@ export default function VideoEditPage() {
       setProcessing(true);
       const formData = await buildServerFormData();
       const res = await editVideoApi(formData);
+      // Try to load the processed file for preview. The server returns a new video id
+      // in res.data.data.videoId. If we can fetch its info and the file path, attempt
+      // to construct a public URL to preview it. (This assumes the backend serves
+      // the uploads directory from the server root or via a public URL.)
+      const newVideoId = res?.data?.data?.videoId || res?.data?.data?.id;
+      if (newVideoId) {
+        try {
+          const info = await getVideoInfo(newVideoId);
+          const filePath = info?.data?.data?.filePath || info?.data?.data?.file_path || info?.data?.filePath || info?.data?.file_path;
+          if (filePath) {
+            // Derive public base by stripping /api from API base if present
+            const apiRaw = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+            const cleaned = String(apiRaw).replace(/\/\/+$/g, '');
+            const publicBase = cleaned.match(/\/api(?:$|\/)\/?/) ? cleaned.replace(/\/api(?:$|\/)\/?/, '') : cleaned;
+            const publicUrl = `${publicBase}/${String(filePath).replace(/^\/+/, '')}`;
+            setProcessedVideoUrl(publicUrl);
+            setPreviewDialog(true);
+            toast({ description: 'Video processed on server successfully. Preview loaded.' });
+            setProcessing(false);
+            return;
+          }
+        } catch (e) {
+          console.warn('Could not fetch processed video info for preview', e);
+        }
+      }
+
+      // Fallback: open preview dialog without a processed URL (user can download/upload from server)
       toast({ description: 'Video processed on server successfully.' });
       setPreviewDialog(true);
-      // Optionally fetch back via getVideoInfo
     } catch (e) {
       console.error(e);
       toast({ description: 'Server processing failed', variant: 'destructive' });
@@ -962,10 +1080,46 @@ export default function VideoEditPage() {
             <DialogTitle>Preview Processed Video</DialogTitle>
             <DialogDescription>Review your edited video before uploading</DialogDescription>
           </DialogHeader>
-          {processedVideoUrl && (
+          {console.log('Preview Dialog render - processedVideoUrl:', processedVideoUrl)}
+          {processedVideoUrl ? (
             <div className="bg-black rounded-lg overflow-hidden">
-              <video src={processedVideoUrl} controls className="w-full" />
+              <video 
+                key={processedVideoUrl} 
+                src={processedVideoUrl} 
+                controls 
+                className="w-full"
+                onLoadedMetadata={(e) => {
+                  console.log('Preview video loaded successfully');
+                  console.log('Video element src:', e.target.src);
+                  console.log('Video element currentSrc:', e.target.currentSrc);
+                }}
+                onError={(e) => console.error('Preview video error:', e)}
+              />
             </div>
+          ) : (
+            // If no processed URL is available, show a live preview of the currently
+            // selected/original video with the same CSS filters so the user can inspect
+            // how the edited result will look before actually running FFmpeg.
+            (videoUrl ? (
+              <div className="bg-black rounded-lg overflow-hidden">
+                <div className="p-4 text-sm text-gray-300">Live preview (not yet processed). Use "Process Locally" or "Process on Server" to generate a processed file.</div>
+                <video
+                  src={videoUrl}
+                  controls
+                  className="w-full"
+                  style={{
+                    filter: `brightness(${1 + brightness/100}) contrast(${contrast/100}) saturate(${saturation/100}) blur(${blur}px)`,
+                    transform: `rotate(${rotation}deg)`
+                  }}
+                  onLoadedMetadata={(e) => console.log('Live preview loaded, src:', e.target.currentSrc)}
+                  onError={(e) => console.error('Live preview error:', e)}
+                />
+              </div>
+            ) : (
+              <div className="bg-gray-100 rounded-lg p-8 text-center">
+                <p className="text-gray-600">No processed video available for preview</p>
+              </div>
+            ))
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setPreviewDialog(false)}>Cancel</Button>

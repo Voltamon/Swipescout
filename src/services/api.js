@@ -315,6 +315,7 @@ export const generateResume = (resumeData) => api.post('/resume/generate', resum
 export const previewResume = (resumeData) => api.post('/resume/preview', resumeData);
 export const saveResume = (resumeData) => api.post('/resume/save', resumeData);
 export const updateResume = (id, resumeData) => api.put(`/resume/${id}`, resumeData);
+export const deleteResume = (id) => api.delete(`/resume/${id}`);
 export const getUserResumes = () => api.get('/resume/user');
 
 // Search & Connect

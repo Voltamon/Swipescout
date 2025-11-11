@@ -406,6 +406,11 @@ export default function VideosPage({ setVideoTab }) {
 
 // Video Card Component
 function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, onDelete, onRetry, getStatusBadge }) {
+  // Use hooks inside the card so it has access to auth, navigation and toast
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const isProcessing = video.status === 'uploading' || video.status === 'processing';
   const isFailed = video.status === 'failed';
 
