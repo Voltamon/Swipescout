@@ -87,7 +87,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
     );
   }
 
-  const mainVideo = videos.find(v => v.video_position === 'main') || videos[0];
+  const mainVideo = videos.find(v => (v.videoPosition === 'main' || v.video_position === 'main')) || videos[0];
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
@@ -111,9 +111,6 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                     <p className="text-lg text-muted-foreground">{profile.industry}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={() => navigate(`/employer-tabs?group=companyContent&tab=company-profile&edit=true`)} className="bg-purple-600 text-white">
-                      Edit Profile
-                    </Button>
                     {/* Show Connect only when viewing someone else's profile */}
                     {profile?.id && user?.id && profile.id !== user.id && (
                       <Button
@@ -131,11 +128,10 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                         Connect
                       </Button>
                     )}
-                    <ReportButton contentType="user" contentId={profile.id} className="bg-white/5 text-white hover:bg-white/20" />
-                  </div>
-                </div>
+                      <ReportButton contentType="user" contentId={profile.id} className="bg-white/5 text-white hover:bg-white/20" />
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                   {profile.location && (
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -171,6 +167,32 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                   <div className="mt-3 text-muted-foreground whitespace-pre-line">{profile.description}</div>
                 )}
               </div>
+
+              {/* Main company video (public view) */}
+              {mainVideo && (
+                <div className="lg:w-[360px] flex-shrink-0">
+                  <Card className="overflow-hidden">
+                    <CardHeader className="bg-black p-3">
+                      <CardTitle className="text-white text-lg">Company Video</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <div className="relative bg-black aspect-video max-h-56">
+                        <video
+                          src={mainVideo.video_url || mainVideo.videoUrl || ''}
+                          className="w-full h-full object-cover"
+                          controls
+                        />
+                      </div>
+                      <div className="p-3">
+                        <p className="font-medium text-sm text-gray-900">{mainVideo.video_title || mainVideo.videoTitle || 'Company Video'}</p>
+                        {mainVideo.description && (
+                          <p className="text-sm text-muted-foreground mt-1">{mainVideo.description}</p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -195,15 +217,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{jobs.reduce((sum, j) => sum + (j.applicants_count || 0), 0)}</div>
-                <p className="text-xs text-muted-foreground mt-1">Candidates applied</p>
-              </CardContent>
-            </Card>
+            {/* Total Applications removed for public view */}
 
             <Card>
               <CardHeader>
@@ -316,6 +330,8 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
         </TabsContent>
       </Tabs>
     </div>
+    
   );
-}
+} 
+
    
