@@ -194,6 +194,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                 </div>
               )}
             </div>
+            </div>
           </CardContent>
         </Card>
       </div>

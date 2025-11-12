@@ -77,11 +77,69 @@ export default function JobSeekerProfile() {
         getUserEducation()
       ]);
 
-      setProfile(profileRes.data);
-      setVideos(videosRes.data.videos || []);
-      setSkills(skillsRes.data.skills || []);
-      setExperiences(expRes.data.experiences || []);
-      setEducation(eduRes.data.education || []);
+      // Normalize backend shapes to the frontend-friendly shape used in this component.
+      const rawProfile = profileRes?.data || null;
+
+      const normalizeProfile = (p) => {
+        if (!p) return null;
+        // Derive fullName from available fields
+        const first = (p.first_name || p.user?.firstName || p.user?.displayName || '').toString().trim();
+        const last = (p.last_name || p.user?.lastName || '').toString().trim();
+        const displayName = (p.user?.displayName || p.displayName || '').toString().trim();
+        const fullName = p.fullName || displayName || `${first} ${last}`.trim() || null;
+
+        // Headline/title
+        const headline = p.headline || p.title || p.preferred_job_title || null;
+
+        // Picture may be stored under several keys
+        const profilePicture = p.profilePicture || p.profile_pic || p.user?.photoUrl || p.photoUrl || null;
+
+        // Social/contact
+        const linkedin = p.linkedin || p.linkedin_url || p.social?.linkedin || null;
+        const github = p.github || p.social?.github || null;
+        const twitter = p.twitter || p.social?.twitter || null;
+
+        // Location/email/phone
+        const location = p.location || p.address || (p.city && p.city.name) || null;
+        const email = p.email || p.user?.email || null;
+        const phone = p.phone || p.mobile || p.user?.phone || null;
+
+        return {
+          ...p,
+          fullName,
+          headline,
+          profilePicture,
+          linkedin,
+          github,
+          twitter,
+          location,
+          email,
+          phone
+        };
+      };
+
+      setProfile(normalizeProfile(rawProfile));
+
+      // Videos endpoint returns { success, page, limit, total, videos }
+      setVideos(videosRes?.data?.videos || []);
+
+      // Skills endpoint returns { message, skills }
+      setSkills(skillsRes?.data?.skills || []);
+
+      // Normalize experiences: backend uses company_name, start_date, end_date, currently_working
+      const rawExperiences = expRes?.data?.experiences || [];
+      const mappedExperiences = (rawExperiences || []).map((e) => ({
+        ...e,
+        company: e.company || e.company_name || '',
+        startDate: e.startDate || e.start_date || e.start_date_time || e.start_date,
+        endDate: e.endDate || e.end_date || e.end_date,
+        current: e.current || e.currently_working || false,
+        description: e.description || e.desc || ''
+      }));
+      setExperiences(mappedExperiences);
+
+      // Education endpoint uses { educations }
+      setEducation(eduRes?.data?.educations || eduRes?.data?.education || []);
     } catch (error) {
       console.error('Error fetching profile data:', error);
       toast({
@@ -255,7 +313,7 @@ export default function JobSeekerProfile() {
                       <div className="relative bg-black aspect-[9/16] max-h-[450px]">
                         <video
                           ref={videoRef}
-                          src={`${VITE_API_BASE_URL}${currentVideo.videoUrl}`}
+                          src={currentVideo.videoUrl?.startsWith('blob:') || currentVideo.videoUrl?.startsWith('http') ? currentVideo.videoUrl : `${VITE_API_BASE_URL}${currentVideo.videoUrl}`}
                           className="w-full h-full object-cover"
                           loop
                           onClick={handlePlayPause}
@@ -343,7 +401,7 @@ export default function JobSeekerProfile() {
                   {skills.slice(0, 10).map((skill, index) => (
                     <Badge key={index} variant="secondary" className="bg-cyan-100 text-cyan-800">
                       {String(localize(skill.name))}
-                      {skill.level && <span className="ml-1 text-xs">â€¢ {skill.level}</span>}
+                      {skill.level && <span className="ml-1 text-xs">• {skill.level}</span>}
                     </Badge>
                   ))}
                 </div>
@@ -533,7 +591,7 @@ export default function JobSeekerProfile() {
                     >
                       {String(localize(skill.name))}
                       {skill.level && (
-                        <span className="ml-2 text-xs opacity-75">â€¢ {skill.level}</span>
+                        <span className="ml-2 text-xs opacity-75">• {skill.level}</span>
                       )}
                     </Badge>
                   ))}

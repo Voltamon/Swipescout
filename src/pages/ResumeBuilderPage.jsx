@@ -113,6 +113,7 @@ export default function ResumeBuilderPage() {
   const [skillTypeFilter, setSkillTypeFilter] = useState('');
   const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
   const typeDropdownRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [categoriesMap, setCategoriesMap] = useState({});
   const [allSkillTypes, setAllSkillTypes] = useState([]);
 
@@ -127,6 +128,8 @@ export default function ResumeBuilderPage() {
   // CV Extraction dialog state
   const [extractionDialogOpen, setExtractionDialogOpen] = useState(false);
   const [extractedData, setExtractedData] = useState(null);
+  const [extractionWorkingCopy, setExtractionWorkingCopy] = useState(null);
+  const [extractionSkillInput, setExtractionSkillInput] = useState('');
 
   // Delete confirmation dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -155,6 +158,62 @@ export default function ResumeBuilderPage() {
       }
     }
     return String(val);
+  };
+
+  // Map the raw extracted CV payload to the local resumeData shape used by the form
+  const mapExtractedToResumeData = (ex) => {
+    if (!ex) return {};
+    const personal = ex.personalInfo || ex.personal || {};
+    const fullName = personal.fullName || personal.full_name || personal.name || '';
+    const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
+    const first_name = parts.length ? parts[0] : (personal.first_name || '');
+    const last_name = parts.length > 1 ? parts.slice(-1)[0] : (personal.last_name || '');
+    const second_name = parts.length > 2 ? parts.slice(1, -1).join(' ') : (personal.second_name || '');
+
+    const mappedPersonal = {
+      first_name: personal.first_name || first_name || '',
+      second_name: personal.second_name || second_name || '',
+      last_name: personal.last_name || last_name || '',
+      fullName: fullName || `${first_name} ${last_name}`.trim(),
+      email: personal.email || personal.email_address || personal.emailAddress || '',
+      phone: personal.phone || personal.mobile || personal.phone_number || '',
+      location: personal.location || personal.address || personal.city || '',
+      linkedin: personal.linkedin || personal.linkedin_url || '',
+      website: personal.website || personal.url || ''
+    };
+
+    const experiences = (ex.experiences || ex.experience || []).map(exp => ({
+      title: exp.title || exp.position || '',
+      company: exp.company || exp.company_name || '',
+      location: exp.location || '',
+      startDate: exp.startDate || exp.start_date || exp.from || '',
+      endDate: exp.endDate || exp.end_date || exp.to || '',
+      current: !!exp.current || !!exp.currently_working,
+      description: exp.description || exp.summary || ''
+    }));
+
+    const education = (ex.education || []).map(ed => ({
+      degree: ed.degree || ed.title || '',
+      institution: ed.institution || ed.school || '',
+      location: ed.location || '',
+      startYear: ed.startYear || ed.start_year || (ed.graduationDate ? String(ed.graduationDate).slice(0,4) : ''),
+      endYear: ed.endYear || ed.end_year || ed.graduationDate || '',
+      gpa: ed.gpa || '',
+      description: ed.description || ''
+    }));
+
+    const skills = Array.isArray(ex.skills) ? ex.skills.map(s => (typeof s === 'string' ? s : (s.name || s.skill_name || extractSkillName(s)))) : [];
+
+    return {
+      personalInfo: mappedPersonal,
+      summary: ex.summary || personal.summary || '',
+      experiences,
+      education,
+      skills,
+      languages: ex.languages || [],
+      certifications: ex.certifications || [],
+      projects: ex.projects || []
+    };
   };
 
   // Type label translations (provide English and some common translations as a helpful default).
@@ -555,27 +614,85 @@ export default function ResumeBuilderPage() {
   const handleFileUpload = async (e) => {
     const file = e?.target?.files?.[0];
     if (!file) return;
+    
+    console.log('[handleFileUpload] File selected:', file.name, file.type, file.size);
     setSelectedFile(file);
     setExtracting(true);
     setProgress(0);
 
     const form = new FormData();
-    form.append('file', file);
+    // backend expects field name `cv` (see upload.single('cv') in server)
+    form.append('cv', file);
 
     try {
+      console.log('[handleFileUpload] Calling extractCVData API...');
       const res = await extractCVData(form);
-      const data = res?.data || res;
-
-      console.log('[ResumeBuilder] CV extraction result:', data);
-
-      // Store extracted data and show dialog
-      setExtractedData(data);
-      setExtractionDialogOpen(true);
+      console.log('[handleFileUpload] Raw API response:', res);
       
-      toast({ title: 'Extraction complete', description: 'Review the extracted data and choose an action', variant: 'default' });
+      const data = res?.data || res;
+      console.log('[handleFileUpload] Extracted data object:', data);
+
+      // The backend returns { success, message, data: { personalInfo, experience, education, skills } }
+      const extractedPayload = data?.data || data;
+      console.log('[handleFileUpload] Extracted payload:', extractedPayload);
+
+      // Store extracted data and prepare editable working copy in dialog
+      setExtractedData(extractedPayload);
+      
+      try {
+        const mapped = mapExtractedToResumeData(extractedPayload);
+        console.log('[handleFileUpload] Mapped data:', mapped);
+        setExtractionWorkingCopy(mapped);
+      } catch (e) {
+        console.warn('Failed to map extracted data into working copy:', e);
+        // Create empty structure if mapping fails
+        setExtractionWorkingCopy({
+          personalInfo: {
+            first_name: '',
+            second_name: '',
+            last_name: '',
+            fullName: '',
+            email: '',
+            phone: '',
+            location: '',
+            linkedin: '',
+            website: ''
+          },
+          summary: '',
+          experiences: [],
+          education: [],
+          skills: [],
+          languages: [],
+          certifications: [],
+          projects: []
+        });
+      }
+
+      // Open the extraction review dialog (editable fields) and show build tab behind it
+      setActiveTab('build');
+      
+      // Small delay to ensure tab switch completes before dialog opens
+      setTimeout(() => {
+        setExtractionDialogOpen(true);
+      }, 100);
+
+      toast({ 
+        title: 'Extraction complete', 
+        description: 'Review and edit the extracted information before applying.', 
+        variant: 'default' 
+      });
+      
     } catch (err) {
-      console.error('Error extracting CV:', err);
-      toast({ title: 'Error', description: 'Failed to extract CV data', variant: 'destructive' });
+      // Improve error reporting so user sees server error details when available
+      console.error('[handleFileUpload] Error extracting CV:', err);
+      console.error('[handleFileUpload] Error response:', err?.response);
+      
+      const msg = err?.response?.data?.message || err?.response?.data?.error || err?.message || String(err);
+      toast({ 
+        title: 'Error extracting CV', 
+        description: String(msg).slice(0, 200), 
+        variant: 'destructive' 
+      });
     } finally {
       setExtracting(false);
       setProgress(0);
@@ -584,43 +701,17 @@ export default function ResumeBuilderPage() {
 
   // Handle "Populate to Profile" action from extraction dialog
   const handlePopulateToProfile = async () => {
-    if (!extractedData) return;
-    
+    // Now this will use the working copy (post edits) rather than raw extractedData
+    if (!extractionWorkingCopy) return;
     setLoading(true);
     try {
-      // Map extracted data to resumeData format
-      const mappedData = {
-        personalInfo: extractedData.personalInfo || extractedData.personal || {},
-        summary: extractedData.summary || '',
-        experiences: extractedData.experiences || [],
-        education: extractedData.education || [],
-        skills: extractedData.skills || [],
-        languages: extractedData.languages || [],
-        certifications: extractedData.certifications || [],
-        projects: extractedData.projects || []
-      };
-      
-      // Set in form
-      setResumeData(mappedData);
-      
-      // Sync to profile immediately - need to wait for state update
-      // Use the mapped data directly instead of relying on state
-      await syncProfileFromData(mappedData);
-      
+      setResumeData(extractionWorkingCopy);
+      await syncProfileFromData(extractionWorkingCopy);
       setExtractionDialogOpen(false);
-      setActiveTab('build');
-      
-      toast({
-        title: "Success",
-        description: "CV data populated to your profile!",
-      });
+      toast({ title: 'Success', description: 'Profile updated from extracted CV.' });
     } catch (error) {
       console.error('Error populating to profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to populate profile",
-        variant: "destructive",
-      });
+      toast({ title: 'Error', description: 'Failed to update profile', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -628,63 +719,19 @@ export default function ResumeBuilderPage() {
 
   // Handle "Save as New Resume" action from extraction dialog
   const handleSaveAsNewResume = async () => {
-    if (!extractedData) return;
-    
+    if (!extractionWorkingCopy) return;
     setLoading(true);
     try {
-      // Map extracted data to backend schema
-      const mappedData = {
-        personalInfo: extractedData.personalInfo || extractedData.personal || {},
-        summary: extractedData.summary || '',
-        experience: extractedData.experiences || extractedData.experience || [],
-        education: extractedData.education || [],
-        skills: extractedData.skills || [],
-        languages: extractedData.languages || [],
-        certifications: extractedData.certifications || [],
-        projects: extractedData.projects || []
-      };
-      
-      const payload = { 
-        data: mappedData, 
-        template: 'modern',
-        title: 'Extracted CV - ' + new Date().toLocaleDateString()
-      };
-      
+      const mappedData = mapToBackendSchema(extractionWorkingCopy);
+      const payload = { data: mappedData, template: selectedTemplate, title: `Extracted CV - ${new Date().toLocaleDateString()}` };
       await saveResume(payload);
-      
       setExtractionDialogOpen(false);
-      const arr = await fetchSavedResumes();
-      // If we didn't get an id from API response above, try to pick the most-recently-updated resume
-      if (!editingResumeId && Array.isArray(arr) && arr.length) {
-        try {
-          const sorted = arr.slice().sort((a,b) => {
-            const ta = a?.updatedAt || a?.updated_at || a?.createdAt || a?.created_at || 0;
-            const tb = b?.updatedAt || b?.updated_at || b?.createdAt || b?.created_at || 0;
-            return new Date(tb) - new Date(ta);
-          });
-          const latest = sorted[0];
-          if (latest) {
-            // enter edit mode for the latest resume
-            handleEditResume(latest);
-            try { if (typeof window !== 'undefined' && window.localStorage) window.localStorage.setItem('resumeBuilder.lastSavedResumeId', String(latest.id || latest._id || '')); } catch (e) {}
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
+      await fetchSavedResumes();
       setActiveTab('saved');
-      
-      toast({
-        title: "Success",
-        description: "Resume saved successfully!",
-      });
+      toast({ title: 'Success', description: 'Resume saved from extracted CV.' });
     } catch (error) {
-      console.error('Error saving resume:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save resume",
-        variant: "destructive",
-      });
+      console.error('Error saving resume from extraction:', error);
+      toast({ title: 'Error', description: 'Failed to save extracted resume', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -2152,10 +2199,15 @@ export default function ResumeBuilderPage() {
             <CardContent className="space-y-6">
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
                 <input
+                  ref={fileInputRef}
                   type="file"
                   id="cv-upload"
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileUpload}
+                  onClick={() => {
+                    // clear the input value so selecting the same file twice still triggers change
+                    try { if (fileInputRef && fileInputRef.current) fileInputRef.current.value = ''; } catch (e) {}
+                  }}
                   className="hidden"
                   disabled={extracting}
                 />
@@ -2177,7 +2229,15 @@ export default function ResumeBuilderPage() {
                       </p>
                     </div>
                     {!extracting && (
-                      <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700">
+                      <Button
+                        type="button"
+                        className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                        onClick={(e) => {
+                          // Prevent any default label interaction and trigger the hidden input
+                          e.preventDefault();
+                          try { if (fileInputRef && fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click(); } } catch (err) { console.warn('file input click failed', err); }
+                        }}
+                      >
                         Choose File
                       </Button>
                     )}
@@ -2291,121 +2351,221 @@ export default function ResumeBuilderPage() {
           <DialogHeader>
             <DialogTitle>CV Extraction Results</DialogTitle>
             <DialogDescription>
-              Review the extracted information and choose how to proceed
+              Review and edit the extracted information. Changes apply only when you confirm.
             </DialogDescription>
           </DialogHeader>
           
-          {extractedData && (
-            <div className="space-y-6">
-              {/* Personal Info Section */}
-              {extractedData.personalInfo && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Personal Information
-                  </h3>
-                  <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
-                    {extractedData.personalInfo.fullName && (
-                      <p><span className="font-medium">Name:</span> {extractedData.personalInfo.fullName}</p>
-                    )}
-                    {extractedData.personalInfo.email && (
-                      <p><span className="font-medium">Email:</span> {extractedData.personalInfo.email}</p>
-                    )}
-                    {extractedData.personalInfo.phone && (
-                      <p><span className="font-medium">Phone:</span> {extractedData.personalInfo.phone}</p>
-                    )}
-                    {extractedData.personalInfo.location && (
-                      <p><span className="font-medium">Location:</span> {extractedData.personalInfo.location}</p>
-                    )}
+          {extractionWorkingCopy && (
+            <div className="space-y-8">
+              {/* Extraction Summary */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-sm text-blue-900 mb-2">Extraction Summary</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <span className="text-gray-600">Personal Info:</span>
+                    <Badge variant={extractionWorkingCopy.personalInfo.email ? "default" : "secondary"}>
+                      {extractionWorkingCopy.personalInfo.email ? 'Found' : 'Missing'}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-blue-600" />
+                    <span className="text-gray-600">Experience:</span>
+                    <Badge variant={extractionWorkingCopy.experiences.length > 0 ? "default" : "secondary"}>
+                      {extractionWorkingCopy.experiences.length} items
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4 text-blue-600" />
+                    <span className="text-gray-600">Education:</span>
+                    <Badge variant={extractionWorkingCopy.education.length > 0 ? "default" : "secondary"}>
+                      {extractionWorkingCopy.education.length} items
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Award className="h-4 w-4 text-blue-600" />
+                    <span className="text-gray-600">Skills:</span>
+                    <Badge variant={extractionWorkingCopy.skills.length > 0 ? "default" : "secondary"}>
+                      {extractionWorkingCopy.skills.length} items
+                    </Badge>
                   </div>
                 </div>
-              )}
+                {extractionWorkingCopy.experiences.length === 0 && 
+                 extractionWorkingCopy.education.length === 0 && 
+                 extractionWorkingCopy.skills.length === 0 && (
+                  <p className="mt-3 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded p-2">
+                    ⚠️ Limited data was extracted from your CV. You can manually fill in the fields below or try uploading a different format.
+                  </p>
+                )}
+              </div>
 
-              {/* Summary Section */}
-              {extractedData.summary && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">Summary</h3>
-                  <div className="bg-gray-50 p-4 rounded-lg text-sm">
-                    <p>{extractedData.summary}</p>
-                  </div>
+              {/* Editable Personal Info */}
+              <section className="space-y-4">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <FileText className="h-5 w-5" /> Personal Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.first_name}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, first_name: e.target.value } }))}
+                    placeholder="First name"
+                  />
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.second_name}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, second_name: e.target.value } }))}
+                    placeholder="Second name"
+                  />
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.last_name}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, last_name: e.target.value } }))}
+                    placeholder="Family name"
+                  />
+                  <Input
+                    type="email"
+                    value={extractionWorkingCopy.personalInfo.email}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, email: e.target.value } }))}
+                    placeholder="Email"
+                  />
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.phone}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, phone: e.target.value } }))}
+                    placeholder="Phone"
+                  />
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.location}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, location: e.target.value } }))}
+                    placeholder="Location"
+                  />
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.linkedin}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, linkedin: e.target.value } }))}
+                    placeholder="LinkedIn"
+                  />
+                  <Input
+                    value={extractionWorkingCopy.personalInfo.website}
+                    onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, website: e.target.value } }))}
+                    placeholder="Website"
+                  />
                 </div>
-              )}
+                <Textarea
+                  value={extractionWorkingCopy.summary}
+                  onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, summary: e.target.value }))}
+                  placeholder="Professional summary"
+                  rows={4}
+                />
+              </section>
 
-              {/* Experience Section */}
-              {extractedData.experiences && extractedData.experiences.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg flex items-center gap-2">
-                    <Briefcase className="h-5 w-5" />
-                    Experience ({extractedData.experiences.length})
-                  </h3>
-                  <div className="space-y-3">
-                    {extractedData.experiences.map((exp, idx) => (
-                      <div key={idx} className="bg-gray-50 p-4 rounded-lg text-sm">
-                        <p className="font-medium">{exp.title} {exp.company && `at ${exp.company}`}</p>
-                        {exp.startDate && <p className="text-gray-600">{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</p>}
-                        {exp.description && <p className="mt-2">{exp.description}</p>}
+              {/* Editable Experiences */}
+              <section className="space-y-4">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <Briefcase className="h-5 w-5" /> Experience
+                </h3>
+                {extractionWorkingCopy.experiences.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No experiences extracted.</p>
+                )}
+                <div className="space-y-4">
+                  {extractionWorkingCopy.experiences.map((exp, idx) => (
+                    <div key={idx} className="border rounded p-4 space-y-2 bg-gray-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <Input value={exp.title} placeholder="Title" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], title:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <Input value={exp.company} placeholder="Company" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], company:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <Input value={exp.location} placeholder="Location" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <Input type="month" value={exp.startDate} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], startDate:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <Input type="month" value={exp.endDate} disabled={exp.current} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], endDate:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <div className="flex items-center gap-2">
+                          <input type="checkbox" checked={exp.current} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], current:e.target.checked}; return { ...w, experiences: arr }; })} />
+                          <span className="text-xs">Current</span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Education Section */}
-              {extractedData.education && extractedData.education.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5" />
-                    Education ({extractedData.education.length})
-                  </h3>
-                  <div className="space-y-3">
-                    {extractedData.education.map((edu, idx) => (
-                      <div key={idx} className="bg-gray-50 p-4 rounded-lg text-sm">
-                        <p className="font-medium">{edu.degree}</p>
-                        <p className="text-gray-600">{edu.institution} {edu.graduationDate && `• ${edu.graduationDate}`}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Skills Section */}
-              {extractedData.skills && extractedData.skills.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg flex items-center gap-2">
-                    <Award className="h-5 w-5" />
-                    Skills ({extractedData.skills.length})
-                  </h3>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex flex-wrap gap-2">
-                      {extractedData.skills.map((skill, idx) => (
-                        <Badge key={idx} variant="secondary">
-                          {typeof skill === 'string' ? skill : skill.name}
-                        </Badge>
-                      ))}
+                      <Textarea value={exp.description} rows={3} placeholder="Description" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, experiences: arr }; })} />
                     </div>
-                  </div>
+                  ))}
                 </div>
-              )}
+              </section>
 
-              {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t">
-                <Button
-                  onClick={handlePopulateToProfile}
-                  className="flex-1 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                  disabled={loading}
-                >
-                  {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
-                  Populate to Profile
-                </Button>
-                <Button
-                  onClick={handleSaveAsNewResume}
-                  variant="outline"
-                  className="flex-1"
-                  disabled={loading}
-                >
-                  {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                  Save as New Resume
-                </Button>
+              {/* Editable Education */}
+              <section className="space-y-4">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5" /> Education
+                </h3>
+                {extractionWorkingCopy.education.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No education entries extracted.</p>
+                )}
+                <div className="space-y-4">
+                  {extractionWorkingCopy.education.map((ed, idx) => (
+                    <div key={idx} className="border rounded p-4 space-y-2 bg-gray-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <Input value={ed.degree} placeholder="Degree" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], degree:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.institution} placeholder="Institution" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], institution:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.location} placeholder="Location" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.startYear} placeholder="Start Year" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], startYear:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.endYear} placeholder="End/Grad Year" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], endYear:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.gpa} placeholder="GPA" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], gpa:e.target.value}; return { ...w, education: arr }; })} />
+                      </div>
+                      <Textarea value={ed.description} rows={3} placeholder="Description" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, education: arr }; })} />
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Editable Skills */}
+              <section className="space-y-4">
+                <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <Award className="h-5 w-5" /> Skills
+                </h3>
+                <div className="flex gap-2">
+                  <Input
+                    value={extractionSkillInput}
+                    placeholder="Add skill"
+                    onChange={(e) => setExtractionSkillInput(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button size="sm" onClick={() => { if (extractionSkillInput.trim()) { setExtractionWorkingCopy(w => ({ ...w, skills: [...w.skills, extractionSkillInput.trim()] })); setExtractionSkillInput(''); } }}>Add</Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {extractionWorkingCopy.skills.map((sk, i) => (
+                    <Badge key={i} variant="secondary" className="gap-2">
+                      {typeof sk === 'string' ? sk : extractSkillName(sk)}
+                      <button onClick={() => setExtractionWorkingCopy(w => ({ ...w, skills: w.skills.filter((_, idx) => idx !== i) }))}>
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </section>
+
+              {/* Dialog Actions */}
+              <div className="flex flex-col gap-3 pt-4 border-t">
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => {
+                      // Apply working copy to main form and close dialog
+                      setResumeData(extractionWorkingCopy);
+                      setExtractionDialogOpen(false);
+                      toast({ title: 'Applied', description: 'Extracted data applied to form.' });
+                    }}
+                    className="flex-1 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                  >
+                    Confirm & Apply
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setExtractionDialogOpen(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                <div className="flex gap-3">
+                  <Button onClick={handlePopulateToProfile} disabled={loading} className="flex-1" variant="secondary">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    Update Profile Now
+                  </Button>
+                  <Button onClick={handleSaveAsNewResume} disabled={loading} className="flex-1" variant="outline">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    Save as New Resume
+                  </Button>
+                </div>
               </div>
             </div>
           )}

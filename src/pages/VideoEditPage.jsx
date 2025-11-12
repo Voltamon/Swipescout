@@ -120,38 +120,69 @@ export default function VideoEditPage() {
         if (ffmpeg && !ffmpeg.loaded) {
           console.log('FFmpeg exists but not loaded, loading now...');
 
-          // Create a load task that first tries CDN then falls back to bundled
+          // Create a load task that first tries a local-hosted core (public/ffmpeg),
+          // then CDN, then finally the bundled default. We pre-check the local files
+          // with `fetch` so we can log HTTP status and avoid calling `ffmpeg.load`
+          // with a URL that will 404 or return the wrong MIME type which can hang.
           const loadTask = (async () => {
-            // Try a local-hosted core first (serve from public/ffmpeg) - this avoids
-            // Vite's transformed worker files which sometimes have bad MIME headers.
             const localCore = '/ffmpeg/ffmpeg-core.js';
             const localWasm = '/ffmpeg/ffmpeg-core.wasm';
+
+            // Helper to try loading from a specific core + wasm pair and log details
+            const tryLoad = async (coreURL, wasmURL, label) => {
+              console.log(`Attempting to load FFmpeg core from ${label}:`, coreURL, wasmURL);
+              try {
+                await ffmpeg.load({ coreURL, wasmURL });
+                console.log(`Loaded FFmpeg core from ${label}`);
+                return true;
+              } catch (err) {
+                console.warn(`Load from ${label} failed:`, err);
+                return false;
+              }
+            };
+
+            // 1) Check local-core availability with a direct fetch so we can report
+            // precise HTTP status and CORS problems before calling ffmpeg.load.
             try {
-              console.log('Attempting to load FFmpeg core from local path:', localCore);
-              await ffmpeg.load({ coreURL: localCore, wasmURL: localWasm });
-              console.log('Loaded FFmpeg core from local path');
-              return;
-            } catch (localErr) {
-              console.warn('Local core load failed, trying CDN...', localErr);
+              const resp = await fetch(localCore, { method: 'GET' });
+              console.log('Local core fetch response for', localCore, 'status=', resp.status, 'content-type=', resp.headers.get('content-type'));
+              if (resp.ok) {
+                // If local file exists, attempt load using it
+                const ok = await tryLoad(localCore, localWasm, 'local path');
+                if (ok) return;
+                console.warn('Local core exists but ffmpeg.load failed for local path, will try CDN next');
+              } else {
+                console.warn('Local core not available (non-OK response), will try CDN. HTTP status:', resp.status);
+              }
+            } catch (fetchErr) {
+              console.warn('Could not fetch local FFmpeg core (network/CORS/404):', fetchErr);
             }
 
+            // 2) Try the CDN (pin to a specific known version). If CDN fails, fall back
+            // to calling ffmpeg.load() without parameters (bundled/bundler provided assets).
+            const cdnCore = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.js';
+            const cdnWasm = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.wasm';
+            const cdnOk = await tryLoad(cdnCore, cdnWasm, 'CDN');
+            if (cdnOk) return;
+
+            // 3) Final fallback - let @ffmpeg/ffmpeg decide (bundled worker). This
+            // can still hang if the build environment doesn't include the worker files
+            // or Vite rewrites them with wrong headers, but it's worth trying.
             try {
-              console.log('Attempting to load FFmpeg core from CDN');
-              await ffmpeg.load({
-                coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.js',
-                wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.wasm'
-              });
-              console.log('Loaded FFmpeg core from CDN');
-            } catch (cdnErr) {
-              console.warn('CDN load failed, falling back to bundled load:', cdnErr);
-              // Try bundled load; if this hangs or fails it will be handled by the timeout below
+              console.log('Falling back to bundled ffmpeg.load() (no coreURL specified)');
               await ffmpeg.load();
+              console.log('Loaded FFmpeg core via bundled loader');
+              return;
+            } catch (finalErr) {
+              console.warn('Bundled ffmpeg.load() also failed:', finalErr);
+              throw finalErr;
             }
           })();
 
           // Timeout guard: if load doesn't complete in a reasonable time, give up and
           // disable FFmpeg so the UI can continue in basic mode instead of being stuck.
-          const timeoutMs = 12000; // 12s
+          // Increase timeout to allow slower connections or local fetch checks
+          const timeoutMs = 20000; // 20s
           try {
             await Promise.race([
               loadTask,
@@ -419,16 +450,26 @@ export default function VideoEditPage() {
     }
 
     if (!ffmpeg || !ffmpeg.loaded) {
-      console.log('FFmpeg not loaded, using basic mode (setting original URL)');
+      // FFmpeg not available: show a live preview with the same CSS filters
+      // applied so the user can inspect the edited look. Don't set
+      // `processedVideoUrl` to the original source because that bypasses
+      // the live preview and shows the unedited video.
+      console.log('FFmpeg not loaded, opening live preview (basic mode)');
       setProcessing(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        setProcessedVideoUrl(videoUrl);
+        // small delay to simulate processing and let UI update
+        await new Promise(resolve => setTimeout(resolve, 800));
+        // Ensure processedVideoUrl is empty so the preview dialog will render
+        // the live preview branch (which applies the CSS filters)
+        if (processedVideoUrl) {
+          try { URL.revokeObjectURL(processedVideoUrl); } catch (e) { /* ignore */ }
+        }
+        setProcessedVideoUrl("");
         setPreviewDialog(true);
-        toast({ description: "Video processed successfully! (Basic mode)" });
+        toast({ description: "Preview opened (basic mode). Use server or install FFmpeg for real exports." });
       } catch (error) {
-        console.error('Error processing video:', error);
-        toast({ description: "Failed to process video", variant: "destructive" });
+        console.error('Error opening live preview:', error);
+        toast({ description: "Failed to open preview", variant: "destructive" });
       } finally {
         setProcessing(false);
       }
@@ -766,7 +807,7 @@ export default function VideoEditPage() {
                       key={video.id}
                       className={`cursor-pointer transition-all hover:shadow-lg ${
                         selectedVideoFromList?.id === video.id ? 'border-2 border-purple-600' : ''
-                      }`}
+                      } ${video.serverProcessing ? 'border-2 border-yellow-400 border-dashed' : ''}`}
                       onClick={() => handleSelectVideoFromList(video)}
                     >
                       <div className="aspect-video bg-gray-900 rounded-t-lg overflow-hidden">

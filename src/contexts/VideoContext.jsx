@@ -18,13 +18,13 @@ export const VideoProvider = ({ children }) => {
     localStorage.setItem('videoResumes', JSON.stringify(videos));
   }, [videos]);
 
-  // Status check for all processing videos
+  // Status check for all processing videos or videos marked as serverProcessing
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const updates = await Promise.all(
           videos
-            .filter(video => (video.status === 'processing' || video.status === 'uploading') && video.id)
+            .filter(video => ((video.status === 'processing' || video.status === 'uploading') || video.serverProcessing) && video.id)
             .map(async (video) => {
               try {
                 console.log(`[VideoContext] Checking status for video: ${video.id}`);
@@ -46,6 +46,7 @@ export const VideoProvider = ({ children }) => {
                     updateVideoServerId(video.id, serverId, {
                       status: 'completed',
                       isLocal: false,
+                      serverProcessing: false,
                       video_url: serverVideoUrl,
                       videoUrl: serverVideoUrl,
                       job_id: video.job_id,
@@ -73,6 +74,7 @@ export const VideoProvider = ({ children }) => {
                       status: 'failed',
                       error: data.message || 'Processing failed',
                       isLocal: true, // Keep as local if server doesn't know it or failed
+                      serverProcessing: false,
                       job_id: video.job_id // Preserve job_id
                     }
                   };
@@ -134,12 +136,14 @@ export const VideoProvider = ({ children }) => {
       return video; // Return existing video or just prevent action
     }
 
+    // Respect caller-provided status (e.g., 'completed' for immediate local preview).
     const newVideo = {
       ...video,
       isLocal: true,
-      status: 'uploading',
-      progress: 0,
-      submitted_at: new Date().toISOString()
+      status: video.status || 'uploading',
+      serverProcessing: video.serverProcessing || false,
+      progress: video.progress ?? 0,
+      submitted_at: video.submitted_at || new Date().toISOString()
     };
     setVideos(prev => [...prev, newVideo]);
     console.log('[VideoContext] Added new local video:', newVideo);
@@ -149,9 +153,23 @@ export const VideoProvider = ({ children }) => {
   // In the updateVideoStatus function, make sure it handles job_id properly
   const updateVideoStatus = (id, updates) => {
     console.log(`[VideoContext] Updating video ${id} with:`, updates);
-    setVideos(prev => prev.map(video => 
-      video.id === id ? { ...video, ...updates } : video
-    ));
+    setVideos(prev => prev.map(video => {
+      if (video.id === id) {
+        // If transitioning from local to server URL, clean up old blob
+        if (video.isLocal && updates.isLocal === false) {
+          if (video.video_url?.startsWith('blob:')) {
+            console.log(`[VideoContext] Revoking old blob URL in updateVideoStatus: ${video.video_url}`);
+            URL.revokeObjectURL(video.video_url);
+          }
+          if (video.videoUrl?.startsWith('blob:')) {
+            console.log(`[VideoContext] Revoking old blob URL in updateVideoStatus: ${video.videoUrl}`);
+            URL.revokeObjectURL(video.videoUrl);
+          }
+        }
+        return { ...video, ...updates };
+      }
+      return video;
+    }));
   };
 
   // Handles changing the ID of an existing video entry
@@ -163,6 +181,20 @@ export const VideoProvider = ({ children }) => {
         if (video.id === tempId) {
           updated = true;
           console.log(`[VideoContext] Transitioning video ID from ${tempId} to ${serverId}.`);
+          
+          // If we're transitioning from local (blob URL) to server (permanent URL),
+          // clean up the old blob URL to free memory
+          if (video.isLocal && initialUpdates.isLocal === false) {
+            if (video.video_url?.startsWith('blob:')) {
+              console.log(`[VideoContext] Revoking old blob URL: ${video.video_url}`);
+              URL.revokeObjectURL(video.video_url);
+            }
+            if (video.videoUrl?.startsWith('blob:')) {
+              console.log(`[VideoContext] Revoking old blob URL: ${video.videoUrl}`);
+              URL.revokeObjectURL(video.videoUrl);
+            }
+          }
+          
           return { ...video, id: serverId, ...initialUpdates };
         }
         return video;
@@ -220,23 +252,27 @@ export const VideoProvider = ({ children }) => {
 
         // The ID will remain the same if it was already a server ID from a previous failed attempt.
         // If it was a temp local ID that never got a server ID, it will get one now.
-        updateVideoServerId(videoId, response.data.uploadId, { 
-          status: 'processing',
+        // Mark serverProcessing so the UI can keep the uploaded look but still
+        // poll the server for completion.
+        updateVideoServerId(videoId, response.data.uploadId, {
+          serverProcessing: true,
           isLocal: true, // It's still local until server confirms completion
         });
         console.log(`[VideoContext] Retry upload successful for tempId ${videoId}. New serverId: ${response.data.uploadId}`);
         return response.data.uploadId;
-      } 
+      } else {
       // For server videos (or local videos that might have an ID but are stuck processing server-side)
-      else {
-        // Call a dedicated retry-processing API or re-trigger upload if needed
-        // const response = await api.post(`/videos/${videoId}/retry-upload`); // Or retry-processing
-        updateVideoStatus(videoId, {
-          status: 'processing'
-        });
-        console.log(`[VideoContext] Retry processing successful for serverId: ${videoId}`);
-        return videoId;
-      }
+          // Call a dedicated retry-processing API or re-trigger upload if needed
+          // const response = await api.post(`/videos/${videoId}/retry-upload`); // Or retry-processing
+          // Mark as serverProcessing to indicate backend work while keeping
+          // the uploaded preview visible locally.
+          updateVideoStatus(videoId, {
+            serverProcessing: true,
+            status: 'completed'
+          });
+          console.log(`[VideoContext] Retry processing triggered for serverId: ${videoId}`);
+          return videoId;
+        }
     } catch (error) {
       console.error(`[VideoContext] Retry failed for video ${videoId}:`, error);
       updateVideoStatus(videoId, {

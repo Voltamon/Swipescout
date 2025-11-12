@@ -285,7 +285,12 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       video_url: blobUrl,
       videoUrl: blobUrl, // for VideosPage preview which expects video.videoUrl
       isLocal: true,
-      status: 'uploading',
+      // Mark as completed locally so the UI shows it as available immediately.
+      // We'll track server-side processing separately via `serverProcessing` so
+      // the UI doesn't show the 'processing' overlay while the upload is in
+      // progress on the server.
+      status: 'completed',
+      serverProcessing: false,
       progress: 0,
       hashtags: hashtags,
       job_id: jobId || null,
@@ -331,8 +336,12 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
 
           // Transition the temp/local ID to the server-provided ID and mark processing
           if (updateVideoServerId) {
+            // Transition temp id -> server id but don't mark the item as visually
+            // 'processing' (which would show an overlay). Instead set
+            // `serverProcessing: true` so the UI can keep the uploaded look but
+            // optionally show a subtle border or indicator.
             updateVideoServerId(videoId, serverId, {
-              status: 'processing',
+              serverProcessing: true,
               isLocal: true,
               progress: 100,
               job_id: response.data.jobId || jobId || null
@@ -357,8 +366,11 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
 
                 // Update local context/progress
                 if (updateVideoStatus) {
+                  // Keep the UI showing the video as uploaded locally. Use
+                  // serverProcessing to indicate backend processing where needed.
                   updateVideoStatus(videoId, {
-                    status: status === 'completed' ? 'completed' : status === 'failed' ? 'failed' : 'processing',
+                    serverProcessing: status === 'processing' || status === 'uploading',
+                    status: status === 'completed' ? 'completed' : (status === 'failed' ? 'failed' : 'completed'),
                     progress
                   });
                 }
@@ -367,9 +379,11 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                 if (status === 'completed') {
                   if (statusData.video && updateVideoServerId) {
                     const returnedId = statusData.video.id || statusData.video.videoId || uploadId;
-                    updateVideoServerId(videoId, returnedId, { status: 'completed', progress: 100 });
+                    // Finalize the transition to the server-provided ID and
+                    // update the video URL to the canonical server URL.
+                    updateVideoServerId(videoId, returnedId, { status: 'completed', progress: 100, isLocal: false, serverProcessing: false, video_url: statusData.video.secure_url || statusData.video.video_url || statusData.video.videoUrl || null, videoUrl: statusData.video.secure_url || statusData.video.video_url || statusData.video.videoUrl || null });
                   } else if (updateVideoStatus) {
-                    updateVideoStatus(videoId, { status: 'completed', progress: 100 });
+                    updateVideoStatus(videoId, { status: 'completed', progress: 100, serverProcessing: false });
                   }
                   clearInterval(uploadPollRef.current);
                   uploadPollRef.current = null;
@@ -397,9 +411,10 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             description: "Video uploaded and is being processed. It will appear when ready.",
           });
         } else if (response.data && response.data.success) {
-          // Fallback if server returns success without id
+          // Fallback if server returns success without id — mark serverProcessing
+          // so the UI keeps the uploaded look while backend works.
           if (updateVideoStatus) {
-            updateVideoStatus(videoId, { status: 'processing', progress: 100 });
+            updateVideoStatus(videoId, { serverProcessing: true, progress: 100, status: 'completed' });
           }
           toast({ title: 'Upload started', description: 'Video is processing.' });
         }
