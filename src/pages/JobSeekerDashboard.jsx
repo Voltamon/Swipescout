@@ -30,6 +30,7 @@ import { Input } from '@/components/UI/input.jsx';
 import { Label } from '@/components/UI/label.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { useToast } from '@/hooks/use-toast';
+import localize from '@/utils/localize';
 
 // Register ChartJS components
 ChartJS.register(
@@ -67,29 +68,18 @@ const JobSeekerDashboard = () => {
     const [skillSearchLoading, setSkillSearchLoading] = useState(false);
     const [selectedSkillId, setSelectedSkillId] = useState(null);
 
-    // Helper to safely get a localized string from value that may be a string or an object
-    const localize = (val, preferred = 'en') => {
-        if (val == null) return '';
-        if (typeof val === 'string') return val;
-        if (typeof val === 'number') return String(val);
-        if (typeof val === 'object') {
-            try {
-                if (preferred && val[preferred]) return val[preferred];
-                // try navigator language if available
-                if (typeof navigator !== 'undefined') {
-                    const lang = (navigator.language || navigator.userLanguage || '').split('-')[0];
-                    if (lang && val[lang]) return val[lang];
-                }
-                // fallback to first string value
-                for (const k of Object.keys(val)) {
-                    if (typeof val[k] === 'string') return val[k];
-                }
-                return JSON.stringify(val);
-            } catch (e) {
-                return String(val);
-            }
+    // Use shared localization util which safely converts localized values to strings
+
+    // Helper to create stable keys for React lists from various possible id types
+    const makeKey = (val, fallback) => {
+        if (val === undefined || val === null) return fallback ?? '';
+        if (typeof val === 'string' || typeof val === 'number') return String(val);
+        try {
+            // JSON stringify complex objects (e.g., composite ids) to create a deterministic key
+            return JSON.stringify(val);
+        } catch (e) {
+            return String(val);
         }
-        return String(val);
     };
 
     useEffect(() => {
@@ -242,13 +232,22 @@ const JobSeekerDashboard = () => {
                 const res = await getSkills();
                 const list = (res?.data?.skills || res?.skills || res || []).map(s => ({
                     id: s.id ?? s._id ?? s.skill_id ?? null,
-                    name: s.name ?? s.skill ?? '',
+                    name: s.skill_name || localize(s.name) || s.onet_element_id || '',
                     category: s.category ?? s.group ?? null,
                     raw: s
-                }));
+                })).filter(s => {
+                    const name = s.name;
+                    // Skip skills with invalid or placeholder names
+                    if (!name || name === '' || name === null || name === undefined) return false;
+                    // Skip names that look like IDs (short alphanumeric strings)
+                    if (typeof name === 'string' && name.length <= 10 && /^[a-zA-Z0-9-_]+$/.test(name) && !/\s/.test(name)) return false;
+                    return true;
+                });
                 setSkillsList(list);
-                const cats = Array.from(new Set(list.map(s => s.category).filter(Boolean)));
-                setSkillCategories(cats);
+                // Extract categories and localize them (they might be multilingual objects)
+                const rawCats = list.map(s => s.category).filter(Boolean);
+                const localizedCats = Array.from(new Set(rawCats.map(c => localize(c))));
+                setSkillCategories(localizedCats);
             } catch (e) {
                 console.warn('Failed to load skills for suggestions:', e);
                 setSkillsList([]);
@@ -473,7 +472,7 @@ const JobSeekerDashboard = () => {
                                     </div>
                                 ) : (
                                     activities.map((activity, index) => (
-                                        <div key={index} className="flex items-start gap-3 pb-3 border-b last:border-0">
+                                        <div key={makeKey(activity.id ?? activity.time ?? index)} className="flex items-start gap-3 pb-3 border-b last:border-0">
                                             <div className="mt-0.5">
                                                 {getActivityIcon(activity.type)}
                                             </div>
@@ -508,8 +507,8 @@ const JobSeekerDashboard = () => {
                                         <p className="text-sm">Check back later for job matches</p>
                                     </div>
                                 ) : (
-                                    recommendations.map((job) => (
-                                        <div key={job.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                                    recommendations.map((job, idx) => (
+                                        <div key={makeKey(job.id ?? job._id ?? job.job_id ?? job.jobId ?? idx)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                             <Avatar>
                                                 <AvatarImage src={job.company?.logo_url} />
                                                 <AvatarFallback>{(String(localize(job.company?.name)) || 'C').charAt(0)}</AvatarFallback>
@@ -526,7 +525,7 @@ const JobSeekerDashboard = () => {
                                                 {job.match_percentage}%
                                             </Badge>
                                         </div>
-                                    ))
+                                        ))
                                 )}
                             </div>
                         </CardContent>
@@ -639,7 +638,8 @@ const JobSeekerDashboard = () => {
                                         <div className="max-h-40 overflow-auto border rounded bg-white">
                                             {skillsList.filter(s => {
                                                 if (!s || !s.name) return false;
-                                                if (selectedCategory && s.category !== selectedCategory) return false;
+                                                // Compare localized category with selected category
+                                                if (selectedCategory && localize(s.category) !== selectedCategory) return false;
                                                 if (!newSkillName) return true;
                                                 try {
                                                     const name = typeof s.name === 'string' ? s.name : String(localize(s.name));
@@ -647,10 +647,10 @@ const JobSeekerDashboard = () => {
                                                 } catch (e) {
                                                     return String(localize(s.name)).toLowerCase().includes(newSkillName.trim().toLowerCase());
                                                 }
-                                                }).slice(0, 50).map(s => (
-                                                <div key={s.id || (typeof s.name === 'string' ? s.name : JSON.stringify(s.name))} className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex justify-between" onClick={() => { setNewSkillName(String(localize(s.name))); setSelectedSkillId(s.id ?? s._id ?? null); setSelectedCategory(s.category ?? null); }}>
+                                                }).slice(0, 50).map((s, idx) => (
+                                                <div key={makeKey(s.id ?? s._id ?? s.skill_id ?? (typeof s.name === 'string' ? s.name : localize(s.name)), idx)} className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex justify-between" onClick={() => { setNewSkillName(String(localize(s.name))); setSelectedSkillId(s.id ?? s._id ?? null); setSelectedCategory(localize(s.category ?? null)); }}>
                                                     <div>{String(localize(s.name))}</div>
-                                                    {s.category && <div className="text-xs text-gray-400">{s.category}</div>}
+                                                    {s.category && <div className="text-xs text-gray-400">{String(localize(s.category))}</div>}
                                                 </div>
                                             ))}
                                             {skillsList.length === 0 && !skillSearchLoading && (
@@ -709,8 +709,8 @@ const JobSeekerDashboard = () => {
                                 <p>No recommendations available</p>
                             </div>
                         ) : (
-                            recommendations.slice((viewAllPage - 1) * itemsPerPage, viewAllPage * itemsPerPage).map((job) => (
-                                <div key={job.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50">
+                    recommendations.slice((viewAllPage - 1) * itemsPerPage, viewAllPage * itemsPerPage).map((job, idx) => (
+                <div key={makeKey(job.id ?? job._id ?? job.job_id ?? job.jobId ?? idx)} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50">
                                     <Avatar>
                                         <AvatarImage src={job.company?.logo_url} />
                                         <AvatarFallback>{(String(localize(job.company?.name)) || 'C').charAt(0)}</AvatarFallback>

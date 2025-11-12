@@ -227,7 +227,7 @@ export const deleteEmployerCategory = (id) => api.delete(`/employer/category/${i
 export const getSkills = (search) => api.get('/skills', { params: search ? { search } : {} });
 // Create a new global skill (admin/general endpoint). We will call this when the user types a skill
 export const createSkill = (skill) => api.post('/skills', skill);
-export const getJobSeekerSkills = (id) => api.get(`/skills/user/${id}`);
+export const getJobSeekerSkills = (id) => api.get(`/job-seeker/skills/${id}`);
 
 // Locations (countries & cities)
 export const getCountries = () => api.get('/locations/countries');

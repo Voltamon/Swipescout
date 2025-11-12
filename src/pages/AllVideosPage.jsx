@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import {
   Play, Pause, VolumeX, Volume2, Share2, Heart,
   Bookmark, UserPlus, ArrowUp, ArrowDown, Home, X,
-  MessageCircle, Eye, Clock, ChevronUp, ChevronDown, User
+  MessageCircle, Eye, Clock, ChevronUp, ChevronDown, User,
+  Video, Loader2
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,11 +20,11 @@ import {
   connectWithUser,
   searchVideos
 } from '@/services/api';
+import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
 
 // Sample videos data generator
 const getSampleVideos = (t) => [
@@ -110,6 +111,7 @@ const AllVideosPage = ({
   const [error, setError] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const [likedVideos, setLikedVideos] = useState(new Set());
   const [savedVideos, setSavedVideos] = useState(new Set());
 
@@ -121,6 +123,207 @@ const AllVideosPage = ({
   const pagetype = propPagetype || urlPagetype;
   const { user } = useAuth();
   const { toast } = useToast();
+  const dragStartY = useRef(0);
+  const [dragDelta, setDragDelta] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  
+  // keyboard navigation while modal open
+  useEffect(() => {
+    if (!modalOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'j') {
+        setCurrentVideoIndex(i => Math.min(allVideos.length - 1, i + 1));
+      } else if (e.key === 'ArrowUp' || e.key === 'k') {
+        setCurrentVideoIndex(i => Math.max(0, i - 1));
+      } else if (e.key === 'Escape') {
+        setModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [modalOpen, allVideos.length]);
+
+  // Gesture / fling helpers
+  const lastPointerY = useRef(0);
+  const lastPointerTime = useRef(0);
+  const velocityRef = useRef(0);
+  const animFrameRef = useRef(null);
+  const isPointerDownRef = useRef(false);
+  const dragDeltaRef = useRef(0);
+
+  const handlePointerDown = (e) => {
+    setIsDragging(true);
+    isPointerDownRef.current = true;
+    dragStartY.current = e.clientY;
+    lastPointerY.current = e.clientY;
+    lastPointerTime.current = performance.now();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDownRef.current) return;
+    const now = performance.now();
+    const dy = e.clientY - lastPointerY.current;
+    const dt = Math.max(1, now - lastPointerTime.current);
+    velocityRef.current = dy / dt; // px per ms
+    lastPointerY.current = e.clientY;
+    lastPointerTime.current = now;
+    const v = e.clientY - dragStartY.current;
+    dragDeltaRef.current = v;
+    setDragDelta(v);
+  };
+
+  const handlePointerUp = (e) => {
+    isPointerDownRef.current = false;
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    const v = velocityRef.current;
+    const delta = dragDeltaRef.current || 0;
+    const threshold = 80; // pixels
+    const velocityThreshold = 0.5; // px/ms
+    if (Math.abs(v) > velocityThreshold) {
+      // start fling animation in the direction of velocity
+      startFling(v);
+    } else {
+      if (delta < -threshold) {
+        goToVideo(currentVideoIndex + 1);
+      } else if (delta > threshold) {
+        goToVideo(currentVideoIndex - 1);
+      }
+      dragDeltaRef.current = 0;
+      setDragDelta(0);
+      velocityRef.current = 0;
+    }
+  };
+
+  // Touch fallback for older browsers (iOS Safari pre-PointerEvents)
+  const handleTouchStart = (e) => {
+    if (!e.touches || e.touches.length === 0) return;
+    setIsDragging(true);
+    isPointerDownRef.current = true;
+    const y = e.touches[0].clientY;
+    dragStartY.current = y;
+    lastPointerY.current = y;
+    lastPointerTime.current = performance.now();
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isPointerDownRef.current || !e.touches || e.touches.length === 0) return;
+    const y = e.touches[0].clientY;
+    const now = performance.now();
+    const dy = y - lastPointerY.current;
+    const dt = Math.max(1, now - lastPointerTime.current);
+    velocityRef.current = dy / dt;
+    lastPointerY.current = y;
+    lastPointerTime.current = now;
+    const v = y - dragStartY.current;
+    dragDeltaRef.current = v;
+    setDragDelta(v);
+  };
+
+  const handleTouchEnd = (e) => {
+    isPointerDownRef.current = false;
+    setIsDragging(false);
+    const v = velocityRef.current;
+    const delta = dragDeltaRef.current || 0;
+    const threshold = 80;
+    const velocityThreshold = 0.5;
+    if (Math.abs(v) > velocityThreshold) {
+      startFling(v);
+    } else {
+      if (delta < -threshold) {
+        goToVideo(currentVideoIndex + 1);
+      } else if (delta > threshold) {
+        goToVideo(currentVideoIndex - 1);
+      }
+      dragDeltaRef.current = 0;
+      setDragDelta(0);
+      velocityRef.current = 0;
+    }
+  };
+
+  // Pause all non-active videos and play active one (reduces CPU)
+  useEffect(() => {
+    const activeId = allVideos[currentVideoIndex]?.id;
+    Object.entries(videoRefs.current).forEach(([id, el]) => {
+      try {
+        if (!el) return;
+        if (id === activeId) {
+          el.muted = isMuted;
+          if (isPlaying) el.play().catch(() => {});
+        } else {
+          try { el.pause(); } catch (e) {}
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+  }, [currentVideoIndex, allVideos, isMuted, isPlaying]);
+
+  // Start a fling/inertia animation based on velocity (px/ms)
+  const startFling = (initialVelocity) => {
+    // convert px/ms to px per frame (~16ms per frame)
+    let v = initialVelocity * 16;
+    const decay = 0.95; // decay per frame
+    let local = dragDeltaRef.current || 0;
+    const step = () => {
+      v *= decay;
+      local += v;
+      dragDeltaRef.current = local;
+      setDragDelta(local);
+
+      // if we've dragged past threshold, navigate
+      const threshold = 80;
+      if (local < -threshold) {
+        goToVideo(currentVideoIndex + 1);
+        dragDeltaRef.current = 0;
+        setDragDelta(0);
+        velocityRef.current = 0;
+        animFrameRef.current = null;
+        return;
+      }
+      if (local > threshold) {
+        goToVideo(currentVideoIndex - 1);
+        dragDeltaRef.current = 0;
+        setDragDelta(0);
+        velocityRef.current = 0;
+        animFrameRef.current = null;
+        return;
+      }
+
+      // stop when velocity decays small
+      if (Math.abs(v) < 0.5) {
+        dragDeltaRef.current = 0;
+        setDragDelta(0);
+        velocityRef.current = 0;
+        animFrameRef.current = null;
+        return;
+      }
+
+      animFrameRef.current = requestAnimationFrame(step);
+    };
+
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    animFrameRef.current = requestAnimationFrame(step);
+  };
+
+  // Cleanup video elements on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(videoRefs.current).forEach(el => {
+        try {
+          if (!el) return;
+          el.pause();
+          // remove src to free memory
+          el.removeAttribute('src');
+        } catch (e) {}
+      });
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+    };
+  }, []);
 
   // Get context from navigation state
   const navigationContext = location.state?.context;
@@ -231,26 +434,38 @@ const AllVideosPage = ({
   }, [serverVideos, pagetype, t]);
 
   // Handle video navigation
+  // Change index with explicit pause/cleanup of previous video to reduce CPU
   const goToVideo = useCallback((index) => {
-    if (index >= 0 && index < allVideos.length) {
-      setCurrentVideoIndex(index);
+    const target = Math.max(0, Math.min(allVideos.length - 1, index));
+    if (target === currentVideoIndex) return;
 
-      const currentVideo = videoRefs.current[allVideos[currentVideoIndex]?.id];
-      if (currentVideo) {
-        currentVideo.pause();
-      }
-
-      setTimeout(() => {
-        const newVideo = videoRefs.current[allVideos[index]?.id];
-        if (newVideo) {
-          newVideo.currentTime = 0;
-          newVideo.muted = isMuted;
-          if (isPlaying) {
-            newVideo.play().catch(e => console.log('Autoplay prevented:', e));
-          }
-        }
-      }, 100);
+    // cancel any running fling animation
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
     }
+
+    const prevId = allVideos[currentVideoIndex]?.id;
+    try {
+      const prevEl = videoRefs.current[prevId];
+      if (prevEl && !prevEl.paused) {
+        prevEl.pause();
+      }
+    } catch (e) {}
+
+    setCurrentVideoIndex(target);
+
+    // start target video after a tiny delay to allow DOM updates
+    setTimeout(() => {
+      try {
+        const newEl = videoRefs.current[allVideos[target]?.id];
+        if (newEl) {
+          newEl.currentTime = 0;
+          newEl.muted = isMuted;
+          if (isPlaying) newEl.play().catch(() => {});
+        }
+      } catch (e) {}
+    }, 80);
   }, [allVideos, currentVideoIndex, isMuted, isPlaying]);
 
   // Handle scroll navigation
@@ -405,6 +620,121 @@ const AllVideosPage = ({
 
   const currentVideo = allVideos[currentVideoIndex];
 
+  // If not full screen, render in grid layout
+  if (!fullScreen) {
+    return (
+      <div className="container mx-auto py-6 px-4 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 className={`${themeColors.text.gradient} text-3xl font-bold mb-2`}>
+                {pagetype === 'all' ? 'All Videos' :
+                 pagetype === 'jobseekers' ? 'Job Seekers Videos' : 'Employer Videos'}
+              </h1>
+              <p className="text-muted-foreground">
+                Discover and explore video content
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleMute}
+              >
+                {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Videos Grid */}
+        {allVideos.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {allVideos.map((video, index) => (
+              <VideoCard
+                key={video.id}
+                video={video}
+                videoRefs={videoRefs}
+                isMuted={isMuted}
+                onClick={() => {
+                  // open enlarged feed/modal starting at this video
+                  setCurrentVideoIndex(index);
+                  setModalOpen(true);
+                }}
+                onLike={() => handleLike(video.id)}
+                onSave={() => handleSave(video.id)}
+                onShare={() => handleShare(video)}
+                onConnect={() => handleConnect(video)}
+                liked={likedVideos.has(video.id)}
+                saved={savedVideos.has(video.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <Card className="text-center py-12">
+            <CardContent>
+              <Video className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No videos yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Be the first to share your video content
+              </p>
+              <Button
+                onClick={() => navigate('/video-upload')}
+                className={`${themeColors.buttons.primary} text-white `}
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Upload Video
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+        {/* Modal / enlarged vertical feed (TikTok-style) */}
+        {modalOpen && (
+          <div className="fixed inset-0 z-50 bg-black">
+            <div className="absolute top-4 left-4">
+              <Button size="icon" onClick={() => { setModalOpen(false); }} className="bg-white/10 text-white">
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="w-full h-full flex items-center justify-center">
+              <div
+                className="relative w-full h-full overflow-hidden"
+                // Pointer handlers (use pointer events when available)
+                onPointerDown={(e) => handlePointerDown(e)}
+                onPointerMove={(e) => handlePointerMove(e)}
+                onPointerUp={(e) => handlePointerUp(e)}
+                // Touch fallback for older browsers that may not support Pointer Events
+                onTouchStart={(e) => handleTouchStart(e)}
+                onTouchMove={(e) => handleTouchMove(e)}
+                onTouchEnd={(e) => handleTouchEnd(e)}
+              >
+                {/* Virtualized 3-slot slider (prev, current, next) */}
+                <VirtualSlider
+                  allVideos={allVideos}
+                  currentIndex={currentVideoIndex}
+                  dragDelta={dragDelta}
+                  isDragging={isDragging}
+                  isMuted={isMuted}
+                  videoRefs={videoRefs}
+                  setCurrentVideoIndex={setCurrentVideoIndex}
+                  handleLike={handleLike}
+                  handleSave={handleSave}
+                  handleShare={handleShare}
+                  handleConnect={handleConnect}
+                  likedVideos={likedVideos}
+                  savedVideos={savedVideos}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Full screen layout (original TikTok-style)
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-black">
       {/* Top Bar */}
@@ -601,3 +931,291 @@ const AllVideosPage = ({
 };
 
 export default AllVideosPage;
+
+// Video Card Component for grid layout
+function VideoCard({ video, videoRefs, isMuted, onClick, onLike, onSave, onShare, onConnect, liked, saved }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [posterUrl, setPosterUrl] = useState(
+    video.thumbnail_url || video.thumbnailUrl || video.poster || null
+  );
+
+  // Generate thumbnail from first frame if no poster is available
+  useEffect(() => {
+    if (posterUrl || !video.video_url) return;
+
+    let cancelled = false;
+    const vid = document.createElement('video');
+    vid.crossOrigin = 'anonymous';
+    vid.src = video.video_url;
+    vid.muted = true;
+    vid.playsInline = true;
+
+    const cleanup = () => {
+      try { vid.pause(); } catch (e) {}
+      vid.src = '';
+    };
+
+    const handleLoaded = () => {
+      try {
+        vid.currentTime = 0.1; // seek a little into the video to avoid black frames
+      } catch (e) {
+        // some browsers throw if seeking too early
+      }
+    };
+
+    const handleSeeked = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = vid.videoWidth || 320;
+        canvas.height = vid.videoHeight || 180;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        if (!cancelled) setPosterUrl(dataUrl);
+      } catch (err) {
+        // CORS or other errors - ignore and leave poster null
+        console.warn('Thumbnail capture failed', err);
+      } finally {
+        cleanup();
+      }
+    };
+
+    vid.addEventListener('loadeddata', handleLoaded);
+    vid.addEventListener('seeked', handleSeeked);
+    // load metadata then seek
+    vid.load();
+
+    // fallback timeout to cleanup
+    const to = setTimeout(() => {
+      cleanup();
+    }, 5000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(to);
+      vid.removeEventListener('loadeddata', handleLoaded);
+      vid.removeEventListener('seeked', handleSeeked);
+      cleanup();
+    };
+  }, [posterUrl, video.video_url]);
+
+  useEffect(() => {
+    const videoEl = videoRefs.current[video.id];
+    if (isHovered) {
+      if (videoEl) {
+        try {
+          videoEl.currentTime = 0;
+          videoEl.muted = isMuted;
+          videoEl.play().catch(() => {});
+        } catch (e) {}
+      }
+    } else {
+      if (videoEl && !videoEl.paused) {
+        try { videoEl.pause(); videoEl.currentTime = 0; } catch (e) {}
+      }
+    }
+  }, [isHovered, video.id, isMuted, videoRefs]);
+
+  return (
+    <Card
+      className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+    >
+      {/* Video Preview with poster */}
+      <div className="relative aspect-[9/16] bg-black overflow-hidden">
+        {!isHovered && posterUrl ? (
+          <img
+            src={posterUrl}
+            alt={video.video_title || 'Video thumbnail'}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <video
+            ref={el => videoRefs.current[video.id] = el}
+            src={video.video_url}
+            poster={posterUrl || undefined}
+            preload="metadata"
+            muted={isMuted}
+            loop
+            className="w-full h-full object-cover"
+          />
+        )}
+
+        {/* Hover Play Icon */}
+        {!isHovered && (
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+              <Play className="h-6 w-6 text-white" />
+            </div>
+          </div>
+        )}
+
+        {/* Video Duration */}
+        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+          {Math.round(video.video_duration || 0)}s
+        </div>
+      </div>
+
+      {/* Video Info */}
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Avatar className="w-8 h-8 flex-shrink-0">
+              <AvatarImage src={video.user?.profile_image || video.user?.profilePicture} />
+              <AvatarFallback>{(video.user?.display_name || video.user?.displayName || 'U').charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-sm line-clamp-1">
+                @{video.user?.display_name || video.user?.displayName || 'Unknown User'}
+              </h3>
+              <Badge className={`text-xs ${
+                video.user?.role === 'employer' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+              }`}>
+                {video.user?.role || video.video_type}
+              </Badge>
+            </div>
+          </div>
+          {video.isSample && (
+            <Badge className="bg-yellow-500 text-black text-xs">Sample</Badge>
+          )}
+        </div>
+
+        <h4 className="font-medium line-clamp-2 mb-2 text-sm">{video.video_title}</h4>
+        
+        {video.hashtags && (
+          <p className="text-xs text-muted-foreground line-clamp-1 mb-3">{video.hashtags}</p>
+        )}
+
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+          <span className="flex items-center gap-1">
+            <Eye className="h-3 w-3" />
+            {video.views_count || 0}
+          </span>
+          <span className="flex items-center gap-1">
+            <Heart className="h-3 w-3" />
+            {video.likes_count || 0}
+          </span>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLike();
+            }}
+            className={`flex-1 ${liked ? 'bg-red-50 border-red-200' : ''}`}
+          >
+            <Heart className={`h-3 w-3 mr-1 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
+            {liked ? 'Liked' : 'Like'}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSave();
+            }}
+            className={`flex-1 ${saved ? 'bg-yellow-50 border-yellow-200' : ''}`}
+          >
+            <Bookmark className={`h-3 w-3 mr-1 ${saved ? 'fill-yellow-500 text-yellow-500' : ''}`} />
+            {saved ? 'Saved' : 'Save'}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onShare();
+            }}
+          >
+            <Share2 className="h-3 w-3" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// VirtualSlider: 3-slot recycler (prev, current, next)
+function VirtualSlider({ allVideos, currentIndex, dragDelta, isDragging, isMuted, videoRefs, setCurrentVideoIndex, handleLike, handleSave, handleShare, handleConnect, likedVideos, savedVideos }) {
+  const len = allVideos.length;
+  const slots = [-1, 0, 1];
+
+  const clampIndex = (i) => Math.max(0, Math.min(len - 1, i));
+
+  return (
+    <>
+      {slots.map((offset) => {
+        const idx = clampIndex(currentIndex + offset);
+        const v = allVideos[idx];
+        if (!v) return null;
+        const basePercent = offset * 100;
+        const transform = `translateY(calc(${basePercent}% + ${dragDelta}px))`;
+        const transition = isDragging ? 'none' : 'transform 300ms ease';
+
+        return (
+          <div key={`slot-${offset}-${v.id}`} className={`absolute inset-0 z-20`} style={{ transform, transition }}>
+            <div className="w-full h-full flex items-center justify-center bg-black">
+              <video
+                ref={el => videoRefs.current[v.id] = el}
+                src={v.video_url}
+                loop
+                playsInline
+                controls
+                autoPlay={idx === currentIndex}
+                muted={isMuted}
+                className="max-h-full max-w-full object-contain mx-auto"
+              />
+
+              {/* Caption / info panel */}
+              <div className="absolute bottom-0 left-0 right-20 p-6 text-white z-30 drop-shadow-[2px_2px_8px_rgba(0,0,0,0.9)]">
+                <div className="flex items-center mb-4">
+                  <Avatar className="w-12 h-12 mr-3">
+                    <AvatarImage src={v.user?.profile_image || v.user?.profilePicture} />
+                    <AvatarFallback>{(v.user?.display_name || v.user?.displayName || 'U').charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold">@{v.user?.display_name || v.user?.displayName || 'Unknown'}</h3>
+                    <Badge className={v.user?.role === 'employer' ? 'bg-green-600' : 'bg-blue-600'}>{v.user?.role || v.video_type}</Badge>
+                  </div>
+                </div>
+
+                <h2 className="text-3xl font-bold mb-2">{v.video_title}</h2>
+                <p className="text-lg mb-3 opacity-90">{v.hashtags}</p>
+
+                <div className="flex gap-6 text-sm opacity-80">
+                  <span className="flex items-center gap-1"><Eye className="h-4 w-4" />{v.views_count || 0}</span>
+                  <span className="flex items-center gap-1"><Heart className="h-4 w-4" />{v.likes_count || 0}</span>
+                  <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{Math.round(v.video_duration || 0)}s</span>
+                </div>
+
+                {/* Action buttons */}
+                <div className="absolute right-4 bottom-24 flex flex-col gap-4 z-40">
+                  <Button size="icon" onClick={() => handleLike(v.id)} className="w-14 h-14 rounded-full bg-black/40">
+                    <Heart className={`h-6 w-6 ${likedVideos.has(v.id) ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+                  </Button>
+                  <Button size="icon" onClick={() => handleSave(v.id)} className="w-14 h-14 rounded-full bg-black/40">
+                    <Bookmark className={`h-6 w-6 ${savedVideos.has(v.id) ? 'fill-yellow-500 text-yellow-500' : 'text-white'}`} />
+                  </Button>
+                  <Button size="icon" onClick={() => handleShare(v)} className="w-14 h-14 rounded-full bg-black/40"><Share2 className="h-6 w-6 text-white" /></Button>
+                  <Button size="icon" onClick={() => handleConnect(v)} className="w-14 h-14 rounded-full bg-black/40"><UserPlus className="h-6 w-6 text-white" /></Button>
+                </div>
+
+                {/* Comments placeholder */}
+                <div className="mt-6 p-3 bg-black/40 rounded-lg max-w-md">
+                  <p className="text-sm text-muted-foreground">Comments area (placeholder)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+}

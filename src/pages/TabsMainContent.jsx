@@ -346,7 +346,7 @@ const MainContent = ({
             justifyContent: 'center',
           }}
         >
-          <AllVideosPage onClose={handleCloseVideos} isMaximized={isMaximized} />
+          <AllVideosPage onClose={handleCloseVideos} fullScreen={isMaximized} />
         </Box>
       )}
 
