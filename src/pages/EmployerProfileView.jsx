@@ -88,258 +88,230 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   }
 
   const mainVideo = videos.find(v => (v.videoPosition === 'main' || v.video_position === 'main')) || videos[0];
-
   return (
-    <div className="container mx-auto py-6 px-4 max-w-7xl">
-      <div className="mb-8">
-        <Card className="border-l-4 border-l-purple-500">
-          <CardContent className="p-8">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-shrink-0">
-                <Avatar className="h-32 w-32">
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* HERO */}
+      <div className="relative rounded-xl overflow-hidden shadow-lg bg-gradient-to-r from-indigo-600 via-cyan-500 to-emerald-400 text-white">
+        <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/20" />
+        <div className="relative z-10 container mx-auto px-6 py-10">
+          <div className="flex flex-col lg:flex-row gap-8 items-center">
+            <div className="flex-shrink-0">
+              <div className="relative -mt-16">
+                <Avatar className="h-36 w-36 ring-4 ring-white shadow-xl">
                   <AvatarImage src={profile.logo ? `${VITE_API_BASE_URL}${profile.logo}` : ''} alt={profile.companyName} />
-                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-4xl">
-                    {profile.companyName?.charAt(0) || 'C'}
-                  </AvatarFallback>
+                  <AvatarFallback className="bg-white/10 text-white text-4xl">{profile.companyName?.charAt(0) || 'C'}</AvatarFallback>
                 </Avatar>
               </div>
+            </div>
 
-              <div className="flex-grow">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h1 className="text-4xl font-bold mb-2">{profile.companyName}</h1>
-                    <p className="text-lg text-muted-foreground">{profile.industry}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    {/* Show Connect only when viewing someone else's profile */}
-                    {profile?.id && user?.id && profile.id !== user.id && (
-                      <Button
-                        variant="outline"
-                        onClick={async () => {
-                          try {
-                            console.log('Attempting to send connection to', profile.id);
-                            const res = await sendConnection(profile.id);
-                            const msg = res?.data?.message || 'Connection request sent successfully.';
-                            toast({ title: 'Connection sent', description: msg });
-                          } catch (err) {
-                            console.error('Connection failed', err);
-                            const status = err?.response?.status;
-                            const serverMsg = err?.response?.data?.message;
-                            let userMsg = serverMsg || err?.message || 'Failed to send connection';
-                            if (status === 404) userMsg = 'User not found (they may have been removed)';
-                            if (status === 400) userMsg = serverMsg || 'Invalid request';
-                            toast({ title: 'Connection failed', description: userMsg, variant: 'destructive' });
-                          }
-                        }}
-                      >
-                        Connect
-                      </Button>
-                    )}
-                      <ReportButton contentType="user" contentId={profile.id} className="bg-white/5 text-white hover:bg-white/20" />
-                    </div>
+            <div className="flex-1 text-white">
+              <h1 className="text-3xl lg:text-4xl font-extrabold leading-tight">{profile.companyName}</h1>
+              <p className="mt-1 text-lg opacity-90">{profile.industry} • {profile.companySize ? `${profile.companySize} employees` : 'Company'}</p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                  {profile.location && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>{profile.location}</span>
-                    </div>
-                  )}
-
-                  {profile.companySize && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Briefcase className="h-4 w-4 text-muted-foreground" />
-                      <span>{profile.companySize} employees</span>
-                    </div>
-                  )}
-
-                  {profile.email && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <a href={`mailto:${profile.email}`} className="hover:text-cyan-600">{profile.email}</a>
-                    </div>
-                  )}
-
-                  {profile.website && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                      <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600 flex items-center gap-1">
-                        Visit Website
-                      </a>
-                    </div>
-                  )}
-                </div>
-
-                {profile.description && (
-                  <div className="mt-3 text-muted-foreground whitespace-pre-line">{profile.description}</div>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                {profile.location && (
+                  <Badge className="bg-white/10 text-white">{profile.location}</Badge>
+                )}
+                {profile.email && (
+                  <a href={`mailto:${profile.email}`} className="text-sm underline opacity-90">{profile.email}</a>
+                )}
+                {profile.website && (
+                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="ml-2 text-sm font-medium underline">Visit website</a>
                 )}
               </div>
 
-              {/* Main company video (public view) */}
-              {mainVideo && (
-                <div className="lg:w-[360px] flex-shrink-0">
-                  <Card className="overflow-hidden">
-                    <CardHeader className="bg-black p-3">
-                      <CardTitle className="text-white text-lg">Company Video</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <div className="relative bg-black aspect-video max-h-56">
-                        <video
-                          src={mainVideo.video_url || mainVideo.videoUrl || ''}
-                          className="w-full h-full object-cover"
-                          controls
-                        />
-                      </div>
-                      <div className="p-3">
-                        <p className="font-medium text-sm text-gray-900">{mainVideo.video_title || mainVideo.videoTitle || 'Company Video'}</p>
-                        {mainVideo.description && (
-                          <p className="text-sm text-muted-foreground mt-1">{mainVideo.description}</p>
-                        )}
-                      </div>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {profile?.id && user?.id && profile.id !== user.id && (
+                  <Button
+                    onClick={async () => {
+                      try {
+                        const res = await sendConnection(profile.id);
+                        toast({ title: 'Connection sent', description: res?.data?.message || 'Connection request sent.' });
+                      } catch (err) {
+                        const status = err?.response?.status;
+                        const serverMsg = err?.response?.data?.message;
+                        let userMsg = serverMsg || err?.message || 'Failed to send connection';
+                        if (status === 404) userMsg = 'User not found (they may have been removed)';
+                        toast({ title: 'Connection failed', description: userMsg, variant: 'destructive' });
+                      }
+                    }}
+                    className="px-5 py-2"
+                  >
+                    Connect
+                  </Button>
+                )}
+
+                <Button variant="outline" onClick={() => navigate(`/employer/${profile.id}/jobs`)} className="px-5 py-2">View Jobs</Button>
+                <ReportButton contentType="user" contentId={profile.id} className="ml-2" />
+              </div>
+            </div>
+
+            {/* Quick stats */}
+            <div className="hidden lg:flex flex-col items-end gap-3">
+              <div className="text-right">
+                <div className="text-2xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
+                <div className="text-sm opacity-90">Open roles</div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold">{profile.profileViews || 0}</div>
+                <div className="text-sm opacity-90">Profile views</div>
+              </div>
+            </div>
+          </div>
+
+          {profile.description && (
+            <div className="mt-6 max-w-3xl text-white/90 whitespace-pre-line">{profile.description}</div>
+          )}
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white rounded-lg shadow-sm">
+            <TabsList className="grid grid-cols-3">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="jobs">Jobs <span className="ml-2 text-sm text-muted-foreground">({jobs.length})</span></TabsTrigger>
+              <TabsTrigger value="videos">Videos</TabsTrigger>
+            </TabsList>
+
+            <div className="p-6">
+              <TabsContent value="overview" className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Card>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground">Open Roles</div>
+                      <div className="text-3xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground">Profile Views (30d)</div>
+                      <div className="text-3xl font-bold">{profile.profileViews || 0}</div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground">Company Size</div>
+                      <div className="text-3xl font-bold">{profile.companySize || '—'}</div>
                     </CardContent>
                   </Card>
                 </div>
-              )}
-            </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </TabsContent>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="jobs">Jobs ({jobs.length})</TabsTrigger>
-          <TabsTrigger value="videos">Videos</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
-                <p className="text-xs text-muted-foreground mt-1">Job postings</p>
-              </CardContent>
-            </Card>
-
-            {/* Total Applications removed for public view */}
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{profile.profileViews || 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">In the last 30 days</p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="jobs" className="space-y-6">
-          {jobs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {jobs.map(job => (
-                <Card key={job.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{job.title}</CardTitle>
-                    <div className="text-sm text-muted-foreground flex items-center gap-2"><MapPin className="h-3 w-3" />{job.location}</div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>{localize(job.status)}</Badge>
-                        <Badge variant="outline">{localize(job.jobType)}</Badge>
-                      </div>
-                      {job.description && <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>}
-                      <Button variant="outline" className="w-full" onClick={() => navigate(`/job/${job.id}`)}>View Details</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card className="text-center py-12">
-              <CardContent>
-                <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No jobs posted yet</h3>
-                <p className="text-muted-foreground mb-4">Start attracting candidates by posting your first job</p>
-                <Button onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')} className="bg-cyan-600 text-white">Post a Job</Button>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="videos" className="space-y-6">
-          {mainVideo ? (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{mainVideo.video_title || 'Company Video'}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="relative bg-black aspect-video">
-                      <video
-                        ref={mainVideoRef}
-                        src={mainVideo.video_url || mainVideo.videoUrl || ''}
-                        className="w-full h-full object-cover"
-                        muted={isMuted}
-                        onClick={togglePlay}
-                      />
-
-                      <div className="absolute inset-0 flex items-end p-4 pointer-events-none">
-                        <div className="w-full flex justify-between items-center pointer-events-auto">
-                          <div className="flex gap-2">
-                            <Button size="icon" variant="ghost" onClick={togglePlay} className="bg-white/20 text-white">
-                              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-                            </Button>
-                            <Button size="icon" variant="ghost" onClick={toggleMute} className="bg-white/20 text-white">
-                              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                            </Button>
+              <TabsContent value="jobs" className="space-y-6">
+                {jobs.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {jobs.map(job => (
+                      <Card key={job.id} className="hover:shadow-lg transition-shadow">
+                        <CardContent>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="text-lg font-semibold">{job.title}</h3>
+                              <div className="text-sm text-muted-foreground">{job.location} • {localize(job.jobType)}</div>
+                            </div>
+                            <div className="text-right">
+                              <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>{localize(job.status)}</Badge>
+                            </div>
                           </div>
-                          <div className="text-white text-sm">{mainVideo.viewsCount || 0} views</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="space-y-3">
-                {videos.filter(v => v.id !== mainVideo.id).map(v => (
-                  <Card key={v.id} className="overflow-hidden cursor-pointer" onClick={() => { /* optionally open modal */ }}>
-                    <div className="relative bg-black aspect-video">
-                      <video src={v.video_url || v.videoUrl} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                        <Play className="h-10 w-10 text-white" />
-                      </div>
-                    </div>
+                          {job.description && <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{job.description}</p>}
+                          <div className="mt-4 flex gap-2">
+                            <Button variant="outline" onClick={() => navigate(`/job/${job.id}`)}>View</Button>
+                            <Button onClick={() => navigate(`/apply/${job.id}`)}>Apply</Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="text-center py-12">
                     <CardContent>
-                      <h3 className="font-semibold truncate">{v.video_title || v.title}</h3>
-                      {v.description && <p className="text-sm text-muted-foreground truncate mt-1">{v.description}</p>}
+                      <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-xl font-semibold mb-2">No jobs posted yet</h3>
+                      <p className="text-muted-foreground mb-4">This employer hasn't posted jobs yet.</p>
                     </CardContent>
                   </Card>
-                ))}
-              </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="videos" className="space-y-6">
+                {mainVideo ? (
+                  <div className="space-y-4">
+                    <Card>
+                      <CardContent className="p-0">
+                        <div className="relative bg-black aspect-video">
+                          <video
+                            ref={mainVideoRef}
+                            src={mainVideo.video_url || mainVideo.videoUrl || ''}
+                            className="w-full h-full object-cover"
+                            muted={isMuted}
+                            onClick={togglePlay}
+                            controls
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {videos.filter(v => v.id !== mainVideo.id).map(v => (
+                        <Card key={v.id} className="overflow-hidden cursor-pointer" onClick={() => { /* open modal */ }}>
+                          <div className="relative bg-black aspect-video">
+                            <video src={v.video_url || v.videoUrl} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                              <Play className="h-10 w-10 text-white" />
+                            </div>
+                          </div>
+                          <CardContent>
+                            <h3 className="font-semibold truncate">{v.video_title || v.title}</h3>
+                            {v.description && <p className="text-sm text-muted-foreground truncate mt-1">{v.description}</p>}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <Card className="text-center py-12">
+                    <CardContent>
+                      <Play className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-xl font-semibold mb-2">No videos</h3>
+                      <p className="text-muted-foreground">This employer hasn't uploaded any videos yet.</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
             </div>
-          ) : (
-            <Card className="text-center py-12">
-              <CardContent>
-                <Play className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No videos</h3>
-                <p className="text-muted-foreground">This employer hasn't uploaded any videos yet.</p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-      </Tabs>
+          </Tabs>
+        </div>
+
+        {/* Right column: contact / quick info */}
+        <aside className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Quick info</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {profile.location && <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{profile.location}</div>}
+                {profile.size && <div className="flex items-center gap-2"><Briefcase className="h-4 w-4" />{profile.companySize}</div>}
+                {profile.website && <a href={profile.website} target="_blank" rel="noreferrer" className="underline">Visit website</a>}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">About</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground line-clamp-4">{profile.shortBio || profile.description || 'No summary available.'}</p>
+            </CardContent>
+          </Card>
+        </aside>
+      </div>
     </div>
-    
   );
-} 
+}
 
    
