@@ -82,14 +82,53 @@ export default function JobSeekerProfile() {
 
       const normalizeProfile = (p) => {
         if (!p) return null;
+        
         // Derive fullName from available fields
-        const first = (p.first_name || p.user?.firstName || p.user?.displayName || '').toString().trim();
-        const last = (p.last_name || p.user?.lastName || '').toString().trim();
-        const displayName = (p.user?.displayName || p.displayName || '').toString().trim();
-        const fullName = p.fullName || displayName || `${first} ${last}`.trim() || null;
+        // Check user object fields (camelCase from backend User entity)
+        const first = (
+          p.first_name ||
+          p.firstName ||
+          p.user?.firstName ||
+          ''
+        ).toString().trim();
+
+        const middle = (
+          p.second_name ||
+          p.secondName ||
+          p.user?.middleName ||
+          ''
+        ).toString().trim();
+
+        const last = (
+          p.last_name ||
+          p.lastName ||
+          p.user?.lastName ||
+          ''
+        ).toString().trim();
+
+        const displayName = (
+          p.displayName ||
+          p.user?.displayName ||
+          p.display_name ||
+          ''
+        ).toString().trim();
+
+        // Build full name: prioritize explicit fullName, then displayName, then first+middle+last combination
+        const nameParts = [first, middle, last].filter(Boolean);
+        const combined = nameParts.join(' ');
+        const fullName = p.fullName || displayName || combined || 'User Name';
 
         // Headline/title
-        const headline = p.headline || p.title || p.preferred_job_title || null;
+        // Resolve professional/title from multiple possible backend fields
+        const headline = (
+          p.headline ||
+          p.title ||
+          p.preferred_job_title ||
+          p.preferredJobTitle ||
+          p.user?.title ||
+          p.user?.headline ||
+          null
+        );
 
         // Picture may be stored under several keys
         const profilePicture = p.profilePicture || p.profile_pic || p.user?.photoUrl || p.photoUrl || null;
@@ -180,6 +219,11 @@ export default function JobSeekerProfile() {
     if (openTab) url += `&openTab=${encodeURIComponent(openTab)}`;
     if (action) url += `&action=${encodeURIComponent(action)}`;
     navigate(url);
+  };
+
+  const handleGoToVideos = () => {
+    // Navigate to the jobseeker-tabs page and open the My Videos tab
+    navigate('/jobseeker-tabs?group=profileContent&tab=my-videos');
   };
 
   if (loading) {
@@ -617,6 +661,16 @@ export default function JobSeekerProfile() {
           )}
         </TabsContent>
       </Tabs>
+      {/* Bottom action - go to user's videos page */}
+      <div className="mt-6 flex justify-end">
+        <Button
+          onClick={handleGoToVideos}
+          className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+        >
+          <Play className="h-4 w-4 mr-2" />
+          My Videos
+        </Button>
+      </div>
     </div>
   );
 }

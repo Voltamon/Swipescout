@@ -64,6 +64,22 @@ export default function ProfileViewPage() {
     }
   }, [userId]);
 
+  const handleConnect = async () => {
+    // If user not logged in, redirect to login and preserve return path
+    if (!user || !user.id) {
+      navigate('/login', { state: { from: window.location.pathname } });
+      return;
+    }
+
+    try {
+      await sendConnection(profile.id);
+      toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
+    } catch (err) {
+      console.error('Connection failed', err);
+      toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
+    }
+  };
+
   const fetchProfile = async () => {
     setLoading(true);
     try {
@@ -182,18 +198,10 @@ export default function ProfileViewPage() {
                           {isEmployer ? 'Employer' : 'Job Seeker'}
                         </Badge>
                         {/* Show Connect when viewing another user's profile */}
-                        {profile?.id && user?.id && profile.id !== user.id && (
+                        {profile?.id && profile.id !== user?.id && (
                           <Button
                             variant="outline"
-                            onClick={async () => {
-                              try {
-                                await sendConnection(profile.id);
-                                toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
-                              } catch (err) {
-                                console.error('Connection failed', err);
-                                toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
-                              }
-                            }}
+                            onClick={handleConnect}
                           >
                             Connect
                           </Button>
@@ -750,6 +758,15 @@ export default function ProfileViewPage() {
           </TabsContent>
         )}
       </Tabs>
+      {/* Bottom action - Connect (visible when viewing another user's profile) */}
+      {profile?.id && profile.id !== user?.id && (
+        <div className="mt-6 flex justify-end">
+          <Button onClick={handleConnect} className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700">
+            <Heart className="h-4 w-4 mr-2" />
+            Connect
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

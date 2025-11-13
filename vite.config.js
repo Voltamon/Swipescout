@@ -10,6 +10,9 @@ export default defineConfig({
     },
     extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json']
   },
+  optimizeDeps: {
+    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+  },
   build: {
     rollupOptions: {
       output: {
@@ -35,20 +38,42 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // Proxy Cloudinary videos to avoid CORS issues
+      '/cloudinary-proxy': {
+        target: 'https://res.cloudinary.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cloudinary-proxy/, ''),
+        configure: (proxy, options) => {
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            // Add CORP header for proxied videos
+            proxyRes.headers['cross-origin-resource-policy'] = 'cross-origin';
+          });
+        },
+      },
     },
     headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-      'Cross-Origin-Embedder-Policy': 'unsafe-none',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'credentialless', // More permissive than require-corp
     },
-    // Dev server middleware to set Cross-Origin-Opener-Policy so popups can close and postMessage
-    // This mirrors the backend header used in production and avoids COOP blocking during dev.
+    // Dev server middleware to set proper headers for FFmpeg SharedArrayBuffer
     middlewareMode: false,
     setup: ({ middlewares }) => {
-      // Vite's connect-style middleware stack: add a header for all responses
+      // Vite's connect-style middleware stack: add headers for all responses
       middlewares.use((req, res, next) => {
         try {
-          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-          res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+          // FFmpeg requires these headers for SharedArrayBuffer support
+          // Using 'credentialless' allows loading external resources without CORP headers
+          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+          res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+          
+          // Ensure worker files have correct MIME type
+          if (req.url && (req.url.includes('worker') || req.url.includes('.wasm'))) {
+            if (req.url.includes('.wasm')) {
+              res.setHeader('Content-Type', 'application/wasm');
+            } else if (req.url.includes('.js')) {
+              res.setHeader('Content-Type', 'application/javascript');
+            }
+          }
         } catch {
           // ignore if headers already sent
         }
@@ -58,8 +83,8 @@ export default defineConfig({
   },
   preview: {
     headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-      'Cross-Origin-Embedder-Policy': 'unsafe-none',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'credentialless',
     },
   },
 });

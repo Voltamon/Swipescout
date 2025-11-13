@@ -378,8 +378,9 @@ const VideoFeedViewer = () => {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
-              cursor: "pointer"
+              objectFit: "contain",
+              cursor: "pointer",
+              backgroundColor: "black"
             }}
             muted={isMuted}
             loop

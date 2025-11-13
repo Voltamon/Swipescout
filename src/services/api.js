@@ -195,6 +195,7 @@ export const getJobSeekersVideos = (page = 1, limit = 10) => api.get('/videos/jo
 export const getEmployerPublicVideos = (page = 1, limit = 10) => api.get('/videos/employers', { params: { page, limit } });
 export const getUserVideoById = (id) => api.get(`/videos/${id}`);
 export const updateUserVideo = (id, videoData) => api.put(`/videos/${id}`, videoData);
+export const archiveAndReplaceVideo = (id, newVideoData) => api.post(`/videos/${id}/archive-and-replace`, newVideoData);
 export const deleteUserVideo = (id) => api.delete(`/videos/${id}`);
 
 // Employer

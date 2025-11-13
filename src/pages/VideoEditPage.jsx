@@ -4,7 +4,7 @@ import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
 } from 'lucide-react';
-import { uploadVideoResume, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus, getVideoInfo, updateUserVideo, deleteUserVideo, checkUploadStatus } from '@/services/api';
+import { uploadVideoResume, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus, getVideoInfo, updateUserVideo, deleteUserVideo, checkUploadStatus, archiveAndReplaceVideo } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
@@ -21,50 +21,60 @@ import { Badge } from '@/components/UI/badge.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { v4 as uuidv4 } from 'uuid';
 
-// FFmpeg import with fallback
+// FFmpeg import with fallback and retry mechanism
 let ffmpeg;
 let FFmpegClass;
 let fetchFile;
-let toBlobURL;
+let ffmpegLoadAttempts = 0;
+let ffmpegLoadError = null;
+const MAX_FFMPEG_RETRIES = 3;
 
 console.log('VideoEditPage: Starting FFmpeg import...');
 
-try {
-  import('@ffmpeg/ffmpeg').then(module => {
-    console.log('FFmpeg module loaded successfully');
-    FFmpegClass = module.FFmpeg;
+// Provide a lightweight fetchFile polyfill (works for Blob/File or remote URL)
+fetchFile = async (file) => {
+  if (file instanceof File || file instanceof Blob) {
+    return new Uint8Array(await file.arrayBuffer());
+  }
+  const response = await fetch(file);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
+  }
+  return new Uint8Array(await response.arrayBuffer());
+};
 
-    // Provide a lightweight fetchFile polyfill (works for Blob/File or remote URL)
-    fetchFile = async (file) => {
-      if (file instanceof File || file instanceof Blob) {
-        return new Uint8Array(await file.arrayBuffer());
-      }
-      const response = await fetch(file);
-      return new Uint8Array(await response.arrayBuffer());
-    };
-
-    // toBlobURL not required; rely on ffmpeg.load() defaults from @ffmpeg/core package
-    initializeFFmpeg();
-  }).catch(err => {
-    console.error('Failed to load FFmpeg:', err);
-  });
-} catch (error) {
-  console.error('Failed to load FFmpeg:', error);
-}
-
-function initializeFFmpeg() {
-  console.log('initializeFFmpeg called, FFmpegClass exists:', !!FFmpegClass);
-  if (FFmpegClass) {
-    try {
-      ffmpeg = new FFmpegClass();
-      console.log('FFmpeg instance created:', ffmpeg);
-    } catch (err) {
-      console.error('Failed to create FFmpeg instance:', err);
-    }
-  } else {
+// Async function to initialize FFmpeg with retry logic
+async function initializeFFmpeg() {
+  console.log('initializeFFmpeg called, attempt:', ffmpegLoadAttempts + 1);
+  
+  if (!FFmpegClass) {
     console.error('FFmpegClass is not available');
+    return null;
+  }
+
+  try {
+    ffmpeg = new FFmpegClass();
+    console.log('FFmpeg instance created:', ffmpeg);
+    return ffmpeg;
+  } catch (err) {
+    console.error('Failed to create FFmpeg instance:', err);
+    ffmpegLoadError = err;
+    return null;
   }
 }
+
+// Import FFmpeg dynamically with error handling
+(async () => {
+  try {
+    const module = await import('@ffmpeg/ffmpeg');
+    console.log('✅ FFmpeg module loaded successfully');
+    FFmpegClass = module.FFmpeg;
+    await initializeFFmpeg();
+  } catch (err) {
+    console.error('❌ Failed to load FFmpeg module:', err);
+    ffmpegLoadError = err;
+  }
+})();
 
 export default function VideoEditPage() {
   const { user } = useAuth();
@@ -116,123 +126,117 @@ export default function VideoEditPage() {
   const [previewDialog, setPreviewDialog] = useState(false);
   const [processedVideoUrl, setProcessedVideoUrl] = useState("");
   const [wasJustProcessed, setWasJustProcessed] = useState(false);
+  const [recentlyUploadedVideoId, setRecentlyUploadedVideoId] = useState(null);
 
   useEffect(() => {
     async function loadFFmpeg() {
-      console.log('loadFFmpeg effect running, ffmpeg:', ffmpeg, 'loaded:', ffmpeg?.loaded);
+      console.log('🎬 loadFFmpeg effect running, attempt:', ffmpegLoadAttempts + 1);
+      console.log('FFmpeg state - instance exists:', !!ffmpeg, 'loaded:', ffmpeg?.loaded);
+      
       try {
-        if (ffmpeg && !ffmpeg.loaded) {
-          console.log('FFmpeg exists but not loaded, loading now...');
-
-          // Create a load task that first tries a local-hosted core (public/ffmpeg),
-          // then CDN, then finally the bundled default. We pre-check the local files
-          // with `fetch` so we can log HTTP status and avoid calling `ffmpeg.load`
-          // with a URL that will 404 or return the wrong MIME type which can hang.
-          const loadTask = (async () => {
-            const localCore = '/ffmpeg/ffmpeg-core.js';
-            const localWasm = '/ffmpeg/ffmpeg-core.wasm';
-
-            // Helper to try loading from a specific core + wasm pair and log details
-            const tryLoad = async (coreURL, wasmURL, label) => {
-              console.log(`Attempting to load FFmpeg core from ${label}:`, coreURL, wasmURL);
-              try {
-                await ffmpeg.load({ coreURL, wasmURL });
-                console.log(`Loaded FFmpeg core from ${label}`);
-                return true;
-              } catch (err) {
-                console.warn(`Load from ${label} failed:`, err);
-                return false;
-              }
-            };
-
-            // 1) Check local-core availability with a direct fetch so we can report
-            // precise HTTP status and CORS problems before calling ffmpeg.load.
-            try {
-              const resp = await fetch(localCore, { method: 'GET' });
-              console.log('Local core fetch response for', localCore, 'status=', resp.status, 'content-type=', resp.headers.get('content-type'));
-              if (resp.ok) {
-                // If local file exists, attempt load using it
-                const ok = await tryLoad(localCore, localWasm, 'local path');
-                if (ok) return;
-                console.warn('Local core exists but ffmpeg.load failed for local path, will try CDN next');
-              } else {
-                console.warn('Local core not available (non-OK response), will try CDN. HTTP status:', resp.status);
-              }
-            } catch (fetchErr) {
-              console.warn('Could not fetch local FFmpeg core (network/CORS/404):', fetchErr);
-            }
-
-            // 2) Try the CDN (pin to a specific known version). If CDN fails, fall back
-            // to calling ffmpeg.load() without parameters (bundled/bundler provided assets).
-            const cdnCore = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.js';
-            const cdnWasm = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/ffmpeg-core.wasm';
-            const cdnOk = await tryLoad(cdnCore, cdnWasm, 'CDN');
-            if (cdnOk) return;
-
-            // 3) Final fallback - let @ffmpeg/ffmpeg decide (bundled worker). This
-            // can still hang if the build environment doesn't include the worker files
-            // or Vite rewrites them with wrong headers, but it's worth trying.
-            try {
-              console.log('Falling back to bundled ffmpeg.load() (no coreURL specified)');
-              await ffmpeg.load();
-              console.log('Loaded FFmpeg core via bundled loader');
-              return;
-            } catch (finalErr) {
-              console.warn('Bundled ffmpeg.load() also failed:', finalErr);
-              throw finalErr;
-            }
-          })();
-
-          // Timeout guard: if load doesn't complete in a reasonable time, give up and
-          // disable FFmpeg so the UI can continue in basic mode instead of being stuck.
-          // Increase timeout to allow slower connections or local fetch checks
-          const timeoutMs = 20000; // 20s
-          try {
-            await Promise.race([
-              loadTask,
-              new Promise((_, reject) => setTimeout(() => reject(new Error('FFmpeg load timeout')), timeoutMs))
-            ]);
-            console.log('FFmpeg loaded successfully!');
+        // If FFmpeg isn't initialized yet, wait and retry
+        if (!ffmpeg) {
+          console.log('⏳ FFmpeg instance not ready, will retry...');
+          if (ffmpegLoadAttempts < MAX_FFMPEG_RETRIES) {
+            ffmpegLoadAttempts++;
+            setTimeout(() => {
+              setLoadingFFmpeg(true); // Trigger re-render to retry
+            }, 2000 * ffmpegLoadAttempts); // Exponential backoff
+            return;
+          } else {
+            console.error('❌ FFmpeg failed to initialize after', MAX_FFMPEG_RETRIES, 'attempts');
             setLoadingFFmpeg(false);
-          } catch (loadErr) {
-            console.error('FFmpeg failed to load (timeout or error):', loadErr);
-            // Ensure we don't keep a partly-initialized ffmpeg instance around
-            try { ffmpeg = null; } catch (e) { /* ignore */ }
-            setLoadingFFmpeg(false);
-            toast({
-              description: 'FFmpeg failed to load or timed out. Editor will run in basic mode.',
-              variant: 'destructive'
-            });
+            return;
           }
-
-        } else if (!ffmpeg) {
-          console.log('FFmpeg instance does not exist, waiting briefly then continuing in basic mode...');
-          setTimeout(() => {
-            console.log('FFmpeg still not available after delay, ffmpeg:', ffmpeg);
-            setLoadingFFmpeg(false);
-            toast({ 
-              description: 'FFmpeg not available. Editor will run in basic mode.',
-              variant: 'destructive'
-            });
-          }, 3000);
-        } else {
-          console.log('FFmpeg already loaded');
-          setLoadingFFmpeg(false);
         }
+
+        if (ffmpeg.loaded) {
+          console.log('✅ FFmpeg already loaded');
+          setLoadingFFmpeg(false);
+          return;
+        }
+
+        console.log('📦 FFmpeg exists but not loaded, loading now...');
+        setLoadingFFmpeg(true);
+
+        // Retry mechanism with multiple strategies
+        const loadStrategies = [
+          {
+            name: 'CDN (unpkg - latest)',
+            coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+            wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
+          },
+          {
+            name: 'CDN (jsdelivr - fallback)',
+            coreURL: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+            wasmURL: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
+          },
+          {
+            name: 'Default (bundled)',
+            coreURL: undefined,
+            wasmURL: undefined
+          }
+        ];
+
+        let loadSuccess = false;
+
+        for (const strategy of loadStrategies) {
+          if (loadSuccess) break;
+          
+          console.log(`🔄 Trying strategy: ${strategy.name}`);
+          
+          try {
+            // Add timeout for each load attempt
+            const loadPromise = strategy.coreURL 
+              ? ffmpeg.load({ 
+                  coreURL: strategy.coreURL,
+                  wasmURL: strategy.wasmURL,
+                  // Add worker URL to fix worker loading issues
+                  workerURL: strategy.coreURL.replace('ffmpeg-core.js', 'ffmpeg-core.worker.js')
+                })
+              : ffmpeg.load();
+
+            const timeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Load timeout')), 15000)
+            );
+
+            await Promise.race([loadPromise, timeoutPromise]);
+            
+            console.log(`✅ Successfully loaded FFmpeg using: ${strategy.name}`);
+            loadSuccess = true;
+            setLoadingFFmpeg(false);
+            
+          } catch (err) {
+            console.warn(`❌ Strategy '${strategy.name}' failed:`, err.message);
+            if (strategy === loadStrategies[loadStrategies.length - 1]) {
+              // Last strategy failed
+              throw err;
+            }
+            // Continue to next strategy
+          }
+        }
+
+        if (!loadSuccess) {
+          throw new Error('All FFmpeg load strategies failed');
+        }
+
       } catch (error) {
-        console.error('Failed to load FFmpeg:', error);
-        // Defensive: clear ffmpeg so other code falls back to basic mode
-        try { ffmpeg = null; } catch (e) { /* ignore */ }
+        console.error('❌ Failed to load FFmpeg after all attempts:', error);
+        ffmpegLoadError = error;
         setLoadingFFmpeg(false);
+        
+        // Show user-friendly error message
         toast({
-          description: 'Failed to initialize video editor. Basic editing may still work.',
-          variant: 'destructive'
+          title: "FFmpeg Loading Failed",
+          description: "Client-side video processing is unavailable. You can still use 'Process on Server' option.",
+          variant: "destructive",
         });
       }
     }
-    
+
     loadFFmpeg();
     loadMyVideos();
+    
     // Capture initial videoId param so we can auto-select after videos load
     try {
       const vid = searchParams.get('videoId') || searchParams.get('videoid') || searchParams.get('id');
@@ -240,6 +244,7 @@ export default function VideoEditPage() {
     } catch (e) {
       // ignore
     }
+    
     // Load subscription status
     if (user?.id) {
       getSubscriptionStatus(user.id).then(r => {
@@ -248,7 +253,7 @@ export default function VideoEditPage() {
         setIsPro(!!status?.active);
       }).catch(() => setIsPro(false));
     }
-  }, []);
+  }, [loadingFFmpeg]); // Depend on loadingFFmpeg to enable retries
 
   // When videos load and an initialVideoId was provided, auto-select that video
   useEffect(() => {
@@ -363,6 +368,17 @@ export default function VideoEditPage() {
     setVideoDescription(video.description || video.desc || '');
     setVideoFile(null);
     resetEditingParameters();
+    
+    // Scroll to video preview section after a short delay to let state update
+    setTimeout(() => {
+      if (previewRef.current) {
+        previewRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }, 200);
   };
 
   const resetEditingParameters = () => {
@@ -456,29 +472,14 @@ export default function VideoEditPage() {
     }
 
     if (!ffmpeg || !ffmpeg.loaded) {
-      // FFmpeg not available: show a live preview with the same CSS filters
-      // applied so the user can inspect the edited look. Don't set
-      // `processedVideoUrl` to the original source because that bypasses
-      // the live preview and shows the unedited video.
-      console.log('FFmpeg not loaded, opening live preview (basic mode)');
-      setProcessing(true);
-      try {
-        // small delay to simulate processing and let UI update
-        await new Promise(resolve => setTimeout(resolve, 800));
-        // Ensure processedVideoUrl is empty so the preview dialog will render
-        // the live preview branch (which applies the CSS filters)
-        if (processedVideoUrl) {
-          try { URL.revokeObjectURL(processedVideoUrl); } catch (e) { /* ignore */ }
-        }
-        setProcessedVideoUrl("");
-        setPreviewDialog(true);
-        toast({ description: "Preview opened (basic mode). Use server or install FFmpeg for real exports." });
-      } catch (error) {
-        console.error('Error opening live preview:', error);
-        toast({ description: "Failed to open preview", variant: "destructive" });
-      } finally {
-        setProcessing(false);
-      }
+      // FFmpeg not available: can't process, inform user
+      console.log('FFmpeg not loaded - processing unavailable');
+      toast({ 
+        title: "Processing Unavailable", 
+        description: "FFmpeg is not loaded. Please use 'Process on Server' or wait for FFmpeg to load.",
+        variant: "destructive",
+        duration: 5000
+      });
       return;
     }
 
@@ -591,13 +592,16 @@ export default function VideoEditPage() {
       console.log('Set new processedVideoUrl to:', processedUrl);
       setWasJustProcessed(true);
       
-      // Small delay to ensure state updates before opening dialog
-      setTimeout(() => {
-        console.log('Opening preview dialog with processedVideoUrl:', processedUrl);
-        console.log('State check - processedVideoUrl should be set now');
-        setPreviewDialog(true);
-        toast({ description: "Video processed successfully! Ready to upload." });
-      }, 200);
+      // Wait for state to update, then open dialog
+      await new Promise(resolve => setTimeout(resolve, 300));
+      console.log('Opening preview dialog with processedVideoUrl:', processedUrl);
+      console.log('State check - processedVideoUrl should be set now');
+      setPreviewDialog(true);
+      toast({ 
+        title: "✅ Video Processed",
+        description: "Video processed successfully! Ready to upload.",
+        duration: 3000
+      });
 
       try {
         await ffmpeg.deleteFile(inputFileName);
@@ -736,23 +740,26 @@ export default function VideoEditPage() {
 
     setExporting(true);
     try {
+      // Use the correct field names that match the backend entity
       const updateData = {
-        title: videoTitle || 'Updated Video',
-        description: videoDescription || '',
-        updatedAt: new Date().toISOString()
+        videoTitle: videoTitle || selectedVideoFromList.title || 'Updated Video',
+        videoDescription: videoDescription || ''
       };
 
-      await updateUserVideo(selectedVideoFromList.id, updateData);
+      console.log('Updating video metadata:', { id: selectedVideoFromList.id, updateData });
+      
+      const response = await updateUserVideo(selectedVideoFromList.id, updateData);
+      
+      console.log('Update response:', response);
 
       toast({ 
         title: "✅ Metadata Updated",
-        description: "Video title and description have been updated",
+        description: "Video title and description have been updated successfully",
         duration: 3000
       });
 
-      setPreviewDialog(false);
+      // Reload videos to see the changes
       await loadMyVideos();
-      setActiveTab('library');
       
     } catch (error) {
       console.error('Quick update error:', error);
@@ -806,27 +813,7 @@ export default function VideoEditPage() {
       }
       
       if (isUpdatingExisting) {
-        // STEP 1: Create temp local video for immediate preview
-        const tempVideoId = uuidv4();
-        const blobUrl = URL.createObjectURL(videoBlob);
-        
-        const tempLocalVideo = {
-          id: tempVideoId,
-          video_title: videoTitle,
-          title: videoTitle,
-          description: videoDescription,
-          video_description: videoDescription,
-          video_url: blobUrl,
-          videoUrl: blobUrl,
-          isLocal: true,
-          status: 'completed',
-          serverProcessing: true, // Mark as uploading to server
-          progress: 0,
-          submitted_at: new Date().toISOString()
-        };
-        
-        // Add to context so VideosPage shows it immediately
-        addLocalVideo(tempLocalVideo);
+        // NEW SIMPLER FLOW: Upload new video, then use archive-and-replace API
         
         toast({ 
           title: "Uploading...",
@@ -834,18 +821,16 @@ export default function VideoEditPage() {
           duration: 2000 
         });
         
-        // STEP 2: Upload new video file to backend (creates new video entry with new ID)
+        // STEP 1: Upload new video file to backend (creates temp video entry)
         const uploadFormData = new FormData();
         if (videoFile) {
           uploadFormData.append('video', videoFile);
         }
-        uploadFormData.append('title', videoTitle || 'Updated Video');
+        uploadFormData.append('title', `temp_${videoTitle || 'Updated Video'}`);
         uploadFormData.append('description', videoDescription || '');
         
-        // Upload and get upload ID - use uploadVideoResume (POST /videos/)
         const uploadResponse = await uploadVideoResume(uploadFormData, (progress) => {
           setProcessingProgress(progress);
-          updateVideoStatus(tempVideoId, { progress });
         });
         
         console.log('Upload response:', uploadResponse.data);
@@ -877,10 +862,7 @@ export default function VideoEditPage() {
             console.log(`Upload status poll ${pollAttempts}: ${status} (${progress}%)`);
             
             // Update progress
-            updateVideoStatus(tempVideoId, { 
-              progress,
-              serverProcessing: true 
-            });
+            setProcessingProgress(progress);
             
             if (status === 'completed' && statusData.video) {
               finalVideo = statusData.video;
@@ -901,68 +883,60 @@ export default function VideoEditPage() {
           throw new Error('Upload polling timeout - video not ready');
         }
         
-        const newVideoId = finalVideo.id;
         const newVideoUrl = finalVideo.secure_url || finalVideo.video_url || finalVideo.videoUrl;
         
-        if (!newVideoId || !newVideoUrl) {
-          throw new Error('Invalid video data from server');
+        if (!newVideoUrl) {
+          throw new Error('Invalid video data from server - no URL');
         }
         
-        console.log(`New video uploaded with ID: ${newVideoId}, URL: ${newVideoUrl}`);
+        console.log(`New video uploaded with URL: ${newVideoUrl}`);
         
-        // Update temp local video with server ID and URL
-        updateVideoServerId(tempVideoId, newVideoId, {
-          status: 'completed',
-          isLocal: false,
-          serverProcessing: false,
-          video_url: newVideoUrl,
-          videoUrl: newVideoUrl,
-          ...finalVideo
-        });
-        
-        // STEP 3: Update old video record to use new video's URL and data
+        // STEP 2: Use archive-and-replace API to archive old video and update with new data
         toast({ 
           title: "Updating...",
-          description: `Transferring content to video ID: ${oldVideoId}`, 
+          description: `Archiving old version and updating video ID: ${oldVideoId}`, 
           duration: 2000 
         });
         
-        const updateData = {
-          title: videoTitle || 'Updated Video',
-          description: videoDescription || '',
-          video_url: newVideoUrl,
-          video_url_signed: newVideoUrl,
-          // Transfer any additional data from the new upload
-          cloudinary_public_id: finalVideo.cloudinary_public_id,
-          duration: finalVideo.duration,
-          file_size: finalVideo.file_size || finalVideo.fileSize,
-          updatedAt: new Date().toISOString()
+        const archiveData = {
+          videoUrl: newVideoUrl,
+          videoTitle: videoTitle || 'Updated Video',
+          hashtags: finalVideo.hashtags || [],
+          videoDuration: finalVideo.duration || 0,
+          cloudinaryPublicId: finalVideo.cloudinary_public_id,
+          fileSize: finalVideo.file_size || finalVideo.fileSize,
+          thumbnail: finalVideo.thumbnail
         };
         
         try {
-          await updateUserVideo(oldVideoId, updateData);
+          const archiveResponse = await archiveAndReplaceVideo(oldVideoId, archiveData);
           
-          // STEP 4: Delete the temporary new video entry
-          try {
-            await deleteUserVideo(newVideoId);
-            console.log(`Deleted temporary video with ID: ${newVideoId}`);
-          } catch (deleteError) {
-            console.warn('Could not delete temporary video:', deleteError);
+          console.log('Archive and replace response:', archiveResponse.data);
+          
+          // STEP 3: Delete the temporary uploaded video entry
+          const tempVideoId = finalVideo.id;
+          if (tempVideoId) {
+            try {
+              await deleteUserVideo(tempVideoId);
+              console.log(`Deleted temporary video with ID: ${tempVideoId}`);
+            } catch (deleteError) {
+              console.warn('Could not delete temporary video:', deleteError);
+            }
           }
           
           toast({ 
             title: "✨ Video Replaced!",
-            description: `Video content updated on ID: ${oldVideoId}`, 
+            description: `Video content updated on ID: ${oldVideoId}. Old version archived.`, 
             duration: 4000 
           });
           
         } catch (updateError) {
-          console.error('Error updating old video:', updateError);
-          throw new Error(`Failed to update old video: ${updateError.message}`);
+          console.error('Error in archive-and-replace:', updateError);
+          throw new Error(`Failed to archive and replace video: ${updateError.message}`);
         }
         
       } else {
-        // UPLOAD MODE: Create new video with new ID (same as VideoUpload)
+        // UPLOAD MODE: Create new video with new ID (same as before)
         const tempVideoId = uuidv4();
         const blobUrl = URL.createObjectURL(videoBlob);
         
@@ -1097,6 +1071,48 @@ export default function VideoEditPage() {
       // Switch to library tab to show the result
       setActiveTab('library');
       
+      // Mark the video as recently uploaded for highlighting
+      const uploadedVideoId = isUpdatingExisting ? oldVideoId : newVideoId;
+      setRecentlyUploadedVideoId(uploadedVideoId);
+      
+      // Scroll to top of page to show toast and library
+      window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth' 
+      });
+      
+      // Show final success message after dialog closes with visual emphasis
+      setTimeout(() => {
+        toast({ 
+          title: "🎉 Upload Complete!",
+          description: isUpdatingExisting 
+            ? "✅ Video updated and old version archived. Check the highlighted video below!" 
+            : "✅ New video uploaded successfully. Check the highlighted video below!",
+          duration: 6000,
+          className: "bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-500 shadow-lg"
+        });
+        
+        // After showing toast, scroll to the uploaded video card
+        setTimeout(() => {
+          const videoCards = document.querySelectorAll('[data-video-id]');
+          const uploadedCard = Array.from(videoCards).find(
+            card => card.getAttribute('data-video-id') === uploadedVideoId
+          );
+          if (uploadedCard) {
+            uploadedCard.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center',
+              inline: 'nearest'
+            });
+          }
+        }, 1000);
+      }, 500);
+      
+      // Clear the highlight after 10 seconds
+      setTimeout(() => {
+        setRecentlyUploadedVideoId(null);
+      }, 10500);
+      
     } catch (error) {
       console.error('Error uploading/updating video:', error);
       toast({ 
@@ -1189,12 +1205,18 @@ export default function VideoEditPage() {
                       new Date(video.updatedAt).getTime() > new Date(video.createdAt).getTime() &&
                       (Date.now() - new Date(video.updatedAt).getTime()) < 5 * 60 * 1000;
                     
+                    // Check if this is the recently uploaded/updated video
+                    const isJustUploaded = recentlyUploadedVideoId && video.id === recentlyUploadedVideoId;
+                    
                     return (
                       <Card
                         key={video.id}
+                        data-video-id={video.id}
                         className={`cursor-pointer transition-all hover:shadow-lg ${
                           selectedVideoFromList?.id === video.id ? 'border-2 border-purple-600' : ''
-                        } ${video.serverProcessing ? 'border-2 border-yellow-400 border-dashed' : ''}`}
+                        } ${video.serverProcessing ? 'border-2 border-yellow-400 border-dashed' : ''} ${
+                          isJustUploaded ? 'border-4 border-green-500 shadow-2xl shadow-green-500/50 animate-pulse ring-4 ring-green-300/50' : ''
+                        }`}
                         onClick={() => handleSelectVideoFromList(video)}
                       >
                         <div className="aspect-video bg-gray-900 rounded-t-lg overflow-hidden relative">
@@ -1209,7 +1231,15 @@ export default function VideoEditPage() {
                               <span>Processing...</span>
                             </div>
                           )}
-                          {isRecentlyUpdated && !video.serverProcessing && (
+                          {isJustUploaded && (
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg animate-bounce">
+                                <Sparkles className="h-4 w-4 mr-1" />
+                                Just Uploaded!
+                              </Badge>
+                            </div>
+                          )}
+                          {!isJustUploaded && isRecentlyUpdated && !video.serverProcessing && (
                             <div className="absolute top-2 right-2">
                               <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg">
                                 <Sparkles className="h-3 w-3 mr-1" />
@@ -1227,7 +1257,13 @@ export default function VideoEditPage() {
                               <span>Uploading to server</span>
                             </div>
                           )}
-                          {isRecentlyUpdated && !video.serverProcessing && (
+                          {isJustUploaded && (
+                            <div className="mt-2 flex items-center gap-1 text-xs text-green-600 font-semibold">
+                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                              <span>✅ Upload Complete!</span>
+                            </div>
+                          )}
+                          {!isJustUploaded && isRecentlyUpdated && !video.serverProcessing && (
                             <div className="mt-2 flex items-center gap-1 text-xs text-amber-600">
                               <RotateCw className="h-3 w-3" />
                               <span>Recently updated</span>
@@ -1306,17 +1342,14 @@ export default function VideoEditPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                 {selectedVideoFromList && (
                   <div className="md:col-span-2 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                    <div className="flex flex-col gap-1">
+                      <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 w-fit">
                         Editing Mode
                       </Badge>
-                      <span className="text-blue-700 dark:text-blue-300">
-                        Video ID: <code className="bg-blue-100 dark:bg-blue-900 px-2 py-0.5 rounded font-mono text-xs">{selectedVideoFromList.id}</code>
-                      </span>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">
+                        Saving will replace the video file and metadata while making original one as Old
+                      </p>
                     </div>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                      Saving will replace the video file and metadata while keeping this ID
-                    </p>
                   </div>
                 )}
                 <div className="space-y-2">
@@ -1619,6 +1652,49 @@ export default function VideoEditPage() {
           {/* Process Button */}
           <Card>
             <CardContent className="pt-6">
+              {/* FFmpeg Status & Retry */}
+              {loadingFFmpeg && (
+                <div className="mb-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg flex items-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-blue-300">Loading FFmpeg...</p>
+                    <p className="text-xs text-blue-400/70">Client-side video processing is being initialized</p>
+                  </div>
+                </div>
+              )}
+              {!loadingFFmpeg && !ffmpeg?.loaded && ffmpegLoadError && (
+                <div className="mb-4 p-3 bg-amber-900/20 border border-amber-500/30 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-amber-300">FFmpeg Not Available</p>
+                      <p className="text-xs text-amber-400/70">Client-side processing unavailable. Use "Process on Server" or retry loading.</p>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => {
+                      ffmpegLoadAttempts = 0;
+                      ffmpegLoadError = null;
+                      setLoadingFFmpeg(true);
+                    }} 
+                    size="sm" 
+                    variant="outline"
+                    className="border-amber-500/50 text-amber-300 hover:bg-amber-900/30"
+                  >
+                    <RotateCw className="h-4 w-4 mr-2" />
+                    Retry Loading FFmpeg
+                  </Button>
+                </div>
+              )}
+              {!loadingFFmpeg && ffmpeg?.loaded && (
+                <div className="mb-4 p-3 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
+                  <Sparkles className="h-5 w-5 text-green-400" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-green-300">FFmpeg Ready</p>
+                    <p className="text-xs text-green-400/70">Client-side video processing is available</p>
+                  </div>
+                </div>
+              )}
+              
               <div className="flex justify-center gap-3 flex-wrap">
                 {!useServerProcessing && (
                   <Button onClick={handleProcessVideo} disabled={processing || loadingFFmpeg} className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 px-8 py-6 text-lg">
@@ -1630,6 +1706,17 @@ export default function VideoEditPage() {
                     {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Sending to server...</>) : (<><Upload className="h-5 w-5 mr-2" />Process on Server</>)}
                   </Button>
                 )}
+                {selectedVideoFromList && (
+                  <Button 
+                    onClick={handleQuickUpdate} 
+                    disabled={processing}
+                    variant="outline"
+                    className="px-4 py-6 text-sm border-blue-500 text-blue-400 hover:bg-blue-900/20"
+                  >
+                    <RotateCw className="h-4 w-4 mr-2" />
+                    Update Metadata Only
+                  </Button>
+                )}
               </div>
               {processing && (<Progress value={processingProgress} className="mt-4" />)}
             </CardContent>
@@ -1639,7 +1726,7 @@ export default function VideoEditPage() {
 
       {/* Preview Dialog */}
       <Dialog open={previewDialog} onOpenChange={setPreviewDialog}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Preview Processed Video</DialogTitle>
             <DialogDescription>Review your edited video before uploading</DialogDescription>
@@ -1651,24 +1738,42 @@ export default function VideoEditPage() {
           {console.log('hasEdits:', checkIfEditsExist())}
           {console.log('=========================')}
           
-          {/* Warning if edits exist but not processed */}
+          {/* Info banner about video state */}
           {(() => {
             const hasEdits = checkIfEditsExist();
             
-            // Don't show warning if video was just processed or if processedVideoUrl exists
-            if (hasEdits && !processedVideoUrl && !wasJustProcessed) {
+            // Show info about processed vs unprocessed state
+            if (processedVideoUrl) {
               return (
-                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4">
+                <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      <svg className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-amber-800">Unprocessed Edits</h3>
-                      <p className="mt-1 text-sm text-amber-700">
-                        You've made edits but haven't processed the video. Click "Process Video" button first to apply your changes before uploading.
+                      <h3 className="text-sm font-medium text-green-800">Video Processed & Ready</h3>
+                      <p className="mt-1 text-sm text-green-700">
+                        Your edited video is ready to upload. Click "Replace" or "Upload" below.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            } else if (hasEdits) {
+              return (
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-blue-800">Preview with Live Edits</h3>
+                      <p className="mt-1 text-sm text-blue-700">
+                        You're viewing a live preview with CSS filters applied. To create a permanent processed video file, click "Process Locally" or "Process on Server" first, then upload.
                       </p>
                     </div>
                   </div>
@@ -1684,7 +1789,7 @@ export default function VideoEditPage() {
                 key={processedVideoUrl} 
                 src={processedVideoUrl} 
                 controls 
-                className="w-full"
+                className="w-full max-h-[50vh] object-contain"
                 onLoadedMetadata={(e) => {
                   console.log('Preview video loaded successfully');
                   console.log('Video element src:', e.target.src);
@@ -1703,7 +1808,7 @@ export default function VideoEditPage() {
                 <video
                   src={videoUrl}
                   controls
-                  className="w-full"
+                  className="w-full max-h-[50vh] object-contain"
                   style={{
                     filter: `brightness(${1 + brightness/100}) contrast(${contrast/100}) saturate(${saturation/100}) blur(${blur}px)`,
                     transform: `rotate(${rotation}deg)`
@@ -1734,16 +1839,6 @@ export default function VideoEditPage() {
               setPreviewDialog(false);
               setWasJustProcessed(false);
             }} disabled={exporting}>Cancel</Button>
-            {selectedVideoFromList && (
-              <Button 
-                variant="secondary" 
-                onClick={handleQuickUpdate} 
-                disabled={exporting}
-                className="mr-auto"
-              >
-                Quick Update (Metadata Only)
-              </Button>
-            )}
             {selectedVideoFromList ? (
               <Button onClick={handleUploadProcessedVideo} disabled={exporting} className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
                 {exporting ? (
@@ -1754,7 +1849,7 @@ export default function VideoEditPage() {
                 ) : (
                   <>
                     <RotateCw className="h-4 w-4 mr-2" />
-                    Replace Video (Keep ID)
+                    Upload and Update Video
                   </>
                 )}
               </Button>

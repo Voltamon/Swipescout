@@ -117,11 +117,18 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                         variant="outline"
                         onClick={async () => {
                           try {
-                            await sendConnection(profile.id);
-                            toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
+                            console.log('Attempting to send connection to', profile.id);
+                            const res = await sendConnection(profile.id);
+                            const msg = res?.data?.message || 'Connection request sent successfully.';
+                            toast({ title: 'Connection sent', description: msg });
                           } catch (err) {
                             console.error('Connection failed', err);
-                            toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
+                            const status = err?.response?.status;
+                            const serverMsg = err?.response?.data?.message;
+                            let userMsg = serverMsg || err?.message || 'Failed to send connection';
+                            if (status === 404) userMsg = 'User not found (they may have been removed)';
+                            if (status === 400) userMsg = serverMsg || 'Invalid request';
+                            toast({ title: 'Connection failed', description: userMsg, variant: 'destructive' });
                           }
                         }}
                       >

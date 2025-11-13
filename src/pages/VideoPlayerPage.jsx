@@ -83,13 +83,13 @@ const VideoSection = styled(Box)(({ theme }) => ({
 }));
 
 const VideoElement = styled('video')(({ theme }) => ({
-  width: '100%',
-  height: '100%',
-  objectFit: 'contain',
+  // Use max constraints instead of fixed 100% to prevent clipping on tall videos
+  maxWidth: '100%',
   maxHeight: '100vh',
-  [theme.breakpoints.down('md')]: {
-    objectFit: 'cover',
-  },
+  width: 'auto',
+  height: 'auto',
+  objectFit: 'contain', // This prevents clipping and maintains aspect ratio
+  backgroundColor: '#000',
 }));
 
 const VideoOverlay = styled(Box)(({ theme }) => ({

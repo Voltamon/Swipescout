@@ -428,7 +428,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
       onMouseLeave={() => onHover(video.id, false)}
     >
       {/* Video Preview */}
-      <div className="relative aspect-[9/16] bg-black overflow-hidden">
+      <div className="relative aspect-[9/16] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden flex items-center justify-center">
         {
           // compute poster and video src safely (handle absolute or relative paths)
         }
@@ -446,7 +446,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
               <img
                 src={posterUrl}
                 alt={video.title || 'Video thumbnail'}
-                className="w-full h-full object-cover cursor-pointer"
+                className="max-w-full max-h-full object-contain cursor-pointer"
                 onClick={() => !isFailed && onClick(video)}
               />
             );
@@ -462,7 +462,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                 preload="metadata"
                 muted={isMuted}
                 loop
-                className="w-full h-full object-cover cursor-pointer"
+                className="max-w-full max-h-full object-contain cursor-pointer"
                 onClick={() => !isFailed && onClick(video)}
               />
             );

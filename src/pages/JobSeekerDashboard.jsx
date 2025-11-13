@@ -324,9 +324,10 @@ const JobSeekerDashboard = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
                     Dashboard
-                </h1>
-
-                <div className="flex gap-2">
+                  
+  </h1>
+            
+                <div className="flex gap-2" >
                     <Button
                         onClick={handleUploadVideoClick}
                         className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
@@ -347,7 +348,7 @@ const JobSeekerDashboard = () => {
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-cyan-500">
                     <CardContent className="pt-6 text-center">
                         <div className="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center mx-auto mb-4">
@@ -387,7 +388,7 @@ const JobSeekerDashboard = () => {
                         <p className="text-sm text-gray-600">Unread Messages</p>
                     </CardContent>
                 </Card>
-            </div>
+            </div> */}
 
             {/* Charts and Recommendations */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
