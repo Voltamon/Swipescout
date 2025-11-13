@@ -130,6 +130,9 @@ export default function ResumeBuilderPage() {
   const [extractedData, setExtractedData] = useState(null);
   const [extractionWorkingCopy, setExtractionWorkingCopy] = useState(null);
   const [extractionSkillInput, setExtractionSkillInput] = useState('');
+  
+  // Skill validation state - track which extracted skills exist in DB
+  const [validatedSkills, setValidatedSkills] = useState(new Map()); // Map<skillName, { exists: boolean, skillId?: string, skill?: object }>
 
   // Delete confirmation dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -642,6 +645,13 @@ export default function ResumeBuilderPage() {
       try {
         const mapped = mapExtractedToResumeData(extractedPayload);
         console.log('[handleFileUpload] Mapped data:', mapped);
+        
+        // Validate skills against database
+        if (mapped.skills && mapped.skills.length > 0) {
+          console.log('[handleFileUpload] Validating extracted skills...');
+          await validateExtractedSkills(mapped);
+        }
+        
         setExtractionWorkingCopy(mapped);
       } catch (e) {
         console.warn('Failed to map extracted data into working copy:', e);
@@ -949,6 +959,87 @@ export default function ResumeBuilderPage() {
     }));
   };
 
+  // Helper function to normalize date format for database
+  const normalizeDateForDB = (dateStr) => {
+    if (!dateStr || typeof dateStr !== 'string') return null;
+    const trimmed = dateStr.trim();
+    if (!trimmed) return null;
+    
+    // Already in YYYY-MM-DD format
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+    
+    // YYYY-MM format -> add -01 for first day of month
+    if (/^\d{4}-\d{2}$/.test(trimmed)) return `${trimmed}-01`;
+    
+    // Just YYYY format -> use January 1st
+    if (/^\d{4}$/.test(trimmed)) return `${trimmed}-01-01`;
+    
+    // Can't normalize, return null
+    console.warn('[normalizeDateForDB] Could not normalize date:', dateStr);
+    return null;
+  };
+
+  // Validate extracted skills against database
+  const validateExtractedSkills = async (mappedData) => {
+    if (!mappedData.skills || mappedData.skills.length === 0) return;
+    
+    try {
+      const skillValidationMap = new Map();
+      
+      // Get all available skills from DB
+      if (!Array.isArray(availableSkills) || availableSkills.length === 0) {
+        console.warn('[validateExtractedSkills] Available skills not loaded yet, fetching...');
+        await fetchAvailableSkills();
+      }
+      
+      // Validate each extracted skill
+      for (const skill of mappedData.skills) {
+        const skillName = typeof skill === 'string' ? skill : extractSkillName(skill);
+        const normalizedName = skillName.toLowerCase().trim();
+        
+        // Search for matching skill in database
+        const matchingSkill = availableSkills.find(s => {
+          const dbSkillName = extractSkillName(s).toLowerCase().trim();
+          return dbSkillName === normalizedName;
+        });
+        
+        if (matchingSkill) {
+          // Skill exists in DB
+          skillValidationMap.set(skillName, {
+            exists: true,
+            skillId: matchingSkill.id || matchingSkill.skill_id,
+            skill: matchingSkill,
+            originalName: extractSkillName(matchingSkill)
+          });
+          console.log(`[validateExtractedSkills] ✓ Skill "${skillName}" found in DB`);
+        } else {
+          // Skill doesn't exist in DB
+          skillValidationMap.set(skillName, {
+            exists: false,
+            skillId: null,
+            skill: null,
+            originalName: skillName
+          });
+          console.warn(`[validateExtractedSkills] ✗ Skill "${skillName}" NOT found in DB`);
+        }
+      }
+      
+      setValidatedSkills(skillValidationMap);
+      
+      const invalidCount = Array.from(skillValidationMap.values()).filter(v => !v.exists).length;
+      if (invalidCount > 0) {
+        toast({
+          title: 'Skills Validation',
+          description: `${invalidCount} skill(s) not found in database. They are highlighted in the dialog and won't sync to profile.`,
+          variant: 'default'
+        });
+      }
+      
+    } catch (error) {
+      console.error('[validateExtractedSkills] Error validating skills:', error);
+    }
+  };
+
   // Sync resume form data back to profile entities (education, experience, personal info)
   const syncProfileFromResumeData = async () => {
     await syncProfileFromData(resumeData);
@@ -975,14 +1066,26 @@ export default function ResumeBuilderPage() {
       
       for (let i = 0; i < data.experiences.length; i++) {
         const exp = data.experiences[i];
+        
+        // Validate required fields - title is required, company can be null
+        if (!exp.title?.trim()) {
+          console.warn(`[syncProfileFromData] Skipping experience ${i}: missing required title field`);
+          toast({
+            title: 'Experience Skipped',
+            description: `Experience #${i + 1} is missing required title field. Please fill it in manually.`,
+            variant: 'destructive'
+          });
+          continue; // Skip this experience
+        }
+        
         const payload = {
-          title: exp.title,
-          company: exp.company,
-          location: exp.location,
-          start_date: exp.startDate,
-          end_date: exp.current ? null : exp.endDate,
-          current: exp.current,
-          description: exp.description
+          title: exp.title.trim(),
+          company: exp.company?.trim() || null,  // Allow null for company
+          location: exp.location?.trim() || '',
+          start_date: normalizeDateForDB(exp.startDate),
+          end_date: exp.current ? null : normalizeDateForDB(exp.endDate),
+          current: exp.current || false,
+          description: exp.description?.trim() || ''
         };
         
         if (existingExpArray[i]?.id) {
@@ -1000,13 +1103,25 @@ export default function ResumeBuilderPage() {
       
       for (let i = 0; i < data.education.length; i++) {
         const edu = data.education[i];
+        
+        // Validate required fields and provide defaults
+        if (!edu.degree || !edu.institution) {
+          console.warn(`[syncProfileFromData] Skipping education ${i}: missing required fields (degree or institution)`);
+          toast({
+            title: 'Education Skipped',
+            description: `Education #${i + 1} is missing required fields (degree and institution). Please fill them in manually.`,
+            variant: 'destructive'
+          });
+          continue; // Skip this education entry
+        }
+        
         const payload = {
-          degree: edu.degree,
-          institution: edu.institution,
-          location: edu.location || '',
-          startDate: edu.startYear ? `${edu.startYear}-01-01` : null,
-          endDate: edu.endYear ? `${edu.endYear}-12-31` : null,
-          description: edu.description || ''
+          degree: edu.degree.trim(),
+          institution: edu.institution.trim(),
+          location: edu.location?.trim() || '',
+          startDate: normalizeDateForDB(edu.startYear),
+          endDate: normalizeDateForDB(edu.endYear),
+          description: edu.description?.trim() || ''
         };
         
         if (existingEduArray[i]?.id) {
@@ -1015,6 +1130,42 @@ export default function ResumeBuilderPage() {
         } else {
           // Create new
           await addUserEducation(payload);
+        }
+      }
+
+      // Sync skills - ONLY add skills that exist in database
+      const validSkillsToAdd = [];
+      const invalidSkills = [];
+      
+      for (const skill of data.skills || []) {
+        const skillName = typeof skill === 'string' ? skill : extractSkillName(skill);
+        const validation = validatedSkills.get(skillName);
+        
+        if (validation && validation.exists && validation.skill) {
+          // Skill exists in DB, add it
+          validSkillsToAdd.push(validation.skill);
+        } else {
+          // Skill doesn't exist in DB, skip it
+          invalidSkills.push(skillName);
+        }
+      }
+      
+      console.log(`[syncProfileFromData] Adding ${validSkillsToAdd.length} valid skills to profile`);
+      if (invalidSkills.length > 0) {
+        console.warn(`[syncProfileFromData] Skipping ${invalidSkills.length} invalid skills:`, invalidSkills);
+        toast({
+          title: 'Skills Partially Synced',
+          description: `${invalidSkills.length} skill(s) skipped (not in database). Only validated skills were added to your profile.`,
+          variant: 'default'
+        });
+      }
+      
+      // Add valid skills to profile
+      for (const skill of validSkillsToAdd) {
+        try {
+          await addUserSkill(skill);
+        } catch (err) {
+          console.warn(`[syncProfileFromData] Failed to add skill:`, skill, err);
         }
       }
 
@@ -2397,6 +2548,16 @@ export default function ResumeBuilderPage() {
                     ⚠️ Limited data was extracted from your CV. You can manually fill in the fields below or try uploading a different format.
                   </p>
                 )}
+                <div className="mt-3 text-xs text-blue-700 bg-blue-100 border border-blue-300 rounded p-2">
+                  💡 <strong>Tips:</strong>
+                  <ul className="list-disc ml-4 mt-1 space-y-1">
+                    <li>Fields marked with <span className="text-red-600">*</span> are required (Title for Experience, Degree & Institution for Education)</li>
+                    <li>Dates must be in <code className="bg-white px-1 py-0.5 rounded">YYYY-MM</code> format (e.g., 2020-01)</li>
+                    <li>Required fields with 🔴 light pink borders must be filled before syncing to profile</li>
+                    <li>Date fields with 🟡 amber borders need format correction</li>
+                    <li>Company name is optional - leave blank if self-employed or not applicable</li>
+                  </ul>
+                </div>
               </div>
 
               {/* Editable Personal Info */}
@@ -2467,11 +2628,50 @@ export default function ResumeBuilderPage() {
                   {extractionWorkingCopy.experiences.map((exp, idx) => (
                     <div key={idx} className="border rounded p-4 space-y-2 bg-gray-50">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <Input value={exp.title} placeholder="Title" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], title:e.target.value}; return { ...w, experiences: arr }; })} />
-                        <Input value={exp.company} placeholder="Company" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], company:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <div className="space-y-1">
+                          <Input 
+                            value={exp.title} 
+                            placeholder="Title *" 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], title:e.target.value}; return { ...w, experiences: arr }; })}
+                            className={!exp.title?.trim() ? 'border-red-400' : ''}
+                          />
+                          {!exp.title?.trim() && (
+                            <p className="text-xs text-red-600">⚠️ Title is required</p>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <Input 
+                            value={exp.company} 
+                            placeholder="Company" 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], company:e.target.value}; return { ...w, experiences: arr }; })}
+                          />
+                        </div>
                         <Input value={exp.location} placeholder="Location" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, experiences: arr }; })} />
-                        <Input type="month" value={exp.startDate} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], startDate:e.target.value}; return { ...w, experiences: arr }; })} />
-                        <Input type="month" value={exp.endDate} disabled={exp.current} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], endDate:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <div className="space-y-1">
+                          <Input 
+                            type="month" 
+                            value={exp.startDate} 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], startDate:e.target.value}; return { ...w, experiences: arr }; })}
+                            title="Format: YYYY-MM (e.g., 2020-01 for January 2020)"
+                            className={!exp.startDate || !/^\d{4}-\d{2}$/.test(exp.startDate) ? 'border-amber-400' : ''}
+                          />
+                          {exp.startDate && !/^\d{4}-\d{2}$/.test(exp.startDate) && (
+                            <p className="text-xs text-amber-600">⚠️ Use YYYY-MM format (e.g., 2020-01)</p>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <Input 
+                            type="month" 
+                            value={exp.endDate} 
+                            disabled={exp.current} 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], endDate:e.target.value}; return { ...w, experiences: arr }; })}
+                            title="Format: YYYY-MM (e.g., 2023-12 for December 2023)"
+                            className={!exp.current && exp.endDate && !/^\d{4}-\d{2}$/.test(exp.endDate) ? 'border-amber-400' : ''}
+                          />
+                          {!exp.current && exp.endDate && !/^\d{4}-\d{2}$/.test(exp.endDate) && (
+                            <p className="text-xs text-amber-600">⚠️ Use YYYY-MM format (e.g., 2023-12)</p>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={exp.current} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], current:e.target.checked}; return { ...w, experiences: arr }; })} />
                           <span className="text-xs">Current</span>
@@ -2495,11 +2695,53 @@ export default function ResumeBuilderPage() {
                   {extractionWorkingCopy.education.map((ed, idx) => (
                     <div key={idx} className="border rounded p-4 space-y-2 bg-gray-50">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <Input value={ed.degree} placeholder="Degree" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], degree:e.target.value}; return { ...w, education: arr }; })} />
-                        <Input value={ed.institution} placeholder="Institution" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], institution:e.target.value}; return { ...w, education: arr }; })} />
+                        <div className="space-y-1">
+                          <Input 
+                            value={ed.degree} 
+                            placeholder="Degree *" 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], degree:e.target.value}; return { ...w, education: arr }; })}
+                            className={!ed.degree?.trim() ? 'border-red-400' : ''}
+                          />
+                          {!ed.degree?.trim() && (
+                            <p className="text-xs text-red-600">⚠️ Degree is required</p>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <Input 
+                            value={ed.institution} 
+                            placeholder="Institution *" 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], institution:e.target.value}; return { ...w, education: arr }; })}
+                            className={!ed.institution?.trim() ? 'border-red-400' : ''}
+                          />
+                          {!ed.institution?.trim() && (
+                            <p className="text-xs text-red-600">⚠️ Institution is required</p>
+                          )}
+                        </div>
                         <Input value={ed.location} placeholder="Location" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, education: arr }; })} />
-                        <Input value={ed.startYear} placeholder="Start Year" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], startYear:e.target.value}; return { ...w, education: arr }; })} />
-                        <Input value={ed.endYear} placeholder="End/Grad Year" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], endYear:e.target.value}; return { ...w, education: arr }; })} />
+                        <div className="space-y-1">
+                          <Input 
+                            value={ed.startYear} 
+                            placeholder="Start Year/Date (YYYY-MM or YYYY)" 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], startYear:e.target.value}; return { ...w, education: arr }; })}
+                            title="Format: YYYY-MM (e.g., 2015-09) or YYYY (e.g., 2015)"
+                            className={ed.startYear && !/^\d{4}(-\d{2})?$/.test(ed.startYear) ? 'border-amber-400' : ''}
+                          />
+                          {ed.startYear && !/^\d{4}(-\d{2})?$/.test(ed.startYear) && (
+                            <p className="text-xs text-amber-600">⚠️ Use YYYY-MM or YYYY format</p>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <Input 
+                            value={ed.endYear} 
+                            placeholder="End/Grad Year/Date (YYYY-MM or YYYY)" 
+                            onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], endYear:e.target.value}; return { ...w, education: arr }; })}
+                            title="Format: YYYY-MM (e.g., 2019-06) or YYYY (e.g., 2019)"
+                            className={ed.endYear && !/^\d{4}(-\d{2})?$/.test(ed.endYear) ? 'border-amber-400' : ''}
+                          />
+                          {ed.endYear && !/^\d{4}(-\d{2})?$/.test(ed.endYear) && (
+                            <p className="text-xs text-amber-600">⚠️ Use YYYY-MM or YYYY format</p>
+                          )}
+                        </div>
                         <Input value={ed.gpa} placeholder="GPA" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], gpa:e.target.value}; return { ...w, education: arr }; })} />
                       </div>
                       <Textarea value={ed.description} rows={3} placeholder="Description" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, education: arr }; })} />
@@ -2513,6 +2755,9 @@ export default function ResumeBuilderPage() {
                 <h3 className="font-semibold text-lg flex items-center gap-2">
                   <Award className="h-5 w-5" /> Skills
                 </h3>
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-800">
+                  <strong>Skill Validation:</strong> Skills highlighted in amber don't exist in the database and won't be synced to your profile (but will appear in the generated resume).
+                </div>
                 <div className="flex gap-2">
                   <Input
                     value={extractionSkillInput}
@@ -2523,14 +2768,25 @@ export default function ResumeBuilderPage() {
                   <Button size="sm" onClick={() => { if (extractionSkillInput.trim()) { setExtractionWorkingCopy(w => ({ ...w, skills: [...w.skills, extractionSkillInput.trim()] })); setExtractionSkillInput(''); } }}>Add</Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {extractionWorkingCopy.skills.map((sk, i) => (
-                    <Badge key={i} variant="secondary" className="gap-2">
-                      {typeof sk === 'string' ? sk : extractSkillName(sk)}
-                      <button onClick={() => setExtractionWorkingCopy(w => ({ ...w, skills: w.skills.filter((_, idx) => idx !== i) }))}>
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
+                  {extractionWorkingCopy.skills.map((sk, i) => {
+                    const skillName = typeof sk === 'string' ? sk : extractSkillName(sk);
+                    const validation = validatedSkills.get(skillName.toLowerCase().trim());
+                    const isValid = validation?.exists;
+                    
+                    return (
+                      <Badge 
+                        key={i} 
+                        variant={isValid ? "secondary" : "outline"} 
+                        className={`gap-2 ${!isValid ? 'border-amber-400 bg-amber-50 text-amber-800' : ''}`}
+                      >
+                        {skillName}
+                        {!isValid && <span className="ml-1" title="Not in database">⚠️</span>}
+                        <button onClick={() => setExtractionWorkingCopy(w => ({ ...w, skills: w.skills.filter((_, idx) => idx !== i) }))}>
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    );
+                  })}
                 </div>
               </section>
 

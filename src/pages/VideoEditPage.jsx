@@ -4,8 +4,9 @@ import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
   Loader2, Download, RotateCw, Sliders, Scissors, Sparkles
 } from 'lucide-react';
-import { uploadVideo, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus, getVideoInfo } from '@/services/api';
+import { uploadVideoResume, getAllVideos, deleteEditedVideo, editVideo as editVideoApi, exportVideo as exportVideoApi, getSubscriptionStatus, getVideoInfo, updateUserVideo, deleteUserVideo, checkUploadStatus } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { useVideoContext } from '@/contexts/VideoContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -18,6 +19,7 @@ import { Progress } from '@/components/UI/progress.jsx';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
+import { v4 as uuidv4 } from 'uuid';
 
 // FFmpeg import with fallback
 let ffmpeg;
@@ -67,6 +69,7 @@ function initializeFFmpeg() {
 export default function VideoEditPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { addLocalVideo, updateVideoStatus, updateVideoServerId } = useVideoContext();
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
   const previewRef = useRef(null);
@@ -112,6 +115,7 @@ export default function VideoEditPage() {
   // Preview and export
   const [previewDialog, setPreviewDialog] = useState(false);
   const [processedVideoUrl, setProcessedVideoUrl] = useState("");
+  const [wasJustProcessed, setWasJustProcessed] = useState(false);
 
   useEffect(() => {
     async function loadFFmpeg() {
@@ -306,7 +310,9 @@ export default function VideoEditPage() {
         thumbnailUrl: v.thumbnailUrl || v.thumbnail_url || v.thumb || v.poster || v.preview_image,
         status: v.status || 'completed',
         progress: v.progress || v.upload_progress || 0,
-        description: v.description || v.desc || ''
+        description: v.description || v.desc || '',
+        updatedAt: v.updatedAt || v.updated_at || v.modifiedAt,
+        createdAt: v.createdAt || v.created_at
       }));
 
       // Client-side filter: ensure we only show videos that belong to the current user
@@ -583,13 +589,15 @@ export default function VideoEditPage() {
       
       setProcessedVideoUrl(processedUrl);
       console.log('Set new processedVideoUrl to:', processedUrl);
+      setWasJustProcessed(true);
       
       // Small delay to ensure state updates before opening dialog
       setTimeout(() => {
-        console.log('Opening preview dialog');
+        console.log('Opening preview dialog with processedVideoUrl:', processedUrl);
+        console.log('State check - processedVideoUrl should be set now');
         setPreviewDialog(true);
-        toast({ description: "Video processed successfully!" });
-      }, 100);
+        toast({ description: "Video processed successfully! Ready to upload." });
+      }, 200);
 
       try {
         await ffmpeg.deleteFile(inputFileName);
@@ -675,6 +683,7 @@ export default function VideoEditPage() {
             const publicBase = cleaned.match(/\/api(?:$|\/)\/?/) ? cleaned.replace(/\/api(?:$|\/)\/?/, '') : cleaned;
             const publicUrl = `${publicBase}/${String(filePath).replace(/^\/+/, '')}`;
             setProcessedVideoUrl(publicUrl);
+            setWasJustProcessed(true);
             setPreviewDialog(true);
             toast({ description: 'Video processed on server successfully. Preview loaded.' });
             setProcessing(false);
@@ -696,37 +705,409 @@ export default function VideoEditPage() {
     }
   };
 
-  const handleUploadProcessedVideo = async () => {
-    if (!processedVideoUrl) {
-      toast({ description: "No processed video to upload", variant: "destructive" });
+  // Helper function to check if any edits exist
+  const checkIfEditsExist = () => {
+    return (
+      segments.length > 0 ||
+      trimStart > 0 ||
+      trimEnd > 0 ||
+      brightness !== 0 ||
+      contrast !== 100 ||
+      saturation !== 100 ||
+      blur > 0 ||
+      playbackSpeed !== 1 ||
+      rotation !== 0 ||
+      (crop.w > 0 && crop.h > 0) ||
+      audioFile !== null ||
+      watermarkFile !== null
+    );
+  };
+
+  // Quick update for metadata only (no video file replacement)
+  const handleQuickUpdate = async () => {
+    if (!selectedVideoFromList || !selectedVideoFromList.id) {
+      toast({ 
+        title: "No Video Selected",
+        description: "Quick Update only works when editing an existing video from library",
+        variant: "destructive"
+      });
       return;
     }
 
     setExporting(true);
     try {
-      const response = await fetch(processedVideoUrl);
-      const blob = await response.blob();
-      const file = new File([blob], `${videoTitle || 'edited_video'}.mp4`, { type: 'video/mp4' });
+      const updateData = {
+        title: videoTitle || 'Updated Video',
+        description: videoDescription || '',
+        updatedAt: new Date().toISOString()
+      };
 
-      const formData = new FormData();
-      formData.append('video', file);
-      formData.append('title', videoTitle);
-      formData.append('description', videoDescription);
+      await updateUserVideo(selectedVideoFromList.id, updateData);
 
-      await uploadVideo(formData);
-      
-      toast({ description: "Video uploaded successfully!" });
+      toast({ 
+        title: "✅ Metadata Updated",
+        description: "Video title and description have been updated",
+        duration: 3000
+      });
+
       setPreviewDialog(false);
+      await loadMyVideos();
+      setActiveTab('library');
       
-      URL.revokeObjectURL(processedVideoUrl);
-      setProcessedVideoUrl("");
-      
-      loadMyVideos();
     } catch (error) {
-      console.error('Error uploading video:', error);
-      toast({ description: "Failed to upload video", variant: "destructive" });
+      console.error('Quick update error:', error);
+      toast({ 
+        title: "Update Failed",
+        description: error.response?.data?.message || error.message || "Failed to update video metadata",
+        variant: "destructive"
+      });
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleUploadProcessedVideo = async () => {
+    if (!processedVideoUrl && !videoUrl) {
+      toast({ description: "No video to upload", variant: "destructive" });
+      return;
+    }
+
+    // Check if edits were made but video wasn't processed (unless just processed)
+    const hasEdits = checkIfEditsExist();
+
+    if (hasEdits && !processedVideoUrl && !wasJustProcessed) {
+      toast({ 
+        title: "⚠️ Unprocessed Edits",
+        description: "You have made edits but haven't processed the video. Click 'Process Video' first, or use 'Quick Update' to save title/description only.",
+        variant: "destructive",
+        duration: 5000
+      });
+      return;
+    }
+
+    setExporting(true);
+    try {
+      // Check if we're updating an existing video (keeping same ID) or creating new one
+      const isUpdatingExisting = selectedVideoFromList && selectedVideoFromList.id;
+      const oldVideoId = isUpdatingExisting ? selectedVideoFromList.id : null;
+      
+      // Prepare video file (processed or original)
+      let videoBlob, videoFile;
+      if (processedVideoUrl) {
+        const response = await fetch(processedVideoUrl);
+        videoBlob = await response.blob();
+      } else if (videoUrl) {
+        const response = await fetch(videoUrl);
+        videoBlob = await response.blob();
+      }
+      
+      if (videoBlob) {
+        videoFile = new File([videoBlob], `${videoTitle || 'video'}.mp4`, { type: 'video/mp4' });
+      }
+      
+      if (isUpdatingExisting) {
+        // STEP 1: Create temp local video for immediate preview
+        const tempVideoId = uuidv4();
+        const blobUrl = URL.createObjectURL(videoBlob);
+        
+        const tempLocalVideo = {
+          id: tempVideoId,
+          video_title: videoTitle,
+          title: videoTitle,
+          description: videoDescription,
+          video_description: videoDescription,
+          video_url: blobUrl,
+          videoUrl: blobUrl,
+          isLocal: true,
+          status: 'completed',
+          serverProcessing: true, // Mark as uploading to server
+          progress: 0,
+          submitted_at: new Date().toISOString()
+        };
+        
+        // Add to context so VideosPage shows it immediately
+        addLocalVideo(tempLocalVideo);
+        
+        toast({ 
+          title: "Uploading...",
+          description: "Uploading new video file to server", 
+          duration: 2000 
+        });
+        
+        // STEP 2: Upload new video file to backend (creates new video entry with new ID)
+        const uploadFormData = new FormData();
+        if (videoFile) {
+          uploadFormData.append('video', videoFile);
+        }
+        uploadFormData.append('title', videoTitle || 'Updated Video');
+        uploadFormData.append('description', videoDescription || '');
+        
+        // Upload and get upload ID - use uploadVideoResume (POST /videos/)
+        const uploadResponse = await uploadVideoResume(uploadFormData, (progress) => {
+          setProcessingProgress(progress);
+          updateVideoStatus(tempVideoId, { progress });
+        });
+        
+        console.log('Upload response:', uploadResponse.data);
+        
+        // Get the uploadId to poll for status
+        const uploadId = uploadResponse.data?.uploadId;
+        
+        if (!uploadId) {
+          throw new Error('Failed to get upload ID from response');
+        }
+        
+        console.log(`Upload started with ID: ${uploadId}, polling for completion...`);
+        
+        // Poll for upload status until completed
+        let finalVideo = null;
+        let pollAttempts = 0;
+        const maxPollAttempts = 60; // 60 seconds max
+        
+        while (pollAttempts < maxPollAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+          pollAttempts++;
+          
+          try {
+            const statusResponse = await checkUploadStatus(uploadId);
+            const statusData = statusResponse.data || {};
+            const status = statusData.status || '';
+            const progress = statusData.progress || 0;
+            
+            console.log(`Upload status poll ${pollAttempts}: ${status} (${progress}%)`);
+            
+            // Update progress
+            updateVideoStatus(tempVideoId, { 
+              progress,
+              serverProcessing: true 
+            });
+            
+            if (status === 'completed' && statusData.video) {
+              finalVideo = statusData.video;
+              console.log('Upload completed:', finalVideo);
+              break;
+            }
+            
+            if (status === 'failed') {
+              throw new Error(statusData.error || 'Upload failed on server');
+            }
+          } catch (pollError) {
+            console.warn('Poll error:', pollError);
+            // Continue polling on transient errors
+          }
+        }
+        
+        if (!finalVideo) {
+          throw new Error('Upload polling timeout - video not ready');
+        }
+        
+        const newVideoId = finalVideo.id;
+        const newVideoUrl = finalVideo.secure_url || finalVideo.video_url || finalVideo.videoUrl;
+        
+        if (!newVideoId || !newVideoUrl) {
+          throw new Error('Invalid video data from server');
+        }
+        
+        console.log(`New video uploaded with ID: ${newVideoId}, URL: ${newVideoUrl}`);
+        
+        // Update temp local video with server ID and URL
+        updateVideoServerId(tempVideoId, newVideoId, {
+          status: 'completed',
+          isLocal: false,
+          serverProcessing: false,
+          video_url: newVideoUrl,
+          videoUrl: newVideoUrl,
+          ...finalVideo
+        });
+        
+        // STEP 3: Update old video record to use new video's URL and data
+        toast({ 
+          title: "Updating...",
+          description: `Transferring content to video ID: ${oldVideoId}`, 
+          duration: 2000 
+        });
+        
+        const updateData = {
+          title: videoTitle || 'Updated Video',
+          description: videoDescription || '',
+          video_url: newVideoUrl,
+          video_url_signed: newVideoUrl,
+          // Transfer any additional data from the new upload
+          cloudinary_public_id: finalVideo.cloudinary_public_id,
+          duration: finalVideo.duration,
+          file_size: finalVideo.file_size || finalVideo.fileSize,
+          updatedAt: new Date().toISOString()
+        };
+        
+        try {
+          await updateUserVideo(oldVideoId, updateData);
+          
+          // STEP 4: Delete the temporary new video entry
+          try {
+            await deleteUserVideo(newVideoId);
+            console.log(`Deleted temporary video with ID: ${newVideoId}`);
+          } catch (deleteError) {
+            console.warn('Could not delete temporary video:', deleteError);
+          }
+          
+          toast({ 
+            title: "✨ Video Replaced!",
+            description: `Video content updated on ID: ${oldVideoId}`, 
+            duration: 4000 
+          });
+          
+        } catch (updateError) {
+          console.error('Error updating old video:', updateError);
+          throw new Error(`Failed to update old video: ${updateError.message}`);
+        }
+        
+      } else {
+        // UPLOAD MODE: Create new video with new ID (same as VideoUpload)
+        const tempVideoId = uuidv4();
+        const blobUrl = URL.createObjectURL(videoBlob);
+        
+        const localVideo = {
+          id: tempVideoId,
+          video_title: videoTitle,
+          title: videoTitle,
+          description: videoDescription,
+          video_description: videoDescription,
+          video_url: blobUrl,
+          videoUrl: blobUrl,
+          isLocal: true,
+          status: 'completed',
+          serverProcessing: true,
+          progress: 0,
+          submitted_at: new Date().toISOString()
+        };
+        
+        addLocalVideo(localVideo);
+        
+        toast({ 
+          title: "Uploading...",
+          description: "Uploading video to server", 
+          duration: 2000 
+        });
+        
+        const formData = new FormData();
+        if (videoFile) {
+          formData.append('video', videoFile);
+        }
+        formData.append('title', videoTitle || 'New Video');
+        formData.append('description', videoDescription || '');
+
+        const uploadResponse = await uploadVideoResume(formData, (progress) => {
+          setProcessingProgress(progress);
+          updateVideoStatus(tempVideoId, { progress });
+        });
+        
+        console.log('Upload response:', uploadResponse.data);
+        
+        // Get the uploadId to poll for status
+        const uploadId = uploadResponse.data?.uploadId;
+        
+        if (!uploadId) {
+          throw new Error('Failed to get upload ID from response');
+        }
+        
+        console.log(`Upload started with ID: ${uploadId}, polling for completion...`);
+        
+        // Poll for upload status until completed
+        let finalVideo = null;
+        let pollAttempts = 0;
+        const maxPollAttempts = 60; // 60 seconds max
+        
+        while (pollAttempts < maxPollAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+          pollAttempts++;
+          
+          try {
+            const statusResponse = await checkUploadStatus(uploadId);
+            const statusData = statusResponse.data || {};
+            const status = statusData.status || '';
+            const progress = statusData.progress || 0;
+            
+            console.log(`Upload status poll ${pollAttempts}: ${status} (${progress}%)`);
+            
+            // Update progress
+            updateVideoStatus(tempVideoId, { 
+              progress,
+              serverProcessing: true 
+            });
+            
+            if (status === 'completed' && statusData.video) {
+              finalVideo = statusData.video;
+              console.log('Upload completed:', finalVideo);
+              break;
+            }
+            
+            if (status === 'failed') {
+              throw new Error(statusData.error || 'Upload failed on server');
+            }
+          } catch (pollError) {
+            console.warn('Poll error:', pollError);
+            // Continue polling on transient errors
+          }
+        }
+        
+        if (!finalVideo) {
+          throw new Error('Upload polling timeout - video not ready');
+        }
+        
+        const newVideoId = finalVideo.id;
+        const newVideoUrl = finalVideo.secure_url || finalVideo.video_url || finalVideo.videoUrl;
+        
+        if (!newVideoId || !newVideoUrl) {
+          throw new Error('Invalid video data from server');
+        }
+        
+        console.log(`New video uploaded with ID: ${newVideoId}, URL: ${newVideoUrl}`);
+        
+        // Update temp video with server ID and URL
+        updateVideoServerId(tempVideoId, newVideoId, {
+          status: 'completed',
+          isLocal: false,
+          serverProcessing: false,
+          video_url: newVideoUrl,
+          videoUrl: newVideoUrl,
+          ...finalVideo
+        });
+        
+        toast({ 
+          title: "Video Uploaded!",
+          description: "New video has been uploaded successfully", 
+          duration: 3000 
+        });
+      }
+      
+      // Close dialog and cleanup
+      setPreviewDialog(false);
+      setWasJustProcessed(false);
+      
+      if (processedVideoUrl) {
+        URL.revokeObjectURL(processedVideoUrl);
+        setProcessedVideoUrl("");
+      }
+      
+      setProcessingProgress(0);
+      
+      // Reload video list
+      await loadMyVideos();
+      
+      // Switch to library tab to show the result
+      setActiveTab('library');
+      
+    } catch (error) {
+      console.error('Error uploading/updating video:', error);
+      toast({ 
+        title: "Operation Failed",
+        description: error.response?.data?.message || error.message || "Failed to upload/update video", 
+        variant: "destructive",
+        duration: 4000
+      });
+    } finally {
+      setExporting(false);
+      setProcessingProgress(0);
     }
   };
 
@@ -802,27 +1183,60 @@ export default function VideoEditPage() {
                     <p>No videos found</p>
                   </div>
                 ) : (
-                  myVideos.map((video) => (
-                    <Card
-                      key={video.id}
-                      className={`cursor-pointer transition-all hover:shadow-lg ${
-                        selectedVideoFromList?.id === video.id ? 'border-2 border-purple-600' : ''
-                      } ${video.serverProcessing ? 'border-2 border-yellow-400 border-dashed' : ''}`}
-                      onClick={() => handleSelectVideoFromList(video)}
-                    >
-                      <div className="aspect-video bg-gray-900 rounded-t-lg overflow-hidden">
-                        {video.videoUrl ? (
-                          <video src={video.videoUrl} className="w-full h-full object-cover" />
-                        ) : (
-                          <img src={video.thumbnailUrl ? (video.thumbnailUrl.startsWith('http') ? video.thumbnailUrl : `${VITE_API_BASE_URL}${video.thumbnailUrl}`) : ''} alt={video.title || 'Video'} className="w-full h-full object-cover" />
-                        )}
-                      </div>
-                      <CardContent className="p-3">
-                        <p className="font-medium truncate">{video.title}</p>
-                        <p className="text-xs text-gray-600 truncate">{video.description || 'No description'}</p>
-                      </CardContent>
-                    </Card>
-                  ))
+                  myVideos.map((video) => {
+                    // Check if video was updated recently (within last 5 minutes)
+                    const isRecentlyUpdated = video.updatedAt && video.createdAt && 
+                      new Date(video.updatedAt).getTime() > new Date(video.createdAt).getTime() &&
+                      (Date.now() - new Date(video.updatedAt).getTime()) < 5 * 60 * 1000;
+                    
+                    return (
+                      <Card
+                        key={video.id}
+                        className={`cursor-pointer transition-all hover:shadow-lg ${
+                          selectedVideoFromList?.id === video.id ? 'border-2 border-purple-600' : ''
+                        } ${video.serverProcessing ? 'border-2 border-yellow-400 border-dashed' : ''}`}
+                        onClick={() => handleSelectVideoFromList(video)}
+                      >
+                        <div className="aspect-video bg-gray-900 rounded-t-lg overflow-hidden relative">
+                          {video.videoUrl ? (
+                            <video src={video.videoUrl} className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={video.thumbnailUrl ? (video.thumbnailUrl.startsWith('http') ? video.thumbnailUrl : `${VITE_API_BASE_URL}${video.thumbnailUrl}`) : ''} alt={video.title || 'Video'} className="w-full h-full object-cover" />
+                          )}
+                          {video.serverProcessing && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-yellow-400/90 text-yellow-900 text-xs font-medium py-1 px-2 flex items-center gap-1">
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              <span>Processing...</span>
+                            </div>
+                          )}
+                          {isRecentlyUpdated && !video.serverProcessing && (
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg">
+                                <Sparkles className="h-3 w-3 mr-1" />
+                                Updated
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                        <CardContent className="p-3">
+                          <p className="font-medium truncate">{video.title}</p>
+                          <p className="text-xs text-gray-600 truncate">{video.description || 'No description'}</p>
+                          {video.serverProcessing && (
+                            <div className="mt-2 flex items-center gap-1 text-xs text-yellow-600">
+                              <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />
+                              <span>Uploading to server</span>
+                            </div>
+                          )}
+                          {isRecentlyUpdated && !video.serverProcessing && (
+                            <div className="mt-2 flex items-center gap-1 text-xs text-amber-600">
+                              <RotateCw className="h-3 w-3" />
+                              <span>Recently updated</span>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })
                 )}
               </div>
             </CardContent>
@@ -890,6 +1304,21 @@ export default function VideoEditPage() {
 
               {/* Metadata */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                {selectedVideoFromList && (
+                  <div className="md:col-span-2 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                        Editing Mode
+                      </Badge>
+                      <span className="text-blue-700 dark:text-blue-300">
+                        Video ID: <code className="bg-blue-100 dark:bg-blue-900 px-2 py-0.5 rounded font-mono text-xs">{selectedVideoFromList.id}</code>
+                      </span>
+                    </div>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      Saving will replace the video file and metadata while keeping this ID
+                    </p>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="title">Video Title</Label>
                   <Input
@@ -918,6 +1347,100 @@ export default function VideoEditPage() {
                     </label>
                   </div>
                 </div>
+                {selectedVideoFromList && (
+                  <div className="space-y-2 flex items-end">
+                    <Button 
+                      onClick={async () => {
+                        try {
+                          const oldVideoId = selectedVideoFromList.id;
+                          
+                          // If there's a processed video or current video file to upload
+                          if (processedVideoUrl || videoFile) {
+                            // STEP 1: Upload new video file
+                            toast({ 
+                              title: "Uploading...",
+                              description: "Uploading new video file", 
+                              duration: 2000 
+                            });
+                            
+                            let videoBlob;
+                            if (processedVideoUrl) {
+                              const response = await fetch(processedVideoUrl);
+                              videoBlob = await response.blob();
+                            } else if (videoFile) {
+                              videoBlob = videoFile;
+                            }
+                            
+                            const file = new File([videoBlob], `${videoTitle || 'updated_video'}.mp4`, { type: 'video/mp4' });
+                            
+                            const uploadFormData = new FormData();
+                            uploadFormData.append('video', file);
+                            uploadFormData.append('title', videoTitle);
+                            uploadFormData.append('description', videoDescription);
+                            
+                            const uploadResponse = await uploadVideo(uploadFormData);
+                            const newVideoData = uploadResponse.data?.video || uploadResponse.data?.data || {};
+                            const newVideoId = newVideoData.id || uploadResponse.data?.uploadId;
+                            const newVideoUrl = newVideoData.video_url || newVideoData.secure_url;
+                            
+                            // STEP 2: Update old video with new URL
+                            const updateData = {
+                              title: videoTitle,
+                              description: videoDescription,
+                              video_url: newVideoUrl,
+                              video_url_signed: newVideoUrl,
+                              cloudinary_public_id: newVideoData.cloudinary_public_id,
+                              duration: newVideoData.duration,
+                              file_size: newVideoData.file_size,
+                              updatedAt: new Date().toISOString()
+                            };
+                            
+                            await updateUserVideo(oldVideoId, updateData);
+                            
+                            // STEP 3: Delete temporary video
+                            try {
+                              await deleteUserVideo(newVideoId);
+                            } catch (e) {
+                              console.warn('Could not delete temp video:', e);
+                            }
+                            
+                            toast({ 
+                              title: "✨ Video Updated!",
+                              description: `Video content replaced on ID: ${oldVideoId}`, 
+                              duration: 4000 
+                            });
+                          } else {
+                            // Just update metadata
+                            await updateUserVideo(oldVideoId, {
+                              title: videoTitle,
+                              description: videoDescription
+                            });
+                            
+                            toast({ 
+                              title: "Info Updated",
+                              description: "Video information updated", 
+                              duration: 3000 
+                            });
+                          }
+                          
+                          await loadMyVideos();
+                        } catch (error) {
+                          console.error('Error updating video:', error);
+                          toast({ 
+                            title: "Update Failed",
+                            description: error.response?.data?.message || "Failed to update video", 
+                            variant: "destructive" 
+                          });
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <RotateCw className="h-4 w-4 mr-2" />
+                      Update Video & Replace File
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1121,7 +1644,40 @@ export default function VideoEditPage() {
             <DialogTitle>Preview Processed Video</DialogTitle>
             <DialogDescription>Review your edited video before uploading</DialogDescription>
           </DialogHeader>
-          {console.log('Preview Dialog render - processedVideoUrl:', processedVideoUrl)}
+          {console.log('=== PREVIEW DIALOG STATE ===')}
+          {console.log('processedVideoUrl:', processedVideoUrl)}
+          {console.log('wasJustProcessed:', wasJustProcessed)}
+          {console.log('videoUrl:', videoUrl)}
+          {console.log('hasEdits:', checkIfEditsExist())}
+          {console.log('=========================')}
+          
+          {/* Warning if edits exist but not processed */}
+          {(() => {
+            const hasEdits = checkIfEditsExist();
+            
+            // Don't show warning if video was just processed or if processedVideoUrl exists
+            if (hasEdits && !processedVideoUrl && !wasJustProcessed) {
+              return (
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-amber-800">Unprocessed Edits</h3>
+                      <p className="mt-1 text-sm text-amber-700">
+                        You've made edits but haven't processed the video. Click "Process Video" button first to apply your changes before uploading.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
+          
           {processedVideoUrl ? (
             <div className="bg-black rounded-lg overflow-hidden">
               <video 
@@ -1162,11 +1718,61 @@ export default function VideoEditPage() {
               </div>
             ))
           )}
+          {exporting && processingProgress > 0 && (
+            <div className="px-6 pb-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Upload Progress</span>
+                  <span>{processingProgress}%</span>
+                </div>
+                <Progress value={processingProgress} />
+              </div>
+            </div>
+          )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPreviewDialog(false)}>Cancel</Button>
-            <Button onClick={handleUploadProcessedVideo} disabled={exporting} className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-              {exporting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Uploading...</>) : (<><Upload className="h-4 w-4 mr-2" />Upload Video</>)}
-            </Button>
+            <Button variant="outline" onClick={() => {
+              setPreviewDialog(false);
+              setWasJustProcessed(false);
+            }} disabled={exporting}>Cancel</Button>
+            {selectedVideoFromList && (
+              <Button 
+                variant="secondary" 
+                onClick={handleQuickUpdate} 
+                disabled={exporting}
+                className="mr-auto"
+              >
+                Quick Update (Metadata Only)
+              </Button>
+            )}
+            {selectedVideoFromList ? (
+              <Button onClick={handleUploadProcessedVideo} disabled={exporting} className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
+                {exporting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {processingProgress > 0 ? `Uploading ${processingProgress}%` : 'Processing...'}
+                  </>
+                ) : (
+                  <>
+                    <RotateCw className="h-4 w-4 mr-2" />
+                    Replace Video (Keep ID)
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button onClick={handleUploadProcessedVideo} disabled={exporting} className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
+                {exporting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {processingProgress > 0 ? `Uploading ${processingProgress}%` : 'Processing...'}
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload as New Video
+                  </>
+                )}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

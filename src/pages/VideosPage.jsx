@@ -414,10 +414,15 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
   const isProcessing = video.status === 'uploading' || video.status === 'processing';
   const isFailed = video.status === 'failed';
 
+  // Check if video is currently being uploaded to server (serverProcessing flag)
+  const isServerProcessing = video.serverProcessing || false;
+
   return (
     <Card
       className={`group relative overflow-hidden hover:shadow-lg transition-all duration-200 ${
-        isProcessing ? 'border-l-4 border-l-blue-500' : isFailed ? 'border-l-4 border-l-red-500' : ''
+        isServerProcessing ? 'border-2 border-yellow-400 border-dashed' : 
+        isProcessing ? 'border-l-4 border-l-blue-500' : 
+        isFailed ? 'border-l-4 border-l-red-500' : ''
       }`}
       onMouseEnter={() => onHover(video.id, true)}
       onMouseLeave={() => onHover(video.id, false)}
@@ -429,20 +434,20 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
         }
         {(() => {
           const posterUrl = video.thumbnailUrl
-            ? (video.thumbnailUrl.startsWith('http') ? video.thumbnailUrl : `${VITE_API_BASE_URL}${video.thumbnailUrl}`)
+            ? (video.thumbnailUrl.startsWith('http') || video.thumbnailUrl.startsWith('blob:') ? video.thumbnailUrl : `${VITE_API_BASE_URL}${video.thumbnailUrl}`)
             : null;
           const videoSrc = video.videoUrl
-            ? (video.videoUrl.startsWith('http') ? video.videoUrl : `${VITE_API_BASE_URL}${video.videoUrl}`)
+            ? (video.videoUrl.startsWith('http') || video.videoUrl.startsWith('blob:') ? video.videoUrl : `${VITE_API_BASE_URL}${video.videoUrl}`)
             : null;
 
           // If we have a poster and the card is not currently hovered, show the poster image
-          if (posterUrl && hoveredVideo !== video.id) {
+          if (posterUrl && hoveredVideo !== video.id && !isServerProcessing) {
             return (
               <img
                 src={posterUrl}
                 alt={video.title || 'Video thumbnail'}
                 className="w-full h-full object-cover cursor-pointer"
-                onClick={() => !isProcessing && !isFailed && onClick(video)}
+                onClick={() => !isFailed && onClick(video)}
               />
             );
           }
@@ -457,8 +462,8 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                 preload="metadata"
                 muted={isMuted}
                 loop
-                className="w-full h-full object-cover"
-                onClick={() => !isProcessing && !isFailed && onClick(video)}
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => !isFailed && onClick(video)}
               />
             );
           }
@@ -471,8 +476,16 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
           );
         })()}
 
-        {/* Processing Overlay */}
-        {isProcessing && (
+        {/* Bottom uploading indicator for serverProcessing (doesn't block video) */}
+        {isServerProcessing && (
+          <div className="absolute bottom-0 left-0 right-0 bg-yellow-400/90 text-yellow-900 text-xs font-medium py-1.5 px-2 flex items-center gap-1.5">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            <span>Uploading to server...</span>
+          </div>
+        )}
+
+        {/* Processing Overlay - only for actual processing status (not serverProcessing) */}
+        {isProcessing && !isServerProcessing && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="text-center text-white">
               <Loader2 className="h-12 w-12 animate-spin mx-auto mb-2" />
@@ -526,6 +539,14 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
             {video.description}
           </p>
+        )}
+
+        {/* Server processing indicator in card body */}
+        {isServerProcessing && (
+          <div className="mb-3 flex items-center gap-1.5 text-xs text-yellow-600">
+            <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />
+            <span>Processing on server</span>
+          </div>
         )}
 
         {/* Actions */}
