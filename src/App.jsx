@@ -69,6 +69,7 @@ import EULA from "./pages/legal/EULA";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 
 import NotificationsPage from "./pages/NotificationsPage";
+import NotificationsRedirect from './pages/NotificationsRedirect';
 import { useAuth } from "./contexts/AuthContext";
 import { Cloudinary } from "@cloudinary/url-gen";
 
@@ -243,7 +244,7 @@ function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/notifications" element={<NotificationsRedirect />} />
               <Route path="/notification-settings" element={<NotificationSettingsPage />} />
               
               {/* Interview and Video Call Routes */}

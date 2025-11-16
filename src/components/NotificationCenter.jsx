@@ -34,13 +34,12 @@ import {
   ChatBubbleOutline,
   Bookmark,
   Share as ShareIcon,
-  Update as UpdateIcon
+  Update as UpdateIcon,
+  Autorenew as RotateRight
 } from '@mui/icons-material';
 import { 
   getNotifications, 
   getUnreadNotificationCount, 
-  markNotificationAsRead, 
-  markAllNotificationsAsRead,
   deleteNotification 
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -48,7 +47,7 @@ import { useNotifications } from '@/contexts/NotificationContext';
 
 export default function NotificationCenter() {
   const { user } = useAuth();
-  const { notifications, unreadCount, loading, refresh, markRead, markAllRead, remove } = useNotifications();
+  const { notifications, unreadCount, loading, refresh, markRead, markAllRead, markUnread, markAllUnread, remove } = useNotifications();
   const [anchorEl, setAnchorEl] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -234,7 +233,7 @@ export default function NotificationCenter() {
               Notifications
             </Typography>
             <Box>
-              {unreadCount > 0 && (
+              {unreadCount > 0 ? (
                 <Button
                   size="small"
                   startIcon={<MarkEmailRead />}
@@ -243,6 +242,23 @@ export default function NotificationCenter() {
                 >
                   Mark all read
                 </Button>
+              ) : (
+                notifications.length > 0 && (
+                  <Button
+                    size="small"
+                    startIcon={<RotateRight />}
+                    onClick={async () => {
+                      try {
+                        await markAllUnread();
+                      } catch (err) {
+                        console.error('Failed to mark all unread', err);
+                      }
+                    }}
+                    sx={{ mr: 1 }}
+                  >
+                    Mark all unread
+                  </Button>
+                )
               )}
               <IconButton size="small">
                 <Settings />
@@ -364,6 +380,12 @@ export default function NotificationCenter() {
           <MenuItem onClick={() => handleNotificationClick(selectedNotification)}>
             <MarkEmailRead sx={{ mr: 1 }} />
             Mark as read
+          </MenuItem>
+        )}
+        {selectedNotification && selectedNotification.read_at && (
+          <MenuItem onClick={async () => { await markUnread(selectedNotification.id); setMenuAnchor(null); setSelectedNotification(null); }}>
+            <RotateRight sx={{ mr: 1 }} />
+            Mark as unread
           </MenuItem>
         )}
         <MenuItem 

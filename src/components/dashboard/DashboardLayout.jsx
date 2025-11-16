@@ -15,8 +15,9 @@ import {
 } from '@/components/UI/dropdown-menu.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const DashboardLayout = ({
   children,
@@ -27,6 +28,7 @@ const DashboardLayout = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -61,13 +63,32 @@ const DashboardLayout = ({
           <BreadcrumbNav customBreadcrumbs={customBreadcrumbs} />
 
           <div className="flex items-center gap-3">
-            <LanguageSwitcher />
+            <LanguageSelector variant="menu" showLabel={true} />
             {/* Notifications */}
-            <Button variant="ghost" size="icon" className="relative">
+                <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
+              onClick={() => {
+                // Navigate into the tabbed dashboard / tabs route for notifications
+                const roleStr = Array.isArray(user?.role) ? user?.role[0] : user?.role;
+                if (roleStr === 'employer') {
+                  navigate('/employer-tabs?group=communication&tab=notifications');
+                } else if (roleStr === 'admin') {
+                  navigate('/admin-tabs?group=dashboard&tab=notifications');
+                } else {
+                  // job seeker: open the 'Notifications' tab under 'communication' group (dashboard layout)
+                  navigate('/jobseeker-tabs?group=communication&tab=notifications');
+                }
+              }}
+              aria-label="Notifications"
+            >
               <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500">
-                3
-              </Badge>
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-5 min-w-[1.25rem] px-1 flex items-center justify-center p-0 bg-red-500 text-xs">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </Badge>
+              )}
             </Button>
 
             {/* User Menu */}
@@ -93,15 +114,26 @@ const DashboardLayout = ({
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                <DropdownMenuItem onClick={() => {
+                  // Navigate to the dashboard settings tab using client-side navigation
+                  const roleStr = Array.isArray(user?.role) ? user?.role[0] : user?.role;
+                  if (roleStr === 'employer') {
+                    navigate('/employer-tabs?group=managementSettings&tab=settings');
+                  } else {
+                    navigate('/jobseeker-tabs?group=activities&tab=settings');
+                  }
+                }}>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => {
-                  const profilePath = user?.role === 'employer' 
-                    ? '/employer-tabs?group=companyContent&tab=company-profile'
-                    : '/jobseeker-tabs?group=profileContent&tab=my-profile';
-                  navigate(profilePath);
+                  if (user?.role === 'employer') {
+                    const profilePath = '/employer-tabs?group=companyContent&tab=company-profile';
+                    navigate(profilePath);
+                  } else {
+                    // For jobseekers, use client-side navigation into the profile tab
+                    navigate('/jobseeker-tabs?group=profileContent&tab=my-profile');
+                  }
                 }}>
                   <User className="mr-2 h-4 w-4" />
                   Profile

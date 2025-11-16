@@ -71,7 +71,17 @@ export default function LanguageSelector({ variant = 'menu', showLabel = true })
           {languages.map((language) => (
             <MenuItem key={language.code} value={language.code}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <span style={{ fontSize: '1.2em' }}>{language.flag}</span>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 28,
+                  height: 28,
+                  borderRadius: 9999,
+                  background: language.code === i18n.language ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.04)',
+                  fontSize: 12,
+                  fontWeight: language.code === i18n.language ? 700 : 600,
+                }}>{language.code.toUpperCase()}</span>
                 <Typography variant="body2">
                   {showLabel ? language.nativeName : language.code.toUpperCase()}
                 </Typography>
@@ -99,30 +109,25 @@ export default function LanguageSelector({ variant = 'menu', showLabel = true })
         }}
         aria-label={t('header.languageSelector')}
       >
-        {/* Flag */}
-        <span style={{ fontSize: '1.2em', lineHeight: 1 }}>{currentLanguage.flag}</span>
-
-        {/* Small letters badge next to the flag */}
-        {showLabel && (
+          {/* Language icon: use code abbreviation in a circle instead of flag emoji */}
           <span
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              minWidth: 28,
-              height: 20,
-              padding: '0 6px',
-              marginLeft: 6,
+              width: 28,
+              height: 28,
               borderRadius: 9999,
               background: 'rgba(0,0,0,0.06)',
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 700,
             }}
             aria-hidden
           >
             {currentLanguage.code.toUpperCase()}
           </span>
-        )}
+
+        {/* No small text label: only the round language icon is shown */}
 
         <ExpandMore sx={{ fontSize: '1rem' }} />
       </IconButton>
@@ -161,25 +166,19 @@ export default function LanguageSelector({ variant = 'menu', showLabel = true })
               gap: 1.5
             }}
           >
-            <ListItemIcon sx={{ minWidth: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <span style={{ fontSize: '1.25em', lineHeight: 1 }}>{language.flag}</span>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minWidth: 28,
-                  height: 20,
-                  padding: '0 6px',
-                  borderRadius: 9999,
-                  background: language.code === i18n.language ? 'rgba(0,0,0,0.12)' : 'transparent',
-                  fontSize: 12,
-                  fontWeight: language.code === i18n.language ? 700 : 500,
-                }}
-                aria-hidden
-              >
-                {language.code.toUpperCase()}
-              </span>
+              <ListItemIcon sx={{ minWidth: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 28,
+                height: 28,
+                borderRadius: 9999,
+                background: language.code === i18n.language ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.04)',
+                fontSize: 12,
+                fontWeight: language.code === i18n.language ? 700 : 600,
+              }}>{language.code.toUpperCase()}</span>
+              {/* Only show the language icon; remove the duplicate small code badge */}
             </ListItemIcon>
             <ListItemText
               primary={language.nativeName}

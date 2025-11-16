@@ -26,6 +26,8 @@ const MobileNavigation = () => {
     else if (path.startsWith('/search')) setValue(1);
     else if (path.startsWith('/chat')) setValue(2);
     else if (path.startsWith('/notifications')) setValue(3);
+    else if (path.startsWith('/jobseeker-tabs') && new URLSearchParams(location.search).get('tab') === 'notifications') setValue(3);
+    else if (path.startsWith('/employer-tabs') && new URLSearchParams(location.search).get('tab') === 'notifications') setValue(3);
     else if (path.startsWith('/profile')) setValue(4);
   }, [location]);
 
@@ -42,7 +44,13 @@ const MobileNavigation = () => {
         navigate('/chat');
         break;
       case 3:
-        navigate('/notifications');
+        // Navigate into the tabbed route for notifications depending on role
+        if (role === 'employer') {
+          navigate('/employer-tabs?group=managementSettings&tab=notifications');
+        } else {
+          navigate('/jobseeker-tabs?group=activities&tab=notification-settings');
+        }
+        break;
         break;
       case 4:
         navigate(role=='employer'?'/employer-profile':'Job-seeker-profile');

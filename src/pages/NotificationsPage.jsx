@@ -1,18 +1,28 @@
 ﻿import React, { useState, useEffect } from "react";
-import { Bell, Briefcase, MessageSquare, Heart, UserPlus, Calendar, Check, Trash2, Loader2 } from "lucide-react";
+import { Bell, Briefcase, MessageSquare, Heart, UserPlus, Calendar, Check, Trash2, Loader2, RotateCw } from "lucide-react";
 import { Card, CardContent } from "@/components/UI/card.jsx";
 import { Button } from "@/components/UI/button.jsx";
 import { Badge } from "@/components/UI/badge.jsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/UI/avatar.jsx";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '@/contexts/NotificationContext';
 
 const NotificationsPage = () => {
   const { toast } = useToast();
-  const { notifications, loading, refresh, markRead, remove, markAllRead } = useNotifications();
+    const { notifications, loading, refresh, markRead, remove, markAllRead, markUnread, markAllUnread } = useNotifications();
+    const navigate = useNavigate();
   const [filter, setFilter] = useState('all'); // all, unread, read
 
-  useEffect(() => { refresh(); /* initial fetch handled in provider, but ensure */ }, []);
+  useEffect(() => {
+    (async () => {
+      const fetched = await refresh();
+      // If there are unread notifications, mark them read when the page opens
+      if (fetched && fetched.some(n => !n.read)) {
+        await markAllRead();
+      }
+    })();
+  }, []);
 
   const handleMarkAsRead = async (id) => {
     try {
@@ -41,6 +51,26 @@ const NotificationsPage = () => {
     } catch (error) {
       console.error('Error marking all as read:', error);
       toast({ description: "Failed to mark all as read", variant: "destructive" });
+    }
+  };
+
+  const handleMarkAllAsUnread = async () => {
+    try {
+      await markAllUnread();
+      toast({ description: "All notifications marked as unread" });
+    } catch (error) {
+      console.error('Error marking all as unread:', error);
+      toast({ description: "Failed to mark all as unread", variant: "destructive" });
+    }
+  };
+
+  const handleMarkAsUnread = async (id) => {
+    try {
+      await markUnread(id);
+      toast({ description: "Notification marked as unread" });
+    } catch (error) {
+      console.error('Error marking notification as unread:', error);
+      toast({ description: "Failed to mark as unread", variant: "destructive" });
     }
   };
 
@@ -113,7 +143,7 @@ const NotificationsPage = () => {
           )}
         </div>
         
-        {unreadCount > 0 && (
+        {unreadCount > 0 ? (
           <Button
             onClick={handleMarkAllAsRead}
             variant="outline"
@@ -122,6 +152,17 @@ const NotificationsPage = () => {
             <Check className="h-4 w-4 mr-2" />
             Mark all as read
           </Button>
+        ) : (
+          notifications.length > 0 && (
+            <Button
+              onClick={handleMarkAllAsUnread}
+              variant="outline"
+              className="border-gray-600 text-gray-600 hover:bg-gray-50"
+            >
+              <RotateCw className="h-4 w-4 mr-2" />
+              Mark all as unread
+            </Button>
+          )
         )}
       </div>
 
@@ -174,7 +215,22 @@ const NotificationsPage = () => {
                 !notification.read ? 'border-l-4 border-l-purple-600 bg-purple-50/30' : 'hover:bg-gray-50'
               }`}
             >
-              <CardContent className="p-4">
+                <CardContent
+                  className="p-4 cursor-pointer"
+                  onClick={() => (async () => {
+                    // mark item read on click if not read
+                    if (!notification.read) {
+                      await markRead(notification.id);
+                    }
+                    if (notification.link) {
+                      if (notification.link.startsWith('/')) {
+                        navigate(notification.link);
+                      } else {
+                        window.open(notification.link, '_blank');
+                      }
+                    }
+                  })()}
+                >
                 <div className="flex items-start gap-4">
                   <div className="mt-1">
                     {getNotificationIcon(notification.type)}
@@ -198,25 +254,34 @@ const NotificationsPage = () => {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {!notification.read && (
-                      <Badge className="bg-purple-600">New</Badge>
-                    )}
-                    
-                    {!notification.read && (
+                    {!notification.read ? (
+                      <>
+                        <Badge className="bg-purple-600">New</Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => { e.stopPropagation(); handleMarkAsRead(notification.id); }}
+                          className="hover:bg-purple-100"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleMarkAsRead(notification.id)}
-                        className="hover:bg-purple-100"
+                        onClick={(e) => { e.stopPropagation(); handleMarkAsUnread(notification.id); }}
+                        className="hover:bg-gray-100"
+                        title="Mark as unread"
                       >
-                        <Check className="h-4 w-4" />
+                        <RotateCw className="h-4 w-4" />
                       </Button>
                     )}
 
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDelete(notification.id)}
+                      onClick={(e) => { e.stopPropagation(); handleDelete(notification.id); }}
                       className="hover:bg-red-100 hover:text-red-600"
                     >
                       <Trash2 className="h-4 w-4" />

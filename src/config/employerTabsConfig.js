@@ -172,6 +172,13 @@ export const getEmployerTabCategories = t => [
     label: t("employerTabs:categories.communication"),
     tabs: [
       {
+        label: t("employerTabs:tabs.notifications"),
+        icon: { name: "Notifications" },
+        component: NotificationSettingsPage,
+        path: "notifications",
+        description: t("employerTabs:descriptions.notifications")
+      },
+      {
         label: t("employerTabs:tabs.chat"),
         icon: { name: "ChatIcon" },
         component: Chat,

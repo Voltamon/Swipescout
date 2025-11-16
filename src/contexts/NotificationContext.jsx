@@ -6,7 +6,9 @@ import {
   getNotifications,
   getUnreadNotificationCount,
   markNotificationAsRead,
+  markNotificationAsUnread,
   markAllNotificationsAsRead,
+  markAllNotificationsAsUnread,
   deleteNotification
 } from '@/services/api';
 
@@ -38,6 +40,7 @@ export const NotificationProvider = ({ children }) => {
       const count = countRes?.data?.count ?? countRes?.count ?? 0;
       setNotifications(notifs);
       setUnreadCount(count);
+      return notifs;
     } catch (err) {
       console.error('Failed to refresh notifications', err);
       // Set empty state on error to avoid blocking the UI
@@ -51,6 +54,7 @@ export const NotificationProvider = ({ children }) => {
           variant: "destructive",
         });
       }
+      return [];
     } finally {
       setLoading(false);
     }
@@ -73,6 +77,27 @@ export const NotificationProvider = ({ children }) => {
       setUnreadCount(0);
     } catch (err) {
       console.error('Failed to mark all read', err);
+    }
+  };
+
+  const markUnread = async (id) => {
+    try {
+      await markNotificationAsUnread(id);
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false, read_at: null } : n));
+      setUnreadCount(c => c + 1);
+    } catch (err) {
+      console.error('Failed to mark notification as unread', err);
+    }
+  };
+
+  const markAllUnread = async () => {
+    try {
+      await markAllNotificationsAsUnread();
+      setNotifications(prev => prev.map(n => ({ ...n, read: false, read_at: null })));
+      // set unread count to total notifications
+      setUnreadCount(prev => notifications.length);
+    } catch (err) {
+      console.error('Failed to mark all notifications as unread', err);
     }
   };
 
@@ -107,7 +132,7 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [socket, toast]);
 
-  const value = useMemo(() => ({ notifications, unreadCount, loading, refresh, markRead, markAllRead, remove }), [notifications, unreadCount, loading]);
+  const value = useMemo(() => ({ notifications, unreadCount, loading, refresh, markRead, markAllRead, markUnread, markAllUnread, remove }), [notifications, unreadCount, loading]);
 
   return (
     <NotificationContext.Provider value={value}>
