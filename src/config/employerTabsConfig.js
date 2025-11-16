@@ -135,7 +135,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.notifications"),
         icon: { name: "Notifications" },
-        component: NotificationsPage,
+        component: NotificationSettingsPage,
         path: "notifications",
         description: t("employerTabs:descriptions.notifications")
       },
@@ -175,7 +175,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.notifications"),
         icon: { name: "Notifications" },
-        component: NotificationSettingsPage,
+        component: NotificationsPage,
         path: "notifications",
         description: t("employerTabs:descriptions.notifications")
       },
