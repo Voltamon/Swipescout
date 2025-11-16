@@ -169,60 +169,82 @@ export const AuthProvider = ({ children }) => {
 
 			const pathname = window.location.pathname;
 		
-			// Skip auth check for public routes
-			const publicRoutes = [
-			
-				"/signup",
-				"/about",
-				"/FAQs",
-				"/unauthorized",
-				"/auth/linkedin/callback",
-				"/forgot-password",
-				"/reset-password",
-				"/",
-				"/jobseeker-profile/:id",
-				"/employer-profile/:id",
-				"/register-form",
-				"/more-page",
-				"/authpage",
-				"/auth/linkedin/callback",
-				"/check-it",
-				"/employer-explore-public",
-				"/Explore-jobs-public",
-				"/video-feed/:vid",
-				 "/jobseeker-video-feed/:vid",
-			   "/forgot-password",
-				"/reset-password/:oobCode",
-				"/jobseeker-profile/:id",
-				"/employer-profile/:id",
-				"/videos/:pagetype",
-				"/video-player/:id",
-				"/videos/all" ,
-				"/how-it-works",
-				"/pricing",
-				"/contact",
-				"/share",
-				"/credits",
-			
-			];
-			
-			
+			// DEBUG: log pathname and public routes to help diagnose unexpected redirects
+			console.debug('[AuthContext checkAuth] Starting auth check', { 
+				pathname, 
+				silent: options.silent,
+				hasTokens: {
+					access: !!localStorage.getItem("accessToken"),
+					refresh: !!localStorage.getItem("refreshToken")
+				}
+			});
+		// Skip auth check for public routes
+		const publicRoutes = [
+			"/",
+			"/login",
+			"/signup",
+			"/register",
+			"/about",
+			"/FAQs",
+			"/contact",
+			"/unauthorized",
+			"/auth/linkedin/callback",
+			"/forgot-password",
+			"/reset-password/:oobCode",
+			"/jobseeker-profile/:id",
+			"/jobseeker-profile/:userId",
+			"/employer-profile/:id",
+			"/employer-profile/:userId",
+			"/profile/:userId",
+			"/video-feed/:vid",
+			"/jobseeker-video-feed/:vid",
+			"/videos/:id",
+			"/videos/:pagetype",
+			"/videos",
+			"/video-player/:id",
+			"/video-player",
+			"/how-it-works",
+			"/pricing",
+			"/share",
+			"/credits",
+			"/blog",
+			"/blog/:id",
+			"/privacy-policy",
+			"/terms-of-service",
+			"/cookie-policy",
+			"/community-guidelines",
+			"/copyright-ip-terms",
+			"/eula"
+		];			
 			   
 	 
-			const isPublicRoute = publicRoutes.some(route => {
-				// Handle dynamic routes like '/jobseeker-profile/:id'
-				if (route.includes(":")) {
-					const basePath = route.split("/:")[0];
-					return pathname.startsWith(basePath);
-				}
-				return pathname === route;
-			});
-	
-			if (isPublicRoute) {
-				return; // Skip auth check for public routes
+		const isPublicRoute = publicRoutes.some(route => {
+			// Handle dynamic routes like '/jobseeker-profile/:id'
+			if (route.includes(":")) {
+				const basePath = route.split("/:")[0];
+				const match = pathname.startsWith(basePath);
+				console.debug('[AuthContext] Dynamic route check:', { route, basePath, pathname, match });
+				return match;
 			}
-	
-			const accessToken = localStorage.getItem("accessToken");
+			const exactMatch = pathname === route;
+			if (exactMatch) {
+				console.debug('[AuthContext] Exact route match:', { route, pathname });
+			}
+			return exactMatch;
+		});
+		
+		console.debug('[AuthContext] Public route decision:', { 
+			pathname, 
+			isPublicRoute,
+			silent: options.silent,
+			willSkipAuthCheck: isPublicRoute 
+		});
+
+		if (isPublicRoute) {
+			console.debug('[AuthContext] Skipping auth check - public route');
+			setLoading(false);
+			return; // Skip auth check for public routes
+		}			const accessToken = localStorage.getItem("accessToken");
 			const refreshToken = localStorage.getItem("refreshToken");
 			const accessExpiresTime = parseInt(localStorage.getItem("accessExpiresTime"), 10);
 			const refreshExpiresTime = parseInt(localStorage.getItem("refreshExpiresTime"), 10);
@@ -230,13 +252,19 @@ export const AuthProvider = ({ children }) => {
 			if (window.location.pathname.includes("/login")) return;
 
 			if (!accessToken && !refreshToken) {
-				if (!options.silent) navigate("/login");
+				if (!options.silent) {
+					console.warn('[AuthContext] Redirecting to /login - no tokens available', { pathname, stack: new Error().stack });
+					navigate("/login");
+				}
 				throw new Error("No tokens available");
 			}
 
 			// Check if refresh token is expired
 			if (refreshToken && refreshExpiresTime && Date.now() > refreshExpiresTime) {
-				if (!options.silent) navigate("/login");
+				if (!options.silent) {
+					console.warn('[AuthContext] Redirecting to /login - refresh token expired', { pathname, stack: new Error().stack });
+					navigate("/login");
+				}
 				throw new Error("Refresh token expired");
 			}
 
@@ -251,7 +279,10 @@ export const AuthProvider = ({ children }) => {
 						await refreshTokens();
 						return;
 					} catch (refreshError) {
-						if (!options.silent) navigate("/login");
+						if (!options.silent) {
+							console.warn('[AuthContext] Redirecting to /login - refresh failed', { pathname, refreshError, stack: new Error().stack });
+							navigate("/login");
+						}
 						throw refreshError;
 					}
 				}

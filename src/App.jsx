@@ -190,7 +190,9 @@ function App() {
             <Route path="/login" element={<AuthPage initialTab={0} />} />
             <Route path="/register" element={<AuthPage initialTab={1} />} />
             <Route path="/translation-test" element={<TranslationTest />} />
-
+            <Route path="/jobseeker-profile/:userId" element={<JobseekerProfileView />} />
+            <Route path="/employer-profile/:userId" element={<EmployerProfileView />} />
+            
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/contact" element={<ContactPage />} />
@@ -213,8 +215,7 @@ function App() {
             
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
-            <Route path="/jobseeker-profile/:userId" element={<JobseekerProfileView />} />
-            <Route path="/employer-profile/:userId" element={<EmployerProfileView />} />
+        
             <Route path="/profile/:userId" element={<ProfileViewPage />} />
             <Route path="/video-feed/:vid?" element={<VideoFeed />} />
             <Route path="/jobseeker-video-feed/:vid?" element={<JobseekerVideoFeed />} />

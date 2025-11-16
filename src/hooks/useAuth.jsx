@@ -151,8 +151,10 @@ export const AuthProvider = ({ children }) => {
         '/forgot-password',
         '/reset-password',
         '/',
-        '/jobseeker-profile/:id',
+        
+        '/jobseeker-profile/:userId',
         '/employer-profile/:id',
+        '/employer-profile/:userId',
         '/register-form',
         '/more-page',
         '/authpage',
@@ -172,6 +174,8 @@ export const AuthProvider = ({ children }) => {
                 '/how-it-works',
                 '/pricing',
                 '/contact',
+                '/share',
+                '/credits',
                 '/page-near-future'
         
       ];

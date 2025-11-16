@@ -28,6 +28,29 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Determine whether the current viewer is the profile owner.
+  const profileOwnerId = profile?.id || null;
+  const isOwnProfile = Boolean(user?.id && profileOwnerId && String(profileOwnerId) === String(user.id));
+
+  const handleConnect = async () => {
+    if (!user?.id) {
+      // Not logged in -> redirect to login and preserve current path
+      navigate('/login', { state: { from: window.location.pathname } });
+      return;
+    }
+
+    try {
+      const res = await sendConnection(profile.id);
+      toast({ title: 'Connection sent', description: res?.data?.message || 'Connection request sent.' });
+    } catch (err) {
+      const status = err?.response?.status;
+      const serverMsg = err?.response?.data?.message;
+      let userMsg = serverMsg || err?.message || 'Failed to send connection';
+      if (status === 404) userMsg = 'User not found (they may have been removed)';
+      toast({ title: 'Connection failed', description: userMsg, variant: 'destructive' });
+    }
+  };
+
   const mainVideoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -121,20 +144,9 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
-                {profile?.id && user?.id && profile.id !== user.id && (
+                {profile?.id && !isOwnProfile && (
                   <Button
-                    onClick={async () => {
-                      try {
-                        const res = await sendConnection(profile.id);
-                        toast({ title: 'Connection sent', description: res?.data?.message || 'Connection request sent.' });
-                      } catch (err) {
-                        const status = err?.response?.status;
-                        const serverMsg = err?.response?.data?.message;
-                        let userMsg = serverMsg || err?.message || 'Failed to send connection';
-                        if (status === 404) userMsg = 'User not found (they may have been removed)';
-                        toast({ title: 'Connection failed', description: userMsg, variant: 'destructive' });
-                      }
-                    }}
+                    onClick={handleConnect}
                     className="px-5 py-2"
                   >
                     Connect

@@ -2553,7 +2553,7 @@ export default function ResumeBuilderPage() {
                   <ul className="list-disc ml-4 mt-1 space-y-1">
                     <li>Fields marked with <span className="text-red-600">*</span> are required (Title for Experience, Degree & Institution for Education)</li>
                     <li>Dates must be in <code className="bg-white px-1 py-0.5 rounded">YYYY-MM</code> format (e.g., 2020-01)</li>
-                    <li>Required fields with 🔴 light pink borders must be filled before syncing to profile</li>
+                    <li>Required fields with 🟠 light red borders must be filled before syncing to profile</li>
                     <li>Date fields with 🟡 amber borders need format correction</li>
                     <li>Company name is optional - leave blank if self-employed or not applicable</li>
                   </ul>

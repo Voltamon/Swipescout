@@ -487,6 +487,14 @@ export default function VideoEditPage() {
     setProcessing(true);
     setProcessingProgress(0);
     
+    // Set up progress tracking
+    ffmpeg.on('progress', ({ progress, time }) => {
+      // progress is a value between 0 and 1
+      const percentage = Math.round(progress * 100);
+      console.log(`FFmpeg progress: ${percentage}% (time: ${time})`);
+      setProcessingProgress(percentage);
+    });
+    
     try {
       const inputFileName = 'input.mp4';
       const outputFileName = 'output.mp4';
@@ -614,6 +622,8 @@ export default function VideoEditPage() {
       console.error('Error processing video:', error);
       toast({ description: "Failed to process video", variant: "destructive" });
     } finally {
+      // Clean up progress listener
+      ffmpeg.off('progress');
       setProcessing(false);
       setProcessingProgress(0);
     }

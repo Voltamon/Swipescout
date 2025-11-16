@@ -70,9 +70,14 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Component mount - no-op (previously had debug alerts)
+
   useEffect(() => {
     const fetchAll = async () => {
-      if (!id) return setError('No user id provided');
+      if (!id) {
+        return setError('No user id provided');
+      }
+      // fetchAll starting for id: (no alert)
       setLoading(true);
       setError(null);
       try {
@@ -174,6 +179,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
 
   const handleConnect = async () => {
     if (!user || !user.id) {
+      try { console.trace && console.trace('[JobSeekerProfileView] handleConnect trace'); } catch (e) {}
       navigate('/login', { state: { from: window.location.pathname } });
       return;
     }
@@ -215,13 +221,20 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
     }
   };
 
+  // Determine whether the current viewer is the profile owner.
+  const profileOwnerId = profile?.user?.id || profile?.userId || profile?.id || null;
+  const isOwnProfile = Boolean(user?.id && profileOwnerId && String(profileOwnerId) === String(user.id));
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto py-8 px-4 max-w-7xl">
         {/* Back Button */}
         <Button 
           variant="ghost" 
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (window.history.length > 1) navigate(-1);
+            else navigate('/');
+          }}
           className="mb-6 hover:bg-white/50"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -257,7 +270,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                         </div>
                       </div>
                       {/* Connect Button - show when viewing another user (or not logged in) */}
-                      {(!user?.id || (profile?.user?.id && profile.user.id !== user?.id)) && (
+                      {(!user?.id || !isOwnProfile) && (
                         <Button 
                           onClick={handleConnect}
                           className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 shadow-lg"
@@ -273,7 +286,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       {profile?.location && (
                         <div className="flex items-center gap-2 text-sm">
                           <MapPin className="h-4 w-4 text-cyan-600" />
-                          <span>{profile.location}</span>
+                          <span>{localize(profile.location)}</span>
                         </div>
                       )}
 
@@ -339,7 +352,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       <Briefcase className="h-5 w-5 text-cyan-600" />
                       About Me
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{profile.bio}</p>
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{localize(profile.bio)}</p>
                   </div>
                 )}
               </div>
@@ -390,9 +403,9 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       </div>
 
                       <div className="p-4">
-                        <p className="font-medium">{mainVideo.video_title || 'Video Resume'}</p>
+                        <p className="font-medium">{localize(mainVideo.video_title) || 'Video Resume'}</p>
                         {mainVideo.description && (
-                          <p className="text-sm text-muted-foreground mt-1">{mainVideo.description}</p>
+                          <p className="text-sm text-muted-foreground mt-1">{localize(mainVideo.description)}</p>
                         )}
                       </div>
                     </CardContent>
@@ -427,7 +440,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                   <div className="flex flex-wrap gap-2">
                     {skills.slice(0, 10).map((s, i) => (
                       <Badge key={i} variant="secondary" className="bg-cyan-100 text-cyan-800 hover:bg-cyan-200">
-                        {s.name || s.skill?.name}
+                        {localize(s.name || s.skill?.name)}
                         {s.level && <span className="ml-1 text-xs">• {s.level}</span>}
                       </Badge>
                     ))}
@@ -448,22 +461,22 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                 <CardContent>
                   {experiences.slice(0, 2).map((exp, index) => (
                     <div key={exp.id} className={index > 0 ? "mt-4 pt-4 border-t" : ""}>
-                      <h3 className="font-semibold text-lg">{exp.title}</h3>
-                      <p className="text-muted-foreground">{exp.company_name}</p>
+                      <h3 className="font-semibold text-lg">{localize(exp.title)}</h3>
+                        <p className="text-muted-foreground">{localize(exp.company_name)}</p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                         <Calendar className="h-3 w-3" />
                         <span>
                           {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)}
                         </span>
                       </div>
-                      {exp.location && (
+                        {exp.location && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                           <MapPin className="h-3 w-3" />
-                          <span>{exp.location}</span>
+                          <span>{localize(exp.location)}</span>
                         </div>
                       )}
                       {exp.description && (
-                        <p className="mt-2 text-sm text-muted-foreground">{exp.description}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">{localize(exp.description)}</p>
                       )}
                     </div>
                   ))}
@@ -483,10 +496,10 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                 <CardContent>
                   {education.slice(0, 2).map((edu, index) => (
                     <div key={edu.id} className={index > 0 ? "mt-4 pt-4 border-t" : ""}>
-                      <h3 className="font-semibold text-lg">{edu.degree}</h3>
-                      <p className="text-muted-foreground">{edu.institution}</p>
+                      <h3 className="font-semibold text-lg">{localize(edu.degree)}</h3>
+                      <p className="text-muted-foreground">{localize(edu.institution)}</p>
                       {edu.field && (
-                        <p className="text-sm text-cyan-600 mt-1">{edu.field}</p>
+                        <p className="text-sm text-cyan-600 mt-1">{localize(edu.field)}</p>
                       )}
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                         <Calendar className="h-3 w-3" />
@@ -495,7 +508,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                         </span>
                       </div>
                       {edu.description && (
-                        <p className="mt-2 text-sm text-muted-foreground">{edu.description}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">{localize(edu.description)}</p>
                       )}
                     </div>
                   ))}
@@ -506,33 +519,33 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
 
           {/* Experience Tab */}
           <TabsContent value="experience" className="space-y-6">
-            {experiences.length > 0 ? (
-              experiences.map((exp) => (
+      {experiences.length > 0 ? (
+        experiences.map((exp) => (
                 <Card key={exp.id} className="border-l-4 border-l-purple-500 shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-semibold text-xl">{exp.title}</h3>
-                        <p className="text-lg text-cyan-600">{exp.company_name}</p>
+                              <h3 className="font-semibold text-xl">{localize(exp.title)}</h3>
+                              <p className="text-lg text-cyan-600">{localize(exp.company_name)}</p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                           <Calendar className="h-4 w-4" />
                           <span>
                             {formatDate(exp.start_date)} - {exp.currently_working ? 'Present' : formatDate(exp.end_date)}
                           </span>
                         </div>
-                        {exp.location && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                            <MapPin className="h-4 w-4" />
-                            <span>{exp.location}</span>
-                          </div>
-                        )}
+                              {exp.location && (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                                  <MapPin className="h-4 w-4" />
+                                  <span>{localize(exp.location)}</span>
+                                </div>
+                              )}
                       </div>
                       {exp.currently_working && (
                         <Badge className="bg-green-100 text-green-800">Current</Badge>
                       )}
                     </div>
                     {exp.description && (
-                      <p className="mt-4 text-muted-foreground whitespace-pre-line">{exp.description}</p>
+                      <p className="mt-4 text-muted-foreground whitespace-pre-line">{localize(exp.description)}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -556,10 +569,10 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-semibold text-xl">{edu.degree}</h3>
-                        <p className="text-lg text-cyan-600">{edu.institution}</p>
+                        <h3 className="font-semibold text-xl">{localize(edu.degree)}</h3>
+                        <p className="text-lg text-cyan-600">{localize(edu.institution)}</p>
                         {edu.field && (
-                          <Badge variant="outline" className="mt-2">{edu.field}</Badge>
+                          <Badge variant="outline" className="mt-2">{localize(edu.field)}</Badge>
                         )}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                           <Calendar className="h-4 w-4" />
@@ -573,7 +586,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       )}
                     </div>
                     {edu.description && (
-                      <p className="mt-4 text-muted-foreground whitespace-pre-line">{edu.description}</p>
+                      <p className="mt-4 text-muted-foreground whitespace-pre-line">{localize(edu.description)}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -605,7 +618,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                         variant="secondary" 
                         className="bg-gradient-to-r from-cyan-100 to-purple-100 text-gray-800 px-4 py-2 text-sm hover:from-cyan-200 hover:to-purple-200"
                       >
-                        {s.name || s.skill?.name}
+                        {localize(s.name || s.skill?.name)}
                         {s.level && <span className="ml-2 text-xs opacity-75">• {s.level}</span>}
                         {s.years_of_experience && <span className="ml-1 text-xs opacity-75">({s.years_of_experience}y)</span>}
                       </Badge>
@@ -650,7 +663,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       </div>
                     </div>
                     <CardContent className="p-3">
-                      <p className="font-medium truncate text-sm">{video.video_title || 'Untitled Video'}</p>
+                      <p className="font-medium truncate text-sm">{localize(video.video_title) || 'Untitled Video'}</p>
                       <div className="flex justify-between text-xs text-muted-foreground mt-2">
                         <span>{video.video_duration ? `${Math.round(video.video_duration)}s` : ''}</span>
                         <span>{video.views ? `${video.views} views` : ''}</span>
@@ -664,7 +677,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         )}
 
         {/* Bottom Connect Button */}
-        {(!user?.id || (profile?.user?.id && profile.user.id !== user?.id)) && (
+        {(!user?.id || !isOwnProfile) && (
           <div className="mt-8 flex justify-center">
             <Button 
               onClick={handleConnect}

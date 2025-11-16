@@ -57,16 +57,27 @@ export default function ReportButton({ contentType, contentId, reportedUserId = 
             <h3 className="text-lg font-semibold mb-3">Report content</h3>
             <div className="mb-3">
               <label className="block text-sm font-medium mb-1">Reason</label>
-              <select value={reason} onChange={(e) => setReason(e.target.value)} className="w-full border rounded px-3 py-2">
-                {DEFAULT_REASONS.map((r) => (<option key={r} value={r}>{r}</option>))}
+              <select
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className="w-full border rounded px-3 py-2 bg-white text-slate-900 dark:bg-slate-800 dark:text-white"
+              >
+                {DEFAULT_REASONS.map((r) => (
+                  <option key={r} value={r} className="text-slate-900 dark:text-white">{r}</option>
+                ))}
               </select>
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Details (optional)</label>
-              <textarea value={details} onChange={(e) => setDetails(e.target.value)} className="w-full border rounded px-3 py-2 h-24" />
+              <textarea
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                className="w-full border rounded px-3 py-2 h-24 bg-white text-slate-900 dark:bg-slate-800 dark:text-white"
+              />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setOpen(false)} disabled={submitting}>Cancel</Button>
+              {/* Use an explicit outline variant and clearer label so the button is visible on all backgrounds */}
+              <Button variant="outline" onClick={() => setOpen(false)} disabled={submitting}>Close</Button>
               <Button onClick={submit} disabled={submitting}>{submitting ? 'Sending...' : 'Submit report'}</Button>
             </div>
           </div>

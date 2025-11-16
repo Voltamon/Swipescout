@@ -71,10 +71,33 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refreshToken');
       
       if (!refreshToken) {
-        // No refresh token, redirect to login
+        // No refresh token. If the failing request is for a public API endpoint
+        // (public profiles, public videos, etc.) we should NOT force a global
+        // redirect to the app root — allow the request to fail so the page can
+        // render a public view. Only redirect for protected endpoints.
+        const publicApiPrefixes = [
+          '/job-seeker/', // job seeker public profile endpoints
+          '/videos/user/',
+          '/employer/employer-profile/',
+          '/profile/'
+        ];
+
+        const reqUrl = originalRequest?.url || '';
+        const isPublicApi = publicApiPrefixes.some(p => reqUrl.startsWith(p) || reqUrl.indexOf(p) !== -1);
+
         processQueue(error, null);
         isRefreshing = false;
+
+        if (isPublicApi) {
+          // Don't clear storage or redirect for public endpoints — return the error
+          console.warn('[api] no refresh token for public API request -> skipping global redirect', { origin: reqUrl, status: (error.response?.status || 'unknown') });
+          return Promise.reject(error);
+        }
+
+        // Non-public endpoint: clear auth and redirect to the root/login flow
         localStorage.clear();
+        console.warn('[api] no refresh token -> redirecting to /', { origin: reqUrl, status: (error.response?.status || 'unknown') });
+        try { console.trace && console.trace('[api] redirect trace'); } catch (e) {}
         window.location.href = '/';
         return Promise.reject(error);
       }
@@ -103,7 +126,24 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         isRefreshing = false;
+
+        const publicApiPrefixes = [
+          '/job-seeker/',
+          '/videos/user/',
+          '/employer/employer-profile/',
+          '/profile/'
+        ];
+        const reqUrl = originalRequest?.url || '';
+        const isPublicApi = publicApiPrefixes.some(p => reqUrl.startsWith(p) || reqUrl.indexOf(p) !== -1);
+
+        if (isPublicApi) {
+          console.warn('[api] token refresh failed for public API request -> skipping global redirect', { origin: reqUrl });
+          return Promise.reject(refreshError);
+        }
+
         localStorage.clear();
+        console.warn('[api] refresh failed -> redirecting to /', { origin: reqUrl, status: (error.response?.status || 'unknown') });
+        try { console.trace && console.trace('[api] refresh failed trace'); } catch (e) {}
         window.location.href = '/';
         return Promise.reject(refreshError);
       }
