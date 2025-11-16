@@ -180,9 +180,9 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
               <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent animate-shimmer"></div>
               
               {/* Logo */}
-              <img 
-                src="/swipescout.svg" 
-                alt="SwipeScout" 
+              <img
+                src={`${import.meta.env.BASE_URL}swipescout.png`}
+                alt="SwipeScout"
                 className="w-12 h-12 object-contain drop-shadow-lg"
               />
             </div>

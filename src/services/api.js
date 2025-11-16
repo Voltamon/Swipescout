@@ -377,6 +377,8 @@ export const getNotifications = (page = 1, limit = 20, unreadOnly = false) => ap
 export const getUnreadNotificationCount = () => api.get('/notifications/unread-count');
 export const markNotificationAsRead = (notificationId) => api.patch(`/notifications/${notificationId}/read`);
 export const markAllNotificationsAsRead = () => api.patch('/notifications/mark-all-read');
+export const markNotificationAsUnread = (notificationId) => api.patch(`/notifications/${notificationId}/unread`);
+export const markAllNotificationsAsUnread = () => api.patch('/notifications/mark-all-unread');
 export const deleteNotification = (notificationId) => api.delete(`/notifications/${notificationId}`);
 export const getNotificationSettings = () => api.get('/notifications/settings');
 export const updateNotificationSettings = (settings) => api.put('/notifications/settings', { settings });

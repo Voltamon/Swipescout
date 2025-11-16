@@ -17,6 +17,7 @@ import CandidateSearchPage from "../pages/CandidateSearchPage.jsx";
 import JobPostingForm from "../pages/JobPostingForm.jsx";
 import CompanyVideos from "../pages/CompanyVideos.jsx";
 import NotificationSettingsPage from "../pages/NotificationSettingsPage.jsx";
+import NotificationsPage from "../pages/NotificationsPage.jsx";
 import AllVideosPage from "../pages/AllVideosPage.jsx";
 import VideoEditPage from "../pages/VideoEditPage.jsx";
 import JobsListingPage from "../pages/JobsListingPage.jsx";
@@ -171,6 +172,13 @@ export const getEmployerTabCategories = t => [
     key: "communication",
     label: t("employerTabs:categories.communication"),
     tabs: [
+      {
+        label: t("employerTabs:tabs.notifications"),
+        icon: { name: "Notifications" },
+        component: NotificationsPage,
+        path: "notifications",
+        description: t("employerTabs:descriptions.notifications")
+      },
       {
         label: t("employerTabs:tabs.chat"),
         icon: { name: "ChatIcon" },

@@ -26,7 +26,7 @@ import {
   LightMode
 } from '@mui/icons-material';
 import { useTranslation } from '../../hooks/useTranslation';
-import LanguageSwitcher from '../LanguageSwitcher';
+import LanguageSelector from '../LanguageSelector';
 import NotificationCenter from '@/components/NotificationCenter';
 
 const drawerWidth = 280;
@@ -147,7 +147,7 @@ const DashboardLayout = ({
 
           {/* Language Switcher */}
           <Box sx={{ mx: 1 }}>
-            <LanguageSwitcher variant="standard" />
+            <LanguageSelector variant="menu" showLabel={true} />
           </Box>
 
           {/* Notifications */}

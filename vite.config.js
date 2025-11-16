@@ -52,19 +52,27 @@ export default defineConfig({
       },
     },
     headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'credentialless', // More permissive than require-corp
+      // Allow popups for OAuth providers (e.g. Google signin popup)
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      // Remove COEP for Firebase compatibility - Firebase auth iframes don't send CORP headers
+      // 'Cross-Origin-Embedder-Policy': 'credentialless',
     },
     // Dev server middleware to set proper headers for FFmpeg SharedArrayBuffer
     middlewareMode: false,
     setup: ({ middlewares }) => {
       // Vite's connect-style middleware stack: add headers for all responses
       middlewares.use((req, res, next) => {
-        try {
-          // FFmpeg requires these headers for SharedArrayBuffer support
-          // Using 'credentialless' allows loading external resources without CORP headers
-          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-          res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+          try {
+          // Allow OAuth popups for all routes
+          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+          // Add CORP header so cross-origin resources (e.g. provider hosted assets) can be fetched
+          res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+          
+          // Enable COEP ONLY for video editor route to support FFmpeg SharedArrayBuffer
+          // All other routes (including auth) don't get COEP, allowing Firebase iframes to work
+          if (req.url && (req.url.includes('/video-edit') || req.url.includes('/videos/edit'))) {
+            res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+          }
           
           // Ensure worker files have correct MIME type
           if (req.url && (req.url.includes('worker') || req.url.includes('.wasm'))) {
@@ -83,8 +91,10 @@ export default defineConfig({
   },
   preview: {
     headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'credentialless',
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      // Remove COEP for Firebase auth iframe compatibility
+      // 'Cross-Origin-Embedder-Policy': 'credentialless',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
     },
   },
 });
