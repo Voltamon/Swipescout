@@ -1,24 +1,12 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import {
     getEmployerDashboardStats,
     getRecentActivities,
     getCandidateRecommendations,
     getJobPostings
 } from '../services/dashboardService';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
 import {
     Eye,
     UserSearch,
@@ -30,10 +18,13 @@ import {
     Plus,
     ArrowRight,
     Building2,
-    Users,
     BarChart3,
+    Calendar,
+    CheckCircle,
+    Clock,
+    Star,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
@@ -42,27 +33,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ScrollArea } from '@/components/UI/scroll-area.jsx';
 import themeColors from '@/config/theme-colors';
 
-// Register ChartJS components
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend
-);
-
 const EmployerDashboard = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [stats, setStats] = useState(null);
     const [activities, setActivities] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('overview');
+    const [activeTab, setActiveTab] = useState('jobs');
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -93,46 +72,6 @@ const EmployerDashboard = () => {
 
         fetchDashboardData();
     }, []);
-
-    // Views chart data with theme colors
-    const viewsChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        datasets: [
-            {
-                label: 'Job Views',
-                data: stats?.job_views_chart || [120, 190, 150, 250, 220, 300],
-                ...themeColors.charts.line.primary,
-                tension: 0.4,
-            },
-        ],
-    };
-
-    // Applicants chart data with theme colors
-    const applicantsChartData = {
-        labels: stats?.job_titles || ['Frontend Developer', 'Backend Developer', 'UI/UX Designer', 'Project Manager', 'Digital Marketer'],
-        datasets: [
-            {
-                label: 'Number of Applicants',
-                data: stats?.applicants_per_job || [25, 18, 12, 8, 15],
-                backgroundColor: themeColors.charts.bar.secondary,
-                borderColor: themeColors.charts.bar.secondary,
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    // Applicant sources chart data with theme colors
-    const applicantSourcesChartData = {
-        labels: ['Direct Search', 'Referrals', 'Social Media', 'Job Boards', 'Other'],
-        datasets: [
-            {
-                data: stats?.applicant_sources || [35, 25, 20, 15, 5],
-                backgroundColor: themeColors.charts.doughnut,
-                borderColor: themeColors.charts.doughnutBorders,
-                borderWidth: 2,
-            },
-        ],
-    };
 
     const getActivityIcon = (type) => {
         switch (type) {
@@ -214,7 +153,7 @@ const EmployerDashboard = () => {
 
                 {/* Statistics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <Card className="hover:shadow-lg transition-shadow">
+                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => navigate('/employer/analytics')}>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -224,33 +163,41 @@ const EmployerDashboard = () => {
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.total_job_views || 0}
                                     </h3>
+                                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                                        <TrendingUp className="h-3 w-3" />
+                                        +12% this week
+                                    </p>
                                 </div>
                                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.primary}`}>
-                                    <Eye className="h-6 w-6" />
+                                    <Eye className="h-6 w-6 text-indigo-600" />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="hover:shadow-lg transition-shadow">
+                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setActiveTab('applicants')}>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
-                                        Applicants
+                                        New Applicants
                                     </p>
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.total_applicants || 0}
                                     </h3>
+                                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                                        <TrendingUp className="h-3 w-3" />
+                                        +8% this week
+                                    </p>
                                 </div>
                                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.success}`}>
-                                    <UserSearch className="h-6 w-6" />
+                                    <UserSearch className="h-6 w-6 text-green-600" />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="hover:shadow-lg transition-shadow">
+                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setActiveTab('jobs')}>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -260,15 +207,18 @@ const EmployerDashboard = () => {
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.active_jobs || 0}
                                     </h3>
+                                    <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
+                                        {stats?.draft_jobs || 0} drafts
+                                    </p>
                                 </div>
                                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.warning}`}>
-                                    <Briefcase className="h-6 w-6" />
+                                    <Briefcase className="h-6 w-6 text-yellow-600" />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="hover:shadow-lg transition-shadow">
+                    <Card className="hover:shadow-lg transition-all duration-200">
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -278,9 +228,12 @@ const EmployerDashboard = () => {
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.unread_messages || 0}
                                     </h3>
+                                    <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
+                                        From candidates
+                                    </p>
                                 </div>
                                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.info}`}>
-                                    <MessageSquare className="h-6 w-6" />
+                                    <MessageSquare className="h-6 w-6 text-blue-600" />
                                 </div>
                             </div>
                         </CardContent>
@@ -289,173 +242,175 @@ const EmployerDashboard = () => {
 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Left Column - Charts and Jobs */}
+                    {/* Left Column - Jobs and Applicants */}
                     <div className="lg:col-span-2 space-y-6">
                         <Card>
                             <Tabs value={activeTab} onValueChange={setActiveTab}>
                                 <CardHeader>
-                                    <TabsList className="grid w-full grid-cols-3">
-                                        <TabsTrigger value="overview">Overview</TabsTrigger>
-                                        <TabsTrigger value="jobs">Active Jobs</TabsTrigger>
-                                        <TabsTrigger value="applicants">Applicants</TabsTrigger>
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle>Job Management</CardTitle>
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="text-indigo-600"
+                                            onClick={() => navigate('/employer/analytics')}
+                                        >
+                                            <BarChart3 className="h-4 w-4 mr-1" />
+                                            View Analytics
+                                        </Button>
+                                    </div>
+                                    <TabsList className="grid w-full grid-cols-2 mt-4">
+                                        <TabsTrigger value="jobs">Active Jobs ({jobs.length})</TabsTrigger>
+                                        <TabsTrigger value="applicants">Recent Applicants</TabsTrigger>
                                     </TabsList>
                                 </CardHeader>
                                 <CardContent>
-                                    <TabsContent value="overview" className="space-y-6">
-                                        {/* Job Views Chart */}
-                                        <div className="h-80">
-                                            <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>
-                                                Job Views Over Time
-                                            </h3>
-                                            <Line
-                                                data={viewsChartData}
-                                                options={{
-                                                    responsive: true,
-                                                    maintainAspectRatio: false,
-                                                    plugins: {
-                                                        legend: {
-                                                            position: 'top',
-                                                        },
-                                                    },
-                                                }}
-                                            />
-                                        </div>
-
-                                        {/* Additional Charts */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="h-64">
-                                                <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>
-                                                    Applicants Per Job
-                                                </h3>
-                                                <Bar
-                                                    data={applicantsChartData}
-                                                    options={{
-                                                        responsive: true,
-                                                        maintainAspectRatio: false,
-                                                        plugins: {
-                                                            legend: {
-                                                                display: false,
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-                                            </div>
-
-                                            <div className="h-64">
-                                                <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>
-                                                    Applicant Sources
-                                                </h3>
-                                                <Doughnut
-                                                    data={applicantSourcesChartData}
-                                                    options={{
-                                                        responsive: true,
-                                                        maintainAspectRatio: false,
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </TabsContent>
-
-                                    <TabsContent value="jobs">
-                                        <div className="space-y-4">
-                                            <h3 className={`text-lg font-semibold ${themeColors.text.primary}`}>
-                                                Active Job Postings
-                                            </h3>
-                                            <div className="rounded-md border">
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead>Job Title</TableHead>
-                                                            <TableHead>Posted Date</TableHead>
-                                                            <TableHead>Views</TableHead>
-                                                            <TableHead>Applicants</TableHead>
-                                                            <TableHead>Status</TableHead>
-                                                            <TableHead>Actions</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {jobs.map((job) => (
-                                                            <TableRow key={job.id}>
-                                                                <TableCell className="font-medium">{job.title}</TableCell>
-                                                                <TableCell>{new Date(job.created_at).toLocaleDateString('en-US')}</TableCell>
-                                                                <TableCell>{job.views}</TableCell>
-                                                                <TableCell>{job.applicants_count}</TableCell>
-                                                                <TableCell>
-                                                                    {getStatusBadge(job.status)}
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <Button variant="ghost" size="sm" className="text-purple-600">
-                                                                        View
-                                                                    </Button>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </div>
-                                            <div className="flex justify-center">
-                                                <Button variant="outline" className={themeColors.buttons.outline}>
-                                                    View All Jobs
-                                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                    <TabsContent value="jobs" className="space-y-4 mt-0">
+                                        {jobs.length === 0 ? (
+                                            <div className="text-center py-12">
+                                                <Briefcase className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                                                <p className={`text-sm ${themeColors.text.secondary} mb-4`}>
+                                                    No active jobs yet
+                                                </p>
+                                                <Button className={`${themeColors.buttons.primary} text-white`}>
+                                                    <Plus className="h-4 w-4 mr-2" />
+                                                    Post Your First Job
                                                 </Button>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <>
+                                                <div className="rounded-md border">
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow>
+                                                                <TableHead>Job Title</TableHead>
+                                                                <TableHead>Posted</TableHead>
+                                                                <TableHead>Views</TableHead>
+                                                                <TableHead>Applicants</TableHead>
+                                                                <TableHead>Status</TableHead>
+                                                                <TableHead>Actions</TableHead>
+                                                            </TableRow>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {jobs.slice(0, 5).map((job) => (
+                                                                <TableRow key={job.id}>
+                                                                    <TableCell className="font-medium">
+                                                                        <div>
+                                                                            <div>{job.title}</div>
+                                                                            <div className="text-xs text-gray-500">{job.location}</div>
+                                                                        </div>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <div className="flex items-center gap-1 text-sm">
+                                                                            <Calendar className="h-3 w-3 text-gray-400" />
+                                                                            {new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                                        </div>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <div className="flex items-center gap-1">
+                                                                            <Eye className="h-3 w-3 text-gray-400" />
+                                                                            {job.views}
+                                                                        </div>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <Badge className={themeColors.badges.info}>
+                                                                            {job.applicants_count}
+                                                                        </Badge>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        {getStatusBadge(job.status)}
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <Button variant="ghost" size="sm" className="text-purple-600">
+                                                                            Manage
+                                                                        </Button>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                                <div className="flex justify-center">
+                                                    <Button variant="outline" className={themeColors.buttons.outline}>
+                                                        View All Jobs
+                                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        )}
                                     </TabsContent>
 
-                                    <TabsContent value="applicants">
-                                        <div className="space-y-4">
-                                            <h3 className={`text-lg font-semibold ${themeColors.text.primary}`}>
-                                                Latest Applicants
-                                            </h3>
-                                            <div className="rounded-md border">
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead>Candidate</TableHead>
-                                                            <TableHead>Job</TableHead>
-                                                            <TableHead>Applied Date</TableHead>
-                                                            <TableHead>Match</TableHead>
-                                                            <TableHead>Status</TableHead>
-                                                            <TableHead>Actions</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {recommendations.slice(0, 5).map((candidate) => (
-                                                            <TableRow key={candidate.id}>
-                                                                <TableCell>
-                                                                    <div className="flex items-center gap-3">
-                                                                        <Avatar className="h-8 w-8">
-                                                                            <AvatarImage src={candidate.photoUrl} />
-                                                                            <AvatarFallback>{candidate.name?.charAt(0)}</AvatarFallback>
-                                                                        </Avatar>
-                                                                        <span className="font-medium">{candidate.name}</span>
-                                                                    </div>
-                                                                </TableCell>
-                                                                <TableCell>{candidate.job_title}</TableCell>
-                                                                <TableCell>{new Date(candidate.applied_at).toLocaleDateString('en-US')}</TableCell>
-                                                                <TableCell>
-                                                                    {getMatchBadge(candidate.match_percentage)}
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {getStatusBadge(candidate.status)}
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <Button variant="ghost" size="sm" className="text-purple-600">
-                                                                        View
-                                                                    </Button>
-                                                                </TableCell>
+                                    <TabsContent value="applicants" className="space-y-4 mt-0">
+                                        {recommendations.length === 0 ? (
+                                            <div className="text-center py-12">
+                                                <UserSearch className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                                                <p className={`text-sm ${themeColors.text.secondary}`}>
+                                                    No applicants yet
+                                                </p>
+                                                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
+                                                    Applicants will appear here once they apply to your jobs
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="rounded-md border">
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow>
+                                                                <TableHead>Candidate</TableHead>
+                                                                <TableHead>Job</TableHead>
+                                                                <TableHead>Applied</TableHead>
+                                                                <TableHead>Match</TableHead>
+                                                                <TableHead>Status</TableHead>
+                                                                <TableHead>Actions</TableHead>
                                                             </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </div>
-                                            <div className="flex justify-center">
-                                                <Button variant="outline" className={themeColors.buttons.outline}>
-                                                    View All Applicants
-                                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        </div>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {recommendations.slice(0, 5).map((candidate) => (
+                                                                <TableRow key={candidate.id}>
+                                                                    <TableCell>
+                                                                        <div className="flex items-center gap-3">
+                                                                            <Avatar className="h-9 w-9">
+                                                                                <AvatarImage src={candidate.photoUrl} />
+                                                                                <AvatarFallback>{candidate.name?.charAt(0)}</AvatarFallback>
+                                                                            </Avatar>
+                                                                            <div>
+                                                                                <div className="font-medium">{candidate.name}</div>
+                                                                                <div className="text-xs text-gray-500">{candidate.experience} years exp</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </TableCell>
+                                                                    <TableCell className="text-sm">{candidate.job_title}</TableCell>
+                                                                    <TableCell>
+                                                                        <div className="flex items-center gap-1 text-sm">
+                                                                            <Clock className="h-3 w-3 text-gray-400" />
+                                                                            {new Date(candidate.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                                        </div>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        {getMatchBadge(candidate.match_percentage)}
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        {getStatusBadge(candidate.status)}
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <Button variant="ghost" size="sm" className="text-purple-600">
+                                                                            Review
+                                                                        </Button>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                                <div className="flex justify-center">
+                                                    <Button variant="outline" className={themeColors.buttons.outline}>
+                                                        View All Applicants
+                                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        )}
                                     </TabsContent>
                                 </CardContent>
                             </Tabs>
@@ -565,59 +520,65 @@ const EmployerDashboard = () => {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-xl font-bold">
-                            Tips to Attract More Qualified Candidates
+                            Quick Actions to Improve Your Results
                         </CardTitle>
+                        <CardDescription>
+                            Take these steps to attract more qualified candidates
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-md transition-shadow`}>
+                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`}>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className={`p-2 rounded-lg ${themeColors.iconBackgrounds.primary}`}>
-                                        <PlayCircle className="h-6 w-6" />
+                                    <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.primary}`}>
+                                        <PlayCircle className="h-6 w-6 text-indigo-600" />
                                     </div>
                                     <h3 className={`font-semibold ${themeColors.text.primary}`}>
-                                        Add Video to Job Posting
+                                        Add Job Video
                                     </h3>
                                 </div>
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
-                                    Jobs with videos receive 34% more applications than traditional text-based job posts.
+                                    Jobs with videos receive 34% more applications and attract higher quality candidates.
                                 </p>
                                 <Button className={`w-full ${themeColors.buttons.primary} text-white`}>
+                                    <Plus className="h-4 w-4 mr-2" />
                                     Add Video
                                 </Button>
                             </div>
 
-                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-md transition-shadow`}>
+                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`}>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className={`p-2 rounded-lg ${themeColors.iconBackgrounds.secondary}`}>
-                                        <Building2 className="h-6 w-6" />
+                                    <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.secondary}`}>
+                                        <Building2 className="h-6 w-6 text-purple-600" />
                                     </div>
                                     <h3 className={`font-semibold ${themeColors.text.primary}`}>
-                                        Complete Company Profile
+                                        Complete Profile
                                     </h3>
                                 </div>
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
-                                    Companies with complete profiles attract higher quality candidates and increase acceptance rates.
+                                    Complete profiles increase candidate trust and boost application acceptance rates by 45%.
                                 </p>
                                 <Button className={`w-full ${themeColors.buttons.secondary} text-white`}>
-                                    Update Profile
+                                    <CheckCircle className="h-4 w-4 mr-2" />
+                                    Update Now
                                 </Button>
                             </div>
 
-                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-md transition-shadow`}>
+                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`} onClick={() => navigate('/employer/analytics')}>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className={`p-2 rounded-lg ${themeColors.iconBackgrounds.info}`}>
-                                        <BarChart3 className="h-6 w-6" />
+                                    <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.info}`}>
+                                        <BarChart3 className="h-6 w-6 text-blue-600" />
                                     </div>
                                     <h3 className={`font-semibold ${themeColors.text.primary}`}>
-                                        Analyze Job Performance
+                                        View Analytics
                                     </h3>
                                 </div>
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
-                                    Review your job performance analytics to improve visibility and application rates.
+                                    Review detailed analytics to optimize your job postings and improve visibility.
                                 </p>
                                 <Button className={`w-full ${themeColors.buttons.success} text-white`}>
-                                    View Analytics
+                                    <BarChart3 className="h-4 w-4 mr-2" />
+                                    View Details
                                 </Button>
                             </div>
                         </div>

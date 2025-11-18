@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Building2, AlertCircle, Chrome, Linkedin, X, Loader2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,6 +19,18 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
   const [loading, setLoading] = useState({ email: false, google: false, linkedin: false });
   const [error, setError] = useState('');
   const [showRoleMenu, setShowRoleMenu] = useState({ google: false, linkedin: false });
+
+  const dialogRef = useRef(null);
+
+  const scrollDialogToBottom = (smooth = true) => {
+    const el = dialogRef.current;
+    if (!el) return;
+    try {
+      el.scrollTo({ top: el.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+    } catch (err) {
+      el.scrollTop = el.scrollHeight;
+    }
+  };
 
   const redirectPath = propRedirectPath || (location && location.state && location.state.redirectPath) || null;
 
@@ -157,6 +169,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
         className="fixed left-[50vw] top-[50vh] z-[100000] w-full max-w-md p-4 transform -translate-x-1/2 -translate-y-1/2"
       >
         <div
+          ref={dialogRef}
           className="relative w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-scale-in border border-gray-100 max-h-[95vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
@@ -482,7 +495,10 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowRoleMenu({ ...showRoleMenu, google: !showRoleMenu.google })}
+                onClick={() => {
+                  setShowRoleMenu({ ...showRoleMenu, google: !showRoleMenu.google });
+                  setTimeout(() => scrollDialogToBottom(), 0);
+                }}
                 disabled={loading.google}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-gray-200 rounded-lg font-medium text-gray-700 hover:border-indigo-300 hover:bg-indigo-50/50 hover:shadow-md transition-all duration-300 disabled:opacity-50 group"
               >
@@ -519,7 +535,10 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowRoleMenu({ ...showRoleMenu, linkedin: !showRoleMenu.linkedin })}
+                onClick={() => {
+                  setShowRoleMenu({ ...showRoleMenu, linkedin: !showRoleMenu.linkedin });
+                  setTimeout(() => scrollDialogToBottom(), 0);
+                }}
                 disabled={loading.linkedin}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-gray-200 rounded-lg font-medium text-gray-700 hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-md transition-all duration-300 disabled:opacity-50 group"
               >
