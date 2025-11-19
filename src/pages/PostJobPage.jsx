@@ -1,47 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { 
-  Calendar,
-  MapPin,
-  DollarSign,
-  Save,
-  X,
-  Plus,
-  Trash2,
-  Briefcase,
-  FileText,
-  Video,
-  Building2,
-  GraduationCap,
-  Clock,
-  Tag
-} from 'lucide-react';
-
-import { Button } from '@/components/UI/button';
-import { Input } from '@/components/UI/input';
-import { Label } from '@/components/UI/label';
-import { Textarea } from '@/components/UI/textarea';
-import { Checkbox } from '@/components/UI/checkbox';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/UI/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card';
-import { Badge } from '@/components/UI/badge';
-import { Alert, AlertDescription } from '@/components/UI/alert';
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/UI/dialog';
-import LoadingSpinner from '@/components/UI/LoadingSpinner';
-
 import { 
   postJob, 
   getCategories,
@@ -49,19 +7,59 @@ import {
   updateJob
 } from '@/services/api';
 import VideoUpload from './VideoUpload';
+
+// shadcn/ui components
+import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/input';
+import { Label } from '@/components/UI/label';
+import { Textarea } from '@/components/UI/textarea';
+import { Checkbox } from '@/components/UI/checkbox';
+import { Badge } from '@/components/UI/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/UI/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/UI/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/UI/dialog';
+
+// Lucide icons
+import {
+  Briefcase,
+  MapPin,
+  DollarSign,
+  Save,
+  X,
+  Plus,
+  Trash2,
+  Video,
+  FileText,
+  Loader2,
+  Calendar,
+  GraduationCap,
+  Award,
+  CheckCircle2,
+} from 'lucide-react';
+
+// Theme colors
 import { themeColors } from '@/config/theme-colors';
 
 const PostJobPage = () => {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
-  const currentLang = i18n.language || 'en';
-
-  // Helper function to get localized name
-  const getLocalizedName = (nameObj) => {
-    if (!nameObj) return '';
-    if (typeof nameObj === 'string') return nameObj;
-    return nameObj[currentLang] || nameObj.en || nameObj.ar || nameObj.zh || '';
-  };
   
   const [jobForm, setJobForm] = useState({
     title: '',
@@ -69,8 +67,8 @@ const PostJobPage = () => {
     location: '',
     employment_type: 'full-time',
     remote_ok: false,
-    salary_min: null,
-    salary_max: null,
+    salary_min: '',
+    salary_max: '',
     experience_level: '',
     education_level: '',
     job_status: 'active',
@@ -79,49 +77,48 @@ const PostJobPage = () => {
     requirements: [''],
     responsibilities: [''],
     deadline: '',
-    videoRequired: false // Indicates if a video is required for this job post
+    videoRequired: false
   });
   
   const [errors, setErrors] = useState({
     title: false,
     description: false,
     location: false,
-    salary: false
+    salary: false,
   });
   
   const [showVideoUpload, setShowVideoUpload] = useState(false);
-  const [uploadedVideoId, setUploadedVideoId] = useState(null); // This is the ID of the video from VideoUpload
+  const [uploadedVideoId, setUploadedVideoId] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableSkills, setAvailableSkills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isChildUploading, setIsChildUploading] = useState(false);
   const [isChildRecording, setIsChildRecording] = useState(false);
-  const [newJobId, setNewJobId] = useState(null);
-
-  const [notification, setNotification] = useState({
-    show: false,
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [toast, setToast] = useState({
+    open: false,
     message: '',
     type: 'success'
   });
-
-  // Category selection state
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [newJobId, setNewJobId] = useState(null);
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const categoriesResponse = await getCategories();
+        const [categoriesResponse, skillsResponse] = await Promise.all([
+          getCategories(),
+          getSkills()
+        ]);
         setAvailableCategories(categoriesResponse.data.categories);
-        const skillsResponse = await getSkills();
         setAvailableSkills(skillsResponse.data.skills);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        showNotification('Error loading categories and skills', 'error');
+        showToast('Error loading categories and skills', 'error');
+      } finally {
         setLoading(false);
       }
     };
@@ -129,11 +126,9 @@ const PostJobPage = () => {
     fetchData();
   }, []);
 
-  const showNotification = (message, type = 'success') => {
-    setNotification({ show: true, message, type });
-    setTimeout(() => {
-      setNotification({ show: false, message: '', type: 'success' });
-    }, 6000);
+  const showToast = (message, type = 'success') => {
+    setToast({ open: true, message, type });
+    setTimeout(() => setToast({ ...toast, open: false }), 5000);
   };
 
   const validateForm = () => {
@@ -149,26 +144,26 @@ const PostJobPage = () => {
     return !Object.values(newErrors).some(error => error);
   };
 
-const handleFormChange = (e) => {
-  const { name, value, type, checked } = e.target;
-  
-  let processedValue = type === 'checkbox' ? checked : value;
-  if ((name === 'salary_min' || name === 'salary_max') && value !== '') {
-    processedValue = Number(value);
-  }
-  
-  setJobForm({
-    ...jobForm,
-    [name]: processedValue
-  });
-  
-  if (errors[name]) {
-    setErrors({
-      ...errors,
-      [name]: false
+  const handleFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    
+    let processedValue = type === 'checkbox' ? checked : value;
+    if ((name === 'salary_min' || name === 'salary_max') && value !== '') {
+      processedValue = Number(value);
+    }
+    
+    setJobForm({
+      ...jobForm,
+      [name]: processedValue
     });
-  }
-};
+    
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: false
+      });
+    }
+  };
 
   const handleSelectChange = (name, value) => {
     setJobForm({
@@ -178,26 +173,26 @@ const handleFormChange = (e) => {
   };
 
   const toggleCategory = (categoryId) => {
-    const updatedCategories = selectedCategories.includes(categoryId)
+    const newCategories = selectedCategories.includes(categoryId)
       ? selectedCategories.filter(id => id !== categoryId)
       : [...selectedCategories, categoryId];
     
-    setSelectedCategories(updatedCategories);
+    setSelectedCategories(newCategories);
     setJobForm({
       ...jobForm,
-      categoryIds: updatedCategories
+      categoryIds: newCategories
     });
   };
 
   const toggleSkill = (skillId) => {
-    const updatedSkills = selectedSkills.includes(skillId)
+    const newSkills = selectedSkills.includes(skillId)
       ? selectedSkills.filter(id => id !== skillId)
       : [...selectedSkills, skillId];
     
-    setSelectedSkills(updatedSkills);
+    setSelectedSkills(newSkills);
     setJobForm({
       ...jobForm,
-      skillIds: updatedSkills
+      skillIds: newSkills
     });
   };
 
@@ -228,7 +223,7 @@ const handleFormChange = (e) => {
 
   const handleVideoUploadClick = async () => {
     if (!validateForm()) {
-      showNotification('Please fill in all required fields before uploading video', 'error');
+      showToast('Please fill in all required fields before uploading video', 'error');
       return;
     }
 
@@ -244,10 +239,10 @@ const handleFormChange = (e) => {
         };
         const response = await postJob(jobDataToPost);
         setNewJobId(response.data.job.id);
-        showNotification('Job draft saved. Proceeding to video upload.', 'info');
+        showToast('Job draft saved. Proceeding to video upload.', 'info');
       } catch (error) {
         console.error('Error creating job draft:', error);
-        showNotification('Error creating job draft for video upload.', 'error');
+        showToast('Error creating job draft for video upload.', 'error');
         setSaving(false);
         return;
       } finally {
@@ -275,17 +270,16 @@ const handleFormChange = (e) => {
         };
         
         await updateJob(newJobId, updatedJobData);
-        showNotification('Video linked to job and job updated successfully!', 'success');
-        
+        showToast('Video linked to job and job updated successfully!', 'success');
         navigate(`/job/${newJobId}`);
       } catch (error) {
         console.error('Error updating job with video ID:', error);
-        showNotification('Error linking video to job.', 'error');
+        showToast('Error linking video to job.', 'error');
       } finally {
         setSaving(false);
       }
     } else if (!videoId) {
-      showNotification('Video upload failed or was cancelled. Job not updated with video.', 'error');
+      showToast('Video upload failed or was cancelled. Job not updated with video.', 'error');
     }
   };
 
@@ -298,12 +292,12 @@ const handleFormChange = (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
-      showNotification('Please fill in all required fields', 'error');
+      showToast('Please fill in all required fields', 'error');
       return;
     }
     
     if (jobForm.videoRequired && !uploadedVideoId && !newJobId) {
-      showNotification('Please upload the required video resume, or ensure job is created first.', 'error');
+      showToast('Please upload the required video resume, or ensure job is created first.', 'error');
       return;
     }
 
@@ -320,19 +314,19 @@ const handleFormChange = (e) => {
       let finalJobId = newJobId;
       if (finalJobId) {
         await updateJob(finalJobId, jobData);
-        showNotification('Job updated successfully!', 'success');
+        showToast('Job updated successfully!', 'success');
       } else {
         const response = await postJob(jobData);
         finalJobId = response.data.job.id;
         setNewJobId(finalJobId);
-        showNotification('Job posted successfully!', 'success');
+        showToast('Job posted successfully!', 'success');
       }
       
       navigate(`/job/${finalJobId}`);
       
     } catch (error) {
       console.error('Error posting/updating job:', error);
-      showNotification('Error posting/updating job', 'error');
+      showToast('Error posting/updating job', 'error');
     } finally {
       setSaving(false);
     }
@@ -345,75 +339,92 @@ const handleFormChange = (e) => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 flex items-center justify-center">
-        <LoadingSpinner />
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
+          <p className="text-slate-600 text-lg">Loading...</p>
+        </div>
       </div>
     );
   }
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 py-8 px-4 sm:px-6 lg:px-8">
+      {/* Toast Notification */}
+      {toast.open && (
+        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2">
+          <div className={`rounded-lg px-6 py-4 shadow-lg ${
+            toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+            toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+            'bg-blue-50 border border-blue-200'
+          }`}>
+            <div className="flex items-center gap-3">
+              {toast.type === 'success' && <CheckCircle2 className="h-5 w-5 text-green-600" />}
+              {toast.type === 'error' && <X className="h-5 w-5 text-red-600" />}
+              <p className={`font-medium ${
+                toast.type === 'success' ? 'text-green-800' :
+                toast.type === 'error' ? 'text-red-800' :
+                'text-blue-800'
+              }`}>
+                {toast.message}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
                 Post a New Job
               </h1>
-              <p className="text-slate-600 mt-2">Fill in the details to create a new job posting</p>
+              <p className="text-slate-600 mt-2">Create an amazing job opportunity</p>
             </div>
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 onClick={handleCancel}
                 disabled={saving}
-                className="border-slate-300 hover:bg-slate-50"
               >
-                <X className="w-4 h-4 mr-2" />
+                <X className="mr-2 h-4 w-4" />
                 Cancel
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={saving}
-                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white shadow-lg shadow-indigo-500/50"
+                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
               >
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? 'Posting...' : 'Post Job'}
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Posting...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Post Job
+                  </>
+                )}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Notification */}
-        {notification.show && (
-          <Alert className={`mb-6 ${
-            notification.type === 'error' ? 'border-red-500 bg-red-50' :
-            notification.type === 'info' ? 'border-blue-500 bg-blue-50' :
-            'border-green-500 bg-green-50'
-          }`}>
-            <AlertDescription className={
-              notification.type === 'error' ? 'text-red-800' :
-              notification.type === 'info' ? 'text-blue-800' :
-              'text-green-800'
-            }>
-              {notification.message}
-            </AlertDescription>
-          </Alert>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
-              <CardTitle className="flex items-center text-slate-900">
-                <Briefcase className="w-5 h-5 mr-2 text-indigo-600" />
+              <CardTitle className="flex items-center gap-2 text-slate-900">
+                <Briefcase className="h-5 w-5 text-indigo-600" />
                 Basic Information
               </CardTitle>
+              <CardDescription>Provide the core details about this position</CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
+            <CardContent className="pt-6 space-y-6">
               <div>
-                <Label htmlFor="title" className="text-slate-700">
+                <Label htmlFor="title" className="text-slate-700 font-medium">
                   Job Title <span className="text-red-500">*</span>
                 </Label>
                 <Input
@@ -422,20 +433,20 @@ const handleFormChange = (e) => {
                   value={jobForm.title}
                   onChange={handleFormChange}
                   placeholder="e.g., Senior Frontend Developer"
-                  className={`mt-1 ${errors.title ? 'border-red-500' : ''}`}
+                  className={`mt-1.5 ${errors.title ? 'border-red-500' : ''}`}
                 />
                 {errors.title && (
                   <p className="text-red-500 text-sm mt-1">This field is required</p>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="location" className="text-slate-700">
+                  <Label htmlFor="location" className="text-slate-700 font-medium">
                     Location <span className="text-red-500">*</span>
                   </Label>
-                  <div className="relative mt-1">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <div className="relative mt-1.5">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       id="location"
                       name="location"
@@ -451,15 +462,15 @@ const handleFormChange = (e) => {
                 </div>
 
                 <div>
-                  <Label htmlFor="employment_type" className="text-slate-700">
+                  <Label htmlFor="employment_type" className="text-slate-700 font-medium">
                     Employment Type
                   </Label>
                   <Select
                     value={jobForm.employment_type}
                     onValueChange={(value) => handleSelectChange('employment_type', value)}
                   >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select type" />
+                    <SelectTrigger className="mt-1.5">
+                      <SelectValue placeholder="Select employment type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="full-time">Full-time</SelectItem>
@@ -476,55 +487,54 @@ const handleFormChange = (e) => {
                 <Checkbox
                   id="remote_ok"
                   checked={jobForm.remote_ok}
-                  onCheckedChange={(checked) => 
-                    setJobForm({ ...jobForm, remote_ok: checked })
-                  }
+                  onCheckedChange={(checked) => handleSelectChange('remote_ok', checked)}
                 />
-                <Label htmlFor="remote_ok" className="text-slate-700 cursor-pointer">
+                <Label htmlFor="remote_ok" className="text-slate-700 font-medium cursor-pointer">
                   Remote position available
                 </Label>
               </div>
 
-              <div className="border-t border-slate-200 pt-4">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Checkbox
-                    id="videoRequired"
-                    checked={jobForm.videoRequired}
-                    onCheckedChange={(checked) => 
-                      setJobForm({ ...jobForm, videoRequired: checked })
-                    }
-                  />
-                  <Label htmlFor="videoRequired" className="text-slate-700 cursor-pointer">
-                    Add video introduction to this job posting
-                  </Label>
+              <div className="border-t border-slate-200 pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="videoRequired"
+                      checked={jobForm.videoRequired}
+                      onCheckedChange={(checked) => handleSelectChange('videoRequired', checked)}
+                    />
+                    <Label htmlFor="videoRequired" className="text-slate-700 font-medium cursor-pointer">
+                      Add a video to this job post
+                    </Label>
+                  </div>
+                  {jobForm.videoRequired && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleVideoUploadClick}
+                      disabled={saving}
+                      className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                    >
+                      <Video className="mr-2 h-4 w-4" />
+                      {uploadedVideoId ? 'Video Uploaded ✓' : 'Upload Video'}
+                    </Button>
+                  )}
                 </div>
-                {jobForm.videoRequired && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleVideoUploadClick}
-                    disabled={saving}
-                    className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
-                  >
-                    <Video className="w-4 h-4 mr-2" />
-                    {uploadedVideoId ? 'Video Uploaded ✓' : 'Upload Video'}
-                  </Button>
-                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Job Description */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
-              <CardTitle className="flex items-center text-slate-900">
-                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
+              <CardTitle className="flex items-center gap-2 text-slate-900">
+                <FileText className="h-5 w-5 text-indigo-600" />
                 Job Description
               </CardTitle>
+              <CardDescription>Describe what this position entails</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <div>
-                <Label htmlFor="description" className="text-slate-700">
+                <Label htmlFor="description" className="text-slate-700 font-medium">
                   Description <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
@@ -532,9 +542,9 @@ const handleFormChange = (e) => {
                   name="description"
                   value={jobForm.description}
                   onChange={handleFormChange}
-                  placeholder="Provide a detailed description of the job position"
-                  rows={6}
-                  className={`mt-1 ${errors.description ? 'border-red-500' : ''}`}
+                  placeholder="Provide a detailed description of the job position..."
+                  rows={8}
+                  className={`mt-1.5 ${errors.description ? 'border-red-500' : ''}`}
                 />
                 {errors.description && (
                   <p className="text-red-500 text-sm mt-1">This field is required</p>
@@ -544,49 +554,50 @@ const handleFormChange = (e) => {
           </Card>
 
           {/* Categories and Skills */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
-              <CardTitle className="flex items-center text-slate-900">
-                <Tag className="w-5 h-5 mr-2 text-indigo-600" />
-                Categories and Skills
+              <CardTitle className="flex items-center gap-2 text-slate-900">
+                <Award className="h-5 w-5 text-indigo-600" />
+                Categories & Skills
               </CardTitle>
+              <CardDescription>Select relevant categories and required skills</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div>
-                <Label className="text-slate-700 mb-3 block">Categories</Label>
+                <Label className="text-slate-700 font-medium mb-3 block">Categories</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableCategories.map((category) => (
                     <Badge
                       key={category.id}
-                      variant={selectedCategories.includes(category.id) ? "default" : "outline"}
+                      variant={selectedCategories.includes(category.id) ? 'default' : 'outline'}
                       className={`cursor-pointer transition-all ${
                         selectedCategories.includes(category.id)
-                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
-                          : 'border-slate-300 text-slate-600 hover:border-indigo-400'
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700'
+                          : 'hover:bg-slate-100'
                       }`}
                       onClick={() => toggleCategory(category.id)}
                     >
-                      {getLocalizedName(category.name)}
+                      {category.name}
                     </Badge>
                   ))}
                 </div>
               </div>
 
               <div>
-                <Label className="text-slate-700 mb-3 block">Required Skills</Label>
+                <Label className="text-slate-700 font-medium mb-3 block">Required Skills</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableSkills.map((skill) => (
                     <Badge
                       key={skill.skill_id}
-                      variant={selectedSkills.includes(skill.skill_id) ? "default" : "outline"}
+                      variant={selectedSkills.includes(skill.skill_id) ? 'default' : 'outline'}
                       className={`cursor-pointer transition-all ${
                         selectedSkills.includes(skill.skill_id)
-                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                          : 'border-slate-300 text-slate-600 hover:border-blue-400'
+                          ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700'
+                          : 'hover:bg-slate-100'
                       }`}
                       onClick={() => toggleSkill(skill.skill_id)}
                     >
-                      {getLocalizedName(skill.name)}
+                      {skill.name}
                     </Badge>
                   ))}
                 </div>
@@ -595,66 +606,69 @@ const handleFormChange = (e) => {
           </Card>
 
           {/* Salary Information */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
-              <CardTitle className="flex items-center text-slate-900">
-                <DollarSign className="w-5 h-5 mr-2 text-indigo-600" />
+              <CardTitle className="flex items-center gap-2 text-slate-900">
+                <DollarSign className="h-5 w-5 text-indigo-600" />
                 Salary Information
               </CardTitle>
+              <CardDescription>Define the salary range for this position</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="salary_min" className="text-slate-700">
+                  <Label htmlFor="salary_min" className="text-slate-700 font-medium">
                     Minimum Salary
                   </Label>
-                  <div className="relative mt-1">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <div className="relative mt-1.5">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       id="salary_min"
                       name="salary_min"
                       type="number"
-                      value={jobForm.salary_min || ''}
+                      value={jobForm.salary_min}
                       onChange={handleFormChange}
                       placeholder="50000"
                       className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
                     />
                   </div>
                 </div>
+
                 <div>
-                  <Label htmlFor="salary_max" className="text-slate-700">
+                  <Label htmlFor="salary_max" className="text-slate-700 font-medium">
                     Maximum Salary
                   </Label>
-                  <div className="relative mt-1">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <div className="relative mt-1.5">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       id="salary_max"
                       name="salary_max"
                       type="number"
-                      value={jobForm.salary_max || ''}
+                      value={jobForm.salary_max}
                       onChange={handleFormChange}
-                      placeholder="100000"
+                      placeholder="80000"
                       className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
                     />
                   </div>
                 </div>
               </div>
               {errors.salary && (
-                <p className="text-red-500 text-sm mt-2">
-                  Maximum salary must be greater than minimum salary
-                </p>
+                <p className="text-red-500 text-sm mt-2">Maximum salary must be greater than minimum salary</p>
               )}
             </CardContent>
           </Card>
 
           {/* Requirements */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center text-slate-900">
-                  <FileText className="w-5 h-5 mr-2 text-indigo-600" />
-                  Requirements
-                </CardTitle>
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
+                    <CheckCircle2 className="h-5 w-5 text-indigo-600" />
+                    Requirements
+                  </CardTitle>
+                  <CardDescription>List the requirements for this position</CardDescription>
+                </div>
                 <Button
                   type="button"
                   variant="outline"
@@ -662,19 +676,18 @@ const handleFormChange = (e) => {
                   onClick={() => addListItem('requirements')}
                   className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
+                  <Plus className="mr-1 h-4 w-4" />
                   Add
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-3">
+            <CardContent className="pt-6 space-y-4">
               {jobForm.requirements.map((requirement, index) => (
                 <div key={index} className="flex gap-2">
                   <Input
                     value={requirement}
                     onChange={(e) => handleListItemChange('requirements', index, e.target.value)}
                     placeholder={`Requirement ${index + 1}`}
-                    className="flex-1"
                   />
                   <Button
                     type="button"
@@ -682,9 +695,9 @@ const handleFormChange = (e) => {
                     size="icon"
                     onClick={() => removeListItem('requirements', index)}
                     disabled={jobForm.requirements.length <= 1}
-                    className="border-red-300 text-red-600 hover:bg-red-50"
+                    className="shrink-0 hover:bg-red-50 hover:border-red-300 hover:text-red-600"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
@@ -692,13 +705,16 @@ const handleFormChange = (e) => {
           </Card>
 
           {/* Responsibilities */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center text-slate-900">
-                  <Briefcase className="w-5 h-5 mr-2 text-indigo-600" />
-                  Responsibilities
-                </CardTitle>
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
+                    <CheckCircle2 className="h-5 w-5 text-indigo-600" />
+                    Responsibilities
+                  </CardTitle>
+                  <CardDescription>Define the key responsibilities</CardDescription>
+                </div>
                 <Button
                   type="button"
                   variant="outline"
@@ -706,19 +722,18 @@ const handleFormChange = (e) => {
                   onClick={() => addListItem('responsibilities')}
                   className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
+                  <Plus className="mr-1 h-4 w-4" />
                   Add
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-3">
+            <CardContent className="pt-6 space-y-4">
               {jobForm.responsibilities.map((responsibility, index) => (
                 <div key={index} className="flex gap-2">
                   <Input
                     value={responsibility}
                     onChange={(e) => handleListItemChange('responsibilities', index, e.target.value)}
                     placeholder={`Responsibility ${index + 1}`}
-                    className="flex-1"
                   />
                   <Button
                     type="button"
@@ -726,9 +741,9 @@ const handleFormChange = (e) => {
                     size="icon"
                     onClick={() => removeListItem('responsibilities', index)}
                     disabled={jobForm.responsibilities.length <= 1}
-                    className="border-red-300 text-red-600 hover:bg-red-50"
+                    className="shrink-0 hover:bg-red-50 hover:border-red-300 hover:text-red-600"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
@@ -736,40 +751,42 @@ const handleFormChange = (e) => {
           </Card>
 
           {/* Additional Information */}
-          <Card className="shadow-lg border-slate-200">
+          <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
-              <CardTitle className="flex items-center text-slate-900">
-                <Building2 className="w-5 h-5 mr-2 text-indigo-600" />
+              <CardTitle className="flex items-center gap-2 text-slate-900">
+                <GraduationCap className="h-5 w-5 text-indigo-600" />
                 Additional Information
               </CardTitle>
+              <CardDescription>Add more details about the position</CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <Label htmlFor="deadline" className="text-slate-700 flex items-center">
-                    <Calendar className="w-4 h-4 mr-1" />
+                  <Label htmlFor="deadline" className="text-slate-700 font-medium">
                     Application Deadline
                   </Label>
-                  <Input
-                    id="deadline"
-                    name="deadline"
-                    type="date"
-                    value={jobForm.deadline}
-                    onChange={handleFormChange}
-                    className="mt-1"
-                  />
+                  <div className="relative mt-1.5">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      id="deadline"
+                      name="deadline"
+                      type="date"
+                      value={jobForm.deadline}
+                      onChange={handleFormChange}
+                      className="pl-10"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="experience_level" className="text-slate-700 flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
+                  <Label htmlFor="experience_level" className="text-slate-700 font-medium">
                     Experience Level
                   </Label>
                   <Select
                     value={jobForm.experience_level}
                     onValueChange={(value) => handleSelectChange('experience_level', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1.5">
                       <SelectValue placeholder="Select level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -782,15 +799,14 @@ const handleFormChange = (e) => {
                 </div>
 
                 <div>
-                  <Label htmlFor="education_level" className="text-slate-700 flex items-center">
-                    <GraduationCap className="w-4 h-4 mr-1" />
+                  <Label htmlFor="education_level" className="text-slate-700 font-medium">
                     Education Level
                   </Label>
                   <Select
                     value={jobForm.education_level}
                     onValueChange={(value) => handleSelectChange('education_level', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1.5">
                       <SelectValue placeholder="Select level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -813,18 +829,26 @@ const handleFormChange = (e) => {
               variant="outline"
               onClick={handleCancel}
               disabled={saving}
-              className="border-slate-300 hover:bg-slate-50"
             >
-              <X className="w-4 h-4 mr-2" />
+              <X className="mr-2 h-4 w-4" />
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={saving}
-              className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white shadow-lg shadow-indigo-500/50"
+              className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
             >
-              <Save className="w-4 h-4 mr-2" />
-              {saving ? 'Posting...' : 'Post Job'}
+              {saving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Posting...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Post Job
+                </>
+              )}
             </Button>
           </div>
         </form>
@@ -832,11 +856,9 @@ const handleFormChange = (e) => {
 
       {/* Video Upload Dialog */}
       <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Upload Job Video
-            </DialogTitle>
+            <DialogTitle>Upload Job Video</DialogTitle>
           </DialogHeader>
           <VideoUpload 
             onComplete={handleVideoUploadComplete}

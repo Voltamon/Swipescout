@@ -3,6 +3,7 @@
  * 
  * Change colors here and they will be applied across all pages.
  * All gradients, backgrounds, and UI colors are defined in one place.
+ * for employer
  */
 
 export const themeColors = {

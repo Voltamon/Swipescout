@@ -308,7 +308,7 @@ function App() {
               <Route path="/employer-profile" element={<EmployerProfilePage />} />
               <Route path="/edit-employer-profile" element={<EditEmployerProfilePage />} />
               <Route path="/jobs-listing" element={<JobsListingPage />} />
-              <Route path="/post-job" element={<JobPostingForm />} /> {/* this ok PostJobPage*/}
+              <Route path="/post-job" element={<PostJobPage />} />
               <Route path="/my-videos" element={<VideosPage />} />
               <Route path="/edit-video/:id" element={<EditVideoPage />} />
               <Route path="/help" element={<HelpPageLinks />} />
