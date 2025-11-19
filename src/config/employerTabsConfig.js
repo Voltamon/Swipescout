@@ -14,7 +14,7 @@
 } from "lucide-react";
 
 import CandidateSearchPage from "../pages/CandidateSearchPage.jsx";
-import JobPostingForm from "../pages/JobPostingForm.jsx";
+import PostJobPage from "../pages/PostJobPage";
 import CompanyVideos from "../pages/CompanyVideos.jsx";
 import NotificationSettingsPage from "../pages/NotificationSettingsPage.jsx";
 import NotificationsPage from "../pages/NotificationsPage.jsx";
@@ -28,6 +28,7 @@ import Chat from "../pages/Chat.jsx";
 import HelpPageLinks from "../pages/HelpPageLinks.jsx";
 import EmployerDashboard from "../pages/EmployerDashboard.jsx";
 import VideoUpload from "../pages/VideoUpload.jsx"; // Import VideoUpload component
+import AnalyticsEmployer from "../pages/AnalyticsEmployer";
 
 // Function to get translated employer tab categories
 export const getEmployerTabCategories = t => [
@@ -45,7 +46,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.analytics"),
         icon: { name: "Analytics" },
-        component: AllVideosPage,
+        component: AnalyticsEmployer,
         context: "analytics",
         path: "analytics",
         description: t("employerTabs:descriptions.analytics")
@@ -80,7 +81,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.postNewJob"),
         icon: { name: "PostAdd" },
-        component: JobPostingForm,
+        component: PostJobPage,
         path: "post-job",
         description: t("employerTabs:descriptions.postNewJob")
       },

@@ -126,6 +126,27 @@ const AllVideosPage = ({
   const dragStartY = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  // Combine real videos with sample videos (must be declared before effects that reference it)
+  const allVideos = React.useMemo(() => {
+    const realVideos = [
+      ...serverVideos.map(v => ({ ...v, isLocal: false, status: v.status || 'completed' }))
+    ];
+
+    if (realVideos.length < 5) {
+      const sampleVideos = getSampleVideos(t);
+      
+      let filteredSamples = sampleVideos;
+      if (pagetype === 'jobseekers') {
+        filteredSamples = sampleVideos.filter(v => v.user.role === 'jobseeker');
+      } else if (pagetype === 'employers') {
+        filteredSamples = sampleVideos.filter(v => v.user.role === 'employer');
+      }
+
+      return [...realVideos, ...filteredSamples];
+    }
+
+    return realVideos;
+  }, [serverVideos, pagetype, t]);
   
   // keyboard navigation while modal open
   useEffect(() => {
@@ -411,27 +432,7 @@ const AllVideosPage = ({
     fetchServerVideos();
   }, [pagetype, context]);
 
-  // Combine real videos with sample videos
-  const allVideos = React.useMemo(() => {
-    const realVideos = [
-      ...serverVideos.map(v => ({ ...v, isLocal: false, status: v.status || 'completed' }))
-    ];
-
-    if (realVideos.length < 5) {
-      const sampleVideos = getSampleVideos(t);
-      
-      let filteredSamples = sampleVideos;
-      if (pagetype === 'jobseekers') {
-        filteredSamples = sampleVideos.filter(v => v.user.role === 'jobseeker');
-      } else if (pagetype === 'employers') {
-        filteredSamples = sampleVideos.filter(v => v.user.role === 'employer');
-      }
-
-      return [...realVideos, ...filteredSamples];
-    }
-
-    return realVideos;
-  }, [serverVideos, pagetype, t]);
+  
 
   // Handle video navigation
   // Change index with explicit pause/cleanup of previous video to reduce CPU

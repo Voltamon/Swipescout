@@ -1,100 +1,67 @@
-﻿import React, { useContext, useState, useEffect  } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  FormHelperText,
-  FormControlLabel,
-  Checkbox,
-  Divider,
-  InputAdornment,
-  Autocomplete,
-  CircularProgress,
-  Snackbar,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  styled,
-  useTheme
-} from '@mui/material';
-import {
-  Work as WorkIcon,
-  LocationOn as LocationIcon,
-  AttachMoney as MoneyIcon,
-  Save as SaveIcon,
-  Cancel as CancelIcon,
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Category as CategoryIcon,
-  Description as DescriptionIcon,
-  VideoCall as VideoCallIcon
-} from '@mui/icons-material';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { 
+  Calendar,
+  MapPin,
+  DollarSign,
+  Save,
+  X,
+  Plus,
+  Trash2,
+  Briefcase,
+  FileText,
+  Video,
+  Building2,
+  GraduationCap,
+  Clock,
+  Tag
+} from 'lucide-react';
+
+import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/input';
+import { Label } from '@/components/UI/label';
+import { Textarea } from '@/components/UI/textarea';
+import { Checkbox } from '@/components/UI/checkbox';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/UI/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card';
+import { Badge } from '@/components/UI/badge';
+import { Alert, AlertDescription } from '@/components/UI/alert';
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/UI/dialog';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
+
 import { 
   postJob, 
   getCategories,
   getSkills,
-  updateJob // Assuming you have an updateJob API
+  updateJob
 } from '@/services/api';
 import VideoUpload from './VideoUpload';
-import IconButton from '@mui/material/IconButton';
-
-
-const PageContainer = styled(Box)(({ theme }) => ({
-  bgcolor: 'background.jobseeker',
-  minHeight: '100vh',
-  paddingTop: theme.spacing(3),
-  paddingBottom: theme.spacing(4),
-  pt: {
-    xs: 20,  
-    sm: 16   
-  }
-}));
-
-const FormPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-}));
-
-const CategoryChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.secondary.light,
-  color: theme.palette.secondary.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.secondary.main,
-  }
-}));
-
-const SkillChip = styled(Chip)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.primary.light,
-  color: theme.palette.primary.contrastText,
-  '&:hover': {
-    backgroundColor: theme.palette.primary.main,
-  }
-}));
-
-const StyledSnackbar = styled(Snackbar)(({ theme }) => ({
-  '& .MuiAlert-root': {
-    fontSize: '1rem',
-    padding: theme.spacing(2),
-  },
-}));
+import { themeColors } from '@/config/theme-colors';
 
 const PostJobPage = () => {
-  // const theme = useTheme(); // Removed: unused variable
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || 'en';
+
+  // Helper function to get localized name
+  const getLocalizedName = (nameObj) => {
+    if (!nameObj) return '';
+    if (typeof nameObj === 'string') return nameObj;
+    return nameObj[currentLang] || nameObj.en || nameObj.ar || nameObj.zh || '';
+  };
   
   const [jobForm, setJobForm] = useState({
     title: '',
@@ -119,6 +86,7 @@ const PostJobPage = () => {
     title: false,
     description: false,
     location: false,
+    salary: false
   });
   
   const [showVideoUpload, setShowVideoUpload] = useState(false);
@@ -127,16 +95,19 @@ const PostJobPage = () => {
   const [availableSkills, setAvailableSkills] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  // States to track VideoUpload's internal status for dialog control
   const [isChildUploading, setIsChildUploading] = useState(false);
   const [isChildRecording, setIsChildRecording] = useState(false);
+  const [newJobId, setNewJobId] = useState(null);
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
+  const [notification, setNotification] = useState({
+    show: false,
     message: '',
-    severity: 'success'
+    type: 'success'
   });
-  const [newJobId, setNewJobId] = useState(null); // Stores the ID of the newly created job
+
+  // Category selection state
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
 
 
   useEffect(() => {
@@ -150,11 +121,7 @@ const PostJobPage = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setSnackbar({
-          open: true,
-          message: 'Error loading categories and skills',
-          severity: 'error'
-        });
+        showNotification('Error loading categories and skills', 'error');
         setLoading(false);
       }
     };
@@ -162,18 +129,25 @@ const PostJobPage = () => {
     fetchData();
   }, []);
 
+  const showNotification = (message, type = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: 'success' });
+    }, 6000);
+  };
+
   const validateForm = () => {
     const newErrors = {
-    title: !jobForm.title,
-    description: !jobForm.description,
-    location: !jobForm.location,
-    salary: jobForm.salary_min && jobForm.salary_max && 
-            Number(jobForm.salary_min) > Number(jobForm.salary_max)
+      title: !jobForm.title,
+      description: !jobForm.description,
+      location: !jobForm.location,
+      salary: jobForm.salary_min && jobForm.salary_max && 
+              Number(jobForm.salary_min) > Number(jobForm.salary_max)
+    };
+    
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error);
   };
-  
-  setErrors(newErrors);
-  return !Object.values(newErrors).some(error => error);
-};
 
 const handleFormChange = (e) => {
   const { name, value, type, checked } = e.target;
@@ -196,17 +170,34 @@ const handleFormChange = (e) => {
   }
 };
 
-  const handleCategoryChange = (event, newValue) => {
+  const handleSelectChange = (name, value) => {
     setJobForm({
       ...jobForm,
-      categoryIds: newValue.map(cat => cat.id)
+      [name]: value
     });
   };
 
-  const handleSkillChange = (event, newValue) => {
+  const toggleCategory = (categoryId) => {
+    const updatedCategories = selectedCategories.includes(categoryId)
+      ? selectedCategories.filter(id => id !== categoryId)
+      : [...selectedCategories, categoryId];
+    
+    setSelectedCategories(updatedCategories);
     setJobForm({
       ...jobForm,
-      skillIds: newValue.map(skill => skill.skill_id)
+      categoryIds: updatedCategories
+    });
+  };
+
+  const toggleSkill = (skillId) => {
+    const updatedSkills = selectedSkills.includes(skillId)
+      ? selectedSkills.filter(id => id !== skillId)
+      : [...selectedSkills, skillId];
+    
+    setSelectedSkills(updatedSkills);
+    setJobForm({
+      ...jobForm,
+      skillIds: updatedSkills
     });
   };
 
@@ -235,18 +226,12 @@ const handleFormChange = (e) => {
     });
   };
 
-  // Modified: This function now handles creating the job first if not already created
   const handleVideoUploadClick = async () => {
     if (!validateForm()) {
-      setSnackbar({
-        open: true,
-        message: 'Please fill in all required fields before uploading video',
-        severity: 'error'
-      });
+      showNotification('Please fill in all required fields before uploading video', 'error');
       return;
     }
 
-    // If job hasn't been posted yet, post it first to get an ID
     if (!newJobId) {
       try {
         setSaving(true);
@@ -255,22 +240,14 @@ const handleFormChange = (e) => {
           requirements: jobForm.requirements.filter(item => item.trim() !== ''),
           responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
           deadline: jobForm.deadline || null,
-          video_id: null, // Video ID will be added later
+          video_id: null,
         };
         const response = await postJob(jobDataToPost);
         setNewJobId(response.data.job.id);
-        setSnackbar({
-          open: true,
-          message: 'Job draft saved. Proceeding to video upload.',
-          severity: 'info'
-        });
+        showNotification('Job draft saved. Proceeding to video upload.', 'info');
       } catch (error) {
         console.error('Error creating job draft:', error);
-        setSnackbar({
-          open: true,
-          message: 'Error creating job draft for video upload.',
-          severity: 'error'
-        });
+        showNotification('Error creating job draft for video upload.', 'error');
         setSaving(false);
         return;
       } finally {
@@ -280,54 +257,38 @@ const handleFormChange = (e) => {
     setShowVideoUpload(true);
   };
 
-  // Modify the handleVideoUploadComplete function
-const handleVideoUploadComplete = async (videoId) => {
-  console.log('handleVideoUploadComplete called with videoId:', videoId);
-  setUploadedVideoId(videoId);
-  setShowVideoUpload(false); // Close the dialog immediately after upload initiation
-  console.log('setShowVideoUpload(false) called.');
-  
-  if (newJobId && videoId) {
-    try {
-      setSaving(true);
-      const updatedJobData = {
-        ...jobForm,
-        video_id: videoId,
-        requirements: jobForm.requirements.filter(item => item.trim() !== ''),
-        responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-        deadline: jobForm.deadline || null,
-      };
-      
-      await updateJob(newJobId, updatedJobData);
-      setSnackbar({
-        open: true,
-        message: 'Video linked to job and job updated successfully!',
-        severity: 'success'
-      });
-      
-      // Navigate to job details page
-      navigate(`/job/${newJobId}`);
-    } catch (error) {
-      console.error('Error updating job with video ID:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error linking video to job.',
-        severity: 'error'
-      });
-    } finally {
-      setSaving(false);
+  const handleVideoUploadComplete = async (videoId) => {
+    console.log('handleVideoUploadComplete called with videoId:', videoId);
+    setUploadedVideoId(videoId);
+    setShowVideoUpload(false);
+    console.log('setShowVideoUpload(false) called.');
+    
+    if (newJobId && videoId) {
+      try {
+        setSaving(true);
+        const updatedJobData = {
+          ...jobForm,
+          video_id: videoId,
+          requirements: jobForm.requirements.filter(item => item.trim() !== ''),
+          responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
+          deadline: jobForm.deadline || null,
+        };
+        
+        await updateJob(newJobId, updatedJobData);
+        showNotification('Video linked to job and job updated successfully!', 'success');
+        
+        navigate(`/job/${newJobId}`);
+      } catch (error) {
+        console.error('Error updating job with video ID:', error);
+        showNotification('Error linking video to job.', 'error');
+      } finally {
+        setSaving(false);
+      }
+    } else if (!videoId) {
+      showNotification('Video upload failed or was cancelled. Job not updated with video.', 'error');
     }
-  } else if (!videoId) {
-    setSnackbar({
-      open: true,
-      message: 'Video upload failed or was cancelled. Job not updated with video.',
-      severity: 'error'
-    });
-  }
-};
+  };
 
-
-  // Callback to receive current uploading/recording status from VideoUpload
   const handleChildStatusChange = (uploading, recording) => {
     setIsChildUploading(uploading);
     setIsChildRecording(recording);
@@ -337,20 +298,12 @@ const handleVideoUploadComplete = async (videoId) => {
     e.preventDefault();
     
     if (!validateForm()) {
-      setSnackbar({
-        open: true,
-        message: 'Please fill in all required fields',
-        severity: 'error'
-      });
+      showNotification('Please fill in all required fields', 'error');
       return;
     }
     
-    if (jobForm.videoRequired && !uploadedVideoId && !newJobId) { // Check if video is required but not uploaded/linked yet
-      setSnackbar({
-        open: true,
-        message: 'Please upload the required video resume, or ensure job is created first.',
-        severity: 'error'
-      });
+    if (jobForm.videoRequired && !uploadedVideoId && !newJobId) {
+      showNotification('Please upload the required video resume, or ensure job is created first.', 'error');
       return;
     }
 
@@ -361,41 +314,25 @@ const handleVideoUploadComplete = async (videoId) => {
         requirements: jobForm.requirements.filter(item => item.trim() !== ''),
         responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
         deadline: jobForm.deadline || null,
-        // If newJobId exists and a video was uploaded/linked, keep its video_id.
-        // Otherwise, it might be a job without a required video, or a fresh post without video.
         video_id: uploadedVideoId || null, 
       };
 
       let finalJobId = newJobId;
       if (finalJobId) {
-        // If job already exists (from video upload pre-creation), update it
         await updateJob(finalJobId, jobData);
-        setSnackbar({
-          open: true,
-          message: 'Job updated successfully!',
-          severity: 'success'
-        });
+        showNotification('Job updated successfully!', 'success');
       } else {
-        // If job does not exist yet, create it
         const response = await postJob(jobData);
         finalJobId = response.data.job.id;
         setNewJobId(finalJobId);
-        setSnackbar({
-          open: true,
-          message: 'Job posted successfully!',
-          severity: 'success'
-        });
+        showNotification('Job posted successfully!', 'success');
       }
       
       navigate(`/job/${finalJobId}`);
       
     } catch (error) {
       console.error('Error posting/updating job:', error);
-      setSnackbar({
-        open: true,
-        message: 'Error posting/updating job',
-        severity: 'error'
-      });
+      showNotification('Error posting/updating job', 'error');
     } finally {
       setSaving(false);
     }
@@ -405,515 +342,520 @@ const handleVideoUploadComplete = async (videoId) => {
     navigate(-1);
   };
 
-  // Update the renderVideoUploadDialog function
-const renderVideoUploadDialog = () => (
-  <Dialog
-    open={showVideoUpload}
-    // Dialog should close when `showVideoUpload` becomes false
-    onClose={() => setShowVideoUpload(false)}
-    fullWidth
-    maxWidth="md"
-    // Loosen restrictions: allow escape key to close. The parent explicitly closes on upload complete.
-    disableEscapeKeyDown={false} 
-  >
-    <DialogTitle>Upload Job Video</DialogTitle>
-    <DialogContent>
-      <VideoUpload 
-        onComplete={handleVideoUploadComplete}
-        onStatusChange={handleChildStatusChange}
-        newjobid={newJobId}
-        embedded={true}
-      />
-    </DialogContent>
-    <DialogActions>
-      {/* Always allow cancel button if the dialog is open and not actively recording */}
-      <Button 
-        onClick={() => setShowVideoUpload(false)} 
-        disabled={isChildRecording} // Only disable if actively recording
-      >
-        Cancel
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-
-  const renderBasicInfoSection = () => (
-    <FormPaper elevation={1}>
-      <Typography variant="h6" gutterBottom>
-        Basic Information
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Job Title"
-            name="title"
-            value={jobForm.title}
-            onChange={handleFormChange}
-            required
-            error={errors.title}
-            helperText={errors.title ? "This field is required" : ""}
-            placeholder="e.g., Senior Frontend Developer"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Location"
-            name="location"
-            value={jobForm.location}
-            onChange={handleFormChange}
-            required
-            error={errors.location}
-            helperText={errors.location ? "This field is required" : ""}
-            placeholder="e.g., San Francisco, CA"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LocationIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel id="employment-type-label">Employment Type</InputLabel>
-            <Select
-              labelId="employment-type-label"
-              name="employment_type"
-              value={jobForm.employment_type}
-              onChange={handleFormChange}
-              label="Employment Type"
-            >
-              <MenuItem value="full-time">Full-time</MenuItem>
-              <MenuItem value="part-time">Part-time</MenuItem>
-              <MenuItem value="contract">Contract</MenuItem>
-              <MenuItem value="internship">Internship</MenuItem>
-              <MenuItem value="temporary">Temporary</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        
-        <Grid item xs={12} sm={6}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={jobForm.videoRequired}
-                onChange={handleFormChange}
-                name="videoRequired"
-                color="primary"
-              />
-            }
-            label="Post Job Video"
-          />
-          {jobForm.videoRequired && (
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<VideoCallIcon />}
-              onClick={handleVideoUploadClick} // This will now ensure newJobId exists
-              sx={{ mt: 1 }}
-              disabled={saving} // Disable while job is being drafted/saved
-            >
-              {uploadedVideoId ? 'Video Uploaded' : 'Upload Video'}
-            </Button>
-          )}
-        </Grid>
-      </Grid>
-    </FormPaper>
-  );
-
-  const renderCategoriesAndSkillsSection = () => (
-    <FormPaper elevation={1}>
-      <Typography variant="h6" gutterBottom>
-        Categories and Skills
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Autocomplete
-            multiple
-            id="categories"
-            options={availableCategories}
-            getOptionLabel={(option) => option.name}
-            value={availableCategories.filter(cat => jobForm.categoryIds.includes(cat.id))}
-            onChange={handleCategoryChange}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Categories"
-                placeholder="Select categories"
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <>
-                      <InputAdornment position="start">
-                        <CategoryIcon />
-                      </InputAdornment>
-                      {params.InputProps.startAdornment}
-                    </>
-                  ),
-                }}
-              />
-            )}
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => (
-                <CategoryChip
-                  label={option.name}
-                  {...getTagProps({ index })}
-                  key={option.id}
-                />
-              ))
-            }
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Autocomplete
-            multiple
-            id="skills"
-            options={availableSkills}
-            getOptionLabel={(option) => option.name}
-            value={availableSkills.filter(skill => jobForm.skillIds.includes(skill.skill_id))}
-            onChange={handleSkillChange}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Required Skills"
-                placeholder="Select skills"
-                fullWidth
-                sx={{ minWidth: '300px' }}
-              />
-            )}
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => (
-                <SkillChip
-                  label={option.name}
-                  {...getTagProps({ index })}
-                  key={option.skill_id}
-                />
-              ))
-            }
-          />
-        </Grid>
-      </Grid>
-    </FormPaper>
-  );
-
-  const renderSalaryInfoSection = () => (
-    <FormPaper elevation={1}>
-      <Typography variant="h6" gutterBottom>
-        Salary Information
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Minimum Salary"
-            name="salary_min"
-            type="number"
-            value={jobForm.salary_min}
-            onChange={handleFormChange}
-              error={errors.salary}
-              helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <MoneyIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Maximum Salary"
-            name="salary_max"
-            type="number"
-            value={jobForm.salary_max}
-            onChange={handleFormChange}
-              error={errors.salary}
-              helperText={errors.salary ? "Max salary must be greater than min salary" : ""}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <MoneyIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
-    </FormPaper>
-  );
-
-  const renderAdditionalInfoSection = () => (
-    <FormPaper elevation={1}>
-      <Typography variant="h6" gutterBottom>
-        Additional Information
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={4}>
-          <TextField
-            fullWidth
-            label="Application Deadline"
-            name="deadline"
-            type="date"
-            value={jobForm.deadline}
-            onChange={handleFormChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </Grid>
-  
-        <Grid item xs={12} sm={6} md={4}>
-          <FormControl fullWidth>
-            <InputLabel id="experience-level-label">Experience Level</InputLabel>
-            <Select
-              labelId="experience-level-label"
-              name="experience_level"
-              value={jobForm.experience_level}
-              onChange={handleFormChange}
-              label="Experience Level"
-              sx={{ minWidth: '200px' }}
-            >
-              <MenuItem value="entry">Entry Level</MenuItem>
-              <MenuItem value="mid">Mid Level</MenuItem>
-              <MenuItem value="senior">Senior Level</MenuItem>
-              <MenuItem value="executive">Executive</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-  
-        <Grid item xs={12} sm={6} md={4}>
-          <FormControl fullWidth>
-            <InputLabel id="education-level-label">Education Level</InputLabel>
-            <Select
-              labelId="education-level-label"
-              name="education_level"
-              value={jobForm.education_level}
-              onChange={handleFormChange}
-              label="Education Level"
-              sx={{ minWidth: '200px' }}
-            >
-              <MenuItem value="high_school">High School</MenuItem>
-              <MenuItem value="associate">Associate Degree</MenuItem>
-              <MenuItem value="bachelor">Bachelor's Degree</MenuItem>
-              <MenuItem value="master">Master's Degree</MenuItem>
-              <MenuItem value="phd">PhD</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-  
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={jobForm.remote_ok}
-                onChange={handleFormChange}
-                name="remote_ok"
-                color="primary"
-              />
-            }
-            label="Remote position"
-          />
-        </Grid>
-      </Grid>
-    </FormPaper>
-  );
-
-  const renderJobDescriptionSection = () => (
-    <FormPaper elevation={1}>
-      <Typography variant="h6" gutterBottom>
-        Job Description
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Job Description"
-            name="description"
-            value={jobForm.description}
-            onChange={handleFormChange}
-            multiline
-            rows={6}
-            required
-            error={errors.description}
-            helperText={errors.description ? "This field is required" : ""}
-            placeholder="Provide a detailed description of the job position"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
-                  <DescriptionIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
-    </FormPaper>
-  );
-
-  const renderRequirementsSection = () => (
-    <FormPaper elevation={1}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">
-          Requirements
-        </Typography>
-        <Button
-          variant="outlined"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => addListItem('requirements')}
-        >
-          Add Requirement
-        </Button>
-      </Box>
-      {jobForm.requirements.map((requirement, index) => (
-        <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <TextField
-            fullWidth
-            label={`Requirement ${index + 1}`}
-            value={requirement}
-            onChange={(e) => handleListItemChange('requirements', index, e.target.value)}
-            placeholder="e.g., At least 3 years of experience in React development"
-          />
-          <IconButton
-            color="error"
-            onClick={() => removeListItem('requirements', index)}
-            disabled={jobForm.requirements.length <= 1}
-            sx={{ ml: 1 }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Box>
-      ))}
-    </FormPaper>
-  );
-
-  const renderResponsibilitiesSection = () => (
-    <FormPaper elevation={1}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">
-          Responsibilities
-        </Typography>
-        <Button
-          variant="outlined"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => addListItem('responsibilities')}
-        >
-          Add Responsibility
-        </Button>
-      </Box>
-      {jobForm.responsibilities.map((responsibility, index) => (
-        <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <TextField
-            fullWidth
-            label={`Responsibility ${index + 1}`}
-            value={responsibility}
-            onChange={(e) => handleListItemChange('responsibilities', index, e.target.value)}
-            placeholder="e.g., Develop and maintain web applications using React"
-          />
-          <IconButton
-            color="error"
-            onClick={() => removeListItem('responsibilities', index)}
-            disabled={jobForm.responsibilities.length <= 1}
-            sx={{ ml: 1 }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Box>
-      ))}
-    </FormPaper>
-  );
 
   return (
-    <PageContainer>
-      <Container maxWidth="lg" sx={{ bgcolor: 'rgb(221, 235, 253)' , borderRadius: 1 ,padding: 1 }}>
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center'  }}>
-          <Typography variant="h4" component="h1">
-            Post a New Job
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              color="inherit"
-              startIcon={<CancelIcon />}
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<SaveIcon />}
-              onClick={handleSubmit}
-              disabled={saving}
-            >
-              {saving ? 'Posting...' : 'Post Job'}
-            </Button>
-          </Box>
-        </Box>
-        
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            {renderBasicInfoSection()}
-            {renderCategoriesAndSkillsSection()}
-            {renderSalaryInfoSection()}
-            {renderJobDescriptionSection()}
-            {renderRequirementsSection()}
-            {renderResponsibilitiesSection()}
-            {renderAdditionalInfoSection()}
-            
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Post a New Job
+              </h1>
+              <p className="text-slate-600 mt-2">Fill in the details to create a new job posting</p>
+            </div>
+            <div className="flex gap-3">
               <Button
-                variant="outlined"
-                color="inherit"
-                startIcon={<CancelIcon />}
+                variant="outline"
                 onClick={handleCancel}
                 disabled={saving}
+                className="border-slate-300 hover:bg-slate-50"
               >
+                <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
               <Button
-                variant="contained"
-                color="primary"
-                startIcon={<SaveIcon />}
-                type="submit"
+                onClick={handleSubmit}
                 disabled={saving}
+                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white shadow-lg shadow-indigo-500/50"
               >
+                <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Posting...' : 'Post Job'}
               </Button>
-            </Box>
-          </form>
+            </div>
+          </div>
+        </div>
+
+        {/* Notification */}
+        {notification.show && (
+          <Alert className={`mb-6 ${
+            notification.type === 'error' ? 'border-red-500 bg-red-50' :
+            notification.type === 'info' ? 'border-blue-500 bg-blue-50' :
+            'border-green-500 bg-green-50'
+          }`}>
+            <AlertDescription className={
+              notification.type === 'error' ? 'text-red-800' :
+              notification.type === 'info' ? 'text-blue-800' :
+              'text-green-800'
+            }>
+              {notification.message}
+            </AlertDescription>
+          </Alert>
         )}
-      </Container>
-      
-      {renderVideoUploadDialog()}
-      
-      <StyledSnackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </StyledSnackbar>
-    </PageContainer>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <CardTitle className="flex items-center text-slate-900">
+                <Briefcase className="w-5 h-5 mr-2 text-indigo-600" />
+                Basic Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-4">
+              <div>
+                <Label htmlFor="title" className="text-slate-700">
+                  Job Title <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={jobForm.title}
+                  onChange={handleFormChange}
+                  placeholder="e.g., Senior Frontend Developer"
+                  className={`mt-1 ${errors.title ? 'border-red-500' : ''}`}
+                />
+                {errors.title && (
+                  <p className="text-red-500 text-sm mt-1">This field is required</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="location" className="text-slate-700">
+                    Location <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative mt-1">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      id="location"
+                      name="location"
+                      value={jobForm.location}
+                      onChange={handleFormChange}
+                      placeholder="e.g., San Francisco, CA"
+                      className={`pl-10 ${errors.location ? 'border-red-500' : ''}`}
+                    />
+                  </div>
+                  {errors.location && (
+                    <p className="text-red-500 text-sm mt-1">This field is required</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="employment_type" className="text-slate-700">
+                    Employment Type
+                  </Label>
+                  <Select
+                    value={jobForm.employment_type}
+                    onValueChange={(value) => handleSelectChange('employment_type', value)}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="full-time">Full-time</SelectItem>
+                      <SelectItem value="part-time">Part-time</SelectItem>
+                      <SelectItem value="contract">Contract</SelectItem>
+                      <SelectItem value="internship">Internship</SelectItem>
+                      <SelectItem value="temporary">Temporary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remote_ok"
+                  checked={jobForm.remote_ok}
+                  onCheckedChange={(checked) => 
+                    setJobForm({ ...jobForm, remote_ok: checked })
+                  }
+                />
+                <Label htmlFor="remote_ok" className="text-slate-700 cursor-pointer">
+                  Remote position available
+                </Label>
+              </div>
+
+              <div className="border-t border-slate-200 pt-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Checkbox
+                    id="videoRequired"
+                    checked={jobForm.videoRequired}
+                    onCheckedChange={(checked) => 
+                      setJobForm({ ...jobForm, videoRequired: checked })
+                    }
+                  />
+                  <Label htmlFor="videoRequired" className="text-slate-700 cursor-pointer">
+                    Add video introduction to this job posting
+                  </Label>
+                </div>
+                {jobForm.videoRequired && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleVideoUploadClick}
+                    disabled={saving}
+                    className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                  >
+                    <Video className="w-4 h-4 mr-2" />
+                    {uploadedVideoId ? 'Video Uploaded ✓' : 'Upload Video'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Job Description */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <CardTitle className="flex items-center text-slate-900">
+                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
+                Job Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div>
+                <Label htmlFor="description" className="text-slate-700">
+                  Description <span className="text-red-500">*</span>
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={jobForm.description}
+                  onChange={handleFormChange}
+                  placeholder="Provide a detailed description of the job position"
+                  rows={6}
+                  className={`mt-1 ${errors.description ? 'border-red-500' : ''}`}
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">This field is required</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Categories and Skills */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <CardTitle className="flex items-center text-slate-900">
+                <Tag className="w-5 h-5 mr-2 text-indigo-600" />
+                Categories and Skills
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div>
+                <Label className="text-slate-700 mb-3 block">Categories</Label>
+                <div className="flex flex-wrap gap-2">
+                  {availableCategories.map((category) => (
+                    <Badge
+                      key={category.id}
+                      variant={selectedCategories.includes(category.id) ? "default" : "outline"}
+                      className={`cursor-pointer transition-all ${
+                        selectedCategories.includes(category.id)
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                          : 'border-slate-300 text-slate-600 hover:border-indigo-400'
+                      }`}
+                      onClick={() => toggleCategory(category.id)}
+                    >
+                      {getLocalizedName(category.name)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-slate-700 mb-3 block">Required Skills</Label>
+                <div className="flex flex-wrap gap-2">
+                  {availableSkills.map((skill) => (
+                    <Badge
+                      key={skill.skill_id}
+                      variant={selectedSkills.includes(skill.skill_id) ? "default" : "outline"}
+                      className={`cursor-pointer transition-all ${
+                        selectedSkills.includes(skill.skill_id)
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                          : 'border-slate-300 text-slate-600 hover:border-blue-400'
+                      }`}
+                      onClick={() => toggleSkill(skill.skill_id)}
+                    >
+                      {getLocalizedName(skill.name)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Salary Information */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <CardTitle className="flex items-center text-slate-900">
+                <DollarSign className="w-5 h-5 mr-2 text-indigo-600" />
+                Salary Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="salary_min" className="text-slate-700">
+                    Minimum Salary
+                  </Label>
+                  <div className="relative mt-1">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      id="salary_min"
+                      name="salary_min"
+                      type="number"
+                      value={jobForm.salary_min || ''}
+                      onChange={handleFormChange}
+                      placeholder="50000"
+                      className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="salary_max" className="text-slate-700">
+                    Maximum Salary
+                  </Label>
+                  <div className="relative mt-1">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      id="salary_max"
+                      name="salary_max"
+                      type="number"
+                      value={jobForm.salary_max || ''}
+                      onChange={handleFormChange}
+                      placeholder="100000"
+                      className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
+                    />
+                  </div>
+                </div>
+              </div>
+              {errors.salary && (
+                <p className="text-red-500 text-sm mt-2">
+                  Maximum salary must be greater than minimum salary
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Requirements */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center text-slate-900">
+                  <FileText className="w-5 h-5 mr-2 text-indigo-600" />
+                  Requirements
+                </CardTitle>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addListItem('requirements')}
+                  className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-3">
+              {jobForm.requirements.map((requirement, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={requirement}
+                    onChange={(e) => handleListItemChange('requirements', index, e.target.value)}
+                    placeholder={`Requirement ${index + 1}`}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => removeListItem('requirements', index)}
+                    disabled={jobForm.requirements.length <= 1}
+                    className="border-red-300 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Responsibilities */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center text-slate-900">
+                  <Briefcase className="w-5 h-5 mr-2 text-indigo-600" />
+                  Responsibilities
+                </CardTitle>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addListItem('responsibilities')}
+                  className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-3">
+              {jobForm.responsibilities.map((responsibility, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={responsibility}
+                    onChange={(e) => handleListItemChange('responsibilities', index, e.target.value)}
+                    placeholder={`Responsibility ${index + 1}`}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => removeListItem('responsibilities', index)}
+                    disabled={jobForm.responsibilities.length <= 1}
+                    className="border-red-300 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Additional Information */}
+          <Card className="shadow-lg border-slate-200">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
+              <CardTitle className="flex items-center text-slate-900">
+                <Building2 className="w-5 h-5 mr-2 text-indigo-600" />
+                Additional Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="deadline" className="text-slate-700 flex items-center">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    Application Deadline
+                  </Label>
+                  <Input
+                    id="deadline"
+                    name="deadline"
+                    type="date"
+                    value={jobForm.deadline}
+                    onChange={handleFormChange}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="experience_level" className="text-slate-700 flex items-center">
+                    <Clock className="w-4 h-4 mr-1" />
+                    Experience Level
+                  </Label>
+                  <Select
+                    value={jobForm.experience_level}
+                    onValueChange={(value) => handleSelectChange('experience_level', value)}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="entry">Entry Level</SelectItem>
+                      <SelectItem value="mid">Mid Level</SelectItem>
+                      <SelectItem value="senior">Senior Level</SelectItem>
+                      <SelectItem value="executive">Executive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="education_level" className="text-slate-700 flex items-center">
+                    <GraduationCap className="w-4 h-4 mr-1" />
+                    Education Level
+                  </Label>
+                  <Select
+                    value={jobForm.education_level}
+                    onValueChange={(value) => handleSelectChange('education_level', value)}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high_school">High School</SelectItem>
+                      <SelectItem value="associate">Associate Degree</SelectItem>
+                      <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
+                      <SelectItem value="master">Master's Degree</SelectItem>
+                      <SelectItem value="phd">PhD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Submit Buttons */}
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={saving}
+              className="border-slate-300 hover:bg-slate-50"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={saving}
+              className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white shadow-lg shadow-indigo-500/50"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? 'Posting...' : 'Post Job'}
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Video Upload Dialog */}
+      <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Upload Job Video
+            </DialogTitle>
+          </DialogHeader>
+          <VideoUpload 
+            onComplete={handleVideoUploadComplete}
+            onStatusChange={handleChildStatusChange}
+            newjobid={newJobId}
+            embedded={true}
+          />
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={() => setShowVideoUpload(false)} 
+              disabled={isChildRecording}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
