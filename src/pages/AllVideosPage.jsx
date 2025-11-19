@@ -631,7 +631,7 @@ const AllVideosPage = ({
             <div>
               <h1 className={`${themeColors.text.gradient} text-3xl font-bold mb-2`}>
                 {pagetype === 'all' ? 'All Videos' :
-                 pagetype === 'jobseekers' ? 'Job Seekers Videos' : 'Employer Videos'}
+                 pagetype === 'jobseekers' ? 'Employer'  : 'Job Seekers Videos' }
               </h1>
               <p className="text-muted-foreground">
                 Discover and explore video content

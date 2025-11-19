@@ -140,11 +140,18 @@ const EmployerDashboard = () => {
                         </p>
                     </div>
                     <div className="flex gap-3">
-                        <Button className={`${themeColors.buttons.primary} text-white`}>
+                        <Button 
+                            className={`${themeColors.buttons.primary} text-white`}
+                            onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
+                        >
                             <Plus className="h-4 w-4 mr-2" />
                             Post New Job
                         </Button>
-                        <Button variant="outline" className={themeColors.buttons.outline}>
+                        <Button 
+                            variant="outline" 
+                            className={themeColors.buttons.outline}
+                            onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
+                        >
                             <Building2 className="h-4 w-4 mr-2" />
                             Update Profile
                         </Button>
@@ -153,7 +160,7 @@ const EmployerDashboard = () => {
 
                 {/* Statistics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => navigate('/employer/analytics')}>
+                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -253,7 +260,7 @@ const EmployerDashboard = () => {
                                             variant="ghost" 
                                             size="sm" 
                                             className="text-indigo-600"
-                                            onClick={() => navigate('/employer/analytics')}
+                                            onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}
                                         >
                                             <BarChart3 className="h-4 w-4 mr-1" />
                                             View Analytics
@@ -272,7 +279,10 @@ const EmployerDashboard = () => {
                                                 <p className={`text-sm ${themeColors.text.secondary} mb-4`}>
                                                     No active jobs yet
                                                 </p>
-                                                <Button className={`${themeColors.buttons.primary} text-white`}>
+                                                <Button 
+                                                    className={`${themeColors.buttons.primary} text-white`}
+                                                    onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
+                                                >
                                                     <Plus className="h-4 w-4 mr-2" />
                                                     Post Your First Job
                                                 </Button>
@@ -331,7 +341,11 @@ const EmployerDashboard = () => {
                                                     </Table>
                                                 </div>
                                                 <div className="flex justify-center">
-                                                    <Button variant="outline" className={themeColors.buttons.outline}>
+                                                    <Button 
+                                                        variant="outline" 
+                                                        className={themeColors.buttons.outline}
+                                                        onClick={() => navigate('/employer/my-jobs')}
+                                                    >
                                                         View All Jobs
                                                         <ArrowRight className="ml-2 h-4 w-4" />
                                                     </Button>
@@ -404,7 +418,11 @@ const EmployerDashboard = () => {
                                                     </Table>
                                                 </div>
                                                 <div className="flex justify-center">
-                                                    <Button variant="outline" className={themeColors.buttons.outline}>
+                                                    <Button 
+                                                        variant="outline" 
+                                                        className={themeColors.buttons.outline}
+                                                        onClick={() => navigate('/employer/find-candidates')}
+                                                    >
                                                         View All Applicants
                                                         <ArrowRight className="ml-2 h-4 w-4" />
                                                     </Button>
@@ -463,7 +481,12 @@ const EmployerDashboard = () => {
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-lg font-semibold">Recommended Candidates</CardTitle>
-                                <Button variant="ghost" size="sm" className="text-purple-600">
+                                <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="text-purple-600"
+                                    onClick={() => navigate('/employer/find-candidates')}
+                                >
                                     View All
                                     <ArrowRight className="ml-1 h-4 w-4" />
                                 </Button>
@@ -540,7 +563,10 @@ const EmployerDashboard = () => {
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
                                     Jobs with videos receive 34% more applications and attract higher quality candidates.
                                 </p>
-                                <Button className={`w-full ${themeColors.buttons.primary} text-white`}>
+                                <Button 
+                                    className={`w-full ${themeColors.buttons.primary} text-white`}
+                                    onClick={() => navigate('/employer-tabs?group=videoManagement&tab=video-upload')}
+                                >
                                     <Plus className="h-4 w-4 mr-2" />
                                     Add Video
                                 </Button>
@@ -558,13 +584,16 @@ const EmployerDashboard = () => {
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
                                     Complete profiles increase candidate trust and boost application acceptance rates by 45%.
                                 </p>
-                                <Button className={`w-full ${themeColors.buttons.secondary} text-white`}>
+                                <Button 
+                                    className={`w-full ${themeColors.buttons.secondary} text-white`}
+                                    onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
+                                >
                                     <CheckCircle className="h-4 w-4 mr-2" />
                                     Update Now
                                 </Button>
                             </div>
 
-                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`} onClick={() => navigate('/employer/analytics')}>
+                            <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`} onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}>
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.info}`}>
                                         <BarChart3 className="h-6 w-6 text-blue-600" />
@@ -576,7 +605,7 @@ const EmployerDashboard = () => {
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
                                     Review detailed analytics to optimize your job postings and improve visibility.
                                 </p>
-                                <Button className={`w-full ${themeColors.buttons.success} text-white`}>
+                                <Button className={`w-full ${themeColors.buttons.success} text-white`} onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}>
                                     <BarChart3 className="h-4 w-4 mr-2" />
                                     View Details
                                 </Button>

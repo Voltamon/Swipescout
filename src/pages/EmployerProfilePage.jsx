@@ -70,7 +70,7 @@ export default function EmployerProfilePage() {
   };
 
   const handleEditProfile = () => {
-    navigate('/employer-tabs?group=companyContent&tab=company-profile&edit=true');
+    navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile');
   };
 
   if (loading) {

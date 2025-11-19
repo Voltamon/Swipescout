@@ -29,6 +29,7 @@ import HelpPageLinks from "../pages/HelpPageLinks.jsx";
 import EmployerDashboard from "../pages/EmployerDashboard.jsx";
 import VideoUpload from "../pages/VideoUpload.jsx"; // Import VideoUpload component
 import AnalyticsEmployer from "../pages/AnalyticsEmployer";
+import EditEmployerProfilePage from "../pages/EditEmployerProfilePage";
 
 // Function to get translated employer tab categories
 export const getEmployerTabCategories = t => [
@@ -104,6 +105,19 @@ export const getEmployerTabCategories = t => [
         component: EmployerProfilePage,
         path: "company-profile",
         description: t("employerTabs:descriptions.companyProfile")
+      },
+      {
+        label: t(
+          "employerTabs:tabs.editCompanyProfile",
+          "Edit Company Profile"
+        ),
+        icon: { name: "Edit" },
+        component: EditEmployerProfilePage,
+        path: "edit-employer-profile",
+        description: t(
+          "employerTabs:descriptions.editCompanyProfile",
+          "Edit your company profile"
+        )
       },
       {
         label: t("employerTabs:tabs.companyVideos"),
