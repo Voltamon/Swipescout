@@ -61,14 +61,25 @@ import { themeColors } from '@/config/theme-colors';
 const PostJobPage = () => {
   const navigate = useNavigate();
   
+  // Helper function to extract text from multilingual objects
+  const getLocalizedText = (text, defaultValue = 'Unknown') => {
+    if (!text) return defaultValue;
+    if (typeof text === 'string') return text;
+    if (typeof text === 'object') {
+      // Priority: English > Arabic > Chinese > First available value
+      return text.en || text.ar || text.zh || Object.values(text)[0] || defaultValue;
+    }
+    return defaultValue;
+  };
+  
   const [jobForm, setJobForm] = useState({
     title: '',
     description: '',
     location: '',
     employment_type: 'full-time',
     remote_ok: false,
-    salary_min: '',
-    salary_max: '',
+    salary_min: null,
+    salary_max: null,
     experience_level: '',
     education_level: '',
     job_status: 'active',
@@ -77,7 +88,7 @@ const PostJobPage = () => {
     requirements: [''],
     responsibilities: [''],
     deadline: '',
-    videoRequired: false
+    videoRequired: false // Indicates if a video is required for this job post
   });
   
   const [errors, setErrors] = useState({
@@ -148,8 +159,8 @@ const PostJobPage = () => {
     const { name, value, type, checked } = e.target;
     
     let processedValue = type === 'checkbox' ? checked : value;
-    if ((name === 'salary_min' || name === 'salary_max') && value !== '') {
-      processedValue = Number(value);
+    if ((name === 'salary_min' || name === 'salary_max')) {
+      processedValue = value !== '' ? Number(value) : null;
     }
     
     setJobForm({
@@ -221,12 +232,14 @@ const PostJobPage = () => {
     });
   };
 
+  // Modified: This function now handles creating the job first if not already created
   const handleVideoUploadClick = async () => {
     if (!validateForm()) {
       showToast('Please fill in all required fields before uploading video', 'error');
       return;
     }
 
+    // If job hasn't been posted yet, post it first to get an ID
     if (!newJobId) {
       try {
         setSaving(true);
@@ -235,7 +248,7 @@ const PostJobPage = () => {
           requirements: jobForm.requirements.filter(item => item.trim() !== ''),
           responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
           deadline: jobForm.deadline || null,
-          video_id: null,
+          video_id: null, // Video ID will be added later
         };
         const response = await postJob(jobDataToPost);
         setNewJobId(response.data.job.id);
@@ -252,10 +265,11 @@ const PostJobPage = () => {
     setShowVideoUpload(true);
   };
 
+  // Callback when video upload completes - updates job with video ID
   const handleVideoUploadComplete = async (videoId) => {
     console.log('handleVideoUploadComplete called with videoId:', videoId);
     setUploadedVideoId(videoId);
-    setShowVideoUpload(false);
+    setShowVideoUpload(false); // Close the dialog immediately after upload initiation
     console.log('setShowVideoUpload(false) called.');
     
     if (newJobId && videoId) {
@@ -271,6 +285,8 @@ const PostJobPage = () => {
         
         await updateJob(newJobId, updatedJobData);
         showToast('Video linked to job and job updated successfully!', 'success');
+        
+        // Navigate to job details page
         navigate(`/job/${newJobId}`);
       } catch (error) {
         console.error('Error updating job with video ID:', error);
@@ -283,6 +299,7 @@ const PostJobPage = () => {
     }
   };
 
+  // Callback to receive current uploading/recording status from VideoUpload
   const handleChildStatusChange = (uploading, recording) => {
     setIsChildUploading(uploading);
     setIsChildRecording(recording);
@@ -296,6 +313,7 @@ const PostJobPage = () => {
       return;
     }
     
+    // Check if video is required but not uploaded/linked yet
     if (jobForm.videoRequired && !uploadedVideoId && !newJobId) {
       showToast('Please upload the required video resume, or ensure job is created first.', 'error');
       return;
@@ -308,14 +326,18 @@ const PostJobPage = () => {
         requirements: jobForm.requirements.filter(item => item.trim() !== ''),
         responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
         deadline: jobForm.deadline || null,
+        // If newJobId exists and a video was uploaded/linked, keep its video_id.
+        // Otherwise, it might be a job without a required video, or a fresh post without video.
         video_id: uploadedVideoId || null, 
       };
 
       let finalJobId = newJobId;
       if (finalJobId) {
+        // If job already exists (from video upload pre-creation), update it
         await updateJob(finalJobId, jobData);
         showToast('Job updated successfully!', 'success');
       } else {
+        // If job does not exist yet, create it
         const response = await postJob(jobData);
         finalJobId = response.data.job.id;
         setNewJobId(finalJobId);
@@ -568,7 +590,7 @@ const PostJobPage = () => {
                 <div className="flex flex-wrap gap-2">
                   {availableCategories.map((category) => (
                     <Badge
-                      key={category.id}
+                      key={`category-${category.id}`}
                       variant={selectedCategories.includes(category.id) ? 'default' : 'outline'}
                       className={`cursor-pointer transition-all ${
                         selectedCategories.includes(category.id)
@@ -577,7 +599,7 @@ const PostJobPage = () => {
                       }`}
                       onClick={() => toggleCategory(category.id)}
                     >
-                      {category.name}
+                      {getLocalizedText(category.name)}
                     </Badge>
                   ))}
                 </div>
@@ -588,7 +610,7 @@ const PostJobPage = () => {
                 <div className="flex flex-wrap gap-2">
                   {availableSkills.map((skill) => (
                     <Badge
-                      key={skill.skill_id}
+                      key={`skill-${skill.skill_id}`}
                       variant={selectedSkills.includes(skill.skill_id) ? 'default' : 'outline'}
                       className={`cursor-pointer transition-all ${
                         selectedSkills.includes(skill.skill_id)
@@ -597,7 +619,7 @@ const PostJobPage = () => {
                       }`}
                       onClick={() => toggleSkill(skill.skill_id)}
                     >
-                      {skill.name}
+                      {getLocalizedText(skill.name)}
                     </Badge>
                   ))}
                 </div>
@@ -626,7 +648,7 @@ const PostJobPage = () => {
                       id="salary_min"
                       name="salary_min"
                       type="number"
-                      value={jobForm.salary_min}
+                      value={jobForm.salary_min || ''}
                       onChange={handleFormChange}
                       placeholder="50000"
                       className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
@@ -644,7 +666,7 @@ const PostJobPage = () => {
                       id="salary_max"
                       name="salary_max"
                       type="number"
-                      value={jobForm.salary_max}
+                      value={jobForm.salary_max || ''}
                       onChange={handleFormChange}
                       placeholder="80000"
                       className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
@@ -854,7 +876,7 @@ const PostJobPage = () => {
         </form>
       </div>
 
-      {/* Video Upload Dialog */}
+      {/* Video Upload Dialog - Modal for uploading job video */}
       <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -867,10 +889,11 @@ const PostJobPage = () => {
             embedded={true}
           />
           <DialogFooter>
+            {/* Always allow cancel button if the dialog is open and not actively recording */}
             <Button 
               variant="outline"
               onClick={() => setShowVideoUpload(false)} 
-              disabled={isChildRecording}
+              disabled={isChildRecording} // Only disable if actively recording
             >
               Cancel
             </Button>
