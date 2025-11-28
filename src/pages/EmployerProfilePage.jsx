@@ -92,10 +92,10 @@ export default function EmployerProfilePage() {
               <Avatar className="h-32 w-32">
                 <AvatarImage 
                   src={profile?.logo ? `${VITE_API_BASE_URL}${profile.logo}` : ''} 
-                  alt={profile?.companyName}
+                  alt={profile?.name}
                 />
                 <AvatarFallback className="bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-4xl">
-                  {profile?.companyName?.charAt(0) || 'C'}
+                  {profile?.name?.charAt(0) || 'C'}
                 </AvatarFallback>
               </Avatar>
 
@@ -103,7 +103,7 @@ export default function EmployerProfilePage() {
               <div className="flex-grow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h1 className="text-4xl font-bold mb-2">{profile?.companyName || 'Company Name'}</h1>
+                    <h1 className="text-4xl font-bold mb-2">{profile?.name || 'Company Name'}</h1>
                     <p className="text-lg text-muted-foreground">{profile?.industry || 'Industry'}</p>
                   </div>
                   <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white  hover:bg-purple-700`}>
@@ -121,10 +121,10 @@ export default function EmployerProfilePage() {
                     </div>
                   )}
 
-                  {profile?.companySize && (
+                  {profile?.size && (
                     <div className="flex items-center gap-2 text-sm">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{profile.companySize} employees</span>
+                      <span>{profile.size} employees</span>
                     </div>
                   )}
 
@@ -159,34 +159,34 @@ export default function EmployerProfilePage() {
                     </div>
                   )}
 
-                  {profile?.foundedYear && (
+                  {profile?.establish_year && (
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>Founded in {profile.foundedYear}</span>
+                      <span>Founded in {profile.establish_year}</span>
                     </div>
                   )}
                 </div>
 
                 {/* Social Links */}
-                {(profile?.linkedin || profile?.facebook || profile?.twitter) && (
+                {(profile?.social?.linkedin || profile?.social?.facebook || profile?.social?.twitter) && (
                   <div className="flex gap-2">
-                    {profile?.linkedin && (
+                    {profile?.social?.linkedin && (
                       <Button variant="outline" size="icon" asChild>
-                        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+                        <a href={profile.social.linkedin} target="_blank" rel="noopener noreferrer">
                           <Linkedin className="h-4 w-4" />
                         </a>
                       </Button>
                     )}
-                    {profile?.facebook && (
+                    {profile?.social?.facebook && (
                       <Button variant="outline" size="icon" asChild>
-                        <a href={profile.facebook} target="_blank" rel="noopener noreferrer">
+                        <a href={profile.social.facebook} target="_blank" rel="noopener noreferrer">
                           <Facebook className="h-4 w-4" />
                         </a>
                       </Button>
                     )}
-                    {profile?.twitter && (
+                    {profile?.social?.twitter && (
                       <Button variant="outline" size="icon" asChild>
-                        <a href={profile.twitter} target="_blank" rel="noopener noreferrer">
+                        <a href={profile.social.twitter} target="_blank" rel="noopener noreferrer">
                           <Twitter className="h-4 w-4" />
                         </a>
                       </Button>
@@ -260,7 +260,7 @@ export default function EmployerProfilePage() {
         <TabsContent value="about" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>About {profile?.companyName}</CardTitle>
+              <CardTitle>About {profile?.name}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {profile?.description && (

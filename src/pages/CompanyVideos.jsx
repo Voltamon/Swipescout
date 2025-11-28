@@ -60,6 +60,9 @@ export default function CompanyVideos() {
     const [likedVideos, setLikedVideos] = useState(new Set());
     const [savedVideos, setSavedVideos] = useState(new Set());
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [menuVideo, setMenuVideo] = useState(null);
 
     const categories = [
         { value: 'all', label: 'All Categories' },
@@ -261,384 +264,233 @@ export default function CompanyVideos() {
         return matchesSearch && matchesCategory && matchesLocation && matchesSize;
     });
 
-    const FilterSidebar = () => (
-        <Box sx={{ width: 280, p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-                Filters
-            </Typography>
-            
-            <Box mb={3}>
-                <Typography variant="subtitle2" gutterBottom>
-                    Category
-                </Typography>
-                {categories.map((category) => (
-                    <Button
-                        key={category.value}
-                        fullWidth
-                        variant={selectedCategory === category.value ? 'contained' : 'text'}
-                        onClick={() => setSelectedCategory(category.value)}
-                        sx={{ justifyContent: 'flex-start', mb: 0.5 }}
-                    >
-                        {category.label}
-                    </Button>
-                ))}
-            </Box>
-
-            <Box mb={3}>
-                <Typography variant="subtitle2" gutterBottom>
-                    Location
-                </Typography>
-                {locations.map((location) => (
-                    <Button
-                        key={location.value}
-                        fullWidth
-                        variant={selectedLocation === location.value ? 'contained' : 'text'}
-                        onClick={() => setSelectedLocation(location.value)}
-                        sx={{ justifyContent: 'flex-start', mb: 0.5 }}
-                    >
-                        {location.label}
-                    </Button>
-                ))}
-            </Box>
-
-            <Box mb={3}>
-                <Typography variant="subtitle2" gutterBottom>
-                    Company Size
-                </Typography>
-                {companySizes.map((size) => (
-                    <Button
-                        key={size.value}
-                        fullWidth
-                        variant={selectedCompanySize === size.value ? 'contained' : 'text'}
-                        onClick={() => setSelectedCompanySize(size.value)}
-                        sx={{ justifyContent: 'flex-start', mb: 0.5 }}
-                    >
-                        {size.label}
-                    </Button>
-                ))}
-            </Box>
-        </Box>
-    );
-
     return (
-        <Container maxWidth="xl">
-            <CompanyVideosContainer>
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+            <div className="space-y-6">
                 {/* Header */}
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                    <Typography variant="h4" fontWeight="bold">
-                        Company Videos
-                    </Typography>
-                    <Button
-                        variant="outlined"
-                        startIcon={<FilterList />}
-                        onClick={() => setDrawerOpen(true)}
-                    >
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-4xl font-bold">Company Videos</h1>
+                    <Button variant="outline" onClick={() => setDrawerOpen(true)}>
+                        <Filter className="mr-2 h-4 w-4" />
                         Filters
                     </Button>
-                </Box>
+                </div>
 
                 {/* Search */}
-                <TextField
-                    fullWidth
-                    placeholder="Search companies, videos, or descriptions..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Search />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={{ mb: 4 }}
-                />
+                <div className="relative mb-4">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                        className="pl-10 w-full"
+                        placeholder="Search companies, videos, or descriptions..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
 
                 {/* Videos Grid */}
                 {loading ? (
-                    <Box display="flex" justifyContent="center" py={8}>
-                        <CircularProgress size={60} />
-                    </Box>
+                    <div className="flex justify-center py-8">
+                        <Loader2 className="h-12 w-12 animate-spin" />
+                    </div>
                 ) : (
-                    <Grid container spacing={3}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {filteredVideos.map((video) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
-                                <VideoCard onClick={() => handleVideoClick(video)}>
-                                    <Box position="relative">
-                                        <CardMedia
-                                            component="img"
-                                            height="200"
-                                            image={video.thumbnail || '/placeholder-video.jpg'}
-                                            alt={video.title}
-                                        />
-                                        <PlayButton>
-                                            <PlayArrow fontSize="large" />
-                                        </PlayButton>
-                                        
-                                        {/* Video Actions */}
-                                        <Box
-                                            position="absolute"
-                                            top={8}
-                                            right={8}
-                                            display="flex"
-                                            flexDirection="column"
-                                            gap={1}
-                                        >
-                                            <IconButton
-                                                size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setAnchorEl(e.currentTarget);
-                                                    setMenuVideo(video);
-                                                }}
-                                                sx={{ 
-                                                    backgroundColor: 'rgba(0,0,0,0.5)', 
-                                                    color: 'white',
-                                                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' }
-                                                }}
-                                            >
-                                                <MoreVert />
-                                            </IconButton>
-                                        </Box>
-
-                                        {/* Video Stats */}
-                                        <Box
-                                            position="absolute"
-                                            bottom={8}
-                                            left={8}
-                                            display="flex"
-                                            gap={1}
-                                        >
-                                            <Chip
-                                                size="small"
-                                                label={`${video.views || 0} views`}
-                                                sx={{ 
-                                                    backgroundColor: 'rgba(0,0,0,0.7)', 
-                                                    color: 'white',
-                                                    fontSize: '0.75rem'
-                                                }}
-                                            />
-                                        </Box>
-                                    </Box>
+                            <Card key={video.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleVideoClick(video)}>
+                                <div className="relative">
+                                    <img
+                                        className="w-full h-[200px] object-cover"
+                                        src={video.thumbnail || '/placeholder-video.jpg'}
+                                        alt={video.title}
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="bg-black bg-opacity-50 rounded-full p-3">
+                                            <PlayCircle className="h-12 w-12 text-white" />
+                                        </div>
+                                    </div>
                                     
-                                    <CardContent>
-                                        <Box display="flex" alignItems="center" mb={1}>
-                                            <Avatar
-                                                src={video.companyLogo}
-                                                sx={{ width: 32, height: 32, mr: 1 }}
-                                            >
-                                                {video.company?.[0]}
-                                            </Avatar>
-                                            <Typography variant="h6" noWrap>
-                                                {video.company}
-                                            </Typography>
-                                        </Box>
-                                        
-                                        <Typography variant="body1" fontWeight="medium" gutterBottom>
-                                            {video.title}
-                                        </Typography>
-                                        
-                                        <Typography 
-                                            variant="body2" 
-                                            color="text.secondary" 
-                                            sx={{ 
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: 2,
-                                                WebkitBoxOrient: 'vertical',
-                                                overflow: 'hidden'
+                                    {/* Video Actions */}
+                                    <div className="absolute top-2 right-2 flex flex-col gap-1">
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="bg-black bg-opacity-50 hover:bg-opacity-70 text-white h-8 w-8"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setAnchorEl(e.currentTarget);
+                                                setMenuVideo(video);
                                             }}
                                         >
-                                            {video.description}
-                                        </Typography>
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </div>
 
-                                        {video.location && (
-                                            <Box display="flex" alignItems="center" mt={1}>
-                                                <LocationOn sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {video.location}
-                                                </Typography>
-                                            </Box>
-                                        )}
+                                    {/* Video Stats */}
+                                    <div className="absolute bottom-2 left-2 flex gap-1">
+                                        <Badge variant="secondary" className="bg-black bg-opacity-70 text-white text-xs">
+                                            <Eye className="h-3 w-3 mr-1" />
+                                            {video.views || 0} views
+                                        </Badge>
+                                    </div>
+                                </div>
+                                
+                                <CardContent>
+                                    <div className="flex items-center mb-2">
+                                        <Avatar className="h-8 w-8 mr-2">
+                                            <AvatarImage src={video.companyLogo} />
+                                            <AvatarFallback>{video.company?.[0]}</AvatarFallback>
+                                        </Avatar>
+                                        <h3 className="font-semibold truncate">{video.company}</h3>
+                                    </div>
+                                    
+                                    <h4 className="font-medium mb-1">{video.title}</h4>
+                                    
+                                    <p className="text-sm text-gray-600 line-clamp-2">
+                                        {video.description}
+                                    </p>
 
-                                        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
-                                            <Box display="flex" gap={1}>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={(e) => handleLike(video.id, e)}
-                                                    color={likedVideos.has(video.id) ? "error" : "default"}
-                                                >
-                                                    {likedVideos.has(video.id) ? <Favorite /> : <FavoriteBorder />}
-                                                </IconButton>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={(e) => handleSave(video.id, e)}
-                                                    color={savedVideos.has(video.id) ? "primary" : "default"}
-                                                >
-                                                    {savedVideos.has(video.id) ? <Bookmark /> : <BookmarkBorder />}
-                                                </IconButton>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleComment(video);
-                                                    }}
-                                                >
-                                                    <Comment />
-                                                </IconButton>
-                                            </Box>
-                                            
+                                    {video.location && (
+                                        <div className="flex items-center mt-2">
+                                            <MapPin className="h-4 w-4 mr-1 text-gray-500" />
+                                            <span className="text-xs text-gray-500">{video.location}</span>
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-between items-center mt-3">
+                                        <div className="flex gap-1">
                                             <Button
-                                                size="small"
-                                                variant="contained"
-                                                startIcon={<Connect />}
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8"
+                                                onClick={(e) => handleLike(video.id, e)}
+                                            >
+                                                <Heart className={`h-4 w-4 ${likedVideos.has(video.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                                            </Button>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8"
+                                                onClick={(e) => handleSave(video.id, e)}
+                                            >
+                                                {savedVideos.has(video.id) ? (
+                                                    <BookmarkCheck className="h-4 w-4 text-blue-500" />
+                                                ) : (
+                                                    <Bookmark className="h-4 w-4" />
+                                                )}
+                                            </Button>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleConnect(video);
+                                                    handleComment(video);
                                                 }}
                                             >
-                                                Connect
+                                                <MessageCircle className="h-4 w-4" />
                                             </Button>
-                                        </Box>
-                                    </CardContent>
-                                </VideoCard>
-                            </Grid>
+                                        </div>
+                                        
+                                        <Button
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleConnect(video);
+                                            }}
+                                        >
+                                            <Handshake className="h-4 w-4 mr-1" />
+                                            Connect
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         ))}
-                    </Grid>
+                    </div>
                 )}
 
-                {/* Filter Drawer */}
-                <Drawer
-                    anchor="right"
-                    open={drawerOpen}
-                    onClose={() => setDrawerOpen(false)}
-                >
-                    <FilterSidebar />
-                </Drawer>
-
                 {/* Video Dialog */}
-                <Dialog
-                    open={videoDialog}
-                    onClose={() => setVideoDialog(false)}
-                    maxWidth="md"
-                    fullWidth
-                >
-                    {selectedVideo && (
-                        <>
-                            <DialogContent sx={{ p: 0 }}>
-                                <video
-                                    width="100%"
-                                    height="400"
-                                    controls
-                                    autoPlay
-                                    src={selectedVideo.videoUrl}
-                                />
-                                <Box p={3}>
-                                    <Typography variant="h5" gutterBottom>
-                                        {selectedVideo.title}
-                                    </Typography>
-                                    <Typography variant="body1" color="text.secondary" gutterBottom>
-                                        {selectedVideo.company}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {selectedVideo.description}
-                                    </Typography>
-                                </Box>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => setVideoDialog(false)}>
-                                    Close
-                                </Button>
-                                <Button variant="contained" onClick={() => handleConnect(selectedVideo)}>
-                                    Connect with Company
-                                </Button>
-                            </DialogActions>
-                        </>
-                    )}
+                <Dialog open={videoDialog} onOpenChange={setVideoDialog}>
+                    <DialogContent className="max-w-3xl">
+                        {selectedVideo && (
+                            <>
+                                <DialogHeader>
+                                    <DialogTitle>{selectedVideo.title}</DialogTitle>
+                                    <DialogDescription>{selectedVideo.company}</DialogDescription>
+                                </DialogHeader>
+                                <div className="p-0">
+                                    <video
+                                        className="w-full h-[400px]"
+                                        controls
+                                        autoPlay
+                                        src={selectedVideo.videoUrl}
+                                    />
+                                    <div className="p-4">
+                                        <p className="text-sm text-gray-600">
+                                            {selectedVideo.description}
+                                        </p>
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setVideoDialog(false)}>
+                                        Close
+                                    </Button>
+                                    <Button onClick={() => handleConnect(selectedVideo)}>
+                                        Connect with Company
+                                    </Button>
+                                </DialogFooter>
+                            </>
+                        )}
+                    </DialogContent>
                 </Dialog>
 
                 {/* Comment Dialog */}
-                <Dialog
-                    open={commentDialog.open}
-                    onClose={() => setCommentDialog({ open: false, video: null })}
-                    maxWidth="sm"
-                    fullWidth
-                >
-                    <DialogTitle>
-                        Comments - {commentDialog.video?.title}
-                    </DialogTitle>
-                    <DialogContent>
-                        <Box mb={2}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={3}
-                                placeholder="Add a comment..."
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                            />
-                            <Button
-                                variant="contained"
-                                onClick={handleAddComment}
-                                sx={{ mt: 1 }}
-                                disabled={!newComment.trim()}
-                            >
-                                Add Comment
+                <Dialog open={commentDialog.open} onOpenChange={(open) => setCommentDialog({ open, video: commentDialog.video })}>
+                    <DialogContent className="max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>Comments - {commentDialog.video?.title}</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div>
+                                <Textarea
+                                    className="w-full"
+                                    rows={3}
+                                    placeholder="Add a comment..."
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                />
+                                <Button
+                                    className="mt-2"
+                                    onClick={handleAddComment}
+                                    disabled={!newComment.trim()}
+                                >
+                                    Add Comment
+                                </Button>
+                            </div>
+                            
+                            <div className="border-t pt-4">
+                                <div className="space-y-4">
+                                    {comments.map((comment, index) => (
+                                        <div key={index} className="flex items-start space-x-3">
+                                            <Avatar>
+                                                <AvatarFallback>{comment.author?.[0]}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1">
+                                                <p className="font-semibold text-sm">{comment.author}</p>
+                                                <p className="text-sm text-gray-600">{comment.text}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setCommentDialog({ open: false, video: null })}>
+                                Close
                             </Button>
-                        </Box>
-                        
-                        <Divider sx={{ my: 2 }} />
-                        
-                        <List>
-                            {comments.map((comment, index) => (
-                                <ListItem key={index} alignItems="flex-start">
-                                    <Avatar sx={{ mr: 2 }}>
-                                        {comment.author?.[0]}
-                                    </Avatar>
-                                    <ListItemText
-                                        primary={comment.author}
-                                        secondary={comment.text}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
+                        </DialogFooter>
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setCommentDialog({ open: false, video: null })}>
-                            Close
-                        </Button>
-                    </DialogActions>
                 </Dialog>
-
-                {/* Action Menu */}
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={() => setAnchorEl(null)}
-                >
-                    <MenuItem onClick={(e) => handleShare(menuVideo, e)}>
-                        <ListItemIcon><Share /></ListItemIcon>
-                        <ListItemText>Share</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={() => window.open(`/company/${menuVideo?.companyId}`, '_blank')}>
-                        <ListItemIcon><Visibility /></ListItemIcon>
-                        <ListItemText>View Company Profile</ListItemText>
-                    </MenuItem>
-                </Menu>
-
-                {/* Snackbar */}
-                <Snackbar
-                    open={snackbar.open}
-                    autoHideDuration={6000}
-                    onClose={() => setSnackbar({ ...snackbar, open: false })}
-                >
-                    <Alert 
-                        onClose={() => setSnackbar({ ...snackbar, open: false })} 
-                        severity={snackbar.severity}
-                    >
-                        {snackbar.message}
-                    </Alert>
-                </Snackbar>
-            </CompanyVideosContainer>
-        </Container>
+            </div>
+        </div>
     );
 }   
 

@@ -610,14 +610,14 @@ const PostJobPage = () => {
                 <div className="flex flex-wrap gap-2">
                   {availableSkills.map((skill) => (
                     <Badge
-                      key={`skill-${skill.skill_id}`}
-                      variant={selectedSkills.includes(skill.skill_id) ? 'default' : 'outline'}
+                      key={`skill-${skill.id}`}
+                      variant={selectedSkills.includes(skill.id) ? 'default' : 'outline'}
                       className={`cursor-pointer transition-all ${
-                        selectedSkills.includes(skill.skill_id)
+                        selectedSkills.includes(skill.id)
                           ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700'
                           : 'hover:bg-slate-100'
                       }`}
-                      onClick={() => toggleSkill(skill.skill_id)}
+                      onClick={() => toggleSkill(skill.id)}
                     >
                       {getLocalizedText(skill.name)}
                     </Badge>
