@@ -247,9 +247,12 @@ const PostJobPage = () => {
           ...jobForm,
           requirements: jobForm.requirements.filter(item => item.trim() !== ''),
           responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-          deadline: jobForm.deadline || null,
-          video_id: null, // Video ID will be added later
         };
+        // Remove frontend-only fields that backend doesn't expect
+        delete jobDataToPost.videoRequired;
+        delete jobDataToPost.deadline;
+        delete jobDataToPost.video_id;
+        
         const response = await postJob(jobDataToPost);
         setNewJobId(response.data.job.id);
         showToast('Job draft saved. Proceeding to video upload.', 'info');
@@ -277,11 +280,15 @@ const PostJobPage = () => {
         setSaving(true);
         const updatedJobData = {
           ...jobForm,
-          video_id: videoId,
           requirements: jobForm.requirements.filter(item => item.trim() !== ''),
           responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-          deadline: jobForm.deadline || null,
         };
+        // Remove frontend-only fields that backend doesn't expect
+        delete updatedJobData.videoRequired;
+        delete updatedJobData.deadline;
+        delete updatedJobData.video_id;
+        // Note: Backend Job entity has a video relation managed through the video entity itself
+        // The video should already be associated with the job via the VideoUpload component
         
         await updateJob(newJobId, updatedJobData);
         showToast('Video linked to job and job updated successfully!', 'success');
@@ -325,11 +332,14 @@ const PostJobPage = () => {
         ...jobForm,
         requirements: jobForm.requirements.filter(item => item.trim() !== ''),
         responsibilities: jobForm.responsibilities.filter(item => item.trim() !== ''),
-        deadline: jobForm.deadline || null,
-        // If newJobId exists and a video was uploaded/linked, keep its video_id.
-        // Otherwise, it might be a job without a required video, or a fresh post without video.
-        video_id: uploadedVideoId || null, 
       };
+      
+      // Remove frontend-only fields that backend doesn't expect
+      delete jobData.videoRequired;
+      delete jobData.deadline;
+      delete jobData.video_id;
+      // Note: Backend Job entity doesn't directly accept deadline or video_id fields
+      // Video association is handled through the video entity's job relation
 
       let finalJobId = newJobId;
       if (finalJobId) {
