@@ -394,8 +394,8 @@ const PostJobPage = () => {
         await updateJob(newJobId, updatedJobData);
         showToast('Video linked to job and job updated successfully!', 'success');
         
-        // Navigate to job details page
-        navigate(`/job/${newJobId}`);
+        // Navigate to job details page in employer tabs
+        navigate(`/employer-tabs?group=jobManagement&tab=job-details&id=${newJobId}`);
       } catch (error) {
         console.error('Error updating job with video ID:', error);
         const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Error linking video to job.';
@@ -471,7 +471,7 @@ const PostJobPage = () => {
         showToast('Job posted successfully!', 'success');
       }
       
-      navigate(`/job/${finalJobId}`);
+      navigate(`/employer-tabs?group=jobManagement&tab=job-details&id=${finalJobId}`);
       
     } catch (error) {
       console.error('Error posting/updating job:', error);

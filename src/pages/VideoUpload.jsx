@@ -305,7 +305,13 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
 
       // If not embedded, navigate to VideosPage immediately so user sees upload in list
       if (!embedded) {
-        navigate('/jobseeker-tabs?group=profileContent&tab=my-videos');
+        // role is an array, check if it includes 'employer'
+        const isEmployer = Array.isArray(role) && role.includes('employer');
+        if (isEmployer) {
+          navigate('/employer-tabs?group=companyContent&tab=company-videos');
+        } else {
+          navigate('/jobseeker-tabs?group=profileContent&tab=my-videos');
+        }
       }
 
       // Prepare form data for upload
@@ -754,7 +760,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             </div>
 
             {/* Job ID (if applicable) */}
-            {role === 'jobseeker' && (
+            {Array.isArray(role) && (role.includes('jobseeker') || role.includes('job_seeker')) && (
               <div className="space-y-2">
                 <Label htmlFor="jobId">Job Application (Optional)</Label>
                 <Input

@@ -28,8 +28,10 @@ import Chat from "../pages/Chat.jsx";
 import HelpPageLinks from "../pages/HelpPageLinks.jsx";
 import EmployerDashboard from "../pages/EmployerDashboard.jsx";
 import VideoUpload from "../pages/VideoUpload.jsx"; // Import VideoUpload component
+import VideosPage from "../pages/VideosPage.jsx"; // Import VideosPage component
 import AnalyticsEmployer from "../pages/AnalyticsEmployer";
 import EditEmployerProfilePage from "../pages/EditEmployerProfilePage";
+import JobDetailsPage from "../pages/JobDetailsPage.jsx";
 
 // Function to get translated employer tab categories
 export const getEmployerTabCategories = t => [
@@ -92,6 +94,17 @@ export const getEmployerTabCategories = t => [
         component: JobsListingPage,
         path: "my-jobs",
         description: t("employerTabs:descriptions.myJobListings")
+      },
+      {
+        label: t("employerTabs:tabs.jobDetails", "Job Details"),
+        icon: { name: "DocumentText" },
+        component: JobDetailsPage,
+        path: "job-details/:id",
+        hideInSidebar: true,
+        description: t(
+          "employerTabs:descriptions.jobDetails",
+          "View detailed information about a specific job"
+        )
       }
     ]
   },
@@ -122,9 +135,16 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.companyVideos"),
         icon: { name: "VideoLibrary" },
-        component: CompanyVideos,
+        component: VideosPage,
         path: "company-videos",
         description: t("employerTabs:descriptions.companyVideos")
+      },
+      {
+        label: t("employerTabs:tabs.videoUpload"),
+        icon: { name: "Upload" },
+        component: VideoUpload,
+        path: "video-upload",
+        description: t("employerTabs:descriptions.videoUpload")
       },
       {
         label: t("employerTabs:tabs.videoEditor"),
@@ -214,13 +234,6 @@ export const getEmployerTabCategories = t => [
     key: "videoManagement",
     label: t("employerTabs:categories.videoManagement"),
     tabs: [
-      {
-        label: t("employerTabs:tabs.videoUpload"),
-        icon: { name: "VideoLibrary" },
-        component: VideoUpload,
-        path: "video-upload",
-        description: t("employerTabs:descriptions.videoUpload")
-      },
       {
         label: t("employerTabs:tabs.videoEditor"),
         icon: { name: "Edit" },

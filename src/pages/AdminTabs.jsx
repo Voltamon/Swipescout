@@ -109,17 +109,19 @@ const AdminTabs = () => {
 
   // Build navigation items from config
   const navigationItems = adminTabCategoriesData.flatMap((category, catIndex) => {
-    const items = category.tabs.map((tab) => {
-      const IconComponent = iconMap[tab.icon.name] || LayoutDashboard;
-      return {
-        label: tab.label,
-        icon: IconComponent,
-        path: `/admin-tabs?group=${category.key}&tab=${tab.path}`,
-      };
-    });
+    const items = category.tabs
+      .filter((tab) => !tab.hideInSidebar) // Filter out hidden tabs
+      .map((tab) => {
+        const IconComponent = iconMap[tab.icon.name] || LayoutDashboard;
+        return {
+          label: tab.label,
+          icon: IconComponent,
+          path: `/admin-tabs?group=${category.key}&tab=${tab.path}`,
+        };
+      });
 
     // Add separator before each category (except first)
-    if (catIndex > 0) {
+    if (catIndex > 0 && items.length > 0) {
       return [
         {
           type: 'separator',

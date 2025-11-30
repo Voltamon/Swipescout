@@ -44,11 +44,18 @@ const EmployerTabs = () => {
 
   const tabCategoryKey = searchParams.get('group') || 'dashboard';
   const tabParam = searchParams.get('tab') || 'overview';
+  const tabId = searchParams.get('id'); // Get dynamic ID parameter
 
   const employerTabCategories = getEmployerTabCategories(t);
 
   const tabCategory = employerTabCategories.find((cat) => cat.key === tabCategoryKey) || employerTabCategories[0];
-  const currentTab = tabCategory.tabs.find((tab) => tab.path === tabParam) || tabCategory.tabs[0];
+  
+  // Match tab path with or without dynamic segments
+  const currentTab = tabCategory.tabs.find((tab) => {
+    const tabPathBase = tab.path.split('/:')[0]; // Get base path before :id
+    const tabParamBase = tabParam.split('/')[0]; // Get base from query param
+    return tabPathBase === tabParamBase || tab.path === tabParam;
+  }) || tabCategory.tabs[0];
 
   useEffect(() => {
     if (user) {
@@ -94,17 +101,19 @@ const EmployerTabs = () => {
 
   // Build navigation items from config
   const navigationItems = employerTabCategories.flatMap((category, catIndex) => {
-    const items = category.tabs.map((tab) => {
-      const IconComponent = iconMap[tab.icon.name] || BarChart3;
-      return {
-        label: tab.label,
-        icon: IconComponent,
-        path: `/employer-tabs?group=${category.key}&tab=${tab.path}`,
-      };
-    });
+    const items = category.tabs
+      .filter((tab) => !tab.hideInSidebar) // Filter out hidden tabs
+      .map((tab) => {
+        const IconComponent = iconMap[tab.icon.name] || BarChart3;
+        return {
+          label: tab.label,
+          icon: IconComponent,
+          path: `/employer-tabs?group=${category.key}&tab=${tab.path}`,
+        };
+      });
 
     // Add separator before each category (except first)
-    if (catIndex > 0) {
+    if (catIndex > 0 && items.length > 0) {
       return [
         {
           type: 'separator',
@@ -216,8 +225,8 @@ const EmployerTabs = () => {
           </CardHeader>
           <CardContent>
             {currentTab.context
-              ? React.createElement(currentTab.component, { context: currentTab.context })
-              : React.createElement(currentTab.component)}
+              ? React.createElement(currentTab.component, { context: currentTab.context, id: tabId })
+              : React.createElement(currentTab.component, { id: tabId })}
           </CardContent>
         </Card>
       </div>

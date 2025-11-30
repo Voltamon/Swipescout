@@ -162,7 +162,13 @@ export default function VideosPage({ setVideoTab }) {
       });
       return;
     }
-    navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
+    // role is an array, check if it includes 'employer'
+    const isEmployer = user?.role && Array.isArray(user.role) && user.role.includes('employer');
+    if (isEmployer) {
+      navigate('/employer-tabs?group=companyContent&tab=video-upload');
+    } else {
+      navigate('/jobseeker-tabs?group=profileContent&tab=video-upload');
+    }
   };
 
   const handleVideoHover = (videoId, isHovering) => {

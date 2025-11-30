@@ -23,8 +23,9 @@ import {
   ArrowLeftIcon,
 } from '@/components/icons/heroicons';
 
-const JobDetailsPage = () => {
-  const { id } = useParams();
+const JobDetailsPage = ({ id: propId }) => {
+  const { id: paramId } = useParams();
+  const id = propId || paramId; // Use prop if available, fallback to URL param
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -332,14 +333,6 @@ const JobDetailsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50 pt-20 pb-20">
       <div className="container max-w-6xl mx-auto px-4">
-        {/* Back button */}
-        <div className="mb-6">
-          <Button variant="outline" onClick={() => navigate('/jobs-Listing-Page')} className="gap-2">
-            <ArrowLeftIcon className="w-4 h-4" />
-            Back to Jobs
-          </Button>
-        </div>
-
         {/* Video Hero Section */}
         {hasVideo() && renderVideoHero()}
 
