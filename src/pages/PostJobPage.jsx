@@ -4,9 +4,13 @@ import {
   postJob, 
   getCategories,
   getSkills,
-  updateJob
+  updateJob,
+  getEmployerProfile
 } from '@/services/api';
-import VideoUpload from './VideoUpload';
+import { useAuth } from '@/contexts/AuthContext';
+
+// Lazy load VideoUpload to prevent race conditions
+const VideoUpload = React.lazy(() => import('./VideoUpload'));
 
 // shadcn/ui components
 import { Button } from '@/components/UI/button';
@@ -53,13 +57,63 @@ import {
   GraduationCap,
   Award,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 
 // Theme colors
 import { themeColors } from '@/config/theme-colors';
 
+// Error Boundary Component
+class VideoUploadErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('VideoUpload Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            Video Upload Error
+          </h3>
+          <p className="text-slate-600 mb-4">
+            There was an issue loading the video upload component.
+          </p>
+          <Button onClick={() => this.setState({ hasError: false })}>
+            Try Again
+          </Button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const PostJobPage = () => {
   const navigate = useNavigate();
+  const { user, role } = useAuth();
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('=== PostJobPage User Debug ===');
+    console.log('User object:', user);
+    console.log('Role from context:', role);
+    console.log('User.role:', user?.role);
+    console.log('LocalStorage user:', localStorage.getItem('user'));
+    console.log('LocalStorage role:', localStorage.getItem('role'));
+    console.log('LocalStorage access token:', localStorage.getItem('accessToken') ? 'Present' : 'Missing');
+  }, [user, role]);
   
   // Helper function to extract text from multilingual objects
   const getLocalizedText = (text, defaultValue = 'Unknown') => {
@@ -114,12 +168,41 @@ const PostJobPage = () => {
     type: 'success'
   });
   const [newJobId, setNewJobId] = useState(null);
+  const [permissionError, setPermissionError] = useState(false);
+  const [videoDialogMounted, setVideoDialogMounted] = useState(false);
+  const [hasEmployerProfile, setHasEmployerProfile] = useState(null); // null = checking, true/false = result
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Check if employer profile exists first
+        let profileExists = false;
+        try {
+          const profileResponse = await getEmployerProfile();
+          profileExists = !!(profileResponse?.data?.id || profileResponse?.data);
+          setHasEmployerProfile(profileExists);
+          
+          // If no profile exists, show the permission error immediately
+          if (!profileExists) {
+            setPermissionError(true);
+            showToast('Please create an employer profile before posting jobs', 'error');
+          }
+        } catch (profileError) {
+          console.error('Error checking employer profile:', profileError);
+          if (profileError.response?.status === 404 || profileError.response?.status === 403) {
+            setHasEmployerProfile(false);
+            setPermissionError(true);
+            showToast('Please create an employer profile before posting jobs', 'error');
+          } else {
+            // Other errors - maybe network issue, don't block the user
+            setHasEmployerProfile(null);
+          }
+        }
+        
+        // Fetch categories and skills regardless of profile status
         const [categoriesResponse, skillsResponse] = await Promise.all([
           getCategories(),
           getSkills()
@@ -128,6 +211,8 @@ const PostJobPage = () => {
         setAvailableSkills(skillsResponse.data.skills);
       } catch (error) {
         console.error('Error fetching data:', error);
+        // Don't block the user from seeing the form if categories/skills fail to load
+        // They might still be able to post without selecting categories/skills
         showToast('Error loading categories and skills', 'error');
       } finally {
         setLoading(false);
@@ -258,21 +343,37 @@ const PostJobPage = () => {
         showToast('Job draft saved. Proceeding to video upload.', 'info');
       } catch (error) {
         console.error('Error creating job draft:', error);
-        showToast('Error creating job draft for video upload.', 'error');
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Error creating job draft for video upload.';
+        
+        if (error.response?.status === 403) {
+          showToast(errorMessage, 'error');
+          setPermissionError(true);
+        } else {
+          showToast(errorMessage, 'error');
+        }
         setSaving(false);
         return;
       } finally {
         setSaving(false);
       }
     }
-    setShowVideoUpload(true);
+    
+    // Use setTimeout to ensure state updates are processed before opening dialog
+    setTimeout(() => {
+      setVideoDialogMounted(true);
+      setShowVideoUpload(true);
+    }, 100);
   };
 
   // Callback when video upload completes - updates job with video ID
   const handleVideoUploadComplete = async (videoId) => {
     console.log('handleVideoUploadComplete called with videoId:', videoId);
     setUploadedVideoId(videoId);
-    setShowVideoUpload(false); // Close the dialog immediately after upload initiation
+    
+    // Close dialog with delay to prevent race conditions
+    setShowVideoUpload(false);
+    setTimeout(() => setVideoDialogMounted(false), 300);
+    
     console.log('setShowVideoUpload(false) called.');
     
     if (newJobId && videoId) {
@@ -297,7 +398,14 @@ const PostJobPage = () => {
         navigate(`/job/${newJobId}`);
       } catch (error) {
         console.error('Error updating job with video ID:', error);
-        showToast('Error linking video to job.', 'error');
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Error linking video to job.';
+        
+        if (error.response?.status === 403) {
+          showToast(errorMessage, 'error');
+          setPermissionError(true);
+        } else {
+          showToast(errorMessage, 'error');
+        }
       } finally {
         setSaving(false);
       }
@@ -310,6 +418,15 @@ const PostJobPage = () => {
   const handleChildStatusChange = (uploading, recording) => {
     setIsChildUploading(uploading);
     setIsChildRecording(recording);
+  };
+
+  // Handle dialog open/close state changes
+  const handleDialogOpenChange = (open) => {
+    if (!open) {
+      // Closing the dialog
+      setShowVideoUpload(false);
+      setTimeout(() => setVideoDialogMounted(false), 300);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -358,7 +475,15 @@ const PostJobPage = () => {
       
     } catch (error) {
       console.error('Error posting/updating job:', error);
-      showToast('Error posting/updating job', 'error');
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Error posting/updating job';
+      
+      if (error.response?.status === 403) {
+        // Show the actual backend error message
+        showToast(errorMessage, 'error');
+        setPermissionError(true);
+      } else {
+        showToast(errorMessage, 'error');
+      }
     } finally {
       setSaving(false);
     }
@@ -886,30 +1011,91 @@ const PostJobPage = () => {
         </form>
       </div>
 
-      {/* Video Upload Dialog - Modal for uploading job video */}
-      <Dialog open={showVideoUpload} onOpenChange={setShowVideoUpload}>
-        <DialogContent className="max-w-4xl">
+      {/* Permission Error Dialog */}
+      <Dialog open={permissionError} onOpenChange={setPermissionError}>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Upload Job Video</DialogTitle>
+            <div className="flex items-center justify-center mb-4">
+              <div className="rounded-full bg-amber-100 p-3">
+                <AlertCircle className="h-8 w-8 text-amber-500" />
+              </div>
+            </div>
+            <DialogTitle className="text-center text-2xl">Profile Needed</DialogTitle>
+            <CardDescription className="text-center">
+              You need to create profile to post jobs
+            </CardDescription>
           </DialogHeader>
-          <VideoUpload 
-            onComplete={handleVideoUploadComplete}
-            onStatusChange={handleChildStatusChange}
-            newjobid={newJobId}
-            embedded={true}
-          />
-          <DialogFooter>
-            {/* Always allow cancel button if the dialog is open and not actively recording */}
-            <Button 
-              variant="outline"
-              onClick={() => setShowVideoUpload(false)} 
-              disabled={isChildRecording} // Only disable if actively recording
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
+          <div className="space-y-4 p-4">
+            <p className="text-slate-600 text-center">
+              Only employers with profile can post job listings. 
+              Please create an employer profile or contact support if you believe this is an error.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button
+                variant="outline"
+                onClick={() => setPermissionError(false)}
+              >
+                Go Back
+              </Button>
+              <Button
+                onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
+                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
+              >
+                Create Employer Profile
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
+
+      {/* Video Upload Dialog - Modal for uploading job video */}
+      {videoDialogMounted && (
+        <Dialog open={showVideoUpload} onOpenChange={handleDialogOpenChange}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Upload Job Video</DialogTitle>
+            </DialogHeader>
+            <VideoUploadErrorBoundary>
+              <React.Suspense 
+                fallback={
+                  <div className="p-6 text-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mx-auto mb-4" />
+                    <p className="text-slate-600">Loading video uploader...</p>
+                  </div>
+                }
+              >
+                {newJobId ? (
+                  <VideoUpload 
+                    key={`video-upload-${newJobId}`}
+                    onComplete={handleVideoUploadComplete}
+                    onStatusChange={handleChildStatusChange}
+                    newjobid={newJobId}
+                    embedded={true}
+                  />
+                ) : (
+                  <div className="p-6 text-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mx-auto mb-4" />
+                    <p className="text-slate-600">Preparing video upload...</p>
+                  </div>
+                )}
+              </React.Suspense>
+            </VideoUploadErrorBoundary>
+            <DialogFooter>
+              {/* Always allow cancel button if the dialog is open and not actively recording */}
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setShowVideoUpload(false);
+                  setTimeout(() => setVideoDialogMounted(false), 300);
+                }}
+                disabled={isChildRecording} // Only disable if actively recording
+              >
+                Cancel
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
