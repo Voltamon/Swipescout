@@ -44,6 +44,18 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
   const { user, role } = useAuth();
   const { addLocalVideo, updateVideoStatus, updateVideoServerId } = useVideoContext();
   
+  // Debug logging for role detection
+  useEffect(() => {
+    console.log('[VideoUpload] User:', user);
+    console.log('[VideoUpload] Role:', role);
+    console.log('[VideoUpload] Role type:', typeof role);
+    console.log('[VideoUpload] Is Array:', Array.isArray(role));
+    if (Array.isArray(role)) {
+      console.log('[VideoUpload] Role includes employer:', role.includes('employer'));
+      console.log('[VideoUpload] Role includes jobseeker:', role.includes('jobseeker') || role.includes('job_seeker'));
+    }
+  }, [user, role]);
+  
   // Refs
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -307,6 +319,11 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       if (!embedded) {
         // role is an array, check if it includes 'employer'
         const isEmployer = Array.isArray(role) && role.includes('employer');
+        console.log('[VideoUpload] Navigation decision:', {
+          role,
+          isEmployer,
+          targetUrl: isEmployer ? '/employer-tabs?group=companyContent&tab=company-videos' : '/jobseeker-tabs?group=profileContent&tab=my-videos'
+        });
         if (isEmployer) {
           navigate('/employer-tabs?group=companyContent&tab=company-videos');
         } else {

@@ -50,6 +50,17 @@ export default function VideosPage({ setVideoTab }) {
   const { toast } = useToast();
   const navigate = useNavigate();
   const videoRefs = useRef({});
+  
+  // Debug logging for role detection
+  useEffect(() => {
+    console.log('[VideosPage] User:', user);
+    console.log('[VideosPage] User role:', user?.role);
+    console.log('[VideosPage] Role type:', typeof user?.role);
+    console.log('[VideosPage] Is Array:', Array.isArray(user?.role));
+    if (user?.role && Array.isArray(user.role)) {
+      console.log('[VideosPage] Role includes employer:', user.role.includes('employer'));
+    }
+  }, [user]);
 
   const [serverVideos, setServerVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,17 +77,27 @@ export default function VideosPage({ setVideoTab }) {
   const fetchServerVideos = async (pageNum) => {
     try {
       setLoading(true);
+      console.log('[VideosPage] Fetching videos for page:', pageNum);
       const response = await api.get(`/videos/?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
+      console.log('[VideosPage] Videos fetched successfully:', response.data);
       setServerVideos(response.data.videos || []);
       setTotalPages(response.data.totalPages || 1);
       setUploadLimitReached(response.data.uploadLimitReached || false);
     } catch (err) {
-      console.error('Failed to fetch videos:', err);
-      toast({
-        title: "Error",
-        description: "Failed to load videos",
-        variant: "destructive",
+      console.error('[VideosPage] Failed to fetch videos:', err);
+      console.error('[VideosPage] Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
       });
+      // Don't show error toast if it's just a network issue during initialization
+      if (err.response?.status && err.response.status !== 401) {
+        toast({
+          title: "Error",
+          description: err.response?.data?.message || "Failed to load videos",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -164,6 +185,12 @@ export default function VideosPage({ setVideoTab }) {
     }
     // role is an array, check if it includes 'employer'
     const isEmployer = user?.role && Array.isArray(user.role) && user.role.includes('employer');
+    console.log('[VideosPage] Upload button clicked:', {
+      user: user,
+      role: user?.role,
+      isEmployer,
+      targetUrl: isEmployer ? '/employer-tabs?group=companyContent&tab=video-upload' : '/jobseeker-tabs?group=profileContent&tab=video-upload'
+    });
     if (isEmployer) {
       navigate('/employer-tabs?group=companyContent&tab=video-upload');
     } else {
