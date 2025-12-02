@@ -48,7 +48,7 @@ function normalizeVideo(v) {
     videoUrl: v.videoUrl || v.video_url || v.video_url_full || v.secure_url || '',
     thumbnail: v.thumbnail || v.thumbnailUrl || v.thumbnail_url || null,
     uploaderName: v.uploaderName || v.uploader_name || (v.user && (v.user.displayName || v.user.display_name)) || null,
-    uploaderType: v.uploaderType || v.uploader_type || (v.user && v.user.role) || null,
+    uploaderType: v.uploaderType || v.uploader_type || v.uploaderRole || v.uploader_role || (v.user && v.user.role) || null,
     savedAt: v.savedAt || v.saved_at || null,
     createdAt: v.createdAt || v.submittedAt || v.submitted_at || null,
     // keep original for any additional fields
@@ -310,9 +310,14 @@ export default function SavedVideosPage() {
                 <h3 className="font-semibold line-clamp-1 mb-1">{getTitle(video)}</h3>
                 
                 {video.uploaderName && (
-                  <p className="text-sm text-muted-foreground mb-2">
-                    by {video.uploaderName}
-                  </p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <p className="text-sm text-muted-foreground">by {video.uploaderName}</p>
+                    {video.uploaderRole && (
+                      <Badge className="text-xs bg-muted-foreground/10 text-muted-foreground border-muted-foreground/10 capitalize">
+                        {String(video.uploaderRole).replace('_', ' ')}
+                      </Badge>
+                    )}
+                  </div>
                 )}
 
                 {(getDescription(video)) && (

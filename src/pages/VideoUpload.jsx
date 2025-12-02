@@ -82,6 +82,12 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
   const [hashtagInput, setHashtagInput] = useState('');
   const [jobId, setJobId] = useState(newjobid || '');
   const [privacy, setPrivacy] = useState('public');
+  // Allow user to choose role to upload as if they have multiple roles
+  const [selectedUploaderRole, setSelectedUploaderRole] = useState(() => {
+    if (Array.isArray(role) && role.length) return role[0];
+    if (typeof role === 'string') return role;
+    return null;
+  });
 
   useEffect(() => {
     let interval;
@@ -308,6 +314,11 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       job_id: jobId || null,
       submitted_at: new Date().toISOString()
     };
+    // Attach uploader role for local preview if selected
+    if (selectedUploaderRole) {
+      localVideo.uploaderRole = selectedUploaderRole;
+      localVideo.uploader_role = selectedUploaderRole;
+    }
 
     try {
       // Add to local context immediately so VideosPage can show the uploading item
@@ -317,8 +328,9 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
 
       // If not embedded, navigate to VideosPage immediately so user sees upload in list
       if (!embedded) {
-        // role is an array, check if it includes 'employer'
-        const isEmployer = Array.isArray(role) && role.includes('employer');
+        // Determine which role the user chose to upload as (default to selectedUploaderRole)
+        const roleToUse = selectedUploaderRole || (Array.isArray(role) ? (role.includes('employer') ? 'employer' : role[0]) : role);
+        const isEmployer = roleToUse && roleToUse.includes('employer');
         console.log('[VideoUpload] Navigation decision:', {
           role,
           isEmployer,
@@ -340,6 +352,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       formData.append('hashtags', JSON.stringify(hashtags));
       formData.append('privacy', privacy);
       if (jobId) formData.append('jobId', jobId);
+      if (selectedUploaderRole) formData.append('uploaderRole', selectedUploaderRole);
       formData.append('videoId', videoId);
 
       // Start upload in background and update context with progress
@@ -775,6 +788,18 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Upload as (role) */}
+            {Array.isArray(role) && role.length > 1 && (
+              <div className="space-y-2">
+                <Label htmlFor="uploaderRole">Upload as</Label>
+                <Select value={selectedUploaderRole} onValueChange={setSelectedUploaderRole}>
+                  {role.map((r) => (
+                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                  ))}
+                </Select>
+              </div>
+            )}
 
             {/* Job ID (if applicable) */}
             {Array.isArray(role) && (role.includes('jobseeker') || role.includes('job_seeker')) && (

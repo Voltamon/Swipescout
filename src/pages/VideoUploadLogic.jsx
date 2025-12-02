@@ -44,7 +44,7 @@ const useVideoUploadLogic = () => {
 
   const navigate = useNavigate();
   const { video_id: videoIdParam } = useParams();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { uploadStatus, setUploadStatus } = useVideoContext();
 
   useEffect(
@@ -243,6 +243,10 @@ const useVideoUploadLogic = () => {
           uploadedBy: user.uid,
           uploadDate: new Date().toISOString(),
           processingStatus: "IN_PROGRESS"
+        };
+        // Attach uploaderRole if available; choose employer if multiple
+        const defaultUploaderRole = Array.isArray(role) ? (role.includes('employer') ? 'employer' : role[0]) : role;
+        if (defaultUploaderRole) metadata.uploaderRole = defaultUploaderRole;
         };
         await saveVideoMetadata(metadata, user.token);
 

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/contexts/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Heart, 
   MessageCircle, 
@@ -20,7 +20,8 @@ import {
   VolumeX,
   Send,
   Eye,
-  Loader2
+  Loader2,
+  User
 } from 'lucide-react';
 import ReportButton from '@/components/ReportButton.jsx';
 import { Button } from '@/components/UI/button.jsx';
@@ -34,7 +35,9 @@ import { cn } from '@/lib/utils';
 axios.defaults.withCredentials = true;
 
 // add API base constant (from Vite env or fallback)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + '/api' || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '') : 'http://localhost:5000') + '/api';
+// Base URL for media (images, thumbnails, avatars) - omit /api so we can build URLs
+const MEDIA_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 // Helper function to safely get array from localStorage
 const getLocalStorageArray = (key) => {
@@ -103,6 +106,18 @@ const normalizeVideoFromApi = (v) => {
     saved,
     isLiked,
     views,
+    // Uploader metadata normalization - multiple backend shapes supported
+    uploaderId: v.uploaderId || v.uploader_id || v.userId || v.user_id || v.ownerId || v.owner_id || v.createdBy || v.created_by || (v.uploader && (v.uploader.id || v.uploader.userId || v.uploader.user_id)),
+    uploaderName: v.uploaderName || v.uploader_name || (v.user && (v.user.displayName || v.user.display_name || v.user.name)) || (v.uploader && (v.uploader.name || v.uploader.displayName)) || null,
+    uploaderAvatar: (function(){
+      const cand = v.uploaderAvatar || v.uploader_avatar || v.avatar || (v.user && (v.user.avatar || v.user.profilePicture || v.user.picture)) || (v.uploader && (v.uploader.avatar || v.uploader.profilePicture || v.uploader.picture));
+      if (!cand) return null;
+      // If absolute URL, return as-is; otherwise prefix with MEDIA_BASE_URL to form absolute URL
+      if (/^https?:\/\//i.test(cand)) return cand;
+      return `${MEDIA_BASE_URL}${cand.startsWith('/') ? '' : '/'}${cand}`;
+    })(),
+    uploaderRole: v.uploaderRole || v.uploader_role || v.uploaderType || v.uploader_type || (v.user && v.user.role) || (v.uploader && v.uploader.role) || null,
+    isAnonymous: _extractBoolean(v, ['isAnonymous', 'is_anonymous', 'anonymous', 'is_anon'], v.videoType === 'sample')
   };
 };
 
@@ -213,7 +228,8 @@ const VideoCard = React.memo(({
   commentsLoading = false,
   commentSubmitting = false,
   commentCount = 0,
-  shouldLoad = false
+  shouldLoad = false,
+  onUserAvatarClick
 }) => {
   const videoRef = useRef(null);
   const { t } = useTranslation();
@@ -394,9 +410,36 @@ const VideoCard = React.memo(({
             </Card>
           )}
 
+          {/* Avatar and uploader info is embedded inside video info card below (see card content) */}
+
           {/* Video info */}
           <Card className="bg-white/10 backdrop-blur-md border-white/20">
             <CardContent className="p-4 space-y-2">
+              {/* Uploader row (avatar + name) */}
+              <div
+                className="flex items-center gap-3 cursor-pointer hover:bg-white/5 rounded-md p-1 -m-1"
+                onClick={() => onUserAvatarClick && onUserAvatarClick(video)}
+                role="button"
+                aria-label={video.uploaderName || 'View uploader profile'}
+              >
+                <Avatar className="h-9 w-9 flex-shrink-0">
+                  <AvatarImage src={video.uploaderAvatar || video.uploader?.avatar || video.user?.avatar} alt={video.uploaderName || 'User'} />
+                  <AvatarFallback className="bg-purple-500 text-white text-xs">
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-white truncate">{video.uploaderName || video.uploader?.name || video.user?.name || 'Anonymous User'}</p>
+                    {video.uploaderRole && (
+                      <Badge className="text-xs bg-white/10 text-white border-white/20 capitalize">
+                        {String(video.uploaderRole).replace('_', ' ')}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-300">{video.videoType === 'sample' ? 'Sample Video' : 'Click to view profile'}</p>
+                </div>
+              </div>
               {video.videoTitle && (
                 <h2 className="text-lg font-bold text-white leading-tight">
                   {video.videoTitle}
@@ -622,6 +665,7 @@ const VideoCard = React.memo(({
 const Videos = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -749,7 +793,7 @@ const Videos = () => {
       console.log('Fetching videos with startId:', startId);
       // Use public endpoint alias to avoid "No token provided" when unauthenticated.
       // Be tolerant to multiple response shapes (array, { videos: [...] }, { data: { videos: [...] } }, etc.)
-      const response = await axios.get(`${API_BASE_URL}/videos/public/getVideosForHomePage`, { params: { id: startId } });
+      const response = await axios.get(`${API_BASE_URL}/videos/public/getVideosForHomePage`, { params: { id: startId, includeUser: true } });
       console.log('Videos response:', response);
       const payload = response?.data ?? response ?? {};
 
@@ -1267,6 +1311,41 @@ const Videos = () => {
     setMaximizedVideoId((prev) => (prev === videoId ? null : videoId));
   }, []);
 
+  // Handle user avatar click - navigate to profile or show toast for anonymous
+  const handleUserAvatarClick = useCallback((video) => {
+    // Extract user data from normalized fields or fallback locations
+    const userId = video.uploaderId || video.user?.id || video.user?.userId || video.uploader?.id || video.uploader?.userId || null;
+    const userRole = video.uploaderRole || video.uploader?.role || video.user?.role || null;
+    const isAnonymous = !!(video.isAnonymous || video.videoType === 'sample' || (!userId));
+
+    if (isAnonymous) {
+      // Show toast message for anonymous/sample videos
+      toast.info('This video is a sample: uploader is an anonymous user and their profile is not available.', {
+        position: 'bottom-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    // Navigate to appropriate profile based on user role
+    const roleStr = (userRole || '').toString().toLowerCase();
+    if (roleStr.includes('employer')) {
+      navigate(`/employer-profile/${userId}`);
+    } else if (roleStr.includes('jobseeker') || roleStr.includes('job_seeker') || roleStr.includes('seeker')) {
+      navigate(`/jobseeker-profile/${userId}`);
+    } else {
+      // Fallback: try to determine from video context or show message
+      toast.warning('Unable to determine user profile type.', {
+        position: 'bottom-center',
+        autoClose: 2000,
+      });
+    }
+  }, [navigate]);
+
   // lock body scroll when a video is maximized
   // NOTE: Previously body scrolling was disabled when a video was maximized (overflow: hidden).
   // Requirement: allow normal page scrolling while maximized, so we intentionally DO NOT
@@ -1487,6 +1566,7 @@ const Videos = () => {
                   commentSubmitting={commentMeta?.submitting || false}
                   commentCount={resolvedCommentCount}
                   shouldLoad={shouldLoadVideo}
+                  onUserAvatarClick={handleUserAvatarClick}
                 />
               ) : (
                 <div className="w-full max-w-3xl min-h-screen flex items-center justify-center">

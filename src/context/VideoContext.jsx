@@ -49,7 +49,8 @@ export const VideoProvider = ({ children }) => {
                       isLocal: false,
                       job_id: video.job_id,
                       // Merge any additional server-provided video metadata
-                      ...data.video
+                      ...data.video,
+                      uploaderRole: data.video?.uploaderRole || data.video?.uploader_role || video.uploaderRole || video.uploader_role || null
                     }
                   };
                 } else if (data.status === 'failed') {
@@ -134,6 +135,8 @@ export const VideoProvider = ({ children }) => {
       progress: 0,
       submitted_at: new Date().toISOString()
     };
+    // Normalize uploaderRole
+    if (!newVideo.uploaderRole && newVideo.uploader_role) newVideo.uploaderRole = newVideo.uploader_role;
     setVideos(prev => [...prev, newVideo]);
     console.log('[VideoContext] Added new local video:', newVideo);
     return newVideo;
@@ -156,7 +159,7 @@ export const VideoProvider = ({ children }) => {
         if (video.id === tempId) {
           updated = true;
           console.log(`[VideoContext] Transitioning video ID from ${tempId} to ${serverId}.`);
-          return { ...video, id: serverId, ...initialUpdates };
+          return { ...video, id: serverId, ...initialUpdates, uploaderRole: initialUpdates.uploaderRole || video.uploaderRole || video.uploader_role || null };
         }
         return video;
       });
@@ -201,6 +204,7 @@ export const VideoProvider = ({ children }) => {
         });
 
         formData.append('video', videoFile);
+        if (video.uploaderRole) formData.append('uploaderRole', video.uploaderRole);
         formData.append('title', video.video_title);
         formData.append('jobId', video.job_id || ''); // Use the stored jobId
         formData.append('hashtags', video.hashtags);
