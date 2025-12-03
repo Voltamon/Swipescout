@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useCallback } from 'react';
 import { searchCandidates, connectWithCandidate } from '@/services/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
 import { Label } from '@/components/UI/label.jsx';
@@ -62,24 +62,15 @@ export default function CandidateSearchPage() {
     { value: "phd", label: "PhD" }
   ];
 
-  useEffect(() => {
-    fetchCandidates();
-  }, []);
+  // fetchCandidates will be declared as a memoized useCallback further below
 
   const { connectionMap, refresh: refreshConnections } = useConnectionMap();
   const [openConversation, setOpenConversation] = useState(null);
   const [openChat, setOpenChat] = useState(false);
 
-  const loadFilterOptions = async () => {
-    try {
-      const response = await getFilterOptions();
-      setFilterOptions(response.data);
-    } catch (error) {
-      console.error('Error loading filter options:', error);
-    }
-  };
+  // loadFilterOptions removed as it referenced undefined getFilterOptions & setFilterOptions
 
-  const fetchCandidates = async (currentPage = 1) => {
+  const fetchCandidates = useCallback(async (currentPage = 1) => {
     setLoading(true);
     setError(null);
     try {
@@ -103,7 +94,12 @@ export default function CandidateSearchPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, skills, experienceLevel, location, educationLevel]);
+
+  // Fetch on first load and whenever search params change (fetchCandidates is memoized)
+  useEffect(() => {
+    fetchCandidates(1);
+  }, [fetchCandidates]);
 
   const handleSearch = () => {
     setPage(1);
@@ -217,35 +213,7 @@ export default function CandidateSearchPage() {
             <Eye className="h-4 w-4 mr-1" />
             View
           </Button>
-          const fetchCandidates = useCallback(async (currentPage = 1) => {
-            setLoading(true);
-            setError(null);
-            try {
-              const searchParams = {
-                q: searchTerm,
-                skills: skills || undefined,
-                experienceLevel: experienceLevel === "any" ? undefined : experienceLevel,
-                location: location || undefined,
-                educationLevel: educationLevel === "any" ? undefined : educationLevel,
-                page: currentPage,
-                limit: 12
-              };
-
-              const response = await searchCandidates(searchParams);
-              setCandidates(response.data.candidates || []);
-              setTotalPages(response.data.totalPages || 1);
-              setPage(currentPage);
-            } catch (error) {
-              console.error('Error fetching candidates:', error);
-              setError('Failed to fetch candidates. Please try again.');
-            } finally {
-              setLoading(false);
-            }
-          }, [searchTerm, skills, experienceLevel, location, educationLevel]);
-
-          useEffect(() => {
-            fetchCandidates(1);
-          }, [fetchCandidates]);
+          <Button
             variant="secondary"
             size="sm"
             className="flex-1"
