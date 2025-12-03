@@ -2,6 +2,7 @@
 import { useVideoContext } from '@/contexts/VideoContext';
 import { useNavigate } from 'react-router-dom';
 import api, { deleteVideo } from '@/services/api';
+import normalizeRole from '@/utils/normalizeRole';
 import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
@@ -83,8 +84,10 @@ export default function VideosPage({ setVideoTab }) {
     try {
       setLoading(true);
       console.log('[VideosPage] Fetching videos for page:', pageNum);
-      // Pass the active role to the server so it can filter by uploader_role
-      const activeRole = role ? (Array.isArray(role) ? role[0] : role) : null;
+  // Pass the active role to the server so it can filter by uploader_role
+  const activeRoleRaw = role ? (Array.isArray(role) ? role[0] : role) : null;
+  // Normalize role to server format (job_seeker / employer)
+  const activeRole = normalizeRole(activeRoleRaw);
       const params = { page: pageNum, limit: VIDEOS_PER_PAGE };
       if (activeRole) params.role = activeRole;
       const response = await api.get('/videos', { params });
@@ -213,8 +216,8 @@ export default function VideosPage({ setVideoTab }) {
       });
       return;
     }
-  // role is an array, check if it includes 'employer'
-  const isEmployer = role && Array.isArray(role) && role.includes('employer');
+  // role is an array, check if it includes 'employer' (normalize)
+  const isEmployer = role && Array.isArray(role) && role.some(r => normalizeRole(r) === 'employer');
     console.log('[VideosPage] Upload button clicked:', {
       user: user,
       role: user?.role,

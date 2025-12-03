@@ -393,6 +393,7 @@ export const createNotification = (notificationData) => api.post('/notifications
 export const testNotification = (notificationData) => api.post('/notifications/test', notificationData);
 export const sendBulkNotifications = (notificationData) => api.post('/notifications/bulk', notificationData);
 export const registerNotificationDevice = (payload) => api.post('/notifications/register', payload);
+export const deregisterNotificationDevice = () => api.delete('/notifications/register');
 
 // AI
 export const getAutoInitialInterviewResults = (userId, videoId) => api.get(`/ai/interview-results/${userId}/${videoId}`);

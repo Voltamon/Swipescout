@@ -142,6 +142,10 @@ export const updateUserSettings = async (settings) => {
           systemUpdates: true
         }
       };
+      // Persist desktop notifications preference to server-side user.notificationSettings
+      if (ui.desktop_notifications !== undefined) {
+        mapped.desktop_notifications = !!ui.desktop_notifications;
+      }
       const res = await axios.put(`${API_BASE_URL}/notifications/settings`, { settings: mapped }, { headers: getAuthHeader() });
       results.notifications = res.data;
     }

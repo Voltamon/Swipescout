@@ -1,5 +1,6 @@
 ﻿/* eslint-disable react-refresh/only-export-components -- TODO: move context helpers (non-component exports) to separate files */
 import { createContext, useState, useEffect, useMemo, useCallback, useContext } from "react";
+import normalizeRole from '@/utils/normalizeRole';
 import { getAuth, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, browserLocalPersistence, signOut, setPersistence } from "firebase/auth";
 import { app } from "../firebase-config.js";
 import { useNavigate } from "react-router-dom";
@@ -16,8 +17,8 @@ export const AuthProvider = ({ children }) => {
 
 	const TOKEN_REFRESH_BUFFER = 5 * 60 * 1000; // 5 minutes buffer
 
-	// Helper: normalize role into array or null
-	const normalizeRole = (r) => {
+	// Helper: parse role into array or null (no normalization) - keeps original spelling
+	const parseRoles = (r) => {
 		if (r == null) return null;
 		if (Array.isArray(r)) return r;
 		if (typeof r === "string") {
@@ -49,10 +50,12 @@ export const AuthProvider = ({ children }) => {
 	});
 
 	// `roles` - canonical list stored in localStorage (persisted across tabs)
-	const [roles, setRoles] = useState(() => {
-		try {
-			const raw = localStorage.getItem("roles") || localStorage.getItem("role");
-			return normalizeRole(raw);
+		const [roles, setRoles] = useState(() => {
+			try {
+				const raw = localStorage.getItem("roles") || localStorage.getItem("role");
+				const parsed = parseRoles(raw);
+				// Normalize each role string to canonical form
+				return parsed && parsed.length ? parsed.map(r => normalizeRole(r)) : null;
 		} catch (e) {
 			console.error("Failed to parse roles from localStorage", e);
 			return null;
@@ -60,13 +63,14 @@ export const AuthProvider = ({ children }) => {
 	});
 
 	// `role` - active role for this tab. Stored in sessionStorage to allow multiple logged-in roles per browser.
-	const [role, setRole] = useState(() => {
+		const [role, setRole] = useState(() => {
 		try {
 			const active = sessionStorage.getItem('activeRole');
 			if (active) return active;
 			const raw = localStorage.getItem("roles") || localStorage.getItem("role");
-			const parsed = normalizeRole(raw);
-			return parsed && parsed.length ? parsed[0] : null;
+			const parsed = parseRoles(raw);
+			const normalized = parsed && parsed.length ? parsed.map(p => normalizeRole(p)) : null;
+			return normalized && normalized.length ? normalized[0] : null;
 		} catch (e) {
 			console.error('Failed to initialize active role from storage', e);
 			return null;
@@ -92,7 +96,8 @@ export const AuthProvider = ({ children }) => {
 			};
 			localStorage.setItem("user", JSON.stringify(userWithRefreshToken));
 			// store roles as JSON so arrays are preserved (backend may send array or CSV/string)
-			const normalized = normalizeRole(userData?.role);
+			const parsedRoles = parseRoles(userData?.role);
+			const normalized = parsedRoles && parsedRoles.length ? parsedRoles.map(r => normalizeRole(r)) : null;
 			localStorage.setItem("roles", JSON.stringify(normalized));
 			localStorage.setItem("role", JSON.stringify(normalized)); // legacy
 			// update in-memory roles and active role

@@ -12,6 +12,7 @@ import {
   markAllNotificationsAsUnread,
   deleteNotification
 } from '@/services/api';
+import normalizeRole from '@/utils/normalizeRole';
 
 const NotificationContext = createContext({
   notifications: [],
@@ -147,12 +148,10 @@ export const NotificationProvider = ({ children }) => {
     
   const onNotification = (notif) => {
       try {
-  const currentRole = getCurrentRole();
-  const normalizeRole = (r) => (typeof r === 'string' ? r.toLowerCase().replace(/[-\s]/g, '_') : r);
-  const currentRoleNorm = normalizeRole(currentRole);
+  const currentRole = normalizeRole(getCurrentRole());
   const notifRoleNorm = normalizeRole(notif.role);
         // If notification has a role, only show when current role matches; if no role set, treat as global
-  if (!currentRole || !notif.role || notifRoleNorm === currentRoleNorm) {
+  if (!currentRole || !notif.role || notifRoleNorm === currentRole) {
           // Prepend to list
           setNotifications(prev => [notif, ...prev]);
 
@@ -213,13 +212,21 @@ export const NotificationProvider = ({ children }) => {
             const reg = await navigator.serviceWorker.register('/service-worker.js');
             const subscription = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: payload?.vapidKey || null });
             // Send push subscription or fcmToken to server to register
-            await import('@/services/api').then(m => m.registerNotificationDevice({ pushSubscription: subscription }));
+            const regRes = await import('@/services/api').then(m => m.registerNotificationDevice({ pushSubscription: subscription }));
+            const device = regRes?.data?.device || regRes?.device;
+            try {
+              if (device) localStorage.setItem('pushDevice', JSON.stringify(device));
+            } catch(e) { /* ignore storage failures */ }
           } catch (err) {
-            // If push manager not supported or fails, fallback to fcmToken flow (not implemented here) or store flag
-            await import('@/services/api').then(m => m.registerNotificationDevice({ fcmToken: null }));
+            // If push manager not supported or fails, explicitly call deregister endpoint
+            const deregRes = await import('@/services/api').then(m => m.deregisterNotificationDevice());
+            try {
+              localStorage.removeItem('pushDevice');
+            } catch(e) { /* ignore */ }
           }
-        } else {
-          await import('@/services/api').then(m => m.registerNotificationDevice({ fcmToken: null }));
+          } else {
+            const deregRes = await import('@/services/api').then(m => m.deregisterNotificationDevice());
+            try { localStorage.removeItem('pushDevice'); } catch(e) {}
         }
         return true;
       }

@@ -29,7 +29,7 @@ import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { ScrollArea } from '@/components/UI/scroll-area.jsx';
-import { cn } from '@/lib/utils';
+import { cn, getDisplayName } from '@/lib/utils';
 
 // Ensure axios sends cookies by default (helps when backend uses session cookies)
 axios.defaults.withCredentials = true;
@@ -81,6 +81,8 @@ const _extractBoolean = (obj, candidates = [], fallback = false) => {
   return fallback;
 };
 
+// Reuse shared helper getDisplayName from utils to build a readable display name
+
 const normalizeVideoFromApi = (v) => {
   if (!v) return v;
   const likes = _extractNumber(v, ['likes', 'likes_count', 'likesCount'], 0);
@@ -108,7 +110,9 @@ const normalizeVideoFromApi = (v) => {
     views,
     // Uploader metadata normalization - multiple backend shapes supported
     uploaderId: v.uploaderId || v.uploader_id || v.userId || v.user_id || v.ownerId || v.owner_id || v.createdBy || v.created_by || (v.uploader && (v.uploader.id || v.uploader.userId || v.uploader.user_id)),
-    uploaderName: v.uploaderName || v.uploader_name || (v.user && (v.user.displayName || v.user.display_name || v.user.name)) || (v.uploader && (v.uploader.name || v.uploader.displayName)) || null,
+    // Compose uploaderName from many possible backend shapes
+    uploaderName: v.uploaderName || v.uploader_name || v.ownerName || v.owner_name || v.createdByName || v.created_by_name ||
+      getDisplayName(v.user) || getDisplayName(v.uploader) || getDisplayName(v) || null,
     uploaderAvatar: (function(){
       const cand = v.uploaderAvatar || v.uploader_avatar || v.avatar || (v.user && (v.user.avatar || v.user.profilePicture || v.user.picture)) || (v.uploader && (v.uploader.avatar || v.uploader.profilePicture || v.uploader.picture));
       if (!cand) return null;
@@ -423,14 +427,14 @@ const VideoCard = React.memo(({
                 aria-label={video.uploaderName || 'View uploader profile'}
               >
                 <Avatar className="h-9 w-9 flex-shrink-0">
-                  <AvatarImage src={video.uploaderAvatar || video.uploader?.avatar || video.user?.avatar} alt={video.uploaderName || 'User'} />
+                  <AvatarImage src={video.uploaderAvatar || video.uploader?.avatar || video.user?.avatar || video.user?.photoUrl || video.user?.profile_pic || video.user?.profilePicture} alt={video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile) || 'User'} />
                   <AvatarFallback className="bg-purple-500 text-white text-xs">
-                    <User className="h-4 w-4" />
+                    { (video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile)) ? (String((video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile))[0]).toUpperCase()) : <User className="h-4 w-4" /> }
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-white truncate">{video.uploaderName || video.uploader?.name || video.user?.name || 'Anonymous User'}</p>
+                    <p className="text-sm font-semibold text-white truncate">{video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile) || getDisplayName(video.uploader) || 'Anonymous User'}</p>
                     {video.uploaderRole && (
                       <Badge className="text-xs bg-white/10 text-white border-white/20 capitalize">
                         {String(video.uploaderRole).replace('_', ' ')}

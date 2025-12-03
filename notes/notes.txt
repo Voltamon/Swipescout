@@ -142,3 +142,31 @@ choose the best
  for points system which thing not fully implemented in frontend yes that allow some points earned from interactions by user then some amount of them can converted to a subscription kind
 
  
+ on notifications :
+
+ Notes and suggestions
+
+For higher quality assurance, adding a simple integration test (using supertest in the backend suite) for:
+POST /notifications/register should save and return device payload.
+DELETE /notifications/register should clear and return device payload with nulls.
+PUT /notifications/settings should set desktop_notifications inside user.notificationSettings.
+Optionally consider:
+Returning the updated notificationSettings in the register/deregister responses if you want the UI to use this to update available settings without additional API calls.
+Implementing multi-device support (array of subscriptions) if that's needed for multi-device persistence.
+Consolidating notification settings schema (UserSettings vs. user.notificationSettings), because both the UserSettings entity and user.notificationSettings JSONB are currently in play — this can lead to some duplication or mismatch if both are used for overlapping properties. Consider centralizing values in one canonical place to avoid future confusion.
+Build notes:
+Frontend: cd d:\_projts\frontend && yarn build (build succeeded in this session).
+Backend: cd d:\_projts\backend && npm run build (the backend also built successfully earlier in the session; one build attempt showed errors unrelated to our changes — those are existing issues in other files).
+Next steps (optional)
+
+Add automated tests for the register/deregister endpoints.
+Update the UI to show live “device registered” status, not only toasts, e.g., show the endpoint or a toggle status that indicates the server state.
+Consider small consolidation or migration to standardize where notification preferences are stored (UserSettings vs user.notificationSettings).
+Add more robust error handling & user messages for push permission errors or invalid subscriptions.
+If you'd like, I can:
+
+Add a supertest-based backend test for the register/deregister flow and the update notification settings flow.
+Update the UI to display the registered device info in Settings (instead of just a toast).
+Add an optional server-side log entry/analytics event for device registration/deregistration.
+Which of these would you like next?
+

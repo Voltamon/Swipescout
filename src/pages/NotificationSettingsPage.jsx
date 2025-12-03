@@ -6,6 +6,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { testNotification } from '@/services/api';
 import { getUserSettings, updateUserSettings } from '@/services/userService';
+import { registerNotificationDevice } from '@/services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Switch } from '@/components/UI/switch.jsx';
@@ -36,7 +37,8 @@ const NotificationSettingsPage = () => {
     quiet_hours_enabled: false,
     quiet_hours_start: '22:00',
     quiet_hours_end: '08:00',
-    notification_frequency: 'immediate'
+    notification_frequency: 'immediate',
+    desktop_notifications: false
   });
   
   const [loading, setLoading] = useState(true);
@@ -72,7 +74,8 @@ const NotificationSettingsPage = () => {
         notification_frequency: 'immediate'
       };
 
-      setSettings(prev => ({ ...prev, ...normalized }));
+  const desktopEnabled = (notif.desktop_notifications !== undefined) ? !!notif.desktop_notifications : ((typeof Notification !== 'undefined' && Notification.permission === 'granted') || (localStorage.getItem('desktopNotificationsEnabled') === 'true'));
+  setSettings(prev => ({ ...prev, ...normalized, desktop_notifications: desktopEnabled }));
     } catch (error) {
       console.error('Failed to fetch notification settings:', error);
       toast({ description: "Failed to load settings", variant: "destructive" });
@@ -100,8 +103,12 @@ const NotificationSettingsPage = () => {
         weeklyDigest: !!settings.weekly_digest,
         profileViews: false // no direct control on this page yet
       };
+      // Include desktop preference so it can be persisted server-side
+      mapped.desktop_notifications = !!settings.desktop_notifications;
 
-      await updateUserSettings({ notifications: mapped });
+  await updateUserSettings({ notifications: mapped });
+  // Save desktop notifications preference locally
+  localStorage.setItem('desktopNotificationsEnabled', settings.desktop_notifications ? 'true' : 'false');
       toast({ description: "Settings saved successfully!" });
     } catch (error) {
       console.error('Failed to save notification settings:', error);
@@ -191,6 +198,7 @@ const NotificationSettingsPage = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-cyan-600" />
                 <div>
@@ -203,8 +211,6 @@ const NotificationSettingsPage = () => {
                 onCheckedChange={(checked) => handleSettingChange('email_notifications', checked)}
               />
             </div>
-
-            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Bell className="h-5 w-5 text-purple-600" />
                 <div>
@@ -214,7 +220,75 @@ const NotificationSettingsPage = () => {
               </div>
               <Switch
                 checked={settings.push_notifications}
-                onCheckedChange={(checked) => handleSettingChange('push_notifications', checked)}
+                onCheckedChange={async (checked) => {
+                  handleSettingChange('push_notifications', checked);
+                  // If user is enabling push and desktop notifications are available but permission is default,
+                  // offer to enable native notifications automatically.
+                  if (checked && !settings.desktop_notifications && typeof Notification !== 'undefined' && Notification.permission === 'default') {
+                    const ok = await enableNativeNotifications();
+                    if (ok) {
+                      handleSettingChange('desktop_notifications', true);
+                      localStorage.setItem('desktopNotificationsEnabled', 'true');
+                      toast({ description: 'Desktop notifications enabled' });
+                    }
+                  }
+                }}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Bell className="h-5 w-5 text-purple-600" />
+                <div>
+                  <Label className="font-medium">Desktop Notifications</Label>
+                  <p className="text-sm text-gray-600">Enable desktop (native) notifications</p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.desktop_notifications}
+                onCheckedChange={async (checked) => {
+                  // If enabling, request permission and register device via enableNativeNotifications
+                  if (checked) {
+                    const ok = await enableNativeNotifications();
+                    if (ok) {
+                      toast({ description: 'Desktop notifications enabled' });
+                      localStorage.setItem('desktopNotificationsEnabled', 'true');
+                      handleSettingChange('desktop_notifications', true);
+                      // Try to show the server-registered endpoint if available
+                      try {
+                        const dev = JSON.parse(localStorage.getItem('pushDevice'));
+                        if (dev && dev.pushSubscription && dev.pushSubscription.endpoint) {
+                          toast({ description: 'Push subscription registered for endpoint: ' + dev.pushSubscription.endpoint });
+                        }
+                      } catch (e) { /* ignore parse errors */ }
+                    } else {
+                      toast({ description: 'Notification permission denied', variant: 'destructive' });
+                      handleSettingChange('desktop_notifications', false);
+                    }
+                  } else {
+                    // Disable: attempt to deregister the device server-side by posting fcmToken: null
+                    try {
+                      // Use explicit DELETE endpoint to unregister device
+                      try {
+                        const { deregisterNotificationDevice } = await import('@/services/api');
+                        const resp = await deregisterNotificationDevice();
+                        const device = resp?.data?.device || resp?.device;
+                        if (device && device.pushSubscription && device.pushSubscription.endpoint) {
+                          toast({ description: 'Device unregistered: ' + device.pushSubscription.endpoint });
+                        }
+                      } catch (err) {
+                        // fallback to calling register with null if DELETE isn't available
+                        await registerNotificationDevice({ fcmToken: null });
+                      }
+                    } catch (err) {
+                      // ignore errors; we still toggle locally
+                      console.warn('Failed to unregister notification device', err);
+                    }
+                    localStorage.setItem('desktopNotificationsEnabled', 'false');
+                    handleSettingChange('desktop_notifications', false);
+                    toast({ description: 'Desktop notifications disabled' });
+                  }
+                }}
               />
             </div>
 

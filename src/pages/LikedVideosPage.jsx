@@ -31,6 +31,7 @@ import {
   Filter,
   SortAsc
 } from 'lucide-react';
+import { cn, getDisplayName } from '@/lib/utils';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -42,7 +43,7 @@ function normalizeVideo(v) {
     description: v.description || v.videoDescription || v.video_description || '',
     videoUrl: v.videoUrl || v.video_url || v.secure_url || '',
     thumbnail: v.thumbnail || v.thumbnailUrl || v.thumbnail_url || null,
-    uploaderName: v.uploaderName || v.uploader_name || (v.user && (v.user.displayName || v.user.display_name)) || null,
+    uploaderName: v.uploaderName || v.uploader_name || getDisplayName(v.user) || getDisplayName(v.user?.jobSeekerProfile) || getDisplayName(v.user?.employerProfile) || getDisplayName(v.uploader) || null,
     uploaderType: v.uploaderType || v.uploader_type || (v.user && v.user.role) || null,
     likedAt: v.likedAt || v.liked_at || null,
     createdAt: v.createdAt || v.submittedAt || v.submitted_at || null,
