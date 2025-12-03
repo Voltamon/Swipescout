@@ -70,6 +70,7 @@ import CookieConsentBanner from "./components/CookieConsentBanner";
 
 import NotificationsPage from "./pages/NotificationsPage";
 import NotificationsRedirect from './pages/NotificationsRedirect';
+import NotificationDebugPage from "./pages/NotificationDebugPage";
 import { useAuth } from "./contexts/AuthContext";
 import { Cloudinary } from "@cloudinary/url-gen";
 
@@ -238,6 +239,9 @@ function App() {
             <Route path="/employer-tabs" element={<EmployerTabs />} />
             <Route path="/jobseeker-tabs" element={<JobseekerTabs />} />
             <Route path="/admin-tabs" element={<AdminTabs />} />
+
+            {/* Debug Routes (Development) */}
+            <Route path="/debug/notifications" element={<NotificationDebugPage />} />
 
             {/* Private Routes */}
             <Route element={<ProtectedRoute />}>

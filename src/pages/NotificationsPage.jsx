@@ -15,13 +15,8 @@ const NotificationsPage = () => {
   const [filter, setFilter] = useState('all'); // all, unread, read
 
   useEffect(() => {
-    (async () => {
-      const fetched = await refresh();
-      // If there are unread notifications, mark them read when the page opens
-      if (fetched && fetched.some(n => !n.read)) {
-        await markAllRead();
-      }
-    })();
+    // Just refresh notifications, don't auto-mark as read
+    refresh();
   }, []);
 
   const handleMarkAsRead = async (id) => {

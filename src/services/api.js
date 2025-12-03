@@ -218,7 +218,7 @@ export const updateUserEducation = (id, education) => api.put(`/education/${id}`
 export const deleteUserEducation = (id) => api.delete(`/education/${id}`);
 
 // Video listings & paginator
-export const getUserVideos = () => api.get('/videos');
+export const getUserVideos = (role) => api.get('/videos', { params: { role } });
 // Allow optional filter params to be passed (e.g. { title, uploader, status })
 export const getAllVideos = (page = 1, limit = 10, filters = {}) => {
   // Remove empty/null/undefined filter values so backend doesn't receive blank params
@@ -373,8 +373,15 @@ export const getApplications = () => api.get('/job/applications');
 export const getJobApplications = (jobId) => api.get(`/employer/job/${jobId}/applications`);
 
 // Notifications
-export const getNotifications = (page = 1, limit = 20, unreadOnly = false) => api.get('/notifications', { params: { page, limit, unreadOnly } });
-export const getUnreadNotificationCount = () => api.get('/notifications/unread-count');
+export const getNotifications = (page = 1, limit = 20, unreadOnly = false, role = null) => {
+  const params = { page, limit, unreadOnly };
+  if (role) params.role = role;
+  return api.get('/notifications', { params });
+};
+export const getUnreadNotificationCount = (role = null) => {
+  const params = role ? { role } : {};
+  return api.get('/notifications/unread-count', { params });
+};
 export const markNotificationAsRead = (notificationId) => api.patch(`/notifications/${notificationId}/read`);
 export const markNotificationAsUnread = (notificationId) => api.patch(`/notifications/${notificationId}/unread`);
 export const markAllNotificationsAsRead = () => api.patch('/notifications/mark-all-read');

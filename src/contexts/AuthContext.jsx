@@ -48,12 +48,27 @@ export const AuthProvider = ({ children }) => {
 		}
 	});
 
+	// `roles` - canonical list stored in localStorage (persisted across tabs)
+	const [roles, setRoles] = useState(() => {
+		try {
+			const raw = localStorage.getItem("roles") || localStorage.getItem("role");
+			return normalizeRole(raw);
+		} catch (e) {
+			console.error("Failed to parse roles from localStorage", e);
+			return null;
+		}
+	});
+
+	// `role` - active role for this tab. Stored in sessionStorage to allow multiple logged-in roles per browser.
 	const [role, setRole] = useState(() => {
 		try {
-			const storedRole = localStorage.getItem("role");
-			return normalizeRole(storedRole);
+			const active = sessionStorage.getItem('activeRole');
+			if (active) return active;
+			const raw = localStorage.getItem("roles") || localStorage.getItem("role");
+			const parsed = normalizeRole(raw);
+			return parsed && parsed.length ? parsed[0] : null;
 		} catch (e) {
-			console.error("Failed to parse role from localStorage", e);
+			console.error('Failed to initialize active role from storage', e);
 			return null;
 		}
 	});
@@ -76,11 +91,22 @@ export const AuthProvider = ({ children }) => {
 				refresh_token: refreshToken
 			};
 			localStorage.setItem("user", JSON.stringify(userWithRefreshToken));
-			// store role as JSON so arrays are preserved (backend may send array or CSV/string)
+			// store roles as JSON so arrays are preserved (backend may send array or CSV/string)
 			const normalized = normalizeRole(userData?.role);
-			localStorage.setItem("role", JSON.stringify(normalized));
-			// update in-memory role as array or null
-			setRole(normalized);
+			localStorage.setItem("roles", JSON.stringify(normalized));
+			localStorage.setItem("role", JSON.stringify(normalized)); // legacy
+			// update in-memory roles and active role
+			setRoles(normalized);
+			const curActive = sessionStorage.getItem('activeRole');
+			if (!curActive) {
+				const defaultActive = normalized && normalized.length ? normalized[0] : null;
+				if (defaultActive) {
+					sessionStorage.setItem('activeRole', defaultActive);
+					setRole(defaultActive);
+				} else {
+					setRole(null);
+				}
+			}
 		}
 	};
 
@@ -91,6 +117,8 @@ export const AuthProvider = ({ children }) => {
 		localStorage.removeItem("refreshExpiresTime");
 		localStorage.removeItem("user");
 		localStorage.removeItem("role");
+		localStorage.removeItem("roles");
+		sessionStorage.removeItem('activeRole');
 		localStorage.removeItem("persistentToken");
 	};
 
@@ -163,6 +191,61 @@ export const AuthProvider = ({ children }) => {
 		}
 	}, [apiUrl, navigate, auth]);
 
+	// Switch the active role for the current tab
+	const switchActiveRole = useCallback((newRole) => {
+		try {
+			if (!newRole) {
+				sessionStorage.removeItem('activeRole');
+				setRole(null);
+				return;
+			}
+			if (roles && roles.includes(newRole)) {
+				sessionStorage.setItem('activeRole', newRole);
+				setRole(newRole);
+			} else {
+				console.warn('switchActiveRole: role not in roles list', newRole, roles);
+			}
+		} catch (e) {
+			console.error('switchActiveRole error', e);
+		}
+	}, [roles]);
+
+	// Log out only active role for this tab (not all roles). This will remove the
+	// role from the roles list stored in localStorage and unset the active role in
+	// session storage. If this was the user's only role, fall back to full logout.
+	const logoutRole = useCallback(async (roleToLogout) => {
+		try {
+			const currentRole = roleToLogout || role;
+			if (!currentRole) return;
+			if (!roles || roles.length <= 1) {
+				// No multi-role support: perform a full logout
+				await logout();
+				return;
+			}
+			// Remove this role from the stored roles
+			const updated = (roles || []).filter(r => r !== currentRole);
+			setRoles(updated);
+			localStorage.setItem('roles', JSON.stringify(updated));
+			// legacy key maintained
+			localStorage.setItem('role', JSON.stringify(updated));
+			// If active role was removed, assign a fallback for this tab
+			const currentActive = sessionStorage.getItem('activeRole');
+			if (currentActive === currentRole) {
+				const fallback = updated.length ? updated[0] : null;
+				if (fallback) {
+					sessionStorage.setItem('activeRole', fallback);
+					setRole(fallback);
+				} else {
+					sessionStorage.removeItem('activeRole');
+					setRole(null);
+				}
+			}
+			// Do NOT clear tokens (full session) — this logs out only role usage in the UI
+		} catch (e) {
+			console.error('logoutRole error', e);
+		}
+	}, [roles, role, logout]);
+
 	const checkAuth = useCallback(async (options = { silent: false }) => {
 		try {
 			setLoading(true);
@@ -215,10 +298,9 @@ export const AuthProvider = ({ children }) => {
 			"/community-guidelines",
 			"/copyright-ip-terms",
 			"/eula"
-		];			
-			   
-	 
-		const isPublicRoute = publicRoutes.some(route => {
+		];            
+               
+			const isPublicRoute = publicRoutes.some(route => {
 			// Handle dynamic routes like '/jobseeker-profile/:id'
 			if (route.includes(":")) {
 				const basePath = route.split("/:")[0];
@@ -307,6 +389,7 @@ export const AuthProvider = ({ children }) => {
 		localStorage.setItem("user", JSON.stringify(safeUser));
 		// store role as JSON
 		const normalized = normalizeRole(safeUser.role);
+		localStorage.setItem("roles", JSON.stringify(normalized));
 		localStorage.setItem("role", JSON.stringify(normalized));
 		
 		if (accessToken) {
@@ -316,7 +399,20 @@ export const AuthProvider = ({ children }) => {
 		}
 		
 		setUser(safeUser);
-		setRole(normalized);
+		setRoles(normalized);
+		// set active role for this tab if not already set
+		const existingActive = sessionStorage.getItem('activeRole');
+		if (!existingActive) {
+			const defaultActive = normalized && normalized.length ? normalized[0] : null;
+			if (defaultActive) {
+				sessionStorage.setItem('activeRole', defaultActive);
+				setRole(defaultActive);
+			} else {
+				setRole(null);
+			}
+		} else {
+			setRole(existingActive);
+		}
 		setFallbackMode(isFallback);
 	};
 
@@ -328,14 +424,31 @@ export const AuthProvider = ({ children }) => {
 
 		localStorage.setItem("accessToken", accessToken);
 		localStorage.setItem("user", JSON.stringify(userWithRefreshToken));
-		// save role as JSON
-		const normalized = normalizeRole(roleArg);
+		// save roles JSON
+		const normalized = normalizeRole(roleArg || userArg?.role);
+		localStorage.setItem("roles", JSON.stringify(normalized));
 		localStorage.setItem("role", JSON.stringify(normalized));
 		localStorage.setItem("accessExpiresTime", (Date.now() + (accessExpiresIn * 1000)).toString());
 		localStorage.setItem("refreshExpiresTime", (Date.now() + (refreshExpiresIn * 1000)).toString());
 
-		setUser(userWithRefreshToken);
-		setRole(normalized);
+			setUser(userWithRefreshToken);
+			setRoles(normalized);
+			const prevActive = sessionStorage.getItem('activeRole');
+			if (roleArg) {
+				const act = Array.isArray(roleArg) ? roleArg[0] : roleArg;
+				sessionStorage.setItem('activeRole', act);
+				setRole(act);
+			} else if (prevActive && normalized && normalized.includes(prevActive)) {
+				setRole(prevActive);
+			} else {
+				const defaultAct = normalized && normalized.length ? normalized[0] : null;
+				if (defaultAct) {
+					sessionStorage.setItem('activeRole', defaultAct);
+					setRole(defaultAct);
+				} else {
+					setRole(null);
+				}
+			}
 		setFallbackMode(firebaseStatus === "fallback");
 		return { success: true, user: userWithRefreshToken, role: normalized, provider };
 	}, []);
@@ -363,7 +476,20 @@ export const AuthProvider = ({ children }) => {
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
 
 			setUser(data.user);
-			setRole(normalizeRole(data.user?.role || null));
+			const normalized = normalizeRole(data.user?.role || null);
+			setRoles(normalized);
+			const prevActive = sessionStorage.getItem('activeRole');
+			if (!prevActive) {
+				const defaultActive = normalized && normalized.length ? normalized[0] : null;
+				if (defaultActive) {
+					sessionStorage.setItem('activeRole', defaultActive);
+					setRole(defaultActive);
+				} else {
+					setRole(null);
+				}
+			} else {
+				setRole(prevActive);
+			}
 			
 			return { success: true, user: data.user };
 			
@@ -417,7 +543,23 @@ export const AuthProvider = ({ children }) => {
 			const data = await response.json();
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
 			setUser(data.user);
-			setRole(normalizeRole(data.user?.role || null));
+			const normalized = normalizeRole(data.user?.role || null);
+			setRoles(normalized);
+			// set active role in this tab
+			const activeFromPending = role; // the role option passed to authenticateWithGoogle is `role` var above
+			if (activeFromPending) {
+				const act = Array.isArray(activeFromPending) ? activeFromPending[0] : activeFromPending;
+				sessionStorage.setItem('activeRole', act);
+				setRole(act);
+			} else {
+				const prevActive = sessionStorage.getItem('activeRole');
+				if (!prevActive && normalized && normalized.length) {
+					sessionStorage.setItem('activeRole', normalized[0]);
+					setRole(normalized[0]);
+				} else {
+					setRole(prevActive || (normalized && normalized.length ? normalized[0] : null));
+				}
+			}
 			return { success: true, user: data.user, role: normalizeRole(data.user?.role || null) };
 		} catch (error) {
 			const isCoopBlocked = error?.message?.includes("Cross-Origin-Opener-Policy");
@@ -490,7 +632,20 @@ export const AuthProvider = ({ children }) => {
 			// Store tokens and user data
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
 			setUser(data.user);
-			setRole(normalizeRole(data.user?.role || null));
+			const normalizedRoles = normalizeRole(data.user?.role || null);
+			setRoles(normalizedRoles);
+			const prevActive = sessionStorage.getItem('activeRole');
+			if (!prevActive) {
+				const defaultActive = normalizedRoles && normalizedRoles.length ? normalizedRoles[0] : null;
+				if (defaultActive) {
+					sessionStorage.setItem('activeRole', defaultActive);
+					setRole(defaultActive);
+				} else {
+					setRole(null);
+				}
+			} else {
+				setRole(prevActive);
+			}
 			return { success: true, user: data.user };
 		} catch (error) {
 			console.error("LinkedIn auth error:", error);
@@ -524,9 +679,21 @@ export const AuthProvider = ({ children }) => {
 
 			// Store all tokens and user data, using data.accessExpiresIn from the backend
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
-			
 			setUser(data.user);
-			setRole(normalizeRole(data.user.role));
+			const normalizedSignupRoles = normalizeRole(data.user.role);
+			setRoles(normalizedSignupRoles);
+			const prevActive = sessionStorage.getItem('activeRole');
+			if (!prevActive) {
+				const defaultActive = normalizedSignupRoles && normalizedSignupRoles.length ? normalizedSignupRoles[0] : null;
+				if (defaultActive) {
+					sessionStorage.setItem('activeRole', defaultActive);
+					setRole(defaultActive);
+				} else {
+					setRole(null);
+				}
+			} else {
+				setRole(prevActive);
+			}
 			
 			return { 
 				success: true, 
@@ -600,7 +767,24 @@ export const AuthProvider = ({ children }) => {
 								data.refreshExpiresIn || 86400
 							);
 							setUser(data.user);
-							setRole(normalizeRole(data.user?.role || null));
+							const normalizedRedirect = normalizeRole(data.user?.role || null);
+							setRoles(normalizedRedirect);
+							const prevActiveRedirect = sessionStorage.getItem('activeRole');
+							if (roleFromPending) {
+								const act = Array.isArray(roleFromPending) ? roleFromPending[0] : roleFromPending;
+								sessionStorage.setItem('activeRole', act);
+								setRole(act);
+							} else if (!prevActiveRedirect) {
+								const defaultActive = normalizedRedirect && normalizedRedirect.length ? normalizedRedirect[0] : null;
+								if (defaultActive) {
+									sessionStorage.setItem('activeRole', defaultActive);
+									setRole(defaultActive);
+								} else {
+									setRole(null);
+								}
+							} else {
+								setRole(prevActiveRedirect);
+							}
 						} else {
 							console.warn('Backend did not accept redirect result', await response.text());
 						}
@@ -652,7 +836,20 @@ export const AuthProvider = ({ children }) => {
 			if (storedUser) {
 				const parsed = JSON.parse(storedUser);
 				setUser(parsed);
-				setRole(normalizeRole(parsed.role));
+				const normalized = normalizeRole(parsed.role);
+				setRoles(normalized);
+				const prevActive = sessionStorage.getItem('activeRole');
+				if (!prevActive) {
+					const defaultActive = normalized && normalized.length ? normalized[0] : null;
+					if (defaultActive) {
+						sessionStorage.setItem('activeRole', defaultActive);
+						setRole(defaultActive);
+					} else {
+						setRole(null);
+					}
+				} else {
+					setRole(prevActive);
+				}
 			}
 		}
 	}, [loading]);
@@ -660,6 +857,7 @@ export const AuthProvider = ({ children }) => {
 	const value = useMemo(
 		() => ({
 			user,
+			roles,
 			role,
 			loading,
 			error,
@@ -672,7 +870,9 @@ export const AuthProvider = ({ children }) => {
 			logout,
 			checkAuth,
 			storeAuthData,
-			refreshTokens
+			switchActiveRole,
+			refreshTokens,
+			logoutRole
 		}),
 		[
 			user,
@@ -688,6 +888,7 @@ export const AuthProvider = ({ children }) => {
 			checkAuth,
 			storeAuthData,
 			refreshTokens
+			,switchActiveRole
 		]
 	);
 
@@ -723,7 +924,20 @@ export const AuthProvider = ({ children }) => {
 								if (data.accessToken && data.refreshToken && data.user) {
 									storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn || 3600, data.refreshExpiresIn || 86400);
 									setUser(data.user);
-									setRole(normalizeRole(data.user?.role || null));
+									const normalizedExchange = normalizeRole(data.user?.role || null);
+									setRoles(normalizedExchange);
+									const prevActiveExchange = sessionStorage.getItem('activeRole');
+									if (!prevActiveExchange) {
+										const defaultActive = normalizedExchange && normalizedExchange.length ? normalizedExchange[0] : null;
+										if (defaultActive) {
+											sessionStorage.setItem('activeRole', defaultActive);
+											setRole(defaultActive);
+										} else {
+											setRole(null);
+										}
+									} else {
+										setRole(prevActiveExchange);
+									}
 								}
 							}
 						} catch (e) {

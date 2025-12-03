@@ -113,9 +113,22 @@ const NotificationSettingsPage = () => {
     try {
       // Build a payload expected by the backend test endpoint
       const currentUserId = user?.id || user?.userId || user?.uid;
+      
+      // Detect current role from URL path to match the notification context filtering
+      const getCurrentRole = () => {
+        const path = window.location.pathname;
+        if (path.startsWith('/employer')) return 'employer';
+        if (path.startsWith('/jobseeker') || path.startsWith('/job-seeker')) return 'job_seeker';
+        return null; // Global notification if on public pages
+      };
+      
+      const currentRole = getCurrentRole();
+      console.log('[NotificationSettings] Sending test notification with role:', currentRole);
+      
       const payload = {
         userId: currentUserId,
-        message: `Test ${testType} notification from UI`
+        message: `Test ${testType} notification from UI`,
+        role: currentRole // Include role so it matches the current dashboard context
       };
 
       await testNotification(payload);

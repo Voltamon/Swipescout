@@ -10,7 +10,9 @@
   Building2,
   Edit,
   MessageSquare,
-  HelpCircle
+  HelpCircle,
+  BookOpen,
+  Info
 } from "lucide-react";
 
 import CandidateSearchPage from "../pages/CandidateSearchPage.jsx";
@@ -190,6 +192,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.hiringTips"),
         icon: { name: "BookOpen" },
+        component: null, // External link, no component needed
         path: "/blog",
         externalLink: true,
         description: t("employerTabs:descriptions.hiringTips")
@@ -197,6 +200,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.aboutUs"),
         icon: { name: "Info" },
+        component: null, // External link, no component needed
         path: "/about",
         externalLink: true,
         description: t("employerTabs:descriptions.aboutUs")

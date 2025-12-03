@@ -512,20 +512,20 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 )}
               </button>
               {showRoleMenu.google && (
-                <div className="absolute z-10 top-full mt-2 w-full bg-white border-2 border-indigo-200 rounded-lg shadow-xl py-1 animate-scale-in">
+                <div className="absolute z-10 top-full mt-2 w-full bg-white border-2 border-indigo-200 rounded-lg shadow-lg py-1 animate-scale-in min-w-[220px]">
                   <button
                     onClick={() => handleGoogleSignInWithRole('job_seeker')}
                     className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-indigo-50 transition-colors duration-200 flex items-center gap-2"
                   >
                     <User className="w-4 h-4" />
-                    {t('auth:menu.signUpAsJobSeeker')}
+                    {activeTab === 0 ? t('auth:menu.signInAsJobSeeker', { defaultValue: t('auth:menu.signUpAsJobSeeker') }) : t('auth:menu.signUpAsJobSeeker')}
                   </button>
                   <button
                     onClick={() => handleGoogleSignInWithRole('employer')}
                     className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-indigo-50 transition-colors duration-200 flex items-center gap-2"
                   >
                     <Building2 className="w-4 h-4" />
-                    {t('auth:menu.signUpAsEmployer')}
+                    {activeTab === 0 ? t('auth:menu.signInAsEmployer', { defaultValue: t('auth:menu.signUpAsEmployer') }) : t('auth:menu.signUpAsEmployer')}
                   </button>
                 </div>
               )}
@@ -552,20 +552,20 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 )}
               </button>
               {showRoleMenu.linkedin && (
-                <div className="absolute z-10 top-full mt-2 w-full bg-white border-2 border-blue-200 rounded-lg shadow-xl py-1 animate-scale-in">
+                <div className="absolute z-10 top-full mt-2 w-full bg-white border-2 border-blue-200 rounded-lg shadow-lg py-1 animate-scale-in min-w-[220px]">
                   <button
                     onClick={() => handleLinkedInSignInWithRole('job_seeker')}
                     className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-2"
                   >
                     <User className="w-4 h-4" />
-                    {t('auth:menu.signUpAsJobSeeker')}
+                    {activeTab === 0 ? t('auth:menu.signInAsJobSeeker', { defaultValue: t('auth:menu.signUpAsJobSeeker') }) : t('auth:menu.signUpAsJobSeeker')}
                   </button>
                   <button
                     onClick={() => handleLinkedInSignInWithRole('employer')}
                     className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-2"
                   >
                     <Building2 className="w-4 h-4" />
-                    {t('auth:menu.signUpAsEmployer')}
+                    {activeTab === 0 ? t('auth:menu.signInAsEmployer', { defaultValue: t('auth:menu.signUpAsEmployer') }) : t('auth:menu.signUpAsEmployer')}
                   </button>
                 </div>
               )}

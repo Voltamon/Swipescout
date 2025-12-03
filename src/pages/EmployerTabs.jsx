@@ -25,7 +25,9 @@ import {
   Eye,
   UserPlus,
   TrendingUp,
-  FileText
+  FileText,
+  BookOpen,
+  Info
 } from 'lucide-react';
  
 const EmployerTabs = () => {
@@ -97,6 +99,8 @@ const EmployerTabs = () => {
     Edit: Edit,
     ChatIcon: MessageSquare,
     HelpIcon: HelpCircle,
+    BookOpen: BookOpen,
+    Info: Info,
   };
 
   // Build navigation items from config
@@ -105,11 +109,16 @@ const EmployerTabs = () => {
       .filter((tab) => !tab.hideInSidebar) // Filter out hidden tabs
       .map((tab) => {
         const IconComponent = iconMap[tab.icon.name] || BarChart3;
-        return {
+        const navItem = {
           label: tab.label,
           icon: IconComponent,
-          path: `/employer-tabs?group=${category.key}&tab=${tab.path}`,
+          path: tab.externalLink ? tab.path : `/employer-tabs?group=${category.key}&tab=${tab.path}`,
+          externalLink: tab.externalLink || false,
+          // Force active styling for certain items that should look like other nav items
+          forceActiveStyle: !!tab.forceActiveStyle || !!tab.externalLink,
         };
+        // no-op: navItem prepared
+        return navItem;
       });
 
     // Add separator before each category (except first)
@@ -211,24 +220,45 @@ const EmployerTabs = () => {
         )}
 
         {/* Current Tab Content */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              {React.createElement(iconMap[currentTab.icon.name] || BarChart3, {
-                className: `h-6 w-6 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`,
-              })}
-              <div>
-                <CardTitle>{currentTab.label}</CardTitle>
-                <CardDescription className="mt-1">{currentTab.description}</CardDescription>
+        {currentTab.externalLink ? (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                {React.createElement(iconMap[currentTab.icon.name] || BarChart3, {
+                  className: `h-6 w-6 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`,
+                })}
+                <div>
+                  <CardTitle>{currentTab.label}</CardTitle>
+                  <CardDescription className="mt-1">{currentTab.description}</CardDescription>
+                </div>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {currentTab.context
-              ? React.createElement(currentTab.component, { context: currentTab.context, id: tabId })
-              : React.createElement(currentTab.component, { id: tabId })}
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <p className={themeColors.text.secondary}>
+                {t('employerTabs:redirecting', 'Redirecting to external page...')}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                {React.createElement(iconMap[currentTab.icon.name] || BarChart3, {
+                  className: `h-6 w-6 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`,
+                })}
+                <div>
+                  <CardTitle>{currentTab.label}</CardTitle>
+                  <CardDescription className="mt-1">{currentTab.description}</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {currentTab.component && (currentTab.context
+                ? React.createElement(currentTab.component, { context: currentTab.context, id: tabId })
+                : React.createElement(currentTab.component, { id: tabId }))}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </DashboardLayout>
   );

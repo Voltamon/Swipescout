@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import CollapsibleSidebar from './CollapsibleSidebar';
 import BreadcrumbNav from './BreadcrumbNav';
@@ -31,6 +31,13 @@ const DashboardLayout = ({
   const { unreadCount } = useNotifications();
   const navigate = useNavigate();
 
+  // Debug log to verify unreadCount updates
+  console.log('[DashboardLayout] Rendering with unreadCount:', unreadCount);
+
+  useEffect(() => {
+    console.log('[DashboardLayout] unreadCount changed to:', unreadCount);
+  }, [unreadCount]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -47,7 +54,7 @@ const DashboardLayout = ({
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Collapsible Sidebar */}
       <CollapsibleSidebar
         navigationItems={navigationItems}
@@ -57,7 +64,7 @@ const DashboardLayout = ({
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         {/* Top Bar with Breadcrumb */}
         <div className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 flex items-center justify-between">
           <BreadcrumbNav customBreadcrumbs={customBreadcrumbs} />
@@ -89,6 +96,8 @@ const DashboardLayout = ({
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </Badge>
               )}
+              {/* Debug: Always show count for testing */}
+              
             </Button>
 
             {/* User Menu */}

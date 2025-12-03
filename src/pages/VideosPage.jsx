@@ -46,7 +46,7 @@ const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost
 
 export default function VideosPage({ setVideoTab }) {
   const { videos: localVideos, retryUpload, removeVideo } = useVideoContext();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const videoRefs = useRef({});
@@ -54,13 +54,14 @@ export default function VideosPage({ setVideoTab }) {
   // Debug logging for role detection
   useEffect(() => {
     console.log('[VideosPage] User:', user);
+    console.log('[VideosPage] Context role:', role);
     console.log('[VideosPage] User role:', user?.role);
-    console.log('[VideosPage] Role type:', typeof user?.role);
-    console.log('[VideosPage] Is Array:', Array.isArray(user?.role));
-    if (user?.role && Array.isArray(user.role)) {
-      console.log('[VideosPage] Role includes employer:', user.role.includes('employer'));
+    console.log('[VideosPage] Role type:', typeof role);
+    console.log('[VideosPage] Is Array:', Array.isArray(role));
+    if (Array.isArray(role)) {
+      console.log('[VideosPage] Role includes employer:', role.includes('employer'));
     }
-  }, [user]);
+  }, [user, role]);
 
   const [serverVideos, setServerVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +79,11 @@ export default function VideosPage({ setVideoTab }) {
     try {
       setLoading(true);
       console.log('[VideosPage] Fetching videos for page:', pageNum);
-      const response = await api.get(`/videos/?page=${pageNum}&limit=${VIDEOS_PER_PAGE}`);
+      // Pass the active role to the server so it can filter by uploader_role
+      const activeRole = role ? (Array.isArray(role) ? role[0] : role) : null;
+      const params = { page: pageNum, limit: VIDEOS_PER_PAGE };
+      if (activeRole) params.role = activeRole;
+      const response = await api.get('/videos', { params });
       console.log('[VideosPage] Videos fetched successfully:', response.data);
       setServerVideos(response.data.videos || []);
       setTotalPages(response.data.totalPages || 1);
@@ -172,7 +177,7 @@ export default function VideosPage({ setVideoTab }) {
   useEffect(() => {
     fetchServerVideos(page);
     checkUploadLimit();
-  }, [page]);
+  }, [page, role]);
 
   const handleUploadClick = async () => {
     const limitReached = await checkUploadLimit();
@@ -183,8 +188,8 @@ export default function VideosPage({ setVideoTab }) {
       });
       return;
     }
-    // role is an array, check if it includes 'employer'
-    const isEmployer = user?.role && Array.isArray(user.role) && user.role.includes('employer');
+  // role is an array, check if it includes 'employer'
+  const isEmployer = role && Array.isArray(role) && role.includes('employer');
     console.log('[VideosPage] Upload button clicked:', {
       user: user,
       role: user?.role,

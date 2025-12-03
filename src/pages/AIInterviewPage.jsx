@@ -45,7 +45,7 @@ import { useContext } from 'react'; // Import the AuthContext contexts/AuthConte
 
 const AIInterviewPage = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [interviewResults, setInterviewResults] = useState(null);
   const [aiQuestions, setAIQuestions] = useState([]);
@@ -67,7 +67,8 @@ const AIInterviewPage = () => {
 
   const fetchUserVideos = async () => {
     try {
-      const response = await getUserVideos();
+  const activeRole = role ? (Array.isArray(role) ? role[0] : role) : null;
+  const response = await getUserVideos(activeRole);
       setUserVideos(response.data.data || []);
     } catch (err) {
       console.error('Failed to fetch user videos:', err);

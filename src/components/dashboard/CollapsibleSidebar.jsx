@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/UI/button.jsx';
@@ -42,14 +42,20 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
     return false;
   };
 
-  const handleNavigation = (path) => {
-    navigate(path);
+  const handleNavigation = (path, externalLink = false) => {
+    if (externalLink) {
+      // For external links, open in new tab
+      window.open(path, '_blank', 'noopener,noreferrer');
+    } else {
+      // For internal navigation
+      navigate(path);
+    }
   };
 
   return (
     <div
       className={cn(
-        'relative flex flex-col h-screen bg-slate-50 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 transition-all duration-300',
+        'sticky top-0 flex flex-col h-screen bg-slate-50 dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 transition-all duration-300',
         isCollapsed ? 'w-16' : 'w-64'
       )}
     >
@@ -84,6 +90,8 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
           <nav className="space-y-1 px-2">
             {navigationItems.map((item, index) => {
               const active = isActive(item.path);
+              // allow items to force the active style (e.g., external link highlight)
+              const shouldHighlight = !!item.forceActiveStyle || active;
               
               if (item.type === 'separator') {
                 return (
@@ -100,18 +108,31 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
 
               const navButton = (
                 <Button
-                  variant={active ? 'secondary' : 'ghost'}
+                  variant="ghost"
                   className={cn(
-                    'w-full justify-start transition-all',
+                    'w-full justify-start transition-all text-slate-700 dark:text-slate-300',
                     isCollapsed ? 'px-2' : 'px-3',
-                    active
-                      ? 'bg-gradient-to-r from-purple-100 to-cyan-100 dark:from-purple-950/30 dark:to-cyan-950/30 text-purple-700 dark:text-purple-400 font-semibold'
-                      : 'hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                    shouldHighlight
+                      ? 'bg-gradient-to-r from-purple-100 to-cyan-100 dark:from-purple-950/30 dark:to-cyan-950/30 !text-purple-700 dark:!text-purple-400 font-semibold'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-800/50'
                   )}
-                  onClick={() => handleNavigation(item.path)}
+                  onClick={() => handleNavigation(item.path, item.externalLink)}
                 >
-                  <item.icon className={cn('h-5 w-5 flex-shrink-0', !isCollapsed && 'mr-3')} />
-                  {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  {item.icon && (
+                    <item.icon
+                      className={cn(
+                        'h-5 w-5 flex-shrink-0',
+                        !isCollapsed && 'mr-3',
+                        shouldHighlight ? 'text-purple-700 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300'
+                      )}
+                    />
+                  )}
+                  {!isCollapsed && (
+                    <span className={cn('truncate', shouldHighlight ? 'text-purple-700 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300')}>{item.label}</span>
+                  )}
+                  {!isCollapsed && item.externalLink && (
+                    <ExternalLink className="ml-auto h-3 w-3 opacity-50 text-slate-600 dark:text-slate-400" />
+                  )}
                   {!isCollapsed && item.badge && (
                     <span className="ml-auto text-xs bg-purple-600 text-white rounded-full px-2 py-0.5">
                       {item.badge}
@@ -126,6 +147,7 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                     <TooltipTrigger asChild>{navButton}</TooltipTrigger>
                     <TooltipContent side="right" className="flex items-center gap-2">
                       {item.label}
+                      {item.externalLink && <ExternalLink className="h-3 w-3 opacity-50" />}
                       {item.badge && (
                         <span className="text-xs bg-purple-600 text-white rounded-full px-2 py-0.5">
                           {item.badge}

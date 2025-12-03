@@ -24,14 +24,23 @@ export const SocketProvider = ({ children }) => {
     // Initialize once
     if (!socketRef.current) {
       const token = localStorage.getItem('accessToken');
+      console.log('[SocketContext] Initializing socket connection to:', SOCKET_URL);
+      console.log('[SocketContext] Auth token present:', !!token);
+      
       socketRef.current = io(SOCKET_URL, {
         transports: ['websocket', 'polling'],
         withCredentials: true,
         auth: token ? { token } : undefined
       });
 
-      socketRef.current.on('connect', () => setIsConnected(true));
-      socketRef.current.on('disconnect', () => setIsConnected(false));
+      socketRef.current.on('connect', () => {
+        console.log('[SocketContext] Socket connected. Socket ID:', socketRef.current.id);
+        setIsConnected(true);
+      });
+      socketRef.current.on('disconnect', () => {
+        console.log('[SocketContext] Socket disconnected');
+        setIsConnected(false);
+      });
     }
     return () => {
       // Don't auto-disconnect on provider unmount (app-level)
@@ -41,8 +50,14 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     // Register the authenticated user id with the socket server
     const id = user?.id || user?.userId || user?.uid;
+    console.log('[SocketContext] User object:', user);
+    console.log('[SocketContext] Extracted user ID for socket registration:', id);
+    
     if (socketRef.current && id) {
+      console.log('[SocketContext] Emitting register event with user ID:', id);
       socketRef.current.emit('register', id);
+    } else if (socketRef.current && !id) {
+      console.warn('[SocketContext] Socket available but no user ID found');
     }
   }, [user]);
 
