@@ -38,6 +38,7 @@ import {
 import { getSavedCandidates, unsaveCandidate, connectWithCandidate } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useContext } from 'react';
+import useConnectionMap from '@/hooks/useConnectionMap.jsx';
 
 export default function SavedCandidatesPage() {
   const theme = useTheme();
@@ -54,6 +55,8 @@ export default function SavedCandidatesPage() {
   useEffect(() => {
     fetchSavedCandidates();
   }, []);
+
+  const { connectionMap, refresh: refreshConnections } = useConnectionMap();
 
   const fetchSavedCandidates = async () => {
     setLoading(true);
@@ -241,15 +244,34 @@ export default function SavedCandidatesPage() {
           >
             View Profile
           </Button>
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<Connect />}
-            onClick={() => handleConnect(candidate)}
-            sx={{ flex: 1 }}
-          >
-            Connect
-          </Button>
+          {(() => {
+            const c = connectionMap[candidate.id];
+            if (c && c.status === 'accepted') {
+              return <Button disabled size="small" sx={{ flex: 1, bgcolor: 'green', color: 'white' }}>Connected</Button>;
+            }
+            if (c && c.status === 'pending' && c.isSender) {
+              return <Button disabled size="small" sx={{ flex: 1 }}>Pending</Button>;
+            }
+            if (c && c.status === 'pending' && !c.isSender) {
+              return (
+                <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+                  <Button size="small" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection accepted', severity: 'success' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to accept', severity: 'error' }); }}} sx={{ flex: 1, bgcolor: 'primary.main', color: 'white' }}>Accept</Button>
+                  <Button size="small" variant="outlined" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection declined', severity: 'info' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to decline', severity: 'error' }); }}} sx={{ flex: 1 }}>Decline</Button>
+                </Box>
+              );
+            }
+            return (
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<Connect />}
+                onClick={() => handleConnect(candidate)}
+                sx={{ flex: 1 }}
+              >
+                Connect
+              </Button>
+            );
+          })()}
         </Box>
 
         {candidate.savedAt && (

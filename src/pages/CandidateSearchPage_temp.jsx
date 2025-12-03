@@ -1,4 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿// This temporary file was replaced by CandidateSearchPage.jsx
+// Please use CandidateSearchPage.jsx instead. Kept for reference only.
+import React from 'react';
 import { searchCandidates, connectWithCandidate, getFilterOptions } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
@@ -12,6 +14,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/UI/textarea.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { useToast } from '@/hooks/use-toast';
+import useConnectionMap from '@/hooks/useConnectionMap.jsx';
+import themeColors from '@/config/theme-colors';
 import {
   MapPin,
   Search,
@@ -29,10 +33,12 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-export default function CandidateSearchPage() {
-  // const { user } = useAuth(); // Removed: unused variable
-  const { toast } = useToast();
-  const [searchTerm, setSearchTerm] = useState("");
+export default function CandidateSearchPageTemp() {
+  return (
+    <div className="container mx-auto py-6 px-4 max-w-3xl">
+      <h2 className="text-xl font-semibold">This is a deprecated temporary file. Use CandidateSearchPage.jsx instead.</h2>
+    </div>
+  );
   const [skills, setSkills] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("any");
   const [location, setLocation] = useState("");
@@ -64,6 +70,8 @@ export default function CandidateSearchPage() {
     loadFilterOptions();
     fetchCandidates();
   }, []);
+
+  const { connectionMap, refresh: refreshConnections } = useConnectionMap();
 
   const loadFilterOptions = async () => {
     try {
@@ -212,15 +220,34 @@ export default function CandidateSearchPage() {
             <Eye className="h-4 w-4 mr-1" />
             View
           </Button>
-          <Button
-            variant="default"
-            size="sm"
-            className="flex-1 `+themeColors.buttons.primary.replace('bg-gradient-to-r ', '')+` "
-            onClick={() => handleConnect(candidate)}
-          >
-            <Handshake className="h-4 w-4 mr-1" />
-            Connect
-          </Button>
+          {(() => {
+            const c = connectionMap[candidate.id];
+            if (c && c.status === 'accepted') {
+              return <Button size="sm" disabled className="bg-green-600 text-white">Connected</Button>;
+            }
+            if (c && c.status === 'pending' && c.isSender) {
+              return <Button size="sm" disabled className="bg-gray-300">Pending</Button>;
+            }
+            if (c && c.status === 'pending' && !c.isSender) {
+              return (
+                <div className="flex gap-2">
+                <Button size="sm" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); toast({ description: 'Connection accepted' }); } catch (err) { toast({ description: 'Failed to accept', variant: 'destructive' }); } }} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
+                <Button size="sm" variant="outline" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); toast({ description: 'Connection declined' }); } catch (err) { toast({ description: 'Failed to decline', variant: 'destructive' }); } }}>Decline</Button>
+                </div>
+              );
+            }
+            return (
+              <Button
+                variant="default"
+                size="sm"
+                className={`${themeColors.buttons.primary} text-white flex-1 `}
+                onClick={() => handleConnect(candidate)}
+              >
+                <Handshake className="h-4 w-4 mr-1" />
+                Connect
+              </Button>
+            );
+          })()}
           <Button
             variant="secondary"
             size="sm"

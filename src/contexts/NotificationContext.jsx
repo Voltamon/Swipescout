@@ -145,61 +145,103 @@ export const NotificationProvider = ({ children }) => {
     
     console.log('[NotificationContext] Setting up notification listener');
     
-    const onNotification = (notif) => {
-      console.log('[NotificationContext] Received notification:', notif);
-      
-      // Filter notification by current role context
-      const currentRole = getCurrentRole();
-      console.log('[NotificationContext] Current role:', currentRole);
-      console.log('[NotificationContext] Notification role:', notif.role);
-      
-      // Only add notification if it matches current role or has no role (global notifications)
-      if (!currentRole || !notif.role || notif.role === currentRole) {
-        console.log('[NotificationContext] Adding notification to list');
-        console.log('[NotificationContext] Notification read status:', notif.read, 'read_at:', notif.read_at, 'readAt:', notif.readAt);
-        
-        // Prepend to list and increment unread if not read
-        setNotifications(prev => {
-          const updated = [notif, ...prev];
-          console.log('[NotificationContext] Updated notifications list length:', updated.length);
-          return updated;
-        });
-        
-        // Check both read_at (snake_case) and readAt (camelCase) for compatibility
-        const isRead = notif.read || notif.read_at || notif.readAt;
-        
-        if (!isRead) {
-          setUnreadCount(c => {
-            const newCount = c + 1;
-            console.log('[NotificationContext] Incrementing unread count from', c, 'to', newCount);
-            return newCount;
-          });
+  const onNotification = (notif) => {
+      try {
+  const currentRole = getCurrentRole();
+  const normalizeRole = (r) => (typeof r === 'string' ? r.toLowerCase().replace(/[-\s]/g, '_') : r);
+  const currentRoleNorm = normalizeRole(currentRole);
+  const notifRoleNorm = normalizeRole(notif.role);
+        // If notification has a role, only show when current role matches; if no role set, treat as global
+  if (!currentRole || !notif.role || notifRoleNorm === currentRoleNorm) {
+          // Prepend to list
+          setNotifications(prev => [notif, ...prev]);
+
+          // Check both read booleans/fields for compatibility
+          const isRead = !!(notif.read || notif.read_at || notif.readAt);
+          if (!isRead) setUnreadCount(c => c + 1);
+
+          toast({ description: notif.title || notif.body || 'New notification' });
+
+          // If desktop notifications are available and permitted, show native notification
+          try {
+            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+              const n = new Notification(notif.title || notif.body || 'New notification', {
+                body: notif.body,
+                icon: notif.sender?.photo_url || notif.sender?.profile_image || undefined,
+                data: { link: notif.link }
+              });
+              n.onclick = function () {
+                try {
+                  if (n.data && n.data.link) {
+                    if (n.data.link.startsWith('/')) {
+                      window.location.href = n.data.link; // client side navigation
+                    } else {
+                      window.open(n.data.link, '_blank');
+                    }
+                  }
+                } catch (err) {
+                  // ignore
+                }
+                window.focus && window.focus();
+              };
+            }
+          } catch (err) {
+            // ignore Notification API errors silently
+          }
         } else {
-          console.log('[NotificationContext] Notification already read, not incrementing count');
+          // Notification was for a different role; ignore
+          console.log('[NotificationContext] Notification filtered out due to role mismatch', { currentRole, notificationRole: notif.role });
         }
-        
-        toast({ description: notif.title || notif.body || 'New notification' });
-      } else {
-        console.log('[NotificationContext] Notification filtered out due to role mismatch');
+      } catch (err) {
+        console.error('[NotificationContext] onNotification error', err, notif);
       }
-    };
+  };
     socket.on('notification', onNotification);
     return () => {
       socket.off('notification', onNotification);
     };
   }, [socket, toast, location.pathname]);
 
-  const value = useMemo(() => ({ 
-    notifications, 
-    unreadCount, 
-    loading, 
-    refresh, 
-    markRead, 
-    markAllRead, 
-    markUnread, 
-    markAllUnread, 
-    remove 
-  }), [notifications, unreadCount, loading, refresh, markRead, markAllRead, markUnread, markAllUnread, remove]);
+  const enableNativeNotifications = async (payload = {}) => {
+    try {
+      if (!('Notification' in window)) return false;
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        // Optionally register push subscription if push manager available
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          try {
+            const reg = await navigator.serviceWorker.register('/service-worker.js');
+            const subscription = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: payload?.vapidKey || null });
+            // Send push subscription or fcmToken to server to register
+            await import('@/services/api').then(m => m.registerNotificationDevice({ pushSubscription: subscription }));
+          } catch (err) {
+            // If push manager not supported or fails, fallback to fcmToken flow (not implemented here) or store flag
+            await import('@/services/api').then(m => m.registerNotificationDevice({ fcmToken: null }));
+          }
+        } else {
+          await import('@/services/api').then(m => m.registerNotificationDevice({ fcmToken: null }));
+        }
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('enableNativeNotifications error', err);
+      return false;
+    }
+  };
+
+  const value = useMemo(() => ({
+    notifications,
+    unreadCount,
+    loading,
+    refresh,
+    markRead,
+    markAllRead,
+    markUnread,
+    markAllUnread,
+    remove,
+    enableNativeNotifications
+  }), [notifications, unreadCount, loading, refresh, markRead, markAllRead, markUnread, markAllUnread, remove, enableNativeNotifications]);
 
   return (
     <NotificationContext.Provider value={value}>

@@ -27,6 +27,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [connection, setConnection] = useState(null);
 
   // Determine whether the current viewer is the profile owner.
   const profileOwnerId = profile?.id || null;
@@ -70,6 +71,17 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
         setProfile(pRes.data);
         setVideos(vRes.data?.videos || []);
         setJobs(jRes.data?.jobs || []);
+        // check connection status
+        try {
+          if (user?.id) {
+            const otherId = pRes.data?.id;
+            if (otherId) {
+              const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(otherId));
+              const conn = connRes?.data?.connection || null;
+              setConnection(conn);
+            }
+          }
+        } catch (e) {}
       } catch (err) {
         console.error('Error fetching employer public data', err);
         toast({ title: 'Error', description: 'Failed to load employer data', variant: 'destructive' });
@@ -145,12 +157,23 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 {profile?.id && !isOwnProfile && (
-                  <Button
-                    onClick={handleConnect}
-                    className="px-5 py-2"
-                  >
-                    Connect
-                  </Button>
+                  (connection && connection.status === 'accepted') ? (
+                    <Badge className="bg-green-600">Connected</Badge>
+                  ) : (connection && connection.status === 'pending' && connection.isSender) ? (
+                    <Button disabled className="bg-gray-300">Pending</Button>
+                  ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
+                    <div className="flex gap-2">
+                      <Button onClick={() => import('@/services/connectionService.js').then(m => m.acceptConnection(connection.id)).then(() => { setConnection({ ...connection, status: 'accepted' }); toast({ title: 'Connection accepted', description: 'You are now connected.' }) }).catch(err => { toast({ title: 'Error', description: 'Failed to accept connection', variant: 'destructive' }); })} className="px-5 py-2 bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
+                      <Button onClick={() => import('@/services/connectionService.js').then(m => m.rejectConnection(connection.id)).then(() => { setConnection(null); toast({ title: 'Connection declined', description: 'Connection request declined' }); }).catch(err => { toast({ title: 'Error', description: 'Failed to decline', variant: 'destructive' }); })} variant="outline">Decline</Button>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={handleConnect}
+                      className="px-5 py-2"
+                    >
+                      Connect
+                    </Button>
+                  )
                 )}
 
                 <Button variant="outline" onClick={() => navigate(`/employer/${profile.id}/jobs`)} className="px-5 py-2">View Jobs</Button>

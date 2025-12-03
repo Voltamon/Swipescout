@@ -26,6 +26,7 @@ import Settings from "../pages/Settings.jsx";
 import JobSeekerDashboard from "../pages/JobSeekerDashboard.jsx";
 import Chat from "../pages/Chat.jsx";
 import NotificationsPage from "../pages/NotificationsPage.jsx";
+import ConnectionsPage from "../pages/ConnectionsPage.jsx";
 import VideoUpload from "../pages/VideoUpload.jsx";
 import VideoEditPage from "../pages/VideoEditPage.jsx";
 import VideosPage from "../pages/VideosPage.jsx";
@@ -71,7 +72,7 @@ export const jobseekerTabCategories = () => {
           path: "find-jobs",
           description: t("jobseekerTabs:descriptions.findJobs")
         },
-        { 
+        {
           label: t("jobseekerTabs:tabs.videoFeed"),
           icon: { name: "VideoLibrary" },
           component: AllVideosPage,
@@ -200,6 +201,13 @@ export const jobseekerTabCategories = () => {
           component: NotificationsPage,
           path: "notifications",
           description: t("jobseekerTabs:descriptions.notifications")
+        },
+        {
+          label: t("jobseekerTabs:tabs.connections"),
+          icon: { name: "Person" },
+          component: ConnectionsPage,
+          path: "connections",
+          description: t("jobseekerTabs:descriptions.connections")
         },
         {
           label: t("jobseekerTabs:tabs.chat"),

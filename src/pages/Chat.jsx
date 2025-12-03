@@ -207,20 +207,20 @@ const Chat = () => {
     ));
   };
 
-  useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        setLoading(prev => ({ ...prev, conversations: true }));
-        const response = await getConversations();
-        const convs = (response.data.conversations || []).map(normalizeConversation);
-        setConversations(convs);
-      } catch (error) {
-        console.error('Error fetching conversations:', error);
-      } finally {
-        setLoading(prev => ({ ...prev, conversations: false }));
-      }
-    };
+  const fetchConversations = async () => {
+    try {
+      setLoading(prev => ({ ...prev, conversations: true }));
+      const response = await getConversations();
+      const convs = (response.data.conversations || []).map(normalizeConversation);
+      setConversations(convs);
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    } finally {
+      setLoading(prev => ({ ...prev, conversations: false }));
+    }
+  };
 
+  useEffect(() => {
     if (user?.id) {
       fetchConversations();
     }
@@ -258,10 +258,23 @@ const Chat = () => {
       }
     });
 
+    socket.on('notification', (n) => {
+      if (!n || !n.type) return;
+      if (['connection_request', 'connection_accepted', 'connection_rejected'].includes(n.type)) {
+        // Refresh list of connected users / conversations
+        (async () => {
+          try { await fetchConversations(); } catch (e) {}
+          try { await fetchConnections(); } catch (e) {}
+        })();
+      }
+    });
+
+
     return () => {
       socket.off('user_status_update');
       socket.off('new_message');
       socket.off('typing');
+      socket.off('notification');
       socket.disconnect();
     };
   }, [socket, user?.id, activeConversation]);
