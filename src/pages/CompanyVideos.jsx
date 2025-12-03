@@ -21,6 +21,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/UI/textarea.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { useToast } from '@/hooks/use-toast';
+import OpenChatModal from '@/components/Chat/OpenChatModal.jsx';
+import useConnectionMap from '@/hooks/useConnectionMap.jsx';
 import {
     Play,
     Filter,
@@ -60,6 +62,9 @@ export default function CompanyVideos() {
     const [likedVideos, setLikedVideos] = useState(new Set());
     const [savedVideos, setSavedVideos] = useState(new Set());
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
+    const { connectionMap, refresh: refreshConnections } = useConnectionMap();
+    const [openConversation, setOpenConversation] = useState(null);
+    const [openChat, setOpenChat] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [menuVideo, setMenuVideo] = useState(null);
@@ -390,16 +395,36 @@ export default function CompanyVideos() {
                                             </Button>
                                         </div>
                                         
-                                        <Button
-                                            size="sm"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleConnect(video);
-                                            }}
-                                        >
-                                            <Handshake className="h-4 w-4 mr-1" />
-                                            Connect
-                                        </Button>
+                                        {(() => {
+                                            const ownerId = video.userId || video.user_id || video.ownerId || (video.user && video.user.id);
+                                            const c = connectionMap[ownerId];
+                                            if (c && c.status === 'accepted') {
+                                                return <Button size="sm" disabled className="bg-green-600 text-white">Connected</Button>;
+                                            }
+                                            if (c && c.status === 'pending' && c.isSender) {
+                                                return <Button size="sm" disabled>Pending</Button>;
+                                            }
+                                            if (c && c.status === 'pending' && !c.isSender) {
+                                                return (
+                                                    <div className="flex gap-2">
+                                                        <Button size="sm" onClick={async () => { try { const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection accepted', severity: 'success' }); if (data?.conversation) { setOpenConversation(data.conversation); setOpenChat(true); } } catch (err) { setSnackbar({ open: true, message: 'Failed to accept', severity: 'error' }); } }} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
+                                                        <Button size="sm" variant="outline" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection declined', severity: 'info' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to decline', severity: 'error' }); } }}>Decline</Button>
+                                                    </div>
+                                                );
+                                            }
+                                            return (
+                                                <Button
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleConnect(video);
+                                                    }}
+                                                >
+                                                    <Handshake className="h-4 w-4 mr-1" />
+                                                    Connect
+                                                </Button>
+                                            );
+                                        })()}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -489,6 +514,7 @@ export default function CompanyVideos() {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+                <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
             </div>
         </div>
     );

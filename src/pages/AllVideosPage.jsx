@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors';
 import { useAuth } from '@/contexts/AuthContext';
+import useConnectionMap from '@/hooks/useConnectionMap.jsx';
 import { 
   getAllVideos, 
   getEmployerPublicVideos, 
@@ -25,6 +26,7 @@ import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { useToast } from '@/hooks/use-toast';
+import OpenChatModal from '@/components/Chat/OpenChatModal.jsx';
 
 // Sample videos data generator
 const getSampleVideos = (t) => [
@@ -123,6 +125,9 @@ const AllVideosPage = ({
   const pagetype = propPagetype || urlPagetype;
   const { user } = useAuth();
   const { toast } = useToast();
+  const { connectionMap, refresh: refreshConnections } = useConnectionMap();
+  const [openConversation, setOpenConversation] = useState(null);
+  const [openChat, setOpenChat] = useState(false);
   const dragStartY = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -582,12 +587,35 @@ const AllVideosPage = ({
     }
   };
 
-  const handleConnect = (video) => {
+  const handleConnect = async (video) => {
     if (video.isSample) {
       toast({ description: t("videos.sampleVideoMessage") });
       return;
     }
-    toast({ description: t("videos.connectionRequestSent") });
+    try {
+      const ownerId = video.userId || video.user?.id;
+      const c = connectionMap[ownerId];
+      if (c && c.status === 'accepted') {
+        toast({ description: 'Already connected' });
+        return;
+      }
+      if (c && c.status === 'pending' && !c.isSender) {
+        // prompt to accept or decline
+        // Auto-accept for now (if viewing recipient) - better UX: show dialog
+        const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id));
+        await refreshConnections();
+        toast({ description: 'Connection accepted' });
+        if (data?.conversation) { setOpenConversation(data.conversation); setOpenChat(true); }
+        return;
+      }
+      // If not connected, send request
+      await import('@/services/connectionService.js').then(m => m.sendConnection(ownerId));
+      await refreshConnections();
+      toast({ description: t("videos.connectionRequestSent") });
+    } catch (err) {
+      console.error('Connection failed', err);
+      toast({ description: t('errors.networkError'), variant: 'destructive' });
+    }
   };
 
   if (loading) {
@@ -731,6 +759,7 @@ const AllVideosPage = ({
             </div>
           </div>
         )}
+        <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
       </div>
     );
   }
@@ -927,6 +956,7 @@ const AllVideosPage = ({
           <ChevronDown className="h-6 w-6 text-white" />
         </Button>
       </div>
+    <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
     </div>
   );
 };

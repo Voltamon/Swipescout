@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
+import OpenChatModal from '@/components/Chat/OpenChatModal.jsx';
 import {
   Dialog,
   DialogContent,
@@ -71,6 +72,9 @@ export default function VideosPage({ setVideoTab }) {
   const [isMuted, setIsMuted] = useState(true);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState(null);
+  const [connectionMap, setConnectionMap] = useState({});
+  const [openConversation, setOpenConversation] = useState(null);
+  const [openChat, setOpenChat] = useState(false);
 
   const VIDEOS_PER_PAGE = 9;
 
@@ -172,6 +176,26 @@ export default function VideosPage({ setVideoTab }) {
   useEffect(() => {
     fetchServerVideos(page);
     checkUploadLimit();
+    // Prefetch connections mapping so we can display connect/pending/connected status per user
+    (async () => {
+      try {
+        const [connRes, pendingSentRes, pendingReceivedRes] = await Promise.all([
+          import('@/services/connectionService.js').then(m => m.getConnections()),
+          import('@/services/connectionService.js').then(m => m.getPendingSent()),
+          import('@/services/connectionService.js').then(m => m.getPendingReceived()),
+        ]);
+        const map = {};
+        const accepted = (connRes?.data?.connections || connRes?.data || []);
+        accepted.forEach(a => { map[a.id] = { status: 'accepted', id: a.id }; });
+        const sent = pendingSentRes?.data?.pendingSent || [];
+        sent.forEach(s => { map[s.receiver?.id || s.receiverId || s.receiver?.userId] = { status: 'pending', id: s.connectionId, isSender: true }; });
+        const rec = pendingReceivedRes?.data?.pendingReceived || [];
+        rec.forEach(r => { map[r.sender?.id || r.senderId] = { status: 'pending', id: r.connectionId, isSender: false }; });
+        setConnectionMap(map);
+      } catch (e) {
+        console.warn('Failed to fetch connections map', e);
+      }
+    })();
   }, [page]);
 
   const handleUploadClick = async () => {
@@ -433,6 +457,7 @@ export default function VideosPage({ setVideoTab }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
     </div>
   );
 }
@@ -602,6 +627,24 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
               {(() => {
                 const ownerId = video.userId || video.user_id || video.ownerId || (video.user && video.user.id);
                 if (ownerId && ownerId !== (user && user.id)) {
+                  const c = connectionMap[ownerId];
+                  if (c && c.status === 'accepted') {
+                    return <Button variant="outline" size="sm" disabled>Connected</Button>;
+                  }
+                  if (c && c.status === 'pending' && c.isSender) {
+                    return <Button variant="outline" size="sm" disabled>Pending</Button>;
+                  }
+                  if (c && c.status === 'pending' && !c.isSender) {
+                    return (
+                      <div className="flex gap-2">
+                        <Button variant="default" size="sm" onClick={async (e) => {
+                          e.stopPropagation();
+                          try { const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); toast({ description: 'Connection accepted' }); setConnectionMap(prev => ({ ...prev, [ownerId]: { ...c, status: 'accepted' } })); if (data?.conversation) { setOpenConversation(data.conversation); setOpenChat(true); } } catch (err) { toast({ description: 'Failed to accept', variant: 'destructive' }); }
+                        }}>Accept</Button>
+                        <Button variant="ghost" size="sm" onClick={async (e) => { e.stopPropagation(); try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); toast({ description: 'Declined' }); setConnectionMap(prev => { const cp = { ...prev }; delete cp[ownerId]; return cp; }); } catch (err) { toast({ description: 'Failed to decline', variant: 'destructive' }); } }}>Decline</Button>
+                      </div>
+                    );
+                  }
                   return (
                     <Button
                       variant="outline"
@@ -615,6 +658,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                         try {
                           await sendConnection(ownerId);
                           toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
+                          setConnectionMap(prev => ({ ...prev, [ownerId]: { status: 'pending', id: null, isSender: true } }));
                         } catch (err) {
                           console.error('Connection failed', err);
                           toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });

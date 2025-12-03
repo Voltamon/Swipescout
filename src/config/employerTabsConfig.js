@@ -25,6 +25,7 @@ import EmployerProfilePage from "../pages/EmployerProfilePage.jsx";
 import Settings from "../pages/Settings.jsx";
 import EmployerSettingsPage from "../pages/EmployerSettingsPage.jsx";
 import Chat from "../pages/Chat.jsx";
+import ConnectionsPage from "../pages/ConnectionsPage.jsx";
 import HelpPageLinks from "../pages/HelpPageLinks.jsx";
 import EmployerDashboard from "../pages/EmployerDashboard.jsx";
 import VideoUpload from "../pages/VideoUpload.jsx"; // Import VideoUpload component
@@ -138,20 +139,6 @@ export const getEmployerTabCategories = t => [
         component: VideosPage,
         path: "company-videos",
         description: t("employerTabs:descriptions.companyVideos")
-      },
-      {
-        label: t("employerTabs:tabs.videoUpload"),
-        icon: { name: "Upload" },
-        component: VideoUpload,
-        path: "video-upload",
-        description: t("employerTabs:descriptions.videoUpload")
-      },
-      {
-        label: t("employerTabs:tabs.videoEditor"),
-        icon: { name: "Edit" },
-        component: VideoEditPage,
-        path: "video-editor",
-        description: t("employerTabs:descriptions.videoEditor")
       }
     ]
   },
@@ -215,6 +202,13 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.notifications")
       },
       {
+        label: t("employerTabs:tabs.connections"),
+        icon: { name: "Users" },
+        component: ConnectionsPage,
+        path: "connections",
+        description: t("employerTabs:descriptions.connections")
+      },
+      {
         label: t("employerTabs:tabs.chat"),
         icon: { name: "ChatIcon" },
         component: Chat,
@@ -234,6 +228,13 @@ export const getEmployerTabCategories = t => [
     key: "videoManagement",
     label: t("employerTabs:categories.videoManagement"),
     tabs: [
+      {
+        label: t("employerTabs:tabs.videoUpload"),
+        icon: { name: "Upload" },
+        component: VideoUpload,
+        path: "video-upload",
+        description: t("employerTabs:descriptions.videoUpload")
+      },
       {
         label: t("employerTabs:tabs.videoEditor"),
         icon: { name: "Edit" },

@@ -15,10 +15,12 @@ import { Input } from '@/components/UI/input.jsx';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/UI/dialog.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 const NotificationSettingsPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { enableNativeNotifications } = useNotifications();
   
   const [settings, setSettings] = useState({
     email_notifications: true,
@@ -419,7 +421,18 @@ const NotificationSettingsPage = () => {
                   Test Notification
                 </Button>
               </div>
-
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={async () => {
+                    const ok = await enableNativeNotifications();
+                    if (ok) toast({ description: 'Desktop notifications enabled' });
+                    else toast({ description: 'Desktop notification permission not granted', variant: 'destructive' });
+                  }}
+                >
+                  Enable Desktop Notifications
+                </Button>
+              </div>
               <Button
                 onClick={handleSaveSettings}
                 disabled={saving}

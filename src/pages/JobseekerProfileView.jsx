@@ -64,6 +64,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [connection, setConnection] = useState(null); // { id, status, isSender }
 
   const mainVideoRef = useRef(null);
   const navigate = useNavigate();
@@ -103,6 +104,19 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         const vids = vRes.data?.videos || [];
         setVideos(vids);
         setMainVideo(vids.find(v => v.video_position === 'main') || null);
+        // After loading profile, check connection status
+        const checkConnection = async () => {
+          try {
+            const otherId = profileObj?.user?.id || profileObj?.userId || profileObj?.id;
+            if (!otherId || !user?.id) return;
+            const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(otherId));
+            const conn = connRes?.data?.connection || null;
+            setConnection(conn);
+          } catch (e) {
+            // ignore errors silently
+          }
+        };
+        checkConnection();
 
         setLoading(false);
       } catch (e) {
@@ -192,6 +206,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
 
     try {
       await sendConnection(receiverId);
+      setConnection({ status: 'pending', isSender: true });
       toast({ title: 'Connection sent', description: 'Your connection request has been sent successfully!' });
     } catch (err) {
       console.error('Connection failed', err);
@@ -200,6 +215,28 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         description: err.response?.data?.message || 'Failed to send connection request', 
         variant: 'destructive' 
       });
+    }
+  };
+
+  const handleAcceptConnection = async (connectionId) => {
+    try {
+      await import('@/services/connectionService.js').then(m => m.acceptConnection(connectionId));
+      setConnection({ ...connection, status: 'accepted' });
+      toast({ title: 'Connection accepted', description: 'You are now connected.' });
+    } catch (err) {
+      console.error('Accept failed', err);
+      toast({ title: 'Error', description: 'Failed to accept connection', variant: 'destructive' });
+    }
+  };
+
+  const handleRejectConnection = async (connectionId) => {
+    try {
+      await import('@/services/connectionService.js').then(m => m.rejectConnection(connectionId));
+      setConnection(null);
+      toast({ title: 'Connection declined', description: 'Connection request declined' });
+    } catch (err) {
+      console.error('Reject failed', err);
+      toast({ title: 'Error', description: 'Failed to decline connection', variant: 'destructive' });
     }
   };
 
@@ -269,15 +306,26 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                           <span>{profile?.profileViews || 0} profile views</span>
                         </div>
                       </div>
-                      {/* Connect Button - show when viewing another user (or not logged in) */}
+                      {/* Connect Button / state */}
                       {(!user?.id || !isOwnProfile) && (
-                        <Button 
-                          onClick={handleConnect}
-                          className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 shadow-lg"
-                        >
-                          <Heart className="h-4 w-4 mr-2" />
-                          Connect
-                        </Button>
+                        (connection && connection.status === 'accepted') ? (
+                          <Badge className="bg-green-600">Connected</Badge>
+                        ) : (connection && connection.status === 'pending' && connection.isSender) ? (
+                          <Button disabled className="bg-gray-300">Pending</Button>
+                        ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
+                          <div className="flex gap-2">
+                            <Button onClick={() => handleAcceptConnection(connection.id)} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
+                            <Button onClick={() => handleRejectConnection(connection.id)} variant="outline">Decline</Button>
+                          </div>
+                        ) : (
+                          <Button 
+                            onClick={handleConnect}
+                            className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 shadow-lg"
+                          >
+                            <Heart className="h-4 w-4 mr-2" />
+                            Connect
+                          </Button>
+                        )
                       )}
                     </div>
 

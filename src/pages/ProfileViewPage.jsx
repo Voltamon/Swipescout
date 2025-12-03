@@ -52,6 +52,7 @@ export default function ProfileViewPage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [connection, setConnection] = useState(null);
   
   // Video player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -73,6 +74,7 @@ export default function ProfileViewPage() {
 
     try {
       await sendConnection(profile.id);
+      setConnection({ status: 'pending', isSender: true });
       toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
     } catch (err) {
       console.error('Connection failed', err);
@@ -88,6 +90,12 @@ export default function ProfileViewPage() {
       
       const response = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, { headers });
       setProfile(response.data.profile);
+      try {
+        if (user?.id) {
+          const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(response.data.profile?.id));
+          setConnection(connRes?.data?.connection || null);
+        }
+      } catch (e) {}
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
@@ -199,12 +207,23 @@ export default function ProfileViewPage() {
                         </Badge>
                         {/* Show Connect when viewing another user's profile */}
                         {profile?.id && profile.id !== user?.id && (
-                          <Button
-                            variant="outline"
-                            onClick={handleConnect}
-                          >
-                            Connect
-                          </Button>
+                          (connection && connection.status === 'accepted') ? (
+                            <Badge className="bg-green-600">Connected</Badge>
+                          ) : (connection && connection.status === 'pending' && connection.isSender) ? (
+                            <Button disabled>Pending</Button>
+                          ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
+                            <div className="flex gap-2">
+                              <Button onClick={() => import('@/services/connectionService.js').then(m => m.acceptConnection(connection.id)).then(() => { setConnection({ ...connection, status: 'accepted' }); toast({ description: 'Connection accepted' }); }).catch(err => toast({ description: 'Failed to accept', variant: 'destructive' }))} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
+                              <Button variant="outline" onClick={() => import('@/services/connectionService.js').then(m => m.rejectConnection(connection.id)).then(() => { setConnection(null); toast({ description: 'Connection declined' }); }).catch(err => toast({ description: 'Failed to decline', variant: 'destructive' }))}>Decline</Button>
+                            </div>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              onClick={handleConnect}
+                            >
+                              Connect
+                            </Button>
+                          )
                         )}
                       </div>
                     </div>

@@ -1,6 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import { searchCandidates, connectWithCandidate, getFilterOptions } from '@/services/api';
-import { useAuth } from '@/contexts/AuthContext';
+﻿import React, { useState, useEffect, useCallback } from 'react';
+import { searchCandidates, connectWithCandidate } from '@/services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -12,6 +11,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/UI/textarea.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { useToast } from '@/hooks/use-toast';
+import OpenChatModal from '@/components/Chat/OpenChatModal.jsx';
+import useConnectionMap from '@/hooks/useConnectionMap.jsx';
 import {
   MapPin,
   Search,
@@ -43,7 +44,7 @@ export default function CandidateSearchPage() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filterOptions, setFilterOptions] = useState({});
+  // const [filterOptions, setFilterOptions] = useState({});
   const [connectDialog, setConnectDialog] = useState({ open: false, candidate: null });
   const [connectMessage, setConnectMessage] = useState("");
 
@@ -62,9 +63,12 @@ export default function CandidateSearchPage() {
   ];
 
   useEffect(() => {
-    loadFilterOptions();
     fetchCandidates();
   }, []);
+
+  const { connectionMap, refresh: refreshConnections } = useConnectionMap();
+  const [openConversation, setOpenConversation] = useState(null);
+  const [openChat, setOpenChat] = useState(false);
 
   const loadFilterOptions = async () => {
     try {
@@ -203,7 +207,7 @@ export default function CandidateSearchPage() {
           </div>
         )}
 
-        <div className="flex gap-2 mt-auto">
+          <div className="flex gap-2 mt-auto">
           <Button
             variant="outline"
             size="sm"
@@ -213,16 +217,35 @@ export default function CandidateSearchPage() {
             <Eye className="h-4 w-4 mr-1" />
             View
           </Button>
-          <Button
-            variant="default"
-            size="sm"
-            className={`${themeColors.buttons.primary} text-white flex-1 `}
-            onClick={() => handleConnect(candidate)}
-          >
-            <Handshake className="h-4 w-4 mr-1" />
-            Connect
-          </Button>
-          <Button
+          const fetchCandidates = useCallback(async (currentPage = 1) => {
+            setLoading(true);
+            setError(null);
+            try {
+              const searchParams = {
+                q: searchTerm,
+                skills: skills || undefined,
+                experienceLevel: experienceLevel === "any" ? undefined : experienceLevel,
+                location: location || undefined,
+                educationLevel: educationLevel === "any" ? undefined : educationLevel,
+                page: currentPage,
+                limit: 12
+              };
+
+              const response = await searchCandidates(searchParams);
+              setCandidates(response.data.candidates || []);
+              setTotalPages(response.data.totalPages || 1);
+              setPage(currentPage);
+            } catch (error) {
+              console.error('Error fetching candidates:', error);
+              setError('Failed to fetch candidates. Please try again.');
+            } finally {
+              setLoading(false);
+            }
+          }, [searchTerm, skills, experienceLevel, location, educationLevel]);
+
+          useEffect(() => {
+            fetchCandidates(1);
+          }, [fetchCandidates]);
             variant="secondary"
             size="sm"
             className="flex-1"
@@ -442,6 +465,7 @@ export default function CandidateSearchPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
     </div>
   );
 }

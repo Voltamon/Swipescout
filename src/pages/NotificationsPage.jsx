@@ -7,12 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/UI/avatar.jsx"
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '@/contexts/NotificationContext';
+import OpenChatModal from '@/components/Chat/OpenChatModal.jsx';
 
 const NotificationsPage = () => {
   const { toast } = useToast();
     const { notifications, loading, refresh, markRead, remove, markAllRead, markUnread, markAllUnread } = useNotifications();
     const navigate = useNavigate();
   const [filter, setFilter] = useState('all'); // all, unread, read
+  const [openChat, setOpenChat] = useState(false);
+  const [openConversation, setOpenConversation] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -41,6 +44,41 @@ const NotificationsPage = () => {
     } catch (error) {
       console.error('Error deleting notification:', error);
       toast({ description: "Failed to delete notification", variant: "destructive" });
+    }
+  };
+
+  const handleAccept = async (notification) => {
+    try {
+      // Accept connection using connectionId in notification.data
+      const connectionId = notification.data?.connectionId || notification.data?.connection_id || notification.data?.connection;
+      if (!connectionId) throw new Error('Connection ID not found');
+      const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(connectionId));
+      toast({ description: 'Connection accepted' });
+      // Optionally mark read
+      await markRead(notification.id);
+      // Refresh notifications and chat state
+      await refresh();
+      if (data?.conversation) {
+        setOpenConversation(data.conversation);
+        setOpenChat(true);
+      }
+    } catch (err) {
+      console.error('Failed to accept connection', err);
+      toast({ description: 'Failed to accept connection', variant: 'destructive' });
+    }
+  };
+
+  const handleRejectNotification = async (notification) => {
+    try {
+      const connectionId = notification.data?.connectionId || notification.data?.connection_id || notification.data?.connection;
+      if (!connectionId) throw new Error('Connection ID not found');
+      await import('@/services/connectionService.js').then(m => m.rejectConnection(connectionId));
+      toast({ description: 'Connection request declined' });
+      await markRead(notification.id);
+      await refresh();
+    } catch (err) {
+      console.error('Failed to decline connection', err);
+      toast({ description: 'Failed to decline connection', variant: 'destructive' });
     }
   };
 
@@ -253,7 +291,7 @@ const NotificationsPage = () => {
                     <p className="text-xs text-gray-500 mt-2">{formatTime(notification.created_at || notification.timestamp)}</p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                     {!notification.read ? (
                       <>
                         <Badge className="bg-purple-600">New</Badge>
@@ -278,6 +316,16 @@ const NotificationsPage = () => {
                       </Button>
                     )}
 
+                    {notification.type === 'connection_request' && (
+                      <div className="flex items-center gap-2">
+                        <Button variant="default" size="sm" onClick={(e) => { e.stopPropagation(); handleAccept(notification); }}>
+                          Accept
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleRejectNotification(notification); }}>
+                          Decline
+                        </Button>
+                      </div>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -293,6 +341,7 @@ const NotificationsPage = () => {
           ))}
         </div>
       )}
+      <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
     </div>
   );
 };

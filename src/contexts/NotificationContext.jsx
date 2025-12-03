@@ -125,6 +125,28 @@ export const NotificationProvider = ({ children }) => {
       setNotifications(prev => [notif, ...prev]);
       if (!notif.read && !notif.read_at) setUnreadCount(c => c + 1);
       toast({ description: notif.title || notif.body || 'New notification' });
+      // If desktop notifications are available and permitted, show native notification
+      try {
+        if (Notification && Notification.permission === 'granted') {
+          const n = new Notification(notif.title || notif.body || 'New notification', {
+            body: notif.body,
+            icon: notif.sender?.photo_url || notif.sender?.profile_image || undefined,
+            data: { link: notif.link }
+          });
+          n.onclick = function (e) {
+            if (n.data && n.data.link) {
+              if (n.data.link.startsWith('/')) {
+                window.location.href = n.data.link; // client side navigation
+              } else {
+                window.open(n.data.link, '_blank');
+              }
+            }
+            window.focus && window.focus();
+          };
+        }
+      } catch (err) {
+        // ignore
+      }
     };
     socket.on('notification', onNotification);
     return () => {
@@ -132,7 +154,35 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [socket, toast]);
 
-  const value = useMemo(() => ({ notifications, unreadCount, loading, refresh, markRead, markAllRead, markUnread, markAllUnread, remove }), [notifications, unreadCount, loading]);
+  const enableNativeNotifications = async (payload = {}) => {
+    try {
+      if (!('Notification' in window)) return false;
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        // Optionally register push subscription if push manager available
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          try {
+            const reg = await navigator.serviceWorker.register('/service-worker.js');
+            const subscription = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: payload?.vapidKey || null });
+            // Send push subscription or fcmToken to server to register
+            await import('@/services/api').then(m => m.registerNotificationDevice({ pushSubscription: subscription }));
+          } catch (err) {
+            // If push manager not supported or fails, fallback to fcmToken flow (not implemented here) or store flag
+            await import('@/services/api').then(m => m.registerNotificationDevice({ fcmToken: null }));
+          }
+        } else {
+          await import('@/services/api').then(m => m.registerNotificationDevice({ fcmToken: null }));
+        }
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('enableNativeNotifications error', err);
+      return false;
+    }
+  };
+
+  const value = useMemo(() => ({ notifications, unreadCount, loading, refresh, markRead, markAllRead, markUnread, markAllUnread, remove, enableNativeNotifications }), [notifications, unreadCount, loading]);
 
   return (
     <NotificationContext.Provider value={value}>
