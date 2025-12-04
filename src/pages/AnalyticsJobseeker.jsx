@@ -46,6 +46,26 @@ export default function AnalyticsJobseeker() {
     fetch();
   }, [period]);
 
+  useEffect(() => {
+    const handler = (e) => {
+      // Re-fetch stats when a profile view is recorded to reflect updates
+      const fetchNow = async () => {
+        try {
+          setLoading(true);
+          const res = await api.get(`/analytics/profile-views`, { params: { period } });
+          setStats(res.data.stats || {});
+        } catch (e) {
+          setError(e.message || 'Failed to load');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchNow();
+    };
+    window.addEventListener('profileViewRecorded', handler);
+    return () => window.removeEventListener('profileViewRecorded', handler);
+  }, [period]);
+
   const lineChartData = {
     labels: (stats?.daily_stats || []).map(d => new Date(d.date).toLocaleDateString()),
     datasets: [

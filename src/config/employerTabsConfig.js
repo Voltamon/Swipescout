@@ -151,7 +151,7 @@ export const getEmployerTabCategories = t => [
       {
         label: t("employerTabs:tabs.analytics"),
         icon: { name: "Analytics" },
-        component: AllVideosPage, // Just the component reference
+        component: AnalyticsEmployer, // Just the component reference
         context: "analytics", // Add context as a property
         path: "analytics",
         description: t("employerTabs:descriptions.analytics")

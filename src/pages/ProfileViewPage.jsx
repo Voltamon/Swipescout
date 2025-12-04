@@ -90,6 +90,8 @@ export default function ProfileViewPage() {
       
       const response = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, { headers });
       setProfile(response.data.profile);
+      // Notify other UI parts (dashboards, analytics) that a profile view occurred
+      try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId } })); } catch (e) {}
       try {
         if (user?.id) {
           const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(response.data.profile?.id));

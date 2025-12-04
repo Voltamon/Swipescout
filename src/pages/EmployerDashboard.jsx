@@ -73,6 +73,23 @@ const EmployerDashboard = () => {
         fetchDashboardData();
     }, []);
 
+    // Listen for profile view events and refresh employer dashboard stats
+    useEffect(() => {
+        const onProfileView = async (e) => {
+            try {
+                setLoading(true);
+                const statsResponse = await getEmployerDashboardStats();
+                setStats(statsResponse.data.stats);
+            } catch (err) {
+                // ignore
+            } finally {
+                setLoading(false);
+            }
+        };
+        window.addEventListener('profileViewRecorded', onProfileView);
+        return () => window.removeEventListener('profileViewRecorded', onProfileView);
+    }, []);
+
     const getActivityIcon = (type) => {
         switch (type) {
             case 'view':

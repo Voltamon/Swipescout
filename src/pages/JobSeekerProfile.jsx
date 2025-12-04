@@ -28,6 +28,7 @@ import {
   GraduationCap,
   Calendar,
   Edit,
+  Eye,
   Play,
   Pause,
   Heart,
@@ -265,10 +266,28 @@ export default function JobSeekerProfile() {
                         <p className="text-xl text-muted-foreground">{String(localize(profile?.headline || 'Professional Title'))}</p>
                       </div>
                       <div className="flex gap-2">
-                        <Button onClick={handleEditProfile} className="bg-cyan-600 hover:bg-cyan-700">
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={async () => {
+                              const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
+                              if (!id) return;
+                              try {
+                                await import('@/services/api').then(m => m.getPublicProfile(id));
+                              } catch (e) {}
+                              navigate(`/jobseeker-profile/${id}`);
+                            }}
+                            variant="outline"
+                            className="hidden md:inline-flex items-center"
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview
+                          </Button>
+
+                          <Button onClick={handleEditProfile} className="bg-cyan-600 hover:bg-cyan-700">
                           <Edit className="h-4 w-4 mr-2" />
                           Edit Profile
-                        </Button>
+                          </Button>
+                        </div>
                         {/* Connect button intentionally omitted on the logged-in user's own JobSeeker profile */}
                       </div>
                     </div>

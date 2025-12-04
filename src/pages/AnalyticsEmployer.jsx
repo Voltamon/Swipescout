@@ -118,6 +118,15 @@ export default function AnalyticsEmployer() {
     fetchStats();
   }, [fetchStats]);
 
+  useEffect(() => {
+    const onProfileView = (e) => {
+      // refresh stats when profile view is recorded for the tracked employer
+      fetchStats();
+    };
+    window.addEventListener('profileViewRecorded', onProfileView);
+    return () => window.removeEventListener('profileViewRecorded', onProfileView);
+  }, [fetchStats]);
+
   const jobStats = useMemo(() => stats?.stats || stats?.jobs || [], [stats]);
   const labels = useMemo(() => (Array.isArray(jobStats) ? jobStats.map(j => j.job_title || j.title || j.job_id) : []), [jobStats]);
   const values = useMemo(() => (Array.isArray(jobStats) ? jobStats.map(j => j.totalSwipes || j.views || 0) : []), [jobStats]);

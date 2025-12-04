@@ -170,3 +170,20 @@ Update the UI to display the registered device info in Settings (instead of just
 Add an optional server-side log entry/analytics event for device registration/deregistration.
 Which of these would you like next?
 
+
+
+
+profile views :
+
+Notes & follow-ups
+
+There's a small chance of an immediate double getPublicProfile call if you pre-call getPublicProfile on preview and then navigate to the public route which calls getPublicProfile again — backend debounces by IP or user and prevents double counting (it’s handled server-side).
+Left the route public-fetch unchanged (the public page still loads profile data and triggers server tracking).
+I added a cross-app profileViewRecorded event to refresh UI automatically. If you prefer a Redux/Context approach or socket-based updates, we can centralize this event caching/refresh logic rather than raw window events.
+If you'd like, I can:
+Consolidate repeated calls into a small helper function recordProfileView(profile) in api.js.
+Change preview buttons on list items to call a helper to avoid duplicate logic/DRY.
+Add visual indicators in analytics pages showing which user triggered the last update (optional).
+Add automated or manual tests verifying this flow (unit tests or integration tests).
+If you'd like any of these improvements, or a quick demo back-and-forth (e.g. open a public employer profile in modal vs in-page navigation and show changes to analytics), tell me which next step you'd prefer and I'll implement it. ✅
+

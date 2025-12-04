@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { sendConnection } from '@/services/connectionService.js';
 import { Play, Pause, Volume2, VolumeX, MapPin, Briefcase, ExternalLink, Loader2 } from 'lucide-react';
-import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs } from '@/services/api';
+import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile } from '@/services/api';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -80,6 +80,18 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
               const conn = connRes?.data?.connection || null;
               setConnection(conn);
             }
+            // Also call the public profile endpoint so the backend records a profile view
+            try {
+              const publicRes = await getPublicProfile(id);
+              const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+              if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+              }
+            } catch (err) {
+              console.debug('[EmployerProfileView] record view failed', err?.message || err);
+            }
+            // Dispatch event so dashboards/analytics can refresh while open
+            try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId: id } })); } catch (e) {}
           }
         } catch (e) {}
       } catch (err) {

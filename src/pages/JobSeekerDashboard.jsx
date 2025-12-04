@@ -108,6 +108,21 @@ const JobSeekerDashboard = () => {
                     }
                 }
 
+
+                // Refresh dashboard stats when a profile view event is recorded elsewhere in the app
+                useEffect(() => {
+                    const onProfileView = async (e) => {
+                        try {
+                            const statsResponse = await getJobSeekerDashboardStats();
+                            const statsPayload = statsResponse?.stats ?? statsResponse?.data ?? statsResponse;
+                            setStats(statsPayload || {});
+                        } catch (err) {
+                            // ignore
+                        }
+                    };
+                    window.addEventListener('profileViewRecorded', onProfileView);
+                    return () => window.removeEventListener('profileViewRecorded', onProfileView);
+                }, []);
                 // Fetch recent activities
                 const activitiesResponse = await getRecentActivities('jobseeker');
                 const activitiesPayload = activitiesResponse?.activities ?? activitiesResponse?.data ?? activitiesResponse;

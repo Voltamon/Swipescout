@@ -8,6 +8,7 @@ import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Building2,
   MapPin,
@@ -21,6 +22,7 @@ import {
   Briefcase,
   Calendar,
   Edit,
+  Eye,
   PlayCircle,
   Share2,
   Loader2,
@@ -33,6 +35,7 @@ const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost
 export default function EmployerProfilePage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -106,10 +109,31 @@ export default function EmployerProfilePage() {
                     <h1 className="text-4xl font-bold mb-2">{profile?.name || 'Company Name'}</h1>
                     <p className="text-lg text-muted-foreground">{profile?.industry || 'Industry'}</p>
                   </div>
-                  <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white  hover:bg-purple-700`}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={async () => {
+                        const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
+                        if (!id) return;
+                        try {
+                          // Call public profile endpoint to ensure view is tracked
+                          await import('@/services/api').then(m => m.getPublicProfile(id));
+                        } catch (err) {
+                          // ignore
+                        }
+                        navigate(`/employer-profile/${id}`);
+                      }}
+                      variant="outline"
+                      className="hidden md:inline-flex items-center"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Preview
+                    </Button>
+
+                    <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white  hover:bg-purple-700`}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Profile
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Quick Info Grid */}

@@ -36,6 +36,7 @@ import {
   getJobSeekerExperiences,
   getJobSeekerEducation
 } from '../services/api.js';
+import { getPublicProfile } from '@/services/api';
 
 const formatDate = (dateString) => {
   if (!dateString) return 'Present';
@@ -117,6 +118,22 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
           }
         };
         checkConnection();
+
+        // Record a profile view by calling the public profile endpoint — this ensures
+        // the backend's profile view tracking logic runs (it runs inside /profile/:userId)
+        try {
+          const publicRes = await getPublicProfile(id);
+          // Update profile view count displayed in UI using the returned data
+          const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+          if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+            setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+          }
+        } catch (e) {
+          // Ignore errors — tracking is best-effort and should not block the view
+          console.debug('[JobSeekerProfileView] record view failed', e?.message || e);
+        }
+        // Dispatch event so dashboards/analytics can refresh while open
+        try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId: id } })); } catch (e) {}
 
         setLoading(false);
       } catch (e) {
