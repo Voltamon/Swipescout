@@ -199,11 +199,11 @@ const EmployerDashboard = () => {
                         </CardContent>
                     </Card>
 
-                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setActiveTab('applicants')}>
+                    {/* <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setActiveTab('applicants')}>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
+                                     <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
                                         New Applicants
                                     </p>
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
@@ -219,9 +219,9 @@ const EmployerDashboard = () => {
                                 </div>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
-                    <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setActiveTab('jobs')}>
+                    {/* <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer" onClick={() => setActiveTab('jobs')}>
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -240,7 +240,7 @@ const EmployerDashboard = () => {
                                 </div>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
                     <Card className="hover:shadow-lg transition-all duration-200">
                         <CardContent className="pt-6">

@@ -283,6 +283,18 @@ const VideoCard = React.memo(({
     onTogglePlay(video.id);
   };
 
+  // Build a reliable display name to show: if the video is anonymous we show a localized/explicit
+  // fallback, otherwise prefer uploaderName -> user -> uploader object -> jobSeeker/employer profiles.
+  const uploaderDisplayName = (function(){
+    // If the video explicitly marks the uploader anonymous, respect that
+    if (video.isAnonymous) return 'Anonymous User';
+    const name = video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile) || getDisplayName(video.uploader) || null;
+    return name || 'Unknown User';
+  })();
+  if (process.env.NODE_ENV !== 'production') {
+    console.debug('VideoCard uploaderDisplayName:', { id: video.id, isAnonymous: video.isAnonymous, uploaderDisplayName });
+  }
+
   const handleMuteClick = (e) => {
     e.stopPropagation();
     onToggleMute(video.id);
@@ -424,17 +436,17 @@ const VideoCard = React.memo(({
                 className="flex items-center gap-3 cursor-pointer hover:bg-white/5 rounded-md p-1 -m-1"
                 onClick={() => onUserAvatarClick && onUserAvatarClick(video)}
                 role="button"
-                aria-label={video.uploaderName || 'View uploader profile'}
+                aria-label={uploaderDisplayName || 'View uploader profile'}
               >
                 <Avatar className="h-9 w-9 flex-shrink-0">
-                  <AvatarImage src={video.uploaderAvatar || video.uploader?.avatar || video.user?.avatar || video.user?.photoUrl || video.user?.profile_pic || video.user?.profilePicture} alt={video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile) || 'User'} />
+                  <AvatarImage src={video.uploaderAvatar || video.uploader?.avatar || video.user?.avatar || video.user?.photoUrl || video.user?.profile_pic || video.user?.profilePicture} alt={uploaderDisplayName || 'User'} />
                   <AvatarFallback className="bg-purple-500 text-white text-xs">
-                    { (video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile)) ? (String((video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile))[0]).toUpperCase()) : <User className="h-4 w-4" /> }
+                    { (uploaderDisplayName && uploaderDisplayName !== 'Anonymous User' && uploaderDisplayName !== 'Unknown User') ? String(uploaderDisplayName[0]).toUpperCase() : <User className="h-4 w-4" /> }
                   </AvatarFallback>
                 </Avatar>
                   <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-white truncate">{video.uploaderName || getDisplayName(video.user) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile) || getDisplayName(video.uploader) || 'Anonymous User'}</p>
+                    <p className="text-sm font-semibold text-white truncate">{uploaderDisplayName}</p>
                     {video.uploaderRole && (
                       <Badge className="text-xs bg-white/10 text-white border-white/20 capitalize">
                         {String(video.uploaderRole).replace('_', ' ')}
@@ -1320,7 +1332,8 @@ const Videos = () => {
     // Extract user data from normalized fields or fallback locations
     const userId = video.uploaderId || video.user?.id || video.user?.userId || video.uploader?.id || video.uploader?.userId || null;
     const userRole = video.uploaderRole || video.uploader?.role || video.user?.role || null;
-    const isAnonymous = !!(video.isAnonymous || video.videoType === 'sample' || (!userId));
+  const hasName = !!(video.uploaderName || getDisplayName(video.user) || getDisplayName(video.uploader) || getDisplayName(video.user?.jobSeekerProfile) || getDisplayName(video.user?.employerProfile));
+  const isAnonymous = !!(video.isAnonymous || video.videoType === 'sample' || (!userId && !hasName));
 
     if (isAnonymous) {
       // Show toast message for anonymous/sample videos

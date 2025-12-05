@@ -272,8 +272,14 @@ export default function JobSeekerProfile() {
                               const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
                               if (!id) return;
                               try {
-                                await import('@/services/api').then(m => m.getPublicProfile(id));
-                              } catch (e) {}
+                                    await import('@/services/api').then(m => m.recordProfileView(id, 'jobseeker'));
+                                    // Refresh profile view count after recording view so UI updates for the viewer
+                                    const publicRes = await import('@/services/api').then(m => m.getPublicProfile(id, 'jobseeker'));
+                                    const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+                                    if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                                      setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+                                    }
+                                  } catch (e) {}
                               navigate(`/jobseeker-profile/${id}`);
                             }}
                             variant="outline"

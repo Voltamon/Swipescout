@@ -39,6 +39,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import axios from 'axios';
+import { getPublicProfile } from '@/services/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -65,6 +66,20 @@ export default function ProfileViewPage() {
     }
   }, [userId]);
 
+  useEffect(() => {
+    const onProfileView = (e) => {
+      try {
+        const viewed = e?.detail?.userId || e?.detail?.viewedUserId;
+        if (!viewed) return;
+        if (String(viewed) === String(userId)) {
+          fetchProfile();
+        }
+      } catch (err) { /* ignore */ }
+    };
+    window.addEventListener('profileViewRecorded', onProfileView);
+    return () => window.removeEventListener('profileViewRecorded', onProfileView);
+  }, [userId]);
+
   const handleConnect = async () => {
     // If user not logged in, redirect to login and preserve return path
     if (!user || !user.id) {
@@ -85,13 +100,11 @@ export default function ProfileViewPage() {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('accessToken');
-      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-      
-      const response = await axios.get(`${API_BASE_URL}/api/profile/${userId}`, { headers });
+  const res = await getPublicProfile(userId, (new URLSearchParams(window.location.search)).get('profileType') || null);
+  const response = res;
       setProfile(response.data.profile);
       // Notify other UI parts (dashboards, analytics) that a profile view occurred
-      try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId } })); } catch (e) {}
+  try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId, profileType: response.data.profile?.profileType || response.data.profile?.profile_type || null } })); } catch (e) {}
       try {
         if (user?.id) {
           const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(response.data.profile?.id));

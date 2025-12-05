@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { getAllJobsPosted, getCategories } from '@/services/api';
+import { getEmployerJobs, getCategories } from '@/services/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -49,8 +49,9 @@ export default function JobsListingPage() {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const response = await getAllJobsPosted();
-      setJobs(response.data.jobs || []);
+      // Use employer-specific jobs endpoint to list only jobs posted by the current employer
+      const response = await getEmployerJobs();
+      setJobs(response.data.jobs || response.data || []);
     } catch (error) {
       console.error('Error fetching jobs:', error);
       toast({

@@ -11,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { sendConnection } from '@/services/connectionService.js';
 import { Play, Pause, Volume2, VolumeX, MapPin, Briefcase, ExternalLink, Loader2 } from 'lucide-react';
-import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile } from '@/services/api';
+import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile, applyToJob } from '@/services/api';
+import { getEmployerDashboardStats } from '@/services/dashboardService';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -25,13 +26,15 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
   const [jobs, setJobs] = useState([]);
+  const [applyingJobId, setApplyingJobId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [connection, setConnection] = useState(null);
 
   // Determine whether the current viewer is the profile owner.
-  const profileOwnerId = profile?.id || null;
-  const isOwnProfile = Boolean(user?.id && profileOwnerId && String(profileOwnerId) === String(user.id));
+  // Employer profile object has a 'userId' (owner's user id) and an 'id' for the profile itself.
+  const profileOwnerUserId = profile?.userId || profile?.user?.id || null;
+  const isOwnProfile = Boolean(user?.id && profileOwnerUserId && String(profileOwnerUserId) === String(user.id));
 
   const handleConnect = async () => {
     if (!user?.id) {
@@ -68,32 +71,48 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
           getEmployerPublicJobs(id)
         ]);
         if (!mounted) return;
-        setProfile(pRes.data);
+  setProfile(pRes.data);
         setVideos(vRes.data?.videos || []);
         setJobs(jRes.data?.jobs || []);
         // check connection status
         try {
-          if (user?.id) {
-            const otherId = pRes.data?.id;
-            if (otherId) {
-              const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(otherId));
-              const conn = connRes?.data?.connection || null;
-              setConnection(conn);
-            }
-            // Also call the public profile endpoint so the backend records a profile view
-            try {
-              const publicRes = await getPublicProfile(id);
+          const otherId = pRes.data?.id;
+          if (user?.id && otherId) {
+            const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(otherId));
+            const conn = connRes?.data?.connection || null;
+            setConnection(conn);
+          }
+          // Also call the public profile endpoint so the backend records a profile view
+          try {
+            // If the current viewer is the profile owner and is authenticated, fetch dashboard stats
+            if (isOwnProfile && user?.id) {
+              try {
+                const dashRes = await getEmployerDashboardStats();
+                const dashStats = dashRes?.data?.stats || dashRes?.data;
+                const dashProfileViews = dashStats?.profileViews ?? dashStats?.profile_views ?? dashStats?.profileViewsTotal ?? 0;
+                setProfile(prev => ({ ...(prev || {}), profileViews: dashProfileViews }));
+              } catch (dashErr) {
+                // fallback to public profile call
+                const publicRes = await getPublicProfile(id, 'employer');
+                const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+                if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                  setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+                }
+              }
+            } else {
+              // Not owner or not authenticated: use public endpoint to record and fetch views
+              const publicRes = await getPublicProfile(id, 'employer');
               const returnedProfile = publicRes?.data?.profile || publicRes?.data;
               if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
                 setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
               }
-            } catch (err) {
-              console.debug('[EmployerProfileView] record view failed', err?.message || err);
             }
-            // Dispatch event so dashboards/analytics can refresh while open
-            try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId: id } })); } catch (e) {}
+          } catch (err) {
+            console.debug('[EmployerProfileView] record view failed', err?.message || err);
           }
-        } catch (e) {}
+          // Dispatch event so dashboards/analytics can refresh while open; include profileType
+          try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId: id, profileType: 'employer' } })); } catch (e) {}
+  } catch (e) {}
       } catch (err) {
         console.error('Error fetching employer public data', err);
         toast({ title: 'Error', description: 'Failed to load employer data', variant: 'destructive' });
@@ -104,6 +123,46 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
     fetchData();
     return () => { mounted = false; };
   }, [id, toast]);
+
+  // Listen for profileViewRecorded events and refresh profile views when they match current id
+  useEffect(() => {
+    const onProfileView = (e) => {
+      try {
+        const viewed = e?.detail?.userId || e?.detail?.viewedUserId;
+        const eventProfileType = e?.detail?.profileType || e?.detail?.profile_type || null;
+        if (!viewed) return;
+        const currentProfileType = profile?.profileType || profile?.profile_type || 'employer';
+        if (String(viewed) === String(id) && (eventProfileType === null || eventProfileType === String(currentProfileType))) {
+          (async () => {
+            try {
+              if (isOwnProfile && user?.id) {
+                try {
+                  const dashRes = await getEmployerDashboardStats();
+                  const dashStats = dashRes?.data?.stats || dashRes?.data;
+                  const dashProfileViews = dashStats?.profileViews ?? dashStats?.profile_views ?? dashStats?.profileViewsTotal ?? 0;
+                  setProfile(prev => ({ ...(prev || {}), profileViews: dashProfileViews }));
+                } catch (dashErr) {
+                  const publicRes = await import('@/services/api').then(m => m.getPublicProfile(id, 'employer'));
+                  const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+                  if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                    setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+                  }
+                }
+              } else {
+                const publicRes = await import('@/services/api').then(m => m.getPublicProfile(id, 'employer'));
+                const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+                if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                  setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+                }
+              }
+            } catch (err) { /* ignore */ }
+          })();
+        }
+      } catch (err) { /* ignore */ }
+    };
+    window.addEventListener('profileViewRecorded', onProfileView);
+    return () => window.removeEventListener('profileViewRecorded', onProfileView);
+  }, [id]);
 
   const togglePlay = () => {
     if (!mainVideoRef.current) return;
@@ -188,7 +247,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                   )
                 )}
 
-                <Button variant="outline" onClick={() => navigate(`/employer/${profile.id}/jobs`)} className="px-5 py-2">View Jobs</Button>
+                <Button variant="outline" onClick={() => setActiveTab('jobs')} className="px-5 py-2">View Jobs</Button>
                 <ReportButton contentType="user" contentId={profile.id} className="ml-2" />
               </div>
             </div>
@@ -234,7 +293,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
 
                   <Card>
                     <CardContent>
-                      <div className="text-sm text-muted-foreground">Profile Views (30d)</div>
+                      <div className="text-sm text-muted-foreground">Profile Views</div>
                       <div className="text-3xl font-bold">{profile.profileViews || 0}</div>
                     </CardContent>
                   </Card>
@@ -266,7 +325,42 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                           {job.description && <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{job.description}</p>}
                           <div className="mt-4 flex gap-2">
                             <Button variant="outline" onClick={() => navigate(`/job/${job.id}`)}>View</Button>
-                            <Button onClick={() => navigate(`/apply/${job.id}`)}>Apply</Button>
+                            {(() => {
+                              const ownerUserId = job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id;
+                              const isJobOwner = Boolean(user?.id && ownerUserId && String(user?.id) === String(ownerUserId));
+                              if (isJobOwner) {
+                                return (
+                                  <Button disabled variant="default" size="sm" className="flex-1">
+                                    You posted this job
+                                  </Button>
+                                );
+                              }
+                              return (
+                                <Button onClick={async () => {
+                                  // Apply to job in-place
+                                  if (!user?.id) {
+                                    navigate('/login', { state: { from: window.location.pathname } });
+                                    return;
+                                  }
+                                  try {
+                                    setApplyingJobId(job.id);
+                                    await applyToJob(job.id, {});
+                                    // Optimistically update job.applied if present
+                                    setJobs(prev => prev.map(j => j.id === job.id ? { ...j, applied: true, applicants_count: (j.applicants_count || 0) + 1 } : j));
+                                    toast({ title: 'Applied', description: 'Application submitted successfully' });
+                                  } catch (err) {
+                                    console.error('Apply failed', err);
+                                    toast({ title: 'Error', description: err?.response?.data?.message || 'Failed to apply', variant: 'destructive' });
+                                  } finally {
+                                    setApplyingJobId(null);
+                                  }
+                                }}
+                                disabled={job.applied || applyingJobId === job.id}
+                              >
+                                {job.applied ? 'Applied' : (applyingJobId === job.id ? 'Applying...' : 'Apply')}
+                              </Button>
+                              );
+                            })()}
                           </div>
                         </CardContent>
                       </Card>

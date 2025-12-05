@@ -148,14 +148,7 @@ export const getEmployerTabCategories = t => [
     key: "managementSettings",
     label: t("employerTabs:categories.managementSettings"),
     tabs: [
-      {
-        label: t("employerTabs:tabs.analytics"),
-        icon: { name: "Analytics" },
-        component: AnalyticsEmployer, // Just the component reference
-        context: "analytics", // Add context as a property
-        path: "analytics",
-        description: t("employerTabs:descriptions.analytics")
-      },
+      
       {
         label: t("employerTabs:tabs.notifications"),
         icon: { name: "Notifications" },
@@ -198,13 +191,7 @@ export const getEmployerTabCategories = t => [
     key: "communication",
     label: t("employerTabs:categories.communication"),
     tabs: [
-      {
-        label: t("employerTabs:tabs.notifications"),
-        icon: { name: "Notifications" },
-        component: NotificationsPage,
-        path: "notifications",
-        description: t("employerTabs:descriptions.notifications")
-      },
+      
       {
         label: t("employerTabs:tabs.connections"),
         icon: { name: "Users" },

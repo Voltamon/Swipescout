@@ -196,8 +196,24 @@ export const NotificationProvider = ({ children }) => {
       }
   };
     socket.on('notification', onNotification);
+
+    // Listen for profile view socket events and notify the app
+    const onProfileView = (payload) => {
+      try {
+        // Dispatch a cross-window event so other parts of the app can update
+        try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: payload })); } catch (e) {}
+        // Optionally, if the notification UI wants to display something, add a toast
+        if (payload && payload.viewerUserId) {
+          toast({ description: 'Someone viewed your profile' });
+        }
+      } catch (err) {
+        console.error('[NotificationContext] onProfileView error', err, payload);
+      }
+    };
+    socket.on('profile_view', onProfileView);
     return () => {
       socket.off('notification', onNotification);
+      socket.off('profile_view', onProfileView);
     };
   }, [socket, toast, location.pathname]);
 

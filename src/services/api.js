@@ -304,17 +304,19 @@ export const getCandidateRecommendations = () => api.get('/recommendations/candi
 export const submitRecommendationFeedback = (feedbackData) => api.post('/recommendations/feedback', feedbackData);
 
 // Analytics
-export const getProfileViewStats = () => api.get('/analytics/profile-views');
+export const getProfileViewStats = (params = {}) => api.get('/analytics/profile-views', { params });
 export const getSwipeStats = () => api.get('/analytics/swipe-stats');
 export const getJobStats = () => api.get('/analytics/job-stats');
 export const getCandidateEngagement = () => api.get('/analytics/candidate-engagement');
-export const getJobseekerStats = () => api.get('/analytics/jobseeker-stats');
-export const getEmployerStats = () => api.get('/analytics/employer-stats');
+export const getJobseekerStats = (params = {}) => api.get('/analytics/jobseeker-stats', { params });
+export const getEmployerStats = (params = {}) => api.get('/analytics/employer-stats', { params });
 export const getVideoEngagement = () => api.get('/analytics/video-engagement');
 
 // Profile
-export const getPublicProfile = (userId) => api.get(`/profile/${userId}`);
-export const getMyProfileViewStats = () => api.get('/profile/stats/views');
+export const getPublicProfile = (userId, profileType = null) => api.get(`/profile/${userId}`, { params: profileType ? { profileType } : {} });
+export const getMyProfileViewStats = (params = {}) => api.get('/profile/stats/views', { params });
+// Lightweight endpoint to record a profile view without fetching profile
+export const recordProfileView = (userId, profileType = null) => api.post(`/profile/${userId}/view`, { profileType });
 
 // Video processing / Edit
 export const uploadVideo = (formData, onUploadProgress) => api.post('/job-seeker/video-resume', formData, {
@@ -371,6 +373,8 @@ export const connectWithCandidate = (candidateId, message) => api.post(`/employe
 export const applyToJob = (jobId, applicationData) => api.post(`/job/${jobId}/apply`, applicationData);
 export const getApplications = () => api.get('/job/applications');
 export const getJobApplications = (jobId) => api.get(`/employer/job/${jobId}/applications`);
+// Get applicants for a specific job (public/employer endpoint)
+export const getJobApplicants = (jobId) => api.get(`/job/applications/${jobId}`);
 
 // Notifications
 export const getNotifications = (page = 1, limit = 20, unreadOnly = false, role = null) => {

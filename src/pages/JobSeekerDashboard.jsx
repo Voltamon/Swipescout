@@ -109,20 +109,7 @@ const JobSeekerDashboard = () => {
                 }
 
 
-                // Refresh dashboard stats when a profile view event is recorded elsewhere in the app
-                useEffect(() => {
-                    const onProfileView = async (e) => {
-                        try {
-                            const statsResponse = await getJobSeekerDashboardStats();
-                            const statsPayload = statsResponse?.stats ?? statsResponse?.data ?? statsResponse;
-                            setStats(statsPayload || {});
-                        } catch (err) {
-                            // ignore
-                        }
-                    };
-                    window.addEventListener('profileViewRecorded', onProfileView);
-                    return () => window.removeEventListener('profileViewRecorded', onProfileView);
-                }, []);
+                // Fetch recent activities
                 // Fetch recent activities
                 const activitiesResponse = await getRecentActivities('jobseeker');
                 const activitiesPayload = activitiesResponse?.activities ?? activitiesResponse?.data ?? activitiesResponse;
@@ -161,6 +148,24 @@ const JobSeekerDashboard = () => {
         };
 
         fetchDashboardData();
+    }, []);
+
+    // Listen for profileViewRecorded events and refresh the jobseeker dashboard if role matches
+    useEffect(() => {
+        const onProfileView = async (e) => {
+            try {
+                const profileType = e?.detail?.profileType || e?.detail?.profile_type || null;
+                // Only refresh if the event is for a jobseeker profile or if unspecified
+                if (profileType && String(profileType) !== 'jobseeker') return;
+                const statsResponse = await getJobSeekerDashboardStats();
+                const statsPayload = statsResponse?.stats ?? statsResponse?.data ?? statsResponse;
+                setStats(statsPayload || {});
+            } catch (err) {
+                // ignore
+            }
+        };
+        window.addEventListener('profileViewRecorded', onProfileView);
+        return () => window.removeEventListener('profileViewRecorded', onProfileView);
     }, []);
 
     // Activity chart data

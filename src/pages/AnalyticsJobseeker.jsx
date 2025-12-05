@@ -35,7 +35,7 @@ export default function AnalyticsJobseeker() {
         setLoading(true);
         // api instance already includes the `/api` base path, so request path
         // here should not include an extra `/api` segment to avoid `/api/api`.
-        const res = await api.get(`/analytics/profile-views`, { params: { period } });
+  const res = await api.get(`/analytics/profile-views`, { params: { period, profileType: 'jobseeker' } });
         setStats(res.data.stats || {});
       } catch (e) {
         setError(e.message || 'Failed to load');
@@ -52,7 +52,7 @@ export default function AnalyticsJobseeker() {
       const fetchNow = async () => {
         try {
           setLoading(true);
-          const res = await api.get(`/analytics/profile-views`, { params: { period } });
+          const res = await api.get(`/analytics/profile-views`, { params: { period, profileType: 'jobseeker' } });
           setStats(res.data.stats || {});
         } catch (e) {
           setError(e.message || 'Failed to load');

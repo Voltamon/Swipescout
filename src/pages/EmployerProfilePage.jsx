@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEmployerProfile, getEmployerJobs } from '@/services/api';
+import { getEmployerProfile, getEmployerJobs, getMyProfileViewStats } from '@/services/api';
+import { getEmployerDashboardStats } from '@/services/dashboardService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
@@ -46,11 +47,59 @@ export default function EmployerProfilePage() {
     fetchJobs();
   }, []);
 
+  // Listen for profile view events and refresh profile view count when a view gets recorded
+  useEffect(() => {
+    const onProfileView = async (e) => {
+      try {
+        // Fetch the dashboard stats so we show the same total as the Employer Dashboard
+        try {
+          const dashRes = await getEmployerDashboardStats();
+          const dashStats = dashRes?.data?.stats || dashRes?.data;
+          const dashProfileViews = dashStats?.profileViews ?? dashStats?.profile_views ?? dashStats?.profileViewsTotal ?? 0;
+          setProfile(prev => ({ ...(prev || {}), profileViews: dashProfileViews }));
+        } catch (err) {
+          // If dashboard call fails, fallback to last-30-day stats
+          const statsRes = await getMyProfileViewStats({ profileType: 'employer' });
+          const daily = statsRes?.data?.stats?.daily_stats || statsRes?.data?.stats?.dailyStats || [];
+          const last30Count = daily.reduce((sum, d) => sum + (d.views || 0), 0);
+          const totalViews = statsRes?.data?.stats?.total_views ?? statsRes?.data?.stats?.totalViews ?? 0;
+          if (typeof last30Count === 'number') {
+            setProfile(prev => ({ ...(prev || {}), profileViewsLast30: last30Count, profileViewsTotal: totalViews }));
+          }
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
+    window.addEventListener('profileViewRecorded', onProfileView);
+    return () => window.removeEventListener('profileViewRecorded', onProfileView);
+  }, []);
+
   const fetchProfile = async () => {
     setLoading(true);
     try {
       const response = await getEmployerProfile();
       setProfile(response.data);
+      // Also fetch the dashboard stats (total profile views) to match Employer Dashboard
+      try {
+        const dashRes = await getEmployerDashboardStats();
+        const dashStats = dashRes?.data?.stats || dashRes?.data;
+        const dashProfileViews = dashStats?.profileViews ?? dashStats?.profile_views ?? dashStats?.profileViewsTotal ?? 0;
+        setProfile(prev => ({ ...(prev || {}), profileViews: dashProfileViews }));
+      } catch (err) {
+        // Fallback: load last-30-day stats as before
+        try {
+          const statsRes = await getMyProfileViewStats({ profileType: 'employer' });
+          const daily = statsRes?.data?.stats?.daily_stats || statsRes?.data?.stats?.dailyStats || [];
+          const last30Count = daily.reduce((sum, d) => sum + (d.views || 0), 0);
+          const totalViews = statsRes?.data?.stats?.total_views ?? statsRes?.data?.stats?.totalViews ?? 0;
+          if (typeof last30Count === 'number') {
+            setProfile(prev => ({ ...(prev || {}), profileViewsLast30: last30Count, profileViewsTotal: totalViews }));
+          }
+        } catch (err2) {
+          // ignore
+        }
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
@@ -115,8 +164,34 @@ export default function EmployerProfilePage() {
                         const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
                         if (!id) return;
                         try {
-                          // Call public profile endpoint to ensure view is tracked
-                          await import('@/services/api').then(m => m.getPublicProfile(id));
+                          // Call lightweight endpoint to record a public profile view without fetching the entire profile
+                              await import('@/services/api').then(m => m.recordProfileView(id, 'employer'));
+                              // Refresh viewer UI so they see updated profile view count (try dashboard's total views to match Employer Dashboard)
+                              try {
+                                const dashRes = await import('@/services/dashboardService').then(m => m.getEmployerDashboardStats());
+                                const dashStats = dashRes?.data?.stats || dashRes?.data;
+                                const dashProfileViews = dashStats?.profileViews ?? dashStats?.profile_views ?? dashStats?.profileViewsTotal ?? 0;
+                                setProfile(prev => ({ ...(prev || {}), profileViews: dashProfileViews }));
+                                try { window.dispatchEvent(new Event('profileViewRecorded')); } catch (e) {/* ignore */}
+                              } catch (err) {
+                                // fallback: try last-30-day stats
+                                try {
+                                  const statsRes = await import('@/services/api').then(m => m.getMyProfileViewStats({ profileType: 'employer' }));
+                                  const daily = statsRes?.data?.stats?.daily_stats || statsRes?.data?.stats?.dailyStats || [];
+                                  const last30Count = daily.reduce((sum, d) => sum + (d.views || 0), 0);
+                                  const totalViews = statsRes?.data?.stats?.total_views ?? statsRes?.data?.stats?.totalViews ?? 0;
+                                  setProfile(prev => ({ ...(prev || {}), profileViewsLast30: last30Count, profileViewsTotal: totalViews }));
+                                  try { window.dispatchEvent(new Event('profileViewRecorded')); } catch (e) {/* ignore */}
+                                } catch (err2) {
+                                  // fallback to public profile value
+                                  const publicRes = await import('@/services/api').then(m => m.getPublicProfile(id, 'employer'));
+                                  const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+                                  if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                                    setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews ?? prev.profileViews }));
+                                    try { window.dispatchEvent(new Event('profileViewRecorded')); } catch (e) {/* ignore */}
+                                  }
+                                }
+                              }
                         } catch (err) {
                           // ignore
                         }
@@ -262,8 +337,13 @@ export default function EmployerProfilePage() {
                 <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">{profile?.profileViews || 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">In the last 30 days</p>
+                <div className="text-3xl font-bold">{(profile?.profileViews ?? profile?.profileViewsTotal ?? profile?.profileViewsLast30) || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Total profile views
+                  {typeof profile?.profileViewsLast30 !== 'undefined' && (
+                    <span className="ml-2 text-xs text-muted-foreground">In the last 30 days: {profile.profileViewsLast30}</span>
+                  )}
+                </p>
               </CardContent>
             </Card>
           </div>

@@ -34,7 +34,7 @@ const JobDetailsPage = ({ id: propId }) => {
   const [showVideoInfo, setShowVideoInfo] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const { videos: localVideos } = useVideoContext();
   const videoRef = React.useRef(null);
   const [isHovering, setIsHovering] = useState(false);
@@ -532,9 +532,10 @@ const JobDetailsPage = ({ id: propId }) => {
                 <Button 
                   size="lg" 
                   onClick={() => navigate(`/apply/${job.id}`)} 
+                  disabled={Boolean(user?.id && (String(user.id) === String(job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id)))}
                   className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/30 px-12"
                 >
-                  Apply for this Position
+                  {user?.id && (String(user.id) === String(job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id)) ? 'You posted this job' : 'Apply for this Position'}
                 </Button>
               </div>
             )}

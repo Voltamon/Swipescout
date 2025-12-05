@@ -122,7 +122,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         // Record a profile view by calling the public profile endpoint — this ensures
         // the backend's profile view tracking logic runs (it runs inside /profile/:userId)
         try {
-          const publicRes = await getPublicProfile(id);
+    const publicRes = await getPublicProfile(id, 'jobseeker');
           // Update profile view count displayed in UI using the returned data
           const returnedProfile = publicRes?.data?.profile || publicRes?.data;
           if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
@@ -132,8 +132,8 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
           // Ignore errors — tracking is best-effort and should not block the view
           console.debug('[JobSeekerProfileView] record view failed', e?.message || e);
         }
-        // Dispatch event so dashboards/analytics can refresh while open
-        try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId: id } })); } catch (e) {}
+  // Dispatch event so dashboards/analytics can refresh while open
+  try { window.dispatchEvent(new CustomEvent('profileViewRecorded', { detail: { userId: id, profileType: profileObj?.profileType || profileObj?.profile_type || 'jobseeker' } })); } catch (e) {}
 
         setLoading(false);
       } catch (e) {
@@ -144,6 +144,33 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
     };
 
     fetchAll();
+  }, [id]);
+
+  // Listen for profileViewRecorded events and refresh profile when it matches current id
+  useEffect(() => {
+    const onProfileView = (e) => {
+      try {
+        const viewed = e?.detail?.userId || e?.detail?.viewedUserId;
+        const eventProfileType = e?.detail?.profileType || e?.detail?.profile_type || null;
+        if (!viewed) return;
+        // Ensure this event is for the same profile ID AND same role/profileType
+        const currentProfileType = profile?.profileType || profile?.profile_type || 'jobseeker';
+        if (String(viewed) === String(id) && (eventProfileType === null || eventProfileType === String(currentProfileType))) {
+          // re-fetch minimal public profile to update view counts
+          (async () => {
+            try {
+              const publicRes = await getPublicProfile(id, 'jobseeker');
+              const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+              if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+              }
+            } catch (err) { /* ignore */ }
+          })();
+        }
+      } catch (err) { /* ignore */ }
+    };
+    window.addEventListener('profileViewRecorded', onProfileView);
+    return () => window.removeEventListener('profileViewRecorded', onProfileView);
   }, [id]);
 
   if (loading) {

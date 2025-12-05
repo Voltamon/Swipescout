@@ -30,6 +30,7 @@ import JobPostingForm from "./pages/JobPostingForm";
 import VideoUpload from "./pages/VideoUpload";
 
 import JobDetailsPage from "./pages/JobDetailsPage";
+import JobApplicantsPage from "./pages/JobApplicantsPage";
 
 import AdminDashboard from "./pages/adminDashboard";
 import FeedPage from "./pages/FeedPage";
@@ -298,6 +299,7 @@ function App() {
               <Route path="/video-upload" element={<VideoUpload />} />
               
               <Route path="/job/:id" element={<JobDetailsPage />} />
+              <Route path="/job/:id/applications" element={<JobApplicantsPage />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/analytics/admin" element={<AnalyticsAdmin />} />
               <Route path="/feed-page" element={<FeedPage />} />

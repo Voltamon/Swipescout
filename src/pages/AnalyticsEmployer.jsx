@@ -104,7 +104,9 @@ export default function AnalyticsEmployer() {
       const params = {};
       if (opts.from) params.from = opts.from;
       if (opts.to) params.to = opts.to;
-      const res = await api.get('/analytics/employer-stats', { params });
+  // Always include profileType to scope analytics to employer profile views
+  params.profileType = 'employer';
+  const res = await import('@/services/api').then(m => m.getEmployerStats(params));
       setStats(res.data || {});
     } catch (e) {
       console.error('[AnalyticsEmployer] fetch error', e);
