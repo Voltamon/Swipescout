@@ -375,6 +375,7 @@ export const getApplications = () => api.get('/job/applications');
 export const getJobApplications = (jobId) => api.get(`/employer/job/${jobId}/applications`);
 // Get applicants for a specific job (public/employer endpoint)
 export const getJobApplicants = (jobId) => api.get(`/job/applications/${jobId}`);
+export const incrementJobView = (jobId) => api.post(`/job/${jobId}/view`);
 
 // Notifications
 export const getNotifications = (page = 1, limit = 20, unreadOnly = false, role = null) => {

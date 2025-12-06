@@ -302,7 +302,8 @@ export const AuthProvider = ({ children }) => {
 			"/cookie-policy",
 			"/community-guidelines",
 			"/copyright-ip-terms",
-			"/eula"
+			"/eula",
+			"/job/:id"
 		];            
                
 			const isPublicRoute = publicRoutes.some(route => {

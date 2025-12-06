@@ -27,10 +27,17 @@ import {
   Filter,
   PlayCircle
 } from 'lucide-react';
+// Use public images as placeholders
+const placeholderOptions = [
+  '/images/videoPlaceholder1.jpeg',
+  '/images/videoPlaceholder2.jpeg'
+];
 import themeColors from '@/config/theme-colors';
 
 export default function JobsListingPage() {
-  // const { user } = useAuth(); // Removed: unused variable
+  const { user, role } = useAuth();
+  // pick a single random placeholder per page load
+  const [placeholderImage] = useState(() => placeholderOptions[Math.floor(Math.random() * placeholderOptions.length)]);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
@@ -44,6 +51,26 @@ export default function JobsListingPage() {
   useEffect(() => {
     fetchJobs();
     fetchCategories();
+
+    // Listen for view count updates from other parts of the app
+    const onViewsUpdated = (e) => {
+      try {
+        const { jobId, views } = e.detail || {};
+        if (!jobId) return;
+        setJobs(prev => {
+          const idx = prev.findIndex(j => String(j.id) === String(jobId));
+          if (idx === -1) return prev;
+          const copy = [...prev];
+          copy[idx] = { ...copy[idx], views };
+          return copy;
+        });
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    window.addEventListener('job:viewsUpdated', onViewsUpdated);
+    return () => { window.removeEventListener('job:viewsUpdated', onViewsUpdated); };
   }, [statusFilter]);
 
   const fetchJobs = async () => {
@@ -96,9 +123,18 @@ export default function JobsListingPage() {
   };
 
   const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+    const computeStatus = (job) => {
+      const now = new Date();
+      if (job.status === 'draft') return 'draft';
+      if (job.status === 'closed') return 'closed';
+      if (job.deadline && new Date(job.deadline) < now) return 'closed';
+      return 'active';
+    };
+
+    const computedStatus = computeStatus(job);
+    const matchesSearch = (job.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (job.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || computedStatus === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -109,9 +145,21 @@ export default function JobsListingPage() {
           <div className="flex-grow">
             <CardTitle className="text-xl mb-2">{job.title}</CardTitle>
             <div className="flex flex-wrap gap-2 mb-2">
-              <Badge variant={job.status === 'active' ? 'default' : 'secondary'}>
-                {job.status || 'Active'}
-              </Badge>
+              {(() => {
+                const computeStatus = (job) => {
+                  const now = new Date();
+                  if (job.status === 'draft') return 'draft';
+                  if (job.status === 'closed') return 'closed';
+                  if (job.deadline && new Date(job.deadline) < now) return 'closed';
+                  return 'active';
+                };
+                const computedStatus = computeStatus(job);
+                const computedLabel = computedStatus.charAt(0).toUpperCase() + computedStatus.slice(1);
+                const variant = computedStatus === 'active' ? 'default' : 'secondary';
+                return (
+                  <Badge variant={variant}>{computedLabel}</Badge>
+                );
+              })()}
               {job.jobType && (
                 <Badge variant="outline">
                   <Clock className="h-3 w-3 mr-1" />
@@ -138,6 +186,38 @@ export default function JobsListingPage() {
         </div>
       </CardHeader>
       <CardContent>
+        {/* Video / placeholder area */}
+        <div className="mb-4">
+          {job.video?.video_url || job.video_url ? (
+            <div className="relative w-full h-48 rounded-md overflow-hidden">
+              <video
+                src={job.video?.video_url || job.video_url}
+                controls
+                className="w-full h-full object-cover"
+              />
+                {((Array.isArray(role) ? role.includes('employer') || role.includes('recruiter') : role === 'employer') || (user && String(user.id) === String(job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id))) && (
+                <div className="absolute top-3 right-3 z-20">
+                  <Button size="xs" variant="ghost" aria-label="Manage Video" onClick={() => navigate(`/employer-tabs?group=videoManagement&tab=video-editor&id=${job.id}`)}>
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="w-full h-44 rounded-lg overflow-hidden relative shadow-sm border border-slate-100" style={{backgroundImage: `url(${placeholderImage})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-9 rounded-md bg-gradient-to-r from-sky-500 to-indigo-600 flex items-center justify-center border border-white/10 shadow-md">
+                    <PlayCircle className="h-5 w-5 text-white" />
+                  </div>
+                </div>
+              </div>
+                <div className="absolute inset-0 flex items-end justify-end pr-6 pb-3">
+                <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">No Video</p>
+              </div>
+            </div>
+          )}
+        </div>
         {job.description && (
           <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
             {job.description}
@@ -173,12 +253,16 @@ export default function JobsListingPage() {
             </div>
           )}
 
-          {job.views !== undefined && (
-            <div className="flex items-center gap-2 text-sm">
-              <Eye className="h-4 w-4 text-muted-foreground" />
-              <span>{job.views} Views</span>
-            </div>
-          )}
+          {(() => {
+            const getViews = (job) => job.views ?? job.viewsCount ?? job.stats?.views ?? 0;
+            const views = getViews(job) || 0;
+            return (
+              <div className="flex items-center gap-2 text-sm">
+                <Eye className="h-4 w-4 text-muted-foreground" />
+                <span>{views} Views</span>
+              </div>
+            );
+          })()}
         </div>
 
         {job.skills && job.skills.length > 0 && (
@@ -213,7 +297,7 @@ export default function JobsListingPage() {
             variant="default" 
             size="sm"
             className={`${themeColors.buttons.primary} text-white flex-1  hover:from-purple-700 hover:to-cyan-700`}
-            onClick={() => navigate(`/job/${job.id}/applications`)}
+            onClick={() => navigate(`/employer-tabs?group=jobManagement&tab=job-applicants&id=${job.id}`)}
           >
             <Users className="h-4 w-4 mr-1" />
             View Applications
@@ -260,7 +344,17 @@ export default function JobsListingPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {jobs.filter(j => j.status === 'active').length}
+              {jobs.filter(j => {
+                // Use the same computeStatus logic to determine active jobs
+                const computeStatus = (job) => {
+                  const now = new Date();
+                  if (job.status === 'draft') return 'draft';
+                  if (job.status === 'closed') return 'closed';
+                  if (job.deadline && new Date(job.deadline) < now) return 'closed';
+                  return 'active';
+                };
+                return computeStatus(j) === 'active';
+              }).length}
             </div>
           </CardContent>
         </Card>
@@ -280,7 +374,7 @@ export default function JobsListingPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {jobs.reduce((sum, j) => sum + (j.views || 0), 0)}
+              {jobs.reduce((sum, j) => sum + (j.views ?? j.viewsCount ?? j.stats?.views ?? 0), 0)}
             </div>
           </CardContent>
         </Card>
@@ -332,7 +426,7 @@ export default function JobsListingPage() {
       {/* Job Listings */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
+          <Loader2 className={`h-12 w-12 animate-spin ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
         </div>
       ) : filteredJobs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

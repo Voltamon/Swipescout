@@ -6,8 +6,9 @@ import { getJobApplicants } from '@/services/api';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function JobApplicantsPage() {
-  const { id } = useParams();
+export default function JobApplicantsPage({ id: propId }) {
+  const { id: paramId } = useParams();
+  const id = propId || paramId; // accept id via prop or URL params
   const navigate = useNavigate();
   const { toast } = useToast();
   const [applicants, setApplicants] = useState([]);

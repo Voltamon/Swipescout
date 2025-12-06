@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getJobDetails } from '@/services/api';
+import { getJobDetails, incrementJobView } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { Button } from '@/components/UI/button.jsx';
@@ -22,6 +22,13 @@ import {
   AcademicCapIcon,
   ArrowLeftIcon,
 } from '@/components/icons/heroicons';
+import { Eye, Plus, Edit } from 'lucide-react';
+
+// Public placeholder images - randomly selected per page open
+const placeholderOptions = [
+  '/images/videoPlaceholder1.jpeg',
+  '/images/videoPlaceholder2.jpeg'
+];
 
 const JobDetailsPage = ({ id: propId }) => {
   const { id: paramId } = useParams();
@@ -45,7 +52,24 @@ const JobDetailsPage = ({ id: propId }) => {
       try {
         setLoading(true);
         const response = await getJobDetails(id);
-        setJob(response.data.job);
+        const jobData = response.data.job;
+        setJob(jobData);
+
+        // Increment the job view count on the server and update UI
+        try {
+          const inc = await incrementJobView(id);
+          const updatedViews = inc?.data?.views ?? jobData?.views ?? jobData?.viewsCount ?? 0;
+          setJob((prev) => ({ ...(prev || jobData), views: updatedViews }));
+          // Notify other pages to refresh listing or update counts
+          try {
+            window.dispatchEvent(new CustomEvent('job:viewsUpdated', { detail: { jobId: id, views: updatedViews } }));
+          } catch (e) {
+            // ignore if CustomEvent unsupported
+          }
+        } catch (e) {
+          // ignore increment errors
+          console.warn('Failed to increment job view:', e);
+        }
         setLoading(false);
       } catch (err) {
         console.error("Error fetching job details:", err);
@@ -72,7 +96,7 @@ const JobDetailsPage = ({ id: propId }) => {
     }
 
     // 2. Check for completed server video in job data
-    if (job?.video?.video_url && job.video.status === 'completed') {
+    if (job?.video?.video_url && job?.video?.status === 'completed') {
       return job.video;
     }
 
@@ -144,6 +168,15 @@ const JobDetailsPage = ({ id: propId }) => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const computeStatus = (job) => {
+    const now = new Date();
+    if (!job) return 'active';
+    if (job.status === 'draft') return 'draft';
+    if (job.status === 'closed') return 'closed';
+    if (job.deadline && new Date(job.deadline) < now) return 'closed';
+    return 'active';
+  };
+
   const handleMouseEnterVideo = () => {
     setIsHovering(true);
     if (!isPlaying && !isMouseOverControls) {
@@ -158,11 +191,13 @@ const JobDetailsPage = ({ id: propId }) => {
     }
   };
 
-  const renderVideoHero = () => {
-    if (!hasVideo()) return null;
+  const [placeholderImage] = useState(() => placeholderOptions[Math.floor(Math.random() * placeholderOptions.length)]);
 
+  const renderVideoHero = () => {
     const videoUrl = getVideoUrl();
     const video = displayVideo;
+    // Use the deterministic random placeholder chosen at mount
+    const placeholderDataUrl = `url(${placeholderImage})`;
     
     return (
       <Card className="w-full relative overflow-hidden mb-8 border-0 shadow-xl">
@@ -194,7 +229,7 @@ const JobDetailsPage = ({ id: propId }) => {
               <div className="absolute left-0 right-0 bottom-0 p-8 z-10">
                 <div className="max-w-4xl">
                   <Badge variant="secondary" className="mb-3 bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                    {displayVideo.video_title || "Job Video"}
+                    {video?.video_title || "Job Video"}
                   </Badge>
                   <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white drop-shadow-lg">{job?.title}</h1>
                   <div className="flex flex-wrap gap-4 md:gap-6 text-sm md:text-base text-white/90">
@@ -240,24 +275,33 @@ const JobDetailsPage = ({ id: propId }) => {
                   {isMuted ? <SpeakerXIcon className="w-5 h-5 text-slate-900" /> : <SpeakerWaveIcon className="w-5 h-5 text-slate-900" />}
                 </Button>
               </div>
+              {/* Manage Video Button for Employers/Job Owner */}
+              {((Array.isArray(role) ? role.includes('employer') || role.includes('recruiter') : role === 'employer') || (user && String(user.id) === String(job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id))) && (
+                <div className="absolute top-4 right-4 z-30">
+                  <Button size="sm" variant="outline" aria-label="Manage Video" onClick={(e) => { e.stopPropagation(); navigate(`/employer-tabs?group=videoManagement&tab=video-editor&id=${job.id}`); }}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </>
           ) : (
             <div
               onMouseEnter={() => setIsMouseOverControls(true)}
               onMouseLeave={() => setIsMouseOverControls(false)}
-              className="w-full h-[65vh] min-h-[450px] max-h-[850px] flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
+              className="w-full h-[65vh] min-h-[450px] max-h-[850px] flex flex-col items-center justify-center rounded-lg shadow-inner border border-slate-200 text-white"
+              style={{ backgroundImage: placeholderDataUrl, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              {(video.status === 'uploading' || video.status === 'processing') && (
+              {(video?.status === 'uploading' || video?.status === 'processing') && (
                 <>
                   <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-6" />
                   <h3 className="text-2xl font-semibold mb-2">
-                    {video.status === 'uploading' ? `Uploading: ${video.progress || 0}%` : 'Processing your video...'}
+                    {video?.status === 'uploading' ? `Uploading: ${video?.progress || 0}%` : 'Processing your video...'}
                   </h3>
-                  {video.status === 'uploading' && (
+                  {video?.status === 'uploading' && (
                     <div className="w-80 max-w-[80%] bg-slate-700/50 rounded-full h-3 overflow-hidden mt-4">
                       <div 
                         className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300 rounded-full" 
-                        style={{ width: `${video.progress || 0}%` }} 
+                        style={{ width: `${video?.progress || 0}%` }} 
                       />
                     </div>
                   )}
@@ -265,7 +309,7 @@ const JobDetailsPage = ({ id: propId }) => {
                 </>
               )}
 
-              {video.status === 'failed' && (
+              {video?.status === 'failed' && (
                 <>
                   <DocumentTextIcon className="w-20 h-20 text-yellow-400 mb-4" />
                   <h3 className="text-2xl font-semibold mb-2">Video upload failed</h3>
@@ -273,19 +317,23 @@ const JobDetailsPage = ({ id: propId }) => {
                 </>
               )}
 
-              {(!video.status || video.status === 'completed') && !videoUrl && (
+              {(!video?.status || video?.status === 'completed') && !videoUrl && (
                 <>
-                  <DocumentTextIcon className="w-20 h-20 text-slate-400 mb-4" />
-                  <h3 className="text-2xl font-semibold">Video content not available</h3>
+                  <div className="w-full max-w-3xl h-60 mb-4 rounded-lg overflow-hidden relative shadow-lg border border-slate-100">
+                    <div className="absolute inset-0" style={{ backgroundImage: placeholderDataUrl, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                  </div>
+                  <div className="mt-2 flex items-end justify-end pr-8 pb-3">
+                    <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">No Video</p>
+                  </div>
                 </>
               )}
             </div>
           )}
 
-          {video.status === 'processing' && (
+          {video?.status === 'processing' && (
             <div className="absolute inset-0 border-4 border-purple-500 pointer-events-none rounded-lg" />
           )}
-          {video.status === 'failed' && (
+          {video?.status === 'failed' && (
             <div className="absolute inset-0 border-4 border-red-500 pointer-events-none rounded-lg" />
           )}
         </div>
@@ -334,7 +382,7 @@ const JobDetailsPage = ({ id: propId }) => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50 pt-20 pb-20">
       <div className="container max-w-6xl mx-auto px-4">
         {/* Video Hero Section */}
-        {hasVideo() && renderVideoHero()}
+        {renderVideoHero()}
 
         {/* Main Job Details Card */}
         <Card className="shadow-xl border-slate-200/60 mb-8">
@@ -352,7 +400,12 @@ const JobDetailsPage = ({ id: propId }) => {
                 <CardDescription className="text-xs uppercase tracking-wider font-semibold text-purple-600 mb-2">
                   Job Opportunity
                 </CardDescription>
-                <CardTitle className="text-3xl md:text-4xl mb-4">{job.title}</CardTitle>
+                <div className="flex items-center gap-3">
+                  <CardTitle className="text-3xl md:text-4xl mb-4">{job.title}</CardTitle>
+                  <Badge variant={computeStatus(job) === 'active' ? 'default' : 'secondary'}>
+                    {computeStatus(job).charAt(0).toUpperCase() + computeStatus(job).slice(1)}
+                  </Badge>
+                </div>
                 
                 <div className="flex flex-wrap gap-3 mb-4">
                   <div className="flex items-center gap-2 text-slate-600">
@@ -445,6 +498,15 @@ const JobDetailsPage = ({ id: propId }) => {
                 </div>
                 <div className="text-lg font-semibold text-slate-900">
                   {job.location}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
+                  <Eye className="w-5 h-5 text-indigo-600" />
+                  Views
+                </div>
+                <div className="text-lg font-semibold text-slate-900">
+                  {job.views ?? job.viewsCount ?? job.stats?.views ?? 0}
                 </div>
               </div>
             </div>

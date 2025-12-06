@@ -35,6 +35,7 @@ import VideosPage from "../pages/VideosPage.jsx"; // Import VideosPage component
 import AnalyticsEmployer from "../pages/AnalyticsEmployer";
 import EditEmployerProfilePage from "../pages/EditEmployerProfilePage";
 import JobDetailsPage from "../pages/JobDetailsPage.jsx";
+import JobApplicantsPage from "../pages/JobApplicantsPage.jsx";
 
 // Function to get translated employer tab categories
 export const getEmployerTabCategories = t => [
@@ -102,11 +103,22 @@ export const getEmployerTabCategories = t => [
         label: t("employerTabs:tabs.jobDetails", "Job Details"),
         icon: { name: "DocumentText" },
         component: JobDetailsPage,
-        path: "job-details/:id",
+        path: "job-details",
         hideInSidebar: true,
         description: t(
           "employerTabs:descriptions.jobDetails",
           "View detailed information about a specific job"
+        )
+      },
+      {
+        label: t("employerTabs:tabs.jobApplicants", "Job Applicants"),
+        icon: { name: "FileText" },
+        component: JobApplicantsPage,
+        path: "job-applicants",
+        hideInSidebar: true,
+        description: t(
+          "employerTabs:descriptions.jobApplicants",
+          "View applications for a specific job"
         )
       }
     ]
@@ -148,7 +160,6 @@ export const getEmployerTabCategories = t => [
     key: "managementSettings",
     label: t("employerTabs:categories.managementSettings"),
     tabs: [
-      
       {
         label: t("employerTabs:tabs.notifications"),
         icon: { name: "Notifications" },
@@ -191,7 +202,6 @@ export const getEmployerTabCategories = t => [
     key: "communication",
     label: t("employerTabs:categories.communication"),
     tabs: [
-      
       {
         label: t("employerTabs:tabs.connections"),
         icon: { name: "Users" },
