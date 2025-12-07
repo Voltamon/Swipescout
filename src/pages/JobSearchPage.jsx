@@ -34,6 +34,12 @@ import localize from '../utils/localize';
 export default function JobSearchPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  // pick a single random placeholder per page load for jobs without videos
+  const placeholderOptions = [
+    '/images/videoPlaceholder1.jpeg',
+    '/images/videoPlaceholder2.jpeg'
+  ];
+  const [placeholderImage] = useState(() => placeholderOptions[Math.floor(Math.random() * placeholderOptions.length)]);
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [minSalary, setMinSalary] = useState("");
@@ -210,6 +216,37 @@ export default function JobSearchPage() {
               <Bookmark className="h-5 w-5" />
             )}
           </Button>
+        </div>
+
+        {/* Video / placeholder area */}
+        <div className="mb-4">
+          {job.video?.video_url || job.video_url ? (
+            <div className="relative w-full h-48 rounded-md overflow-hidden">
+              <video
+                src={job.video?.video_url || job.video_url}
+                controls
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              className={`w-full h-44 rounded-lg overflow-hidden relative shadow-sm border border-slate-100 ${job.companyVideoId ? 'cursor-pointer' : ''}`}
+              style={{backgroundImage: `url(${placeholderImage})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+              onClick={() => job.companyVideoId && window.open(`/company-video/${job.companyVideoId}`, '_blank')}
+              role={job.companyVideoId ? 'button' : 'presentation'}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-9 rounded-md bg-gradient-to-r from-sky-500 to-indigo-600 flex items-center justify-center border border-white/10 shadow-md">
+                    <PlayCircle className="h-5 w-5 text-white" />
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-0 flex items-end justify-end pr-6 pb-3">
+                <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">No Video</p>
+              </div>
+            </div>
+          )}
         </div>
 
             {job.description && (

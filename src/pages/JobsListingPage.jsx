@@ -246,12 +246,16 @@ export default function JobsListingPage() {
             </div>
           )}
 
-          {job.applicants_count !== undefined && (
-            <div className="flex items-center gap-2 text-sm">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span>{job.applicants_count} Applicants</span>
-            </div>
-          )}
+          {(() => {
+            const applicantsCount = job.applicationsCount ?? job.applicants_count ?? job.applicants?.length ?? job.applications?.length ?? job.applicantList?.length ?? job.applicantsList?.length ?? 0;
+            if (!applicantsCount || applicantsCount <= 0) return null;
+            return (
+              <div className="flex items-center gap-2 text-sm">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span>{applicantsCount} Applicants</span>
+              </div>
+            );
+          })()}
 
           {(() => {
             const getViews = (job) => job.views ?? job.viewsCount ?? job.stats?.views ?? 0;
@@ -329,7 +333,7 @@ export default function JobsListingPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
@@ -364,7 +368,28 @@ export default function JobsListingPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {jobs.reduce((sum, j) => sum + (j.applicants_count || 0), 0)}
+              {(() => {
+                // Prefer counting unique applicant user ids across jobs if applicants/apps lists exist.
+                const uniqueApplicants = new Set();
+                let foundArray = false;
+                const getApplicantId = (a) => {
+                  if (!a) return null;
+                  return a.userId || a.user_id || a.id || a.applicantId || (a.user && (a.user.id || a.userId || a.user._id)) || null;
+                };
+                jobs.forEach(j => {
+                  const arr = j.applicants || j.applications || j.applicantList || j.applicantsList;
+                  if (Array.isArray(arr)) {
+                    foundArray = true;
+                    arr.forEach(a => {
+                      const id = getApplicantId(a);
+                      if (id) uniqueApplicants.add(String(id));
+                    });
+                  }
+                });
+                if (foundArray) return uniqueApplicants.size;
+                // Fallback: sum applicants_count numbers if provided
+                return jobs.reduce((sum, j) => sum + ((j.applicationsCount ?? j.applicants_count) || 0), 0);
+              })()}
             </div>
           </CardContent>
         </Card>

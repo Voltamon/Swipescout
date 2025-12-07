@@ -187,3 +187,14 @@ Add visual indicators in analytics pages showing which user triggered the last u
 Add automated or manual tests verifying this flow (unit tests or integration tests).
 If you'd like any of these improvements, or a quick demo back-and-forth (e.g. open a public employer profile in modal vs in-page navigation and show changes to analytics), tell me which next step you'd prefer and I'll implement it. ✅
 
+number of applications :
+
+Follow-up suggestions
+
+If you'd like consistent unique applicant numbers for large datasets or for pagination efficiency, add a backend field such as unique_applicants_count for each job or a single unique_applicants_count aggregated per employer. It's much cheaper to compute in the backend and prevents transferring arrays just to count unique IDs.
+If you want the label to say "Total Unique Applicants" for clarity, I can update that bit in JobsListingPage.jsx.
+Add tests or snapshot checks if you'd like front-end automated verification.
+If you'd like I can:
+
+Add a small label change to show "(unique)" on Total Applicants.
+Add a backend API suggestion patch for returning a precomputed unique applicant count to avoid transferring applicants lists.

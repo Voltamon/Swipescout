@@ -375,6 +375,8 @@ export const getApplications = () => api.get('/job/applications');
 export const getJobApplications = (jobId) => api.get(`/employer/job/${jobId}/applications`);
 // Get applicants for a specific job (public/employer endpoint)
 export const getJobApplicants = (jobId) => api.get(`/job/applications/${jobId}`);
+// Update the status of a job application. Note: backend endpoint may vary.
+export const updateJobApplicationStatus = (applicationId, status) => api.patch(`/job/applications/${applicationId}`, { status });
 export const incrementJobView = (jobId) => api.post(`/job/${jobId}/view`);
 
 // Notifications

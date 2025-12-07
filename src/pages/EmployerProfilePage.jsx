@@ -326,7 +326,7 @@ export default function EmployerProfilePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {jobs.reduce((sum, j) => sum + (j.applicants_count || 0), 0)}
+                  {jobs.reduce((sum, j) => sum + ((j.applicationsCount ?? j.applicants_count) || 0), 0)}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">Candidates applied</p>
               </CardContent>

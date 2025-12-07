@@ -346,7 +346,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                                     setApplyingJobId(job.id);
                                     await applyToJob(job.id, {});
                                     // Optimistically update job.applied if present
-                                    setJobs(prev => prev.map(j => j.id === job.id ? { ...j, applied: true, applicants_count: (j.applicants_count || 0) + 1 } : j));
+                                    setJobs(prev => prev.map(j => j.id === job.id ? { ...j, applied: true, applicants_count: (j.applicants_count || 0) + 1, applicationsCount: (j.applicationsCount || 0) + 1 } : j));
                                     toast({ title: 'Applied', description: 'Application submitted successfully' });
                                   } catch (err) {
                                     console.error('Apply failed', err);

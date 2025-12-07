@@ -341,7 +341,7 @@ const EmployerDashboard = () => {
                                                                     </TableCell>
                                                                     <TableCell>
                                                                         <Badge className={themeColors.badges.info}>
-                                                                            {job.applicants_count}
+                                                                            {job.applicationsCount ?? job.applicants_count ?? 0}
                                                                         </Badge>
                                                                     </TableCell>
                                                                     <TableCell>
