@@ -36,6 +36,17 @@ const ConnectionsPage = () => {
 
   useEffect(() => { fetchAll(); }, []);
 
+  // Listen for real-time connection updates and refresh lists
+  useEffect(() => {
+    const onConnectionUpdated = (e) => {
+      try {
+        fetchAll();
+      } catch (err) {}
+    };
+    window.addEventListener('connectionUpdated', onConnectionUpdated);
+    return () => window.removeEventListener('connectionUpdated', onConnectionUpdated);
+  }, []);
+
   const handleAccept = async (connectionId) => {
     try {
       const { data } = await acceptConnection(connectionId);
@@ -59,6 +70,17 @@ const ConnectionsPage = () => {
     } catch (err) {
       console.error('Failed to reject', err);
       toast({ description: 'Failed to decline connection', variant: 'destructive' });
+    }
+  };
+
+  const handleCancel = async (connectionId) => {
+    try {
+      await import('@/services/connectionService.js').then(m => m.deleteConnection(connectionId));
+      toast({ description: 'Request cancelled' });
+      await fetchAll();
+    } catch (err) {
+      console.error('Failed to cancel request', err);
+      toast({ description: 'Failed to cancel request', variant: 'destructive' });
     }
   };
 
@@ -124,7 +146,7 @@ const ConnectionsPage = () => {
                   </div>
                   <div className="flex gap-2">
                     <Button disabled>Pending</Button>
-                    <Button variant="outline" onClick={() => handleReject(r.connectionId)}>Cancel</Button>
+                    <Button variant="outline" onClick={() => handleCancel(r.connectionId)}>Cancel</Button>
                   </div>
                 </div>
               ))

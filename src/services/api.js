@@ -449,6 +449,10 @@ export const checkBlogSaved = (blogId) => checkSaved(blogId, 'blog');
 export const getSavedItems = (type) => api.get('/saves', { params: type ? { type } : {} });
 export const getSavedBlogs = () => getSavedItems('blog');
 
+// Admin: connections and audit
+export const getAdminConnections = (params = {}) => api.get('/admin/connections', { params });
+export const purgeRemovedConnections = (data = {}) => api.delete('/admin/connections/purge', { params: data });
+
 // Blog Categories
 export const getBlogCategories = () => api.get('/blogs/categories');
 export const createBlogCategory = (data) => api.post('/blogs/categories', data);

@@ -1,5 +1,6 @@
 ﻿import AdminDashboard from "@/pages/adminDashboard.jsx";
 import UserManagementPage from "@/pages/admin/UserManagementPage.jsx";
+import AdminConnectionsPage from "@/pages/admin/AdminConnectionsPage.jsx";
 import ContentModerationPage from "@/pages/admin/ContentModerationPage.jsx";
 import BlogListPage from "@/pages/admin/BlogListPage.jsx";
 import BlogEditorPage from "@/pages/admin/BlogEditorPage.jsx";
@@ -42,6 +43,13 @@ export const getAdminTabCategories = t => {
           path: "users",
           component: UserManagementPage,
           description: t("adminTabs:descriptions.users")
+        },
+        {
+          label: t("adminTabs:tabs.connections"),
+          icon: { name: "Link" },
+          path: "connections",
+          component: AdminConnectionsPage,
+          description: t("adminTabs:descriptions.connections")
         }
       ]
     },
