@@ -22,3 +22,6 @@ export const getConnectionStatus = otherId =>
   api.get(`/connections/status/${otherId}`);
 export const rejectConnection = connectionId =>
   api.post("/connections/reject", { connectionId });
+
+export const deleteConnection = connectionId =>
+  api.delete(`/connections/${connectionId}`);

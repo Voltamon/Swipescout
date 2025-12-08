@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { sendConnection } from '@/services/connectionService.js';
 import { Play, Pause, Volume2, VolumeX, MapPin, Briefcase, ExternalLink, Loader2 } from 'lucide-react';
-import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile, applyToJob } from '@/services/api';
+import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile, applyToJob, getApplications } from '@/services/api';
 import { getEmployerDashboardStats } from '@/services/dashboardService';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -21,7 +21,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   const id = routeId || propUserId;
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
 
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -44,7 +44,12 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
     }
 
     try {
-      const res = await sendConnection(profile.id);
+      // Use the profile owner's userId (not profile id) as receiverId
+      const receiverId = profileOwnerUserId || profile?.user?.id || profile?.user?.userId || profile?.user_id || profile?.id;
+      const res = await sendConnection(receiverId);
+      const conn = res?.data?.connection || res?.data;
+      // Optimistically update connection state with returned connection
+      if (conn) setConnection(conn);
       toast({ title: 'Connection sent', description: res?.data?.message || 'Connection request sent.' });
     } catch (err) {
       const status = err?.response?.status;
@@ -52,6 +57,20 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
       let userMsg = serverMsg || err?.message || 'Failed to send connection';
       if (status === 404) userMsg = 'User not found (they may have been removed)';
       toast({ title: 'Connection failed', description: userMsg, variant: 'destructive' });
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!connection?.id) return;
+    try {
+      // Dynamically import to stay consistent with other calls
+      const m = await import('@/services/connectionService.js');
+      await m.deleteConnection(connection.id);
+      setConnection(null);
+      toast({ title: 'Disconnected', description: 'Connection removed.' });
+    } catch (err) {
+      console.error('Disconnect failed', err);
+      toast({ title: 'Error', description: err?.response?.data?.message || 'Failed to disconnect', variant: 'destructive' });
     }
   };
 
@@ -73,12 +92,27 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
         if (!mounted) return;
   setProfile(pRes.data);
         setVideos(vRes.data?.videos || []);
-        setJobs(jRes.data?.jobs || []);
+        let fetchedJobs = jRes.data?.jobs || [];
+        setJobs(fetchedJobs);
+        // If the current viewer is a jobseeker, fetch their applications and mark jobs
+        if (user?.id && role === 'job_seeker') {
+          try {
+            const appsRes = await getApplications();
+            const apps = appsRes?.data?.applications || appsRes?.data || [];
+            const appliedJobIds = new Set((apps || []).map(a => String(a.jobId || a.job_id || a.jobId)));
+            // Merge applied flag into jobs
+            fetchedJobs = (fetchedJobs || []).map(j => ({ ...j, applied: Boolean(j.applied) || appliedJobIds.has(String(j.id)) }));
+            setJobs(fetchedJobs);
+          } catch (appErr) {
+            // ignore if user's applications fail to load
+            console.debug('[EmployerProfileView] failed to fetch user applications', appErr?.message || appErr);
+          }
+        }
         // check connection status
         try {
-          const otherId = pRes.data?.id;
-          if (user?.id && otherId) {
-            const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(otherId));
+          const otherUserId = pRes.data?.userId || pRes.data?.user?.id || pRes.data?.user?.userId || pRes.data?.user_id || null;
+          if (user?.id && otherUserId) {
+            const connRes = await import('@/services/connectionService.js').then(m => m.getConnectionStatus(otherUserId));
             const conn = connRes?.data?.connection || null;
             setConnection(conn);
           }
@@ -122,7 +156,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
     };
     fetchData();
     return () => { mounted = false; };
-  }, [id, toast]);
+  }, [id, toast, user?.id, role]);
 
   // Listen for profileViewRecorded events and refresh profile views when they match current id
   useEffect(() => {
@@ -163,6 +197,25 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
     window.addEventListener('profileViewRecorded', onProfileView);
     return () => window.removeEventListener('profileViewRecorded', onProfileView);
   }, [id]);
+
+  // Listen for connection updates over socket and update state if it concerns this profile
+  useEffect(() => {
+    const onConnectionUpdated = (e) => {
+      try {
+        const payload = e?.detail || {};
+        const conn = payload?.connection || payload;
+        if (!conn) return;
+        // connection has userOne and userTwo (user object) - determine the partner id
+        const partnerId = conn.userOne?.id === profileOwnerUserId ? (conn.userTwo?.id || conn.userTwo?.userId) : (conn.userOne?.id || conn.userOne?.userId);
+        // if this update is about the profile's owner, update local state
+        if (String(partnerId) === String(user?.id) || String(conn.userOne?.id) === String(profileOwnerUserId) || String(conn.userTwo?.id) === String(profileOwnerUserId)) {
+          setConnection(conn.status === 'removed' ? null : conn);
+        }
+      } catch (err) { /* ignore */ }
+    };
+    window.addEventListener('connectionUpdated', onConnectionUpdated);
+    return () => window.removeEventListener('connectionUpdated', onConnectionUpdated);
+  }, [profileOwnerUserId, user?.id]);
 
   const togglePlay = () => {
     if (!mainVideoRef.current) return;
@@ -229,14 +282,14 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 {profile?.id && !isOwnProfile && (
                   (connection && connection.status === 'accepted') ? (
-                    <Badge className="bg-green-600">Connected</Badge>
-                  ) : (connection && connection.status === 'pending' && connection.isSender) ? (
-                    <Button disabled className="bg-gray-300">Pending</Button>
-                  ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
-                    <div className="flex gap-2">
-                      <Button onClick={() => import('@/services/connectionService.js').then(m => m.acceptConnection(connection.id)).then(() => { setConnection({ ...connection, status: 'accepted' }); toast({ title: 'Connection accepted', description: 'You are now connected.' }) }).catch(err => { toast({ title: 'Error', description: 'Failed to accept connection', variant: 'destructive' }); })} className="px-5 py-2 bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
-                      <Button onClick={() => import('@/services/connectionService.js').then(m => m.rejectConnection(connection.id)).then(() => { setConnection(null); toast({ title: 'Connection declined', description: 'Connection request declined' }); }).catch(err => { toast({ title: 'Error', description: 'Failed to decline', variant: 'destructive' }); })} variant="outline">Decline</Button>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-green-600">Connected</Badge>
+                      <Button onClick={handleDisconnect} variant="outline" size="sm">Disconnect</Button>
                     </div>
+                  ) : (connection && connection.status === 'pending' && connection.isSender) ? (
+                      <Button onClick={handleDisconnect} className="bg-gray-300">Cancel request</Button>
+                  ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
+                    <Button disabled className="bg-gray-200 text-gray-600">Pending</Button>
                   ) : (
                     <Button
                       onClick={handleConnect}

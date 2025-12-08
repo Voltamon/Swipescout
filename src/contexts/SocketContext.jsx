@@ -59,6 +59,27 @@ export const SocketProvider = ({ children }) => {
     } else if (socketRef.current && !id) {
       console.warn('[SocketContext] Socket available but no user ID found');
     }
+    // Setup listeners for connection events to propagate app-wide
+    const onConnectionRequest = (payload) => {
+      try { window.dispatchEvent(new CustomEvent('connectionUpdated', { detail: payload })); } catch (e) {}
+    };
+    const onConnectionAccepted = (payload) => { try { window.dispatchEvent(new CustomEvent('connectionUpdated', { detail: payload })); } catch (e) {} };
+    const onConnectionRejected = (payload) => { try { window.dispatchEvent(new CustomEvent('connectionUpdated', { detail: payload })); } catch (e) {} };
+    const onConnectionRemoved = (payload) => { try { window.dispatchEvent(new CustomEvent('connectionUpdated', { detail: payload })); } catch (e) {} };
+    if (socketRef.current) {
+      socketRef.current.on('connection_request', onConnectionRequest);
+      socketRef.current.on('connection_accepted', onConnectionAccepted);
+      socketRef.current.on('connection_rejected', onConnectionRejected);
+      socketRef.current.on('connection_removed', onConnectionRemoved);
+    }
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('connection_request', onConnectionRequest);
+        socketRef.current.off('connection_accepted', onConnectionAccepted);
+        socketRef.current.off('connection_rejected', onConnectionRejected);
+        socketRef.current.off('connection_removed', onConnectionRemoved);
+      }
+    };
   }, [user]);
 
   const value = useMemo(() => ({ socket: socketRef.current, isConnected }), [isConnected]);

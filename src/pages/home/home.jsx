@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/UI/button.jsx';
@@ -124,6 +125,10 @@ const Home = () => {
     }
   }, [i18n.language, t]);
 
+  useEffect(() => {
+    console.log('[Home] showAuthDialog state changed:', showAuthDialog);
+  }, [showAuthDialog]);
+
   // Keep track of viewport width and when switching from mobile/tablet
   // (<=1024px) to desktop (>=1025px) scroll to top so user sees the
   // full desktop hero instead of remaining mid-scroll.
@@ -169,8 +174,24 @@ const Home = () => {
   };
 
   const handleOpenAuthDialog = (tabIndex = 0) => {
-    setActiveTab(tabIndex);
-    setShowAuthDialog(true);
+    // Defensive: Log clicks and protect against unexpected errors
+    try {
+      console.log('[Home] handleOpenAuthDialog called', { tabIndex });
+      setActiveTab(tabIndex);
+      // Small delay to avoid races with third-party content scripts or extensions
+      // that may throw exceptions during click-event propagation.
+      setTimeout(() => {
+        try {
+          setShowAuthDialog(true);
+        } catch (err) {
+          console.error('[Home] setShowAuthDialog failed:', err);
+        }
+      }, 40);
+    } catch (err) {
+      console.error('[Home] handleOpenAuthDialog error:', err);
+      // Retry with a micro-delay if the first attempt somehow failed
+      setTimeout(() => setShowAuthDialog(true), 50);
+    }
   };
 
   const handleChange = (e) => {
@@ -633,7 +654,12 @@ const Home = () => {
       {/* Action Buttons - Outside the hero-features wrap */}
       <div className="home-action-buttons">
         <Button
-          onClick={() => handleOpenAuthDialog(0)}
+          onClick={(e) => {
+            console.log('[Home] login button clicked', { buttonEvent: e?.type });
+            // Ensure click doesn't propagate to any parent handlers
+            try { e && e.stopPropagation(); } catch (err) {}
+            handleOpenAuthDialog(0);
+          }}
           className="home-login-button"
         >
           {t('home:buttons.login')}
@@ -649,14 +675,15 @@ const Home = () => {
 
             {/* End of New Section */}
 
-      {/* Auth Dialog */}
-      {showAuthDialog && (
+      {/* Auth Dialog (rendered via portal to avoid stacking context issues) */}
+      {showAuthDialog && createPortal(
         <AuthPage
-          open={showAuthDialog}
+          open={Boolean(showAuthDialog)}
           onClose={() => setShowAuthDialog(false)}
           initialTab={activeTab}
           redirectPath={redirectPath}
-        />
+        />,
+        document.body
       )}
       
       {/* Footer */}
