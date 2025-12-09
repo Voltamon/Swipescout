@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
-// UI components used in the applicant card
+import { Badge } from '@/components/UI/badge.jsx';
 import { getJobApplicants, updateJobApplicationStatus } from '@/services/api';
 import ApplicantCard from '@/components/ApplicantCard.jsx';
 import { Input } from '@/components/UI/input.jsx';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/UI/select.jsx';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Users, Search, SlidersHorizontal, ArrowLeft, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { themeColors } from '@/config/theme-colors';
 
 export default function JobApplicantsPage({ id: propId }) {
   const { id: paramId } = useParams();
@@ -57,8 +58,11 @@ export default function JobApplicantsPage({ id: propId }) {
   }, [id]);
 
   if (loading) return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Loader2 className="h-12 w-12 animate-spin text-cyan-600" />
+    <div className={`flex items-center justify-center min-h-screen ${themeColors.backgrounds.page}`}>
+      <div className="text-center">
+        <Loader2 className={`h-12 w-12 animate-spin mx-auto mb-4 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
+        <p className={themeColors.text.secondary}>Loading applicants...</p>
+      </div>
     </div>
   );
 
@@ -125,82 +129,235 @@ export default function JobApplicantsPage({ id: propId }) {
   };
 
   return (
-    <div className="container max-w-5xl mx-auto py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-            Back
-          </Button>
-          <h1 className="text-2xl font-semibold">Applicants</h1>
-          <span className="text-sm text-muted-foreground">{applicants.length} applicants</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-60">
-            <Input placeholder="Search applicants" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-          </div>
-
-          <div>
-            <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setPage(1); }}>
-              <SelectTrigger className="w-44"><SelectValue placeholder="Filter status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="reviewed">Reviewed</SelectItem>
-                <SelectItem value="accepted">Accepted</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v)}>
-              <SelectTrigger className="w-40"><SelectValue placeholder="Sort" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="appliedAt_desc">Applied (newest)</SelectItem>
-                <SelectItem value="appliedAt_asc">Applied (oldest)</SelectItem>
-                <SelectItem value="name_asc">Name (A–Z)</SelectItem>
-                <SelectItem value="name_desc">Name (Z–A)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Select value={String(perPage)} onValueChange={(v) => { setPerPage(Number(v)); setPage(1); }}>
-              <SelectTrigger className="w-32"><SelectValue placeholder="Per page" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Applicants</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {errorMsg ? (
-            <div className="text-sm text-muted-foreground">{errorMsg}</div>
-          ) : paginatedApplicants.length === 0 ? (
-            <p className="text-muted-foreground">No applicants yet</p>
-          ) : (
-            <div className="space-y-4">
-              {paginatedApplicants.map(a => (
-                <ApplicantCard key={a.applicationId} applicant={a} onViewProfile={handleViewProfile} onUpdateStatus={handleUpdateStatus} />
-              ))}
+    <div className={`min-h-screen ${themeColors.backgrounds.page} py-8 px-4 sm:px-6 lg:px-8`}>
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header with Back Button */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="hover:bg-indigo-50"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-full ${themeColors.iconBackgrounds.primary}`}>
+                  <Users className="h-6 w-6" />
+                </div>
+                <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>
+                  Job Applicants
+                </h1>
+              </div>
+              <p className={`${themeColors.text.secondary} mt-1 ml-14`}>
+                Review and manage candidates for this position
+              </p>
             </div>
-          )}
-        </CardContent>
-      </Card>
-      <div className="mt-4 flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">{filteredApplicants.length} applicant(s) • page {page} of {totalPages}</div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => handlePageChange(Math.max(1, page - 1))} disabled={page <= 1}>Previous</Button>
-          <Button variant="ghost" size="sm" onClick={() => handlePageChange(Math.min(totalPages, page + 1))} disabled={page >= totalPages}>Next</Button>
+          </div>
+          <Badge className={`${themeColors.badges.primary} text-lg px-4 py-2`}>
+            {applicants.length} Total Applicant{applicants.length !== 1 ? 's' : ''}
+          </Badge>
         </div>
+
+        {/* Filters Section */}
+        <Card className={`${themeColors.shadows.md}`}>
+          <CardHeader className={`bg-gradient-to-r ${themeColors.gradients.primary} text-white`}>
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="h-5 w-5" />
+              <CardTitle>Filter & Sort Applicants</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Search */}
+              <div className="lg:col-span-2">
+                <label className={`text-sm font-medium ${themeColors.text.primary} mb-2 block`}>
+                  Search Applicants
+                </label>
+                <div className="relative">
+                  <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${themeColors.text.muted}`} />
+                  <Input 
+                    placeholder="Search by name, skills, title, location..." 
+                    value={search} 
+                    onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Status Filter */}
+              <div>
+                <label className={`text-sm font-medium ${themeColors.text.primary} mb-2 block`}>
+                  Status
+                </label>
+                <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setPage(1); }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="reviewed">Reviewed</SelectItem>
+                    <SelectItem value="accepted">Accepted</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort */}
+              <div>
+                <label className={`text-sm font-medium ${themeColors.text.primary} mb-2 block`}>
+                  Sort By
+                </label>
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="appliedAt_desc">Latest First</SelectItem>
+                    <SelectItem value="appliedAt_asc">Oldest First</SelectItem>
+                    <SelectItem value="name_asc">Name (A–Z)</SelectItem>
+                    <SelectItem value="name_desc">Name (Z–A)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Results count and per-page selector */}
+            <div className="flex items-center justify-between mt-4 pt-4 border-t">
+              <div className={`${themeColors.text.secondary} text-sm`}>
+                Showing <span className="font-semibold">{paginatedApplicants.length}</span> of{' '}
+                <span className="font-semibold">{filteredApplicants.length}</span> applicant{filteredApplicants.length !== 1 ? 's' : ''}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm ${themeColors.text.secondary}`}>Per page:</span>
+                <Select value={String(perPage)} onValueChange={(v) => { setPerPage(Number(v)); setPage(1); }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Applicants List */}
+        <Card className={`${themeColors.shadows.lg}`}>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-2xl">Applicant Profiles</CardTitle>
+                <CardDescription className="mt-1">
+                  Review candidate details and manage application status
+                </CardDescription>
+              </div>
+              <Badge variant="outline" className="text-sm">
+                Page {page} of {totalPages}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            {errorMsg ? (
+              <div className={`flex items-center gap-3 p-4 rounded-lg ${themeColors.status.error}`}>
+                <AlertCircle className="h-5 w-5" />
+                <div>
+                  <p className="font-medium">Error Loading Applicants</p>
+                  <p className="text-sm mt-1">{errorMsg}</p>
+                </div>
+              </div>
+            ) : paginatedApplicants.length === 0 ? (
+              <div className="text-center py-16">
+                <div className={`inline-flex p-4 rounded-full ${themeColors.iconBackgrounds.info} mb-4`}>
+                  <Users className="h-12 w-12" />
+                </div>
+                <h3 className={`text-xl font-semibold ${themeColors.text.primary} mb-2`}>
+                  {filteredApplicants.length === 0 && applicants.length === 0
+                    ? 'No applicants yet'
+                    : 'No matching applicants'}
+                </h3>
+                <p className={`${themeColors.text.secondary}`}>
+                  {filteredApplicants.length === 0 && applicants.length === 0
+                    ? 'Applications will appear here once candidates apply'
+                    : 'Try adjusting your search or filter criteria'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {paginatedApplicants.map(a => (
+                  <ApplicantCard 
+                    key={a.applicationId} 
+                    applicant={a} 
+                    onViewProfile={handleViewProfile} 
+                    onUpdateStatus={handleUpdateStatus} 
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Card className={themeColors.shadows.md}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <Button 
+                  variant="outline" 
+                  onClick={() => handlePageChange(Math.max(1, page - 1))} 
+                  disabled={page <= 1}
+                  className="gap-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (page <= 3) {
+                      pageNum = i + 1;
+                    } else if (page >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={page === pageNum ? "default" : "outline"}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={page === pageNum ? themeColors.buttons.primary : ''}
+                        size="sm"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  onClick={() => handlePageChange(Math.min(totalPages, page + 1))} 
+                  disabled={page >= totalPages}
+                  className="gap-2"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

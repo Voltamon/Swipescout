@@ -42,6 +42,7 @@ import {
 } from '@/components/UI/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { getEmployerProfileCompleteness } from '@/utils/profile';
 import {
   Building2,
   Mail,
@@ -55,9 +56,11 @@ import {
   Save,
   Plus,
   X,
+  Check,
   Linkedin,
   Facebook,
   Twitter,
+  Eye,
   Loader2
 } from 'lucide-react';
 
@@ -94,6 +97,10 @@ export default function EditEmployerProfilePage() {
   const [companyLogoPicture, setCompanyLogoPicture] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savedMessageVisible, setSavedMessageVisible] = useState(false);
+  const [profileCompleteness, setProfileCompleteness] = useState(null);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [companyVideos, setCompanyVideos] = useState([]);
 
   const verifyImageAvailability = (url) => {
     return new Promise((resolve, reject) => {
@@ -121,6 +128,16 @@ export default function EditEmployerProfilePage() {
     });
   };
 
+  // Helper: support multilingual `name` values that may be either a string or a translations object
+  const getLocalizedText = (text, defaultValue = 'Unknown') => {
+    if (!text) return defaultValue;
+    if (typeof text === 'string') return text;
+    if (typeof text === 'object') {
+      return text.en || text.ar || text.zh || Object.values(text)[0] || defaultValue;
+    }
+    return defaultValue;
+  };
+
   const createStarterProfile = async () => {
     setSaving(true);
     try {
@@ -132,6 +149,10 @@ export default function EditEmployerProfilePage() {
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+    setProfileCompleteness(getEmployerProfileCompleteness(profile));
+  }, [profile]);
 
   useEffect(() => {
     const fetchEmployerData = async () => {
@@ -149,6 +170,7 @@ export default function EditEmployerProfilePage() {
               toast({
                 title: "Profile Created",
                 description: "Starter profile created successfully",
+                variant: 'success',
               });
             } catch (error) {
               toast({
@@ -185,7 +207,15 @@ export default function EditEmployerProfilePage() {
             facebook: '',
             twitter: ''
           }
+        ,
+          id: employerData.id || null,
+          userId: employerData.userId || employerData.user?.id || null,
         });
+
+        // Save returned videos (if provided) for post-job checks / preview
+        const vids = profileResponse.data?.videos || [];
+        setCompanyVideos(vids || []);
+        setProfileCompleteness(getEmployerProfileCompleteness(profileResponse.data));
 
         const companyCategoryIds = categoriesResponse.data?.categories?.map(c => c.id) || [];
         const filteredAvailableCategories = allCategoriesResponse.data?.categories?.filter(
@@ -244,11 +274,14 @@ export default function EditEmployerProfilePage() {
     try {
       setSaving(true);
       await updateEmployerProfile(profile);
-      
+      console.log('Profile updated successfully - showing toast');
       toast({
         title: "Success",
         description: "Profile updated successfully",
+        variant: 'success',
       });
+      setSavedMessageVisible(true);
+      setTimeout(() => setSavedMessageVisible(false), 3500);
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -259,6 +292,17 @@ export default function EditEmployerProfilePage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handlePreviewClick = () => {
+    const hasProfile = profileCompleteness?.isComplete || false;
+    if (!hasProfile) {
+      setPreviewDialogOpen(true);
+      return;
+    }
+    const id = profile?.id || profile?.userId || profile?.user?.id;
+    if (!id) return;
+    window.open(`/employer-profile/${id}`, '_blank');
   };
 
   const handleLogoUpload = async (e) => {
@@ -294,6 +338,7 @@ export default function EditEmployerProfilePage() {
         toast({
           title: "Success",
           description: "Company logo updated!",
+          variant: 'success',
         });
       } else {
         toast({
@@ -322,24 +367,26 @@ export default function EditEmployerProfilePage() {
       setSaving(true);
       await addEmployerCategory(selectedCategory);
       
-      const addedCategory = availableCategories.find(cat => cat.id === selectedCategory);
+      const addedCategory = availableCategories.find(cat => String(cat.id) === String(selectedCategory));
       
       if (addedCategory) {
         setCategories([...categories, addedCategory]);
-        setAvailableCategories(availableCategories.filter(cat => cat.id !== selectedCategory));
+        setAvailableCategories(availableCategories.filter(cat => String(cat.id) !== String(selectedCategory)));
       }
       
       toast({
         title: "Success",
         description: "Category added successfully",
+        variant: 'success',
       });
       setSelectedCategory('');
       setCategoryDialogOpen(false);
     } catch (error) {
       console.error('Error saving category:', error);
+      const message = error?.response?.data?.message || error?.message || 'Failed to add category';
       toast({
         title: "Error",
-        description: "Failed to add category",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -362,12 +409,14 @@ export default function EditEmployerProfilePage() {
       toast({
         title: "Success",
         description: "Category removed successfully",
+        variant: 'success',
       });
     } catch (error) {
       console.error('Error deleting category:', error);
+      const message = error?.response?.data?.message || error?.message || 'Failed to remove category';
       toast({
         title: "Error",
-        description: "Failed to remove category",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -395,12 +444,28 @@ export default function EditEmployerProfilePage() {
             <h1 className="text-3xl font-bold text-slate-900">Edit Company Profile</h1>
             <p className="text-slate-600 mt-1">Manage your company information and settings</p>
           </div>
-          <Button
-            onClick={handleSaveProfile}
-            disabled={saving}
-            size="lg"
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-          >
+          {savedMessageVisible && (
+            <div className="ml-4 px-4 py-2 rounded-md bg-green-50 border border-green-200 text-green-800">
+              Profile saved successfully
+            </div>
+          )}
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={handlePreviewClick}
+              variant="outline"
+              disabled={saving}
+              size="lg"
+              className="hidden md:inline-flex items-center"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              Preview
+            </Button>
+            <Button
+              onClick={handleSaveProfile}
+              disabled={saving}
+              size="lg"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+            >
             {saving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -412,7 +477,8 @@ export default function EditEmployerProfilePage() {
                 Save Profile
               </>
             )}
-          </Button>
+            </Button>
+          </div>
         </div>
 
         {/* Logo Section */}
@@ -683,7 +749,10 @@ export default function EditEmployerProfilePage() {
                     <CardDescription>Select categories that describe your business</CardDescription>
                   </div>
                   <Button
-                    onClick={() => setCategoryDialogOpen(true)}
+                    onClick={() => {
+                      if (availableCategories?.length > 0) setSelectedCategory(String(availableCategories[0].id));
+                      setCategoryDialogOpen(true);
+                    }}
                     disabled={availableCategories.length === 0}
                     className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                   >
@@ -693,7 +762,7 @@ export default function EditEmployerProfilePage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
-                {categories.length > 0 ? (
+                  {categories.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {categories.map((category) => (
                       <Badge
@@ -701,7 +770,7 @@ export default function EditEmployerProfilePage() {
                         variant="secondary"
                         className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900 hover:from-indigo-200 hover:to-purple-200"
                       >
-                        {category.name}
+                        {getLocalizedText(category.name)}
                         <button
                           onClick={() => handleDeleteCategory(category.id)}
                           className="ml-2 hover:text-red-600"
@@ -742,8 +811,8 @@ export default function EditEmployerProfilePage() {
                 </SelectTrigger>
                 <SelectContent>
                   {availableCategories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
+                    <SelectItem key={cat.id} value={String(cat.id)}>
+                      {getLocalizedText(cat.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -766,6 +835,57 @@ export default function EditEmployerProfilePage() {
                 ) : (
                   'Add Category'
                 )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* Preview dialog for incomplete employer profile */}
+        <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Profile incomplete</DialogTitle>
+              <DialogDescription>
+                To preview your public employer profile you must provide a company name and at least one additional detail (such as description, logo, website, social link, or contact).
+              </DialogDescription>
+              <div className="mt-4">
+                {profileCompleteness ? (
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      {profileCompleteness.name ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+                      <span>Company name (required)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {profileCompleteness.description ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+                      <span>Company description (min 10 characters)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {profileCompleteness.logo ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+                      <span>Company logo</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {profileCompleteness.website ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+                      <span>Website</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {profileCompleteness.social ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+                      <span>Social link (LinkedIn / Facebook / Twitter)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      {profileCompleteness.contact ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
+                      <span>Contact email or phone</span>
+                    </li>
+                  </ul>
+                ) : (
+                  <div className="text-sm">No profile information found — please provide a company name and at least one additional detail.</div>
+                )}
+              </div>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={() => { setPreviewDialogOpen(false); navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile'); }} className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700">
+                Create / Edit profile
+              </Button>
+              <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
+                Cancel
               </Button>
             </DialogFooter>
           </DialogContent>

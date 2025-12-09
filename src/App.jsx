@@ -68,6 +68,7 @@ import EULA from "./pages/legal/EULA";
 
 // Components
 import CookieConsentBanner from "./components/CookieConsentBanner";
+import { Toaster } from './components/UI/toaster';
 
 import NotificationsPage from "./pages/NotificationsPage";
 import NotificationsRedirect from './pages/NotificationsRedirect';
@@ -330,6 +331,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <CookieConsentBanner />
+          <Toaster />
         </VideoProvider>
         </NotificationProvider>
         </SocketProvider>

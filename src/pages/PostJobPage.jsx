@@ -5,8 +5,11 @@ import {
   getCategories,
   getSkills,
   updateJob,
-  getEmployerProfile
+  getEmployerProfile,
+  getUserVideos
 } from '@/services/api';
+import { isEmployerProfileComplete, getEmployerProfileCompleteness } from '@/utils/profile';
+import { Check, X as CloseIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 // Lazy load VideoUpload to prevent race conditions
@@ -171,6 +174,8 @@ const PostJobPage = () => {
   const [permissionError, setPermissionError] = useState(false);
   const [videoDialogMounted, setVideoDialogMounted] = useState(false);
   const [hasEmployerProfile, setHasEmployerProfile] = useState(null); // null = checking, true/false = result
+  const [profileCompleteness, setProfileCompleteness] = useState(null);
+  const [hasEmployerVideo, setHasEmployerVideo] = useState(null);
 
 
   useEffect(() => {
@@ -178,12 +183,14 @@ const PostJobPage = () => {
       try {
         setLoading(true);
         
-        // Check if employer profile exists first
+        // Check if employer profile exists and has meaningful content first
         let profileExists = false;
         try {
           const profileResponse = await getEmployerProfile();
-          profileExists = !!(profileResponse?.data?.id || profileResponse?.data);
+          const detail = getEmployerProfileCompleteness(profileResponse?.data || profileResponse?.data?.profile || profileResponse?.data?.company || profileResponse);
+          profileExists = detail?.isComplete ?? false;
           setHasEmployerProfile(profileExists);
+          setProfileCompleteness(detail);
           
           // If no profile exists, show the permission error immediately
           if (!profileExists) {
@@ -209,6 +216,26 @@ const PostJobPage = () => {
         ]);
         setAvailableCategories(categoriesResponse.data.categories);
         setAvailableSkills(skillsResponse.data.skills);
+
+        // If profile exists and is meaningfully complete, ensure the employer has at least 1 video uploaded
+        if (profileExists) {
+          try {
+            const videosResponse = await getUserVideos('employer');
+            const videos = videosResponse?.data?.videos || [];
+            const hasVideos = videos.length > 0;
+            setHasEmployerVideo(hasVideos);
+            if (!hasVideos) {
+              setPermissionError(true);
+              showToast('You need to upload at least one company video before posting jobs', 'error');
+            }
+          } catch (err) {
+            console.error('Error fetching employer videos:', err);
+            // If getting videos fails, don't necessarily block the page — leave hasEmployerVideo null
+            setHasEmployerVideo(null);
+          }
+        } else {
+          setHasEmployerVideo(false);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         // Don't block the user from seeing the form if categories/skills fail to load
@@ -443,6 +470,14 @@ const PostJobPage = () => {
       return;
     }
 
+    // Block submit if profile/video requirements are not satisfied
+    const canPost = hasEmployerProfile === true && hasEmployerVideo === true;
+    if (!canPost) {
+      showToast('You need to have an employer profile and at least one uploaded video to post a job', 'error');
+      setPermissionError(true);
+      return;
+    }
+
     try {
       setSaving(true);
       const jobData = {
@@ -550,7 +585,7 @@ const PostJobPage = () => {
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={saving}
+                disabled={saving || hasEmployerProfile !== true || hasEmployerVideo !== true}
                 className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
               >
                 {saving ? (
@@ -992,7 +1027,7 @@ const PostJobPage = () => {
             </Button>
             <Button
               type="submit"
-              disabled={saving}
+              disabled={saving || hasEmployerProfile !== true || hasEmployerVideo !== true}
               className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
             >
               {saving ? (
@@ -1013,7 +1048,7 @@ const PostJobPage = () => {
 
       {/* Permission Error Dialog */}
       <Dialog open={permissionError} onOpenChange={setPermissionError}>
-        <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
               <div className="rounded-full bg-amber-100 p-3">
@@ -1022,28 +1057,70 @@ const PostJobPage = () => {
             </div>
             <DialogTitle className="text-center text-2xl">Profile Needed</DialogTitle>
             <CardDescription className="text-center">
-              You need to create profile to post jobs
+              You need to create an employer profile and have at least one uploaded video to post job listings.
             </CardDescription>
+            {profileCompleteness && (
+              <div className="mt-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.name ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Company name (required)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.description ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Company description (min 10 characters)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.logo ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Company logo</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.website ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Website</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.social ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Social link (LinkedIn / Facebook / Twitter)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.contact ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Contact email or phone</span>
+                  </li>
+                </ul>
+              </div>
+            )}
+            <div className="mt-4 text-center">
+              <div className="inline-flex items-center gap-2">
+                {hasEmployerVideo ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                <span>At least one company video uploaded</span>
+              </div>
+            </div>
           </DialogHeader>
           <div className="space-y-4 p-4">
             <p className="text-slate-600 text-center">
               Only employers with profile can post job listings. 
               Please create an employer profile or contact support if you believe this is an error.
             </p>
-            <div className="flex gap-3 justify-center">
-              <Button
-                variant="outline"
-                onClick={() => setPermissionError(false)}
-              >
-                Go Back
-              </Button>
-              <Button
-                onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
-                className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
-              >
-                Create Employer Profile
-              </Button>
-            </div>
+              <div className="flex gap-3 justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setPermissionError(false)}
+                >
+                  Go Back
+                </Button>
+                <Button
+                  onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
+                  className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
+                >
+                  Create Employer Profile
+                </Button>
+                <Button
+                  onClick={() => navigate('/employer-tabs?group=companyContent&tab=company-videos')}
+                  className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
+                >
+                  Upload Videos
+                </Button>
+              </div>
           </div>
         </DialogContent>
       </Dialog>

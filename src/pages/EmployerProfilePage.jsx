@@ -9,6 +9,8 @@ import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
+import { isEmployerProfileComplete, getEmployerProfileCompleteness } from '@/utils/profile';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/UI/dialog.jsx';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Building2,
@@ -27,8 +29,10 @@ import {
   PlayCircle,
   Share2,
   Loader2,
+  AlertCircle,
   ExternalLink
 } from 'lucide-react';
+import { Check, X as CloseIcon } from 'lucide-react';
 import themeColors from '@/config/theme-colors';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -41,11 +45,18 @@ export default function EmployerProfilePage() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [videoRequiredDialogOpen, setVideoRequiredDialogOpen] = useState(false);
+  const [profileCompleteness, setProfileCompleteness] = useState(null);
 
   useEffect(() => {
     fetchProfile();
     fetchJobs();
   }, []);
+
+  useEffect(() => {
+    setProfileCompleteness(getEmployerProfileCompleteness(profile));
+  }, [profile]);
 
   // Listen for profile view events and refresh profile view count when a view gets recorded
   useEffect(() => {
@@ -125,6 +136,20 @@ export default function EmployerProfilePage() {
     navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile');
   };
 
+  const handlePostJobClick = () => {
+    const hasProfile = profileCompleteness?.isComplete || false;
+    if (!hasProfile) {
+      setPreviewDialogOpen(true);
+      return;
+    }
+    const hasVideos = (profile?.videos || []).length > 0;
+    if (!hasVideos) {
+      setVideoRequiredDialogOpen(true);
+      return;
+    }
+    navigate('/employer-tabs?group=jobManagement&tab=post-job');
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -135,6 +160,22 @@ export default function EmployerProfilePage() {
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
+      {profileCompleteness && !profileCompleteness.isComplete && (
+        <div className={`mb-4 rounded-md p-3 flex items-center justify-between ${themeColors.shadows.sm} ${themeColors.backgrounds.card}`}>
+          <div className="flex items-start gap-3">
+            <div className={`p-2 rounded-full ${themeColors.iconBackgrounds.warning}`}>
+              <AlertCircle className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="font-semibold">Complete your profile</div>
+              <div className="text-sm text-muted-foreground">Provide a company name and at least one additional detail like a description, logo, website, or social link to preview and post jobs.</div>
+            </div>
+          </div>
+          <div>
+            <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white`}>Edit Profile</Button>
+          </div>
+        </div>
+      )}
       {/* Header Section */}
       <div className="mb-8">
         <Card className="border-l-4 border-l-purple-500">
@@ -161,6 +202,11 @@ export default function EmployerProfilePage() {
                   <div className="flex gap-2">
                     <Button
                       onClick={async () => {
+                        const hasProfile = profileCompleteness?.isComplete || false;
+                        if (!hasProfile) {
+                          setPreviewDialogOpen(true);
+                          return;
+                        }
                         const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
                         if (!id) return;
                         try {
@@ -460,7 +506,7 @@ export default function EmployerProfilePage() {
                   Start attracting candidates by posting your first job
                 </p>
                 <Button 
-                  onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
+                  onClick={handlePostJobClick}
                   className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
                 >
                   Post a Job
@@ -489,6 +535,72 @@ export default function EmployerProfilePage() {
           </Card>
         </TabsContent>
       </Tabs>
+      {/* Preview dialog for incomplete employer profile */}
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Profile incomplete</DialogTitle>
+            <DialogDescription>
+              To preview your public employer profile you must provide a company name and at least one additional detail (such as description, logo, website, social link, or contact).
+            </DialogDescription>
+            <div className="mt-4">
+              {profileCompleteness ? (
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.name ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Company name (required)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.description ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Company description (min 10 characters)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.logo ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Company logo</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.website ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Website</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.social ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Social link (LinkedIn / Facebook / Twitter)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    {profileCompleteness.contact ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
+                    <span>Contact email or phone</span>
+                  </li>
+                </ul>
+              ) : (
+                <div className="text-sm">No profile information found — please provide a company name and at least one additional detail.</div>
+              )}
+            </div>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => { setPreviewDialogOpen(false); handleEditProfile(); }} className={`${themeColors.buttons.primary} text-white  hover:bg-purple-700`}>
+              Create / Edit profile
+            </Button>
+            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Dialog: require at least one company video before posting a job */}
+      <Dialog open={videoRequiredDialogOpen} onOpenChange={setVideoRequiredDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Company video required</DialogTitle>
+            <DialogDescription>
+              You need to upload at least one company video before posting jobs. Company videos help candidates learn about your culture and role expectations.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => { setVideoRequiredDialogOpen(false); navigate('/employer-tabs?group=companyContent&tab=company-videos'); }} className={`${themeColors.buttons.primary} text-white`}>Manage videos</Button>
+            <Button variant="outline" onClick={() => setVideoRequiredDialogOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

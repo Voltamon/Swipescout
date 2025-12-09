@@ -32,6 +32,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [connection, setConnection] = useState(null);
   const [createProfileDialogOpen, setCreateProfileDialogOpen] = useState(false);
+  const [uploadVideoDialogOpen, setUploadVideoDialogOpen] = useState(false);
 
   // Determine whether the current viewer is the profile owner.
   // Employer profile object has a 'userId' (owner's user id) and an 'id' for the profile itself.
@@ -407,6 +408,17 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                                             setCreateProfileDialogOpen(true);
                                             return;
                                           }
+                                          // Ensure user has at least one video before applying
+                                          try {
+                                            const videosRes = await import('@/services/api').then(m => m.getUserVideos());
+                                            const userVideos = videosRes?.data?.videos || videosRes?.data || [];
+                                            if (!userVideos || userVideos.length === 0) {
+                                              setUploadVideoDialogOpen(true);
+                                              return;
+                                            }
+                                          } catch (videoErr) {
+                                            console.debug('Failed to check user videos', videoErr?.message || videoErr);
+                                          }
                                         } catch (err) {
                                           // If the request failed (e.g., 404), prompt to create profile
                                           setCreateProfileDialogOpen(true);
@@ -521,6 +533,36 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
           </Card>
         </aside>
       </div>
+      {/* Dialog: prompt job seeker to create a profile if missing */}
+      <Dialog open={createProfileDialogOpen} onOpenChange={setCreateProfileDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Profile incomplete</DialogTitle>
+            <DialogDescription>
+              You need to create and complete your profile before previewing it or applying to jobs.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => { setCreateProfileDialogOpen(false); navigate('/jobseeker-tabs?group=profileContent&tab=my-profile&mode=edit'); }} className="bg-cyan-600 hover:bg-cyan-700 text-white">Create profile</Button>
+            <Button variant="outline" onClick={() => setCreateProfileDialogOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Upload video required dialog - job seeker should upload at least one video before applying */}
+      <Dialog open={uploadVideoDialogOpen} onOpenChange={setUploadVideoDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upload a video</DialogTitle>
+            <DialogDescription>
+              You need to upload at least one video before applying to jobs. Video resumes help you stand out.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => { setUploadVideoDialogOpen(false); navigate('/jobseeker-tabs?group=profileContent&tab=my-videos'); }} className="bg-cyan-600 hover:bg-cyan-700 text-white">Upload a video</Button>
+            <Button variant="outline" onClick={() => setUploadVideoDialogOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

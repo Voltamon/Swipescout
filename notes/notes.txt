@@ -255,3 +255,24 @@ Which follow-up would you like next?
 
 
 
+employer profile completeness :
+
+Notes & suggestions
+
+The profile completeness check uses a minimal set of fields (name, description, logo, industry, user id). Adjust the criteria for "complete" to your business logic if needed.
+We check for videos with getUserVideos('employer'). This returns uploads for the logged-in user filtered by role: employer. If you prefer company-level videos or videos shared another way, adjust the filtering to the exact API or property.
+I didn't block the 'Upload Video' button on the post-job page — users can still upload videos and then proceed to post once their video exists. If you'd like to prevent this until a profile is present, we can add that behavior.
+If you want the Post Job button on other pages/components to also gate similarly (e.g., from the employer dashboard), we can add a shared helper util for checking both conditions.
+Testing & next steps
+
+Manual tests to verify:
+Employer without profile — open Employer Profile, click Preview → preview dialog appears.
+Employer without profile — click "Post a Job" → either you are prevented (EmployerProfilePage) or the Post Job page shows permission dialog and the post buttons are disabled.
+Employer with profile but no video — Post Job page shows permission dialog and post buttons are disabled; there is a button to navigate to company videos.
+Employer with both profile and at least one video — able to create and post a job normally.
+If you'd like, I can:
+Add an explicit hasEmployerProfileAndVideo boolean, reuse it across the app, and create a small helper utility to normalize the check.
+Disable "Post a Job" CTA across other pages (e.g., Dashboard) and keep UI consistent throughout the app.
+Add a link in the employer profile page UI to encourage uploading a video (e.g., "Add company videos") if none exist.
+If you want, I can run the test suite or implement a small e2e check for this flow — tell me which you'd prefer next.
+
