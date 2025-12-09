@@ -15,6 +15,7 @@ import localize from '@/utils/localize';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/UI/dialog.jsx';
 import {
   User,
   MapPin,
@@ -57,6 +58,7 @@ export default function JobSeekerProfile() {
   const [education, setEducation] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   
   // Video player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -269,17 +271,23 @@ export default function JobSeekerProfile() {
                         <div className="flex gap-2">
                           <Button
                             onClick={async () => {
+                              // If the user has not created a profile, show dialog to create one first
+                              const hasProfile = Boolean(profile && (profile.fullName || profile.headline || profile.email || profile.profilePicture));
+                              if (!hasProfile) {
+                                setPreviewDialogOpen(true);
+                                return;
+                              }
                               const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
                               if (!id) return;
                               try {
-                                    await import('@/services/api').then(m => m.recordProfileView(id, 'jobseeker'));
-                                    // Refresh profile view count after recording view so UI updates for the viewer
-                                    const publicRes = await import('@/services/api').then(m => m.getPublicProfile(id, 'jobseeker'));
-                                    const returnedProfile = publicRes?.data?.profile || publicRes?.data;
-                                    if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
-                                      setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
-                                    }
-                                  } catch (e) {}
+                                await import('@/services/api').then(m => m.recordProfileView(id, 'jobseeker'));
+                                // Refresh profile view count after recording view so UI updates for the viewer
+                                const publicRes = await import('@/services/api').then(m => m.getPublicProfile(id, 'jobseeker'));
+                                const returnedProfile = publicRes?.data?.profile || publicRes?.data;
+                                if (returnedProfile && typeof returnedProfile.profileViews !== 'undefined') {
+                                  setProfile(prev => ({ ...(prev || {}), profileViews: returnedProfile.profileViews }));
+                                }
+                              } catch (e) {}
                               navigate(`/jobseeker-profile/${id}`);
                             }}
                             variant="outline"
@@ -696,6 +704,25 @@ export default function JobSeekerProfile() {
           My Videos
         </Button>
       </div>
+      {/* Create profile preview warning dialog */}
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Profile incomplete</DialogTitle>
+            <DialogDescription>
+              You need to create and complete your profile before previewing it or sharing it with employers.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => { setPreviewDialogOpen(false); handleEditProfile(); }} className="bg-cyan-600 hover:bg-cyan-700">
+              Create profile
+            </Button>
+            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

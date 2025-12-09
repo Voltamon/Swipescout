@@ -11,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { sendConnection } from '@/services/connectionService.js';
 import { Play, Pause, Volume2, VolumeX, MapPin, Briefcase, ExternalLink, Loader2 } from 'lucide-react';
-import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile, applyToJob, getApplications } from '@/services/api';
+import { getEmployerPublicProfile, getUserVideosByUserId, getEmployerPublicJobs, getPublicProfile, applyToJob, getApplications, getUserProfile } from '@/services/api';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/UI/dialog.jsx';
 import { getEmployerDashboardStats } from '@/services/dashboardService';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -30,6 +31,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [connection, setConnection] = useState(null);
+  const [createProfileDialogOpen, setCreateProfileDialogOpen] = useState(false);
 
   // Determine whether the current viewer is the profile owner.
   // Employer profile object has a 'userId' (owner's user id) and an 'id' for the profile itself.
@@ -396,8 +398,23 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                                     return;
                                   }
                                   try {
-                                    setApplyingJobId(job.id);
-                                    await applyToJob(job.id, {});
+                                      // Ensure the current user has a jobseeker profile before applying
+                                      if (role === 'job_seeker') {
+                                        try {
+                                          const profileRes = await getUserProfile();
+                                          const userProfile = profileRes?.data || profileRes?.data?.profile || null;
+                                          if (!userProfile || Object.keys(userProfile).length === 0) {
+                                            setCreateProfileDialogOpen(true);
+                                            return;
+                                          }
+                                        } catch (err) {
+                                          // If the request failed (e.g., 404), prompt to create profile
+                                          setCreateProfileDialogOpen(true);
+                                          return;
+                                        }
+                                      }
+                                      setApplyingJobId(job.id);
+                                      await applyToJob(job.id, {});
                                     // Optimistically update job.applied if present
                                     setJobs(prev => prev.map(j => j.id === job.id ? { ...j, applied: true, applicants_count: (j.applicants_count || 0) + 1, applicationsCount: (j.applicationsCount || 0) + 1 } : j));
                                     toast({ title: 'Applied', description: 'Application submitted successfully' });

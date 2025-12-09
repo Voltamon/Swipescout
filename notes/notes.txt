@@ -239,4 +239,19 @@ Add a migration to enable uuid-ossp for the DB (recommended if not present)? or
 Add tests (server-side / integration) for these connection flows and audit writes, and a confirm modal for disconnect in the frontend?
 Let me know which step you'd prefer next and I’ll proceed. 💡
 
-Raptor mini (Preview) • 0x
+apply and preview profile should be profile :
+Follow-ups & improvements (optional)
+
+Clarify the exact profile completeness rules you want enforced for apply/preview (which fields must exist).
+Add a toast/error in addition to the dialog for feedback on smaller screens or toasts consistent with the site’s patterns.
+Add unit/integration tests for the new logic (e.g., mock getUserProfile and ensure dialogs appear).
+Consider disabling the Preview button entirely (instead of showing a dialog) to prevent confusion.
+If you’d like, I can:
+
+Adjust the completeness rule (e.g., check for headline and at least one experience).
+Add tests for these flows with Jest + React Testing Library.
+Swap the modal for a toast / alert for a different UX subtly.
+Which follow-up would you like next?
+
+
+
