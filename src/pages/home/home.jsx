@@ -216,13 +216,23 @@ const Home = () => {
     try {
       const result = await loginByEmailAndPassword(formData.email, formData.password);
       
+      console.debug('[Home] handleEmailSignIn result:', result);
       if (result.error) {
         setError(result.message);
       } else if (result.user) {
         const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
         if (effectiveRole && effectiveRole !== 'no_role' && effectiveRole !== 'no role') {
           setShowAuthDialog(false);
-          navigate(redirectPath || getDefaultRoute(result.user.role)); // Navigate to stored destination or default route
+          // allow the modal to close before navigating to avoid staleness in history
+          const targetRoute = result.route || redirectPath || getDefaultRoute(result.user.role);
+          console.debug('[Home] computed targetRoute', { targetRoute, routeFromResult: result.route, redirectPath });
+          setTimeout(() => {
+            try {
+              navigate(targetRoute);
+            } catch (navErr) {
+              console.error('[Home] Navigation after login failed', navErr);
+            }
+          }, 60);
           setRedirectPath(null); // Clear redirect path
         } else {
           setError("Sign-in successful but user role is not set. Please contact support.");
@@ -287,6 +297,17 @@ const Home = () => {
       if (result?.error && !result.redirect) {
         setError(result.message);
       }
+      if (result?.success) {
+        const targetRoute = result.route || getDefaultRoute(result.user?.role);
+        console.debug('[Home] handleGoogleSignIn computed targetRoute', targetRoute, result);
+        setShowAuthDialog(false);
+        await new Promise((resolve) => setTimeout(resolve, 80));
+        try {
+          navigate(targetRoute);
+        } catch (err) {
+          console.error('[Home] Navigation after Google login failed', err, { targetRoute });
+        }
+      }
     } catch (error) {
       setError(error?.message || "Google Sign-In failed");
     } finally {
@@ -302,6 +323,17 @@ const Home = () => {
       const result = await authenticateWithGoogle();
       if (result?.error && !result.redirect) {
         setError(result.message);
+      }
+      if (result?.success) {
+        const targetRoute = result.route || getDefaultRoute(result.user?.role);
+        console.debug('[Home] handleGoogleSignUp computed targetRoute', targetRoute, result);
+        setShowAuthDialog(false);
+        await new Promise((resolve) => setTimeout(resolve, 80));
+        try {
+          navigate(targetRoute);
+        } catch (err) {
+          console.error('[Home] Navigation after Google signup failed', err, { targetRoute });
+        }
       }
     } catch (error) {
       setError(error?.message || "Google Sign-Up failed");
@@ -319,14 +351,23 @@ const Home = () => {
       if (result?.error && !result.redirect) {
         setError(result.message);
       } else if (!result?.redirect && result.user) {
+        console.debug('[Home] handleGoogleSignInWithRole result', result);
         const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
-        if (effectiveRole) {
-          console.log("Navigating to default route for role:", result.user.role); // Debugging
-          navigate(getDefaultRoute(result.user.role));
-        } else {
-          setError("Google sign-in failed: missing role");
-        }
-      }
+            if (effectiveRole && effectiveRole !== 'no_role' && effectiveRole !== 'no role') {
+              setShowAuthDialog(false);
+              // allow the modal to close before navigating to avoid staleness in history
+              const targetRoute = result.route || redirectPath || getDefaultRoute(result.user.role);
+              console.debug('[Home] computed targetRoute', { targetRoute, routeFromResult: result.route, redirectPath });
+              setTimeout(() => {
+                try {
+                  navigate(targetRoute);
+                } catch (navErr) {
+                  console.error('[Home] Navigation after login failed', navErr, { targetRoute });
+                }
+              }, 60);
+              setRedirectPath(null); // Clear redirect path
+            }
+          }
     } catch (err) {
       setError("Google sign-in failed. Please try again.");
     } finally {
@@ -340,13 +381,20 @@ const Home = () => {
 
     try {
       const result = await authenticateWithLinkedIn();
+      console.debug('[Home] handleLinkedInLogin result', result);
       if (result.error) {
         setError(result.message);
       } else {
         const userRole = result?.user?.role || result?.role;
         const effectiveRole = Array.isArray(userRole) ? userRole[0] : userRole;
         if (effectiveRole) {
-          navigate(getDefaultRoute(userRole));
+          setTimeout(() => {
+            try {
+              navigate(getDefaultRoute(userRole));
+            } catch (err) {
+              console.error('[Home] Navigation after LinkedIn login failed', err);
+            }
+          }, 60);
         } else {
           setError("LinkedIn sign-in successful but unable to determine user role.");
         }
@@ -373,13 +421,21 @@ const Home = () => {
 
     try {
       const result = await authenticateWithLinkedIn(role);
+      console.debug('[Home] handleLinkedInSignInWithRole result', result);
       if (result.error) {
         setError(result.message);
       } else if (result.user) {
         const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
         if (effectiveRole) {
           console.log("Navigating to default route for role:", result.user.role); // Debugging
-          navigate(getDefaultRoute(result.user.role));
+              const targetRoute = result.route || getDefaultRoute(result.user.role);
+              setTimeout(() => {
+                try {
+                  navigate(targetRoute);
+                } catch (err) {
+                  console.error('[Home] Navigation after LinkedIn login failed', err, { targetRoute });
+                }
+              }, 60);
         } else {
           setError("LinkedIn sign-in failed: missing role");
         }

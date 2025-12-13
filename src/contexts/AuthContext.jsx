@@ -45,6 +45,23 @@ export const AuthProvider = ({ children }) => {
 		return parsed && parsed.length ? parsed.map(x => normalizeRole(x)) : null;
 	};
 
+	// Compute canonical route for a role array or single role
+	const computeDefaultRoute = (roleArray) => {
+		const r = Array.isArray(roleArray) ? roleArray[0] : roleArray;
+		switch (r) {
+			case 'job_seeker':
+			case 'employee':
+				return '/jobseeker-tabs';
+			case 'employer':
+			case 'recruiter':
+				return '/employer-tabs';
+			case 'admin':
+				return '/admin-tabs';
+			default:
+				return '/';
+		}
+	};
+
 	const [user, setUser] = useState(() => {
 		try {
 			const storedUser = localStorage.getItem("user");
@@ -465,7 +482,8 @@ export const AuthProvider = ({ children }) => {
 				}
 			}
 		setFallbackMode(firebaseStatus === "fallback");
-		return { success: true, user: userWithRefreshToken, role: normalized, provider };
+		// Return normalized role and route
+		return { success: true, user: userWithRoles, role: normalized, route: computeDefaultRoute(normalized), provider };
 	}, []);
 
 	// Email/Password Login
@@ -495,6 +513,22 @@ export const AuthProvider = ({ children }) => {
 			const userToStore = { ...data.user, role: normalized || data.user.role };
 			// Debugging: log normalized roles for diagnosis, remove in production
 			console.debug('[AuthContext login] user role normalized:', { original: data.user?.role, normalized, userToStore });
+			// compute default route for the normalized role so callers can navigate reliably
+			const computeDefaultRoute = (roleArray) => {
+				const r = Array.isArray(roleArray) ? roleArray[0] : roleArray;
+				switch (r) {
+					case 'job_seeker':
+					case 'employee':
+						return '/jobseeker-tabs';
+					case 'employer':
+					case 'recruiter':
+						return '/employer-tabs';
+					case 'admin':
+						return '/admin-tabs';
+					default:
+						return '/';
+				}
+			};
 			setUser(userToStore);
 			setRoles(normalized);
 			const prevActive = sessionStorage.getItem('activeRole');
@@ -510,7 +544,7 @@ export const AuthProvider = ({ children }) => {
 				setRole(prevActive);
 			}
 			
-			return { success: true, user: userToStore };
+			return { success: true, user: userToStore, role: normalized, route: computeDefaultRoute(normalized) };
 			
 		} catch (error) {
 			console.error("Login error:", error);
@@ -580,7 +614,7 @@ export const AuthProvider = ({ children }) => {
 					setRole(prevActive || (normalized && normalized.length ? normalized[0] : null));
 				}
 			}
-			return { success: true, user: userToStore, role: normalized };
+			return { success: true, user: userToStore, role: normalized, route: computeDefaultRoute(normalized) };
 		} catch (error) {
 			const isCoopBlocked = error?.message?.includes("Cross-Origin-Opener-Policy");
 			if (!useRedirect && (error?.code && fallbackCodes.includes(error.code) || isCoopBlocked)) {
@@ -667,7 +701,7 @@ export const AuthProvider = ({ children }) => {
 			} else {
 				setRole(prevActive);
 			}
-			return { success: true, user: userToStore };
+			return { success: true, user: userToStore, role: normalized, route: computeDefaultRoute(normalized) };
 		} catch (error) {
 			console.error("LinkedIn auth error:", error);
 			return {
@@ -720,7 +754,8 @@ export const AuthProvider = ({ children }) => {
 			return { 
 				success: true, 
 				user: userToStore,
-				role: normalizedSignupRoles
+				role: normalizedSignupRoles,
+				route: computeDefaultRoute(normalizedSignupRoles)
 			};
 		} catch (error) {
 			console.error("Signup error:", error);
