@@ -39,6 +39,12 @@ export const AuthProvider = ({ children }) => {
 		return null;
 	};
 
+	// Returns normalized roles as an array (always use arrays for `roles` state)
+	const getNormalizedRolesArray = (r) => {
+		const parsed = parseRoles(r);
+		return parsed && parsed.length ? parsed.map(x => normalizeRole(x)) : null;
+	};
+
 	const [user, setUser] = useState(() => {
 		try {
 			const storedUser = localStorage.getItem("user");
