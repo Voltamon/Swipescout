@@ -90,14 +90,15 @@ export const AuthProvider = ({ children }) => {
 		}
 		
 		if (userData) {
+			const parsedRoles = parseRoles(userData?.role);
+			const normalized = parsedRoles && parsedRoles.length ? parsedRoles.map(r => normalizeRole(r)) : null;
 			const userWithRefreshToken = {
 				...userData,
-				refresh_token: refreshToken
+				refresh_token: refreshToken,
+				role: normalized || userData?.role
 			};
 			localStorage.setItem("user", JSON.stringify(userWithRefreshToken));
 			// store roles as JSON so arrays are preserved (backend may send array or CSV/string)
-			const parsedRoles = parseRoles(userData?.role);
-			const normalized = parsedRoles && parsedRoles.length ? parsedRoles.map(r => normalizeRole(r)) : null;
 			localStorage.setItem("roles", JSON.stringify(normalized));
 			localStorage.setItem("role", JSON.stringify(normalized)); // legacy
 			// update in-memory roles and active role
@@ -393,8 +394,8 @@ export const AuthProvider = ({ children }) => {
 		};
 
 		localStorage.setItem("user", JSON.stringify(safeUser));
-		// store role as JSON
-		const normalized = normalizeRole(safeUser.role);
+		// store role as normalized array JSON
+		const normalized = getNormalizedRolesArray(safeUser.role);
 		localStorage.setItem("roles", JSON.stringify(normalized));
 		localStorage.setItem("role", JSON.stringify(normalized));
 		
@@ -404,7 +405,8 @@ export const AuthProvider = ({ children }) => {
 			localStorage.setItem("accessToken", accessToken);
 		}
 		
-		setUser(safeUser);
+		const userToStore = { ...safeUser, role: normalized || safeUser.role };
+		setUser(userToStore);
 		setRoles(normalized);
 		// set active role for this tab if not already set
 		const existingActive = sessionStorage.getItem('activeRole');
@@ -429,15 +431,16 @@ export const AuthProvider = ({ children }) => {
 		};
 
 		localStorage.setItem("accessToken", accessToken);
-		localStorage.setItem("user", JSON.stringify(userWithRefreshToken));
-		// save roles JSON
-		const normalized = normalizeRole(roleArg || userArg?.role);
+		// Save user with normalized roles array (for consistency)
+		const normalized = getNormalizedRolesArray(roleArg || userArg?.role);
+		const userWithRoles = { ...userWithRefreshToken, role: normalized || userWithRefreshToken.role };
+		localStorage.setItem("user", JSON.stringify(userWithRoles));
 		localStorage.setItem("roles", JSON.stringify(normalized));
 		localStorage.setItem("role", JSON.stringify(normalized));
 		localStorage.setItem("accessExpiresTime", (Date.now() + (accessExpiresIn * 1000)).toString());
 		localStorage.setItem("refreshExpiresTime", (Date.now() + (refreshExpiresIn * 1000)).toString());
 
-			setUser(userWithRefreshToken);
+			setUser(userWithRoles);
 			setRoles(normalized);
 			const prevActive = sessionStorage.getItem('activeRole');
 			if (roleArg) {
@@ -481,8 +484,12 @@ export const AuthProvider = ({ children }) => {
 			// Store tokens and user data
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
 
-			setUser(data.user);
-			const normalized = normalizeRole(data.user?.role || null);
+			// Normalize roles into an array and keep user.role consistent
+			const normalized = getNormalizedRolesArray(data.user?.role || null);
+			const userToStore = { ...data.user, role: normalized || data.user.role };
+			// Debugging: log normalized roles for diagnosis, remove in production
+			console.debug('[AuthContext login] user role normalized:', { original: data.user?.role, normalized, userToStore });
+			setUser(userToStore);
 			setRoles(normalized);
 			const prevActive = sessionStorage.getItem('activeRole');
 			if (!prevActive) {
@@ -497,7 +504,7 @@ export const AuthProvider = ({ children }) => {
 				setRole(prevActive);
 			}
 			
-			return { success: true, user: data.user };
+			return { success: true, user: userToStore };
 			
 		} catch (error) {
 			console.error("Login error:", error);
@@ -548,8 +555,9 @@ export const AuthProvider = ({ children }) => {
 			}
 			const data = await response.json();
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
-			setUser(data.user);
-			const normalized = normalizeRole(data.user?.role || null);
+			const normalized = getNormalizedRolesArray(data.user?.role || null);
+			const userToStore = { ...data.user, role: normalized || data.user.role };
+			setUser(userToStore);
 			setRoles(normalized);
 			// set active role in this tab
 			const activeFromPending = role; // the role option passed to authenticateWithGoogle is `role` var above
@@ -566,7 +574,7 @@ export const AuthProvider = ({ children }) => {
 					setRole(prevActive || (normalized && normalized.length ? normalized[0] : null));
 				}
 			}
-			return { success: true, user: data.user, role: normalizeRole(data.user?.role || null) };
+			return { success: true, user: userToStore, role: normalized };
 		} catch (error) {
 			const isCoopBlocked = error?.message?.includes("Cross-Origin-Opener-Policy");
 			if (!useRedirect && (error?.code && fallbackCodes.includes(error.code) || isCoopBlocked)) {
@@ -637,8 +645,9 @@ export const AuthProvider = ({ children }) => {
 			
 			// Store tokens and user data
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
-			setUser(data.user);
-			const normalizedRoles = normalizeRole(data.user?.role || null);
+			const normalizedRoles = getNormalizedRolesArray(data.user?.role || null);
+			const userToStore = { ...data.user, role: normalizedRoles || data.user.role };
+			setUser(userToStore);
 			setRoles(normalizedRoles);
 			const prevActive = sessionStorage.getItem('activeRole');
 			if (!prevActive) {
@@ -652,7 +661,7 @@ export const AuthProvider = ({ children }) => {
 			} else {
 				setRole(prevActive);
 			}
-			return { success: true, user: data.user };
+			return { success: true, user: userToStore };
 		} catch (error) {
 			console.error("LinkedIn auth error:", error);
 			return {
@@ -685,8 +694,9 @@ export const AuthProvider = ({ children }) => {
 
 			// Store all tokens and user data, using data.accessExpiresIn from the backend
 			storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn, data.refreshExpiresIn);
-			setUser(data.user);
-			const normalizedSignupRoles = normalizeRole(data.user.role);
+			const normalizedSignupRoles = getNormalizedRolesArray(data.user.role);
+			const userToStore = { ...data.user, role: normalizedSignupRoles || data.user.role };
+			setUser(userToStore);
 			setRoles(normalizedSignupRoles);
 			const prevActive = sessionStorage.getItem('activeRole');
 			if (!prevActive) {
@@ -703,8 +713,8 @@ export const AuthProvider = ({ children }) => {
 			
 			return { 
 				success: true, 
-				user: data.user,
-				role: normalizeRole(data.user.role)
+				user: userToStore,
+				role: normalizedSignupRoles
 			};
 		} catch (error) {
 			console.error("Signup error:", error);
@@ -772,8 +782,9 @@ export const AuthProvider = ({ children }) => {
 								data.accessExpiresIn || 3600,
 								data.refreshExpiresIn || 86400
 							);
-							setUser(data.user);
-							const normalizedRedirect = normalizeRole(data.user?.role || null);
+							const normalizedRedirect = getNormalizedRolesArray(data.user?.role || null);
+							const userToStoreRedirect = { ...data.user, role: normalizedRedirect || data.user.role };
+							setUser(userToStoreRedirect);
 							setRoles(normalizedRedirect);
 							const prevActiveRedirect = sessionStorage.getItem('activeRole');
 							if (roleFromPending) {
@@ -842,7 +853,7 @@ export const AuthProvider = ({ children }) => {
 			if (storedUser) {
 				const parsed = JSON.parse(storedUser);
 				setUser(parsed);
-				const normalized = normalizeRole(parsed.role);
+				const normalized = getNormalizedRolesArray(parsed.role);
 				setRoles(normalized);
 				const prevActive = sessionStorage.getItem('activeRole');
 				if (!prevActive) {
@@ -929,8 +940,9 @@ export const AuthProvider = ({ children }) => {
 								// Store tokens and user data when available
 								if (data.accessToken && data.refreshToken && data.user) {
 									storeTokens(data.accessToken, data.refreshToken, data.user, data.accessExpiresIn || 3600, data.refreshExpiresIn || 86400);
-									setUser(data.user);
-									const normalizedExchange = normalizeRole(data.user?.role || null);
+									const normalizedExchange = getNormalizedRolesArray(data.user?.role || null);
+									const userToStoreExchange = { ...data.user, role: normalizedExchange || data.user.role };
+									setUser(userToStoreExchange);
 									setRoles(normalizedExchange);
 									const prevActiveExchange = sessionStorage.getItem('activeRole');
 									if (!prevActiveExchange) {
@@ -1004,3 +1016,5 @@ if (!context) {
 }
 return context;
 };
+
+// Helper removed (defined earlier inside AuthProvider scope)

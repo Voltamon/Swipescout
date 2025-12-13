@@ -79,8 +79,13 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       const result = await loginByEmailAndPassword(formData.email, formData.password);
       if (result?.error) {
         setError(result.message);
-      } else if (result?.user && result.user.role && result.user.role !== 'no role') {
-        navigate(redirectPath || getDefaultRoute(result.user.role));
+      } else if (result?.user) {
+        const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
+        if (effectiveRole && effectiveRole !== 'no_role' && effectiveRole !== 'no role') {
+          navigate(redirectPath || getDefaultRoute(result.user.role));
+        } else {
+          setError('Sign-in successful but user role is not set. Please contact support.');
+        }
       } else {
         setError('Sign-in successful but user role is not set. Please contact support.');
       }
@@ -118,7 +123,8 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       } else {
         close();
         const userRole = result?.user?.role || result?.role;
-        if (userRole) navigate(getDefaultRoute(userRole));
+        const effectiveRole = Array.isArray(userRole) ? userRole[0] : userRole;
+        if (effectiveRole) navigate(getDefaultRoute(userRole));
         else setError('Sign-up successful but unable to determine user role.');
       }
     } catch (err) {
@@ -135,7 +141,11 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
     try {
       const result = await authenticateWithGoogle({ role: nextRole });
       if (result?.error && !result.redirect) setError(result.message);
-      else if (!result?.redirect && result.user && result.user.role) navigate(getDefaultRoute(result.user.role));
+      else if (!result?.redirect && result.user) {
+        const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
+        if (effectiveRole) navigate(getDefaultRoute(result.user.role));
+        else setError('Google sign-in failed: missing role');
+      }
     } catch (err) {
       setError('Google sign-in failed. Please try again.');
     } finally {
@@ -150,7 +160,11 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
     try {
       const result = await authenticateWithLinkedIn(role);
       if (result?.error) setError(result.message);
-      else if (result?.user && result.user.role) navigate(getDefaultRoute(result.user.role));
+      else if (result?.user) {
+        const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
+        if (effectiveRole) navigate(getDefaultRoute(result.user.role));
+        else setError('LinkedIn sign-in failed: missing role');
+      }
     } catch (err) {
       setError('LinkedIn sign-in failed. Please try again.');
     } finally {
