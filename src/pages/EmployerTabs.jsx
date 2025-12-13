@@ -148,18 +148,11 @@ const EmployerTabs = () => {
     return null;
   }
 
-  // Build breadcrumb items with category and tab to support deep links
-  const breadcrumbItems = [
-    { label: 'nav.home', link: '/' },
-  ];
-  if (tabCategory) breadcrumbItems.push({ label: tabCategory.label, link: `/employer-tabs?group=${tabCategory.key}` });
-  if (currentTab) breadcrumbItems.push({ label: currentTab.label });
-
   return (
     <DashboardLayout
       navigationItems={navigationItems}
       title={'employerTabs:title'}
-      breadcrumbItems={breadcrumbItems}
+      breadcrumbItems={[{ label: 'nav.home', link: '/' }, { label: 'employerTabs:title' }]}
     >
       <div className="space-y-6">
         {/* Welcome Section */}

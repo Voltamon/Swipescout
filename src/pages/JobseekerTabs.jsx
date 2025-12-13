@@ -139,17 +139,11 @@ const JobseekerTabs = () => {
     return null;
   }
 
-  const breadcrumbItems = [
-    { label: 'nav.home', link: '/' },
-  ];
-  if (tabCategory) breadcrumbItems.push({ label: tabCategory.label, link: `/jobseeker-tabs?group=${tabCategory.key}` });
-  if (currentTab) breadcrumbItems.push({ label: currentTab.label });
-
   return (
     <DashboardLayout
       navigationItems={navigationItems}
       title={'jobseekerTabs:title'}
-      breadcrumbItems={breadcrumbItems}
+      breadcrumbItems={[{ label: 'nav.home', link: '/' }, { label: 'jobseekerTabs:title' }]}
     >
       <div className="space-y-6">
         {/* Welcome Section - only show on overview tab */}

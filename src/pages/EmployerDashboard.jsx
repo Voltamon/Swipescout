@@ -25,8 +25,6 @@ import {
     Star,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
-import { Breadcrumbs, Link as MuiLink, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
@@ -146,28 +144,14 @@ const EmployerDashboard = () => {
     }
 
     return (
-        const breadcrumbItems = [{ label: 'nav.home', link: '/' }, { label: 'employerTabs:title' }];
-
-        return (
         <div className={`min-h-screen ${themeColors.backgrounds.page} p-6`}>
             <div className="max-w-7xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                                <div>
-                                                <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 1 }}>
-                                                        {breadcrumbItems.map((item, idx) => (
-                                                            item.link ? (
-                                                                <MuiLink key={idx} component={RouterLink} underline="hover" color="inherit" to={item.link}>
-                                                                    {t(item.label)}
-                                                                </MuiLink>
-                                                            ) : (
-                                                                <Typography key={idx} color="textSecondary">{t(item.label)}</Typography>
-                                                            )
-                                                        ))}
-                                                    </Breadcrumbs>
-                                                    <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>
-                                                        Welcome {user?.displayName}
-                                                    </h1>
+                    <div>
+                        <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>
+                            Welcome {user?.displayName}
+                        </h1>
                         <p className={themeColors.text.secondary}>
                             Here's what's happening with your job postings today
                         </p>

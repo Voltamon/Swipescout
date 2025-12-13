@@ -3,8 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
-import { Breadcrumbs, Link as MuiLink, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getJobApplicants, updateJobApplicationStatus } from '@/services/api';
 import ApplicantCard from '@/components/ApplicantCard.jsx';
@@ -132,12 +130,6 @@ export default function JobApplicantsPage({ id: propId }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const breadcrumbItems = [
-    { label: 'nav.home', link: '/' },
-    { label: 'employerTabs:categories.jobManagement', link: '/employer-tabs?group=jobManagement' },
-    { label: 'employerTabs:tabs.jobApplicants' }
-  ];
-
   return (
     <div className={`min-h-screen ${themeColors.backgrounds.page} py-8 px-4 sm:px-6 lg:px-8`}>
       <div className="max-w-7xl mx-auto space-y-6">
@@ -153,17 +145,6 @@ export default function JobApplicantsPage({ id: propId }) {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 1 }}>
-                {breadcrumbItems.map((item, idx) => (
-                  item.link ? (
-                    <MuiLink key={idx} component={RouterLink} underline="hover" color="inherit" to={item.link}>
-                      {t(item.label)}
-                    </MuiLink>
-                  ) : (
-                    <Typography key={idx} color="textSecondary">{t(item.label)}</Typography>
-                  )
-                ))}
-              </Breadcrumbs>
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-full ${themeColors.iconBackgrounds.primary}`}>
                   <Users className="h-6 w-6" />
