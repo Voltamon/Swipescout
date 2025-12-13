@@ -490,7 +490,7 @@ const EmployerDashboard = () => {
                                                     </Box>
                                                 </TableCell>
                                                 <TableCell>{candidate.job_title}</TableCell>
-                                                <TableCell>{new Date(candidate.applied_at).toLocaleDateString('en-US')}</TableCell>
+                                                <TableCell>{new Date(candidate.appliedAt).toLocaleDateString('en-US')}</TableCell>
                                                 <TableCell>
                                                     <Chip
                                                         label={candidate.match_percentage + '%'}

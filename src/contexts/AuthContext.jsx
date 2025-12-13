@@ -515,22 +515,7 @@ export const AuthProvider = ({ children }) => {
 			const userToStore = { ...data.user, role: normalized || data.user.role };
 			// Debugging: log normalized roles for diagnosis, remove in production
 			console.debug('[AuthContext login] user role normalized:', { original: data.user?.role, normalized, userToStore });
-			// compute default route for the normalized role so callers can navigate reliably
-			const computeDefaultRoute = (roleArray) => {
-				const r = Array.isArray(roleArray) ? roleArray[0] : roleArray;
-				switch (r) {
-					case 'job_seeker':
-					case 'employee':
-						return '/jobseeker-tabs';
-					case 'employer':
-					case 'recruiter':
-						return '/employer-tabs';
-					case 'admin':
-						return '/admin-tabs';
-					default:
-						return '/';
-				}
-			};
+			// Note: use top-level `computeDefaultRoute` helper defined above
 			setUser(userToStore);
 			setRoles(normalized);
 			const prevActive = sessionStorage.getItem('activeRole');
@@ -703,7 +688,7 @@ export const AuthProvider = ({ children }) => {
 			} else {
 				setRole(prevActive);
 			}
-			return { success: true, user: userToStore, role: normalized, route: computeDefaultRoute(normalized) };
+			return { success: true, user: userToStore, role: normalizedRoles, route: computeDefaultRoute(normalizedRoles) };
 		} catch (error) {
 			console.error("LinkedIn auth error:", error);
 			return {

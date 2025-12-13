@@ -415,7 +415,7 @@ const EmployerDashboard = () => {
                                                                     <TableCell>
                                                                         <div className="flex items-center gap-1 text-sm">
                                                                             <Clock className="h-3 w-3 text-gray-400" />
-                                                                            {new Date(candidate.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                                            {new Date(candidate.appliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                                                         </div>
                                                                     </TableCell>
                                                                     <TableCell>

@@ -54,10 +54,6 @@ const Home = () => {
   const [loginInitiated, setLoginInitiated] = useState(false);
   const prevUserRef = useRef(user);
   const prevUserBeforeOpenRef = useRef(null);
-  const [authDialogOpenedAt, setAuthDialogOpenedAt] = useState(null);
-  const [loginInitiated, setLoginInitiated] = useState(false);
-  const prevUserRef = useRef(user);
-  const prevUserBeforeOpenRef = useRef(null);
 
   const getDefaultRoute = (role) => {
     const effectiveRole = Array.isArray(role) ? role[0] : role;
