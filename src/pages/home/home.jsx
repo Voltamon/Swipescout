@@ -49,6 +49,7 @@ const Home = () => {
   const [linkedinAnchorEl, setLinkedinAnchorEl] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
   const [redirectPath, setRedirectPath] = useState(null); // Store intended destination
+  const [navigatedOnLogin, setNavigatedOnLogin] = useState(false);
 
   const getDefaultRoute = (role) => {
     const effectiveRole = Array.isArray(role) ? role[0] : role;
@@ -127,6 +128,10 @@ const Home = () => {
 
   useEffect(() => {
     console.log('[Home] showAuthDialog state changed:', showAuthDialog);
+    if (showAuthDialog) {
+      // reset navigation guard when auth dialog is opened
+      setNavigatedOnLogin(false);
+    }
   }, [showAuthDialog]);
 
   // Keep track of viewport width and when switching from mobile/tablet
@@ -500,6 +505,29 @@ const Home = () => {
       }
     }
   };
+
+  // Fallback: if user logs in and the dialog is closed but navigation didn't happen
+  useEffect(() => {
+    try {
+      if (!showAuthDialog && user && !navigatedOnLogin) {
+        const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
+        if (effectiveRole && effectiveRole !== 'no_role' && effectiveRole !== 'no role') {
+          const target = redirectPath || getDefaultRoute(user.role);
+          console.debug('[Home] fallback navigation triggered', { target, redirectPath, user });
+          try {
+            navigate(target);
+            setNavigatedOnLogin(true);
+            setRedirectPath(null);
+          } catch (err) {
+            console.error('[Home] fallback navigate failed', err, { target });
+          }
+        }
+      }
+    } catch (err) {
+      // swallow to avoid breaking app
+      console.error('[Home] fallback navigate effect error', err);
+    }
+  }, [user, showAuthDialog, navigatedOnLogin, redirectPath]);
 
   const handleEmployersClick = () => {
     // If not logged in, prompt login and store redirect
