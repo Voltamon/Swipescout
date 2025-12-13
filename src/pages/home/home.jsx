@@ -50,6 +50,14 @@ const Home = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const [redirectPath, setRedirectPath] = useState(null); // Store intended destination
   const [navigatedOnLogin, setNavigatedOnLogin] = useState(false);
+  const [authDialogOpenedAt, setAuthDialogOpenedAt] = useState(null);
+  const [loginInitiated, setLoginInitiated] = useState(false);
+  const prevUserRef = useRef(user);
+  const prevUserBeforeOpenRef = useRef(null);
+  const [authDialogOpenedAt, setAuthDialogOpenedAt] = useState(null);
+  const [loginInitiated, setLoginInitiated] = useState(false);
+  const prevUserRef = useRef(user);
+  const prevUserBeforeOpenRef = useRef(null);
 
   const getDefaultRoute = (role) => {
     const effectiveRole = Array.isArray(role) ? role[0] : role;
@@ -134,6 +142,11 @@ const Home = () => {
     }
   }, [showAuthDialog]);
 
+  useEffect(() => {
+    // keep a snapshot of the previous user to compare on login
+    prevUserRef.current = user;
+  }, [user]);
+
   // Keep track of viewport width and when switching from mobile/tablet
   // (<=1024px) to desktop (>=1025px) scroll to top so user sees the
   // full desktop hero instead of remaining mid-scroll.
@@ -187,6 +200,11 @@ const Home = () => {
       // that may throw exceptions during click-event propagation.
       setTimeout(() => {
         try {
+          // record previous user and mark that login flow is initiated from this modal
+          prevUserBeforeOpenRef.current = user;
+          setAuthDialogOpenedAt(Date.now());
+          setLoginInitiated(true);
+          setNavigatedOnLogin(false);
           setShowAuthDialog(true);
         } catch (err) {
           console.error('[Home] setShowAuthDialog failed:', err);
@@ -234,8 +252,11 @@ const Home = () => {
           setTimeout(() => {
             try {
               navigate(targetRoute);
+                    setLoginInitiated(false);
+                    setAuthDialogOpenedAt(null);
+                    setNavigatedOnLogin(true);
             } catch (navErr) {
-              console.error('[Home] Navigation after login failed', navErr);
+              console.error('[Home] Navigation after login failed', navErr, { targetRoute });
             }
           }, 60);
           setRedirectPath(null); // Clear redirect path
@@ -309,6 +330,9 @@ const Home = () => {
         await new Promise((resolve) => setTimeout(resolve, 80));
         try {
           navigate(targetRoute);
+          setLoginInitiated(false);
+          setAuthDialogOpenedAt(null);
+          setNavigatedOnLogin(true);
         } catch (err) {
           console.error('[Home] Navigation after Google login failed', err, { targetRoute });
         }
@@ -336,6 +360,9 @@ const Home = () => {
         await new Promise((resolve) => setTimeout(resolve, 80));
         try {
           navigate(targetRoute);
+          setLoginInitiated(false);
+          setAuthDialogOpenedAt(null);
+          setNavigatedOnLogin(true);
         } catch (err) {
           console.error('[Home] Navigation after Google signup failed', err, { targetRoute });
         }
@@ -366,6 +393,9 @@ const Home = () => {
               setTimeout(() => {
                 try {
                   navigate(targetRoute);
+                  setLoginInitiated(false);
+                  setAuthDialogOpenedAt(null);
+                  setNavigatedOnLogin(true);
                 } catch (navErr) {
                   console.error('[Home] Navigation after login failed', navErr, { targetRoute });
                 }
@@ -393,11 +423,15 @@ const Home = () => {
         const userRole = result?.user?.role || result?.role;
         const effectiveRole = Array.isArray(userRole) ? userRole[0] : userRole;
         if (effectiveRole) {
+          const target = result.route || getDefaultRoute(userRole);
           setTimeout(() => {
             try {
-              navigate(getDefaultRoute(userRole));
+              navigate(target);
+              setLoginInitiated(false);
+              setAuthDialogOpenedAt(null);
+              setNavigatedOnLogin(true);
             } catch (err) {
-              console.error('[Home] Navigation after LinkedIn login failed', err);
+              console.error('[Home] Navigation after LinkedIn login failed', err, { target });
             }
           }, 60);
         } else {
@@ -433,14 +467,17 @@ const Home = () => {
         const effectiveRole = Array.isArray(result.user.role) ? result.user.role[0] : result.user.role;
         if (effectiveRole) {
           console.log("Navigating to default route for role:", result.user.role); // Debugging
-              const targetRoute = result.route || getDefaultRoute(result.user.role);
-              setTimeout(() => {
-                try {
-                  navigate(targetRoute);
-                } catch (err) {
-                  console.error('[Home] Navigation after LinkedIn login failed', err, { targetRoute });
-                }
-              }, 60);
+          const targetRoute = result.route || getDefaultRoute(result.user.role);
+          setTimeout(() => {
+            try {
+              navigate(targetRoute);
+              setLoginInitiated(false);
+              setAuthDialogOpenedAt(null);
+              setNavigatedOnLogin(true);
+            } catch (err) {
+              console.error('[Home] Navigation after LinkedIn login failed', err, { targetRoute });
+            }
+          }, 60);
         } else {
           setError("LinkedIn sign-in failed: missing role");
         }
@@ -509,13 +546,29 @@ const Home = () => {
   // Fallback: if user logs in and the dialog is closed but navigation didn't happen
   useEffect(() => {
     try {
-      if (!showAuthDialog && user && !navigatedOnLogin) {
+      // Only consider fallback navigation when login was initiated from the auth dialog
+      if (loginInitiated && !showAuthDialog && user && !navigatedOnLogin) {
         const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
         if (effectiveRole && effectiveRole !== 'no_role' && effectiveRole !== 'no role') {
           const target = redirectPath || getDefaultRoute(user.role);
+          const prev = prevUserBeforeOpenRef.current;
+          const changed = (!prev && user) || (prev && user && (prev.id !== user.id || JSON.stringify(prev.role) !== JSON.stringify(user.role)));
+          if (!changed) {
+            // If the user didn't actually change since opening the dialog, don't navigate
+            console.debug('[Home] user unchanged since auth dialog opened; skipping fallback navigation', { prev, user });
+            // reset login intent to avoid future attempts
+            setLoginInitiated(false);
+            setAuthDialogOpenedAt(null);
+            return;
+          }
           console.debug('[Home] fallback navigation triggered', { target, redirectPath, user });
           try {
-            navigate(target);
+            // Avoid redundant navigation to the current path
+            if (location.pathname !== target) {
+              navigate(target);
+            }
+            setLoginInitiated(false);
+            setAuthDialogOpenedAt(null);
             setNavigatedOnLogin(true);
             setRedirectPath(null);
           } catch (err) {
@@ -527,7 +580,7 @@ const Home = () => {
       // swallow to avoid breaking app
       console.error('[Home] fallback navigate effect error', err);
     }
-  }, [user, showAuthDialog, navigatedOnLogin, redirectPath]);
+  }, [user, showAuthDialog, navigatedOnLogin, redirectPath, loginInitiated, location.pathname]);
 
   const handleEmployersClick = () => {
     // If not logged in, prompt login and store redirect
@@ -777,7 +830,7 @@ const Home = () => {
       {showAuthDialog && createPortal(
         <AuthPage
           open={Boolean(showAuthDialog)}
-          onClose={() => setShowAuthDialog(false)}
+          onClose={() => { setShowAuthDialog(false); setLoginInitiated(false); setAuthDialogOpenedAt(null); }}
           initialTab={activeTab}
           redirectPath={redirectPath}
         />,
