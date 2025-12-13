@@ -3,9 +3,11 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/UI/avatar.jsx'
 import { Badge } from '@/components/UI/badge.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Mail, MapPin, Phone, FileText, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export default function ApplicantCard({ applicant, onViewProfile, onUpdateStatus }) {
+  const { t } = useTranslation(['jobApplicants', 'common']);
   const profile = applicant.applicantInfo?.profile;
   const userObj = applicant.applicantInfo?.user;
   const userDisplayName = applicant.applicantInfo?.displayName;
@@ -21,7 +23,7 @@ export default function ApplicantCard({ applicant, onViewProfile, onUpdateStatus
   } else if (applicant.applicantInfo?.email) {
     name = applicant.applicantInfo.email;
   } else {
-    name = 'Unknown';
+    name = t('applicantCard.unknown');
   }
   const appliedAt = applicant.appliedAt ? new Date(applicant.appliedAt).toLocaleString() : '—';
   const skills = applicant.applicantInfo?.skills || [];
@@ -93,7 +95,7 @@ export default function ApplicantCard({ applicant, onViewProfile, onUpdateStatus
           )}
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <div className="text-xs text-muted-foreground">{profile?.yearsOfExp || '—'} yrs</div>
+            <div className="text-xs text-muted-foreground">{profile?.yearsOfExp || '—'} {t('applicantCard.years')}</div>
             {skills.length > 0 && (
               <div className="flex gap-2 flex-wrap">
                 {skills.slice(0, 6).map((s, idx) => (
@@ -124,21 +126,21 @@ export default function ApplicantCard({ applicant, onViewProfile, onUpdateStatus
 
         <div className="flex flex-col items-end gap-2">
           <div className="flex flex-col space-y-2">
-            <Button size="sm" variant="ghost" onClick={() => onViewProfile(applicant.applicantInfo?.userId)}>View profile</Button>
+            <Button size="sm" variant="ghost" onClick={() => onViewProfile(applicant.applicantInfo?.userId)}>{t('applicantCard.viewProfile')}</Button>
             {resume && (
               <a href={resume} target="_blank" rel="noopener noreferrer" className="w-full">
-                <Button size="sm" variant="secondary" className="w-full flex items-center gap-2"><FileText className="h-4 w-4" /> Resume</Button>
+                <Button size="sm" variant="secondary" className="w-full flex items-center gap-2"><FileText className="h-4 w-4" /> {t('applicantCard.resume')}</Button>
               </a>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="default" onClick={handleShortlist} disabled={pendingAction || applicant.status === 'accepted'}>Shortlist</Button>
-            <Button size="sm" variant="destructive" onClick={handleReject} disabled={pendingAction || applicant.status === 'rejected'}>Reject</Button>
+            <Button size="sm" variant="default" onClick={handleShortlist} disabled={pendingAction || applicant.status === 'accepted'}>{t('applicantCard.shortlist')}</Button>
+            <Button size="sm" variant="destructive" onClick={handleReject} disabled={pendingAction || applicant.status === 'rejected'}>{t('applicantCard.reject')}</Button>
           </div>
 
           <div className="text-xs text-muted-foreground flex items-center gap-2">
-            <span>Status:</span>
+            <span>{t('applicantCard.status')}:</span>
             <Badge variant={getStatusVariant(applicant.status)}>{(applicant.status || '—').toUpperCase()}</Badge>
           </div>
         </div>

@@ -15,7 +15,9 @@ import {
   useTheme,
   useMediaQuery,
   Paper,
-  Tooltip
+  Tooltip,
+  Breadcrumbs,
+  Link as MuiLink
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -26,6 +28,7 @@ import {
   LightMode
 } from '@mui/icons-material';
 import { useTranslation } from '../../hooks/useTranslation';
+import { Link as RouterLink } from 'react-router-dom';
 import LanguageSelector from '../LanguageSelector';
 import NotificationCenter from '@/components/NotificationCenter';
 
@@ -34,7 +37,8 @@ const drawerWidth = 280;
 const DashboardLayout = ({ 
   children, 
   sidebarItems = [], 
-  title = 'Dashboard',
+  title = 'common.dashboard',
+  breadcrumbItems = [],
   userInfo = {},
   onThemeToggle,
   isDarkMode = false
@@ -134,9 +138,31 @@ const DashboardLayout = ({
             <MenuIcon />
           </IconButton>
           
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+            <Typography variant="h6" noWrap component="div">
+              {t(title)}
+            </Typography>
+            {breadcrumbItems && breadcrumbItems.length > 0 && (
+              <Breadcrumbs aria-label="breadcrumb" sx={{ mt: 0.5 }}>
+                {breadcrumbItems.map((item, idx) => {
+                  const labelText = (typeof item.label === 'string' && item.label.includes(':')) ? t(item.label) : item.label;
+                  return item.link ? (
+                    <MuiLink
+                      key={idx}
+                      component={RouterLink}
+                      underline="hover"
+                      color="inherit"
+                      to={item.link}
+                    >
+                      {labelText}
+                    </MuiLink>
+                  ) : (
+                    <Typography color="text.secondary" key={idx}>{labelText}</Typography>
+                  );
+                })}
+              </Breadcrumbs>
+            )}
+          </Box>
 
           {/* Theme Toggle */}
           <Tooltip title={isDarkMode ? t('common.lightMode') : t('common.darkMode')}>

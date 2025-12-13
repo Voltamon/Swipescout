@@ -1,0 +1,41 @@
+{
+  "title": "Your Connections",
+  "subtitle": "Manage your professional network and pending requests",
+  "stats": {
+    "connected": "Connected",
+    "requestsReceived": "Requests Received",
+    "requestsSent": "Requests Sent"
+  },
+  "sections": {
+    "pendingReceived": "Pending Requests Received",
+    "pendingReceivedDesc": "Review and respond to connection requests",
+    "pendingSent": "Pending Requests Sent",
+    "pendingSentDesc": "Waiting for response from these connections",
+    "connectedUsers": "Your Network",
+    "noConnections": "professional connection",
+    "noConnectionsPlural": "professional connections"
+  },
+  "empty": {
+    "noPendingReceived": "No pending requests received",
+    "noPendingReceivedDesc": "When someone wants to connect, they'll appear here",
+    "noPendingSent": "No pending requests sent",
+    "noPendingSentDesc": "Start connecting with professionals in your network",
+    "noConnected": "No connections yet",
+    "noConnectedDesc": "Build your professional network by connecting with others"
+  },
+  "buttons": {
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "message": "Message",
+    "pending": "Pending"
+  },
+  "messages": {
+    "acceptSuccess": "Connection accepted",
+    "rejectSuccess": "Connection declined",
+    "cancelSuccess": "Request cancelled",
+    "acceptError": "Failed to accept connection",
+    "rejectError": "Failed to decline connection",
+    "cancelError": "Failed to cancel request"
+  }
+}

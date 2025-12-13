@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar.jsx'
 import { Badge } from '@/components/UI/badge.jsx';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import OpenChatModal from '@/components/Chat/OpenChatModal.jsx';
 import { getConnections, getPendingReceived, getPendingSent, acceptConnection, rejectConnection } from '@/services/connectionService.js';
 import localize from '@/utils/localize';
@@ -13,6 +14,7 @@ import { Users, UserCheck, UserPlus, Clock, MessageCircle, X, Check, Loader2 } f
 const ConnectionsPage = () => {
   const { toast } = useToast();
   const { role } = useAuth();
+  const { t } = useTranslation(['connections', 'common']);
   const [accepted, setAccepted] = useState([]);
   const [pendingReceived, setPendingReceived] = useState([]);
   const [pendingSent, setPendingSent] = useState([]);
@@ -69,7 +71,7 @@ const ConnectionsPage = () => {
   const handleAccept = async (connectionId) => {
     try {
       const { data } = await acceptConnection(connectionId);
-      toast({ description: 'Connection accepted' });
+      toast({ description: t('messages.acceptSuccess') });
       await fetchAll();
       if (data?.conversation) {
         setOpenConversation(data.conversation);
@@ -77,29 +79,29 @@ const ConnectionsPage = () => {
       }
     } catch (err) {
       console.error('Failed to accept', err);
-      toast({ description: 'Failed to accept connection', variant: 'destructive' });
+      toast({ description: t('messages.acceptError'), variant: 'destructive' });
     }
   };
 
   const handleReject = async (connectionId) => {
     try {
       await rejectConnection(connectionId);
-      toast({ description: 'Connection declined' });
+      toast({ description: t('messages.rejectSuccess') });
       await fetchAll();
     } catch (err) {
       console.error('Failed to reject', err);
-      toast({ description: 'Failed to decline connection', variant: 'destructive' });
+      toast({ description: t('messages.rejectError'), variant: 'destructive' });
     }
   };
 
   const handleCancel = async (connectionId) => {
     try {
       await import('@/services/connectionService.js').then(m => m.deleteConnection(connectionId));
-      toast({ description: 'Request cancelled' });
+      toast({ description: t('messages.cancelSuccess') });
       await fetchAll();
     } catch (err) {
       console.error('Failed to cancel request', err);
-      toast({ description: 'Failed to cancel request', variant: 'destructive' });
+      toast({ description: t('messages.cancelError'), variant: 'destructive' });
     }
   };
 
@@ -122,10 +124,10 @@ const ConnectionsPage = () => {
             </div>
           </div>
           <h1 className={`text-4xl font-bold mb-2 ${themeColors.text.gradient}`}>
-            Your Connections
+            {t('title')}
           </h1>
           <p className={`${themeColors.text.secondary} text-lg`}>
-            Manage your professional network and pending requests
+            {t('subtitle')}
           </p>
         </div>
 
@@ -135,7 +137,7 @@ const ConnectionsPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm font-medium ${themeColors.text.secondary}`}>Connected</p>
+                  <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{t('stats.connected')}</p>
                   <p className="text-3xl font-bold mt-2">{accepted.length}</p>
                 </div>
                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.success}`}>
@@ -149,7 +151,7 @@ const ConnectionsPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm font-medium ${themeColors.text.secondary}`}>Requests Received</p>
+                  <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{t('stats.requestsReceived')}</p>
                   <p className="text-3xl font-bold mt-2">{pendingReceived.length}</p>
                 </div>
                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.warning}`}>
@@ -163,7 +165,7 @@ const ConnectionsPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm font-medium ${themeColors.text.secondary}`}>Requests Sent</p>
+                  <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{t('stats.requestsSent')}</p>
                   <p className="text-3xl font-bold mt-2">{pendingSent.length}</p>
                 </div>
                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.info}`}>
@@ -180,9 +182,9 @@ const ConnectionsPage = () => {
             <div className="flex items-center gap-3">
               <Clock className="h-6 w-6" />
               <div>
-                <CardTitle className="text-xl">Pending Requests Received</CardTitle>
+                <CardTitle className="text-xl">{t('sections.pendingReceived')}</CardTitle>
                 <CardDescription className="text-white/80">
-                  Review and respond to connection requests
+                  {t('sections.pendingReceivedDesc')}
                 </CardDescription>
               </div>
             </div>
@@ -193,8 +195,8 @@ const ConnectionsPage = () => {
                 <div className={`inline-flex p-4 rounded-full ${themeColors.iconBackgrounds.info} mb-4`}>
                   <Clock className="h-12 w-12" />
                 </div>
-                <p className={`${themeColors.text.secondary} text-lg`}>No pending requests received</p>
-                <p className={`${themeColors.text.muted} text-sm mt-2`}>When someone wants to connect, they'll appear here</p>
+                <p className={`${themeColors.text.secondary} text-lg`}>{t('empty.noPendingReceived')}</p>
+                <p className={`${themeColors.text.muted} text-sm mt-2`}>{t('empty.noPendingReceivedDesc')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -223,7 +225,7 @@ const ConnectionsPage = () => {
                         className={`${themeColors.buttons.primary} text-white flex-1 sm:flex-none`}
                       >
                         <Check className="h-4 w-4 mr-2" />
-                        Accept
+                        {t('buttons.accept')}
                       </Button>
                       <Button 
                         variant="outline" 
@@ -231,7 +233,7 @@ const ConnectionsPage = () => {
                         className="flex-1 sm:flex-none hover:bg-red-50 hover:text-red-600 hover:border-red-300"
                       >
                         <X className="h-4 w-4 mr-2" />
-                        Decline
+                        {t('buttons.decline')}
                       </Button>
                     </div>
                   </div>
@@ -247,9 +249,9 @@ const ConnectionsPage = () => {
             <div className="flex items-center gap-3">
               <UserPlus className="h-6 w-6" />
               <div>
-                <CardTitle className="text-xl">Pending Requests Sent</CardTitle>
+                <CardTitle className="text-xl">{t('sections.pendingSent')}</CardTitle>
                 <CardDescription className="text-white/80">
-                  Waiting for response from these connections
+                  {t('sections.pendingSentDesc')}
                 </CardDescription>
               </div>
             </div>
@@ -260,8 +262,8 @@ const ConnectionsPage = () => {
                 <div className={`inline-flex p-4 rounded-full ${themeColors.iconBackgrounds.info} mb-4`}>
                   <UserPlus className="h-12 w-12" />
                 </div>
-                <p className={`${themeColors.text.secondary} text-lg`}>No pending requests sent</p>
-                <p className={`${themeColors.text.muted} text-sm mt-2`}>Start connecting with professionals in your network</p>
+                <p className={`${themeColors.text.secondary} text-lg`}>{t('empty.noPendingSent')}</p>
+                <p className={`${themeColors.text.muted} text-sm mt-2`}>{t('empty.noPendingSentDesc')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -287,7 +289,7 @@ const ConnectionsPage = () => {
                     <div className="flex gap-2 w-full sm:w-auto">
                       <Badge className={`${themeColors.badges.warning}`}>
                         <Clock className="h-3 w-3 mr-1" />
-                        Pending
+                        {t('buttons.pending')}
                       </Badge>
                       <Button 
                         variant="outline" 
@@ -296,7 +298,7 @@ const ConnectionsPage = () => {
                         size="sm"
                       >
                         <X className="h-4 w-4 mr-2" />
-                        Cancel
+                        {t('buttons.cancel')}
                       </Button>
                     </div>
                   </div>
@@ -312,9 +314,9 @@ const ConnectionsPage = () => {
             <div className="flex items-center gap-3">
               <UserCheck className="h-6 w-6" />
               <div>
-                <CardTitle className="text-xl">Your Network</CardTitle>
+                <CardTitle className="text-xl">{t('sections.connectedUsers')}</CardTitle>
                 <CardDescription className="text-white/80">
-                  {accepted.length} professional connection{accepted.length !== 1 ? 's' : ''}
+                  {accepted.length} {accepted.length !== 1 ? t('sections.noConnectionsPlural') : t('sections.noConnections')}
                 </CardDescription>
               </div>
             </div>
@@ -325,8 +327,8 @@ const ConnectionsPage = () => {
                 <div className={`inline-flex p-4 rounded-full ${themeColors.iconBackgrounds.success} mb-4`}>
                   <UserCheck className="h-12 w-12" />
                 </div>
-                <p className={`${themeColors.text.secondary} text-lg`}>No connections yet</p>
-                <p className={`${themeColors.text.muted} text-sm mt-2`}>Build your professional network by connecting with others</p>
+                <p className={`${themeColors.text.secondary} text-lg`}>{t('empty.noConnected')}</p>
+                <p className={`${themeColors.text.muted} text-sm mt-2`}>{t('empty.noConnectedDesc')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -355,7 +357,7 @@ const ConnectionsPage = () => {
                           }}
                         >
                           <MessageCircle className="h-4 w-4 mr-2" />
-                          Message
+                          {t('buttons.message')}
                         </Button>
                       </div>
                     </CardContent>

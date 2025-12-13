@@ -1,0 +1,67 @@
+{
+  "title": "متقدمو الوظائف",
+  "subtitle": "مراجعة وإدارة المرشحين لهذا المنصب",
+  "totalApplicants": "إجمالي المتقدم",
+  "totalApplicantsPlural": "إجمالي المتقدمين",
+  "filters": {
+    "title": "تصفية وفرز المتقدمين",
+    "searchPlaceholder": "ابحث حسب الاسم والمهارات والعنوان والموقع...",
+    "searchLabel": "البحث عن المتقدمين",
+    "statusLabel": "الحالة",
+    "statusPlaceholder": "تصفية حسب الحالة",
+    "sortLabel": "فرز حسب",
+    "sortPlaceholder": "فرز",
+    "statusAll": "جميع الحالات",
+    "statusPending": "قيد الانتظار",
+    "statusReviewed": "تمت المراجعة",
+    "statusAccepted": "مقبول",
+    "statusRejected": "مرفوض",
+    "sortLatestFirst": "الأحدث أولاً",
+    "sortOldestFirst": "الأقدم أولاً",
+    "sortNameAsc": "الاسم (أ–ي)",
+    "sortNameDesc": "الاسم (ي–أ)",
+    "perPageLabel": "لكل صفحة:",
+    "showing": "عرض",
+    "of": "من",
+    "applicant": "متقدم",
+    "applicants": "متقدمون"
+  },
+  "profiles": {
+    "title": "ملفات المتقدمين",
+    "subtitle": "مراجعة تفاصيل المرشح وإدارة حالة الطلب",
+    "pageOf": "الصفحة",
+    "errorLoading": "خطأ في تحميل المتقدمين",
+    "noApplicants": "لا توجد تقديمات بعد",
+    "noApplicantsDesc": "ستظهر التقديمات هنا بمجرد تقديم المرشحين",
+    "noMatching": "لا توجد متقدمات متطابقة",
+    "noMatchingDesc": "حاول تعديل معايير البحث أو التصفية"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "buttons": {
+    "back": "رجوع",
+    "viewProfile": "عرض الملف الشخصي",
+    "statusUpdate": "تم تحديث حالة المتقدم إلى"
+  },
+  "applicantCard": {
+    "viewProfile": "عرض الملف الشخصي",
+    "resume": "السيرة الذاتية",
+    "shortlist": "قائمة مختصرة",
+    "reject": "رفض",
+    "status": "الحالة",
+    "unknown": "مجهول",
+    "years": "سنوات"
+  },
+  "messages": {
+    "successTitle": "نجح",
+    "errorTitle": "خطأ",
+    "statusUpdateSuccess": "تم تحديث حالة المتقدم إلى",
+    "statusUpdateError": "فشل في تحديث حالة الطلب",
+    "unauthorized": "غير مصرح. يجب تسجيل الدخول لعرض المتقدمين لهذه الوظيفة.",
+    "forbidden": "ممنوع. ليس لديك إذن لعرض المتقدمين لهذه الوظيفة. يمكن فقط لمالك الوظيفة أو المسؤول عرض المتقدمين.",
+    "loadError": "فشل في تحميل المتقدمين."
+  },
+  "loading": "جاري تحميل المتقدمين..."
+}

@@ -10,10 +10,12 @@ import aiMatching from "./aiMatching.json";
 import analysis from "./analysis.json";
 import auth from "./auth.json";
 import common from "./common.json";
+import connections from "./connections.json";
 import contact from "./contact.json";
 import credits from "./credits.json";
 import employer from "./employer.json";
 import employerTabs from "./employerTabs.json";
+import employerProfile from "./employerProfile.json";
 import errors from "./errors.json";
 import faq from "./faq.json";
 import footer from "./footer.json";
@@ -23,6 +25,7 @@ import home from "./home.json";
 import homepage from "./homepage.json";
 import interview from "./interview.json";
 import interviews from "./interviews.json";
+import jobApplicants from "./jobApplicants.json";
 import jobSeeker from "./jobSeeker.json";
 import jobseekerTabs from "./jobseekerTabs.json";
 import legal from "./legal.json";
@@ -53,10 +56,12 @@ export default {
   analysis,
   auth,
   common,
+  connections,
   contact,
   credits,
   employer,
   employerTabs,
+  employerProfile,
   errors,
   faq,
   footer,
@@ -66,6 +71,7 @@ export default {
   homepage,
   interview,
   interviews,
+  jobApplicants,
   jobSeeker,
   jobseekerTabs,
   legal,

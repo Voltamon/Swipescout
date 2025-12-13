@@ -42,6 +42,7 @@ import {
 } from '@/components/UI/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { getEmployerProfileCompleteness } from '@/utils/profile';
 import {
   Building2,
@@ -67,6 +68,7 @@ import {
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export default function EditEmployerProfilePage() {
+  const { t } = useTranslation(['employerProfile', 'employerTabs', 'common']);
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef(null);
@@ -168,14 +170,14 @@ export default function EditEmployerProfilePage() {
               await createStarterProfile();
               profileResponse = await getEmployerProfile();
               toast({
-                title: "Profile Created",
-                description: "Starter profile created successfully",
+                title: t('employerProfile:save') || "Profile Created",
+                description: t('employerProfile:savedMessage') || "Starter profile created successfully",
                 variant: 'success',
               });
             } catch (error) {
               toast({
-                title: "Error",
-                description: "Failed to create starter profile",
+                title: t('employerProfile:error') || "Error",
+                description: t('employerProfile:error_create') || "Failed to create starter profile",
                 variant: "destructive",
               });
               return;
@@ -238,8 +240,8 @@ export default function EditEmployerProfilePage() {
       } catch (error) {
         console.error('Error fetching employer data:', error);
         toast({
-          title: "Error",
-          description: "Failed to load profile data",
+          title: t('employerProfile:error') || "Error",
+          description: t('employerProfile:loadError') || "Failed to load profile data",
           variant: "destructive",
         });
       } finally {
@@ -276,8 +278,8 @@ export default function EditEmployerProfilePage() {
       await updateEmployerProfile(profile);
       console.log('Profile updated successfully - showing toast');
       toast({
-        title: "Success",
-        description: "Profile updated successfully",
+        title: t('employerProfile:save') || "Success",
+        description: t('employerProfile:savedMessage') || "Profile updated successfully",
         variant: 'success',
       });
       setSavedMessageVisible(true);
@@ -285,8 +287,8 @@ export default function EditEmployerProfilePage() {
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
-        title: "Error",
-        description: "Failed to update profile",
+        title: t('employerProfile:error'),
+        description: t('employerProfile:updateError') || 'Failed to update profile',
         variant: "destructive",
       });
     } finally {
@@ -336,14 +338,14 @@ export default function EditEmployerProfilePage() {
         setProfile(prev => ({ ...prev, logo: response.data.logo_url }));
         setCompanyLogoPicture(serverUrl);
         toast({
-          title: "Success",
-          description: "Company logo updated!",
+          title: t('employerProfile:save') || "Success",
+          description: t('employerProfile:logoUpdated') || "Company logo updated!",
           variant: 'success',
         });
       } else {
         toast({
           title: "Uploaded",
-          description: "Refresh to see changes.",
+          description: t('employerProfile:uploadRefresh') || "Refresh to see changes.",
         });
       }
 
@@ -351,8 +353,8 @@ export default function EditEmployerProfilePage() {
     } catch (error) {
       console.error('Error uploading logo:', error);
       toast({
-        title: "Error",
-        description: "Upload failed. Please try again.",
+        title: t('employerProfile:error') || "Error",
+        description: t('employerProfile:uploadFailed') || "Upload failed. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -375,8 +377,8 @@ export default function EditEmployerProfilePage() {
       }
       
       toast({
-        title: "Success",
-        description: "Category added successfully",
+        title: t('employerProfile:save') || "Success",
+        description: t('employerProfile:categoryAdded') || "Category added successfully",
         variant: 'success',
       });
       setSelectedCategory('');
@@ -407,8 +409,8 @@ export default function EditEmployerProfilePage() {
       }
       
       toast({
-        title: "Success",
-        description: "Category removed successfully",
+        title: t('employerProfile:save') || "Success",
+        description: t('employerProfile:categoryRemoved') || "Category removed successfully",
         variant: 'success',
       });
     } catch (error) {
@@ -429,7 +431,7 @@ export default function EditEmployerProfilePage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin mx-auto text-indigo-600" />
-          <p className="mt-4 text-slate-600">Loading profile...</p>
+          <p className="mt-4 text-slate-600">{t('employerProfile:loading')}</p>
         </div>
       </div>
     );
@@ -441,12 +443,12 @@ export default function EditEmployerProfilePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Edit Company Profile</h1>
-            <p className="text-slate-600 mt-1">Manage your company information and settings</p>
+            <h1 className="text-3xl font-bold text-slate-900">{t('employerProfile:title')}</h1>
+            <p className="text-slate-600 mt-1">{t('employerProfile:subtitle')}</p>
           </div>
           {savedMessageVisible && (
             <div className="ml-4 px-4 py-2 rounded-md bg-green-50 border border-green-200 text-green-800">
-              Profile saved successfully
+              {t('employerProfile:savedMessage')}
             </div>
           )}
           <div className="flex items-center gap-3">
@@ -458,7 +460,7 @@ export default function EditEmployerProfilePage() {
               className="hidden md:inline-flex items-center"
             >
               <Eye className="mr-2 h-4 w-4" />
-              Preview
+              {t('employerProfile:preview')}
             </Button>
             <Button
               onClick={handleSaveProfile}
@@ -469,12 +471,12 @@ export default function EditEmployerProfilePage() {
             {saving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t('employerProfile:saving') || 'Saving...'}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Save Profile
+                {t('employerProfile:save')}
               </>
             )}
             </Button>
@@ -783,8 +785,8 @@ export default function EditEmployerProfilePage() {
                 ) : (
                   <div className="text-center py-12 text-slate-500">
                     <Briefcase className="h-12 w-12 mx-auto mb-4 text-slate-300" />
-                    <p>No categories added yet.</p>
-                    <p className="text-sm mt-1">Click "Add Category" to get started.</p>
+                    <p>{t('employerProfile:noCategories')}</p>
+                    <p className="text-sm mt-1">{t('employerProfile:noCategoriesDesc')}</p>
                   </div>
                 )}
               </CardContent>
@@ -799,8 +801,8 @@ export default function EditEmployerProfilePage() {
               <DialogTitle>Add Category to Company</DialogTitle>
               <DialogDescription>
                 {availableCategories.length === 0 
-                  ? "No more categories available to add" 
-                  : "Select a category to add to your company"}
+                  ? t('employerProfile:noMoreCategories') 
+                  : t('employerProfile:selectCategory')}
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
@@ -820,7 +822,7 @@ export default function EditEmployerProfilePage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
-                Cancel
+                {t('employerProfile:cancel')}
               </Button>
               <Button 
                 onClick={handleSaveCategory} 
@@ -830,10 +832,10 @@ export default function EditEmployerProfilePage() {
                 {saving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Adding...
+                    {t('employerProfile:saving') || 'Adding...'}
                   </>
                 ) : (
-                  'Add Category'
+                  t('employerProfile:addCategoryButton')
                 )}
               </Button>
             </DialogFooter>
@@ -843,9 +845,9 @@ export default function EditEmployerProfilePage() {
         <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Profile incomplete</DialogTitle>
+              <DialogTitle>{t('employerProfile:previewTitle')}</DialogTitle>
               <DialogDescription>
-                To preview your public employer profile you must provide a company name and at least one additional detail (such as description, logo, website, social link, or contact).
+                {t('employerProfile:previewDescription')}
               </DialogDescription>
               <div className="mt-4">
                 {profileCompleteness ? (
@@ -876,16 +878,16 @@ export default function EditEmployerProfilePage() {
                     </li>
                   </ul>
                 ) : (
-                  <div className="text-sm">No profile information found — please provide a company name and at least one additional detail.</div>
+                  <div className="text-sm">{t('employerProfile:noProfileInfo') || 'No profile information found — please provide a company name and at least one additional detail.'}</div>
                 )}
               </div>
             </DialogHeader>
             <DialogFooter>
               <Button onClick={() => { setPreviewDialogOpen(false); navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile'); }} className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700">
-                Create / Edit profile
+                {t('employerProfile:createEditProfile')}
               </Button>
               <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
-                Cancel
+                {t('employerProfile:cancel')}
               </Button>
             </DialogFooter>
           </DialogContent>

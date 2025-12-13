@@ -1,0 +1,41 @@
+{
+  "title": "您的联系人",
+  "subtitle": "管理您的专业人脉和待处理请求",
+  "stats": {
+    "connected": "已连接",
+    "requestsReceived": "已收到的请求",
+    "requestsSent": "已发送的请求"
+  },
+  "sections": {
+    "pendingReceived": "待处理的已收到请求",
+    "pendingReceivedDesc": "查看并回复联系请求",
+    "pendingSent": "待处理的已发送请求",
+    "pendingSentDesc": "等待这些联系人的回复",
+    "connectedUsers": "您的人脉",
+    "noConnections": "专业联系",
+    "noConnectionsPlural": "专业联系"
+  },
+  "empty": {
+    "noPendingReceived": "没有收到待处理的请求",
+    "noPendingReceivedDesc": "当有人想要连接时，他们会出现在这里",
+    "noPendingSent": "没有发送待处理的请求",
+    "noPendingSentDesc": "开始与您网络中的专业人士联系",
+    "noConnected": "还没有联系人",
+    "noConnectedDesc": "通过与他人联系来建立您的专业人脉"
+  },
+  "buttons": {
+    "accept": "接受",
+    "decline": "拒绝",
+    "cancel": "取消",
+    "message": "消息",
+    "pending": "待处理"
+  },
+  "messages": {
+    "acceptSuccess": "已接受联系",
+    "rejectSuccess": "已拒绝联系",
+    "cancelSuccess": "请求已取消",
+    "acceptError": "接受联系失败",
+    "rejectError": "拒绝联系失败",
+    "cancelError": "取消请求失败"
+  }
+}

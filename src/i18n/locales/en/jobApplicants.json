@@ -1,0 +1,67 @@
+{
+  "title": "Job Applicants",
+  "subtitle": "Review and manage candidates for this position",
+  "totalApplicants": "Total Applicant",
+  "totalApplicantsPlural": "Total Applicants",
+  "filters": {
+    "title": "Filter & Sort Applicants",
+    "searchPlaceholder": "Search by name, skills, title, location...",
+    "searchLabel": "Search Applicants",
+    "statusLabel": "Status",
+    "statusPlaceholder": "Filter by status",
+    "sortLabel": "Sort By",
+    "sortPlaceholder": "Sort",
+    "statusAll": "All Statuses",
+    "statusPending": "Pending",
+    "statusReviewed": "Reviewed",
+    "statusAccepted": "Accepted",
+    "statusRejected": "Rejected",
+    "sortLatestFirst": "Latest First",
+    "sortOldestFirst": "Oldest First",
+    "sortNameAsc": "Name (A–Z)",
+    "sortNameDesc": "Name (Z–A)",
+    "perPageLabel": "Per page:",
+    "showing": "Showing",
+    "of": "of",
+    "applicant": "applicant",
+    "applicants": "applicants"
+  },
+  "profiles": {
+    "title": "Applicant Profiles",
+    "subtitle": "Review candidate details and manage application status",
+    "pageOf": "Page",
+    "errorLoading": "Error Loading Applicants",
+    "noApplicants": "No applicants yet",
+    "noApplicantsDesc": "Applications will appear here once candidates apply",
+    "noMatching": "No matching applicants",
+    "noMatchingDesc": "Try adjusting your search or filter criteria"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "buttons": {
+    "back": "Back",
+    "viewProfile": "View Profile",
+    "statusUpdate": "Applicant status updated to"
+  },
+  "applicantCard": {
+    "viewProfile": "View profile",
+    "resume": "Resume",
+    "shortlist": "Shortlist",
+    "reject": "Reject",
+    "status": "Status",
+    "unknown": "Unknown",
+    "years": "yrs"
+  },
+  "messages": {
+    "successTitle": "Success",
+    "errorTitle": "Error",
+    "statusUpdateSuccess": "Applicant status updated to",
+    "statusUpdateError": "Failed to update application status",
+    "unauthorized": "Unauthorized. You must be logged in to view applicants for this job.",
+    "forbidden": "Forbidden. You do not have permission to view applicants for this job. Only the job owner or admin can view applicants.",
+    "loadError": "Failed to load applicants."
+  },
+  "loading": "Loading applicants..."
+}

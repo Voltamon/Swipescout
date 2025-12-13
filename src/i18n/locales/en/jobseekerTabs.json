@@ -1,4 +1,5 @@
 {
+  "title": "Job Seeker Dashboard",
   "welcome": "Welcome back, {{name}}! 👋",
   "welcome_message": "Manage your job search, profile, and career opportunities all in one place.",
   "profile_views": "Profile Views",
@@ -34,6 +35,7 @@
     "settings": "Settings",
     "notificationSettings": "Notification Settings",
     "chat": "Chat",
+    "connections": "Connections",
     "videoUpload": "Video Upload",
     "videoEditor": "Video Editor",
     "careerAdvice": "Career Advice",
@@ -55,6 +57,7 @@
     "settings": "Account settings.",
     "notificationSettings": "Manage notification settings.",
     "chat": "Chat with employers and support.",
+    "connections": "Manage your professional connections.",
     "videoUpload": "Upload new videos to your account.",
     "videoEditor": "Edit your uploaded videos.",
     "careerAdvice": "Browse career tips and advice.",

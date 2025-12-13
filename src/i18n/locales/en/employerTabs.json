@@ -1,4 +1,5 @@
 {
+  "title": "Employer Dashboard",
   "welcome": "Welcome back, {{name}}! 🏢",
   "welcome_message": "Manage your hiring process, company profile, and find the best talent for your team.",
   "active_jobs": "Active Jobs",
@@ -36,7 +37,9 @@
     "aboutUs": "About Us",
     "chat": "Chat",
     "helpSupport": "Help & Support",
-    "videoUpload": "Video Upload"
+    "videoUpload": "Video Upload",
+    "connections": "Connections",
+    "editCompanyProfile": "Edit Company Profile"
   },
   "descriptions": {
     "overview": "Your employer dashboard overview.",
@@ -54,6 +57,8 @@
     "aboutUs": "Learn about SwipeScout.",
     "chat": "Chat with candidates and team.",
     "helpSupport": "Get help and support.",
-    "videoUpload": "Upload new videos to your account."
+    "videoUpload": "Upload new videos to your account.",
+    "connections": "Manage your company connections and network.",
+    "editCompanyProfile": "Edit your company profile and settings."
   }
 }

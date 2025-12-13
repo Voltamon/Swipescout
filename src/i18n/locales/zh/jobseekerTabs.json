@@ -1,4 +1,5 @@
 {
+  "title": "求职者仪表板",
   "welcome": "欢迎回来，{{name}}! 👋",
   "welcome_message": "在一个地方管理您的求职、个人资料和职业机会。",
   "profile_views": "个人资料查看次数",
@@ -34,8 +35,7 @@
     "notifications": "通知",
     "settings": "设置",
     "notificationSettings": "通知设置",
-    "chat": "聊天",
-    "videoUpload": "上传视频",
+    "chat": "聊天",    "connections": "联系人",    "videoUpload": "上传视频",
     "videoEditor": "视频编辑器",
     "careerAdvice": "职业建议",
     "personalityTest": "性格测试",
@@ -56,6 +56,7 @@
     "settings": "帐户设置。",
     "notificationSettings": "管理通知设置。",
     "chat": "与雇主和支持人员聊天。",
+    "connections": "管理您的专业联系人。",
     "videoUpload": "将新视频上传到您的帐户。",
     "videoEditor": "编辑您上传的视频。",
     "careerAdvice": "浏览职业技巧和建议。",

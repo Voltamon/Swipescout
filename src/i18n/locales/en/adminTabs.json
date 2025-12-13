@@ -35,6 +35,7 @@
     "reports": "Reports",
     "categories": "Categories",
     "skills": "Skills",
+    "connections": "Connections",
     "settings": "Settings",
     "allBlogs": "All Blogs",
     "createBlog": "Create Blog"
@@ -49,6 +50,7 @@
     "reports": "Review and manage user reports.",
     "categories": "Manage job and video categories.",
     "skills": "Manage platform skills.",
+    "connections": "Manage platform user connections.",
     "settings": "Configure platform settings.",
     "allBlogs": "Manage blog posts",
     "createBlog": "Write a new blog post"

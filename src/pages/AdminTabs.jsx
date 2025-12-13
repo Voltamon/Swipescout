@@ -160,8 +160,16 @@ const AdminTabs = () => {
     return null;
   }
 
+  const breadcrumbItems = [ { label: 'nav.home', link: '/' } ];
+  if (tabCategory) breadcrumbItems.push({ label: tabCategory.label, link: `/admin-tabs?group=${tabCategory.key}` });
+  if (currentTab) breadcrumbItems.push({ label: currentTab.label });
+
   return (
-    <DashboardLayout navigationItems={navigationItems}>
+    <DashboardLayout
+      navigationItems={navigationItems}
+      title={'adminTabs:title'}
+      breadcrumbItems={breadcrumbItems}
+    >
       <div className="space-y-6">
         {/* Viewing As Badge */}
         {viewingAs && (

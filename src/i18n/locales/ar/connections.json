@@ -1,0 +1,41 @@
+{
+  "title": "اتصالاتك",
+  "subtitle": "إدارة شبكتك المهنية والطلبات المعلقة",
+  "stats": {
+    "connected": "متصل",
+    "requestsReceived": "الطلبات المستلمة",
+    "requestsSent": "الطلبات المرسلة"
+  },
+  "sections": {
+    "pendingReceived": "طلبات الاتصال المعلقة المستلمة",
+    "pendingReceivedDesc": "مراجعة والرد على طلبات الاتصال",
+    "pendingSent": "طلبات الاتصال المعلقة المرسلة",
+    "pendingSentDesc": "في انتظار رد من هذه الاتصالات",
+    "connectedUsers": "شبكتك",
+    "noConnections": "اتصال احترافي",
+    "noConnectionsPlural": "اتصالات احترافية"
+  },
+  "empty": {
+    "noPendingReceived": "لا توجد طلبات اتصال معلقة مستلمة",
+    "noPendingReceivedDesc": "عندما يرغب شخص ما في الاتصال، سيظهر هنا",
+    "noPendingSent": "لا توجد طلبات اتصال معلقة مرسلة",
+    "noPendingSentDesc": "ابدأ الاتصال بالمحترفين في شبكتك",
+    "noConnected": "لا توجد اتصالات حتى الآن",
+    "noConnectedDesc": "بناء شبكتك المهنية من خلال الاتصال مع الآخرين"
+  },
+  "buttons": {
+    "accept": "قبول",
+    "decline": "رفض",
+    "cancel": "إلغاء",
+    "message": "رسالة",
+    "pending": "معلق"
+  },
+  "messages": {
+    "acceptSuccess": "تم قبول الاتصال",
+    "rejectSuccess": "تم رفض الاتصال",
+    "cancelSuccess": "تم إلغاء الطلب",
+    "acceptError": "فشل في قبول الاتصال",
+    "rejectError": "فشل في رفض الاتصال",
+    "cancelError": "فشل في إلغاء الطلب"
+  }
+}

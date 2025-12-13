@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
+import { Breadcrumbs, Link as MuiLink, Typography } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getJobApplicants, updateJobApplicationStatus } from '@/services/api';
 import ApplicantCard from '@/components/ApplicantCard.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -18,6 +21,7 @@ export default function JobApplicantsPage({ id: propId }) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, role } = useAuth();
+  const { t } = useTranslation(['jobApplicants', 'common']);
   const [errorMsg, setErrorMsg] = useState(null);
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,13 +46,13 @@ export default function JobApplicantsPage({ id: propId }) {
         console.error('Failed to load applicants', err);
         const status = err?.response?.status;
         if (status === 401) {
-          setErrorMsg('Unauthorized. You must be logged in to view applicants for this job.');
+          setErrorMsg(t('messages.unauthorized'));
         } else if (status === 403) {
-          setErrorMsg('Forbidden. You do not have permission to view applicants for this job. Only the job owner or admin can view applicants.');
+          setErrorMsg(t('messages.forbidden'));
         } else {
-          setErrorMsg('Failed to load applicants.');
+          setErrorMsg(t('messages.loadError'));
         }
-        toast({ title: 'Error', description: errorMsg || 'Failed to load applicants', variant: 'destructive' });
+        toast({ title: t('messages.errorTitle'), description: errorMsg || t('messages.loadError'), variant: 'destructive' });
       } finally {
         if (mounted) setLoading(false);
       }
@@ -61,7 +65,7 @@ export default function JobApplicantsPage({ id: propId }) {
     <div className={`flex items-center justify-center min-h-screen ${themeColors.backgrounds.page}`}>
       <div className="text-center">
         <Loader2 className={`h-12 w-12 animate-spin mx-auto mb-4 ${themeColors.iconBackgrounds.primary.split(' ')[1]}`} />
-        <p className={themeColors.text.secondary}>Loading applicants...</p>
+        <p className={themeColors.text.secondary}>{t('loading')}</p>
       </div>
     </div>
   );
@@ -115,11 +119,11 @@ export default function JobApplicantsPage({ id: propId }) {
     setApplicants(prev.map(a => a.applicationId === applicationId ? { ...a, status: newStatus } : a));
     try {
       await updateJobApplicationStatus(applicationId, newStatus);
-      toast({ title: 'Success', description: `Applicant status updated to ${newStatus}` });
+      toast({ title: t('messages.successTitle'), description: t('messages.statusUpdateSuccess') + ` ${newStatus}` });
     } catch (err) {
       console.error('Failed to update application status', err);
       setApplicants(prev); // revert on failure
-      toast({ title: 'Error', description: 'Failed to update application status', variant: 'destructive' });
+      toast({ title: t('messages.errorTitle'), description: t('messages.statusUpdateError'), variant: 'destructive' });
     }
   };
 
@@ -127,6 +131,12 @@ export default function JobApplicantsPage({ id: propId }) {
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const breadcrumbItems = [
+    { label: 'nav.home', link: '/' },
+    { label: 'employerTabs:categories.jobManagement', link: '/employer-tabs?group=jobManagement' },
+    { label: 'employerTabs:tabs.jobApplicants' }
+  ];
 
   return (
     <div className={`min-h-screen ${themeColors.backgrounds.page} py-8 px-4 sm:px-6 lg:px-8`}>
@@ -143,21 +153,32 @@ export default function JobApplicantsPage({ id: propId }) {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
+              <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 1 }}>
+                {breadcrumbItems.map((item, idx) => (
+                  item.link ? (
+                    <MuiLink key={idx} component={RouterLink} underline="hover" color="inherit" to={item.link}>
+                      {t(item.label)}
+                    </MuiLink>
+                  ) : (
+                    <Typography key={idx} color="textSecondary">{t(item.label)}</Typography>
+                  )
+                ))}
+              </Breadcrumbs>
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-full ${themeColors.iconBackgrounds.primary}`}>
                   <Users className="h-6 w-6" />
                 </div>
                 <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>
-                  Job Applicants
+                  {t('title')}
                 </h1>
               </div>
               <p className={`${themeColors.text.secondary} mt-1 ml-14`}>
-                Review and manage candidates for this position
+                {t('subtitle')}
               </p>
             </div>
           </div>
           <Badge className={`${themeColors.badges.primary} text-lg px-4 py-2`}>
-            {applicants.length} Total Applicant{applicants.length !== 1 ? 's' : ''}
+            {applicants.length} {applicants.length !== 1 ? t('totalApplicantsPlural') : t('totalApplicants')}
           </Badge>
         </div>
 
@@ -166,7 +187,7 @@ export default function JobApplicantsPage({ id: propId }) {
           <CardHeader className={`bg-gradient-to-r ${themeColors.gradients.primary} text-white`}>
             <div className="flex items-center gap-2">
               <SlidersHorizontal className="h-5 w-5" />
-              <CardTitle>Filter & Sort Applicants</CardTitle>
+              <CardTitle>{t('filters.title')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="p-6">
@@ -174,12 +195,12 @@ export default function JobApplicantsPage({ id: propId }) {
               {/* Search */}
               <div className="lg:col-span-2">
                 <label className={`text-sm font-medium ${themeColors.text.primary} mb-2 block`}>
-                  Search Applicants
+                  {t('filters.searchLabel')}
                 </label>
                 <div className="relative">
                   <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${themeColors.text.muted}`} />
                   <Input 
-                    placeholder="Search by name, skills, title, location..." 
+                    placeholder={t('filters.searchPlaceholder')}
                     value={search} 
                     onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                     className="pl-10"
@@ -190,18 +211,18 @@ export default function JobApplicantsPage({ id: propId }) {
               {/* Status Filter */}
               <div>
                 <label className={`text-sm font-medium ${themeColors.text.primary} mb-2 block`}>
-                  Status
+                  {t('filters.statusLabel')}
                 </label>
                 <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setPage(1); }}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Filter by status" />
+                    <SelectValue placeholder={t('filters.statusPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="reviewed">Reviewed</SelectItem>
-                    <SelectItem value="accepted">Accepted</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="all">{t('filters.statusAll')}</SelectItem>
+                    <SelectItem value="pending">{t('filters.statusPending')}</SelectItem>
+                    <SelectItem value="reviewed">{t('filters.statusReviewed')}</SelectItem>
+                    <SelectItem value="accepted">{t('filters.statusAccepted')}</SelectItem>
+                    <SelectItem value="rejected">{t('filters.statusRejected')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -209,17 +230,17 @@ export default function JobApplicantsPage({ id: propId }) {
               {/* Sort */}
               <div>
                 <label className={`text-sm font-medium ${themeColors.text.primary} mb-2 block`}>
-                  Sort By
+                  {t('filters.sortLabel')}
                 </label>
                 <Select value={sortBy} onValueChange={(v) => setSortBy(v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sort" />
+                    <SelectValue placeholder={t('filters.sortPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="appliedAt_desc">Latest First</SelectItem>
-                    <SelectItem value="appliedAt_asc">Oldest First</SelectItem>
-                    <SelectItem value="name_asc">Name (A–Z)</SelectItem>
-                    <SelectItem value="name_desc">Name (Z–A)</SelectItem>
+                    <SelectItem value="appliedAt_desc">{t('filters.sortLatestFirst')}</SelectItem>
+                    <SelectItem value="appliedAt_asc">{t('filters.sortOldestFirst')}</SelectItem>
+                    <SelectItem value="name_asc">{t('filters.sortNameAsc')}</SelectItem>
+                    <SelectItem value="name_desc">{t('filters.sortNameDesc')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -228,11 +249,11 @@ export default function JobApplicantsPage({ id: propId }) {
             {/* Results count and per-page selector */}
             <div className="flex items-center justify-between mt-4 pt-4 border-t">
               <div className={`${themeColors.text.secondary} text-sm`}>
-                Showing <span className="font-semibold">{paginatedApplicants.length}</span> of{' '}
-                <span className="font-semibold">{filteredApplicants.length}</span> applicant{filteredApplicants.length !== 1 ? 's' : ''}
+                {t('filters.showing')} <span className="font-semibold">{paginatedApplicants.length}</span> {t('filters.of')}{' '}
+                <span className="font-semibold">{filteredApplicants.length}</span> {filteredApplicants.length !== 1 ? t('filters.applicants') : t('filters.applicant')}
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-sm ${themeColors.text.secondary}`}>Per page:</span>
+                <span className={`text-sm ${themeColors.text.secondary}`}>{t('filters.perPageLabel')}</span>
                 <Select value={String(perPage)} onValueChange={(v) => { setPerPage(Number(v)); setPage(1); }}>
                   <SelectTrigger className="w-20">
                     <SelectValue />
@@ -254,13 +275,13 @@ export default function JobApplicantsPage({ id: propId }) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-2xl">Applicant Profiles</CardTitle>
+                <CardTitle className="text-2xl">{t('profiles.title')}</CardTitle>
                 <CardDescription className="mt-1">
-                  Review candidate details and manage application status
+                  {t('profiles.subtitle')}
                 </CardDescription>
               </div>
               <Badge variant="outline" className="text-sm">
-                Page {page} of {totalPages}
+                {t('profiles.pageOf')} {page} of {totalPages}
               </Badge>
             </div>
           </CardHeader>
@@ -269,7 +290,7 @@ export default function JobApplicantsPage({ id: propId }) {
               <div className={`flex items-center gap-3 p-4 rounded-lg ${themeColors.status.error}`}>
                 <AlertCircle className="h-5 w-5" />
                 <div>
-                  <p className="font-medium">Error Loading Applicants</p>
+                  <p className="font-medium">{t('profiles.errorLoading')}</p>
                   <p className="text-sm mt-1">{errorMsg}</p>
                 </div>
               </div>
@@ -280,13 +301,13 @@ export default function JobApplicantsPage({ id: propId }) {
                 </div>
                 <h3 className={`text-xl font-semibold ${themeColors.text.primary} mb-2`}>
                   {filteredApplicants.length === 0 && applicants.length === 0
-                    ? 'No applicants yet'
-                    : 'No matching applicants'}
+                    ? t('profiles.noApplicants')
+                    : t('profiles.noMatching')}
                 </h3>
                 <p className={`${themeColors.text.secondary}`}>
                   {filteredApplicants.length === 0 && applicants.length === 0
-                    ? 'Applications will appear here once candidates apply'
-                    : 'Try adjusting your search or filter criteria'}
+                    ? t('profiles.noApplicantsDesc')
+                    : t('profiles.noMatchingDesc')}
                 </p>
               </div>
             ) : (
@@ -316,7 +337,7 @@ export default function JobApplicantsPage({ id: propId }) {
                   className="gap-2"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Previous
+                  {t('pagination.previous')}
                 </Button>
                 
                 <div className="flex items-center gap-2">
@@ -351,7 +372,7 @@ export default function JobApplicantsPage({ id: propId }) {
                   disabled={page >= totalPages}
                   className="gap-2"
                 >
-                  Next
+                  {t('pagination.next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
