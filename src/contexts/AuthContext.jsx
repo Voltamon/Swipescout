@@ -112,9 +112,10 @@ export const AuthProvider = ({ children }) => {
 			localStorage.setItem("refreshExpiresTime", (Date.now() + (refreshExpiresIn * 1000)).toString());
 		}
 		
+		let normalized = null;
 		if (userData) {
 			const parsedRoles = parseRoles(userData?.role);
-			const normalized = parsedRoles && parsedRoles.length ? parsedRoles.map(r => normalizeRole(r)) : null;
+			normalized = parsedRoles && parsedRoles.length ? parsedRoles.map(r => normalizeRole(r)) : null;
 			const userWithRefreshToken = {
 				...userData,
 				refresh_token: refreshToken,
