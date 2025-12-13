@@ -137,6 +137,7 @@ export const AuthProvider = ({ children }) => {
 				}
 			}
 		}
+		console.debug('[AuthContext storeTokens] tokens stored', { hasAccess: !!localStorage.getItem('accessToken'), hasRefresh: !!localStorage.getItem('refreshToken'), role: normalized });
 	};
 
 	const clearTokens = () => {
