@@ -118,15 +118,17 @@ const EmployerTabs = () => {
           forceActiveStyle: !!tab.forceActiveStyle || !!tab.externalLink,
         };
         // no-op: navItem prepared
+        navItem.labelKey = tab.labelKey || '';
         return navItem;
       });
 
     // Add separator before each category (except first)
     if (catIndex > 0 && items.length > 0) {
-      return [
+        return [
         {
           type: 'separator',
           label: category.label,
+          labelKey: category.labelKey || ''
         },
         ...items,
       ];
@@ -138,6 +140,7 @@ const EmployerTabs = () => {
   // Add Home at the beginning
   navigationItems.unshift({
     label: t('nav.home', 'Home'),
+    labelKey: 'nav.home',
     icon: Home,
     path: '/',
   });
@@ -148,11 +151,18 @@ const EmployerTabs = () => {
     return null;
   }
 
+  // Build breadcrumb: Home > Category > Tab
+  const breadcrumbItems = [
+    { labelKey: 'nav.home', link: '/' },
+    { labelKey: tabCategory.labelKey, link: `/employer-tabs?group=${tabCategory.key}` },
+    { labelKey: currentTab.labelKey }
+  ];
+
   return (
     <DashboardLayout
       navigationItems={navigationItems}
       title={'employerTabs:title'}
-      breadcrumbItems={[{ label: 'nav.home', link: '/' }, { label: 'employerTabs:title' }]}
+      breadcrumbItems={breadcrumbItems}
     >
       <div className="space-y-6">
         {/* Welcome Section */}

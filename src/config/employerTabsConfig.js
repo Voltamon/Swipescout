@@ -41,9 +41,11 @@ import JobApplicantsPage from "../pages/JobApplicantsPage.jsx";
 export const getEmployerTabCategories = t => [
   {
     key: "dashboard",
+    labelKey: "employerTabs:categories.dashboard",
     label: t("employerTabs:categories.dashboard"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.overview",
         label: t("employerTabs:tabs.overview"),
         icon: { name: "Analytics" },
         component: EmployerDashboard,
@@ -51,6 +53,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.overview")
       },
       {
+        labelKey: "employerTabs:tabs.analytics",
         label: t("employerTabs:tabs.analytics"),
         icon: { name: "Analytics" },
         component: AnalyticsEmployer,
@@ -62,9 +65,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "talentAcquisition",
+    labelKey: "employerTabs:categories.talentAcquisition",
     label: t("employerTabs:categories.talentAcquisition"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.findCandidates",
         label: t("employerTabs:tabs.findCandidates"),
         icon: { name: "Search" },
         component: CandidateSearchPage,
@@ -72,6 +77,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.findCandidates")
       },
       {
+        labelKey: "employerTabs:tabs.candidateVideos",
         label: t("employerTabs:tabs.candidateVideos"),
         icon: { name: "VideoLibrary" },
         component: AllVideosPage, // Just the component reference
@@ -83,9 +89,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "jobManagement",
+    labelKey: "employerTabs:categories.jobManagement",
     label: t("employerTabs:categories.jobManagement"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.postNewJob",
         label: t("employerTabs:tabs.postNewJob"),
         icon: { name: "PostAdd" },
         component: PostJobPage,
@@ -93,6 +101,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.postNewJob")
       },
       {
+        labelKey: "employerTabs:tabs.myJobListings",
         label: t("employerTabs:tabs.myJobListings"),
         icon: { name: "Work" },
         component: JobsListingPage,
@@ -100,6 +109,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.myJobListings")
       },
       {
+        labelKey: "employerTabs:tabs.jobDetails",
         label: t("employerTabs:tabs.jobDetails", "Job Details"),
         icon: { name: "DocumentText" },
         component: JobDetailsPage,
@@ -111,6 +121,7 @@ export const getEmployerTabCategories = t => [
         )
       },
       {
+        labelKey: "employerTabs:tabs.jobApplicants",
         label: t("employerTabs:tabs.jobApplicants", "Job Applicants"),
         icon: { name: "FileText" },
         component: JobApplicantsPage,
@@ -125,9 +136,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "companyContent",
+    labelKey: "employerTabs:categories.companyContent",
     label: t("employerTabs:categories.companyContent"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.companyProfile",
         label: t("employerTabs:tabs.companyProfile"),
         icon: { name: "Business" },
         component: EmployerProfilePage,
@@ -135,6 +148,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.companyProfile")
       },
       {
+        labelKey: "employerTabs:tabs.editCompanyProfile",
         label: t(
           "employerTabs:tabs.editCompanyProfile",
           "Edit Company Profile"
@@ -148,6 +162,7 @@ export const getEmployerTabCategories = t => [
         )
       },
       {
+        labelKey: "employerTabs:tabs.companyVideos",
         label: t("employerTabs:tabs.companyVideos"),
         icon: { name: "VideoLibrary" },
         component: VideosPage,
@@ -158,9 +173,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "managementSettings",
+    labelKey: "employerTabs:categories.managementSettings",
     label: t("employerTabs:categories.managementSettings"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.notifications",
         label: t("employerTabs:tabs.notifications"),
         icon: { name: "Notifications" },
         component: NotificationSettingsPage,
@@ -168,6 +185,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.notifications")
       },
       {
+        labelKey: "employerTabs:tabs.settings",
         label: t("employerTabs:tabs.settings"),
         icon: { name: "Settings" },
         component: EmployerSettingsPage,
@@ -178,9 +196,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "resources",
+    labelKey: "employerTabs:categories.resources",
     label: t("employerTabs:categories.resources"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.hiringTips",
         label: t("employerTabs:tabs.hiringTips"),
         icon: { name: "BookOpen" },
         component: null, // External link, no component needed
@@ -189,6 +209,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.hiringTips")
       },
       {
+        labelKey: "employerTabs:tabs.aboutUs",
         label: t("employerTabs:tabs.aboutUs"),
         icon: { name: "Info" },
         component: null, // External link, no component needed
@@ -200,9 +221,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "communication",
+    labelKey: "employerTabs:categories.communication",
     label: t("employerTabs:categories.communication"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.connections",
         label: t("employerTabs:tabs.connections"),
         icon: { name: "Users" },
         component: ConnectionsPage,
@@ -210,6 +233,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.connections")
       },
       {
+        labelKey: "employerTabs:tabs.chat",
         label: t("employerTabs:tabs.chat"),
         icon: { name: "ChatIcon" },
         component: Chat,
@@ -217,6 +241,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.chat")
       },
       {
+        labelKey: "employerTabs:tabs.helpSupport",
         label: t("employerTabs:tabs.helpSupport"),
         icon: { name: "HelpIcon" },
         component: HelpPageLinks,
@@ -227,9 +252,11 @@ export const getEmployerTabCategories = t => [
   },
   {
     key: "videoManagement",
+    labelKey: "employerTabs:categories.videoManagement",
     label: t("employerTabs:categories.videoManagement"),
     tabs: [
       {
+        labelKey: "employerTabs:tabs.videoUpload",
         label: t("employerTabs:tabs.videoUpload"),
         icon: { name: "Upload" },
         component: VideoUpload,
@@ -237,6 +264,7 @@ export const getEmployerTabCategories = t => [
         description: t("employerTabs:descriptions.videoUpload")
       },
       {
+        labelKey: "employerTabs:tabs.videoEditor",
         label: t("employerTabs:tabs.videoEditor"),
         icon: { name: "Edit" },
         component: VideoEditPage,

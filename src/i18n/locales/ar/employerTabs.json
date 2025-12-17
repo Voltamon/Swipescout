@@ -38,7 +38,9 @@
     "helpSupport": "المساعدة والدعم",
     "videoUpload": "تحميل فيديو",
     "connections": "الاتصالات",
-    "editCompanyProfile": "تحرير ملف الشركة"
+    "editCompanyProfile": "تحرير ملف الشركة",
+    "jobDetails": "تفاصيل الوظيفة",
+    "jobApplicants": "متقدمو الوظائف"
   },
   "descriptions": {
     "overview": "نظرة عامة على لوحة تحكم صاحب العمل.",
@@ -58,6 +60,8 @@
     "helpSupport": "الحصول على المساعدة والدعم.",
     "videoUpload": "تحميل فيديوهات جديدة إلى حسابك.",
     "connections": "إدارة اتصالات الشركة وشبكتك.",
-    "editCompanyProfile": "تحرير ملف شركتك وإعداداتك."
+    "editCompanyProfile": "تحرير ملف شركتك وإعداداتك.",
+    "jobDetails": "عرض معلومات مفصلة حول وظيفة معينة",
+    "jobApplicants": "عرض الطلبات لوظيفة معينة"
   }
 }
