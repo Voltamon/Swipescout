@@ -4427,6 +4427,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"baseline-browser-mapping@npm:^2.9.11":
+  version: 2.9.11
+  resolution: "baseline-browser-mapping@npm:2.9.11"
+  bin:
+    baseline-browser-mapping: dist/cli.js
+  checksum: 10c0/eba49fcc1b33ab994aeeb73a4848f2670e06a0886dd5b903689ae6f60d47e7f1bea9262dbb2548c48179e858f7eda2b82ddf941ae783b862f4dcc51085a246f2
+  languageName: node
+  linkType: hard
+
 "binary-extensions@npm:^2.0.0":
   version: 2.3.0
   resolution: "binary-extensions@npm:2.3.0"
@@ -9944,6 +9953,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.10.1"
     autoprefixer: "npm:^10.4.21"
     axios: "npm:^1.9.0"
+    baseline-browser-mapping: "npm:^2.9.11"
     chart.js: "npm:^4.3.0"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"

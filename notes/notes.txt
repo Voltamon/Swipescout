@@ -275,4 +275,3 @@ Add an explicit hasEmployerProfileAndVideo boolean, reuse it across the app, and
 Disable "Post a Job" CTA across other pages (e.g., Dashboard) and keep UI consistent throughout the app.
 Add a link in the employer profile page UI to encourage uploading a video (e.g., "Add company videos") if none exist.
 If you want, I can run the test suite or implement a small e2e check for this flow — tell me which you'd prefer next.
-

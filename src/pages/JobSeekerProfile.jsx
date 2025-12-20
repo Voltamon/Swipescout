@@ -59,6 +59,7 @@ export default function JobSeekerProfile() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [missingFields, setMissingFields] = useState([]);
   
   // Video player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -86,40 +87,17 @@ export default function JobSeekerProfile() {
       const normalizeProfile = (p) => {
         if (!p) return null;
         
-        // Derive fullName from available fields
-        // Check user object fields (camelCase from backend User entity)
-        const first = (
-          p.first_name ||
-          p.firstName ||
-          p.user?.firstName ||
-          ''
-        ).toString().trim();
+        // Derive fullName from available fields (prefer profile fields; fall back to user as last resort)
+        const first = (p.first_name || p.firstName || '').toString().trim();
+        const middle = (p.second_name || p.secondName || '').toString().trim();
+        const last = (p.last_name || p.lastName || '').toString().trim();
 
-        const middle = (
-          p.second_name ||
-          p.secondName ||
-          p.user?.middleName ||
-          ''
-        ).toString().trim();
+        const displayName = (p.displayName || p.display_name || '').toString().trim();
 
-        const last = (
-          p.last_name ||
-          p.lastName ||
-          p.user?.lastName ||
-          ''
-        ).toString().trim();
-
-        const displayName = (
-          p.displayName ||
-          p.user?.displayName ||
-          p.display_name ||
-          ''
-        ).toString().trim();
-
-        // Build full name: prioritize explicit fullName, then displayName, then first+middle+last combination
+        // Build full name from profile fields; if none exist, fall back to user identity fields
         const nameParts = [first, middle, last].filter(Boolean);
         const combined = nameParts.join(' ');
-        const fullName = p.fullName || displayName || combined || 'User Name';
+        const fullName = p.fullName || displayName || combined || p.user?.firstName || p.user?.lastName || p.user?.displayName || 'User Name';
 
         // Headline/title
         // Resolve professional/title from multiple possible backend fields
@@ -183,12 +161,16 @@ export default function JobSeekerProfile() {
       // Education endpoint uses { educations }
       setEducation(eduRes?.data?.educations || eduRes?.data?.education || []);
     } catch (error) {
-      console.error('Error fetching profile data:', error);
+      // Prefer backend-provided detailed message when available for better feedback
+      console.error('Error fetching profile data:', error?.response?.data || error);
+      const errMsg = error?.response?.data?.details || error?.response?.data?.message || error?.message || "Failed to load profile data";
       toast({
         title: "Error",
-        description: "Failed to load profile data",
+        description: errMsg,
         variant: "destructive",
       });
+      // For debugging: if server returned details, also log the full response body
+      if (error?.response?.data) console.debug('Backend error payload:', error.response.data);
     } finally {
       setLoading(false);
     }
@@ -271,12 +253,38 @@ export default function JobSeekerProfile() {
                         <div className="flex gap-2">
                           <Button
                             onClick={async () => {
-                              // If the user has not created a profile, show dialog to create one first
-                              const hasProfile = Boolean(profile && (profile.fullName || profile.headline || profile.email || profile.profilePicture));
-                              if (!hasProfile) {
+                              // Compute which required fields are missing so we can show them in the dialog
+                              const missing = [];
+
+                              // Full-name presence: prefer profile fullName/displayName/first/last; if missing, list missing name components
+                              const hasFullName = !!(profile?.fullName || profile?.displayName || profile?.display_name || profile?.first_name || profile?.firstName || profile?.last_name || profile?.lastName);
+                              if (!hasFullName) {
+                                if (!(profile?.first_name || profile?.firstName)) missing.push('First name');
+                                if (!(profile?.second_name || profile?.secondName)) missing.push('Middle name');
+                                if (!(profile?.last_name || profile?.lastName)) missing.push('Last name');
+                              }
+
+                              // Headline/title
+                              if (!(profile?.headline || profile?.title || profile?.preferred_job_title || profile?.preferredJobTitle || profile?.user?.title || profile?.user?.headline)) {
+                                missing.push('Headline / Title');
+                              }
+
+                              // Email
+                              if (!(profile?.email || profile?.user?.email)) {
+                                missing.push('Email');
+                              }
+
+                              // Profile picture
+                              if (!(profile?.profilePicture || profile?.profile_pic || profile?.user?.photoUrl || profile?.photoUrl)) {
+                                missing.push('Profile picture');
+                              }
+
+                              if (missing.length > 0) {
+                                setMissingFields(missing);
                                 setPreviewDialogOpen(true);
                                 return;
                               }
+
                               const id = profile?.user?.id || profile?.userId || profile?.user_id || profile?.id || user?.id;
                               if (!id) return;
                               try {
@@ -708,14 +716,25 @@ export default function JobSeekerProfile() {
       <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Profile incomplete</DialogTitle>
+            <DialogTitle>{missingFields.length > 0 ? 'Profile incomplete — missing fields' : 'Profile incomplete'}</DialogTitle>
             <DialogDescription>
-              You need to create and complete your profile before previewing it or sharing it with employers.
+              {missingFields.length > 0 ? (
+                <>
+                  To preview your public profile, please complete the following required fields:
+                  <ul className="list-disc list-inside mt-2">
+                    {missingFields.map((f, i) => (
+                      <li key={i}>{f}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                'You need to create and complete your profile before previewing it or sharing it with employers.'
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button onClick={() => { setPreviewDialogOpen(false); handleEditProfile(); }} className="bg-cyan-600 hover:bg-cyan-700">
-              Create profile
+              Complete profile
             </Button>
             <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
               Cancel
