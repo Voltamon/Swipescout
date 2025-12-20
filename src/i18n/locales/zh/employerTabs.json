@@ -38,7 +38,9 @@
     "helpSupport": "帮助与支持",
     "videoUpload": "上传视频",
     "connections": "联系人",
-    "editCompanyProfile": "编辑公司资料"
+    "editCompanyProfile": "编辑公司资料",
+    "jobDetails": "职位详情",
+    "jobApplicants": "职位申请人"
   },
   "descriptions": {
     "overview": "您的雇主仪表板概览。",
@@ -58,6 +60,8 @@
     "helpSupport": "获取帮助和支持。",
     "videoUpload": "将新视频上传到您的帐户。",
     "connections": "管理公司的联系人和网络。",
-    "editCompanyProfile": "编辑您的公司资料和设置。"
+    "editCompanyProfile": "编辑您的公司资料和设置。",
+    "jobDetails": "查看特定职位的详细信息",
+    "jobApplicants": "查看特定职位的申请"
   }
 }

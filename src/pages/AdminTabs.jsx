@@ -113,11 +113,13 @@ const AdminTabs = () => {
       .filter((tab) => !tab.hideInSidebar) // Filter out hidden tabs
       .map((tab) => {
         const IconComponent = iconMap[tab.icon.name] || LayoutDashboard;
-        return {
+        const navItem = {
           label: tab.label,
           icon: IconComponent,
           path: `/admin-tabs?group=${category.key}&tab=${tab.path}`,
         };
+        navItem.labelKey = tab.labelKey || '';
+        return navItem;
       });
 
     // Add separator before each category (except first)
@@ -126,6 +128,7 @@ const AdminTabs = () => {
         {
           type: 'separator',
           label: category.label,
+          labelKey: category.labelKey || ''
         },
         ...items,
       ];
@@ -137,6 +140,7 @@ const AdminTabs = () => {
   // Add Home at the beginning
   navigationItems.unshift({
     label: t('nav.home', 'Home'),
+    labelKey: 'nav.home',
     icon: Home,
     path: '/',
   });
@@ -160,11 +164,17 @@ const AdminTabs = () => {
     return null;
   }
 
+  const breadcrumbItems = [
+    { labelKey: 'nav.home', link: '/' },
+    { labelKey: tabCategory.labelKey, link: `/admin-tabs?group=${tabCategory.key}` },
+    { labelKey: currentTab.labelKey }
+  ];
+
   return (
     <DashboardLayout
       navigationItems={navigationItems}
       title={'adminTabs:title'}
-      breadcrumbItems={[{ label: 'nav.home', link: '/' }, { label: 'adminTabs:title' }]}
+      breadcrumbItems={breadcrumbItems}
     >
       <div className="space-y-6">
         {/* Viewing As Badge */}

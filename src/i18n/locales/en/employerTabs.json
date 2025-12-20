@@ -39,7 +39,9 @@
     "helpSupport": "Help & Support",
     "videoUpload": "Video Upload",
     "connections": "Connections",
-    "editCompanyProfile": "Edit Company Profile"
+    "editCompanyProfile": "Edit Company Profile",
+    "jobDetails": "Job Details",
+    "jobApplicants": "Job Applicants"
   },
   "descriptions": {
     "overview": "Your employer dashboard overview.",
@@ -59,6 +61,8 @@
     "helpSupport": "Get help and support.",
     "videoUpload": "Upload new videos to your account.",
     "connections": "Manage your company connections and network.",
-    "editCompanyProfile": "Edit your company profile and settings."
+    "editCompanyProfile": "Edit your company profile and settings.",
+    "jobDetails": "View detailed information about a specific job",
+    "jobApplicants": "View applications for a specific job"
   }
 }

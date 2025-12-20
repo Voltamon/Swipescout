@@ -144,8 +144,9 @@ const DashboardLayout = ({
             </Typography>
             {breadcrumbItems && breadcrumbItems.length > 0 && (
               <Breadcrumbs aria-label="breadcrumb" sx={{ mt: 0.5 }}>
-                {breadcrumbItems.map((item, idx) => (
-                  item.link ? (
+                {breadcrumbItems.map((item, idx) => {
+                  const labelText = item.labelKey ? t(item.labelKey) : (typeof item.label === 'string' && item.label.includes(':') ? t(item.label) : item.label);
+                  return item.link ? (
                     <MuiLink
                       key={idx}
                       component={RouterLink}
@@ -153,12 +154,12 @@ const DashboardLayout = ({
                       color="inherit"
                       to={item.link}
                     >
-                      {t(item.label)}
+                      {labelText}
                     </MuiLink>
                   ) : (
-                    <Typography color="text.secondary" key={idx}>{t(item.label)}</Typography>
-                  )
-                ))}
+                    <Typography color="text.secondary" key={idx}>{labelText}</Typography>
+                  );
+                })}
               </Breadcrumbs>
             )}
           </Box>

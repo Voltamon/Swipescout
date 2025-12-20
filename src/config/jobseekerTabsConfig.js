@@ -42,9 +42,11 @@ export const jobseekerTabCategories = () => {
   return [
     {
       key: "dashboard",
-      label: t("jobseekerTabs:categories.dashboard"),
+        labelKey: "jobseekerTabs:categories.dashboard",
+        label: t("jobseekerTabs:categories.dashboard"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.overview",
           label: t("jobseekerTabs:tabs.overview"),
           icon: { name: "Dashboard" },
           component: JobSeekerDashboard,
@@ -52,6 +54,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.overview")
         },
         {
+          labelKey: "jobseekerTabs:tabs.analytics",
           label: t("jobseekerTabs:tabs.analytics"),
           icon: { name: "AnalyticsIcon" },
           component: AnalyticsJobseeker,
@@ -63,9 +66,11 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "jobSearch",
+      labelKey: "jobseekerTabs:categories.jobSearch",
       label: t("jobseekerTabs:categories.jobSearch"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.findJobs",
           label: t("jobseekerTabs:tabs.findJobs"),
           icon: { name: "Search" },
           component: JobSearchPage,
@@ -73,6 +78,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.findJobs")
         },
         {
+          labelKey: "jobseekerTabs:tabs.videoFeed",
           label: t("jobseekerTabs:tabs.videoFeed"),
           icon: { name: "VideoLibrary" },
           component: AllVideosPage,
@@ -84,16 +90,19 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "profileContent",
+      labelKey: "jobseekerTabs:categories.profileContent",
       label: t("jobseekerTabs:categories.profileContent"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.myProfile",
           label: t("jobseekerTabs:tabs.myProfile"),
           icon: { name: "Person" },
           component: JobSeekerProfile,
           path: "my-profile",
-          description: t("jobseekerTabs:descripti ons.myProfile")
+          description: t("jobseekerTabs:descriptions.myProfile")
         },
         {
+          labelKey: "jobseekerTabs:tabs.resumeBuilder",
           label: t("jobseekerTabs:tabs.resumeBuilder"),
           icon: { name: "Work" },
           component: ResumeBuilderPage,
@@ -101,6 +110,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.resumeBuilder")
         },
         {
+          labelKey: "jobseekerTabs:tabs.videoUpload",
           label: t("jobseekerTabs:tabs.videoUpload"),
           icon: { name: "VideoLibrary" },
           component: VideoUpload,
@@ -108,6 +118,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.videoUpload")
         },
         {
+          labelKey: "jobseekerTabs:tabs.myVideos",
           label: t("jobseekerTabs:tabs.myVideos"),
           icon: { name: "VideoLibrary" },
           component: VideosPage,
@@ -119,9 +130,11 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "savedLiked",
+      labelKey: "jobseekerTabs:categories.savedLiked",
       label: t("jobseekerTabs:categories.savedLiked"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.savedVideos",
           label: t("jobseekerTabs:tabs.savedVideos"),
           icon: { name: "Bookmark" },
           component: SavedVideosPage,
@@ -129,6 +142,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.savedVideos")
         },
         {
+          labelKey: "jobseekerTabs:tabs.likedVideos",
           label: t("jobseekerTabs:tabs.likedVideos"),
           icon: { name: "Favorite" },
           component: LikedVideosPage,
@@ -139,9 +153,11 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "activities",
+      labelKey: "jobseekerTabs:categories.activities",
       label: t("jobseekerTabs:categories.activities"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.settings",
           label: t("jobseekerTabs:tabs.settings"),
           icon: { name: "Settings" },
           component: Settings,
@@ -149,6 +165,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.settings")
         },
         {
+          labelKey: "jobseekerTabs:tabs.notificationSettings",
           label: t("jobseekerTabs:tabs.notificationSettings"),
           icon: { name: "Notifications" },
           component: NotificationSettingsPage,
@@ -159,9 +176,11 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "resources",
+      labelKey: "jobseekerTabs:categories.resources",
       label: t("jobseekerTabs:categories.resources"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.careerAdvice",
           label: t("jobseekerTabs:tabs.careerAdvice"),
           icon: { name: "BookOpen" },
           component: CareerAdvicePage,
@@ -169,6 +188,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.careerAdvice")
         },
         {
+          labelKey: "jobseekerTabs:tabs.personalityTest",
           label: t("jobseekerTabs:tabs.personalityTest"),
           icon: { name: "Psychology" },
           component: PersonalityTestPage,
@@ -176,6 +196,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.personalityTest")
         },
         {
+          labelKey: "jobseekerTabs:tabs.skillGap",
           label: t("jobseekerTabs:tabs.skillGap"),
           icon: { name: "TrendingUp" },
           component: SkillGapAnalysisPage,
@@ -186,9 +207,11 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "communication",
+      labelKey: "jobseekerTabs:categories.communication",
       label: t("jobseekerTabs:categories.communication"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.interviews",
           label: t("jobseekerTabs:tabs.interviews"),
           icon: { name: "CalendarToday" },
           component: InterviewPage,
@@ -196,6 +219,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.interviews")
         },
         {
+          labelKey: "jobseekerTabs:tabs.notifications",
           label: t("jobseekerTabs:tabs.notifications"),
           icon: { name: "Notifications" },
           component: NotificationsPage,
@@ -203,6 +227,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.notifications")
         },
         {
+          labelKey: "jobseekerTabs:tabs.connections",
           label: t("jobseekerTabs:tabs.connections"),
           icon: { name: "Person" },
           component: ConnectionsPage,
@@ -210,6 +235,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.connections")
         },
         {
+          labelKey: "jobseekerTabs:tabs.chat",
           label: t("jobseekerTabs:tabs.chat"),
           icon: { name: "ChatIcon" },
           component: Chat,
@@ -220,9 +246,11 @@ export const jobseekerTabCategories = () => {
     },
     {
       key: "videoManagement",
+      labelKey: "jobseekerTabs:categories.videoManagement",
       label: t("jobseekerTabs:categories.videoManagement"),
       tabs: [
         {
+          labelKey: "jobseekerTabs:tabs.videoUpload",
           label: t("jobseekerTabs:tabs.videoUpload"),
           icon: { name: "VideoLibrary" },
           component: VideoUpload,
@@ -230,6 +258,7 @@ export const jobseekerTabCategories = () => {
           description: t("jobseekerTabs:descriptions.videoUpload")
         },
         {
+          labelKey: "jobseekerTabs:tabs.videoEditor",
           label: t("jobseekerTabs:tabs.videoEditor"),
           icon: { name: "VideoLibrary" },
           component: VideoEditPage,

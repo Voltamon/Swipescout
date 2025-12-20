@@ -107,11 +107,13 @@ const JobseekerTabs = () => {
       .filter((tab) => !tab.hideInSidebar) // Filter out hidden tabs
       .map((tab) => {
         const IconComponent = iconMap[tab.icon.name] || DashboardIcon;
-        return {
+        const navItem = {
           label: tab.label,
           icon: IconComponent,
           path: `/jobseeker-tabs?group=${category.key}&tab=${tab.path}`,
         };
+        navItem.labelKey = tab.labelKey || '';
+        return navItem;
       });
 
     // Add separator before each category (except first)
@@ -120,6 +122,7 @@ const JobseekerTabs = () => {
         {
           type: 'separator',
           label: category.label,
+          labelKey: category.labelKey || ''
         },
         ...items,
       ];
@@ -131,6 +134,7 @@ const JobseekerTabs = () => {
   // Add Home at the beginning
   navigationItems.unshift({
     label: t('nav.home', 'Home'),
+    labelKey: 'nav.home',
     icon: Home,
     path: '/',
   });
@@ -139,11 +143,17 @@ const JobseekerTabs = () => {
     return null;
   }
 
+  const breadcrumbItems = [
+    { labelKey: 'nav.home', link: '/' },
+    { labelKey: tabCategory.labelKey, link: `/jobseeker-tabs?group=${tabCategory.key}` },
+    { labelKey: currentTab.labelKey }
+  ];
+
   return (
     <DashboardLayout
       navigationItems={navigationItems}
       title={'jobseekerTabs:title'}
-      breadcrumbItems={[{ label: 'nav.home', link: '/' }, { label: 'jobseekerTabs:title' }]}
+      breadcrumbItems={breadcrumbItems}
     >
       <div className="space-y-6">
         {/* Welcome Section - only show on overview tab */}
