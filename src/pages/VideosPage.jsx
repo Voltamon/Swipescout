@@ -38,7 +38,8 @@ import {
   Clock,
   Volume2,
   VolumeX,
-  Eye
+  Eye,
+  Edit2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { sendConnection } from '@/services/connectionService.js';
@@ -77,6 +78,15 @@ export default function VideosPage({ setVideoTab }) {
   const [connectionMap, setConnectionMap] = useState({});
   const [openConversation, setOpenConversation] = useState(null);
   const [openChat, setOpenChat] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [videoToEdit, setVideoToEdit] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    description: '',
+    video_position: '',
+    hashtags: '',
+    privacy: 'public'
+  });
 
   const VIDEOS_PER_PAGE = 9;
 
@@ -176,6 +186,51 @@ export default function VideosPage({ setVideoTab }) {
       toast({
         title: "Error",
         description: error.response?.data?.message || "Retry failed",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEditVideo = (video) => {
+    setVideoToEdit(video);
+    setEditFormData({
+      title: video.title || video.video_title || '',
+      description: video.description || '',
+      video_position: video.video_position || '',
+      hashtags: video.hashtags || '',
+      privacy: video.privacy || 'public'
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!videoToEdit) return;
+    try {
+      // Send both title and video_title to ensure compatibility with backend
+      const payload = {
+        ...editFormData,
+        video_title: editFormData.title, // backend may use video_title
+      };
+      await api.put(`/videos/${videoToEdit.id}`, payload);
+      
+      // Update local state immediately so UI reflects changes
+      setServerVideos(prev => prev.map(v => 
+        v.id === videoToEdit.id 
+          ? { ...v, ...payload, title: editFormData.title, video_title: editFormData.title }
+          : v
+      ));
+      
+      toast({
+        title: "Success",
+        description: "Video updated successfully",
+      });
+      setEditDialogOpen(false);
+      setVideoToEdit(null);
+    } catch (err) {
+      console.error('Failed to update video:', err);
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to update video",
         variant: "destructive",
       });
     }
@@ -291,6 +346,15 @@ export default function VideosPage({ setVideoTab }) {
   });
 
   const getStatusBadge = (video) => {
+    const formatPrivacyLabel = (v) => {
+      const raw = (v.privacy || v.visibility || v.privacy_setting || v._visibilityRaw || '').toString().toLowerCase().trim();
+      if (!raw) return null;
+      if (raw === 'public') return 'Public';
+      if (raw === 'private') return 'Private';
+      // fall back to capitalized raw value
+      return raw.charAt(0).toUpperCase() + raw.slice(1);
+    };
+
     if (video.status === 'uploading') {
       return (
         <Badge className="bg-blue-100 text-blue-800">
@@ -316,11 +380,15 @@ export default function VideosPage({ setVideoTab }) {
       );
     }
     if (video.status === 'completed') {
+      const privacyLabel = formatPrivacyLabel(video);
       return (
-        <Badge className="bg-green-100 text-green-800">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          Ready
-        </Badge>
+        <div className="flex items-center gap-2">
+          {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
+          <Badge className="bg-green-100 text-green-800">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Ready
+          </Badge>
+        </div>
       );
     }
     return null;
@@ -397,6 +465,7 @@ export default function VideosPage({ setVideoTab }) {
                   setDeleteConfirmOpen(true);
                 }}
                 onRetry={handleRetry}
+                onEdit={handleEditVideo}
                 getStatusBadge={getStatusBadge}
               />
             ))}
@@ -466,13 +535,112 @@ export default function VideosPage({ setVideoTab }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Video Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Video</DialogTitle>
+            <DialogDescription>
+              Update video information and settings
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Video Preview */}
+            {videoToEdit && (
+              <div className="bg-black rounded-lg overflow-hidden aspect-video max-h-48 flex items-center justify-center">
+                <video
+                  src={videoToEdit.videoUrl?.startsWith('http') || videoToEdit.videoUrl?.startsWith('blob:') ? videoToEdit.videoUrl : `${VITE_API_BASE_URL}${videoToEdit.videoUrl}`}
+                  className="max-w-full max-h-full object-contain"
+                  controls
+                  muted
+                />
+              </div>
+            )}
+
+            {/* Title */}
+            <div>
+              <label className="text-sm font-medium mb-1 block">Title</label>
+              <input
+                type="text"
+                value={editFormData.title}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                placeholder="Video title"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="text-sm font-medium mb-1 block">Description</label>
+              <textarea
+                value={editFormData.description}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 min-h-[100px]"
+                placeholder="Video description"
+              />
+            </div>
+
+            {/* Video Position */}
+            <div>
+              <label className="text-sm font-medium mb-1 block">Video Position</label>
+              <select
+                value={editFormData.video_position}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, video_position: e.target.value }))}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              >
+                <option value="">None</option>
+                <option value="main">Main</option>
+                <option value="secondary">Secondary</option>
+                <option value="portfolio">Portfolio</option>
+              </select>
+            </div>
+
+            {/* Hashtags */}
+            <div>
+              <label className="text-sm font-medium mb-1 block">Hashtags</label>
+              <input
+                type="text"
+                value={editFormData.hashtags}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, hashtags: e.target.value }))}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                placeholder="#tag1 #tag2 #tag3"
+              />
+            </div>
+
+            {/* Privacy */}
+            <div>
+              <label className="text-sm font-medium mb-1 block">Privacy</label>
+              <select
+                value={editFormData.privacy}
+                onChange={(e) => setEditFormData(prev => ({ ...prev, privacy: e.target.value }))}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              >
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEdit} className="bg-cyan-600 hover:bg-cyan-700">
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <OpenChatModal open={openChat} onOpenChange={setOpenChat} conversation={openConversation} />
     </div>
   );
 }
 
 // Video Card Component
-function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, onDelete, onRetry, getStatusBadge }) {
+function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, onDelete, onRetry, onEdit, getStatusBadge }) {
   // Use hooks inside the card so it has access to auth, navigation and toast
   const { user } = useAuth();
   const { toast } = useToast();
@@ -680,6 +848,16 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                 }
                 return null;
               })()}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(video);
+                }}
+              >
+                <Edit2 className="h-3 w-3" />
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

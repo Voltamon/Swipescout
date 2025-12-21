@@ -1,4 +1,5 @@
 ﻿import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import { 
   getUserProfile, 
   getUserVideos, 
@@ -96,7 +97,10 @@ export default function JobSeekerProfile() {
         // Build full name from profile fields; if none exist, fall back to user identity fields
         const nameParts = [first, middle, last].filter(Boolean);
         const combined = nameParts.join(' ');
-        const fullName = p.fullName || displayName || combined || p.user?.firstName || p.user?.lastName || p.user?.displayName || 'User Name';
+        // Prefer profile-level name fields (fullName, displayName, profileName, name).
+        // If none are available, fall back to the user's displayName (not individual first/last)
+        // and use an explicit placeholder when no profile name exists.
+        const fullName = p.fullName || displayName || combined || p.profileName || p.name || p.user?.displayName || 'Profile name not set';
 
         // Headline/title
         // Resolve professional/title from multiple possible backend fields
@@ -237,7 +241,7 @@ export default function JobSeekerProfile() {
                       alt={profile?.fullName}
                     />
                     <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-purple-500 text-white text-3xl">
-                      {(String(localize(profile?.fullName)) || 'U').charAt(0)}
+                      {String(localize(profile?.fullName || profile?.displayName || profile?.profileName || 'Profile name not set')).charAt(0)}
                     </AvatarFallback>
                   </Avatar>
 
@@ -245,7 +249,7 @@ export default function JobSeekerProfile() {
                   <div className="flex-grow">
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h1 className="text-4xl font-bold mb-2">{String(localize(profile?.fullName || 'User Name'))}</h1>
+                        <h1 className="text-4xl font-bold mb-2">{String(localize(profile?.fullName || profile?.displayName || profile?.profileName || 'Profile name not set'))}</h1>
                         <p className="text-xl text-muted-foreground">{String(localize(profile?.headline || 'Professional Title'))}</p>
                       </div>
                       <div className="flex gap-2">

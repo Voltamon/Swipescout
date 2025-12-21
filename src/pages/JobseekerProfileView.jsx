@@ -102,9 +102,56 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         setExperiences(eRes.data?.experiences || []);
         setEducation(edRes.data?.educations || []);
 
-        const vids = vRes.data?.videos || [];
-        setVideos(vids);
-        setMainVideo(vids.find(v => v.video_position === 'main') || null);
+        const rawVids = vRes.data?.videos || [];
+        const normalizedVids = (rawVids || []).map(v => ({
+          ...v,
+          title: v.title || v.video_title || v.videoTitle || v.name || v.original_name || v.videoName,
+          video_url: v.video_url || v.videoUrl || v.secure_url || v.file_url || v.video_url_signed || v.file_url,
+          thumbnail_url: v.thumbnail_url || v.thumbnailUrl || v.thumb || v.poster || v.preview_image,
+          // normalize role/visibility to make filtering robust across backends
+          _uploaderRoleRaw: v.uploader_role || v.uploaderRole || v.role || v.uploader_role_name || v.uploader_role_type || '',
+          _visibilityRaw: v.visibility || v.privacy || v.privacy_setting || ''
+        }));
+
+        const normalizeKey = (s) => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+
+        const isPublic = (v) => {
+          // Prefer the explicit 'privacy' column if present (common case in this project)
+          const rawPrivacy = (v.privacy || v._visibilityRaw || '').toString().toLowerCase().trim();
+          if (rawPrivacy === 'public') return true;
+
+          const status = (v.status || '').toString().toLowerCase();
+          if (status === 'public') return true;
+
+          if (v.is_public === true || v.public === true) return true;
+
+          const vis = normalizeKey(v._visibilityRaw);
+          if (vis === 'public') return true;
+
+          return false;
+        };
+
+        const isJobSeekerUploader = (v) => {
+          // Accept variants like 'job_seeker', 'job-seeker', or 'jobseeker'
+          const raw = (v.uploader_role || v._uploaderRoleRaw || '').toString();
+          const r = normalizeKey(raw);
+          return r === 'jobseeker';
+        };
+
+        const publicVids = normalizedVids.filter(v => isPublic(v) && isJobSeekerUploader(v));
+        // Debugging: log counts and a few samples to help verify filtering
+        const publicCandidates = normalizedVids.filter(isPublic);
+        console.debug('[JobSeekerProfileView] videos fetched', {
+          rawCount: rawVids.length,
+          normalizedCount: normalizedVids.length,
+          publicCandidates: publicCandidates.length,
+          publicCount: publicVids.length,
+          samplePublicCandidate: publicCandidates[0] || null,
+          sampleRejected: normalizedVids.filter(v => !isPublic(v) || !isJobSeekerUploader(v)).slice(0,3)
+        });
+
+        setVideos(publicVids);
+        setMainVideo(publicVids.find(v => v.video_position === 'main') || null);
         // After loading profile, check connection status
         const checkConnection = async () => {
           try {
@@ -209,13 +256,17 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
 
   // Helpers to map backend fields to UI-friendly values
   const getDisplayName = (p) => {
-    if (!p) return '';
-    const first = p.first_name || p.user?.firstName || '';
-    const middle = p.second_name || p.user?.middleName || '';
-    const last = p.last_name || p.user?.lastName || '';
-    const displayName = p.user?.displayName || p.displayName || '';
+    // Prefer profile-level name fields and avoid using the user record as the primary source.
+    // If no profile name exists, return an explicit placeholder so the UI can show that the
+    // profile name is not set (rather than falling back to the user name).
+    if (!p) return 'Profile name not set';
+    const first = p.first_name || '';
+    const middle = p.second_name || '';
+    const last = p.last_name || '';
+    const displayName = p.fullName || p.displayName || p.profileName || p.name || '';
     const nameParts = [first, middle, last].filter(Boolean);
-    return displayName || nameParts.join(' ') || 'User';
+    const combined = nameParts.join(' ');
+    return displayName || combined || 'Profile name not set';
   };
 
   const getHeadline = (p) => {
@@ -305,6 +356,19 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
   // Determine whether the current viewer is the profile owner.
   const profileOwnerId = profile?.user?.id || profile?.userId || profile?.id || null;
   const isOwnProfile = Boolean(user?.id && profileOwnerId && String(profileOwnerId) === String(user.id));
+
+  // Short display name used in UI buttons; omit when the profile name is the placeholder
+  const shortDisplayName = (() => {
+    const d = getDisplayName(profile);
+    if (!d || d === 'Profile name not set') return '';
+    return d.split(' ')[0];
+  })();
+
+  // Determine which videos to show in the "All Videos" grid:
+  // Prefer non-main videos; if there are none but there is exactly one video, show that one.
+  const otherVideos = (videos || []).filter(v => v.video_position !== 'main');
+  const gridVideos = (otherVideos.length > 0) ? otherVideos : ((videos || []).length > 0 ? videos : []);
+  const showAllVideos = gridVideos.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -495,7 +559,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       </div>
 
                       <div className="p-4">
-                        <p className="font-medium">{localize(mainVideo.video_title) || 'Video Resume'}</p>
+                        <p className="font-medium">{localize(mainVideo.title || mainVideo.video_title) || 'Video Resume'}</p>
                         {mainVideo.description && (
                           <p className="text-sm text-muted-foreground mt-1">{localize(mainVideo.description)}</p>
                         )}
@@ -731,18 +795,18 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         </Tabs>
 
         {/* All Videos Section */}
-        {videos && videos.length > 1 && (
+        {showAllVideos && (
           <Card className="mt-8 shadow-xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Play className="h-5 w-5 text-cyan-600" />
                 All Videos
               </CardTitle>
-              <CardDescription>{videos.length} video{videos.length !== 1 ? 's' : ''} available</CardDescription>
+              <CardDescription>{gridVideos.length} video{gridVideos.length !== 1 ? 's' : ''} available</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {videos.filter(v => v.video_position !== 'main').map((video, idx) => (
+                {gridVideos.map((video, idx) => (
                   <Card key={video.id || idx} className="overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
                     <div className="relative bg-black aspect-video">
                       <video 
@@ -755,7 +819,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       </div>
                     </div>
                     <CardContent className="p-3">
-                      <p className="font-medium truncate text-sm">{localize(video.video_title) || 'Untitled Video'}</p>
+                      <p className="font-medium truncate text-sm">{localize(video.title || video.video_title) || 'Untitled Video'}</p>
                       <div className="flex justify-between text-xs text-muted-foreground mt-2">
                         <span>{video.video_duration ? `${Math.round(video.video_duration)}s` : ''}</span>
                         <span>{video.views ? `${video.views} views` : ''}</span>
@@ -777,7 +841,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 shadow-xl text-lg px-8"
             >
               <Heart className="h-5 w-5 mr-2" />
-              Connect with {getDisplayName(profile).split(' ')[0]}
+              {shortDisplayName ? `Connect with ${shortDisplayName}` : 'Connect'}
             </Button>
           </div>
         )}
