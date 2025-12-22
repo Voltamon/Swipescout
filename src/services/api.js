@@ -194,7 +194,7 @@ export const getUserSavedVideos = (id) => api.get(`/videos/${id}/getUserSavedVid
 export const getUserLikedVideos = (id) => api.get(`/videos/${id}/getUserLikedVideos`);
  
 // Job seeker profile (mounted under /api/job-seeker on the backend)
-export const uploadProfileImage = (formData) => api.post('/job-seeker/upload-logo/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const uploadProfileImage = (formData) => api.post('/job-seeker/upload-logo/', formData, { headers: { 'Content-Type': undefined } });
 export const updateUserProfile = (formData) => api.put('/job-seeker/', formData);
 export const getUserProfile = () => api.get('/job-seeker/');
 export const getJobSeekerProfile = (id) => api.get(`/job-seeker/${id}`);
@@ -243,7 +243,7 @@ export const getEmployerProfile = () => api.get('/employer/employer-profile/');
 export const getEmployerPublicProfile = (id) => api.get(`/employer/employer-profile/${id}`);
 export const updateEmployerProfile = (companyData) => api.put(`/employer/employer-profile/`, companyData);
 export const createEmployerProfile = (companyData) => api.post(`/employer/employer-profile/`, companyData);
-export const uploadCompanyLogo = (formData) => api.post(`/employer/upload-logo/`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const uploadCompanyLogo = (formData) => api.post(`/employer/upload-logo/`, formData);
 export const getEmployerJobs = () => api.get('/employer/jobs/');
 export const getEmployerPublicJobs = (id) => api.get(`/employer/jobs/${id}`);
 export const getJobDetails = (id) => api.get(`/employer/job/${id}`);

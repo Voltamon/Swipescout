@@ -94,17 +94,22 @@ export default function VideosPage({ setVideoTab }) {
     try {
       setLoading(true);
       console.log('[VideosPage] Fetching videos for page:', pageNum);
-  // Pass the active role to the server so it can filter by uploader_role
-  const activeRoleRaw = role ? (Array.isArray(role) ? role[0] : role) : null;
-  // Normalize role to server format (job_seeker / employer)
-  const activeRole = normalizeRole(activeRoleRaw);
-      const params = { page: pageNum, limit: VIDEOS_PER_PAGE };
-      if (activeRole) params.role = activeRole;
-      const response = await api.get('/videos', { params });
-      console.log('[VideosPage] Videos fetched successfully:', response.data);
-      setServerVideos(response.data.videos || []);
-      setTotalPages(response.data.totalPages || 1);
-      setUploadLimitReached(response.data.uploadLimitReached || false);
+
+      // Fetch *all* videos for the logged-in user (use /videos/user/:id) so we don't filter by uploader_role
+      let userFetch = Promise.resolve({ data: { videos: [], totalPages: 1 } });
+      if (user && user.id) {
+        userFetch = api.get(`/videos/user/${encodeURIComponent(user.id)}`, { params: { page: pageNum, limit: VIDEOS_PER_PAGE } });
+      }
+
+      const userResp = await userFetch;
+      const userVideos = userResp.data?.videos || [];
+
+      setServerVideos(userVideos);
+
+      // Use paging info from userResp
+      setTotalPages(userResp.data?.totalPages || 1);
+      setUploadLimitReached(userResp.data?.uploadLimitReached || false);
+
     } catch (err) {
       console.error('[VideosPage] Failed to fetch videos:', err);
       console.error('[VideosPage] Error details:', {
@@ -260,7 +265,7 @@ export default function VideosPage({ setVideoTab }) {
         console.warn('Failed to fetch connections map', e);
       }
     })();
-  }, [page, role]);
+  }, [page, role, user]);
 
   const handleUploadClick = async () => {
     const limitReached = await checkUploadLimit();
@@ -355,43 +360,54 @@ export default function VideosPage({ setVideoTab }) {
       return raw.charAt(0).toUpperCase() + raw.slice(1);
     };
 
+    const privacyLabel = formatPrivacyLabel(video);
+
+    // Common badge templates
     if (video.status === 'uploading') {
-      return (
-        <Badge className="bg-blue-100 text-blue-800">
-          <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-          Uploading {video.progress}%
-        </Badge>
-      );
-    }
-    if (video.status === 'processing') {
-      return (
-        <Badge className="bg-yellow-100 text-yellow-800">
-          <Clock className="h-3 w-3 mr-1" />
-          Processing
-        </Badge>
-      );
-    }
-    if (video.status === 'failed') {
-      return (
-        <Badge variant="destructive">
-          <AlertCircle className="h-3 w-3 mr-1" />
-          Failed
-        </Badge>
-      );
-    }
-    if (video.status === 'completed') {
-      const privacyLabel = formatPrivacyLabel(video);
       return (
         <div className="flex items-center gap-2">
           {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
-          <Badge className="bg-green-100 text-green-800">
-            <CheckCircle className="h-3 w-3 mr-1" />
-            Ready
+          <Badge className="bg-blue-100 text-blue-800">
+            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+            Uploading {video.progress ?? ''}
           </Badge>
         </div>
       );
     }
-    return null;
+    if (video.status === 'processing') {
+      return (
+        <div className="flex items-center gap-2">
+          {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
+          <Badge className="bg-yellow-100 text-yellow-800">
+            <Clock className="h-3 w-3 mr-1" />
+            Processing
+          </Badge>
+        </div>
+      );
+    }
+    if (video.status === 'failed') {
+      return (
+        <div className="flex items-center gap-2">
+          {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
+          <Badge variant="destructive">
+            <AlertCircle className="h-3 w-3 mr-1" />
+            Failed
+          </Badge>
+        </div>
+      );
+    }
+    // Completed & other statuses
+    const completedLabel = (
+      <div className="flex items-center gap-2">
+        {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
+        <Badge className="bg-green-100 text-green-800">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          Ready
+        </Badge>
+      </div>
+    );
+
+    return completedLabel;
   };
 
   if (loading && serverVideos.length === 0) {
@@ -467,6 +483,8 @@ export default function VideosPage({ setVideoTab }) {
                 onRetry={handleRetry}
                 onEdit={handleEditVideo}
                 getStatusBadge={getStatusBadge}
+                connectionMap={connectionMap}
+                setConnectionMap={setConnectionMap}
               />
             ))}
           </div>
@@ -640,7 +658,7 @@ export default function VideosPage({ setVideoTab }) {
 }
 
 // Video Card Component
-function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, onDelete, onRetry, onEdit, getStatusBadge }) {
+function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, onDelete, onRetry, onEdit, getStatusBadge, connectionMap, setConnectionMap }) {
   // Use hooks inside the card so it has access to auth, navigation and toast
   const { user } = useAuth();
   const { toast } = useToast();
@@ -765,9 +783,18 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
 
       {/* Video Info */}
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold line-clamp-1">{video.title || 'Untitled'}</h3>
-          {getStatusBadge(video)}
+        <div className="flex justify-between items-start mb-2 gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <h3 className="font-semibold truncate" title={video.title || 'Untitled'}>
+              {video.title || 'Untitled'}
+            </h3>
+            <Badge variant="secondary" className="shrink-0 text-[10px] px-1.5 h-5 font-normal capitalize">
+              {video.privacy || 'Public'}
+            </Badge>
+          </div>
+          <div className="shrink-0">
+            {getStatusBadge(video)}
+          </div>
         </div>
 
         {video.description && (
@@ -800,54 +827,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                 <Eye className="h-3 w-3 mr-1" />
                 View
               </Button>
-              {/* Connect button - only show if we can infer an owner */}
-              {(() => {
-                const ownerId = video.userId || video.user_id || video.ownerId || (video.user && video.user.id);
-                if (ownerId && ownerId !== (user && user.id)) {
-                  const c = connectionMap[ownerId];
-                  if (c && c.status === 'accepted') {
-                    return <Button variant="outline" size="sm" disabled>Connected</Button>;
-                  }
-                  if (c && c.status === 'pending' && c.isSender) {
-                    return <Button variant="outline" size="sm" disabled>Pending</Button>;
-                  }
-                  if (c && c.status === 'pending' && !c.isSender) {
-                    return (
-                      <div className="flex gap-2">
-                        <Button variant="default" size="sm" onClick={async (e) => {
-                          e.stopPropagation();
-                          try { const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); toast({ description: 'Connection accepted' }); setConnectionMap(prev => ({ ...prev, [ownerId]: { ...c, status: 'accepted' } })); if (data?.conversation) { setOpenConversation(data.conversation); setOpenChat(true); } } catch (err) { toast({ description: 'Failed to accept', variant: 'destructive' }); }
-                        }}>Accept</Button>
-                        <Button variant="ghost" size="sm" onClick={async (e) => { e.stopPropagation(); try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); toast({ description: 'Declined' }); setConnectionMap(prev => { const cp = { ...prev }; delete cp[ownerId]; return cp; }); } catch (err) { toast({ description: 'Failed to decline', variant: 'destructive' }); } }}>Decline</Button>
-                      </div>
-                    );
-                  }
-                  return (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        if (!user) {
-                          toast({ description: 'Please log in to connect', variant: 'default' });
-                          return navigate('/login');
-                        }
-                        try {
-                          await sendConnection(ownerId);
-                          toast({ title: 'Connection sent', description: 'Connection request sent successfully.' });
-                          setConnectionMap(prev => ({ ...prev, [ownerId]: { status: 'pending', id: null, isSender: true } }));
-                        } catch (err) {
-                          console.error('Connection failed', err);
-                          toast({ title: 'Error', description: err.response?.data?.message || 'Failed to send connection', variant: 'destructive' });
-                        }
-                      }}
-                    >
-                      Connect
-                    </Button>
-                  );
-                }
-                return null;
-              })()}
+              
               <Button
                 variant="outline"
                 size="sm"

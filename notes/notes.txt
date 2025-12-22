@@ -275,3 +275,15 @@ Add an explicit hasEmployerProfileAndVideo boolean, reuse it across the app, and
 Disable "Post a Job" CTA across other pages (e.g., Dashboard) and keep UI consistent throughout the app.
 Add a link in the employer profile page UI to encourage uploading a video (e.g., "Add company videos") if none exist.
 If you want, I can run the test suite or implement a small e2e check for this flow — tell me which you'd prefer next.
+
+
+upload pic 
+
+Notes & next steps
+If uploads are still not showing immediately, check the upload endpoint response shape (console.log the upload response) and I can add that exact field to the mapper.
+If you see a CORS-related image load error, confirm the image endpoint allows cross-origin image loading (Access-Control-Allow-Origin).
+If you'd like, I can:
+
+Add more logging to the upload code to surface the server response shape in the UI (temporarily) or
+Add a small unit test/mock for the handler.
+

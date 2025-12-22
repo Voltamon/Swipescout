@@ -16,12 +16,14 @@ import {
   updateUserEducation,
   deleteUserEducation,
   getUserVideos,
+  getUserVideosByUserId,
   deleteUserVideo,
   uploadProfileImage,
   getSkills,
   getCountries,
   getCities,
 } from '@/services/api';
+import api from '@/services/api';
 import dayjs from 'dayjs';
 import localize from '@/utils/localize';
 
@@ -54,6 +56,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors-jobseeker';
+import { useAuth } from '@/contexts/AuthContext';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -62,6 +65,7 @@ const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost
 const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSaved = () => {}, openTab = null, action = null }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   // State for tabs
   const [tabValue, setTabValue] = useState(0);
@@ -169,24 +173,22 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   
   const fileInputRef = useRef(null);
 
-  // Add this helper function somewhere in your component (outside the main function)
-  const verifyImageAvailability = (url) => {
+  // Helper to check whether a remote image URL is ready (with configurable timeout)
+  const verifyImageAvailability = (url, timeout = 8000) => {
     return new Promise((resolve, reject) => {
-      if (!url) reject(new Error('Empty URL'));
+      if (!url) return reject(new Error('Empty URL'));
 
       const img = new Image();
+      img.crossOrigin = 'anonymous';
       let timer = setTimeout(() => {
         img.onload = img.onerror = null;
         reject(new Error('Image load timeout'));
-      }, 5000);
+      }, timeout);
 
       img.onload = () => {
         clearTimeout(timer);
-        if (img.width > 0 && img.height > 0) {
-          resolve();
-        } else {
-          reject(new Error('Zero dimensions'));
-        }
+        // onload is sufficient; dimensions may not be available in some CORS cases
+        resolve();
       };
       img.onerror = () => {
         clearTimeout(timer);
@@ -247,40 +249,70 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
   // Fetch user data (or use initialProfile passed by parent)
   useEffect(() => {
     const fetchUserData = async () => {
+      setLoading(true);
+      let profileResponse = null;
+      
+      // 1. Setup Profile Data
       if (initialProfile) {
           const norm = normalizeProfile(initialProfile);
+          // Keep a profileResponse shape so downstream logic can use it
+          profileResponse = { data: initialProfile };
           setProfile(norm);
           setAvatarPicture(norm.profile_pic ? `${VITE_API_BASE_URL}${norm.profile_pic}?t=${Date.now()}` : '');
-          setLoading(false);
-          return;
-        }
-
-      let profileResponse;
-      try {
-        setLoading(true);
+      } else {
         try {
-          profileResponse = await getUserProfile();
-        } catch (error) {
-          if (error?.status === 404) {
-            try {
-              await createStarterProfile();
-              profileResponse = await getUserProfile();
-              setSnackbar({ open: true, message: 'Starter profile created..', severity: 'success' });
-            } catch (err) {
-              console.error('Failed to create starter profile:', err);
-              setSnackbar({ open: true, message: 'Failed to create starter profile ..', severity: 'error' });
+          let profileResponse;
+          try {
+            profileResponse = await getUserProfile();
+          } catch (error) {
+            if (error?.status === 404) {
+              try {
+                await createStarterProfile();
+                profileResponse = await getUserProfile();
+                setSnackbar({ open: true, message: 'Starter profile created..', severity: 'success' });
+              } catch (err) {
+                console.error('Failed to create starter profile:', err);
+                setSnackbar({ open: true, message: 'Failed to create starter profile ..', severity: 'error' });
+              }
+            } else {
+              throw error;
             }
-          } else {
-            throw error;
           }
+          
+          // Some backend responses wrap the actual profile under `data.profile`.
+          // Accept both shapes: `response.data` or `response.data.profile`.
+          const rawProfile = profileResponse?.data?.profile ?? profileResponse?.data ?? {};
+          const normProfile = normalizeProfile(rawProfile);
+          setProfile(normProfile);
+          
+          const initialAvatarUrl = normProfile?.profile_pic ? `${VITE_API_BASE_URL}${normProfile.profile_pic}?t=${Date.now()}` : '';
+          try {
+            if (initialAvatarUrl) {
+               await verifyImageAvailability(initialAvatarUrl);
+            }
+            setAvatarPicture(initialAvatarUrl);
+          } catch (err) {
+            console.error('Avatar image not available:', err);
+            setAvatarPicture('');
+          }
+
+        } catch (error) {
+           console.error('Error fetching profile:', error);
         }
+      }
+
+      // 2. Fetch Auxiliary Data (Skills, Experience, Education, Videos, Locations)
+      try {
+        // Determine which user id to use when fetching videos: prefer auth user id,
+        // fall back to profile fields or the freshly fetched profileResponse shape.
+        const targetUserId = user?.id || profile?.user_id || profile?.id || profile?.userId || profileResponse?.data?.user?.id || profileResponse?.data?.id || null;
+        console.debug('EditJobSeekerProfile: resolved targetUserId for videos=', targetUserId, { userIdFromAuth: user?.id, profileSnippet: { id: profile?.id, user_id: profile?.user_id, userId: profile?.userId }, profileResponseSample: profileResponse?.data });
 
         const allResults = await Promise.allSettled([
           getUserSkills(),
           getSkills(),
           getUserExperiences(),
-          getUserEducation(),
-          getUserVideos()
+          getUserEducation()
         ]);
 
         // Map settled results to expected response-shape, falling back to empty lists when a call failed
@@ -288,29 +320,52 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           skillsResult,
           availableSkillsResult,
           experiencesResult,
-          educationResult,
-          videosResult
+          educationResult
         ] = allResults;
 
         const skillsResponse = skillsResult.status === 'fulfilled' ? skillsResult.value : { data: { skills: [] } };
         const availableSkillsResponse = availableSkillsResult.status === 'fulfilled' ? availableSkillsResult.value : { data: { skills: [] } };
         const experiencesResponse = experiencesResult.status === 'fulfilled' ? experiencesResult.value : { data: { experiences: [] } };
         const educationResponse = educationResult.status === 'fulfilled' ? educationResult.value : { data: { educations: [] } };
-        const videosResponse = videosResult.status === 'fulfilled' ? videosResult.value : { data: { videos: [] } };
 
         // Log any rejected results for easier debugging
         allResults.forEach((r, idx) => {
           if (r.status === 'rejected') {
-            const names = ['getUserSkills','getSkills','getUserExperiences','getUserEducation','getUserVideos'];
+            const names = ['getUserSkills','getSkills','getUserExperiences','getUserEducation'];
             console.error(`Failed to fetch ${names[idx]}:`, r.reason || r);
           }
         });
 
-        // Some backend responses wrap the actual profile under `data.profile`.
-        // Accept both shapes: `response.data` or `response.data.profile`.
-        const rawProfile = profileResponse?.data?.profile ?? profileResponse?.data ?? {};
-        const normProfile = normalizeProfile(rawProfile);
-        setProfile(normProfile);
+        // Fetch videos separately (use user ID when available to avoid role-based filtering)
+        let videosResp;
+        try {
+          if (targetUserId) {
+            videosResp = await api.get(`/videos/user/${encodeURIComponent(targetUserId)}`, { params: { page: 1, limit: 200 } });
+          } else {
+            // Fallback to authenticated endpoint which returns current user's videos
+            videosResp = await getUserVideos('');
+          }
+        } catch (err) {
+          console.error('Failed to fetch videos for edit profile page:', err);
+          videosResp = { data: { videos: [] } };
+        }
+
+        setSkills(skillsResponse.data?.skills || []);
+        setAvailableSkills(availableSkillsResponse.data?.skills || []);
+        setExperiences(experiencesResponse.data?.experiences || []);
+        setEducation(educationResponse.data?.educations || []);
+        const rawVideos = videosResp?.data?.videos || [];
+        console.debug('EditJobSeekerProfile: fetched videos count=', rawVideos.length, rawVideos);
+        const normalizedVideos = (rawVideos || []).map(v => ({
+          ...v,
+          thumbnail: v.thumbnail || v.thumbnailUrl || v.thumb || v.poster || v.preview_image || v.thumb_url || '',
+          video_title: v.video_title || v.videoTitle || v.title || v.name || '',
+          video_duration: v.video_duration || v.videoDuration || v.duration || 0,
+          views: v.views ?? v.views_count ?? v.viewsCount ?? 0,
+          privacy: v.privacy || v.visibility || v.privacy_setting || 'public'
+        }));
+        setVideos(normalizedVideos);
+        
         // Fetch countries & cities via API helpers (mounted under /api/locations)
         try {
           const c = await getCountries();
@@ -320,38 +375,24 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
         }
 
         try {
-          const countryId = normProfile.country_id || normProfile.countryId || normProfile.country?.id || '';
+          const countryId = profile.country_id || profile.countryId || profile.country?.id || '';
           if (countryId) {
-            const ct = await getCities(countryId);
-            setCities(ct?.data || []);
+             const citiesResp = await getCities(countryId);
+             setCities(citiesResp?.data || []);
           }
         } catch (e) {
           console.warn('Could not fetch cities', e);
         }
-        setSkills(skillsResponse.data?.skills || []);
-        setAvailableSkills(availableSkillsResponse.data?.skills || []);
-        setExperiences(experiencesResponse.data?.experiences || []);
-        setEducation(educationResponse.data?.educations || []);
-        setVideos(videosResponse.data?.videos || []);
-        
-  const initialAvatarUrl = normProfile?.profile_pic ? `${VITE_API_BASE_URL}${normProfile.profile_pic}?t=${Date.now()}` : '';
-        try {
-          if (initialAvatarUrl) await verifyImageAvailability(initialAvatarUrl);
-          setAvatarPicture(initialAvatarUrl);
-        } catch (err) {
-          console.error('Avatar image not available:', err);
-          setAvatarPicture('');
-        }
 
-          setLoading(false);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching auxiliary user data:', error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [initialProfile]);
+  }, [initialProfile, user]);
 
   // Listen for query params so other pages can link directly to a tab or open a dialog
   useEffect(() => {
@@ -498,51 +539,88 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
 
   // Handle avatar upload
   const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
+    let tempPreviewUrl;
     try {
       setSaving(true);
 
-      // 1. Show instant preview
-      const tempPreviewUrl = URL.createObjectURL(file);
+      // 1. Show instant preview so user sees immediate feedback
+      tempPreviewUrl = URL.createObjectURL(file);
       setAvatarPicture(tempPreviewUrl);
 
       // 2. Upload to server
-      const response = await uploadProfileImage(file);
+      const formData = new FormData();
+      // backend multer expects fieldname 'avatar'
+      formData.append('avatar', file);
+      const response = await uploadProfileImage(formData);
+      const data = response?.data ?? response ?? {};
 
-      // 3. Server returns the FINAL URL (must be immediately accessible)
-      const serverUrl = `${VITE_API_BASE_URL}${response.data.logo_url}?t=${Date.now()}`;
+      // 3. Try to determine resulting image path from common response shapes
+      let remotePath =
+        // Prefer an absolute URL provided by the server
+        data.logo_url_absolute || data.photoUrlAbsolute || data.logo_url || data.photoUrl ||
+        data.profile_pic ||
+        data.profile?.profile_pic ||
+        data.profile_picture_url ||
+        data.logo_url ||
+        data.url ||
+        data.path ||
+        data.fileUrl ||
+        data.file?.url ||
+        data.file_path ||
+        data.file_name ||
+        null;
 
-      // 4. Verify the image is truly ready (with retries)
-      let loaded = false;
-      for (let i = 0; i < 3; i++) {
+      // If remotePath missing, try to refresh the profile to obtain the new picture
+      if (!remotePath) {
         try {
-          await verifyImageAvailability(serverUrl);
-          loaded = true;
-          break;
-        } catch {
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s between retries
+          const pResp = await getUserProfile();
+          const pRaw = pResp?.data?.profile ?? pResp?.data ?? {};
+          remotePath = pRaw.profile_pic || pRaw.profile_picture_url || pRaw.logo_url || pRaw.profile?.profile_pic || null;
+          if (remotePath) setProfile(prev => normalizeProfile(pRaw));
+        } catch (e) {
+          // ignore, we'll handle missing remotePath below
         }
       }
 
+      if (!remotePath) {
+        setSnackbar({ open: true, message: 'Uploaded but could not determine image URL. Try refreshing.', severity: 'info' });
+        return;
+      }
+
+      const serverUrl = remotePath.startsWith('http') ? `${remotePath}?t=${Date.now()}` : `${VITE_API_BASE_URL}${remotePath}?t=${Date.now()}`;
+
+      // 4. Verify the image is ready with retries and exponential backoff
+      let loaded = false;
+      for (let i = 0; i < 5; i++) {
+        try {
+          await verifyImageAvailability(serverUrl, 8000);
+          loaded = true;
+          break;
+        } catch {
+          await new Promise(resolve => setTimeout(resolve, 500 * Math.pow(2, i))); // increasing delay
+        }
+      }
+
+      // 5. Update state depending on whether the image loaded
+      setProfile(prev => ({ ...prev, profile_pic: remotePath }));
       if (loaded) {
-        const newPic = response.data?.profile?.profile_pic || response.data.logo_url;
-        if (newPic) setProfile(prev => ({ ...prev, profile_pic: newPic }));
         setAvatarPicture(serverUrl);
         setSnackbar({ open: true, message: 'Profile picture updated!', severity: 'success' });
       } else {
         setSnackbar({ open: true, message: 'Uploaded! Refresh to see changes.', severity: 'info' });
       }
 
-      // Clean up preview
-      URL.revokeObjectURL(tempPreviewUrl);
-
     } catch (error) {
       console.error('Avatar upload error:', error);
       setSnackbar({ open: true, message: 'Upload failed. Please try again.', severity: 'error' });
     } finally {
+      // Clean up preview and reset input
+      if (tempPreviewUrl) URL.revokeObjectURL(tempPreviewUrl);
       setSaving(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -942,7 +1020,7 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 </Avatar>
 
                 <input id="avatar-upload" accept="image/*" type="file" className="hidden" ref={fileInputRef} onChange={handleAvatarUpload} />
-                <label htmlFor="avatar-upload" className="absolute -bottom-2 -right-2">
+                <label htmlFor="avatar-upload" className="absolute -bottom-2 -right-2 cursor-pointer" onClick={(e) => { e.preventDefault(); if (fileInputRef && fileInputRef.current) fileInputRef.current.click(); }}>
                   <Button size="icon" variant="outline" asChild>
                     <span>
                       <Camera className="h-4 w-4" />
@@ -1170,6 +1248,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 </Button>
               </div>
 
+              {console.debug('EditJobSeekerProfile: rendering Videos tab, videos length=', (videos || []).length)}
+
               {videos.length === 0 ? (
                 <div className="border-2 border-dashed rounded-md p-8 text-center text-muted-foreground">No videos uploaded yet. Click &quot;Upload Video&quot; to add your first video.</div>
               ) : (
@@ -1177,7 +1257,12 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                   {videos.map((video) => (
                     <Card key={video.id} className="overflow-hidden">
                       <div className="relative bg-black aspect-video">
-                        <img src={video.thumbnail} alt={video.video_title} className="object-cover w-full h-full" />
+                        <img src={(video.thumbnail && (video.thumbnail.startsWith('http') || video.thumbnail.startsWith('blob:'))) ? video.thumbnail : (video.thumbnail ? `${VITE_API_BASE_URL}${video.thumbnail}` : '')} alt={video.video_title} className="object-cover w-full h-full" />
+                        <div className="absolute top-2 right-2 z-10">
+                          <Badge className="bg-black/60 hover:bg-black/70 text-white capitalize">
+                            {video.privacy || 'Public'}
+                          </Badge>
+                        </div>
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Button size="icon" variant="ghost" className="bg-black/40 text-white"><Play className="h-6 w-6"/></Button>
                         </div>
