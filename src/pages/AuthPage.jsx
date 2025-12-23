@@ -22,6 +22,29 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
 
   const dialogRef = useRef(null);
 
+  // Prevent overlay clicks from closing the dialog when on the login tab
+  const handleOverlayClick = (e) => {
+    try {
+      // If Login tab is active (index 0), ignore outside clicks so users don't accidentally dismiss the dialog
+      if (activeTab === 0) {
+        e.stopPropagation();
+        // Return focus to the dialog for better accessibility
+        try {
+          if (dialogRef.current && typeof dialogRef.current.focus === 'function') {
+            dialogRef.current.focus();
+          }
+        } catch (focusErr) {
+          // ignore focus errors
+        }
+        return;
+      }
+    } catch (err) {
+      // If anything goes wrong, fall back to closing
+      console.error('[AuthPage] handleOverlayClick error:', err);
+    }
+    close();
+  };
+
   const scrollDialogToBottom = (smooth = true) => {
     const el = dialogRef.current;
     if (!el) return;
@@ -201,7 +224,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
   return (
     <div
       className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm"
-      onClick={close}
+      onClick={handleOverlayClick}
     >
       {/* Modal centered in the viewport (fixed + transform) */}
       {/* Dialog Container (fixed to viewport) */}
@@ -210,6 +233,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       >
         <div
           ref={dialogRef}
+          tabIndex={-1}
           className="relative w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-scale-in border border-gray-100 max-h-[95vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >

@@ -45,6 +45,12 @@ import {
 } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from '@/components/PaymentForm';
+
+// Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function PricingPage() {
   const { user } = useAuth();
@@ -56,6 +62,7 @@ export default function PricingPage() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [currentSubscription, setCurrentSubscription] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
 
   // Job Seeker Plans
   const jobSeekerPlans = [
@@ -330,23 +337,28 @@ export default function PricingPage() {
       return;
     }
 
-    setSelectedPlan(plan);
-    setPaymentDialog(true);
-  };
-
-  const handleConfirmSubscription = async () => {
+    setSelectedPlan({ ...plan, isService: false });
     setSubscribing(true);
+
     try {
-      // Send data as object with planType and isAnnual
-      await createSubscription({ 
-        planType: selectedPlan.type,
+      // Create subscription intent
+      const response = await createSubscription({ 
+        planType: plan.type,
         isAnnual: isAnnual
       });
-      toast({
-        title: t('success.subscriptionUpdated'),
-      });
-      setPaymentDialog(false);
-      loadCurrentSubscription();
+
+      if (response.clientSecret) {
+        // Paid plan - open payment dialog
+        setClientSecret(response.clientSecret);
+        setPaymentDialog(true);
+      } else {
+        // Free plan - success immediately
+        toast({
+          title: t('success.subscriptionUpdated'),
+          description: "You have successfully subscribed to the " + plan.title + " plan.",
+        });
+        loadCurrentSubscription();
+      }
     } catch (error) {
       console.error('Error creating subscription:', error);
       toast({
@@ -358,6 +370,16 @@ export default function PricingPage() {
     }
   };
 
+  const handlePaymentSuccess = () => {
+    setPaymentDialog(false);
+    setClientSecret(null);
+    toast({
+      title: t('success.subscriptionUpdated'),
+      description: "Your payment was successful and your subscription is active.",
+    });
+    loadCurrentSubscription();
+  };
+
   const handlePurchaseService = async (service) => {
     if (!user) {
       toast({
@@ -367,14 +389,29 @@ export default function PricingPage() {
       return;
     }
 
+    setSelectedPlan({
+        title: service.title,
+        price: service.price,
+        period: '', // One-time
+        monthlyPrice: 0,
+        annualPrice: 0,
+        isService: true
+    });
+
     try {
       // Send data as object with serviceType
-      await purchaseService({ 
+      const response = await purchaseService({ 
         serviceType: service.type 
       });
-      toast({
-        title: t('success.paymentProcessed'),
-      });
+      
+      if (response.data.clientSecret) {
+          setClientSecret(response.data.clientSecret);
+          setPaymentDialog(true);
+      } else {
+          toast({
+            title: t('success.paymentProcessed'),
+          });
+      }
     } catch (error) {
       console.error('Error purchasing service:', error);
       toast({
@@ -554,6 +591,7 @@ export default function PricingPage() {
               {renderPricingCards(jobSeekerPlans)}
             </div>
 
+            {/* Services hidden as per requirement
             <div className="border-t-4 border-purple-200 pt-12">
               <h2 className="text-3xl font-bold text-center mb-4">
                 {t('professionalServices') || 'Professional Services'}
@@ -563,6 +601,7 @@ export default function PricingPage() {
               </p>
               {renderServiceCards(jobSeekerServices)}
             </div>
+            */}
           </TabsContent>
 
           {/* Employers Tab */}
@@ -574,6 +613,7 @@ export default function PricingPage() {
               {renderPricingCards(employerPlans)}
             </div>
 
+            {/* Services Section */}
             <div className="border-t-4 border-purple-200 pt-12">
               <h2 className="text-3xl font-bold text-center mb-4">
                 {t('professionalServices') || 'Professional Services'}
@@ -603,51 +643,26 @@ export default function PricingPage() {
                 <div className="bg-gradient-to-r from-purple-50 to-cyan-50 p-4 rounded-lg">
                   <h3 className="font-bold text-lg mb-2">{selectedPlan.title}</h3>
                   <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                    ${getPrice(selectedPlan)} {selectedPlan.period}
+                    {selectedPlan.isService ? selectedPlan.price : `$${getPrice(selectedPlan)}`} {selectedPlan.period}
                   </p>
-                  {isAnnual && selectedPlan.annualPrice > 0 && (
+                  {isAnnual && selectedPlan.annualPrice > 0 && !selectedPlan.isService && (
                     <Badge variant="outline" className="mt-2 border-green-500 text-green-600">
                       Save {getSavings(selectedPlan)}% annually
                     </Badge>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="card-number">Card Number</Label>
-                  <Input id="card-number" placeholder="1234 5678 9012 3456" className="mt-1" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="expiry">Expiry Date</Label>
-                    <Input id="expiry" placeholder="MM/YY" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="cvv">CVV</Label>
-                    <Input id="cvv" placeholder="123" className="mt-1" />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Shield className="h-4 w-4" />
-                  <span>Secure payment powered by Stripe</span>
-                </div>
+                {clientSecret && (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <PaymentForm 
+                      clientSecret={clientSecret} 
+                      onSuccess={handlePaymentSuccess}
+                      onCancel={() => setPaymentDialog(false)}
+                    />
+                  </Elements>
+                )}
               </div>
             )}
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setPaymentDialog(false)}>
-                Cancel
-              </Button>
-              <Button
-                onClick={handleConfirmSubscription}
-                disabled={subscribing}
-                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
-              >
-                {subscribing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {subscribing ? 'Processing...' : 'Confirm Payment'}
-              </Button>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

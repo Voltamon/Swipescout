@@ -36,8 +36,16 @@ import SkillGapAnalysisPage from "../pages/SkillGapAnalysisPage.jsx";
 
 import { useTranslation } from "react-i18next";
 
-export const jobseekerTabCategories = () => {
+const hasAccess = (userPlan, requiredPlan) => {
+  const levels = { BASIC: 0, PROFESSIONAL: 1, PREMIUM: 2, ENTERPRISE: 3 };
+  const currentLevel = levels[userPlan?.toUpperCase()] || 0;
+  const requiredLevel = levels[requiredPlan?.toUpperCase()] || 0;
+  return currentLevel >= requiredLevel;
+};
+
+export const jobseekerTabCategories = (user) => {
   const { t } = useTranslation();
+  const userPlan = user?.subscriptionPlan || 'BASIC';
 
   return [
     {
@@ -60,7 +68,9 @@ export const jobseekerTabCategories = () => {
           component: AnalyticsJobseeker,
           context: "analytics",
           path: "analytics",
-          description: t("jobseekerTabs:descriptions.analytics")
+          description: t("jobseekerTabs:descriptions.analytics"),
+          locked: !hasAccess(userPlan, 'PROFESSIONAL'),
+          requiredPlan: 'PROFESSIONAL'
         }
       ]
     },
@@ -185,7 +195,9 @@ export const jobseekerTabCategories = () => {
           icon: { name: "BookOpen" },
           component: CareerAdvicePage,
           path: "career-advice",
-          description: t("jobseekerTabs:descriptions.careerAdvice")
+          description: t("jobseekerTabs:descriptions.careerAdvice"),
+          locked: !hasAccess(userPlan, 'PREMIUM'),
+          requiredPlan: 'PREMIUM'
         },
         {
           labelKey: "jobseekerTabs:tabs.personalityTest",
@@ -193,7 +205,9 @@ export const jobseekerTabCategories = () => {
           icon: { name: "Psychology" },
           component: PersonalityTestPage,
           path: "personality-test",
-          description: t("jobseekerTabs:descriptions.personalityTest")
+          description: t("jobseekerTabs:descriptions.personalityTest"),
+          locked: !hasAccess(userPlan, 'PREMIUM'),
+          requiredPlan: 'PREMIUM'
         },
         {
           labelKey: "jobseekerTabs:tabs.skillGap",
@@ -201,7 +215,9 @@ export const jobseekerTabCategories = () => {
           icon: { name: "TrendingUp" },
           component: SkillGapAnalysisPage,
           path: "skill-gap-analysis",
-          description: t("jobseekerTabs:descriptions.skillGap")
+          description: t("jobseekerTabs:descriptions.skillGap"),
+          locked: !hasAccess(userPlan, 'PREMIUM'),
+          requiredPlan: 'PREMIUM'
         }
       ]
     },
@@ -263,7 +279,9 @@ export const jobseekerTabCategories = () => {
           icon: { name: "VideoLibrary" },
           component: VideoEditPage,
           path: "video-editor",
-          description: t("jobseekerTabs:descriptions.videoEditor")
+          description: t("jobseekerTabs:descriptions.videoEditor"),
+          locked: !hasAccess(userPlan, 'PROFESSIONAL'),
+          requiredPlan: 'PROFESSIONAL'
         }
       ]
     }

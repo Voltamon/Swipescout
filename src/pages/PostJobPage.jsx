@@ -6,7 +6,8 @@ import {
   getSkills,
   updateJob,
   getEmployerProfile,
-  getUserVideos
+  getUserVideos,
+  checkJobLimit
 } from '@/services/api';
 import { isEmployerProfileComplete, getEmployerProfileCompleteness } from '@/utils/profile';
 import { Check, X as CloseIcon } from 'lucide-react';
@@ -176,10 +177,28 @@ const PostJobPage = () => {
   const [hasEmployerProfile, setHasEmployerProfile] = useState(null); // null = checking, true/false = result
   const [profileCompleteness, setProfileCompleteness] = useState(null);
   const [hasEmployerVideo, setHasEmployerVideo] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [jobLimit, setJobLimit] = useState(null);
+  const [limitReached, setLimitReached] = useState(false);
 
 
   useEffect(() => {
-    const fetchData = async () => {
+    const checkLimit = async () => {
+      try {
+        const data = await checkJobLimit();
+        setJobLimit(data);
+        if (!data.allowed) {
+          setLimitReached(true);
+        }
+      } catch (error) {
+        console.error('Failed to check job limit:', error);
+      }
+    };
+    checkLimit();
+  }, []);
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
       try {
         setLoading(true);
         
@@ -246,7 +265,7 @@ const PostJobPage = () => {
       }
     };
     
-    fetchData();
+    fetchInitialData();
   }, []);
 
   const showToast = (message, type = 'success') => {
@@ -478,6 +497,12 @@ const PostJobPage = () => {
       return;
     }
 
+    // Check job limit before submitting
+    if (limitReached) {
+      showToast('Job limit reached. Please delete an existing job or upgrade your plan to post more jobs.', 'error');
+      return;
+    }
+
     try {
       setSaving(true);
       const jobData = {
@@ -535,6 +560,35 @@ const PostJobPage = () => {
           <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
           <p className="text-slate-600 text-lg">Loading...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (limitReached) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <Card className="border-red-200 bg-red-50">
+          <CardHeader>
+            <CardTitle className="text-red-700 flex items-center gap-2">
+              <AlertCircle className="h-6 w-6" />
+              Job Posting Limit Reached
+            </CardTitle>
+            <CardDescription className="text-red-600">
+              You have reached the maximum number of job posts allowed for your current plan ({jobLimit?.limit}).
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-slate-700">
+              Upgrade your subscription to post more jobs and unlock premium features.
+            </p>
+            <Button 
+              onClick={() => navigate('/pricing')} 
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Upgrade Plan
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

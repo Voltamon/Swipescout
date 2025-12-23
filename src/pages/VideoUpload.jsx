@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { uploadVideo, saveVideoMetadata } from '@/services/videoService';
-import { checkUploadStatus } from '@/services/api';
+import { checkUploadStatus, checkUploadLimit } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { v4 as uuidv4 } from 'uuid';
@@ -34,7 +34,8 @@ import {
   Loader2,
   CheckCircle,
   ArrowLeft,
-  RefreshCw
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 import themeColors from '@/config/theme-colors';
 
@@ -55,6 +56,21 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       console.log('[VideoUpload] Role includes jobseeker:', role.includes('jobseeker') || role.includes('job_seeker'));
     }
   }, [user, role]);
+
+  useEffect(() => {
+    const checkLimit = async () => {
+      try {
+        const data = await checkUploadLimit();
+        setUploadLimit(data);
+        if (!data.allowed) {
+          setLimitReached(true);
+        }
+      } catch (error) {
+        console.error('Failed to check upload limit:', error);
+      }
+    };
+    checkLimit();
+  }, []);
   
   // Refs
   const videoRef = useRef(null);
@@ -82,6 +98,9 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
   const [hashtagInput, setHashtagInput] = useState('');
   const [jobId, setJobId] = useState(newjobid || '');
   const [privacy, setPrivacy] = useState('public');
+  const [uploadLimit, setUploadLimit] = useState(null);
+  const [limitReached, setLimitReached] = useState(false);
+
   // Allow user to choose role to upload as if they have multiple roles
   const [selectedUploaderRole, setSelectedUploaderRole] = useState(() => {
     if (Array.isArray(role) && role.length) return role[0];
@@ -515,8 +534,37 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
     resetForm();
   };
 
+  if (limitReached) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <Card className="border-red-200 bg-red-50">
+          <CardHeader>
+            <CardTitle className="text-red-700 flex items-center gap-2">
+              <AlertCircle className="h-6 w-6" />
+              Upload Limit Reached
+            </CardTitle>
+            <CardDescription className="text-red-600">
+              You have reached the maximum number of videos allowed for your current plan ({uploadLimit?.limit}).
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-slate-700">
+              Upgrade your subscription to upload more videos and unlock premium features.
+            </p>
+            <Button 
+              onClick={() => navigate('/pricing')} 
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Upgrade Plan
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto py-6 px-4 max-w-5xl">
+    <div className={`max-w-4xl mx-auto p-6 ${embedded ? 'p-0' : ''}`}>
       {/* Header */}
       {!embedded && (
         <div className="mb-8">

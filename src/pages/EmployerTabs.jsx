@@ -8,6 +8,7 @@ import { Badge } from '@/components/UI/badge.jsx';
 import { getEmployerTabCategories } from '@/config/employerTabsConfig';
 import { getEmployerStats } from '@/services/api';
 import themeColors from '@/config/theme-colors';
+import { Button } from '@/components/UI/button.jsx';
 import {
   Home,
   Search,
@@ -27,8 +28,22 @@ import {
   TrendingUp,
   FileText,
   BookOpen,
-  Info
+  Info,
+  Lock
 } from 'lucide-react';
+
+const LockedFeature = ({ requiredPlan, navigate }) => (
+  <div className="flex flex-col items-center justify-center py-12 text-center">
+    <div className="bg-gray-100 p-4 rounded-full mb-4">
+      <Lock className="h-8 w-8 text-gray-500" />
+    </div>
+    <h3 className="text-xl font-bold mb-2">Feature Locked</h3>
+    <p className="text-gray-600 mb-6 max-w-md">
+      This feature requires the {requiredPlan} plan. Upgrade your subscription to access this feature.
+    </p>
+    <Button onClick={() => navigate('/pricing')}>View Plans</Button>
+  </div>
+);
  
 const EmployerTabs = () => {
   const { t } = useTranslation();
@@ -48,7 +63,7 @@ const EmployerTabs = () => {
   const tabParam = searchParams.get('tab') || 'overview';
   const tabId = searchParams.get('id'); // Get dynamic ID parameter
 
-  const employerTabCategories = getEmployerTabCategories(t);
+  const employerTabCategories = getEmployerTabCategories(t, user);
 
   const tabCategory = employerTabCategories.find((cat) => cat.key === tabCategoryKey) || employerTabCategories[0];
   
@@ -116,6 +131,7 @@ const EmployerTabs = () => {
           externalLink: tab.externalLink || false,
           // Force active styling for certain items that should look like other nav items
           forceActiveStyle: !!tab.forceActiveStyle || !!tab.externalLink,
+          locked: tab.locked, // Pass locked state
         };
         // no-op: navItem prepared
         navItem.labelKey = tab.labelKey || '';
@@ -267,7 +283,9 @@ const EmployerTabs = () => {
               </div>
             </CardHeader>
             <CardContent>
-              {currentTab.component && (currentTab.context
+              {currentTab.locked ? (
+                <LockedFeature requiredPlan={currentTab.requiredPlan} navigate={navigate} />
+              ) : currentTab.component && (currentTab.context
                 ? React.createElement(currentTab.component, { context: currentTab.context, id: tabId })
                 : React.createElement(currentTab.component, { id: tabId }))}
             </CardContent>

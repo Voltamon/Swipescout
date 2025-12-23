@@ -48,6 +48,8 @@ import JobVideos from "./pages/JobVideos";
 import CompanyVideos from "./pages/CompanyVideos";
 import Settings from "./pages/Settings";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
+import SupportPage from "./pages/SupportPage";
+import PricingPage from "./pages/PricingPage";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import TranslationTest from "./pages/TranslationTest";
 import UnauthorizedPage from "./pages/Unauthorized";
@@ -251,6 +253,9 @@ function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/support" element={<SupportPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/job-seeker-dashboard" element={<JobSeekerDashboard />} />
               <Route path="/notifications" element={<NotificationsRedirect />} />
               <Route path="/notification-settings" element={<NotificationSettingsPage />} />
               

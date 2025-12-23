@@ -469,7 +469,7 @@ function InterviewCard({ interview, user, canJoin, onJoin, onReschedule, onCance
               <User className="h-3 w-3" />
               {user?.role === 'employer' 
                 ? interview.candidate?.displayName || interview.candidate?.fullName
-                : interview.employer?.companyName || interview.employer?.displayName}
+                : interview.job?.employerProfile?.name || interview.employer?.displayName || 'Company'}
             </CardDescription>
           </div>
         </div>

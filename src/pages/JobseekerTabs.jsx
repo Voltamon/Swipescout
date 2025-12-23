@@ -9,6 +9,7 @@ import { jobseekerTabCategories } from '@/config/jobseekerTabsConfig';
 import EditJobSeekerProfile from '@/pages/EditJobSeekerProfile';
 import { getJobseekerStats } from '@/services/api';
 import themeColors from '@/config/theme-colors-jobseeker';
+import { Button } from '@/components/UI/button.jsx';
 import {
   Home,
   Search,
@@ -29,7 +30,21 @@ import {
   Briefcase,
   Mail,
   TrendingUp,
+  Lock,
 } from 'lucide-react';
+
+const LockedFeature = ({ requiredPlan, navigate }) => (
+  <div className="flex flex-col items-center justify-center py-12 text-center">
+    <div className="bg-gray-100 p-4 rounded-full mb-4">
+      <Lock className="h-8 w-8 text-gray-500" />
+    </div>
+    <h3 className="text-xl font-bold mb-2">Feature Locked</h3>
+    <p className="text-gray-600 mb-6 max-w-md">
+      This feature requires the {requiredPlan} plan. Upgrade your subscription to access this feature.
+    </p>
+    <Button onClick={() => navigate('/pricing')}>View Plans</Button>
+  </div>
+);
 
 const JobseekerTabs = () => {
   const DashboardIcon = Dashboard;
@@ -51,7 +66,7 @@ const JobseekerTabs = () => {
   const tabCategoryKey = searchParams.get('group') || 'dashboard';
   const tabParam = searchParams.get('tab') || 'overview';
 
-  const jobseekerTabCategoriesData = jobseekerTabCategories();
+  const jobseekerTabCategoriesData = jobseekerTabCategories(user);
 
   const tabCategory =
     jobseekerTabCategoriesData.find((cat) => cat.key === tabCategoryKey) ||
@@ -111,6 +126,7 @@ const JobseekerTabs = () => {
           label: tab.label,
           icon: IconComponent,
           path: `/jobseeker-tabs?group=${category.key}&tab=${tab.path}`,
+          locked: tab.locked, // Pass locked state
         };
         navItem.labelKey = tab.labelKey || '';
         return navItem;
@@ -241,7 +257,9 @@ const JobseekerTabs = () => {
           </CardHeader>
           <CardContent>
             {/* If the current tab is the profile tab and mode=edit is present in the query, render the edit form */}
-            {currentTab.path === 'my-profile' && searchParams.get('mode') === 'edit' ? (
+            {currentTab.locked ? (
+              <LockedFeature requiredPlan={currentTab.requiredPlan} navigate={navigate} />
+            ) : currentTab.path === 'my-profile' && searchParams.get('mode') === 'edit' ? (
               <EditJobSeekerProfile openTab={searchParams.get('openTab')} action={searchParams.get('action')} />
             ) : currentTab.context ? (
               React.createElement(currentTab.component, { context: currentTab.context })

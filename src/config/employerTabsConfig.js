@@ -37,8 +37,18 @@ import EditEmployerProfilePage from "../pages/EditEmployerProfilePage";
 import JobDetailsPage from "../pages/JobDetailsPage.jsx";
 import JobApplicantsPage from "../pages/JobApplicantsPage.jsx";
 
+const hasAccess = (userPlan, requiredPlan) => {
+  const levels = { STARTER: 0, BUSINESS: 1, ENTERPRISE: 2 };
+  const currentLevel = levels[userPlan?.toUpperCase()] || 0;
+  const requiredLevel = levels[requiredPlan?.toUpperCase()] || 0;
+  return currentLevel >= requiredLevel;
+};
+
 // Function to get translated employer tab categories
-export const getEmployerTabCategories = t => [
+export const getEmployerTabCategories = (t, user) => {
+  const userPlan = user?.subscriptionPlan || 'STARTER';
+
+  return [
   {
     key: "dashboard",
     labelKey: "employerTabs:categories.dashboard",
@@ -59,7 +69,9 @@ export const getEmployerTabCategories = t => [
         component: AnalyticsEmployer,
         context: "analytics",
         path: "analytics",
-        description: t("employerTabs:descriptions.analytics")
+        description: t("employerTabs:descriptions.analytics"),
+        locked: !hasAccess(userPlan, 'BUSINESS'),
+        requiredPlan: 'BUSINESS'
       }
     ]
   },
@@ -269,8 +281,11 @@ export const getEmployerTabCategories = t => [
         icon: { name: "Edit" },
         component: VideoEditPage,
         path: "video-editor",
-        description: t("employerTabs:descriptions.videoEditor")
+        description: t("employerTabs:descriptions.videoEditor"),
+        locked: !hasAccess(userPlan, 'BUSINESS'),
+        requiredPlan: 'BUSINESS'
       }
     ]
   }
 ];
+};

@@ -173,6 +173,10 @@ export const uploadAvator = (formData) => api.post('/users/me/avatar', formData,
  
 // Videos (general)
 export const uploadVideoResume = (formData) => api.post('/videos/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const checkUploadLimit = async () => {
+  const response = await api.get('/videos/upload-limit');
+  return response.data;
+};
 export const checkUploadStatus = (id) => api.get(`/videos/upload-status/${id}`);
 export const getVideoResume = () => api.get('/videos/');
 export const getJobVideos = (id) => api.get(`/videos/job/${id}`);
@@ -480,6 +484,16 @@ export const deleteCareerPath = (id) => api.delete(`/career-advice/career-paths/
 
 // Career advice (quick tips & career paths)
 // (duplicates removed) getQuickTips/getCareerPaths are defined above with default params
+
+export const createSupportTicket = async (ticketData) => {
+  const response = await api.post('/support', ticketData);
+  return response.data;
+};
+
+export const getUserTickets = async () => {
+  const response = await api.get('/support');
+  return response.data;
+};
 
 export default api;
 

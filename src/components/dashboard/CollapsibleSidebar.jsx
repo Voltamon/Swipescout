@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink, Lock } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/UI/button.jsx';
@@ -42,7 +42,11 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
     return false;
   };
 
-  const handleNavigation = (path, externalLink = false) => {
+  const handleNavigation = (path, externalLink = false, locked = false) => {
+    if (locked) {
+      navigate('/pricing');
+      return;
+    }
     if (externalLink) {
       // For external links, open in new tab
       window.open(path, '_blank', 'noopener,noreferrer');
@@ -116,7 +120,7 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                       ? 'bg-gradient-to-r from-purple-100 to-cyan-100 dark:from-purple-950/30 dark:to-cyan-950/30 !text-purple-700 dark:!text-purple-400 font-semibold'
                       : 'hover:bg-slate-100 dark:hover:bg-slate-800/50'
                   )}
-                  onClick={() => handleNavigation(item.path, item.externalLink)}
+                  onClick={() => handleNavigation(item.path, item.externalLink, item.locked)}
                 >
                   {item.icon && (
                     <item.icon
@@ -129,6 +133,9 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                   )}
                   {!isCollapsed && (
                     <span className={cn('truncate', shouldHighlight ? 'text-purple-700 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300')}>{item.label}</span>
+                  )}
+                  {!isCollapsed && item.locked && (
+                    <Lock className="ml-auto h-3 w-3 opacity-50 text-slate-600 dark:text-slate-400" />
                   )}
                   {!isCollapsed && item.externalLink && (
                     <ExternalLink className="ml-auto h-3 w-3 opacity-50 text-slate-600 dark:text-slate-400" />
