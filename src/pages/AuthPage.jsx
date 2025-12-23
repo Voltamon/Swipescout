@@ -168,6 +168,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
   };
 
   const handleGoogleSignInWithRole = async (nextRole) => {
+    scrollDialogToBottom();
     setShowRoleMenu({ ...showRoleMenu, google: false });
     setLoading({ ...loading, google: true });
     setError('');
@@ -195,6 +196,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
   };
 
   const handleLinkedInSignInWithRole = async (role) => {
+    scrollDialogToBottom();
     setShowRoleMenu({ ...showRoleMenu, linkedin: false });
     setLoading({ ...loading, linkedin: true });
     setError('');

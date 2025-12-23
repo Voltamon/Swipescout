@@ -92,6 +92,7 @@ import EditEmployerProfilePage from "./pages/EditEmployerProfilePage";
 import EditVideoPage from "./pages/EditeVideoPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
 import JobseekerProfileView from "./pages/JobseekerProfileView";
 import EmployerProfileView from "./pages/EmployerProfileView";
 import ProfileViewPage from "./pages/ProfileViewPage";
@@ -220,7 +221,8 @@ function App() {
             <Route path="/videos-Feed" element={<VideosFeed />} />
             
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password/:oobCode" element={<ResetPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
         
             <Route path="/profile/:userId" element={<ProfileViewPage />} />
             <Route path="/video-feed/:vid?" element={<VideoFeed />} />

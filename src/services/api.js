@@ -165,6 +165,8 @@ export const logoutUser = () => api.post('/auth/logout');
 export const refreshToken = () => api.post('/auth/refresh');
 export const forgotPassword = (data) => api.post('/auth/forgot-password', { email: data.email }).then(r => r.data);
 export const resetPassword = (data) => api.post('/auth/reset-password', { oobCode: data.oobCode, newPassword: data.newPassword }).then(r => r.data);
+export const sendVerificationEmail = () => api.post('/auth/send-verification-email').then(r => r.data);
+export const verifyEmail = (token) => api.post('/auth/verify-email', { token }).then(r => r.data);
 
 // User
 export const getCurrentUser = () => api.get('/users/me');
@@ -252,6 +254,10 @@ export const getEmployerJobs = () => api.get('/employer/jobs/');
 export const getEmployerPublicJobs = (id) => api.get(`/employer/jobs/${id}`);
 export const getJobDetails = (id) => api.get(`/employer/job/${id}`);
 export const getEmployerVideos = () => api.get(`/videos/`);
+export const checkJobLimit = async () => {
+  const response = await api.get('/employer/job-limit');
+  return response.data;
+};
 
 // Jobs CRUD
 export const getAllJobs = (params) => api.get('/employer/jobs', { params });
