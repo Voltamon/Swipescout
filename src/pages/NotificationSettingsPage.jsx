@@ -53,6 +53,30 @@ const NotificationSettingsPage = () => {
       const response = await getUserSettings();
       const data = response?.data || {};
       const notif = data.notifications || {};
+
+      // Check if we have the flat structure from new backend
+      if (notif.emailNotifications !== undefined || notif.jobAlerts !== undefined) {
+          setSettings(prev => ({
+            ...prev,
+            email_notifications: !!notif.emailNotifications,
+            push_notifications: !!notif.pushNotifications,
+            sms_notifications: !!notif.sms_notifications,
+            job_alerts: !!notif.jobAlerts,
+            interview_reminders: !!notif.interviewReminders,
+            message_notifications: !!notif.messageNotifications,
+            video_interactions: !!notif.video_interactions,
+            connection_requests: !!notif.connection_requests,
+            marketing_emails: !!notif.weeklyDigest,
+            weekly_digest: !!notif.weeklyDigest,
+            quiet_hours_enabled: !!notif.quiet_hours_enabled,
+            quiet_hours_start: notif.quiet_hours_start || '22:00',
+            quiet_hours_end: notif.quiet_hours_end || '08:00',
+            notification_frequency: notif.notification_frequency || 'immediate',
+            desktop_notifications: !!notif.desktop_notifications
+          }));
+          return;
+      }
+
       const email = notif.email || {};
       const push = notif.push || {};
       const inApp = notif.inApp || {};
@@ -97,14 +121,22 @@ const NotificationSettingsPage = () => {
       setSaving(true);
       // Map this page's flat settings into the shape expected by userService.updateUserSettings
       const mapped = {
+        emailNotifications: !!settings.email_notifications,
+        pushNotifications: !!settings.push_notifications,
         messageNotifications: !!settings.message_notifications,
         jobAlerts: !!settings.job_alerts,
         interviewReminders: !!settings.interview_reminders,
         weeklyDigest: !!settings.weekly_digest,
-        profileViews: false // no direct control on this page yet
+        profileViews: false, // no direct control on this page yet
+        desktop_notifications: !!settings.desktop_notifications,
+        sms_notifications: !!settings.sms_notifications,
+        video_interactions: !!settings.video_interactions,
+        connection_requests: !!settings.connection_requests,
+        quiet_hours_enabled: !!settings.quiet_hours_enabled,
+        quiet_hours_start: settings.quiet_hours_start,
+        quiet_hours_end: settings.quiet_hours_end,
+        notification_frequency: settings.notification_frequency
       };
-      // Include desktop preference so it can be persisted server-side
-      mapped.desktop_notifications = !!settings.desktop_notifications;
 
   await updateUserSettings({ notifications: mapped });
   // Save desktop notifications preference locally
