@@ -266,11 +266,6 @@ export const getJobById = (id) => api.get(`/employer/job/${id}`);
 export const postJob = (jobData) => api.post('/employer/job', jobData);
 export const updateJob = (id, jobData) => api.put(`/employer/job/${id}`, jobData);
 export const deleteJob = (id) => api.delete(`/employer/job/${id}`);
-// Returns the server payload (success, limit, used, remaining, allowed)
-export const checkJobLimit = async () => {
-  const response = await api.get('/employer/job-limit');
-  return response.data;
-};
 export const getJobCategories = (id) => api.get(`/categorie/job/${id}`);
 export const getCategories = () => api.get('/categories');
 // Optional endpoint that backend may expose to return distinct skill_type values
