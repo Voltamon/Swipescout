@@ -34,7 +34,8 @@ import {
   getUserVideosByUserId,
   getJobSeekerSkills,
   getJobSeekerExperiences,
-  getJobSeekerEducation
+  getJobSeekerEducation,
+  sendVerificationEmail
 } from '../services/api.js';
 import { getPublicProfile } from '@/services/api';
 
@@ -286,6 +287,22 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
     return `${VITE_API_BASE_URL}${u}`;
   };
 
+  const handleVerifyEmail = async () => {
+    try {
+      await sendVerificationEmail();
+      toast({
+        title: "Verification email sent",
+        description: "Please check your inbox.",
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to send verification email",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleConnect = async () => {
     if (!user || !user.id) {
       try { console.trace && console.trace('[JobSeekerProfileView] handleConnect trace'); } catch (e) {}
@@ -452,6 +469,15 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                           <a href={`mailto:${profile.email}`} className="hover:text-cyan-600">
                             {profile.email}
                           </a>
+                          {isOwnProfile && (
+                            profile.user?.isVerified ? (
+                              <Badge variant="outline" className="text-green-600 border-green-600 ml-2">Verified</Badge>
+                            ) : (
+                              <Button variant="link" size="sm" onClick={handleVerifyEmail} className="text-orange-500 h-auto p-0 ml-2">
+                                Verify
+                              </Button>
+                            )
+                          )}
                         </div>
                       )}
 

@@ -1,5 +1,5 @@
 ﻿import React, { useContext, useState, useEffect  } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Button, 
@@ -75,7 +75,8 @@ const LoginButton = styled(Button)(({ theme }) => ({
 }));
 
 const ResetPasswordPage = () => {
-  const { oobCode } = useParams();
+  const [searchParams] = useSearchParams();
+  const oobCode = searchParams.get('oobCode');
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
