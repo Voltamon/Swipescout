@@ -34,7 +34,7 @@ import {
   UserPlus,
   Clock
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';
 import { 
@@ -53,10 +53,18 @@ import PaymentForm from '@/components/PaymentForm';
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function PricingPage() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { t } = useTranslation('pricing');
   const { toast } = useToast();
-  const [tabValue, setTabValue] = useState('job-seekers');
+  const location = useLocation();
+  
+  const [tabValue, setTabValue] = useState(() => {
+    const passedRole = location.state?.role;
+    const effectiveRole = passedRole || role || user?.role;
+    const primaryRole = Array.isArray(effectiveRole) ? effectiveRole[0] : effectiveRole;
+    
+    return primaryRole === 'employer' ? 'employers' : 'job-seekers';
+  });
   const [isAnnual, setIsAnnual] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -545,11 +553,13 @@ export default function PricingPage() {
     </div>
   );
 
+  const isDashboard = location.pathname.includes('tabs');
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50">
-      <Header />
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 ${isDashboard ? 'bg-none' : ''}`}>
+      {!isDashboard && <Header />}
       
-      <div className="container mx-auto py-12 px-4">
+      <div className={`container mx-auto px-4 ${isDashboard ? 'py-4' : 'py-12'}`}>
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
@@ -667,7 +677,7 @@ export default function PricingPage() {
         </Dialog>
       </div>
 
-      <Footer />
+      {!isDashboard && <Footer />}
     </div>
   );
 }

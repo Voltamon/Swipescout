@@ -49,7 +49,12 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
 
   const handleNavigation = (path, externalLink = false, locked = false) => {
     if (locked) {
-      navigate('/pricing');
+      const primaryRole = Array.isArray(role) ? role[0] : role;
+      if (primaryRole === 'employer') {
+        navigate('/employer-tabs?group=managementSettings&tab=pricing', { state: { role } });
+      } else {
+        navigate('/jobseeker-tabs?group=activities&tab=pricing', { state: { role } });
+      }
       return;
     }
     if (externalLink) {
@@ -120,11 +125,13 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                 <Button
                   variant="ghost"
                   className={cn(
-                    'w-full justify-start transition-all text-slate-700 dark:text-slate-300',
+                    'w-full justify-start transition-all',
                     isCollapsed ? 'px-2' : 'px-3',
                     shouldHighlight
                       ? `${activeColorScheme.bg} ${activeColorScheme.text} font-semibold`
-                      : 'hover:bg-slate-100 dark:hover:bg-slate-800/50'
+                      : item.locked
+                        ? 'bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 group'
+                        : `${activeColorScheme.hoverBg || 'hover:bg-slate-100 dark:hover:bg-slate-800/50'} text-slate-700 dark:text-slate-300`
                   )}
                   onClick={() => handleNavigation(item.path, item.externalLink, item.locked)}
                 >
@@ -133,15 +140,28 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                       className={cn(
                         'h-5 w-5 flex-shrink-0',
                         !isCollapsed && 'mr-3',
-                        shouldHighlight ? activeColorScheme.icon : 'text-slate-700 dark:text-slate-300'
+                        shouldHighlight 
+                          ? activeColorScheme.icon 
+                          : item.locked 
+                            ? 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors' 
+                            : 'text-slate-700 dark:text-slate-300'
                       )}
                     />
                   )}
                   {!isCollapsed && (
-                    <span className={cn('truncate', shouldHighlight ? activeColorScheme.text : 'text-slate-700 dark:text-slate-300')}>{item.label}</span>
+                    <span className={cn(
+                      'truncate', 
+                      shouldHighlight 
+                        ? activeColorScheme.text 
+                        : item.locked 
+                          ? 'text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors' 
+                          : 'text-slate-700 dark:text-slate-300'
+                    )}>
+                      {item.label}
+                    </span>
                   )}
                   {!isCollapsed && item.locked && (
-                    <Lock className="ml-auto h-3 w-3 opacity-50 text-slate-600 dark:text-slate-400" />
+                    <Lock className="ml-auto h-3.5 w-3.5 text-amber-500 dark:text-amber-400 opacity-80 group-hover:opacity-100 transition-opacity" />
                   )}
                   {!isCollapsed && item.externalLink && (
                     <ExternalLink className="ml-auto h-3 w-3 opacity-50 text-slate-600 dark:text-slate-400" />

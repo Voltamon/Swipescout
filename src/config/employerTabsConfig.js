@@ -36,6 +36,7 @@ import AnalyticsEmployer from "../pages/AnalyticsEmployer";
 import EditEmployerProfilePage from "../pages/EditEmployerProfilePage";
 import JobDetailsPage from "../pages/JobDetailsPage.jsx";
 import JobApplicantsPage from "../pages/JobApplicantsPage.jsx";
+import PricingPage from "../pages/PricingPage.jsx";
 
 const hasAccess = (userPlan, requiredPlan) => {
   const levels = { STARTER: 0, BUSINESS: 1, ENTERPRISE: 2 };
@@ -203,6 +204,15 @@ export const getEmployerTabCategories = (t, user) => {
         component: EmployerSettingsPage,
         path: "settings",
         description: t("employerTabs:descriptions.settings")
+      },
+      {
+        labelKey: "employerTabs:tabs.pricing",
+        label: t("employerTabs:tabs.pricing", "Pricing & Plans"),
+        icon: { name: "CreditCard" },
+        component: PricingPage,
+        path: "pricing",
+        hideInSidebar: true,
+        description: t("employerTabs:descriptions.pricing", "View subscription plans")
       }
     ]
   },

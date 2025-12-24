@@ -4,29 +4,27 @@ import { themeColors as adminTheme } from "./theme-colors-admin.js";
 
 export const roleColorSchemes = {
   job_seeker: {
-    bg:
-      "bg-gradient-to-r from-teal-100 to-cyan-100 dark:from-teal-950/30 dark:to-cyan-950/30",
-    text: `!${jobseekerTheme.badges.primary.split(" ")[1]} dark:!text-teal-400`,
-    icon: `${jobseekerTheme.badges.primary.split(" ")[1]} dark:text-teal-400`
+    bg: `bg-gradient-to-r ${jobseekerTheme.gradients.primary} shadow-md shadow-teal-500/20`,
+    text: "!text-white",
+    icon: "text-white",
+    hoverBg: "hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 dark:hover:from-teal-950/30 dark:hover:to-cyan-950/30"
   },
   employer: {
-    bg:
-      "bg-gradient-to-r from-blue-100 to-slate-100 dark:from-blue-950/30 dark:to-slate-950/30",
-    text: `!${employerTheme.badges.primary.split(" ")[1]} dark:!text-blue-400`,
-    icon: `${employerTheme.badges.primary.split(" ")[1]} dark:text-blue-400`
+    bg: `bg-gradient-to-r ${employerTheme.gradients.primary} shadow-md shadow-blue-500/20`,
+    text: "!text-white",
+    icon: "text-white",
+    hoverBg: "hover:bg-gradient-to-r hover:from-blue-50 hover:to-slate-50 dark:hover:from-blue-950/30 dark:hover:to-slate-950/30"
   },
   admin: {
-    bg:
-      "bg-gradient-to-r from-emerald-100 to-slate-100 dark:from-emerald-950/30 dark:to-slate-950/30",
-    text: `!${adminTheme.badges.secondary.split(
-      " "
-    )[1]} dark:!text-emerald-400`,
-    icon: `${adminTheme.badges.secondary.split(" ")[1]} dark:text-emerald-400`
+    bg: `bg-gradient-to-r ${adminTheme.gradients.primary} shadow-md shadow-slate-500/20`,
+    text: "!text-white",
+    icon: "text-white",
+    hoverBg: "hover:bg-gradient-to-r hover:from-emerald-50 hover:to-slate-50 dark:hover:from-emerald-950/30 dark:hover:to-slate-950/30"
   },
   default: {
-    bg:
-      "bg-gradient-to-r from-purple-100 to-cyan-100 dark:from-purple-950/30 dark:to-cyan-950/30",
-    text: "!text-purple-700 dark:!text-purple-400",
-    icon: "text-purple-700 dark:text-purple-400"
+    bg: "bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-800 shadow-md shadow-purple-500/20",
+    text: "!text-white",
+    icon: "text-white",
+    hoverBg: "hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 dark:hover:from-purple-950/30 dark:hover:to-indigo-950/30"
   }
 };

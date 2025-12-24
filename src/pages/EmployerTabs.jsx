@@ -32,7 +32,7 @@ import {
   Lock
 } from 'lucide-react';
 
-const LockedFeature = ({ requiredPlan, navigate }) => (
+const LockedFeature = ({ requiredPlan, navigate, role }) => (
   <div className="flex flex-col items-center justify-center py-12 text-center">
     <div className="bg-gray-100 p-4 rounded-full mb-4">
       <Lock className="h-8 w-8 text-gray-500" />
@@ -41,7 +41,7 @@ const LockedFeature = ({ requiredPlan, navigate }) => (
     <p className="text-gray-600 mb-6 max-w-md">
       This feature requires the {requiredPlan} plan. Upgrade your subscription to access this feature.
     </p>
-    <Button onClick={() => navigate('/pricing')}>View Plans</Button>
+    <Button onClick={() => navigate('/employer-tabs?group=managementSettings&tab=pricing', { state: { role } })}>View Plans</Button>
   </div>
 );
  
@@ -116,6 +116,7 @@ const EmployerTabs = () => {
     HelpIcon: HelpCircle,
     BookOpen: BookOpen,
     Info: Info,
+    CreditCard: Briefcase, // Fallback or specific icon for pricing
   };
 
   // Build navigation items from config
@@ -284,7 +285,7 @@ const EmployerTabs = () => {
             </CardHeader>
             <CardContent>
               {currentTab.locked ? (
-                <LockedFeature requiredPlan={currentTab.requiredPlan} navigate={navigate} />
+                <LockedFeature requiredPlan={currentTab.requiredPlan} navigate={navigate} role={role} />
               ) : currentTab.component && (currentTab.context
                 ? React.createElement(currentTab.component, { context: currentTab.context, id: tabId })
                 : React.createElement(currentTab.component, { id: tabId }))}

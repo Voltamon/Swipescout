@@ -10,7 +10,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
   const { t } = useTranslation(['auth', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginByEmailAndPassword, registerByEmailAndPassword, authenticateWithGoogle, authenticateWithLinkedIn } = useAuth();
+  const { loginByEmailAndPassword, registerByEmailAndPassword, authenticateWithGoogle, authenticateWithLinkedIn, user, loading: authLoading } = useAuth();
 
   const [activeTab, setActiveTab] = useState(initialTab || 0);
   const [formData, setFormData] = useState({ email: '', password: '', confirmPassword: '', firstName: '', lastName: '', role: '' });
@@ -57,14 +57,6 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
 
   const redirectPath = propRedirectPath || (location && location.state && location.state.redirectPath) || null;
 
-  useEffect(() => {
-    setActiveTab(initialTab || 0);
-  }, [initialTab]);
-
-  // (Note) previous MUI overrides removed — this file uses Tailwind inputs now
-
-  if (open === false) return null;
-
   const getDefaultRoute = (role) => {
     const effectiveRole = Array.isArray(role) ? role[0] : role;
     switch (effectiveRole) {
@@ -76,6 +68,30 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
       default: return '/';
     }
   };
+
+  useEffect(() => {
+    setActiveTab(initialTab || 0);
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (open && !authLoading && user && user.role) {
+      const effectiveRole = Array.isArray(user.role) ? user.role[0] : user.role;
+      if (effectiveRole && effectiveRole !== 'no_role' && effectiveRole !== 'no role') {
+        const targetRoute = redirectPath || getDefaultRoute(user.role);
+        navigate(targetRoute);
+      }
+    }
+  }, [open, authLoading, user, navigate, redirectPath]);
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => scrollDialogToBottom(), 100);
+    }
+  }, [error]);
+
+  // (Note) previous MUI overrides removed — this file uses Tailwind inputs now
+
+  if (open === false) return null;
 
   const handleTabChange = (newValue) => {
     setActiveTab(newValue);
@@ -96,6 +112,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
 
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
+    scrollDialogToBottom();
     setLoading({ ...loading, email: true });
     setError('');
     try {
@@ -131,6 +148,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
 
   const handleEmailSignUp = async (e) => {
     e.preventDefault();
+    scrollDialogToBottom();
     setLoading({ ...loading, email: true });
     setError('');
     if (!formData.role) {

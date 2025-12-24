@@ -33,6 +33,7 @@ import VideosPage from "../pages/VideosPage.jsx";
 import CareerAdvicePage from "../pages/CareerAdvicePage.jsx";
 import PersonalityTestPage from "../pages/PersonalityTestPage.jsx";
 import SkillGapAnalysisPage from "../pages/SkillGapAnalysisPage.jsx";
+import PricingPage from "../pages/PricingPage.jsx";
 
 import { useTranslation } from "react-i18next";
 
@@ -181,6 +182,15 @@ export const jobseekerTabCategories = (user) => {
           component: NotificationSettingsPage,
           path: "notification-settings",
           description: t("jobseekerTabs:descriptions.notificationSettings")
+        },
+        {
+          labelKey: "jobseekerTabs:tabs.pricing",
+          label: t("jobseekerTabs:tabs.pricing", "Pricing & Plans"),
+          icon: { name: "CreditCard" },
+          component: PricingPage,
+          path: "pricing",
+          hideInSidebar: true,
+          description: t("jobseekerTabs:descriptions.pricing", "View subscription plans")
         }
       ]
     },
