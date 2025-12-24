@@ -30,7 +30,7 @@ const ConnectionsPage = () => {
         const theme = await import('@/config/theme-colors-jobseeker');
         setThemeColors(theme.themeColors);
       } else {
-        const theme = await import('@/config/theme-colors');
+        const theme = await import('@/config/theme-colors-employer');
         setThemeColors(theme.themeColors);
       }
     };

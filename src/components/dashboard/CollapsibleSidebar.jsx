@@ -11,10 +11,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/UI/tooltip.jsx';
+import { useAuth } from '@/contexts/AuthContext';
+import { roleColorSchemes } from '@/config/role-colors';
 
 const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed, logo }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { role } = useAuth();
+
+  const roleColorScheme = roleColorSchemes[role] || roleColorSchemes.default;
 
   const isActive = (path) => {
     // Defensive guards: path must be a non-empty string and location must be available
@@ -96,6 +101,7 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
               const active = isActive(item.path);
               // allow items to force the active style (e.g., external link highlight)
               const shouldHighlight = !!item.forceActiveStyle || active;
+              const activeColorScheme = roleColorSchemes[item.color] || roleColorScheme;
               
               if (item.type === 'separator') {
                 return (
@@ -117,7 +123,7 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                     'w-full justify-start transition-all text-slate-700 dark:text-slate-300',
                     isCollapsed ? 'px-2' : 'px-3',
                     shouldHighlight
-                      ? 'bg-gradient-to-r from-purple-100 to-cyan-100 dark:from-purple-950/30 dark:to-cyan-950/30 !text-purple-700 dark:!text-purple-400 font-semibold'
+                      ? `${activeColorScheme.bg} ${activeColorScheme.text} font-semibold`
                       : 'hover:bg-slate-100 dark:hover:bg-slate-800/50'
                   )}
                   onClick={() => handleNavigation(item.path, item.externalLink, item.locked)}
@@ -127,12 +133,12 @@ const CollapsibleSidebar = ({ navigationItems = [], isCollapsed, setIsCollapsed,
                       className={cn(
                         'h-5 w-5 flex-shrink-0',
                         !isCollapsed && 'mr-3',
-                        shouldHighlight ? 'text-purple-700 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300'
+                        shouldHighlight ? activeColorScheme.icon : 'text-slate-700 dark:text-slate-300'
                       )}
                     />
                   )}
                   {!isCollapsed && (
-                    <span className={cn('truncate', shouldHighlight ? 'text-purple-700 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300')}>{item.label}</span>
+                    <span className={cn('truncate', shouldHighlight ? activeColorScheme.text : 'text-slate-700 dark:text-slate-300')}>{item.label}</span>
                   )}
                   {!isCollapsed && item.locked && (
                     <Lock className="ml-auto h-3 w-3 opacity-50 text-slate-600 dark:text-slate-400" />

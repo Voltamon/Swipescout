@@ -29,7 +29,7 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 
 export default function CandidateSearchPage() {
   // const { user } = useAuth(); // Removed: unused variable

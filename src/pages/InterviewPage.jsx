@@ -264,7 +264,7 @@ export default function InterviewPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="`${themeColors.text.gradient} text-4xl font-bold  mb-2">
-          {t('interviews.title') || 'Interviews'}
+          {t('interviews.pageTitle', 'Interviews')}
         </h1>
         <p className="text-muted-foreground">
           Manage and join your scheduled interviews

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/UI/checkbox.jsx";
 import { useToast } from "@/hooks/use-toast";
 import { postJob } from "@/services/api";
-import themeColors from "@/config/theme-colors";
+import themeColors from "@/config/theme-colors-employer";
 import { Briefcase, MapPin, DollarSign, Clock, FileText, CheckCircle, Loader2 } from "lucide-react";
 
 const JobPostingForm = () => {

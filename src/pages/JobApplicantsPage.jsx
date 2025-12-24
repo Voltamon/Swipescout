@@ -11,7 +11,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 import { Loader2, Users, Search, SlidersHorizontal, ArrowLeft, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { themeColors } from '@/config/theme-colors';
+import { themeColors } from '@/config/theme-colors-employer';
 
 export default function JobApplicantsPage({ id: propId }) {
   const { id: paramId } = useParams();

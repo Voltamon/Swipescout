@@ -37,7 +37,7 @@ import {
   RefreshCw,
   AlertCircle
 } from 'lucide-react';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 
 export default function VideoUpload({ newjobid, onComplete, onStatusChange, embedded }) {
   const navigate = useNavigate();

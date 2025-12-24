@@ -33,7 +33,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { Check, X as CloseIcon } from 'lucide-react';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 

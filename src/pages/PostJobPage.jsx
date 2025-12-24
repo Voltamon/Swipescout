@@ -65,7 +65,7 @@ import {
 } from 'lucide-react';
 
 // Theme colors
-import { themeColors } from '@/config/theme-colors';
+import { themeColors } from '@/config/theme-colors-employer';
 
 // Error Boundary Component
 class VideoUploadErrorBoundary extends React.Component {

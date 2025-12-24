@@ -30,7 +30,7 @@ import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs.jsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/table.jsx';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 
 // Register ChartJS components
 ChartJS.register(

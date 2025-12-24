@@ -43,7 +43,7 @@ import {
     Loader2,
     PlayCircle
 } from 'lucide-react';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 
 export default function CompanyVideos() {
   // const { user } = useAuth(); // Removed: unused variable

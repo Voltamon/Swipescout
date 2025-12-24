@@ -15,7 +15,7 @@ import { Textarea } from '@/components/UI/textarea.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/select.jsx';
 import { useToast } from '@/hooks/use-toast';
 import useConnectionMap from '@/hooks/useConnectionMap.jsx';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 import {
   MapPin,
   Search,

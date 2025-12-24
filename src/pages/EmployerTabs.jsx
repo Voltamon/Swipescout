@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/UI/badge.jsx';
 import { getEmployerTabCategories } from '@/config/employerTabsConfig';
 import { getEmployerStats } from '@/services/api';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 import { Button } from '@/components/UI/button.jsx';
 import {
   Home,

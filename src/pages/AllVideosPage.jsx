@@ -9,7 +9,7 @@ import {
   MessageCircle, Eye, Clock, ChevronUp, ChevronDown, User,
   Video, Loader2
 } from 'lucide-react';
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 import { useAuth } from '@/contexts/AuthContext';
 import useConnectionMap from '@/hooks/useConnectionMap.jsx';
 import { 

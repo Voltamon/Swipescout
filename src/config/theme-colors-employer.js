@@ -7,11 +7,11 @@
  */
 
 export const themeColors = {
-  // Primary brand gradients - aligned with home theme (indigo/purple/blue)
+  // Primary brand gradients - corporate and strong (deep blues and slate)
   gradients: {
-    primary: "from-indigo-600 via-purple-600 to-blue-600",
-    primaryHover: "from-indigo-700 via-purple-700 to-blue-700",
-    secondary: "from-blue-500 to-indigo-600",
+    primary: "from-blue-700 via-blue-800 to-gray-900",
+    primaryHover: "from-blue-800 via-blue-900 to-black",
+    secondary: "from-slate-600 to-slate-800",
     success: "from-green-500 to-emerald-600",
     warning: "from-amber-500 to-orange-600",
     danger: "from-red-500 to-rose-600",
@@ -22,7 +22,7 @@ export const themeColors = {
 
   // Background colors
   backgrounds: {
-    page: "bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50",
+    page: "bg-slate-100",
     card: "bg-white",
     cardHover: "hover:bg-slate-50",
     dark: "bg-slate-900",
@@ -36,7 +36,7 @@ export const themeColors = {
     muted: "text-slate-500",
     inverse: "text-white",
     gradient:
-      "bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent"
+      "bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900 bg-clip-text text-transparent"
   },
 
   // Border colors
@@ -44,9 +44,9 @@ export const themeColors = {
     default: "border-slate-200",
     light: "border-slate-100",
     dark: "border-slate-800",
-    primary: "border-indigo-500",
+    primary: "border-blue-700",
     gradient:
-      "border-2 border-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600"
+      "border-2 border-transparent bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
   },
 
   // Status colors
@@ -60,8 +60,8 @@ export const themeColors = {
 
   // Badge colors
   badges: {
-    primary: "bg-indigo-100 text-indigo-800",
-    secondary: "bg-blue-100 text-blue-800",
+    primary: "bg-blue-100 text-blue-800",
+    secondary: "bg-slate-100 text-slate-800",
     success: "bg-green-100 text-green-800",
     warning: "bg-amber-100 text-amber-800",
     danger: "bg-red-100 text-red-800",
@@ -72,29 +72,29 @@ export const themeColors = {
   // Button colors (for gradient buttons)
   buttons: {
     primary:
-      "bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700",
+      "bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900 hover:from-blue-800 hover:via-blue-900 hover:to-black",
     secondary:
-      "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700",
+      "bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900",
     success:
       "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
     danger:
       "bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700",
-    outline: "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
+    outline: "border-2 border-blue-700 text-blue-700 hover:bg-blue-50"
   },
 
   // Chart.js color configurations
   charts: {
     line: {
       primary: {
-        borderColor: "rgba(79, 70, 229, 1)", // indigo-600
-        backgroundColor: "rgba(79, 70, 229, 0.1)",
-        pointBackgroundColor: "rgba(79, 70, 229, 1)",
+        borderColor: "rgba(29, 78, 216, 1)", // blue-700
+        backgroundColor: "rgba(29, 78, 216, 0.1)",
+        pointBackgroundColor: "rgba(29, 78, 216, 1)",
         pointBorderColor: "#fff"
       },
       secondary: {
-        borderColor: "rgba(37, 99, 235, 1)", // blue-600
-        backgroundColor: "rgba(37, 99, 235, 0.1)",
-        pointBackgroundColor: "rgba(37, 99, 235, 1)",
+        borderColor: "rgba(51, 65, 85, 1)", // slate-700
+        backgroundColor: "rgba(51, 65, 85, 0.1)",
+        pointBackgroundColor: "rgba(51, 65, 85, 1)",
         pointBorderColor: "#fff"
       },
       success: {
@@ -105,24 +105,24 @@ export const themeColors = {
       }
     },
     bar: {
-      primary: "rgba(79, 70, 229, 0.8)", // indigo-600
-      secondary: "rgba(37, 99, 235, 0.8)", // blue-600
+      primary: "rgba(29, 78, 216, 0.8)", // blue-700
+      secondary: "rgba(51, 65, 85, 0.8)", // slate-700
       success: "rgba(34, 197, 94, 0.8)", // green-500
       warning: "rgba(245, 158, 11, 0.8)", // amber-500
       danger: "rgba(239, 68, 68, 0.8)" // red-500
     },
     doughnut: [
-      "rgba(79, 70, 229, 0.8)", // indigo-600
-      "rgba(147, 51, 234, 0.8)", // purple-600
-      "rgba(37, 99, 235, 0.8)", // blue-600
+      "rgba(29, 78, 216, 0.8)", // blue-700
+      "rgba(30, 64, 175, 0.8)", // blue-800
+      "rgba(17, 24, 39, 0.8)", // gray-900
       "rgba(34, 197, 94, 0.8)", // green-500
       "rgba(245, 158, 11, 0.8)", // amber-500
       "rgba(239, 68, 68, 0.8)" // red-500
     ],
     doughnutBorders: [
-      "rgba(79, 70, 229, 1)",
-      "rgba(147, 51, 234, 1)",
-      "rgba(37, 99, 235, 1)",
+      "rgba(29, 78, 216, 1)",
+      "rgba(30, 64, 175, 1)",
+      "rgba(17, 24, 39, 1)",
       "rgba(34, 197, 94, 1)",
       "rgba(245, 158, 11, 1)",
       "rgba(239, 68, 68, 1)"
@@ -131,8 +131,8 @@ export const themeColors = {
 
   // Icon background colors
   iconBackgrounds: {
-    primary: "bg-indigo-100 text-indigo-600",
-    secondary: "bg-blue-100 text-blue-600",
+    primary: "bg-blue-100 text-blue-700",
+    secondary: "bg-slate-100 text-slate-700",
     success: "bg-green-100 text-green-600",
     warning: "bg-amber-100 text-amber-600",
     danger: "bg-red-100 text-red-600",
@@ -146,7 +146,7 @@ export const themeColors = {
     md: "shadow-md",
     lg: "shadow-lg",
     xl: "shadow-xl",
-    gradient: "shadow-lg shadow-indigo-500/50"
+    gradient: "shadow-lg shadow-blue-500/50"
   }
 };
 

@@ -32,7 +32,7 @@ const placeholderOptions = [
   '/images/videoPlaceholder1.jpeg',
   '/images/videoPlaceholder2.jpeg'
 ];
-import themeColors from '@/config/theme-colors';
+import themeColors from '@/config/theme-colors-employer';
 
 export default function JobsListingPage() {
   const { user, role } = useAuth();
