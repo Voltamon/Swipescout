@@ -1,4 +1,9 @@
 {
+  "title": "Choose Your Plan",
+  "subtitle": "Find the perfect plan for your needs",
+  "subscriptionPlans": "Subscription Plans",
+  "professionalServices": "Professional Services",
+  "professionalServicesDesc": "Expert solutions for your recruitment needs",
   "choosePlan": "Choose Your Plan",
   "features": "Whether you're looking for your dream job or the perfect candidate, we have the right plan for you.",
   "monthly": "Monthly",

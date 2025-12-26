@@ -183,14 +183,16 @@ const EmployerTabs = () => {
     >
       <div className="space-y-6">
         {/* Welcome Section */}
-        <div className="space-y-2">
-          <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
-            {t('employerTabs:welcome', { name: user?.companyName || 'Employer' })}
-          </h1>
-          <p className={themeColors.text.secondary}>
-            {t('employerTabs:welcome_message')}
-          </p>
-        </div>
+        {tabParam === 'overview' && (
+          <div className="space-y-2">
+            <h1 className={`text-3xl font-bold tracking-tight ${themeColors.text.gradient}`}>
+              {t('employerTabs:welcome', { name: user?.companyName || 'Employer' })}
+            </h1>
+            <p className={themeColors.text.secondary}>
+              {t('employerTabs:welcome_message')}
+            </p>
+          </div>
+        )}
 
         {/* Quick Stats Cards - OpenVC Style */}
         {tabParam === 'overview' && (
