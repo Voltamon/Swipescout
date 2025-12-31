@@ -1,4 +1,5 @@
-﻿// Linkedincallback.jsx
+import i18n from 'i18next';
+// Linkedincallback.jsx
 import { useEffect , useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -68,7 +69,7 @@ export default function Linkedincallback() {
 
   }, [location.search]);
 
-  return <div>Processing LinkedIn login...</div>;
+  return <div>{i18n.t('auto_processing_linkedin_login')}</div>;
 }
 
 async function exchangeCodeForToken(code) {

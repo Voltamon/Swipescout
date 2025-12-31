@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Eye, ThumbsUp, Briefcase, MessageSquare, Bell, TrendingUp,
@@ -342,28 +343,21 @@ const JobSeekerDashboard = () => {
     return (
         <div className="container mx-auto py-6 px-4 max-w-7xl">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                    Dashboard
-                  
-  </h1>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">{i18n.t('auto_dashboard')}</h1>
             
                 <div className="flex gap-2" >
                     <Button
                         onClick={handleUploadVideoClick}
                         className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
                     >
-                        <PlayCircle className="h-4 w-4 mr-2" />
-                        Upload Video CV
-                    </Button>
+                        <PlayCircle className="h-4 w-4 mr-2" />{i18n.t('auto_upload_video_cv')}</Button>
 
                     <Button
                         variant="outline"
                         onClick={handleOpenAddSkill}
                         className="border-purple-600 text-purple-600 hover:bg-purple-50"
                     >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Skills
-                    </Button>
+                        <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_skills')}</Button>
                 </div>
             </div>
 
@@ -375,7 +369,7 @@ const JobSeekerDashboard = () => {
                             <Eye className="h-8 w-8 text-cyan-600" />
                         </div>
                         <h3 className="text-3xl font-bold mb-1">{stats?.profile_views ?? stats?.profileViews ?? 0}</h3>
-                        <p className="text-sm text-gray-600">Profile Views</p>
+                        <p className="text-sm text-gray-600">{i18n.t('auto_profile_views')}</p>
                     </CardContent>
                 </Card>
 
@@ -385,7 +379,7 @@ const JobSeekerDashboard = () => {
                             <ThumbsUp className="h-8 w-8 text-green-600" />
                         </div>
                         <h3 className="text-3xl font-bold mb-1">{stats?.matches || 0}</h3>
-                        <p className="text-sm text-gray-600">Matches</p>
+                        <p className="text-sm text-gray-600">{i18n.t('auto_matches')}</p>
                     </CardContent>
                 </Card>
 
@@ -395,7 +389,7 @@ const JobSeekerDashboard = () => {
                             <Briefcase className="h-8 w-8 text-purple-600" />
                         </div>
                         <h3 className="text-3xl font-bold mb-1">{stats?.applications || 0}</h3>
-                        <p className="text-sm text-gray-600">Applications</p>
+                        <p className="text-sm text-gray-600">{i18n.t('auto_applications')}</p>
                     </CardContent>
                 </Card>
 
@@ -405,7 +399,7 @@ const JobSeekerDashboard = () => {
                             <MessageSquare className="h-8 w-8 text-blue-600" />
                         </div>
                         <h3 className="text-3xl font-bold mb-1">{stats?.unread_messages || 0}</h3>
-                        <p className="text-sm text-gray-600">Unread Messages</p>
+                        <p className="text-sm text-gray-600">{i18n.t('auto_unread_messages')}</p>
                     </CardContent>
                 </Card>
             </div> */}
@@ -415,7 +409,7 @@ const JobSeekerDashboard = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Profile Activity</CardTitle>
+                            <CardTitle>{i18n.t('auto_profile_activity')}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="h-[300px]">
@@ -438,7 +432,7 @@ const JobSeekerDashboard = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Job Engagement</CardTitle>
+                                <CardTitle>{i18n.t('auto_job_engagement')}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="h-[250px]">
@@ -455,7 +449,7 @@ const JobSeekerDashboard = () => {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle>Skill Level</CardTitle>
+                                <CardTitle>{i18n.t('auto_skill_level')}</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="h-[250px]">
@@ -481,15 +475,15 @@ const JobSeekerDashboard = () => {
                 <div className="space-y-6">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>Recent Activities</CardTitle>
+                            <CardTitle>{i18n.t('auto_recent_activities')}</CardTitle>
                             <Bell className="h-5 w-5 text-gray-600" />
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3 max-h-[300px] overflow-auto">
                                 {(activities?.length ?? 0) === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
-                                        <p className="font-medium">No recent activities</p>
-                                        <p className="text-sm">Your activities will appear here</p>
+                                        <p className="font-medium">{i18n.t('auto_no_recent_activities')}</p>
+                                        <p className="text-sm">{i18n.t('auto_your_activities_will_appear_here')}</p>
                                     </div>
                                 ) : (
                                     activities.map((activity, index) => (
@@ -510,22 +504,21 @@ const JobSeekerDashboard = () => {
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>Recommended Jobs</CardTitle>
+                            <CardTitle>{i18n.t('auto_recommended_jobs')}</CardTitle>
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setViewAllOpen(true)}
                                 className="text-purple-600 hover:text-purple-700"
-                            >
-                                View All <ArrowRight className="h-4 w-4 ml-1" />
+                            >{i18n.t('auto_view_all')}<ArrowRight className="h-4 w-4 ml-1" />
                             </Button>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3 max-h-[350px] overflow-auto">
                                 {recommendations.length === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
-                                        <p className="font-medium">No recommendations</p>
-                                        <p className="text-sm">Check back later for job matches</p>
+                                        <p className="font-medium">{i18n.t('auto_no_recommendations')}</p>
+                                        <p className="text-sm">{i18n.t('auto_check_back_later_for_job_matches')}</p>
                                     </div>
                                 ) : (
                                     recommendations.map((job, idx) => (
@@ -557,7 +550,7 @@ const JobSeekerDashboard = () => {
             {/* Tips Section */}
             <Card className="mt-6">
                 <CardHeader>
-                    <CardTitle>Tips to Improve Your Chances</CardTitle>
+                    <CardTitle>{i18n.t('auto_tips_to_improve_your_chances')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -565,11 +558,9 @@ const JobSeekerDashboard = () => {
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-2 mb-3">
                                     <TrendingUp className="h-5 w-5 text-cyan-600" />
-                                    <h3 className="font-semibold">Complete Your Profile</h3>
+                                    <h3 className="font-semibold">{i18n.t('auto_complete_your_profile_1')}</h3>
                                 </div>
-                                <p className="text-sm text-gray-600 mb-4">
-                                    Complete profiles get more attention from employers.
-                                </p>
+                                <p className="text-sm text-gray-600 mb-4">{i18n.t('auto_complete_profiles_get_more_attention_fro')}</p>
                                 <Progress value={stats?.profile_completion || 0} className="h-2" />
                                 <p className="text-xs text-right mt-1 text-gray-600">
                                     {stats?.profile_completion || 0}% Complete
@@ -581,7 +572,7 @@ const JobSeekerDashboard = () => {
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-2 mb-3">
                                     <PlayCircle className="h-5 w-5 text-purple-600" />
-                                    <h3 className="font-semibold">Add Video CV</h3>
+                                    <h3 className="font-semibold">{i18n.t('auto_add_video_cv')}</h3>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
                                     A video increases matching chances by 70% and makes you stand out.
@@ -590,9 +581,7 @@ const JobSeekerDashboard = () => {
                                     variant="outline"
                                     className="w-full border-purple-600 text-purple-600 hover:bg-purple-50"
                                     onClick={handleUploadVideoClick}
-                                >
-                                    Upload Video
-                                </Button>
+                                >{i18n.t('auto_upload_video')}</Button>
                             </CardContent>
                         </Card>
 
@@ -600,18 +589,14 @@ const JobSeekerDashboard = () => {
                             <CardContent className="pt-6">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Briefcase className="h-5 w-5 text-pink-600" />
-                                    <h3 className="font-semibold">Update Your Skills</h3>
+                                    <h3 className="font-semibold">{i18n.t('auto_update_your_skills')}</h3>
                                 </div>
-                                <p className="text-sm text-gray-600 mb-4">
-                                    Add in-demand skills to increase your visibility.
-                                </p>
+                                <p className="text-sm text-gray-600 mb-4">{i18n.t('auto_add_in_demand_skills_to_increase_your_vi')}</p>
                                 <Button
                                     variant="outline"
                                     className="w-full border-pink-600 text-pink-600 hover:bg-pink-50"
                                     onClick={handleOpenAddSkill}
-                                >
-                                    Add Skills
-                                </Button>
+                                >{i18n.t('auto_add_skills')}</Button>
                             </CardContent>
                         </Card>
                     </div>
@@ -622,12 +607,12 @@ const JobSeekerDashboard = () => {
             <Dialog open={openAddSkillDialog} onClose={handleCloseAddSkill}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Add a Skill</DialogTitle>
-                        <DialogDescription>Add a new skill to your profile to improve job matching</DialogDescription>
+                        <DialogTitle>{i18n.t('auto_add_a_skill')}</DialogTitle>
+                        <DialogDescription>{i18n.t('auto_add_a_new_skill_to_your_profile_to_impro')}</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div>
-                            <Label htmlFor="skill-name">Skill Name</Label>
+                            <Label htmlFor="skill-name">{i18n.t('auto_skill_name')}</Label>
                             <Input
                                 id="skill-name"
                                 value={newSkillName}
@@ -636,7 +621,7 @@ const JobSeekerDashboard = () => {
                                     // clear selected id when user types freely
                                     setSelectedSkillId(null);
                                 }}
-                                placeholder="e.g. React, Python"
+                                placeholder={i18n.t('auto_e_g_react_python')} 
                             />
                             {newSkillName && !selectedSkillId && (
                                 <div className="text-xs text-yellow-600 mt-1">Please select a skill from the suggestions below to enable adding.</div>
@@ -644,12 +629,12 @@ const JobSeekerDashboard = () => {
                             {/* Category filter and suggestions */}
                             <div className="mt-2">
                                 {skillSearchLoading ? (
-                                    <div className="text-sm text-gray-500">Loading skills...</div>
+                                    <div className="text-sm text-gray-500">{i18n.t('auto_loading_skills')}</div>
                                 ) : (
                                     <>
                                         {skillCategories.length > 0 && (
                                             <div className="flex gap-2 mb-2 flex-wrap">
-                                                <button type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === null ? 'bg-purple-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(null)}>All</button>
+                                                <button type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === null ? 'bg-purple-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(null)}>{i18n.t('auto_all')}</button>
                                                 {skillCategories.map(cat => (
                                                     <button key={cat} type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === cat ? 'bg-purple-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(cat)}>{cat}</button>
                                                 ))}
@@ -675,7 +660,7 @@ const JobSeekerDashboard = () => {
                                                 </div>
                                             ))}
                                             {skillsList.length === 0 && !skillSearchLoading && (
-                                                <div className="px-3 py-2 text-sm text-gray-500">No suggestions available</div>
+                                                <div className="px-3 py-2 text-sm text-gray-500">{i18n.t('auto_no_suggestions_available')}</div>
                                             )}
                                         </div>
                                     </>
@@ -683,21 +668,21 @@ const JobSeekerDashboard = () => {
                             </div>
                         </div>
                         <div>
-                            <Label htmlFor="skill-level">Level</Label>
+                            <Label htmlFor="skill-level">{i18n.t('auto_level')}</Label>
                             <Select value={newSkillLevel} onValueChange={setNewSkillLevel}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Beginner">Beginner</SelectItem>
-                                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                                    <SelectItem value="Advanced">Advanced</SelectItem>
-                                    <SelectItem value="Expert">Expert</SelectItem>
+                                    <SelectItem value="Beginner">{i18n.t('auto_beginner')}</SelectItem>
+                                    <SelectItem value="Intermediate">{i18n.t('auto_intermediate')}</SelectItem>
+                                    <SelectItem value="Advanced">{i18n.t('auto_advanced')}</SelectItem>
+                                    <SelectItem value="Expert">{i18n.t('auto_expert')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div>
-                            <Label htmlFor="skill-years">Years of Experience</Label>
+                            <Label htmlFor="skill-years">{i18n.t('auto_years_of_experience_1')}</Label>
                             <Input
                                 id="skill-years"
                                 type="number"
@@ -708,9 +693,7 @@ const JobSeekerDashboard = () => {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={handleCloseAddSkill} disabled={addingSkill}>
-                            Cancel
-                        </Button>
+                        <Button variant="outline" onClick={handleCloseAddSkill} disabled={addingSkill}>{i18n.t('auto_cancel')}</Button>
                         <Button onClick={handleConfirmAddSkill} disabled={addingSkill || !selectedSkillId}>
                             {addingSkill ? <Loader2 className="h-4 w-4 animate-spin" /> : "Add Skill"}
                         </Button>
@@ -722,12 +705,12 @@ const JobSeekerDashboard = () => {
             <Dialog open={viewAllOpen} onOpenChange={setViewAllOpen}>
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Recommended Jobs</DialogTitle>
+                        <DialogTitle>{i18n.t('auto_recommended_jobs')}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-2 max-h-[400px] overflow-auto">
                         {recommendations.length === 0 ? (
                             <div className="text-center py-8 text-gray-500">
-                                <p>No recommendations available</p>
+                                <p>{i18n.t('auto_no_recommendations_available')}</p>
                             </div>
                         ) : (
                     recommendations.slice((viewAllPage - 1) * itemsPerPage, viewAllPage * itemsPerPage).map((job, idx) => (
@@ -749,15 +732,11 @@ const JobSeekerDashboard = () => {
                     </div>
                     <DialogFooter className="justify-between">
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" onClick={() => setViewAllPage(p => Math.max(1, p - 1))} disabled={viewAllPage === 1}>
-                                Previous
-                            </Button>
+                            <Button variant="outline" onClick={() => setViewAllPage(p => Math.max(1, p - 1))} disabled={viewAllPage === 1}>{i18n.t('auto_previous')}</Button>
                             <span className="text-sm">Page {viewAllPage} of {Math.max(1, Math.ceil(recommendations.length / itemsPerPage))}</span>
-                            <Button variant="outline" onClick={() => setViewAllPage(p => Math.min(Math.ceil(recommendations.length / itemsPerPage), p + 1))} disabled={viewAllPage >= Math.ceil(recommendations.length / itemsPerPage)}>
-                                Next
-                            </Button>
+                            <Button variant="outline" onClick={() => setViewAllPage(p => Math.min(Math.ceil(recommendations.length / itemsPerPage), p + 1))} disabled={viewAllPage >= Math.ceil(recommendations.length / itemsPerPage)}>{i18n.t('auto_next')}</Button>
                         </div>
-                        <Button onClick={() => setViewAllOpen(false)}>Close</Button>
+                        <Button onClick={() => setViewAllOpen(false)}>{i18n.t('auto_close')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

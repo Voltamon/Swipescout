@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { analyzeSkillGaps, getAllJobs } from '../services/analysisApi';
 import { Briefcase, Target, TrendingUp, Loader, AlertTriangle, BookOpen, Zap } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -188,7 +189,7 @@ const SkillGapAnalysisPage = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center mb-4">
             <TrendingUp className="h-8 w-8 text-purple-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-800">Skill Gap Analysis</h1>
+            <h1 className="text-3xl font-bold text-gray-800">{i18n.t('auto_skill_gap_analysis')}</h1>
           </div>
           <p className="text-gray-600">
             Identify the skills you need to develop for your target job and create a plan to bridge the gap.
@@ -196,7 +197,7 @@ const SkillGapAnalysisPage = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-700">Select a Job to Analyze</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-gray-700">{i18n.t('auto_select_a_job_to_analyze')}</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-grow relative">
               <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -206,7 +207,7 @@ const SkillGapAnalysisPage = () => {
                 className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 disabled={!Array.isArray(jobs) || jobs.length === 0}
               >
-                <option value="">-- Select a Job --</option>
+                <option value="">{i18n.t('auto_select_a_job')}</option>
                 {Array.isArray(jobs) && jobs.map(job => (
                   <option key={job.id} value={job.id}>{String(localize(job.title))}</option>
                 ))}
@@ -246,19 +247,19 @@ const SkillGapAnalysisPage = () => {
             {analysis.summary && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-600">Total Gaps</p>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_total_gaps')}</p>
                   <p className="text-2xl font-bold text-blue-600">{analysis.summary.total_gaps}</p>
                 </div>
                 <div className="bg-red-50 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-600">Critical</p>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_critical')}</p>
                   <p className="text-2xl font-bold text-red-600">{analysis.summary.critical_gaps}</p>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-600">Readiness</p>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_readiness')}</p>
                   <p className="text-2xl font-bold text-green-600">{analysis.summary.readiness_score}%</p>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-600">Est. Time</p>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_est_time')}</p>
                   <p className="text-2xl font-bold text-purple-600">{analysis.summary.total_estimated_time}h</p>
                 </div>
               </div>
@@ -276,24 +277,22 @@ const SkillGapAnalysisPage = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-center">
                     <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-500">Required Level</p>
+                      <p className="text-sm text-gray-500">{i18n.t('auto_required_level')}</p>
                       <p className="font-bold text-lg text-gray-800">{gap.required_level}</p>
                     </div>
                     <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-500">Your Level</p>
+                      <p className="text-sm text-gray-500">{i18n.t('auto_your_level')}</p>
                       <p className="font-bold text-lg text-blue-600">{gap.user_level}</p>
                     </div>
                     <div className="bg-red-50 p-3 rounded-lg">
-                      <p className="text-sm text-red-500">Skill Gap</p>
+                      <p className="text-sm text-red-500">{i18n.t('auto_skill_gap')}</p>
                       <p className="font-bold text-lg text-red-700">{gap.gap_size}</p>
                     </div>
                   </div>
 
                   <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
                     <h4 className="font-semibold text-gray-800 flex items-center mb-2">
-                      <BookOpen className="mr-2 text-purple-600" />
-                      Development Plan
-                    </h4>
+                      <BookOpen className="mr-2 text-purple-600" />{i18n.t('auto_development_plan')}</h4>
                     <p className="text-gray-600 mb-2">{String(localize(gap.development_plan.description))}</p>
                     <p className="text-sm text-gray-500 mb-2">Estimated learning time: {gap.estimated_learning_time} hours</p>
                     <h5 className="font-medium text-gray-700 mt-3">Suggested Resources:</h5>

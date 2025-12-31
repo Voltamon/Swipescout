@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -214,24 +215,20 @@ export default function RecruitCandidatePage() {
                 variant={!useCustomPosition ? "contained" : "outlined"}
                 onClick={() => setUseCustomPosition(false)}
                 sx={{ mr: 2 }}
-              >
-                Existing Position
-              </Button>
+              >{i18n.t('auto_existing_position')}</Button>
               <Button
                 variant={useCustomPosition ? "contained" : "outlined"}
                 onClick={() => setUseCustomPosition(true)}
-              >
-                Create Custom Position
-              </Button>
+              >{i18n.t('auto_create_custom_position')}</Button>
             </Box>
 
             {!useCustomPosition ? (
               <FormControl fullWidth>
-                <InputLabel>Select Job Position</InputLabel>
+                <InputLabel>{i18n.t('auto_select_job_position')}</InputLabel>
                 <Select
                   value={selectedJob}
                   onChange={(e) => setSelectedJob(e.target.value)}
-                  label="Select Job Position"
+                  label={i18n.t('auto_select_job_position')} 
                 >
                   {jobs.map((job) => (
                     <MenuItem key={job.id} value={job.id}>
@@ -250,7 +247,7 @@ export default function RecruitCandidatePage() {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Position Title"
+                    label={i18n.t('auto_position_title')} 
                     value={customPosition.title}
                     onChange={(e) => setCustomPosition(prev => ({
                       ...prev,
@@ -262,7 +259,7 @@ export default function RecruitCandidatePage() {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Department"
+                    label={i18n.t('auto_department_1')} 
                     value={customPosition.department}
                     onChange={(e) => setCustomPosition(prev => ({
                       ...prev,
@@ -273,7 +270,7 @@ export default function RecruitCandidatePage() {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Location"
+                    label={i18n.t('auto_location')} 
                     value={customPosition.location}
                     onChange={(e) => setCustomPosition(prev => ({
                       ...prev,
@@ -283,19 +280,19 @@ export default function RecruitCandidatePage() {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel>Job Type</InputLabel>
+                    <InputLabel>{i18n.t('auto_job_type')}</InputLabel>
                     <Select
                       value={customPosition.jobType}
                       onChange={(e) => setCustomPosition(prev => ({
                         ...prev,
                         jobType: e.target.value
                       }))}
-                      label="Job Type"
+                      label={i18n.t('auto_job_type')} 
                     >
-                      <MenuItem value="Full-Time">Full-Time</MenuItem>
-                      <MenuItem value="Part-Time">Part-Time</MenuItem>
-                      <MenuItem value="Contract">Contract</MenuItem>
-                      <MenuItem value="Freelance">Freelance</MenuItem>
+                      <MenuItem value="Full-Time">{i18n.t('auto_full_time_2')}</MenuItem>
+                      <MenuItem value="Part-Time">{i18n.t('auto_part_time_2')}</MenuItem>
+                      <MenuItem value="Contract">{i18n.t('auto_contract')}</MenuItem>
+                      <MenuItem value="Freelance">{i18n.t('auto_freelance')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -304,7 +301,7 @@ export default function RecruitCandidatePage() {
                     fullWidth
                     multiline
                     rows={4}
-                    label="Job Description"
+                    label={i18n.t('auto_job_description')} 
                     value={customPosition.description}
                     onChange={(e) => setCustomPosition(prev => ({
                       ...prev,
@@ -320,15 +317,13 @@ export default function RecruitCandidatePage() {
       case 1:
         return (
           <Box>
-            <Typography variant="h6" gutterBottom>
-              Customize Offer Details
-            </Typography>
+            <Typography variant="h6" gutterBottom>{i18n.t('auto_customize_offer_details')}</Typography>
             
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Minimum Salary"
+                  label={i18n.t('auto_minimum_salary')} 
                   type="number"
                   value={offerDetails.salaryMin}
                   onChange={(e) => setOfferDetails(prev => ({
@@ -343,7 +338,7 @@ export default function RecruitCandidatePage() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Maximum Salary"
+                  label={i18n.t('auto_maximum_salary')} 
                   type="number"
                   value={offerDetails.salaryMax}
                   onChange={(e) => setOfferDetails(prev => ({
@@ -358,7 +353,7 @@ export default function RecruitCandidatePage() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Preferred Start Date"
+                  label={i18n.t('auto_preferred_start_date')} 
                   type="date"
                   value={offerDetails.startDate}
                   onChange={(e) => setOfferDetails(prev => ({
@@ -372,27 +367,25 @@ export default function RecruitCandidatePage() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Urgency</InputLabel>
+                  <InputLabel>{i18n.t('auto_urgency')}</InputLabel>
                   <Select
                     value={offerDetails.urgency}
                     onChange={(e) => setOfferDetails(prev => ({
                       ...prev,
                       urgency: e.target.value
                     }))}
-                    label="Urgency"
+                    label={i18n.t('auto_urgency')} 
                   >
-                    <MenuItem value="low">Low Priority</MenuItem>
-                    <MenuItem value="normal">Normal</MenuItem>
-                    <MenuItem value="high">High Priority</MenuItem>
-                    <MenuItem value="urgent">Urgent</MenuItem>
+                    <MenuItem value="low">{i18n.t('auto_low_priority')}</MenuItem>
+                    <MenuItem value="normal">{i18n.t('auto_normal')}</MenuItem>
+                    <MenuItem value="high">{i18n.t('auto_high_priority')}</MenuItem>
+                    <MenuItem value="urgent">{i18n.t('auto_urgent')}</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
               
               <Grid item xs={12}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Benefits Package
-                </Typography>
+                <Typography variant="subtitle1" gutterBottom>{i18n.t('auto_benefits_package')}</Typography>
                 <Box display="flex" flexWrap="wrap" gap={1}>
                   {benefitOptions.map((benefit) => (
                     <Chip
@@ -412,13 +405,13 @@ export default function RecruitCandidatePage() {
                   fullWidth
                   multiline
                   rows={4}
-                  label="Personal Message"
+                  label={i18n.t('auto_personal_message_1')} 
                   value={offerDetails.message}
                   onChange={(e) => setOfferDetails(prev => ({
                     ...prev,
                     message: e.target.value
                   }))}
-                  placeholder="Add a personal message to make your offer more appealing..."
+                  placeholder={i18n.t('auto_add_a_personal_message_to_make_your_offe')} 
                 />
               </Grid>
             </Grid>
@@ -429,15 +422,11 @@ export default function RecruitCandidatePage() {
         const position = useCustomPosition ? customPosition : jobs.find(j => j.id === selectedJob);
         return (
           <Box>
-            <Typography variant="h6" gutterBottom>
-              Review Recruitment Offer
-            </Typography>
+            <Typography variant="h6" gutterBottom>{i18n.t('auto_review_recruitment_offer')}</Typography>
             
             <Card sx={{ mb: 3 }}>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Position Details
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_position_details')}</Typography>
                 <Typography><strong>Title:</strong> {position?.title}</Typography>
                 {position?.department && (
                   <Typography><strong>Department:</strong> {position.department}</Typography>
@@ -451,9 +440,7 @@ export default function RecruitCandidatePage() {
 
             <Card sx={{ mb: 3 }}>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Offer Details
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_offer_details')}</Typography>
                 {(offerDetails.salaryMin || offerDetails.salaryMax) && (
                   <Typography>
                     <strong>Salary Range:</strong> 
@@ -517,9 +504,7 @@ export default function RecruitCandidatePage() {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Box mb={4}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Recruit Candidate
-        </Typography>
+        <Typography variant="h4" fontWeight="bold" gutterBottom>{i18n.t('auto_recruit_candidate')}</Typography>
         
         {candidate && (
           <Card sx={{ mb: 3 }}>
@@ -567,25 +552,19 @@ export default function RecruitCandidatePage() {
             <Button
               disabled={activeStep === 0}
               onClick={handleBack}
-            >
-              Back
-            </Button>
+            >{i18n.t('auto_back')}</Button>
             
             {activeStep === recruitmentSteps.length - 1 ? (
               <Button
                 variant="contained"
                 onClick={handleSendRecruitment}
                 startIcon={<Send />}
-              >
-                Send Recruitment Offer
-              </Button>
+              >{i18n.t('auto_send_recruitment_offer')}</Button>
             ) : (
               <Button
                 variant="contained"
                 onClick={handleNext}
-              >
-                Next
-              </Button>
+              >{i18n.t('auto_next')}</Button>
             )}
           </Box>
         </CardContent>

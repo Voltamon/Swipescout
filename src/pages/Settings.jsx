@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserSettings, updateUserSettings } from '../services/userService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
@@ -281,45 +282,31 @@ export default function Settings() {
     <div className="container mx-auto py-6 px-4 max-w-5xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-          Settings
-        </h1>
-        <p className="text-muted-foreground">
-          Manage your account settings and preferences
-        </p>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">{i18n.t('auto_settings')}</h1>
+        <p className="text-muted-foreground">{i18n.t('auto_manage_your_account_settings_and_prefere')}</p>
       </div>
 
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
           <TabsTrigger value="profile">
-            <User className="h-4 w-4 mr-2" />
-            Profile
-          </TabsTrigger>
+            <User className="h-4 w-4 mr-2" />{i18n.t('auto_profile')}</TabsTrigger>
           <TabsTrigger value="notifications">
-            <Bell className="h-4 w-4 mr-2" />
-            Notifications
-          </TabsTrigger>
+            <Bell className="h-4 w-4 mr-2" />{i18n.t('auto_notifications')}</TabsTrigger>
           <TabsTrigger value="privacy">
-            <Eye className="h-4 w-4 mr-2" />
-            Privacy
-          </TabsTrigger>
+            <Eye className="h-4 w-4 mr-2" />{i18n.t('auto_privacy')}</TabsTrigger>
           <TabsTrigger value="security">
-            <Shield className="h-4 w-4 mr-2" />
-            Security
-          </TabsTrigger>
+            <Shield className="h-4 w-4 mr-2" />{i18n.t('auto_security_1')}</TabsTrigger>
           <TabsTrigger value="account">
-            <Globe className="h-4 w-4 mr-2" />
-            Account
-          </TabsTrigger>
+            <Globe className="h-4 w-4 mr-2" />{i18n.t('auto_account')}</TabsTrigger>
         </TabsList>
 
         {/* Profile Settings */}
         <TabsContent value="profile" className="space-y-6">
           <Card className="border-l-4 border-l-purple-500">
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Update your personal information</CardDescription>
+              <CardTitle>{i18n.t('auto_profile_information')}</CardTitle>
+              <CardDescription>{i18n.t('auto_update_your_personal_information')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Avatar Upload */}
@@ -331,15 +318,13 @@ export default function Settings() {
                   </AvatarFallback>
                 </Avatar>
                 <Button variant="outline" size="sm">
-                  <Camera className="h-4 w-4 mr-2" />
-                  Change Photo
-                </Button>
+                  <Camera className="h-4 w-4 mr-2" />{i18n.t('auto_change_photo')}</Button>
               </div>
 
               {/* Form Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name">{i18n.t('auto_full_name')}</Label>
                   <Input
                     id="name"
                     value={formData.name}
@@ -349,9 +334,7 @@ export default function Settings() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email">
-                    <Mail className="h-4 w-4 inline mr-2" />
-                    Email
-                  </Label>
+                    <Mail className="h-4 w-4 inline mr-2" />{i18n.t('auto_email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -362,9 +345,7 @@ export default function Settings() {
 
                 <div className="space-y-2">
                   <Label htmlFor="mobile">
-                    <Phone className="h-4 w-4 inline mr-2" />
-                    Mobile
-                  </Label>
+                    <Phone className="h-4 w-4 inline mr-2" />{i18n.t('auto_mobile')}</Label>
                   <Input
                     id="mobile"
                     value={formData.mobile}
@@ -374,9 +355,7 @@ export default function Settings() {
 
                 <div className="space-y-2">
                   <Label htmlFor="location">
-                    <MapPin className="h-4 w-4 inline mr-2" />
-                    Location
-                  </Label>
+                    <MapPin className="h-4 w-4 inline mr-2" />{i18n.t('auto_location')}</Label>
                   <Input
                     id="location"
                     value={formData.location}
@@ -385,7 +364,7 @@ export default function Settings() {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="bio">Bio</Label>
+                  <Label htmlFor="bio">{i18n.t('auto_bio')}</Label>
                   <Textarea
                     id="bio"
                     value={formData.bio}
@@ -395,22 +374,22 @@ export default function Settings() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="website">Website</Label>
+                  <Label htmlFor="website">{i18n.t('auto_website')}</Label>
                   <Input
                     id="website"
                     value={formData.website}
                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                    placeholder="https://"
+                    placeholder={i18n.t('auto_https')} 
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="linkedin">LinkedIn</Label>
+                  <Label htmlFor="linkedin">{i18n.t('auto_linkedin')}</Label>
                   <Input
                     id="linkedin"
                     value={formData.linkedin}
                     onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-                    placeholder="linkedin.com/in/username"
+                    placeholder={i18n.t('auto_linkedin_com_in_username')} 
                   />
                 </div>
               </div>
@@ -431,8 +410,8 @@ export default function Settings() {
         <TabsContent value="notifications" className="space-y-6">
           <Card className="border-l-4 border-l-cyan-500">
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Manage how you receive notifications</CardDescription>
+              <CardTitle>{i18n.t('auto_notification_preferences')}</CardTitle>
+              <CardDescription>{i18n.t('auto_manage_how_you_receive_notifications')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {Object.entries({
@@ -476,12 +455,12 @@ export default function Settings() {
         <TabsContent value="privacy" className="space-y-6">
           <Card className="border-l-4 border-l-purple-500">
             <CardHeader>
-              <CardTitle>Privacy Settings</CardTitle>
-              <CardDescription>Control who can see your information</CardDescription>
+              <CardTitle>{i18n.t('auto_privacy_settings')}</CardTitle>
+              <CardDescription>{i18n.t('auto_control_who_can_see_your_information')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="profileVisibility">Profile Visibility</Label>
+                <Label htmlFor="profileVisibility">{i18n.t('auto_profile_visibility')}</Label>
                 <Select
                   value={privacySettings.profileVisibility}
                   onValueChange={(value) =>
@@ -492,9 +471,9 @@ export default function Settings() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="public">Public - Everyone can see</SelectItem>
-                    <SelectItem value="connections">Connections Only</SelectItem>
-                    <SelectItem value="private">Private - Only me</SelectItem>
+                    <SelectItem value="public">{i18n.t('auto_public_everyone_can_see')}</SelectItem>
+                    <SelectItem value="connections">{i18n.t('auto_connections_only')}</SelectItem>
+                    <SelectItem value="private">{i18n.t('auto_private_only_me')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -533,41 +512,29 @@ export default function Settings() {
         <TabsContent value="security" className="space-y-6">
           <Card className="border-l-4 border-l-cyan-500">
             <CardHeader>
-              <CardTitle>Security</CardTitle>
-              <CardDescription>Manage your account security</CardDescription>
+              <CardTitle>{i18n.t('auto_security_1')}</CardTitle>
+              <CardDescription>{i18n.t('auto_manage_your_account_security')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold mb-2">Password</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Last changed 30 days ago
-                  </p>
+                  <h3 className="font-semibold mb-2">{i18n.t('auto_password')}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{i18n.t('auto_last_changed_30_days_ago')}</p>
                   <Button variant="outline" onClick={handleChangePassword}>
-                    <Lock className="h-4 w-4 mr-2" />
-                    Change Password
-                  </Button>
+                    <Lock className="h-4 w-4 mr-2" />{i18n.t('auto_change_password')}</Button>
                 </div>
 
                 <div className="pt-4 border-t">
-                  <h3 className="font-semibold mb-2">Two-Factor Authentication</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Add an extra layer of security to your account
-                  </p>
-                  <Button variant="outline">
-                    Enable 2FA
-                  </Button>
+                  <h3 className="font-semibold mb-2">{i18n.t('auto_two_factor_authentication')}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{i18n.t('auto_add_an_extra_layer_of_security_to_your_a')}</p>
+                  <Button variant="outline">{i18n.t('auto_enable_2fa')}</Button>
                 </div>
 
                 <div className="pt-4 border-t">
-                  <h3 className="font-semibold mb-2 text-red-600">Danger Zone</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Permanently delete your account and all associated data
-                  </p>
+                  <h3 className="font-semibold mb-2 text-red-600">{i18n.t('auto_danger_zone')}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{i18n.t('auto_permanently_delete_your_account_and_all_')}</p>
                   <Button variant="destructive" onClick={handleDeleteAccount}>
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Account
-                  </Button>
+                    <Trash2 className="h-4 w-4 mr-2" />{i18n.t('auto_delete_account')}</Button>
                 </div>
               </div>
             </CardContent>
@@ -578,12 +545,12 @@ export default function Settings() {
         <TabsContent value="account" className="space-y-6">
           <Card className="border-l-4 border-l-purple-500">
             <CardHeader>
-              <CardTitle>Account Preferences</CardTitle>
-              <CardDescription>Customize your account settings</CardDescription>
+              <CardTitle>{i18n.t('auto_account_preferences')}</CardTitle>
+              <CardDescription>{i18n.t('auto_customize_your_account_settings')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="language">Language</Label>
+                <Label htmlFor="language">{i18n.t('auto_language')}</Label>
                 <Select
                   value={accountSettings.language}
                   onValueChange={(value) =>
@@ -594,16 +561,16 @@ export default function Settings() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Spanish</SelectItem>
-                    <SelectItem value="fr">French</SelectItem>
-                    <SelectItem value="de">German</SelectItem>
+                    <SelectItem value="en">{i18n.t('auto_english')}</SelectItem>
+                    <SelectItem value="es">{i18n.t('auto_spanish')}</SelectItem>
+                    <SelectItem value="fr">{i18n.t('auto_french')}</SelectItem>
+                    <SelectItem value="de">{i18n.t('auto_german')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
+                <Label htmlFor="timezone">{i18n.t('auto_timezone')}</Label>
                 <Select
                   value={accountSettings.timezone}
                   onValueChange={(value) =>
@@ -614,16 +581,16 @@ export default function Settings() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                    <SelectItem value="UTC">{i18n.t('auto_utc')}</SelectItem>
+                    <SelectItem value="America/New_York">{i18n.t('auto_eastern_time')}</SelectItem>
+                    <SelectItem value="America/Chicago">{i18n.t('auto_central_time')}</SelectItem>
+                    <SelectItem value="America/Los_Angeles">{i18n.t('auto_pacific_time')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="theme">Theme</Label>
+                <Label htmlFor="theme">{i18n.t('auto_theme')}</Label>
                 <Select
                   value={accountSettings.theme}
                   onValueChange={(value) =>
@@ -634,9 +601,9 @@ export default function Settings() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="auto">Auto</SelectItem>
+                    <SelectItem value="light">{i18n.t('auto_light')}</SelectItem>
+                    <SelectItem value="dark">{i18n.t('auto_dark')}</SelectItem>
+                    <SelectItem value="auto">{i18n.t('auto_auto')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -662,15 +629,13 @@ export default function Settings() {
             <AlertDialogDescription>{confirmDialog.message}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{i18n.t('auto_cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 confirmDialog.action?.();
                 setConfirmDialog({ ...confirmDialog, open: false });
               }}
-            >
-              Continue
-            </AlertDialogAction>
+            >{i18n.t('auto_continue')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

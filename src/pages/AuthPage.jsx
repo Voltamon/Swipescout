@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { homeThemeColors } from '@/config/theme-colors-home';
 import './AuthPage.css';
+import i18n from 'i18next';
 
 const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedirectPath }) => {
   const { t } = useTranslation(['auth', 'common']);
@@ -270,17 +271,15 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
               {/* Logo */}
               <img
                 src={`${import.meta.env.BASE_URL}swipescout.png`}
-                alt="SwipeScout"
+                alt={i18n.t('auto_swipescout')} 
                 className="w-10 h-10 object-contain drop-shadow-lg"
               />
             </div>
             <h2 
               className="text-2xl font-bold bg-clip-text text-transparent mb-1"
               style={{ backgroundImage: homeThemeColors.gradients.button }}
-            >
-              Welcome Back
-            </h2>
-            <p className="text-xs text-gray-500">Sign in to continue to SwipeScout</p>
+            >{i18n.t('auto_welcome_back')}</h2>
+            <p className="text-xs text-gray-500">{i18n.t('auto_sign_in_to_continue_to_swipescout')}</p>
           </div>
 
           {(!authLoading && user && user.role && !showLoginAnyway) ? (
@@ -300,7 +299,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 }}
                 className="w-full py-2.5 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-semibold rounded-lg mb-3 hover:from-indigo-700 hover:to-purple-700 shadow-md shadow-indigo-500/30 transition-all duration-200 flex items-center justify-center gap-2 group"
               >
-                <span>Continue to App</span>
+                <span>{i18n.t('auto_continue_to_app')}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
               
@@ -309,7 +308,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                 className="w-full py-2.5 px-4 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Log in to another account</span>
+                <span>{i18n.t('auto_log_in_to_another_account')}</span>
               </button>
             </div>
           ) : (
@@ -358,7 +357,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     onChange={handleChange}
                     required
                     className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                    placeholder="you@example.com"
+                    placeholder={i18n.t('auto_you_example_com')} 
                   />
                 </div>
               </div>
@@ -377,7 +376,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     onChange={handleChange}
                     required
                     className="w-full pl-9 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                    placeholder="••••••••"
+                    placeholder={i18n.t('auto_text_6')} 
                   />
                   <button
                     type="button"
@@ -435,7 +434,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                       onChange={handleChange}
                       required
                       className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                      placeholder="John"
+                      placeholder={i18n.t('auto_john')} 
                     />
                   </div>
                 </div>
@@ -450,7 +449,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     onChange={handleChange}
                     required
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                    placeholder="Doe"
+                    placeholder={i18n.t('auto_doe')} 
                   />
                 </div>
               </div>
@@ -510,7 +509,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     onChange={handleChange}
                     required
                     className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                    placeholder="you@example.com"
+                    placeholder={i18n.t('auto_you_example_com')} 
                   />
                 </div>
               </div>
@@ -529,7 +528,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     onChange={handleChange}
                     required
                     className="w-full pl-9 pr-12 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                    placeholder="••••••••"
+                    placeholder={i18n.t('auto_text_6')} 
                   />
                   <button
                     type="button"
@@ -555,7 +554,7 @@ const AuthPage = ({ initialTab = 0, open = true, onClose, redirectPath: propRedi
                     onChange={handleChange}
                     required
                     className="w-full pl-9 pr-12 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800"
-                    placeholder="••••••••"
+                    placeholder={i18n.t('auto_text_6')} 
                   />
                   <button
                     type="button"

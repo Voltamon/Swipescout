@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -376,7 +377,7 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <TextField
           fullWidth
-          label="Full Name"
+          label={i18n.t('auto_full_name')} 
           value={resumeData.personalInfo.fullName}
           onChange={(e) => handlePersonalInfoChange('fullName', e.target.value)}
         />
@@ -384,7 +385,7 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <TextField
           fullWidth
-          label="Email"
+          label={i18n.t('auto_email')} 
           type="email"
           value={resumeData.personalInfo.email}
           onChange={(e) => handlePersonalInfoChange('email', e.target.value)}
@@ -393,7 +394,7 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <TextField
           fullWidth
-          label="Phone"
+          label={i18n.t('auto_phone')} 
           value={resumeData.personalInfo.phone}
           onChange={(e) => handlePersonalInfoChange('phone', e.target.value)}
         />
@@ -401,7 +402,7 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <TextField
           fullWidth
-          label="Address"
+          label={i18n.t('auto_address')} 
           value={resumeData.personalInfo.address}
           onChange={(e) => handlePersonalInfoChange('address', e.target.value)}
         />
@@ -409,7 +410,7 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <TextField
           fullWidth
-          label="LinkedIn"
+          label={i18n.t('auto_linkedin')} 
           value={resumeData.personalInfo.linkedin}
           onChange={(e) => handlePersonalInfoChange('linkedin', e.target.value)}
         />
@@ -417,7 +418,7 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <TextField
           fullWidth
-          label="Website"
+          label={i18n.t('auto_website')} 
           value={resumeData.personalInfo.website}
           onChange={(e) => handlePersonalInfoChange('website', e.target.value)}
         />
@@ -427,10 +428,10 @@ export default function ResumeBuilderPage() {
           fullWidth
           multiline
           rows={4}
-          label="Professional Summary"
+          label={i18n.t('auto_professional_summary')} 
           value={resumeData.personalInfo.summary}
           onChange={(e) => handlePersonalInfoChange('summary', e.target.value)}
-          placeholder="Write a brief summary of your professional background and career objectives..."
+          placeholder={i18n.t('auto_write_a_brief_summary_of_your_profession')} 
         />
       </Grid>
     </Grid>
@@ -439,14 +440,12 @@ export default function ResumeBuilderPage() {
   const ExperienceStep = () => (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h6">Work Experience</Typography>
+        <Typography variant="h6">{i18n.t('auto_work_experience')}</Typography>
         <Button
           variant="contained"
           startIcon={<Add />}
           onClick={addExperience}
-        >
-          Add Experience
-        </Button>
+        >{i18n.t('auto_add_experience')}</Button>
       </Box>
       
       {resumeData.experience.map((exp, index) => (
@@ -463,7 +462,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Job Title"
+                  label={i18n.t('auto_job_title')} 
                   value={exp.title}
                   onChange={(e) => updateExperience(index, 'title', e.target.value)}
                 />
@@ -471,7 +470,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Company"
+                  label={i18n.t('auto_company')} 
                   value={exp.company}
                   onChange={(e) => updateExperience(index, 'company', e.target.value)}
                 />
@@ -479,7 +478,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
-                  label="Location"
+                  label={i18n.t('auto_location')} 
                   value={exp.location}
                   onChange={(e) => updateExperience(index, 'location', e.target.value)}
                 />
@@ -487,7 +486,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
-                  label="Start Date"
+                  label={i18n.t('auto_start_date')} 
                   type="month"
                   value={exp.startDate}
                   onChange={(e) => updateExperience(index, 'startDate', e.target.value)}
@@ -497,7 +496,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
-                  label="End Date"
+                  label={i18n.t('auto_end_date')} 
                   type="month"
                   value={exp.endDate}
                   onChange={(e) => updateExperience(index, 'endDate', e.target.value)}
@@ -510,10 +509,10 @@ export default function ResumeBuilderPage() {
                   fullWidth
                   multiline
                   rows={3}
-                  label="Job Description"
+                  label={i18n.t('auto_job_description')} 
                   value={exp.description}
                   onChange={(e) => updateExperience(index, 'description', e.target.value)}
-                  placeholder="Describe your responsibilities and achievements..."
+                  placeholder={i18n.t('auto_describe_your_responsibilities_and_achie')} 
                 />
               </Grid>
             </Grid>
@@ -526,14 +525,12 @@ export default function ResumeBuilderPage() {
   const EducationStep = () => (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h6">Education</Typography>
+        <Typography variant="h6">{i18n.t('auto_education')}</Typography>
         <Button
           variant="contained"
           startIcon={<Add />}
           onClick={addEducation}
-        >
-          Add Education
-        </Button>
+        >{i18n.t('auto_add_education')}</Button>
       </Box>
       
       {resumeData.education.map((edu, index) => (
@@ -550,7 +547,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Degree"
+                  label={i18n.t('auto_degree')} 
                   value={edu.degree}
                   onChange={(e) => updateEducation(index, 'degree', e.target.value)}
                 />
@@ -558,7 +555,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Institution"
+                  label={i18n.t('auto_institution')} 
                   value={edu.institution}
                   onChange={(e) => updateEducation(index, 'institution', e.target.value)}
                 />
@@ -566,7 +563,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
-                  label="Location"
+                  label={i18n.t('auto_location')} 
                   value={edu.location}
                   onChange={(e) => updateEducation(index, 'location', e.target.value)}
                 />
@@ -574,7 +571,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
-                  label="Graduation Date"
+                  label={i18n.t('auto_graduation_date')} 
                   type="month"
                   value={edu.graduationDate}
                   onChange={(e) => updateEducation(index, 'graduationDate', e.target.value)}
@@ -584,7 +581,7 @@ export default function ResumeBuilderPage() {
               <Grid item xs={12} md={4}>
                 <TextField
                   fullWidth
-                  label="GPA (Optional)"
+                  label={i18n.t('auto_gpa_optional')} 
                   value={edu.gpa}
                   onChange={(e) => updateEducation(index, 'gpa', e.target.value)}
                 />
@@ -601,14 +598,12 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <Box>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">Skills</Typography>
+            <Typography variant="h6">{i18n.t('auto_skills_1')}</Typography>
             <Button
               variant="contained"
               startIcon={<Add />}
               onClick={addSkill}
-            >
-              Add Skill
-            </Button>
+            >{i18n.t('auto_add_skill_1')}</Button>
           </Box>
           
           {resumeData.skills.map((skill, index) => (
@@ -618,23 +613,23 @@ export default function ResumeBuilderPage() {
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
-                      label="Skill"
+                      label={i18n.t('auto_skill')} 
                       value={skill.name}
                       onChange={(e) => updateSkill(index, 'name', e.target.value)}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <FormControl fullWidth>
-                      <InputLabel>Level</InputLabel>
+                      <InputLabel>{i18n.t('auto_level')}</InputLabel>
                       <Select
                         value={skill.level}
                         onChange={(e) => updateSkill(index, 'level', e.target.value)}
-                        label="Level"
+                        label={i18n.t('auto_level')} 
                       >
-                        <MenuItem value="Beginner">Beginner</MenuItem>
-                        <MenuItem value="Intermediate">Intermediate</MenuItem>
-                        <MenuItem value="Advanced">Advanced</MenuItem>
-                        <MenuItem value="Expert">Expert</MenuItem>
+                        <MenuItem value="Beginner">{i18n.t('auto_beginner')}</MenuItem>
+                        <MenuItem value="Intermediate">{i18n.t('auto_intermediate')}</MenuItem>
+                        <MenuItem value="Advanced">{i18n.t('auto_advanced')}</MenuItem>
+                        <MenuItem value="Expert">{i18n.t('auto_expert')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -653,14 +648,12 @@ export default function ResumeBuilderPage() {
       <Grid item xs={12} md={6}>
         <Box>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">Languages</Typography>
+            <Typography variant="h6">{i18n.t('auto_languages')}</Typography>
             <Button
               variant="contained"
               startIcon={<Add />}
               onClick={addLanguage}
-            >
-              Add Language
-            </Button>
+            >{i18n.t('auto_add_language')}</Button>
           </Box>
           
           {resumeData.languages.map((language, index) => (
@@ -670,23 +663,23 @@ export default function ResumeBuilderPage() {
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
-                      label="Language"
+                      label={i18n.t('auto_language')} 
                       value={language.name}
                       onChange={(e) => updateLanguage(index, 'name', e.target.value)}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <FormControl fullWidth>
-                      <InputLabel>Level</InputLabel>
+                      <InputLabel>{i18n.t('auto_level')}</InputLabel>
                       <Select
                         value={language.level}
                         onChange={(e) => updateLanguage(index, 'level', e.target.value)}
-                        label="Level"
+                        label={i18n.t('auto_level')} 
                       >
-                        <MenuItem value="Basic">Basic</MenuItem>
-                        <MenuItem value="Intermediate">Intermediate</MenuItem>
-                        <MenuItem value="Advanced">Advanced</MenuItem>
-                        <MenuItem value="Native">Native</MenuItem>
+                        <MenuItem value="Basic">{i18n.t('auto_basic')}</MenuItem>
+                        <MenuItem value="Intermediate">{i18n.t('auto_intermediate')}</MenuItem>
+                        <MenuItem value="Advanced">{i18n.t('auto_advanced')}</MenuItem>
+                        <MenuItem value="Native">{i18n.t('auto_native')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -706,7 +699,7 @@ export default function ResumeBuilderPage() {
 
   const PreviewStep = () => (
     <Box>
-      <Typography variant="h6" mb={3}>Choose Template</Typography>
+      <Typography variant="h6" mb={3}>{i18n.t('auto_choose_template')}</Typography>
       <Grid container spacing={3} mb={4}>
         {templates.map((template) => (
           <Grid item xs={12} md={6} key={template.id}>
@@ -734,16 +727,12 @@ export default function ResumeBuilderPage() {
           variant="outlined"
           startIcon={<Visibility />}
           onClick={handlePreview}
-        >
-          Preview Resume
-        </Button>
+        >{i18n.t('auto_preview_resume')}</Button>
         <Button
           variant="contained"
           startIcon={<Save />}
           onClick={handleSave}
-        >
-          Save Resume
-        </Button>
+        >{i18n.t('auto_save_resume')}</Button>
         <Button
           variant="contained"
           startIcon={<GetApp />}
@@ -756,9 +745,7 @@ export default function ResumeBuilderPage() {
           variant="outlined"
           startIcon={<GetApp />}
           onClick={() => handleDownload('html')}
-        >
-          Download HTML
-        </Button>
+        >{i18n.t('auto_download_html')}</Button>
       </Box>
     </Box>
   );
@@ -774,11 +761,11 @@ export default function ResumeBuilderPage() {
       case 3:
         return <SkillsStep />;
       case 4:
-        return <Box><Typography>Additional sections coming soon...</Typography></Box>;
+        return <Box><Typography>{i18n.t('auto_additional_sections_coming_soon')}</Typography></Box>;
       case 5:
         return <PreviewStep />;
       default:
-        return <Typography>Unknown step</Typography>;
+        return <Typography>{i18n.t('auto_unknown_step')}</Typography>;
     }
   };
 
@@ -799,9 +786,7 @@ export default function ResumeBuilderPage() {
             mb: { xs: 2, md: 4 },
             fontSize: { xs: "1.5rem", md: "2rem" }, // Adjust font size for mobile
           }}
-        >
-          Resume Builder
-        </Typography>
+        >{i18n.t('auto_resume_builder')}</Typography>
         <Box
           sx={{
             display: "flex",
@@ -812,9 +797,9 @@ export default function ResumeBuilderPage() {
           {/* Resume Sections */}
           <Box sx={{ flex: 1 }}>
             <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 4 }}>
-              <Tab label="Build Resume" />
-              <Tab label="Upload & Extract" />
-              <Tab label="Saved Resumes" />
+              <Tab label={i18n.t('auto_build_resume')}  />
+              <Tab label={i18n.t('auto_upload_extract')}  />
+              <Tab label={i18n.t('auto_saved_resumes')}  />
             </Tabs>
 
             {tabValue === 0 && (
@@ -835,16 +820,12 @@ export default function ResumeBuilderPage() {
                       <Button
                         disabled={activeStep === 0}
                         onClick={() => setActiveStep(prev => prev - 1)}
-                      >
-                        Back
-                      </Button>
+                      >{i18n.t('auto_back')}</Button>
                       <Button
                         variant="contained"
                         onClick={() => setActiveStep(prev => prev + 1)}
                         disabled={activeStep === steps.length - 1}
-                      >
-                        Next
-                      </Button>
+                      >{i18n.t('auto_next')}</Button>
                     </Box>
                   </CardContent>
                 </Card>
@@ -854,9 +835,7 @@ export default function ResumeBuilderPage() {
             {tabValue === 1 && (
               <Card>
                 <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                  <Typography variant="h6" mb={3}>
-                    Upload Your Existing Resume
-                  </Typography>
+                  <Typography variant="h6" mb={3}>{i18n.t('auto_upload_your_existing_resume')}</Typography>
                   <Typography variant="body2" color="text.secondary" mb={4}>
                     Upload a PDF or Word document and we'll extract the information for you
                   </Typography>
@@ -883,9 +862,7 @@ export default function ResumeBuilderPage() {
                   {extracting && (
                     <Box mt={3}>
                       <LinearProgress />
-                      <Typography variant="body2" mt={1}>
-                        Extracting data from your resume...
-                      </Typography>
+                      <Typography variant="body2" mt={1}>{i18n.t('auto_extracting_data_from_your_resume')}</Typography>
                     </Box>
                   )}
                 </CardContent>
@@ -894,9 +871,7 @@ export default function ResumeBuilderPage() {
 
             {tabValue === 2 && (
               <Box>
-                <Typography variant="h6" mb={3}>
-                  Your Saved Resumes
-                </Typography>
+                <Typography variant="h6" mb={3}>{i18n.t('auto_your_saved_resumes')}</Typography>
                 <Grid container spacing={3}>
                   {Array.isArray(savedResumes) && savedResumes.map((resume) => (
                     <Grid item xs={12} md={6} key={resume.id}>
@@ -910,12 +885,8 @@ export default function ResumeBuilderPage() {
                             Created: {new Date(resume.createdAt).toLocaleDateString()}
                           </Typography>
                           <Box display="flex" gap={1} mt={2}>
-                            <Button size="small" variant="outlined">
-                              Edit
-                            </Button>
-                            <Button size="small" variant="contained">
-                              Download
-                            </Button>
+                            <Button size="small" variant="outlined">{i18n.t('auto_edit')}</Button>
+                            <Button size="small" variant="contained">{i18n.t('auto_download')}</Button>
                           </Box>
                         </CardContent>
                       </Card>
@@ -948,7 +919,7 @@ export default function ResumeBuilderPage() {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Resume Preview</DialogTitle>
+        <DialogTitle>{i18n.t('auto_resume_preview')}</DialogTitle>
         <DialogContent>
           <Box 
             dangerouslySetInnerHTML={{ __html: previewDialog.html }}
@@ -962,9 +933,7 @@ export default function ResumeBuilderPage() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPreviewDialog({ open: false, html: "" })}>
-            Close
-          </Button>
+          <Button onClick={() => setPreviewDialog({ open: false, html: "" })}>{i18n.t('auto_close')}</Button>
         </DialogActions>
       </Dialog>
 

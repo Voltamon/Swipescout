@@ -1,4 +1,5 @@
-﻿import React, { useContext } from 'react';
+import i18n from 'i18next';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -36,20 +37,14 @@ const CommunityGuidelines = () => {
               to="/"
               startIcon={<ArrowBack />}
               sx={{ mb: 2 }}
-            >
-              Back to Home
-            </Button>
+            >{i18n.t('auto_back_to_home')}</Button>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h3" component="h1" gutterBottom>
-                Community Guidelines
-              </Typography>
+              <Typography variant="h3" component="h1" gutterBottom>{i18n.t('auto_community_guidelines')}</Typography>
               <Button
                 variant="outlined"
                 startIcon={<Download />}
                 onClick={handleDownloadPDF}
-              >
-                Download PDF
-              </Button>
+              >{i18n.t('auto_download_pdf')}</Button>
             </Box>
             <Typography variant="body2" color="text.secondary">
               Last updated: January 20, 2024

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -73,30 +74,30 @@ const AdminVideosPage = () => {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 items-end">
         <div className="w-64">
-          <label className="block text-sm text-gray-600">Title</label>
+          <label className="block text-sm text-gray-600">{i18n.t('auto_title')}</label>
           <input
             type="text"
             value={filters.title}
             onChange={(e) => handleFilterChange('title', e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            placeholder="Filter by title"
+            placeholder={i18n.t('auto_filter_by_title')} 
           />
         </div>
 
         <div className="w-64">
-          <label className="block text-sm text-gray-600">Uploader</label>
+          <label className="block text-sm text-gray-600">{i18n.t('auto_uploader')}</label>
           <input
             type="text"
             value={filters.uploader}
             onChange={(e) => handleFilterChange('uploader', e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-            placeholder="Filter by uploader name"
+            placeholder={i18n.t('auto_filter_by_uploader_name')} 
           />
         </div>
 
         <div className="flex gap-2 ml-auto">
-          <Button size="sm" variant="outline" onClick={handleApplyFilters}>Apply</Button>
-          <Button size="sm" onClick={handleClearFilters}>Clear</Button>
+          <Button size="sm" variant="outline" onClick={handleApplyFilters}>{i18n.t('auto_apply')}</Button>
+          <Button size="sm" onClick={handleClearFilters}>{i18n.t('auto_clear')}</Button>
         </div>
       </div>
 
@@ -105,17 +106,17 @@ const AdminVideosPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Uploader</TableHead>
-                <TableHead>Views</TableHead>
-                <TableHead>Uploaded</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{i18n.t('auto_title')}</TableHead>
+                <TableHead>{i18n.t('auto_uploader')}</TableHead>
+                <TableHead>{i18n.t('auto_views')}</TableHead>
+                <TableHead>{i18n.t('auto_uploaded')}</TableHead>
+                <TableHead className="text-right">{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">Loading videos...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8">{i18n.t('auto_loading_videos')}</TableCell>
                 </TableRow>
               ) : errorMessage ? (
                 <TableRow>
@@ -123,7 +124,7 @@ const AdminVideosPage = () => {
                 </TableRow>
               ) : videos.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">No videos found</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8">{i18n.t('auto_no_videos_found')}</TableCell>
                 </TableRow>
               ) : (
                 videos.map(video => (

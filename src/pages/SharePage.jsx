@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState } from "react";
+import i18n from 'i18next';
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button } from "@/components/UI/button.jsx";
@@ -51,70 +52,62 @@ const SharePage = () => {
       <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-lg shadow-lg p-6 relative">
         <button
           onClick={closeWindow}
-          aria-label="close"
+          aria-label={i18n.t('auto_close_1')} 
           className="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
         >
           <ExternalLink className="h-5 w-5" />
         </button>
 
         <div className="text-center mb-4">
-          <h2 className="text-lg font-semibold">Share</h2>
-          <p className="text-sm text-slate-500">Share this item using your preferred app or copy the link.</p>
+          <h2 className="text-lg font-semibold">{i18n.t('auto_share')}</h2>
+          <p className="text-sm text-slate-500">{i18n.t('auto_share_this_item_using_your_preferred_app')}</p>
         </div>
 
         <div className="flex gap-2 items-center mb-4">
           <input
             readOnly
             value={shareableLink}
-            placeholder="Shareable link"
+            placeholder={i18n.t('auto_shareable_link')} 
             className="flex-1 px-3 py-2 rounded-md border border-slate-200 bg-slate-50 text-sm"
           />
-          <Button variant="outline" size="icon" onClick={handleCopyLink} aria-label="Copy link">
+          <Button variant="outline" size="icon" onClick={handleCopyLink} aria-label={i18n.t('auto_copy_link_1')} >
             <Share2 className="h-4 w-4" />
           </Button>
         </div>
 
         <div className="flex gap-3 justify-center flex-wrap mb-4">
           <button
-            aria-label="facebook"
+            aria-label={i18n.t('auto_facebook_1')} 
             onClick={() => openSocialMedia(PLATFORM.facebook.url(shareableLink))}
             className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
             style={{ backgroundColor: PLATFORM.facebook.color }}
-          >
-            Facebook
-          </button>
+          >{i18n.t('auto_facebook')}</button>
 
           <button
-            aria-label="twitter"
+            aria-label={i18n.t('auto_twitter_1')} 
             onClick={() => openSocialMedia(PLATFORM.twitter.url(shareableLink))}
             className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
             style={{ backgroundColor: PLATFORM.twitter.color }}
-          >
-            Twitter
-          </button>
+          >{i18n.t('auto_twitter')}</button>
 
           <button
-            aria-label="linkedin"
+            aria-label={i18n.t('auto_linkedin_1')} 
             onClick={() => openSocialMedia(PLATFORM.linkedin.url(shareableLink))}
             className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
             style={{ backgroundColor: PLATFORM.linkedin.color }}
-          >
-            LinkedIn
-          </button>
+          >{i18n.t('auto_linkedin')}</button>
 
           <button
-            aria-label="whatsapp"
+            aria-label={i18n.t('auto_whatsapp_1')} 
             onClick={() => openSocialMedia(PLATFORM.whatsapp.url(shareableLink))}
             className="flex items-center gap-2 px-4 py-2 rounded-md text-white"
             style={{ backgroundColor: PLATFORM.whatsapp.color }}
-          >
-            WhatsApp
-          </button>
+          >{i18n.t('auto_whatsapp')}</button>
         </div>
 
         <div className="flex justify-center gap-3">
-          <Button variant="default" onClick={handleCopyLink}>Copy Link</Button>
-          <Button variant="ghost" onClick={closeWindow}>Close</Button>
+          <Button variant="default" onClick={handleCopyLink}>{i18n.t('auto_copy_link')}</Button>
+          <Button variant="ghost" onClick={closeWindow}>{i18n.t('auto_close')}</Button>
         </div>
       </div>
     </div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  getEmployerProfile, 
-  updateEmployerProfile, 
+import {
+  getEmployerProfile,
+  updateEmployerProfile,
   uploadCompanyLogo,
   getEmployerCategories,
   addEmployerCategory,
@@ -10,6 +10,7 @@ import {
   getCategories,
   createEmployerProfile
 } from '@/services/api';
+import i18n from 'i18next';
 
 // shadcn/ui components
 import { Button } from '@/components/UI/button';
@@ -520,13 +521,9 @@ export default function EditEmployerProfilePage() {
         <Tabs defaultValue="details" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 bg-white border border-slate-200 p-1">
             <TabsTrigger value="details" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">
-              <Building2 className="h-4 w-4 mr-2" />
-              Company Details
-            </TabsTrigger>
+              <Building2 className="h-4 w-4 mr-2" />{i18n.t('auto_company_details')}</TabsTrigger>
             <TabsTrigger value="categories" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">
-              <Briefcase className="h-4 w-4 mr-2" />
-              Categories
-            </TabsTrigger>
+              <Briefcase className="h-4 w-4 mr-2" />{i18n.t('auto_categories')}</TabsTrigger>
           </TabsList>
 
           {/* Company Details Tab */}
@@ -534,10 +531,8 @@ export default function EditEmployerProfilePage() {
             <Card className="border-slate-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
                 <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-indigo-600" />
-                  Basic Information
-                </CardTitle>
-                <CardDescription>Core details about your company</CardDescription>
+                  <Building2 className="h-5 w-5 text-indigo-600" />{i18n.t('auto_basic_information')}</CardTitle>
+                <CardDescription>{i18n.t('auto_core_details_about_your_company')}</CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -551,7 +546,7 @@ export default function EditEmployerProfilePage() {
                       name="name"
                       value={profile.name || ''}
                       onChange={handleProfileChange}
-                      placeholder="Enter company name"
+                      placeholder={i18n.t('auto_enter_company_name')} 
                       required
                     />
                   </div>
@@ -565,7 +560,7 @@ export default function EditEmployerProfilePage() {
                       name="industry"
                       value={profile.industry || ''}
                       onChange={handleProfileChange}
-                      placeholder="e.g., Technology, Finance"
+                      placeholder={i18n.t('auto_e_g_technology_finance')} 
                       required
                     />
                   </div>
@@ -573,29 +568,25 @@ export default function EditEmployerProfilePage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="location" className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-indigo-600" />
-                    Location
-                  </Label>
+                    <MapPin className="h-4 w-4 text-indigo-600" />{i18n.t('auto_location')}</Label>
                   <Input
                     id="location"
                     name="location"
                     value={profile.location || ''}
                     onChange={handleProfileChange}
-                    placeholder="City, Country"
+                    placeholder={i18n.t('auto_city_country')} 
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description" className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-indigo-600" />
-                    Description
-                  </Label>
+                    <Building2 className="h-4 w-4 text-indigo-600" />{i18n.t('auto_description')}</Label>
                   <Textarea
                     id="description"
                     name="description"
                     value={profile.description || ''}
                     onChange={handleProfileChange}
-                    placeholder="Tell job seekers about your company and what you do"
+                    placeholder={i18n.t('auto_tell_job_seekers_about_your_company_and_')} 
                     rows={4}
                   />
                 </div>
@@ -605,82 +596,70 @@ export default function EditEmployerProfilePage() {
             <Card className="border-slate-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
                 <CardTitle className="flex items-center gap-2">
-                  <Mail className="h-5 w-5 text-indigo-600" />
-                  Contact Information
-                </CardTitle>
-                <CardDescription>How job seekers can reach you</CardDescription>
+                  <Mail className="h-5 w-5 text-indigo-600" />{i18n.t('auto_contact_information')}</CardTitle>
+                <CardDescription>{i18n.t('auto_how_job_seekers_can_reach_you')}</CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="email" className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-indigo-600" />
-                      Email
-                    </Label>
+                      <Mail className="h-4 w-4 text-indigo-600" />{i18n.t('auto_email')}</Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={profile.email || ''}
                       onChange={handleProfileChange}
-                      placeholder="contact@company.com"
+                      placeholder={i18n.t('auto_contact_company_com')} 
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-indigo-600" />
-                      Phone
-                    </Label>
+                      <Phone className="h-4 w-4 text-indigo-600" />{i18n.t('auto_phone')}</Label>
                     <Input
                       id="phone"
                       name="phone"
                       value={profile.phone || ''}
                       onChange={handleProfileChange}
-                      placeholder="+1 (555) 000-0000"
+                      placeholder={i18n.t('auto_1_555_000_0000')} 
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="website" className="flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-indigo-600" />
-                    Website
-                  </Label>
+                    <Globe className="h-4 w-4 text-indigo-600" />{i18n.t('auto_website')}</Label>
                   <Input
                     id="website"
                     name="website"
                     value={profile.website || ''}
                     onChange={handleProfileChange}
-                    placeholder="https://www.yourcompany.com"
+                    placeholder={i18n.t('auto_https_www_yourcompany_com')} 
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="establish_year" className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-indigo-600" />
-                      Founded Year
-                    </Label>
+                      <Calendar className="h-4 w-4 text-indigo-600" />{i18n.t('auto_founded_year')}</Label>
                     <Input
                       id="establish_year"
                       name="establish_year"
                       type="number"
                       value={profile.establish_year || ''}
                       onChange={handleProfileChange}
-                      placeholder="2020"
+                      placeholder={i18n.t('auto_2020')} 
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="size" className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-indigo-600" />
-                      Company Size
-                    </Label>
+                      <Users className="h-4 w-4 text-indigo-600" />{i18n.t('auto_company_size')}</Label>
                     <Input
                       id="size"
                       name="size"
                       value={profile.size || ''}
                       onChange={handleProfileChange}
-                      placeholder="1-50, 51-200, 200+"
+                      placeholder={i18n.t('auto_1_50_51_200_200')} 
                     />
                   </div>
                 </div>
@@ -689,48 +668,42 @@ export default function EditEmployerProfilePage() {
 
             <Card className="border-slate-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
-                <CardTitle>Social Media</CardTitle>
-                <CardDescription>Your company's social media presence</CardDescription>
+                <CardTitle>{i18n.t('auto_social_media')}</CardTitle>
+                <CardDescription>{i18n.t('auto_your_company_s_social_media_presence')}</CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="linkedin" className="flex items-center gap-2">
-                      <Linkedin className="h-4 w-4 text-blue-600" />
-                      LinkedIn
-                    </Label>
+                      <Linkedin className="h-4 w-4 text-blue-600" />{i18n.t('auto_linkedin')}</Label>
                     <Input
                       id="linkedin"
                       name="social.linkedin"
                       value={profile.social?.linkedin || ''}
                       onChange={handleProfileChange}
-                      placeholder="LinkedIn URL"
+                      placeholder={i18n.t('auto_linkedin_url')} 
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="facebook" className="flex items-center gap-2">
-                      <Facebook className="h-4 w-4 text-blue-500" />
-                      Facebook
-                    </Label>
+                      <Facebook className="h-4 w-4 text-blue-500" />{i18n.t('auto_facebook')}</Label>
                     <Input
                       id="facebook"
                       name="social.facebook"
                       value={profile.social?.facebook || ''}
                       onChange={handleProfileChange}
-                      placeholder="Facebook URL"
+                      placeholder={i18n.t('auto_facebook_url')} 
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="twitter" className="flex items-center gap-2">
-                      <Twitter className="h-4 w-4 text-sky-500" />
-                      Twitter
-                    </Label>
+                      <Twitter className="h-4 w-4 text-sky-500" />{i18n.t('auto_twitter')}</Label>
                     <Input
                       id="twitter"
                       name="social.twitter"
                       value={profile.social?.twitter || ''}
                       onChange={handleProfileChange}
-                      placeholder="Twitter URL"
+                      placeholder={i18n.t('auto_twitter_url')} 
                     />
                   </div>
                 </div>
@@ -745,10 +718,8 @@ export default function EditEmployerProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <Briefcase className="h-5 w-5 text-indigo-600" />
-                      Company Categories
-                    </CardTitle>
-                    <CardDescription>Select categories that describe your business</CardDescription>
+                      <Briefcase className="h-5 w-5 text-indigo-600" />{i18n.t('auto_company_categories')}</CardTitle>
+                    <CardDescription>{i18n.t('auto_select_categories_that_describe_your_bus')}</CardDescription>
                   </div>
                   <Button
                     onClick={() => {
@@ -758,20 +729,18 @@ export default function EditEmployerProfilePage() {
                     disabled={availableCategories.length === 0}
                     className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                   >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Category
-                  </Button>
+                    <Plus className="mr-2 h-4 w-4" />{i18n.t('auto_add_category')}</Button>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
                   {categories.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map((category) => (
-                      <Badge
-                        key={category.id}
-                        variant="secondary"
-                        className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900 hover:from-indigo-200 hover:to-purple-200"
-                      >
+                    <div className="flex flex-wrap gap-2">
+                      {categories.map((category) => (
+                        <Badge
+                          key={category.id}
+                          variant="secondary"
+                          className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900 hover:from-indigo-200 hover:to-purple-200"
+                        >
                         {getLocalizedText(category.name)}
                         <button
                           onClick={() => handleDeleteCategory(category.id)}
@@ -798,7 +767,7 @@ export default function EditEmployerProfilePage() {
         <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Category to Company</DialogTitle>
+              <DialogTitle>{i18n.t('auto_add_category_to_company')}</DialogTitle>
               <DialogDescription>
                 {availableCategories.length === 0 
                   ? t('employerProfile:noMoreCategories') 
@@ -806,10 +775,10 @@ export default function EditEmployerProfilePage() {
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
-              <Label htmlFor="category-select">Available Categories</Label>
+              <Label htmlFor="category-select">{i18n.t('auto_available_categories')}</Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select a category" />
+                  <SelectValue placeholder={i18n.t('auto_select_a_category')}  />
                 </SelectTrigger>
                 <SelectContent>
                   {availableCategories.map((cat) => (
@@ -854,19 +823,19 @@ export default function EditEmployerProfilePage() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
                       {profileCompleteness.name ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
-                      <span>Company name (required)</span>
+                      <span>{i18n.t('auto_company_name_required')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       {profileCompleteness.description ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
-                      <span>Company description (min 10 characters)</span>
+                      <span>{i18n.t('auto_company_description_min_10_characters')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       {profileCompleteness.logo ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
-                      <span>Company logo</span>
+                      <span>{i18n.t('auto_company_logo')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       {profileCompleteness.website ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
-                      <span>Website</span>
+                      <span>{i18n.t('auto_website')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       {profileCompleteness.social ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
@@ -874,7 +843,7 @@ export default function EditEmployerProfilePage() {
                     </li>
                     <li className="flex items-center gap-2">
                       {profileCompleteness.contact ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-500" />}
-                      <span>Contact email or phone</span>
+                      <span>{i18n.t('auto_contact_email_or_phone')}</span>
                     </li>
                   </ul>
                 ) : (

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -68,21 +69,21 @@ const AdminJobsPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Posted</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{i18n.t('auto_title')}</TableHead>
+                <TableHead>{i18n.t('auto_company')}</TableHead>
+                <TableHead>{i18n.t('auto_status')}</TableHead>
+                <TableHead>{i18n.t('auto_posted')}</TableHead>
+                <TableHead className="text-right">{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">Loading jobs...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8">{i18n.t('auto_loading_jobs')}</TableCell>
                 </TableRow>
               ) : jobs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">No jobs found</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8">{i18n.t('auto_no_jobs_found')}</TableCell>
                 </TableRow>
               ) : (
                 jobs.map(job => (

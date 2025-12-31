@@ -1,4 +1,5 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -522,14 +523,10 @@ export default function VideoEditPage() {
       <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Select Video
-            </Typography>
+            <Typography variant="h6" gutterBottom>{i18n.t('auto_select_video')}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Upload New Video
-                </Typography>
+                <Typography variant="subtitle1" gutterBottom>{i18n.t('auto_upload_new_video')}</Typography>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -554,14 +551,12 @@ export default function VideoEditPage() {
                 )}
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Select From Your Videos
-                </Typography>
+                <Typography variant="subtitle1" gutterBottom>{i18n.t('auto_select_from_your_videos')}</Typography>
                 <FormControl fullWidth>
-                  <InputLabel>My Videos</InputLabel>
+                  <InputLabel>{i18n.t('auto_my_videos')}</InputLabel>
                   <Select
                     value={selectedVideoFromList?.id || ''}
-                    label="My Videos"
+                    label={i18n.t('auto_my_videos')} 
                     onChange={(e) => {
                       const video = myVideos.find(v => v.id === e.target.value);
                       if (video) handleSelectVideoFromList(video);
@@ -577,9 +572,7 @@ export default function VideoEditPage() {
               </Grid>
             </Grid>
             {loadingFFmpeg && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Loading video editor... Please wait.
-              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{i18n.t('auto_loading_video_editor_please_wait')}</Typography>
             )}
             {!ffmpeg && !loadingFFmpeg && (
               <Alert severity="warning" sx={{ mt: 1 }}>
@@ -595,9 +588,7 @@ export default function VideoEditPage() {
         <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Video Preview
-              </Typography>
+              <Typography variant="h6" gutterBottom>{i18n.t('auto_video_preview')}</Typography>
               <Box position="relative" mb={2}>
                 <video
                   ref={videoRef}
@@ -634,9 +625,7 @@ export default function VideoEditPage() {
 
               {/* Trim Controls */}
               <Box mb={2}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Trim Video
-                </Typography>
+                <Typography variant="subtitle2" gutterBottom>{i18n.t('auto_trim_video')}</Typography>
                 <Box display="flex" alignItems="center" gap={2}>
                   <Typography variant="body2">Start:</Typography>
                   <Box flexGrow={1}>
@@ -677,13 +666,11 @@ export default function VideoEditPage() {
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Video Details
-              </Typography>
+              <Typography variant="h6" gutterBottom>{i18n.t('auto_video_details')}</Typography>
               
               <TextField
                 fullWidth
-                label="Title"
+                label={i18n.t('auto_title')} 
                 value={videoTitle}
                 onChange={(e) => setVideoTitle(e.target.value)}
                 sx={{ mb: 2 }}
@@ -693,15 +680,13 @@ export default function VideoEditPage() {
                 fullWidth
                 multiline
                 rows={3}
-                label="Description"
+                label={i18n.t('auto_description')} 
                 value={videoDescription}
                 onChange={(e) => setVideoDescription(e.target.value)}
                 sx={{ mb: 3 }}
               />
 
-              <Typography variant="h6" gutterBottom>
-                Video Filters
-              </Typography>
+              <Typography variant="h6" gutterBottom>{i18n.t('auto_video_filters')}</Typography>
               
               <Box mb={2}>
                 <Typography variant="body2" gutterBottom>
@@ -771,20 +756,14 @@ export default function VideoEditPage() {
 
   const SavedVideos = () => (
     <Box>
-      <Typography variant="h6" mb={3}>
-        Your Edited Videos
-      </Typography>
+      <Typography variant="h6" mb={3}>{i18n.t('auto_your_edited_videos')}</Typography>
       
       {myVideos.length === 0 ? (
         <Card>
           <CardContent sx={{ textAlign: 'center', py: 8 }}>
             <VideoLibrary sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary" gutterBottom>
-              No edited videos yet
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Start editing videos to see them here
-            </Typography>
+            <Typography variant="h6" color="text.secondary" gutterBottom>{i18n.t('auto_no_edited_videos_yet')}</Typography>
+            <Typography variant="body2" color="text.secondary">{i18n.t('auto_start_editing_videos_to_see_them_here')}</Typography>
           </CardContent>
         </Card>
       ) : (
@@ -812,9 +791,7 @@ export default function VideoEditPage() {
                       color="error"
                       startIcon={<Delete />}
                       onClick={() => handleDeleteVideo(video.id)}
-                    >
-                      Delete
-                    </Button>
+                    >{i18n.t('auto_delete')}</Button>
                   </Stack>
                 </CardContent>
               </Card>
@@ -827,9 +804,7 @@ export default function VideoEditPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center" color="primary">
-        Video Editor
-      </Typography>
+      <Typography variant="h4" component="h1" gutterBottom align="center" color="primary">{i18n.t('auto_video_editor')}</Typography>
       <Typography variant="body1" sx={{ mb: 4, textAlign: 'center', color: 'text.secondary' }}>
         Upload, edit, and enhance your videos with our easy-to-use editor
       </Typography>
@@ -841,8 +816,8 @@ export default function VideoEditPage() {
           centered
           sx={{ mb: 2 }}
         >
-          <Tab label="Edit Video" />
-          <Tab label="Saved Videos" />
+          <Tab label={i18n.t('auto_edit_video')}  />
+          <Tab label={i18n.t('auto_saved_videos')}  />
         </Tabs>
         <Divider sx={{ my: 2 }} />
         {tabValue === 0 && <VideoEditor />}
@@ -856,17 +831,15 @@ export default function VideoEditPage() {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Processed Video Preview</DialogTitle>
+        <DialogTitle>{i18n.t('auto_processed_video_preview')}</DialogTitle>
         <DialogContent>
           {processedVideoUrl && (
             <video src={processedVideoUrl} controls style={{ width: '100%', borderRadius: '8px' }} />
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPreviewDialog(false)}>Close</Button>
-          <Button onClick={downloadProcessedVideo}>
-            Download
-          </Button>
+          <Button onClick={() => setPreviewDialog(false)}>{i18n.t('auto_close')}</Button>
+          <Button onClick={downloadProcessedVideo}>{i18n.t('auto_download')}</Button>
           <Button
             variant="contained"
             startIcon={<Upload />}

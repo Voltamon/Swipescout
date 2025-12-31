@@ -1,4 +1,5 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { uploadVideo, saveVideoMetadata } from '@/services/videoService';
 import { checkUploadStatus, checkUploadLimit } from '@/services/api';
@@ -540,9 +541,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
             <CardTitle className="text-red-700 flex items-center gap-2">
-              <AlertCircle className="h-6 w-6" />
-              Upload Limit Reached
-            </CardTitle>
+              <AlertCircle className="h-6 w-6" />{i18n.t('auto_upload_limit_reached')}</CardTitle>
             <CardDescription className="text-red-600">
               You have reached the maximum number of videos allowed for your current plan ({uploadLimit?.limit}).
             </CardDescription>
@@ -554,9 +553,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             <Button 
               onClick={() => navigate('/pricing')} 
               className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Upgrade Plan
-            </Button>
+            >{i18n.t('auto_upgrade_plan')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -569,15 +566,9 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
       {!embedded && (
         <div className="mb-8">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <h1 className={`${themeColors.text.gradient} text-4xl font-bold  mb-2`}>
-            Upload Video
-          </h1>
-          <p className="text-muted-foreground">
-            Record a new video or upload an existing one
-          </p>
+            <ArrowLeft className="h-4 w-4 mr-2" />{i18n.t('auto_back')}</Button>
+          <h1 className={`${themeColors.text.gradient} text-4xl font-bold  mb-2`}>{i18n.t('auto_upload_video')}</h1>
+          <p className="text-muted-foreground">{i18n.t('auto_record_a_new_video_or_upload_an_existing')}</p>
         </div>
       )}
 
@@ -589,17 +580,13 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             className="h-24 text-lg"
             onClick={() => setUploadMethod('record')}
           >
-            <Video className="h-6 w-6 mr-3" />
-            Record Video
-          </Button>
+            <Video className="h-6 w-6 mr-3" />{i18n.t('auto_record_video')}</Button>
           <Button
             variant={uploadMethod === 'upload' ? 'default' : 'outline'}
             className="h-24 text-lg"
             onClick={() => setUploadMethod('upload')}
           >
-            <Upload className="h-6 w-6 mr-3" />
-            Upload Video
-          </Button>
+            <Upload className="h-6 w-6 mr-3" />{i18n.t('auto_upload_video')}</Button>
         </div>
       )}
 
@@ -632,7 +619,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center text-white">
                     <Upload className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-sm opacity-75">No video selected</p>
+                    <p className="text-sm opacity-75">{i18n.t('auto_no_video_selected')}</p>
                   </div>
                 </div>
               )}
@@ -654,9 +641,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                     onClick={startRecording}
                     className={`${themeColors.buttons.primary} text-white w-full `}
                   >
-                    <Video className="h-4 w-4 mr-2" />
-                    Start Recording
-                  </Button>
+                    <Video className="h-4 w-4 mr-2" />{i18n.t('auto_start_recording')}</Button>
                 ) : (
                   <div className="flex gap-2">
                     <Button
@@ -666,14 +651,10 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                     >
                       {isPaused ? (
                         <>
-                          <Play className="h-4 w-4 mr-2" />
-                          Resume
-                        </>
+                          <Play className="h-4 w-4 mr-2" />{i18n.t('auto_resume')}</>
                       ) : (
                         <>
-                          <Pause className="h-4 w-4 mr-2" />
-                          Pause
-                        </>
+                          <Pause className="h-4 w-4 mr-2" />{i18n.t('auto_pause')}</>
                       )}
                     </Button>
                     <Button
@@ -681,9 +662,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                       variant="destructive"
                       className="flex-1"
                     >
-                      <Square className="h-4 w-4 mr-2" />
-                      Stop
-                    </Button>
+                      <Square className="h-4 w-4 mr-2" />{i18n.t('auto_stop')}</Button>
                   </div>
                 )}
 
@@ -695,14 +674,10 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                   >
                     {isMuted ? (
                       <>
-                        <MicOff className="h-4 w-4 mr-2" />
-                        Unmute
-                      </>
+                        <MicOff className="h-4 w-4 mr-2" />{i18n.t('auto_unmute')}</>
                     ) : (
                       <>
-                        <Mic className="h-4 w-4 mr-2" />
-                        Mute
-                      </>
+                        <Mic className="h-4 w-4 mr-2" />{i18n.t('auto_mute_1')}</>
                     )}
                   </Button>
                 )}
@@ -722,9 +697,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                   onClick={() => fileInputRef.current?.click()}
                   className={`${themeColors.buttons.primary} text-white w-full `}
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Choose Video File
-                </Button>
+                  <Upload className="h-4 w-4 mr-2" />{i18n.t('auto_choose_video_file')}</Button>
               </div>
             )}
 
@@ -735,9 +708,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                   variant="outline"
                   className="flex-1"
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Record Again
-                </Button>
+                  <RefreshCw className="h-4 w-4 mr-2" />{i18n.t('auto_record_again')}</Button>
               </div>
             )}
           </CardContent>
@@ -746,8 +717,8 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
         {/* Video Details Form */}
         <Card className="border-l-4 border-l-cyan-500">
           <CardHeader>
-            <CardTitle>Video Details</CardTitle>
-            <CardDescription>Add information about your video</CardDescription>
+            <CardTitle>{i18n.t('auto_video_details')}</CardTitle>
+            <CardDescription>{i18n.t('auto_add_information_about_your_video')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Title */}
@@ -757,42 +728,42 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                 id="title"
                 value={videoTitle}
                 onChange={(e) => setVideoTitle(e.target.value)}
-                placeholder="Enter video title"
+                placeholder={i18n.t('auto_enter_video_title')} 
               />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{i18n.t('auto_description')}</Label>
               <Textarea
                 id="description"
                 value={videoDescription}
                 onChange={(e) => setVideoDescription(e.target.value)}
-                placeholder="Describe your video..."
+                placeholder={i18n.t('auto_describe_your_video')} 
                 rows={4}
               />
             </div>
 
             {/* Category */}
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">{i18n.t('auto_category')}</Label>
               <Select value={videoCategory} onValueChange={setVideoCategory}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={i18n.t('auto_select_category')}  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="introduction">Introduction</SelectItem>
-                  <SelectItem value="skills">Skills Demo</SelectItem>
-                  <SelectItem value="experience">Experience</SelectItem>
-                  <SelectItem value="portfolio">Portfolio</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="introduction">{i18n.t('auto_introduction')}</SelectItem>
+                  <SelectItem value="skills">{i18n.t('auto_skills_demo')}</SelectItem>
+                  <SelectItem value="experience">{i18n.t('auto_experience')}</SelectItem>
+                  <SelectItem value="portfolio">{i18n.t('auto_portfolio')}</SelectItem>
+                  <SelectItem value="other">{i18n.t('auto_other')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Hashtags */}
             <div className="space-y-2">
-              <Label htmlFor="hashtags">Hashtags</Label>
+              <Label htmlFor="hashtags">{i18n.t('auto_hashtags')}</Label>
               <div className="flex gap-2">
                 <Input
                   id="hashtags"
@@ -804,7 +775,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                       addHashtag();
                     }
                   }}
-                  placeholder="Add hashtag and press Enter"
+                  placeholder={i18n.t('auto_add_hashtag_and_press_enter')} 
                 />
                 <Button onClick={addHashtag} size="icon" variant="outline">
                   <Plus className="h-4 w-4" />
@@ -824,15 +795,15 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
 
             {/* Privacy */}
             <div className="space-y-2">
-              <Label htmlFor="privacy">Privacy</Label>
+              <Label htmlFor="privacy">{i18n.t('auto_privacy')}</Label>
               <Select value={privacy} onValueChange={setPrivacy}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="public">Public</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                  <SelectItem value="unlisted">Unlisted</SelectItem>
+                  <SelectItem value="public">{i18n.t('auto_public')}</SelectItem>
+                  <SelectItem value="private">{i18n.t('auto_private')}</SelectItem>
+                  <SelectItem value="unlisted">{i18n.t('auto_unlisted')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -840,7 +811,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             {/* Upload as (role) */}
             {Array.isArray(role) && role.length > 1 && (
               <div className="space-y-2">
-                <Label htmlFor="uploaderRole">Upload as</Label>
+                <Label htmlFor="uploaderRole">{i18n.t('auto_upload_as')}</Label>
                 <Select value={selectedUploaderRole} onValueChange={setSelectedUploaderRole}>
                   {role.map((r) => (
                     <SelectItem key={r} value={r}>{r}</SelectItem>
@@ -852,12 +823,12 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             {/* Job ID (if applicable) */}
             {Array.isArray(role) && (role.includes('jobseeker') || role.includes('job_seeker')) && (
               <div className="space-y-2">
-                <Label htmlFor="jobId">Job Application (Optional)</Label>
+                <Label htmlFor="jobId">{i18n.t('auto_job_application_optional')}</Label>
                 <Input
                   id="jobId"
                   value={jobId}
                   onChange={(e) => setJobId(e.target.value)}
-                  placeholder="Enter Job ID if applying"
+                  placeholder={i18n.t('auto_enter_job_id_if_applying')} 
                 />
               </div>
             )}
@@ -866,7 +837,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
             {isUploading && (
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Uploading...</span>
+                  <span>{i18n.t('auto_uploading')}</span>
                   <span>{uploadProgress}%</span>
                 </div>
                 <Progress value={uploadProgress} />
@@ -886,9 +857,7 @@ export default function VideoUpload({ newjobid, onComplete, onStatusChange, embe
                 </>
               ) : (
                 <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Video
-                </>
+                  <Save className="h-4 w-4 mr-2" />{i18n.t('auto_save_video')}</>
               )}
             </Button>
           </CardContent>

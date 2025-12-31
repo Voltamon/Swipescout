@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -320,9 +321,7 @@ export default function MaintenanceDashboard() {
             startIcon={runningTasks.has(task.id) ? <CircularProgress size={16} /> : <PlayArrow />}
             onClick={() => handleRunTask(task.id)}
             disabled={runningTasks.has(task.id) || !task.enabled}
-          >
-            Run
-          </Button>
+          >{i18n.t('auto_run')}</Button>
           <Button
             size="small"
             variant="outlined"
@@ -331,9 +330,7 @@ export default function MaintenanceDashboard() {
               setSelectedTask(task);
               setTaskDialog(true);
             }}
-          >
-            Configure
-          </Button>
+          >{i18n.t('auto_configure')}</Button>
         </Box>
       </CardContent>
     </Card>
@@ -344,12 +341,12 @@ export default function MaintenanceDashboard() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Task</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Start Time</TableCell>
-            <TableCell>Duration</TableCell>
-            <TableCell>Message</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>{i18n.t('auto_task')}</TableCell>
+            <TableCell>{i18n.t('auto_status')}</TableCell>
+            <TableCell>{i18n.t('auto_start_time')}</TableCell>
+            <TableCell>{i18n.t('auto_duration')}</TableCell>
+            <TableCell>{i18n.t('auto_message')}</TableCell>
+            <TableCell>{i18n.t('auto_actions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -400,9 +397,7 @@ export default function MaintenanceDashboard() {
               <Build color="primary" />
               <Box>
                 <Typography variant="h4">{statistics?.totalTasks || 0}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Total Tasks
-                </Typography>
+                <Typography variant="body2" color="text.secondary">{i18n.t('auto_total_tasks')}</Typography>
               </Box>
             </Box>
           </CardContent>
@@ -416,9 +411,7 @@ export default function MaintenanceDashboard() {
               <Schedule color="warning" />
               <Box>
                 <Typography variant="h4">{statistics?.pendingTasks || 0}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Pending Tasks
-                </Typography>
+                <Typography variant="body2" color="text.secondary">{i18n.t('auto_pending_tasks')}</Typography>
               </Box>
             </Box>
           </CardContent>
@@ -432,9 +425,7 @@ export default function MaintenanceDashboard() {
               <CheckCircle color="success" />
               <Box>
                 <Typography variant="h4">{statistics?.completedRuns || 0}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Completed Runs
-                </Typography>
+                <Typography variant="body2" color="text.secondary">{i18n.t('auto_completed_runs')}</Typography>
               </Box>
             </Box>
           </CardContent>
@@ -448,9 +439,7 @@ export default function MaintenanceDashboard() {
               <Error color="error" />
               <Box>
                 <Typography variant="h4">{statistics?.failedRuns || 0}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Failed Runs
-                </Typography>
+                <Typography variant="body2" color="text.secondary">{i18n.t('auto_failed_runs')}</Typography>
               </Box>
             </Box>
           </CardContent>
@@ -493,7 +482,7 @@ export default function MaintenanceDashboard() {
                 color="warning"
               />
             }
-            label="Maintenance Mode"
+            label={i18n.t('auto_maintenance_mode')} 
           />
           
           <Button
@@ -501,18 +490,14 @@ export default function MaintenanceDashboard() {
             startIcon={<Refresh />}
             onClick={fetchData}
             disabled={loading}
-          >
-            Refresh
-          </Button>
+          >{i18n.t('auto_refresh')}</Button>
           
           <Button
             variant="contained"
             startIcon={<PlayArrow />}
             onClick={handleRunPendingTasks}
             disabled={loading}
-          >
-            Run Pending
-          </Button>
+          >{i18n.t('auto_run_pending')}</Button>
         </Box>
       </Box>
 
@@ -538,9 +523,9 @@ export default function MaintenanceDashboard() {
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={selectedTab} onChange={(e, newValue) => setSelectedTab(newValue)}>
-          <Tab label="Tasks" />
-          <Tab label="Results" />
-          <Tab label="Analytics" />
+          <Tab label={i18n.t('auto_tasks')}  />
+          <Tab label={i18n.t('auto_results')}  />
+          <Tab label={i18n.t('auto_analytics_1')}  />
         </Tabs>
       </Box>
 
@@ -562,9 +547,7 @@ export default function MaintenanceDashboard() {
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Tasks by Category
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_tasks_by_category')}</Typography>
                 <List>
                   {Object.entries(statistics?.tasksByCategory || {}).map(([category, count]) => (
                     <ListItem key={category}>
@@ -585,9 +568,7 @@ export default function MaintenanceDashboard() {
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Recent Activity
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_recent_activity')}</Typography>
                 <List>
                   {statistics?.recentActivity?.map((activity, index) => (
                     <ListItem key={index}>
@@ -614,30 +595,20 @@ export default function MaintenanceDashboard() {
         onClose={() => setMenuAnchor(null)}
       >
         <MenuItem onClick={() => handleRunTask(menuTask?.id)}>
-          <PlayArrow sx={{ mr: 1 }} />
-          Run Task
-        </MenuItem>
+          <PlayArrow sx={{ mr: 1 }} />{i18n.t('auto_run_task')}</MenuItem>
         <MenuItem onClick={() => handleRunTask(menuTask?.id, true)}>
-          <PlayArrow sx={{ mr: 1 }} />
-          Force Run
-        </MenuItem>
+          <PlayArrow sx={{ mr: 1 }} />{i18n.t('auto_force_run')}</MenuItem>
         <MenuItem onClick={() => {
           setSelectedTask(menuTask);
           setTaskDialog(true);
           setMenuAnchor(null);
         }}>
-          <Settings sx={{ mr: 1 }} />
-          Configure
-        </MenuItem>
+          <Settings sx={{ mr: 1 }} />{i18n.t('auto_configure')}</MenuItem>
         <Divider />
         <MenuItem onClick={() => handleExportData('json')}>
-          <Download sx={{ mr: 1 }} />
-          Export JSON
-        </MenuItem>
+          <Download sx={{ mr: 1 }} />{i18n.t('auto_export_json')}</MenuItem>
         <MenuItem onClick={() => handleExportData('csv')}>
-          <Download sx={{ mr: 1 }} />
-          Export CSV
-        </MenuItem>
+          <Download sx={{ mr: 1 }} />{i18n.t('auto_export_csv')}</MenuItem>
       </Menu>
 
       {/* Task Configuration Dialog */}
@@ -661,7 +632,7 @@ export default function MaintenanceDashboard() {
                     })}
                   />
                 }
-                label="Enabled"
+                label={i18n.t('auto_enabled_1')} 
                 sx={{ mb: 2 }}
               />
               
@@ -672,17 +643,13 @@ export default function MaintenanceDashboard() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setTaskDialog(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setTaskDialog(false)}>{i18n.t('auto_cancel')}</Button>
           <Button 
             onClick={() => handleUpdateTask(selectedTask?.id, {
               enabled: selectedTask?.enabled
             })}
             variant="contained"
-          >
-            Save
-          </Button>
+          >{i18n.t('auto_save')}</Button>
         </DialogActions>
       </Dialog>
     </Container>

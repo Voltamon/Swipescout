@@ -33,7 +33,7 @@ export function translateTextNodes(root = document.body, translateFn) {
       }
     } catch (err) {
       // Don't let one translation failure break the whole pass
-      // eslint-disable-next-line no-console
+       
       console.error("translateTextNodes: translateFn error", err);
     }
   }
@@ -62,7 +62,7 @@ export function safeSetInnerHTML(el, html) {
     if (typeof html === "string" && !/<[a-z][\s\S]*>/i.test(html)) {
       el.textContent = html;
     } else {
-      // eslint-disable-next-line no-console
+       
       console.warn(
         "safeSetInnerHTML prevented setting HTML inside an SVG or its descendants"
       );

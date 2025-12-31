@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import {
   Card,
   CardContent,
@@ -189,20 +190,14 @@ const CategoryManagementPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>
-            Blog Categories
-          </h2>
-          <p className={themeColors.text.secondary}>
-            Manage blog post categories and organize your content
-          </p>
+          <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>{i18n.t('auto_blog_categories')}</h2>
+          <p className={themeColors.text.secondary}>{i18n.t('auto_manage_blog_post_categories_and_organize')}</p>
         </div>
         <Button
           onClick={() => handleOpenDialog()}
           className={`${themeColors.buttons.primary} text-white`}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          New Category
-        </Button>
+          <Plus className="mr-2 h-4 w-4" />{i18n.t('auto_new_category')}</Button>
       </div>
 
       {/* Categories Table */}
@@ -211,13 +206,13 @@ const CategoryManagementPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Color</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Sort Order</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{i18n.t('auto_name')}</TableHead>
+                <TableHead>{i18n.t('auto_slug')}</TableHead>
+                <TableHead>{i18n.t('auto_description')}</TableHead>
+                <TableHead>{i18n.t('auto_color')}</TableHead>
+                <TableHead>{i18n.t('auto_status')}</TableHead>
+                <TableHead>{i18n.t('auto_sort_order')}</TableHead>
+                <TableHead className="text-right">{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -225,9 +220,7 @@ const CategoryManagementPage = () => {
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>
-                      Loading categories...
-                    </div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>{i18n.t('auto_loading_categories')}</div>
                   </TableCell>
                 </TableRow>
               ) : categories.length === 0 ? (
@@ -235,14 +228,12 @@ const CategoryManagementPage = () => {
                   <TableCell colSpan={7} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <Folder className="h-12 w-12 text-gray-300" />
-                      <p className={themeColors.text.muted}>No categories found</p>
+                      <p className={themeColors.text.muted}>{i18n.t('auto_no_categories_found')}</p>
                       <Button
                         variant="outline"
                         onClick={() => handleOpenDialog()}
                         className="mt-2"
-                      >
-                        Create First Category
-                      </Button>
+                      >{i18n.t('auto_create_first_category')}</Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -292,14 +283,10 @@ const CategoryManagementPage = () => {
                     <TableCell>
                       {category.isActive ? (
                         <Badge variant="default" className="gap-1">
-                          <Eye className="h-3 w-3" />
-                          Active
-                        </Badge>
+                          <Eye className="h-3 w-3" />{i18n.t('auto_active')}</Badge>
                       ) : (
                         <Badge variant="secondary" className="gap-1">
-                          <EyeOff className="h-3 w-3" />
-                          Inactive
-                        </Badge>
+                          <EyeOff className="h-3 w-3" />{i18n.t('auto_inactive')}</Badge>
                       )}
                     </TableCell>
                     <TableCell>{category.sortOrder}</TableCell>
@@ -354,30 +341,30 @@ const CategoryManagementPage = () => {
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                placeholder="Category name"
+                placeholder={i18n.t('auto_category_name')} 
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="nameAr">Name (Arabic)</Label>
+              <Label htmlFor="nameAr">{i18n.t('auto_name_arabic')}</Label>
               <Input
                 id="nameAr"
                 value={formData.nameAr}
                 onChange={(e) => handleChange('nameAr', e.target.value)}
-                placeholder="اسم الفئة"
+                placeholder={i18n.t('auto_text_2')} 
                 className="mt-1"
                 dir="rtl"
               />
             </div>
 
             <div>
-              <Label htmlFor="nameZh">Name (Chinese)</Label>
+              <Label htmlFor="nameZh">{i18n.t('auto_name_chinese')}</Label>
               <Input
                 id="nameZh"
                 value={formData.nameZh}
                 onChange={(e) => handleChange('nameZh', e.target.value)}
-                placeholder="类别名称"
+                placeholder={i18n.t('auto_text_3')} 
                 className="mt-1"
               />
             </div>
@@ -388,30 +375,30 @@ const CategoryManagementPage = () => {
                 id="slug"
                 value={formData.slug}
                 onChange={(e) => handleChange('slug', e.target.value)}
-                placeholder="category-slug"
+                placeholder={i18n.t('auto_category_slug')} 
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="description">Description (English)</Label>
+              <Label htmlFor="description">{i18n.t('auto_description_english')}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Category description"
+                placeholder={i18n.t('auto_category_description')} 
                 rows={2}
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="descriptionAr">Description (Arabic)</Label>
+              <Label htmlFor="descriptionAr">{i18n.t('auto_description_arabic')}</Label>
               <Textarea
                 id="descriptionAr"
                 value={formData.descriptionAr}
                 onChange={(e) => handleChange('descriptionAr', e.target.value)}
-                placeholder="وصف الفئة"
+                placeholder={i18n.t('auto_text_4')} 
                 rows={2}
                 className="mt-1"
                 dir="rtl"
@@ -419,12 +406,12 @@ const CategoryManagementPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="descriptionZh">Description (Chinese)</Label>
+              <Label htmlFor="descriptionZh">{i18n.t('auto_description_chinese')}</Label>
               <Textarea
                 id="descriptionZh"
                 value={formData.descriptionZh}
                 onChange={(e) => handleChange('descriptionZh', e.target.value)}
-                placeholder="类别描述"
+                placeholder={i18n.t('auto_text_5')} 
                 rows={2}
                 className="mt-1"
               />
@@ -432,7 +419,7 @@ const CategoryManagementPage = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="color">Color</Label>
+                <Label htmlFor="color">{i18n.t('auto_color')}</Label>
                 <div className="flex gap-2 mt-1">
                   <Input
                     id="color"
@@ -444,14 +431,14 @@ const CategoryManagementPage = () => {
                   <Input
                     value={formData.color}
                     onChange={(e) => handleChange('color', e.target.value)}
-                    placeholder="#3B82F6"
+                    placeholder={i18n.t('auto_3b82f6')} 
                     className="flex-1"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="sortOrder">Sort Order</Label>
+                <Label htmlFor="sortOrder">{i18n.t('auto_sort_order')}</Label>
                 <Input
                   id="sortOrder"
                   type="number"
@@ -463,18 +450,18 @@ const CategoryManagementPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="icon">Icon (Optional)</Label>
+              <Label htmlFor="icon">{i18n.t('auto_icon_optional')}</Label>
               <Input
                 id="icon"
                 value={formData.icon}
                 onChange={(e) => handleChange('icon', e.target.value)}
-                placeholder="icon-name"
+                placeholder={i18n.t('auto_icon_name')} 
                 className="mt-1"
               />
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="isActive">Active</Label>
+              <Label htmlFor="isActive">{i18n.t('auto_active')}</Label>
               <Switch
                 id="isActive"
                 checked={formData.isActive}
@@ -483,23 +470,23 @@ const CategoryManagementPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="metaTitle">Meta Title (SEO)</Label>
+              <Label htmlFor="metaTitle">{i18n.t('auto_meta_title_seo')}</Label>
               <Input
                 id="metaTitle"
                 value={formData.metaTitle}
                 onChange={(e) => handleChange('metaTitle', e.target.value)}
-                placeholder="SEO title"
+                placeholder={i18n.t('auto_seo_title')} 
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="metaDescription">Meta Description (SEO)</Label>
+              <Label htmlFor="metaDescription">{i18n.t('auto_meta_description_seo')}</Label>
               <Textarea
                 id="metaDescription"
                 value={formData.metaDescription}
                 onChange={(e) => handleChange('metaDescription', e.target.value)}
-                placeholder="SEO description"
+                placeholder={i18n.t('auto_seo_description')} 
                 rows={2}
                 className="mt-1"
               />
@@ -514,9 +501,7 @@ const CategoryManagementPage = () => {
               }}
               disabled={saving}
             >
-              <X className="mr-2 h-4 w-4" />
-              Cancel
-            </Button>
+              <X className="mr-2 h-4 w-4" />{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={handleSubmit}
               disabled={saving || !formData.name || !formData.slug}
@@ -533,22 +518,18 @@ const CategoryManagementPage = () => {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
+            <DialogTitle>{i18n.t('auto_delete_category')}</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete "{selectedCategory?.name}"? This action cannot
               be undone. Blog posts in this category will become uncategorized.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={handleDelete}
               className={`${themeColors.buttons.danger} text-white`}
-            >
-              Delete
-            </Button>
+            >{i18n.t('auto_delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

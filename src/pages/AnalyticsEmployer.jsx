@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import i18n from 'i18next';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import api from '../services/api';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
@@ -74,7 +75,7 @@ function StatCard({ title, value, subtitle, icon: Icon, trend, trendValue }) {
                 <span className={`text-xs font-medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
                   {trendValue}
                 </span>
-                <span className={`text-xs ${themeColors.text.muted}`}>vs last month</span>
+                <span className={`text-xs ${themeColors.text.muted}`}>{i18n.t('auto_vs_last_month')}</span>
               </div>
             )}
           </div>
@@ -198,9 +199,7 @@ export default function AnalyticsEmployer() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>
-              Analytics Dashboard
-            </h1>
+            <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>{i18n.t('auto_analytics_dashboard')}</h1>
             <p className={themeColors.text.secondary}>
               Comprehensive insights into your job postings and applicant engagement
             </p>
@@ -213,7 +212,7 @@ export default function AnalyticsEmployer() {
                 value={fromDate}
                 onChange={e => setFromDate(e.target.value)}
                 className="border-0 bg-transparent text-sm focus:outline-none focus:ring-0"
-                aria-label="From date"
+                aria-label={i18n.t('auto_from_date')} 
               />
               <span className="text-gray-400">-</span>
               <input
@@ -221,17 +220,13 @@ export default function AnalyticsEmployer() {
                 value={toDate}
                 onChange={e => setToDate(e.target.value)}
                 className="border-0 bg-transparent text-sm focus:outline-none focus:ring-0"
-                aria-label="To date"
+                aria-label={i18n.t('auto_to_date')} 
               />
             </div>
             <Button onClick={handleRefresh} className={`${themeColors.buttons.primary} text-white`}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
+              <RefreshCw className="h-4 w-4 mr-2" />{i18n.t('auto_refresh')}</Button>
             <Button onClick={handleExport} variant="outline" className={themeColors.buttons.outline}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+              <Download className="h-4 w-4 mr-2" />{i18n.t('auto_export')}</Button>
           </div>
         </div>
 
@@ -250,31 +245,31 @@ export default function AnalyticsEmployer() {
             {/* Key Metrics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard
-                title="Total Job Views"
+                title={i18n.t('auto_total_job_views')} 
                 value={stats?.total_job_views || stats?.totalJobViews || 0}
-                subtitle="All time"
+                subtitle={i18n.t('auto_all_time')} 
                 icon={Eye}
                 trend="up"
                 trendValue="+12%"
               />
               <StatCard
-                title="Total Applicants"
+                title={i18n.t('auto_total_applicants')} 
                 value={stats?.total_applicants || stats?.newApplications || 0}
-                subtitle="All time"
+                subtitle={i18n.t('auto_all_time')} 
                 icon={Users}
                 trend="up"
                 trendValue="+8%"
               />
               <StatCard
-                title="Active Jobs"
+                title={i18n.t('auto_active_jobs')} 
                 value={stats?.activeJobs ?? stats?.active_jobs ?? 0}
-                subtitle="Currently posted"
+                subtitle={i18n.t('auto_currently_posted')} 
                 icon={Briefcase}
               />
               <StatCard
-                title="Avg. Applications per Job"
+                title={i18n.t('auto_avg_applications_per_job')} 
                 value={stats?.avg_applications_per_job || Math.round((stats?.total_applicants || 0) / (stats?.active_jobs || 1))}
-                subtitle="Across all jobs"
+                subtitle={i18n.t('auto_across_all_jobs')} 
                 icon={TrendingUp}
                 trend="up"
                 trendValue="+5%"
@@ -287,22 +282,20 @@ export default function AnalyticsEmployer() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-xl">Performance Analytics</CardTitle>
-                      <CardDescription>Detailed breakdown of your job posting performance</CardDescription>
+                      <CardTitle className="text-xl">{i18n.t('auto_performance_analytics')}</CardTitle>
+                      <CardDescription>{i18n.t('auto_detailed_breakdown_of_your_job_posting_p')}</CardDescription>
                     </div>
                   </div>
                   <TabsList className="grid w-full grid-cols-3 mt-4">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="engagement">Engagement</TabsTrigger>
-                    <TabsTrigger value="sources">Sources</TabsTrigger>
+                    <TabsTrigger value="overview">{i18n.t('auto_overview')}</TabsTrigger>
+                    <TabsTrigger value="engagement">{i18n.t('auto_engagement')}</TabsTrigger>
+                    <TabsTrigger value="sources">{i18n.t('auto_sources')}</TabsTrigger>
                   </TabsList>
                 </CardHeader>
                 <CardContent className="pt-6">
                   <TabsContent value="overview" className="space-y-6 mt-0">
                     <div className="h-80">
-                      <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>
-                        Job Views Over Time
-                      </h3>
+                      <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>{i18n.t('auto_job_views_over_time')}</h3>
                       <Line
                         data={viewsChartData}
                         options={{
@@ -327,9 +320,7 @@ export default function AnalyticsEmployer() {
 
                   <TabsContent value="engagement" className="space-y-6 mt-0">
                     <div className="h-80">
-                      <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>
-                        Applicants Per Job
-                      </h3>
+                      <h3 className={`text-lg font-semibold mb-4 ${themeColors.text.primary}`}>{i18n.t('auto_applicants_per_job')}</h3>
                       <Bar
                         data={applicantsChartData}
                         options={{
@@ -353,9 +344,7 @@ export default function AnalyticsEmployer() {
                   <TabsContent value="sources" className="space-y-6 mt-0">
                     <div className="h-80 flex items-center justify-center">
                       <div className="w-full max-w-md">
-                        <h3 className={`text-lg font-semibold mb-4 text-center ${themeColors.text.primary}`}>
-                          Applicant Sources
-                        </h3>
+                        <h3 className={`text-lg font-semibold mb-4 text-center ${themeColors.text.primary}`}>{i18n.t('auto_applicant_sources')}</h3>
                         <Doughnut
                           data={applicantSourcesChartData}
                           options={{
@@ -381,20 +370,20 @@ export default function AnalyticsEmployer() {
             {Array.isArray(jobStats) && jobStats.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-xl">Job Performance Details</CardTitle>
-                  <CardDescription>Individual job statistics and metrics</CardDescription>
+                  <CardTitle className="text-xl">{i18n.t('auto_job_performance_details')}</CardTitle>
+                  <CardDescription>{i18n.t('auto_individual_job_statistics_and_metrics')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Job Title</TableHead>
-                          <TableHead>Job ID</TableHead>
-                          <TableHead className="text-right">Views</TableHead>
-                          <TableHead className="text-right">Applicants</TableHead>
-                          <TableHead className="text-right">Conversion Rate</TableHead>
-                          <TableHead>Status</TableHead>
+                          <TableHead>{i18n.t('auto_job_title')}</TableHead>
+                          <TableHead>{i18n.t('auto_job_id')}</TableHead>
+                          <TableHead className="text-right">{i18n.t('auto_views')}</TableHead>
+                          <TableHead className="text-right">{i18n.t('auto_applicants')}</TableHead>
+                          <TableHead className="text-right">{i18n.t('auto_conversion_rate')}</TableHead>
+                          <TableHead>{i18n.t('auto_status')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -443,9 +432,7 @@ export default function AnalyticsEmployer() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <BarChart3 className="h-12 w-12 mx-auto mb-4 text-indigo-600" />
-                    <h3 className={`text-lg font-semibold mb-2 ${themeColors.text.primary}`}>
-                      Performance Insights
-                    </h3>
+                    <h3 className={`text-lg font-semibold mb-2 ${themeColors.text.primary}`}>{i18n.t('auto_performance_insights')}</h3>
                     <p className={`text-sm ${themeColors.text.secondary}`}>
                       Your jobs are performing {stats?.performance_rating || 'well'} compared to similar postings
                     </p>
@@ -457,9 +444,7 @@ export default function AnalyticsEmployer() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <TrendingUp className="h-12 w-12 mx-auto mb-4 text-green-600" />
-                    <h3 className={`text-lg font-semibold mb-2 ${themeColors.text.primary}`}>
-                      Growth Trend
-                    </h3>
+                    <h3 className={`text-lg font-semibold mb-2 ${themeColors.text.primary}`}>{i18n.t('auto_growth_trend')}</h3>
                     <p className={`text-sm ${themeColors.text.secondary}`}>
                       {stats?.growth_trend || '+15%'} increase in applicant engagement this month
                     </p>
@@ -471,9 +456,7 @@ export default function AnalyticsEmployer() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <Users className="h-12 w-12 mx-auto mb-4 text-purple-600" />
-                    <h3 className={`text-lg font-semibold mb-2 ${themeColors.text.primary}`}>
-                      Top Source
-                    </h3>
+                    <h3 className={`text-lg font-semibold mb-2 ${themeColors.text.primary}`}>{i18n.t('auto_top_source')}</h3>
                     <p className={`text-sm ${themeColors.text.secondary}`}>
                       Most applicants come from {stats?.top_source || 'Direct Search'}
                     </p>

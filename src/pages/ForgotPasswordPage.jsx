@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState  } from 'react';
 import { 
   Box, 
   Button, 
@@ -105,7 +106,7 @@ const ForgotPasswordPage = () => {
   return (
     <LoginContainer>
       <LoginFormContainer>
-        <LoginFormTitle variant="h5">Forgot Password</LoginFormTitle>
+        <LoginFormTitle variant="h5">{i18n.t('auto_forgot_password_2')}</LoginFormTitle>
         <LoginFormSubtitle>
           Enter your email address and we'll send you a link to reset your password.
         </LoginFormSubtitle>
@@ -128,7 +129,7 @@ const ForgotPasswordPage = () => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={i18n.t('auto_email_address')} 
             name="email"
             autoComplete="email"
             autoFocus

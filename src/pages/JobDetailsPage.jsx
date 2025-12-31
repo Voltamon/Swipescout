@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from "react";
+import i18n from 'i18next';
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getJobDetails, incrementJobView } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -278,7 +279,7 @@ const JobDetailsPage = ({ id: propId }) => {
               {/* Manage Video Button for Employers/Job Owner */}
               {((Array.isArray(role) ? role.includes('employer') || role.includes('recruiter') : role === 'employer') || (user && String(user.id) === String(job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id))) && (
                 <div className="absolute top-4 right-4 z-30">
-                  <Button size="sm" variant="outline" aria-label="Manage Video" onClick={(e) => { e.stopPropagation(); navigate(`/employer-tabs?group=videoManagement&tab=video-editor&id=${job.id}`); }}>
+                  <Button size="sm" variant="outline" aria-label={i18n.t('auto_manage_video')}  onClick={(e) => { e.stopPropagation(); navigate(`/employer-tabs?group=videoManagement&tab=video-editor&id=${job.id}`); }}>
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
@@ -305,15 +306,15 @@ const JobDetailsPage = ({ id: propId }) => {
                       />
                     </div>
                   )}
-                  <p className="mt-3 text-slate-300">This may take a few moments...</p>
+                  <p className="mt-3 text-slate-300">{i18n.t('auto_this_may_take_a_few_moments')}</p>
                 </>
               )}
 
               {video?.status === 'failed' && (
                 <>
                   <DocumentTextIcon className="w-20 h-20 text-yellow-400 mb-4" />
-                  <h3 className="text-2xl font-semibold mb-2">Video upload failed</h3>
-                  <p className="text-slate-300">Please check the videos page for details or try again</p>
+                  <h3 className="text-2xl font-semibold mb-2">{i18n.t('auto_video_upload_failed')}</h3>
+                  <p className="text-slate-300">{i18n.t('auto_please_check_the_videos_page_for_details')}</p>
                 </>
               )}
 
@@ -323,7 +324,7 @@ const JobDetailsPage = ({ id: propId }) => {
                     <div className="absolute inset-0" style={{ backgroundImage: placeholderDataUrl, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                   </div>
                   <div className="mt-2 flex items-end justify-end pr-8 pb-3">
-                    <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">No Video</p>
+                    <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">{i18n.t('auto_no_video')}</p>
                   </div>
                 </>
               )}
@@ -348,7 +349,7 @@ const JobDetailsPage = ({ id: propId }) => {
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-slate-600 font-medium">Loading job details...</p>
+              <p className="text-slate-600 font-medium">{i18n.t('auto_loading_job_details')}</p>
             </div>
           </div>
         </div>
@@ -367,9 +368,7 @@ const JobDetailsPage = ({ id: propId }) => {
                 <h3 className="text-xl font-semibold mb-2">{error || "Job not found"}</h3>
                 <p className="text-sm text-red-600 mb-6">We couldn't load this job listing. It may have been removed or you may not have permission to view it.</p>
                 <Button variant="outline" onClick={() => navigate("/jobs-Listing-Page")}>
-                  <ArrowLeftIcon className="w-4 h-4 mr-2" />
-                  Back to Jobs
-                </Button>
+                  <ArrowLeftIcon className="w-4 h-4 mr-2" />{i18n.t('auto_back_to_jobs')}</Button>
               </div>
             </CardContent>
           </Card>
@@ -397,9 +396,7 @@ const JobDetailsPage = ({ id: propId }) => {
 
               {/* Job Title and Company Info */}
               <div className="flex-1 min-w-0">
-                <CardDescription className="text-xs uppercase tracking-wider font-semibold text-purple-600 mb-2">
-                  Job Opportunity
-                </CardDescription>
+                <CardDescription className="text-xs uppercase tracking-wider font-semibold text-purple-600 mb-2">{i18n.t('auto_job_opportunity')}</CardDescription>
                 <div className="flex items-center gap-3">
                   <CardTitle className="text-3xl md:text-4xl mb-4">{job.title}</CardTitle>
                   <Badge variant={computeStatus(job) === 'active' ? 'default' : 'secondary'}>
@@ -415,7 +412,7 @@ const JobDetailsPage = ({ id: propId }) => {
                   <div className="flex items-center gap-2 text-slate-600">
                     <MapPinIcon className="w-5 h-5 text-purple-500" />
                     <span>{job?.location}</span>
-                    {job.remote_ok && <Badge variant="secondary" className="ml-1">Remote</Badge>}
+                    {job.remote_ok && <Badge variant="secondary" className="ml-1">{i18n.t('auto_remote')}</Badge>}
                   </div>
                 </div>
 
@@ -439,9 +436,7 @@ const JobDetailsPage = ({ id: propId }) => {
                   variant="outline" 
                   onClick={() => navigate(`/employer-profile/${job.employer?.userId || job.employer?.user_id || job.employerProfile?.userId || job.employerProfile?.user_id}`)}
                   className="w-full md:w-auto"
-                >
-                  View Company
-                </Button>
+                >{i18n.t('auto_view_company')}</Button>
               </div>
             </div>
           </CardHeader>
@@ -451,9 +446,7 @@ const JobDetailsPage = ({ id: propId }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-slate-50/50 rounded-xl border border-slate-100">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-                  <CurrencyDollarIcon className="w-5 h-5 text-green-600" />
-                  Salary Range
-                </div>
+                  <CurrencyDollarIcon className="w-5 h-5 text-green-600" />{i18n.t('auto_salary_range')}</div>
                 <div className="text-lg font-semibold text-slate-900">
                   {(job.salary_min || job.salary_max || job.salaryMin || job.salaryMax) 
                     ? `${formatSalary(job.salaryMin || job.salary_min)} - ${formatSalary(job.salaryMax || job.salary_max)}` 
@@ -463,9 +456,7 @@ const JobDetailsPage = ({ id: propId }) => {
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-                  <BriefcaseIcon className="w-5 h-5 text-blue-600" />
-                  Employment Type
-                </div>
+                  <BriefcaseIcon className="w-5 h-5 text-blue-600" />{i18n.t('auto_employment_type')}</div>
                 <div className="text-lg font-semibold text-slate-900">
                   {job.employment_type ? job.employment_type.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Not specified'}
                 </div>
@@ -473,9 +464,7 @@ const JobDetailsPage = ({ id: propId }) => {
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-                  <ClockIcon className="w-5 h-5 text-purple-600" />
-                  Experience Level
-                </div>
+                  <ClockIcon className="w-5 h-5 text-purple-600" />{i18n.t('auto_experience_level')}</div>
                 <div className="text-lg font-semibold text-slate-900">
                   {job.experience_level || 'Not specified'}
                 </div>
@@ -483,9 +472,7 @@ const JobDetailsPage = ({ id: propId }) => {
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-                  <AcademicCapIcon className="w-5 h-5 text-orange-600" />
-                  Education Level
-                </div>
+                  <AcademicCapIcon className="w-5 h-5 text-orange-600" />{i18n.t('auto_education_level')}</div>
                 <div className="text-lg font-semibold text-slate-900">
                   {job.education_level || 'Not specified'}
                 </div>
@@ -493,18 +480,14 @@ const JobDetailsPage = ({ id: propId }) => {
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-                  <MapPinIcon className="w-5 h-5 text-red-600" />
-                  Location
-                </div>
+                  <MapPinIcon className="w-5 h-5 text-red-600" />{i18n.t('auto_location')}</div>
                 <div className="text-lg font-semibold text-slate-900">
                   {job.location}
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-                  <Eye className="w-5 h-5 text-indigo-600" />
-                  Views
-                </div>
+                  <Eye className="w-5 h-5 text-indigo-600" />{i18n.t('auto_views')}</div>
                 <div className="text-lg font-semibold text-slate-900">
                   {job.views ?? job.viewsCount ?? job.stats?.views ?? 0}
                 </div>
@@ -514,9 +497,7 @@ const JobDetailsPage = ({ id: propId }) => {
             {/* Job Description */}
             <div className="space-y-3">
               <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <DocumentTextIcon className="w-6 h-6 text-purple-600" />
-                Job Description
-              </h3>
+                <DocumentTextIcon className="w-6 h-6 text-purple-600" />{i18n.t('auto_job_description')}</h3>
               <div className="prose prose-slate max-w-none">
                 <p className="text-slate-700 leading-relaxed whitespace-pre-line">{job.description}</p>
               </div>
@@ -525,7 +506,7 @@ const JobDetailsPage = ({ id: propId }) => {
             {/* Requirements */}
             {job.requirements && job.requirements.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-xl font-bold text-slate-900">Requirements</h3>
+                <h3 className="text-xl font-bold text-slate-900">{i18n.t('auto_requirements_1')}</h3>
                 <ul className="space-y-2">
                   {job.requirements.map((req, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-700">
@@ -540,7 +521,7 @@ const JobDetailsPage = ({ id: propId }) => {
             {/* Responsibilities */}
             {job.responsibilities && job.responsibilities.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-xl font-bold text-slate-900">Responsibilities</h3>
+                <h3 className="text-xl font-bold text-slate-900">{i18n.t('auto_responsibilities')}</h3>
                 <ul className="space-y-2">
                   {job.responsibilities.map((r, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-700">
@@ -555,7 +536,7 @@ const JobDetailsPage = ({ id: propId }) => {
             {/* Skills */}
             {job.skills && job.skills.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-xl font-bold text-slate-900">Required Skills</h3>
+                <h3 className="text-xl font-bold text-slate-900">{i18n.t('auto_required_skills')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {job.skills.map(s => (
                     <Badge 
@@ -573,7 +554,7 @@ const JobDetailsPage = ({ id: propId }) => {
             {/* Categories */}
             {job.categories && job.categories.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-xl font-bold text-slate-900">Categories</h3>
+                <h3 className="text-xl font-bold text-slate-900">{i18n.t('auto_categories')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {job.categories.map(c => (
                     <Badge 

@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState } from 'react';
+import i18n from 'i18next';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export default function AnalyticsAdmin() {
@@ -38,8 +39,8 @@ export default function AnalyticsAdmin() {
 
   return (
     <div style={{ padding: 24 }}>
-      <h2>Admin Analytics</h2>
-      {loading && <div>Loading...</div>}
+      <h2>{i18n.t('auto_admin_analytics')}</h2>
+      {loading && <div>{i18n.t('auto_loading')}</div>}
       {error && <div style={{ color: 'red' }}>{error}</div>}
       {!loading && !error && (
         <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(stats, null, 2)}</pre>

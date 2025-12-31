@@ -1,4 +1,5 @@
-﻿/* eslint-disable react-refresh/only-export-components -- TODO: move non-component exports/constants to helpers */
+import i18n from 'i18next';
+/* eslint-disable react-refresh/only-export-components -- TODO: move non-component exports/constants to helpers */
 import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
 import {
   Box,
@@ -554,7 +555,7 @@ const HomePage = () => {
                   <Chip sx={{ backgroundColor: 'rgba(66, 81, 107, 0.2)', color: 'white' , mt:-6,
                                                              backdropFilter: 'blur(10px)',
                                                              border: '1px solid rgba(255, 255, 255, 0.3) '}}
-                                                         label="🚀 AI-Powered Recruitment Platform"
+                                                         label={i18n.t('auto_ai_powered_recruitment_platform_1')} 
                                                         
                                                      />
                                                      <Typography
@@ -567,16 +568,12 @@ const HomePage = () => {
                                                              color: 'white',
                                                              textShadow: '0 4px 20px rgba(0,0,0,0.3)'
                                                          }}
-                                                     >
-                                                         The Future of
-                                                         <Box component="span" sx={{ 
+                                                     >{i18n.t('auto_the_future_of')}<Box component="span" sx={{ 
                                                              background: 'linear-gradient(45deg, #FFD700, #FFA500)',
                                                              WebkitBackgroundClip: 'text',
                                                              WebkitTextFillColor: 'transparent',
                                                              display: 'block'
-                                                         }}>
-                                                             Video Recruitment
-                                                         </Box>
+                                                         }}>{i18n.t('auto_video_recruitment')}</Box>
                                                      </Typography>
                                                      <Typography
                                                          variant="h5"
@@ -616,9 +613,7 @@ const HomePage = () => {
                         boxShadow: theme.shadows[5],
                       },
                     }}
-                  >
-                    Get Started
-                  </Button>
+                  >{i18n.t('auto_get_started')}</Button>
                   <Button
                     component={Link}
                     to="/videos/all"
@@ -636,9 +631,7 @@ const HomePage = () => {
                         borderColor: theme.palette.primary.contrastText,
                       },
                     }}
-                  >
-                    Explore
-                  </Button>
+                  >{i18n.t('auto_explore')}</Button>
                 </Box>
               </Grid>
               <Grid item xs={12} md={6} sx={{ position: "relative" }}>
@@ -663,12 +656,10 @@ const HomePage = () => {
                       color: theme.palette.text.primary,
                       textAlign: "center",
                     }}
-                  >
-                    Log in to your account
-                  </LoginFormTitle>
+                  >{i18n.t('auto_log_in_to_your_account')}</LoginFormTitle>
                   <Box component="form" onSubmit={handleEmailSignIn}>
                     <InputField
-                      label="Enter your email address"
+                      label={i18n.t('auto_enter_your_email_address')} 
                       type="email"
                       name="email"
                       value={formData.email}
@@ -678,7 +669,7 @@ const HomePage = () => {
                       size="small"
                     />
                     <InputField
-                      label="Enter your password"
+                      label={i18n.t('auto_enter_your_password')} 
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
@@ -707,9 +698,7 @@ const HomePage = () => {
                     <Link
                       to="/forgot-password"
                       style={{ fontSize: "0.875rem", color: theme.palette.primary.main }}
-                    >
-                      Forgot Password?
-                    </Link>
+                    >{i18n.t('auto_forgot_password')}</Link>
                     <LoginButton type="submit" disabled={loading.email}>
                       {loading.email ? (
                         <CircularProgress size={24} color="inherit" />
@@ -719,9 +708,7 @@ const HomePage = () => {
                     </LoginButton>
                   </Box>
                   <SocialDivider>
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                      Or log in with
-                    </Typography>
+                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>{i18n.t('auto_or_log_in_with')}</Typography>
                   </SocialDivider>
                   <Stack direction="row" spacing={1} justifyContent="center">
                     <GoogleSignInButton
@@ -787,9 +774,7 @@ const HomePage = () => {
                           textDecoration: "underline",
                         },
                       }}
-                    >
-                      Sign Up
-                    </Link>
+                    >{i18n.t('auto_sign_up')}</Link>
                   </Typography>
                 </Box>
               </Grid>
@@ -806,9 +791,7 @@ const HomePage = () => {
                   src={`/images/tareq.jpg`} // Corrected image path
                   sx={{ width: 150, height: 150, mx: "auto", mb: 2, boxShadow: theme.shadows[3] }}
                 />
-                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: theme.palette.text.primary, textAlign: "center" }}>
-                  Tareq Al-Sharif
-                </Typography>
+                <Typography variant="h5" component="h3" sx={{ fontWeight: 600, color: theme.palette.text.primary, textAlign: "center" }}>{i18n.t('auto_tareq_al_sharif')}</Typography>
                 <Typography variant="body2" color={theme.palette.text.secondary} sx={{ textAlign: "center" }}>
                   Founder & CEO
                 </Typography>
@@ -823,9 +806,7 @@ const HomePage = () => {
                     color: theme.palette.text.primary,
                     textAlign: "center",
                   }}
-                >
-                  A Message from Our Founder
-                </Typography>
+                >{i18n.t('auto_a_message_from_our_founder')}</Typography>
                 <Typography variant="body1" sx={{ color: theme.palette.text.secondary, textAlign: "center" }}>
                   Welcome to SwipeScout! I founded this platform with a vision to
                   revolutionize how people connect in the professional world. I
@@ -852,9 +833,7 @@ const HomePage = () => {
                 fontWeight: 700,
                 color: theme.palette.text.primary,
               }}
-            >
-              See SwipeScout in Action
-            </Typography>
+            >{i18n.t('auto_see_swipescout_in_action')}</Typography>
             <Grid container spacing={3} sx={{ p: 2 }}>
               {mockVideoResumes.map((video) => (
                 <Grid
@@ -1019,9 +998,7 @@ const HomePage = () => {
                     bgcolor: theme.palette.primary.dark,
                   },
                 }}
-              >
-                Browse All Videos
-              </Button>
+              >{i18n.t('auto_browse_all_videos')}</Button>
             </Box>
           </Container>
         </Box>
@@ -1035,17 +1012,13 @@ const HomePage = () => {
               align="center"
               gutterBottom
               sx={{ fontWeight: 'bold', mb: 6, color: theme.palette.text.primary }}
-            >
-              Unlock More with Premium Features
-            </Typography>
+            >{i18n.t('auto_unlock_more_with_premium_features')}</Typography>
             <Grid container spacing={4} alignItems="stretch">
               <Grid item xs={12} md={4}>
                 <StyledFeatureCard elevation={3}>
                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                     <MonetizationOnIcon sx={{ fontSize: 60, color: theme.palette.success.main, mb: 2 }} />
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Advanced Analytics
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_advanced_analytics')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Gain deeper insights into your profile views, video performance, and application success rates.
                     </Typography>
@@ -1056,9 +1029,7 @@ const HomePage = () => {
                 <StyledFeatureCard elevation={3}>
                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                     <VideoCall sx={{ fontSize: 60, color: theme.palette.info.main, mb: 2 }} />
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Enhanced Video Tools
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_enhanced_video_tools')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Access professional video editing features, longer video uploads, and premium templates.
                     </Typography>
@@ -1069,9 +1040,7 @@ const HomePage = () => {
                 <StyledFeatureCard elevation={3}>
                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                     <TrendingUp sx={{ fontSize: 60, color: theme.palette.warning.main, mb: 2 }} />
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Priority Matching
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_priority_matching')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Get prioritized in our matching algorithm and connect with exclusive job opportunities or top candidates faster.
                     </Typography>
@@ -1095,9 +1064,7 @@ const HomePage = () => {
                 component={Link}
                 to="/pricing"
                 onClick={() => window.scrollTo(0, 0)}
-              >
-                View Pricing Plans
-              </Button>
+              >{i18n.t('auto_view_pricing_plans')}</Button>
             </Box>
           </Container>
         </Box>
@@ -1113,9 +1080,7 @@ const HomePage = () => {
                 fontWeight: 700,
                 color: theme.palette.text.primary,
               }}
-            >
-              What Our Users Say
-            </Typography>
+            >{i18n.t('auto_what_our_users_say')}</Typography>
             <Grid container spacing={4}>
               {testimonials.map((testimonial, index) => (
                 <Grid item xs={12} md={4} key={index}>
@@ -1207,9 +1172,7 @@ const HomePage = () => {
                   borderRadius: '3px'
                 }
               }}
-            >
-              Ready to Transform Your Recruitment?
-            </Typography>
+            >{i18n.t('auto_ready_to_transform_your_recruitment')}</Typography>
             <Typography
               variant="h5"
               component="p"
@@ -1252,9 +1215,7 @@ const HomePage = () => {
                 },
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
               }}
-            >
-              Get Started Free
-              <Box
+            >{i18n.t('auto_get_started_free')}<Box
                 component="span"
                 sx={{
                   ml: 1,
@@ -1276,17 +1237,11 @@ const HomePage = () => {
               }}
             >
               <Typography variant="caption" sx={{ color: theme.palette.primary.contrastText + 'CC', display: 'flex', alignItems: 'center' }}>
-                <CheckCircle sx={{ color: theme.palette.success.light, mr: 1, fontSize: '1rem' }} />
-                No credit card required to start
-              </Typography>
+                <CheckCircle sx={{ color: theme.palette.success.light, mr: 1, fontSize: '1rem' }} />{i18n.t('auto_no_credit_card_required_to_start')}</Typography>
               <Typography variant="caption" sx={{ color: theme.palette.primary.contrastText + 'CC', display: 'flex', alignItems: 'center' }}>
-                <TrendingUp sx={{ color: theme.palette.info.light, mr: 1, fontSize: '1rem' }} />
-                30-second signup
-              </Typography>
+                <TrendingUp sx={{ color: theme.palette.info.light, mr: 1, fontSize: '1rem' }} />{i18n.t('auto_30_second_signup')}</Typography>
               <Typography variant="caption" sx={{ color: theme.palette.primary.contrastText + 'CC', display: 'flex', alignItems: 'center' }}>
-                <People sx={{ color: theme.palette.warning.light, mr: 1, fontSize: '1rem' }} />
-                Free forever plan
-              </Typography>
+                <People sx={{ color: theme.palette.warning.light, mr: 1, fontSize: '1rem' }} />{i18n.t('auto_free_forever_plan')}</Typography>
             </Box>
           </Container>
         </Box>

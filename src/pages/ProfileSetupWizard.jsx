@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -410,9 +411,7 @@ const ProfileSetupWizard = () => {
             case 0: // Basic Information
                 return (
                     <StepCard>
-                        <Typography variant="h6" gutterBottom>
-                            Basic Information
-                        </Typography>
+                        <Typography variant="h6" gutterBottom>{i18n.t('auto_basic_information')}</Typography>
                         <Grid container spacing={3}>
                             <Grid item xs={12} sx={{ textAlign: 'center', mb: 2 }}>
                                 <Avatar
@@ -438,7 +437,7 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="First Name *"
+                                    label={i18n.t('auto_first_name_1')} 
                                     value={profileData.firstName}
                                     onChange={(e) => handleInputChange('firstName', e.target.value)}
                                 />
@@ -447,7 +446,7 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="Last Name *"
+                                    label={i18n.t('auto_last_name_1')} 
                                     value={profileData.lastName}
                                     onChange={(e) => handleInputChange('lastName', e.target.value)}
                                 />
@@ -456,7 +455,7 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="Email *"
+                                    label={i18n.t('auto_email_2')} 
                                     type="email"
                                     value={profileData.email}
                                     onChange={(e) => handleInputChange('email', e.target.value)}
@@ -466,7 +465,7 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="Phone"
+                                    label={i18n.t('auto_phone')} 
                                     value={profileData.phone}
                                     onChange={(e) => handleInputChange('phone', e.target.value)}
                                 />
@@ -475,22 +474,22 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="Location *"
+                                    label={i18n.t('auto_location_1')} 
                                     value={profileData.location}
                                     onChange={(e) => handleInputChange('location', e.target.value)}
-                                    placeholder="City, Country"
+                                    placeholder={i18n.t('auto_city_country')} 
                                 />
                             </Grid>
                             
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="Bio"
+                                    label={i18n.t('auto_bio')} 
                                     multiline
                                     rows={4}
                                     value={profileData.bio}
                                     onChange={(e) => handleInputChange('bio', e.target.value)}
-                                    placeholder="Tell us about yourself..."
+                                    placeholder={i18n.t('auto_tell_us_about_yourself')} 
                                 />
                             </Grid>
                         </Grid>
@@ -500,17 +499,15 @@ const ProfileSetupWizard = () => {
             case 1: // Professional Details
                 return (
                     <StepCard>
-                        <Typography variant="h6" gutterBottom>
-                            Professional Details
-                        </Typography>
+                        <Typography variant="h6" gutterBottom>{i18n.t('auto_professional_details')}</Typography>
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="Current Job Title *"
+                                    label={i18n.t('auto_current_job_title_1')} 
                                     value={profileData.currentTitle}
                                     onChange={(e) => handleInputChange('currentTitle', e.target.value)}
-                                    placeholder="e.g., Software Developer"
+                                    placeholder={i18n.t('auto_e_g_software_developer')} 
                                 />
                             </Grid>
                             
@@ -520,13 +517,13 @@ const ProfileSetupWizard = () => {
                                     <Select
                                         value={profileData.experienceLevel}
                                         onChange={(e) => handleInputChange('experienceLevel', e.target.value)}
-                                        label="Experience Level *"
+                                        label={i18n.t('auto_experience_level_1')} 
                                     >
-                                        <MenuItem value="entry">Entry Level (0-2 years)</MenuItem>
-                                        <MenuItem value="mid">Mid Level (2-5 years)</MenuItem>
-                                        <MenuItem value="senior">Senior Level (5-10 years)</MenuItem>
+                                        <MenuItem value="entry">{i18n.t('auto_entry_level_0_2_years')}</MenuItem>
+                                        <MenuItem value="mid">{i18n.t('auto_mid_level_2_5_years')}</MenuItem>
+                                        <MenuItem value="senior">{i18n.t('auto_senior_level_5_10_years')}</MenuItem>
                                         <MenuItem value="lead">Lead/Principal (10+ years)</MenuItem>
-                                        <MenuItem value="executive">Executive</MenuItem>
+                                        <MenuItem value="executive">{i18n.t('auto_executive')}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -537,17 +534,17 @@ const ProfileSetupWizard = () => {
                                     <Select
                                         value={profileData.industry}
                                         onChange={(e) => handleInputChange('industry', e.target.value)}
-                                        label="Industry *"
+                                        label={i18n.t('auto_industry')} 
                                     >
-                                        <MenuItem value="technology">Technology</MenuItem>
-                                        <MenuItem value="finance">Finance</MenuItem>
-                                        <MenuItem value="healthcare">Healthcare</MenuItem>
-                                        <MenuItem value="education">Education</MenuItem>
-                                        <MenuItem value="marketing">Marketing</MenuItem>
-                                        <MenuItem value="sales">Sales</MenuItem>
-                                        <MenuItem value="design">Design</MenuItem>
-                                        <MenuItem value="engineering">Engineering</MenuItem>
-                                        <MenuItem value="other">Other</MenuItem>
+                                        <MenuItem value="technology">{i18n.t('auto_technology')}</MenuItem>
+                                        <MenuItem value="finance">{i18n.t('auto_finance')}</MenuItem>
+                                        <MenuItem value="healthcare">{i18n.t('auto_healthcare')}</MenuItem>
+                                        <MenuItem value="education">{i18n.t('auto_education')}</MenuItem>
+                                        <MenuItem value="marketing">{i18n.t('auto_marketing')}</MenuItem>
+                                        <MenuItem value="sales">{i18n.t('auto_sales')}</MenuItem>
+                                        <MenuItem value="design">{i18n.t('auto_design')}</MenuItem>
+                                        <MenuItem value="engineering">{i18n.t('auto_engineering')}</MenuItem>
+                                        <MenuItem value="other">{i18n.t('auto_other')}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -555,25 +552,25 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="Expected Salary (Annual)"
+                                    label={i18n.t('auto_expected_salary_annual')} 
                                     value={profileData.expectedSalary}
                                     onChange={(e) => handleInputChange('expectedSalary', e.target.value)}
-                                    placeholder="e.g., $50,000 - $70,000"
+                                    placeholder={i18n.t('auto_e_g_50_000_70_000')} 
                                 />
                             </Grid>
                             
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
-                                    <InputLabel>Availability</InputLabel>
+                                    <InputLabel>{i18n.t('auto_availability')}</InputLabel>
                                     <Select
                                         value={profileData.availability}
                                         onChange={(e) => handleInputChange('availability', e.target.value)}
-                                        label="Availability"
+                                        label={i18n.t('auto_availability')} 
                                     >
-                                        <MenuItem value="immediate">Available Immediately</MenuItem>
-                                        <MenuItem value="2weeks">2 Weeks Notice</MenuItem>
-                                        <MenuItem value="1month">1 Month Notice</MenuItem>
-                                        <MenuItem value="2months">2 Months Notice</MenuItem>
+                                        <MenuItem value="immediate">{i18n.t('auto_available_immediately')}</MenuItem>
+                                        <MenuItem value="2weeks">{i18n.t('auto_2_weeks_notice')}</MenuItem>
+                                        <MenuItem value="1month">{i18n.t('auto_1_month_notice')}</MenuItem>
+                                        <MenuItem value="2months">{i18n.t('auto_2_months_notice')}</MenuItem>
                                         <MenuItem value="3months">3+ Months</MenuItem>
                                     </Select>
                                 </FormControl>
@@ -588,9 +585,7 @@ const ProfileSetupWizard = () => {
                         <Typography variant="h6" gutterBottom>
                             Skills & Expertise
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                            Add at least 3 skills that represent your expertise
-                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>{i18n.t('auto_add_at_least_3_skills_that_represent_you')}</Typography>
                         
                         <Autocomplete
                             options={availableSkills}
@@ -603,8 +598,8 @@ const ProfileSetupWizard = () => {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Search and add skills"
-                                    placeholder="Type to search skills..."
+                                    label={i18n.t('auto_search_and_add_skills')} 
+                                    placeholder={i18n.t('auto_type_to_search_skills')} 
                                 />
                             )}
                             sx={{ mb: 3 }}
@@ -623,9 +618,7 @@ const ProfileSetupWizard = () => {
                         </Box>
                         
                         {profileData.skills.length < 3 && (
-                            <Alert severity="info" sx={{ mt: 2 }}>
-                                Please add at least 3 skills to continue
-                            </Alert>
+                            <Alert severity="info" sx={{ mt: 2 }}>{i18n.t('auto_please_add_at_least_3_skills_to_continue')}</Alert>
                         )}
                     </StepCard>
                 );
@@ -634,16 +627,12 @@ const ProfileSetupWizard = () => {
                 return (
                     <StepCard>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Typography variant="h6">
-                                Work Experience
-                            </Typography>
+                            <Typography variant="h6">{i18n.t('auto_work_experience')}</Typography>
                             <Button
                                 variant="outlined"
                                 startIcon={<AddIcon />}
                                 onClick={() => setExperienceDialog(true)}
-                            >
-                                Add Experience
-                            </Button>
+                            >{i18n.t('auto_add_experience')}</Button>
                         </Box>
                         
                         {profileData.experiences.length === 0 ? (
@@ -672,22 +661,16 @@ const ProfileSetupWizard = () => {
                 return (
                     <StepCard>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Typography variant="h6">
-                                Education
-                            </Typography>
+                            <Typography variant="h6">{i18n.t('auto_education')}</Typography>
                             <Button
                                 variant="outlined"
                                 startIcon={<AddIcon />}
                                 onClick={() => setEducationDialog(true)}
-                            >
-                                Add Education
-                            </Button>
+                            >{i18n.t('auto_add_education')}</Button>
                         </Box>
                         
                         {profileData.education.length === 0 ? (
-                            <Alert severity="info">
-                                Add your educational background to strengthen your profile
-                            </Alert>
+                            <Alert severity="info">{i18n.t('auto_add_your_educational_background_to_stren')}</Alert>
                         ) : (
                             <List>
                                 {profileData.education.map((edu, index) => (
@@ -712,18 +695,16 @@ const ProfileSetupWizard = () => {
                         <Typography variant="h6" gutterBottom>
                             Social & Portfolio Links
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                            Connect your professional online presence
-                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>{i18n.t('auto_connect_your_professional_online_presenc')}</Typography>
                         
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="LinkedIn Profile"
+                                    label={i18n.t('auto_linkedin_profile')} 
                                     value={profileData.linkedinUrl}
                                     onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
-                                    placeholder="https://linkedin.com/in/yourprofile"
+                                    placeholder={i18n.t('auto_https_linkedin_com_in_yourprofile')} 
                                     InputProps={{
                                         startAdornment: <LinkedInIcon sx={{ mr: 1, color: 'action.active' }} />
                                     }}
@@ -733,10 +714,10 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="GitHub Profile"
+                                    label={i18n.t('auto_github_profile')} 
                                     value={profileData.githubUrl}
                                     onChange={(e) => handleInputChange('githubUrl', e.target.value)}
-                                    placeholder="https://github.com/yourusername"
+                                    placeholder={i18n.t('auto_https_github_com_yourusername')} 
                                     InputProps={{
                                         startAdornment: <GitHubIcon sx={{ mr: 1, color: 'action.active' }} />
                                     }}
@@ -746,10 +727,10 @@ const ProfileSetupWizard = () => {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="Portfolio Website"
+                                    label={i18n.t('auto_portfolio_website')} 
                                     value={profileData.portfolioUrl}
                                     onChange={(e) => handleInputChange('portfolioUrl', e.target.value)}
-                                    placeholder="https://yourportfolio.com"
+                                    placeholder={i18n.t('auto_https_yourportfolio_com')} 
                                 />
                             </Grid>
                         </Grid>
@@ -759,12 +740,8 @@ const ProfileSetupWizard = () => {
             case 6: // Job Preferences
                 return (
                     <StepCard>
-                        <Typography variant="h6" gutterBottom>
-                            Job Preferences
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                            Help us match you with the right opportunities
-                        </Typography>
+                        <Typography variant="h6" gutterBottom>{i18n.t('auto_job_preferences')}</Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>{i18n.t('auto_help_us_match_you_with_the_right_opportu')}</Typography>
                         
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
@@ -774,7 +751,7 @@ const ProfileSetupWizard = () => {
                                         multiple
                                         value={profileData.jobTypes}
                                         onChange={(e) => handleInputChange('jobTypes', e.target.value)}
-                                        label="Preferred Job Types *"
+                                        label={i18n.t('auto_preferred_job_types')} 
                                         renderValue={(selected) => (
                                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                 {selected.map((value) => (
@@ -783,11 +760,11 @@ const ProfileSetupWizard = () => {
                                             </Box>
                                         )}
                                     >
-                                        <MenuItem value="full-time">Full Time</MenuItem>
-                                        <MenuItem value="part-time">Part Time</MenuItem>
-                                        <MenuItem value="contract">Contract</MenuItem>
-                                        <MenuItem value="freelance">Freelance</MenuItem>
-                                        <MenuItem value="internship">Internship</MenuItem>
+                                        <MenuItem value="full-time">{i18n.t('auto_full_time_1')}</MenuItem>
+                                        <MenuItem value="part-time">{i18n.t('auto_part_time_1')}</MenuItem>
+                                        <MenuItem value="contract">{i18n.t('auto_contract')}</MenuItem>
+                                        <MenuItem value="freelance">{i18n.t('auto_freelance')}</MenuItem>
+                                        <MenuItem value="internship">{i18n.t('auto_internship')}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -798,12 +775,12 @@ const ProfileSetupWizard = () => {
                                     <Select
                                         value={profileData.workLocation}
                                         onChange={(e) => handleInputChange('workLocation', e.target.value)}
-                                        label="Work Location *"
+                                        label={i18n.t('auto_work_location')} 
                                     >
-                                        <MenuItem value="onsite">On-site</MenuItem>
-                                        <MenuItem value="remote">Remote</MenuItem>
-                                        <MenuItem value="hybrid">Hybrid</MenuItem>
-                                        <MenuItem value="flexible">Flexible</MenuItem>
+                                        <MenuItem value="onsite">{i18n.t('auto_on_site')}</MenuItem>
+                                        <MenuItem value="remote">{i18n.t('auto_remote')}</MenuItem>
+                                        <MenuItem value="hybrid">{i18n.t('auto_hybrid')}</MenuItem>
+                                        <MenuItem value="flexible">{i18n.t('auto_flexible')}</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -816,7 +793,7 @@ const ProfileSetupWizard = () => {
                                             onChange={(e) => handleInputChange('remoteWork', e.target.checked)}
                                         />
                                     }
-                                    label="Open to remote work"
+                                    label={i18n.t('auto_open_to_remote_work')} 
                                 />
                             </Grid>
                         </Grid>
@@ -826,23 +803,17 @@ const ProfileSetupWizard = () => {
             case 7: // Video Resume
                 return (
                     <StepCard>
-                        <Typography variant="h6" gutterBottom>
-                            Video Resume
-                        </Typography>
+                        <Typography variant="h6" gutterBottom>{i18n.t('auto_video_resume')}</Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                             Stand out with a video introduction (optional but recommended)
                         </Typography>
                         
                         {profileData.hasVideoResume ? (
-                            <Alert severity="success" sx={{ mb: 2 }}>
-                                You already have a video resume uploaded!
-                            </Alert>
+                            <Alert severity="success" sx={{ mb: 2 }}>{i18n.t('auto_you_already_have_a_video_resume_uploaded')}</Alert>
                         ) : (
                             <Card sx={{ textAlign: 'center', p: 4 }}>
                                 <VideoCallIcon sx={{ fontSize: 64, color: 'primary.main', mb: 2 }} />
-                                <Typography variant="h6" gutterBottom>
-                                    Upload Your Video Resume
-                                </Typography>
+                                <Typography variant="h6" gutterBottom>{i18n.t('auto_upload_your_video_resume')}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                                     A 60-90 second video introducing yourself can significantly increase your chances of getting noticed by employers.
                                 </Typography>
@@ -851,9 +822,7 @@ const ProfileSetupWizard = () => {
                                     size="large"
                                     onClick={() => navigate('/video-resume-upload')}
                                     disabled={profileCompleteness < 60}
-                                >
-                                    Upload Video Resume
-                                </Button>
+                                >{i18n.t('auto_upload_video_resume')}</Button>
                                 {profileCompleteness < 60 && (
                                     <Typography variant="caption" display="block" sx={{ mt: 1 }}>
                                         Complete at least 60% of your profile to upload a video resume
@@ -876,9 +845,7 @@ const ProfileSetupWizard = () => {
                 <Grid item xs={12} md={4}>
                     <ProgressCard>
                         <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                Profile Completion
-                            </Typography>
+                            <Typography variant="h6" gutterBottom>{i18n.t('auto_profile_completion')}</Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                                 <LinearProgress
                                     variant="determinate"
@@ -924,9 +891,7 @@ const ProfileSetupWizard = () => {
                 {/* Main Content */}
                 <Grid item xs={12} md={8}>
                     <Box sx={{ mb: 4 }}>
-                        <Typography variant="h4" gutterBottom>
-                            Complete Your Profile
-                        </Typography>
+                        <Typography variant="h4" gutterBottom>{i18n.t('auto_complete_your_profile_1')}</Typography>
                         <Typography variant="body1" color="text.secondary">
                             Let's set up your profile to help you find the perfect job opportunities
                         </Typography>
@@ -940,9 +905,7 @@ const ProfileSetupWizard = () => {
                             onClick={handleBack}
                             disabled={activeStep === 0}
                             variant="outlined"
-                        >
-                            Back
-                        </Button>
+                        >{i18n.t('auto_back')}</Button>
                         
                         <Box>
                             {activeStep === steps.length - 1 ? (
@@ -959,9 +922,7 @@ const ProfileSetupWizard = () => {
                                     onClick={handleNext}
                                     variant="contained"
                                     disabled={!validateStep(activeStep)}
-                                >
-                                    Next
-                                </Button>
+                                >{i18n.t('auto_next')}</Button>
                             )}
                         </Box>
                     </Box>
@@ -975,13 +936,13 @@ const ProfileSetupWizard = () => {
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>Add Work Experience</DialogTitle>
+                <DialogTitle>{i18n.t('auto_add_work_experience')}</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Job Title"
+                                label={i18n.t('auto_job_title')} 
                                 value={currentExperience.title}
                                 onChange={(e) => setCurrentExperience(prev => ({ ...prev, title: e.target.value }))}
                             />
@@ -989,7 +950,7 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Company"
+                                label={i18n.t('auto_company')} 
                                 value={currentExperience.company}
                                 onChange={(e) => setCurrentExperience(prev => ({ ...prev, company: e.target.value }))}
                             />
@@ -997,7 +958,7 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Location"
+                                label={i18n.t('auto_location')} 
                                 value={currentExperience.location}
                                 onChange={(e) => setCurrentExperience(prev => ({ ...prev, location: e.target.value }))}
                             />
@@ -1005,7 +966,7 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Start Date"
+                                label={i18n.t('auto_start_date')} 
                                 type="month"
                                 value={currentExperience.startDate}
                                 onChange={(e) => setCurrentExperience(prev => ({ ...prev, startDate: e.target.value }))}
@@ -1015,7 +976,7 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="End Date"
+                                label={i18n.t('auto_end_date')} 
                                 type="month"
                                 value={currentExperience.endDate}
                                 onChange={(e) => setCurrentExperience(prev => ({ ...prev, endDate: e.target.value }))}
@@ -1031,27 +992,25 @@ const ProfileSetupWizard = () => {
                                         onChange={(e) => setCurrentExperience(prev => ({ ...prev, current: e.target.checked }))}
                                     />
                                 }
-                                label="I currently work here"
+                                label={i18n.t('auto_i_currently_work_here')} 
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Description"
+                                label={i18n.t('auto_description')} 
                                 multiline
                                 rows={4}
                                 value={currentExperience.description}
                                 onChange={(e) => setCurrentExperience(prev => ({ ...prev, description: e.target.value }))}
-                                placeholder="Describe your role and achievements..."
+                                placeholder={i18n.t('auto_describe_your_role_and_achievements')} 
                             />
                         </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setExperienceDialog(false)}>Cancel</Button>
-                    <Button onClick={handleExperienceAdd} variant="contained">
-                        Add Experience
-                    </Button>
+                    <Button onClick={() => setExperienceDialog(false)}>{i18n.t('auto_cancel')}</Button>
+                    <Button onClick={handleExperienceAdd} variant="contained">{i18n.t('auto_add_experience')}</Button>
                 </DialogActions>
             </Dialog>
 
@@ -1062,31 +1021,31 @@ const ProfileSetupWizard = () => {
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>Add Education</DialogTitle>
+                <DialogTitle>{i18n.t('auto_add_education')}</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Degree"
+                                label={i18n.t('auto_degree')} 
                                 value={currentEducation.degree}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, degree: e.target.value }))}
-                                placeholder="e.g., Bachelor's, Master's"
+                                placeholder={i18n.t('auto_e_g_bachelor_s_master_s')} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Field of Study"
+                                label={i18n.t('auto_field_of_study')} 
                                 value={currentEducation.field}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, field: e.target.value }))}
-                                placeholder="e.g., Computer Science"
+                                placeholder={i18n.t('auto_e_g_computer_science')} 
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Institution"
+                                label={i18n.t('auto_institution')} 
                                 value={currentEducation.institution}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, institution: e.target.value }))}
                             />
@@ -1094,7 +1053,7 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12} sm={4}>
                             <TextField
                                 fullWidth
-                                label="Start Date"
+                                label={i18n.t('auto_start_date')} 
                                 type="month"
                                 value={currentEducation.startDate}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, startDate: e.target.value }))}
@@ -1104,7 +1063,7 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12} sm={4}>
                             <TextField
                                 fullWidth
-                                label="End Date"
+                                label={i18n.t('auto_end_date')} 
                                 type="month"
                                 value={currentEducation.endDate}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, endDate: e.target.value }))}
@@ -1114,30 +1073,28 @@ const ProfileSetupWizard = () => {
                         <Grid item xs={12} sm={4}>
                             <TextField
                                 fullWidth
-                                label="GPA (Optional)"
+                                label={i18n.t('auto_gpa_optional')} 
                                 value={currentEducation.gpa}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, gpa: e.target.value }))}
-                                placeholder="e.g., 3.8/4.0"
+                                placeholder={i18n.t('auto_e_g_3_8_4_0')} 
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Description"
+                                label={i18n.t('auto_description')} 
                                 multiline
                                 rows={3}
                                 value={currentEducation.description}
                                 onChange={(e) => setCurrentEducation(prev => ({ ...prev, description: e.target.value }))}
-                                placeholder="Relevant coursework, achievements, etc."
+                                placeholder={i18n.t('auto_relevant_coursework_achievements_etc')} 
                             />
                         </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setEducationDialog(false)}>Cancel</Button>
-                    <Button onClick={handleEducationAdd} variant="contained">
-                        Add Education
-                    </Button>
+                    <Button onClick={() => setEducationDialog(false)}>{i18n.t('auto_cancel')}</Button>
+                    <Button onClick={handleEducationAdd} variant="contained">{i18n.t('auto_add_education')}</Button>
                 </DialogActions>
             </Dialog>
 

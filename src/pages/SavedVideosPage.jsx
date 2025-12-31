@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSavedVideos, unsaveVideo } from '@/services/api';
 import { Card, CardContent } from '@/components/UI/card.jsx';
@@ -221,9 +222,7 @@ export default function SavedVideosPage() {
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
-          Saved Videos
-        </h1>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">{i18n.t('auto_saved_videos')}</h1>
         <p className="text-muted-foreground">
           Your bookmarked video collection ({savedVideos.length} videos)
         </p>
@@ -234,7 +233,7 @@ export default function SavedVideosPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search saved videos..."
+            placeholder={i18n.t('auto_search_saved_videos')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -247,9 +246,9 @@ export default function SavedVideosPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Videos</SelectItem>
-            <SelectItem value="jobseeker">Job Seekers</SelectItem>
-            <SelectItem value="employer">Employers</SelectItem>
+            <SelectItem value="all">{i18n.t('auto_all_videos')}</SelectItem>
+            <SelectItem value="jobseeker">{i18n.t('auto_job_seekers')}</SelectItem>
+            <SelectItem value="employer">{i18n.t('auto_employers')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -259,9 +258,9 @@ export default function SavedVideosPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="saved_date">Recently Saved</SelectItem>
-            <SelectItem value="upload_date">Recently Uploaded</SelectItem>
-            <SelectItem value="title">Title (A-Z)</SelectItem>
+            <SelectItem value="saved_date">{i18n.t('auto_recently_saved')}</SelectItem>
+            <SelectItem value="upload_date">{i18n.t('auto_recently_uploaded')}</SelectItem>
+            <SelectItem value="title">{i18n.t('auto_title_a_z')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -291,9 +290,7 @@ export default function SavedVideosPage() {
                 {/* Saved Badge */}
                 <div className="absolute top-3 right-3">
                   <Badge className="bg-cyan-100 text-cyan-800">
-                    <BookmarkCheck className="h-3 w-3 mr-1" />
-                    Saved
-                  </Badge>
+                    <BookmarkCheck className="h-3 w-3 mr-1" />{i18n.t('auto_saved')}</Badge>
                 </div>
 
                 {/* Hover Play Icon */}
@@ -335,9 +332,7 @@ export default function SavedVideosPage() {
                     className="flex-1"
                     onClick={() => handleVideoClick(video)}
                   >
-                    <Eye className="h-3 w-3 mr-1" />
-                    Watch
-                  </Button>
+                    <Eye className="h-3 w-3 mr-1" />{i18n.t('auto_watch')}</Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -373,9 +368,7 @@ export default function SavedVideosPage() {
                 : 'Start saving videos to build your collection'}
             </p>
             {!searchQuery && (
-              <Button onClick={() => navigate('/jobseeker-tabs?group=discovery&tab=all-videos')}>
-                Discover Videos
-              </Button>
+              <Button onClick={() => navigate('/jobseeker-tabs?group=discovery&tab=all-videos')}>{i18n.t('auto_discover_videos')}</Button>
             )}
           </CardContent>
         </Card>
@@ -385,16 +378,14 @@ export default function SavedVideosPage() {
       <AlertDialog open={deleteDialog} onOpenChange={setDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove from Saved</AlertDialogTitle>
+            <AlertDialogTitle>{i18n.t('auto_remove_from_saved')}</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to remove "{videoToDelete ? getTitle(videoToDelete) : ''}" from your saved collection?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleUnsaveVideo}>
-              Remove
-            </AlertDialogAction>
+            <AlertDialogCancel>{i18n.t('auto_cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnsaveVideo}>{i18n.t('auto_remove')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

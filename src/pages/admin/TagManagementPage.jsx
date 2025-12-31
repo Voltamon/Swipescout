@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import {
   Card,
   CardContent,
@@ -169,9 +170,7 @@ const TagManagementPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>
-            Blog Tags
-          </h2>
+          <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>{i18n.t('auto_blog_tags')}</h2>
           <p className={themeColors.text.secondary}>
             Manage blog tags for better content organization and discoverability
           </p>
@@ -180,9 +179,7 @@ const TagManagementPage = () => {
           onClick={() => handleOpenDialog()}
           className={`${themeColors.buttons.primary} text-white`}
         >
-          <Plus className="mr-2 h-4 w-4" />
-          New Tag
-        </Button>
+          <Plus className="mr-2 h-4 w-4" />{i18n.t('auto_new_tag_1')}</Button>
       </div>
 
       {/* Tags Grid */}
@@ -191,9 +188,7 @@ const TagManagementPage = () => {
           <Card className="col-span-full">
             <CardContent className="py-12">
               <div className="flex items-center justify-center gap-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>
-                Loading tags...
-              </div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>{i18n.t('auto_loading_tags')}</div>
             </CardContent>
           </Card>
         ) : tags.length === 0 ? (
@@ -201,14 +196,12 @@ const TagManagementPage = () => {
             <CardContent className="py-12">
               <div className="flex flex-col items-center gap-2">
                 <TagIcon className="h-12 w-12 text-gray-300" />
-                <p className={themeColors.text.muted}>No tags found</p>
+                <p className={themeColors.text.muted}>{i18n.t('auto_no_tags_found')}</p>
                 <Button
                   variant="outline"
                   onClick={() => handleOpenDialog()}
                   className="mt-2"
-                >
-                  Create First Tag
-                </Button>
+                >{i18n.t('auto_create_first_tag')}</Button>
               </div>
             </CardContent>
           </Card>
@@ -268,14 +261,10 @@ const TagManagementPage = () => {
                     </div>
                     {tag.isActive ? (
                       <Badge variant="default" className="text-xs">
-                        <Eye className="h-3 w-3 mr-1" />
-                        Active
-                      </Badge>
+                        <Eye className="h-3 w-3 mr-1" />{i18n.t('auto_active')}</Badge>
                     ) : (
                       <Badge variant="secondary" className="text-xs">
-                        <EyeOff className="h-3 w-3 mr-1" />
-                        Inactive
-                      </Badge>
+                        <EyeOff className="h-3 w-3 mr-1" />{i18n.t('auto_inactive')}</Badge>
                     )}
                   </div>
 
@@ -299,20 +288,18 @@ const TagManagementPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Tag</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Usage</TableHead>
-                <TableHead>Color</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{i18n.t('auto_tag')}</TableHead>
+                <TableHead>{i18n.t('auto_slug')}</TableHead>
+                <TableHead>{i18n.t('auto_usage')}</TableHead>
+                <TableHead>{i18n.t('auto_color')}</TableHead>
+                <TableHead>{i18n.t('auto_status')}</TableHead>
+                <TableHead className="text-right">{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {tags.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4 text-gray-500">
-                    No tags available
-                  </TableCell>
+                  <TableCell colSpan={6} className="text-center py-4 text-gray-500">{i18n.t('auto_no_tags_available')}</TableCell>
                 </TableRow>
               ) : (
                 tags.map((tag) => (
@@ -349,14 +336,10 @@ const TagManagementPage = () => {
                     <TableCell>
                       {tag.isActive ? (
                         <Badge variant="default" className="gap-1">
-                          <Eye className="h-3 w-3" />
-                          Active
-                        </Badge>
+                          <Eye className="h-3 w-3" />{i18n.t('auto_active')}</Badge>
                       ) : (
                         <Badge variant="secondary" className="gap-1">
-                          <EyeOff className="h-3 w-3" />
-                          Inactive
-                        </Badge>
+                          <EyeOff className="h-3 w-3" />{i18n.t('auto_inactive')}</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -409,7 +392,7 @@ const TagManagementPage = () => {
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                placeholder="Tag name"
+                placeholder={i18n.t('auto_tag_name')} 
                 className="mt-1"
               />
             </div>
@@ -420,25 +403,25 @@ const TagManagementPage = () => {
                 id="slug"
                 value={formData.slug}
                 onChange={(e) => handleChange('slug', e.target.value)}
-                placeholder="tag-slug"
+                placeholder={i18n.t('auto_tag_slug')} 
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{i18n.t('auto_description')}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
-                placeholder="Tag description"
+                placeholder={i18n.t('auto_tag_description')} 
                 rows={2}
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="color">Color</Label>
+              <Label htmlFor="color">{i18n.t('auto_color')}</Label>
               <div className="flex gap-2 mt-1">
                 <Input
                   id="color"
@@ -450,14 +433,14 @@ const TagManagementPage = () => {
                 <Input
                   value={formData.color}
                   onChange={(e) => handleChange('color', e.target.value)}
-                  placeholder="#6B7280"
+                  placeholder={i18n.t('auto_6b7280')} 
                   className="flex-1"
                 />
               </div>
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="isActive">Active</Label>
+              <Label htmlFor="isActive">{i18n.t('auto_active')}</Label>
               <Switch
                 id="isActive"
                 checked={formData.isActive}
@@ -466,23 +449,23 @@ const TagManagementPage = () => {
             </div>
 
             <div>
-              <Label htmlFor="metaTitle">Meta Title (SEO)</Label>
+              <Label htmlFor="metaTitle">{i18n.t('auto_meta_title_seo')}</Label>
               <Input
                 id="metaTitle"
                 value={formData.metaTitle}
                 onChange={(e) => handleChange('metaTitle', e.target.value)}
-                placeholder="SEO title"
+                placeholder={i18n.t('auto_seo_title')} 
                 className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="metaDescription">Meta Description (SEO)</Label>
+              <Label htmlFor="metaDescription">{i18n.t('auto_meta_description_seo')}</Label>
               <Textarea
                 id="metaDescription"
                 value={formData.metaDescription}
                 onChange={(e) => handleChange('metaDescription', e.target.value)}
-                placeholder="SEO description"
+                placeholder={i18n.t('auto_seo_description')} 
                 rows={2}
                 className="mt-1"
               />
@@ -497,9 +480,7 @@ const TagManagementPage = () => {
               }}
               disabled={saving}
             >
-              <X className="mr-2 h-4 w-4" />
-              Cancel
-            </Button>
+              <X className="mr-2 h-4 w-4" />{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={handleSubmit}
               disabled={saving || !formData.name || !formData.slug}
@@ -516,22 +497,18 @@ const TagManagementPage = () => {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Tag</DialogTitle>
+            <DialogTitle>{i18n.t('auto_delete_tag')}</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete the tag "{selectedTag?.name}"? This action
               cannot be undone. The tag will be removed from all blog posts.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={handleDelete}
               className={`${themeColors.buttons.danger} text-white`}
-            >
-              Delete
-            </Button>
+            >{i18n.t('auto_delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

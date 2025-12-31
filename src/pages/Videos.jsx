@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { likeVideo, unlikeVideo, shareVideo, saveVideo, unsaveVideo, addVideoComment, getVideoComments, getVideoStats } from '@/services/api';
@@ -200,9 +201,7 @@ const SwipeScoutBackground = () => (
           textShadow: '0 2px 10px rgba(0,0,0,0.3)'
         }}
       >
-        <span className="text-xs md:text-base font-semibold text-white/70 tracking-wide mr-2">©</span>
-        SwipeScout
-      </h1>
+        <span className="text-xs md:text-base font-semibold text-white/70 tracking-wide mr-2">©</span>{i18n.t('auto_swipescout')}</h1>
     </div>
 
     {/* Decorative circles */}
@@ -364,9 +363,7 @@ const VideoCard = React.memo(({
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-gray-300 text-center py-8">
-                          No comments yet — be the first to comment!
-                        </p>
+                        <p className="text-sm text-gray-300 text-center py-8">{i18n.t('auto_no_comments_yet_be_the_first_to_comment_1')}</p>
                       )}
                     </div>
                   )}
@@ -377,13 +374,13 @@ const VideoCard = React.memo(({
                   {commentSubmitting ? (
                     <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5">
                       <Loader2 className="h-4 w-4 animate-spin text-white" />
-                      <span className="text-sm text-gray-300">Submitting...</span>
+                      <span className="text-sm text-gray-300">{i18n.t('auto_submitting')}</span>
                     </div>
                   ) : (
                     <>
                       <input
-                        aria-label="comment-input"
-                        placeholder="Add a comment..."
+                        aria-label={i18n.t('auto_comment_input')} 
+                        placeholder={i18n.t('auto_add_a_comment')} 
                         className="flex-1 px-3 py-2 text-sm rounded-lg bg-white/90 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                         id={`comment-input-${video.id}`}
                         onFocus={(e) => {
@@ -415,7 +412,7 @@ const VideoCard = React.memo(({
                           const input = document.getElementById(`comment-input-${video.id}`);
                           if (input) handleSubmitComment(input);
                         }}
-                        aria-label="post-comment"
+                        aria-label={i18n.t('auto_post_comment')} 
                       >
                         <Send className="h-4 w-4" />
                       </Button>
@@ -514,9 +511,7 @@ const VideoCard = React.memo(({
               
               {/* Sample badge */}
               {video.videoType === 'sample' && (
-                <Badge variant="secondary" className="absolute bottom-4 left-4 bg-black/60 text-white border-white/20">
-                  Sample
-                </Badge>
+                <Badge variant="secondary" className="absolute bottom-4 left-4 bg-black/60 text-white border-white/20">{i18n.t('auto_sample')}</Badge>
               )}
 
               {/* Maximize/minimize button */}
@@ -563,7 +558,7 @@ const VideoCard = React.memo(({
                 "rounded-full transition-all hover:scale-110",
                 isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
               )}
-              aria-label="previous"
+              aria-label={i18n.t('auto_previous_1')} 
             >
               <ChevronUp className="h-6 w-6" />
             </Button>
@@ -582,7 +577,7 @@ const VideoCard = React.memo(({
                       ? "text-white hover:bg-white/20" 
                       : "text-white hover:bg-white/20"
                 )}
-                aria-label="like"
+                aria-label={i18n.t('auto_like_1')} 
               >
                 <Heart className={cn("h-6 w-6", video.isLiked && "fill-current")} />
               </Button>
@@ -601,7 +596,7 @@ const VideoCard = React.memo(({
                   "rounded-full transition-all hover:scale-110",
                   isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
                 )}
-                aria-label="comment"
+                aria-label={i18n.t('auto_comment_1')} 
               >
                 <MessageCircle className="h-6 w-6" />
               </Button>
@@ -620,7 +615,7 @@ const VideoCard = React.memo(({
                   "rounded-full transition-all hover:scale-110",
                   isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
                 )}
-                aria-label="share"
+                aria-label={i18n.t('auto_share_1')} 
               >
                 <Share2 className="h-6 w-6" />
               </Button>
@@ -649,7 +644,7 @@ const VideoCard = React.memo(({
                       ? "text-white hover:bg-white/20" 
                       : "text-white hover:bg-white/20"
                 )}
-                aria-label="save"
+                aria-label={i18n.t('auto_save_2')} 
               >
                 <Bookmark className={cn("h-6 w-6", video.saved && "fill-current")} />
               </Button>
@@ -667,7 +662,7 @@ const VideoCard = React.memo(({
                 "rounded-full transition-all hover:scale-110",
                 isMaximized ? "text-white hover:bg-white/20" : "text-white hover:bg-white/20"
               )}
-              aria-label="next"
+              aria-label={i18n.t('auto_next_1')} 
             >
               <ChevronDown className="h-6 w-6" />
             </Button>
@@ -1484,7 +1479,7 @@ const Videos = () => {
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         <Card className="max-w-2xl w-full border-red-200 bg-red-50">
           <CardContent className="p-6 space-y-4">
-            <h2 className="text-2xl font-bold text-red-800">Oops!</h2>
+            <h2 className="text-2xl font-bold text-red-800">{i18n.t('auto_oops')}</h2>
             <p className="text-red-700">{error}</p>
             <p className="text-sm text-gray-600">
               Please try refreshing the page or contact support if the problem persists.
@@ -1497,15 +1492,11 @@ const Videos = () => {
                   fetchVideos(id);
                 }}
                 variant="default"
-              >
-                Try Again
-              </Button>
+              >{i18n.t('auto_try_again')}</Button>
               <Button
                 onClick={() => window.location.href = '/'}
                 variant="outline"
-              >
-                Go Home
-              </Button>
+              >{i18n.t('auto_go_home')}</Button>
             </div>
           </CardContent>
         </Card>

@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Dialog,
@@ -544,7 +545,7 @@ const mockVideos = [
       <ProfileContainer>
         <Container maxWidth="lg">
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <Typography variant="h6">Loading profile...</Typography>
+            <Typography variant="h6">{i18n.t('auto_loading_profile')}</Typography>
           </Box>
         </Container>
       </ProfileContainer>
@@ -590,18 +591,14 @@ const mockVideos = [
               startIcon={<EditIcon />}
               onClick={handleEditProfile}
               sx={{ mb: 3, boxShadow: 2 }}
-            >
-              Edit Profile
-            </Button>
+            >{i18n.t('auto_edit_profile')}</Button>
 
             <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
               {userData.bio}
             </Typography>
 
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                Skills
-              </Typography>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">{i18n.t('auto_skills_1')}</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 {userSkills.map((skill, index) => (
                   <SkillChip key={index} label={profile?skill.name:skill} sx={{ mb: 1, mr: 1 }} />
@@ -638,22 +635,22 @@ const mockVideos = [
 
             <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
               {userData.social?.linkedin && (
-                <Tooltip title="LinkedIn">
-                  <IconButton color="primary" aria-label="LinkedIn" href={userData.social.linkedin} target="_blank">
+                <Tooltip title={i18n.t('auto_linkedin')} >
+                  <IconButton color="primary" aria-label={i18n.t('auto_linkedin')}  href={userData.social.linkedin} target="_blank">
                     <LinkedInIcon />
                   </IconButton>
                 </Tooltip>
               )}
               {userData.social?.github && (
-                <Tooltip title="GitHub">
-                  <IconButton color="primary" aria-label="GitHub" href={userData.social.github} target="_blank">
+                <Tooltip title={i18n.t('auto_github')} >
+                  <IconButton color="primary" aria-label={i18n.t('auto_github')}  href={userData.social.github} target="_blank">
                     <GitHubIcon />
                   </IconButton>
                 </Tooltip>
               )}
               {userData.social?.twitter && (
-                <Tooltip title="Twitter">
-                  <IconButton color="primary" aria-label="Twitter" href={userData.social.twitter} target="_blank">
+                <Tooltip title={i18n.t('auto_twitter')} >
+                  <IconButton color="primary" aria-label={i18n.t('auto_twitter')}  href={userData.social.twitter} target="_blank">
                     <TwitterIcon />
                   </IconButton>
                 </Tooltip>
@@ -690,17 +687,17 @@ const mockVideos = [
               </VideoControls>
 
               <VideoActions>
-                <Tooltip title="Like">
+                <Tooltip title={i18n.t('auto_like')} >
                   <IconButton color="inherit">
                     <FavoriteIcon />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Share">
+                <Tooltip title={i18n.t('auto_share')} >
                   <IconButton color="inherit">
                     <ShareIcon />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Save">
+                <Tooltip title={i18n.t('auto_save')} >
                   <IconButton color="inherit">
                     <BookmarkIcon />
                   </IconButton>
@@ -728,10 +725,10 @@ const mockVideos = [
               }
             }}
           >
-            <Tab label="Experience" icon={<WorkIcon />} iconPosition="start" />
-            <Tab label="Education" icon={<SchoolIcon />} iconPosition="start" />
-            <Tab label="Skills" />
-            <Tab label="Additional Info" />
+            <Tab label={i18n.t('auto_experience')}  icon={<WorkIcon />} iconPosition="start" />
+            <Tab label={i18n.t('auto_education')}  icon={<SchoolIcon />} iconPosition="start" />
+            <Tab label={i18n.t('auto_skills_1')}  />
+            <Tab label={i18n.t('auto_additional_info')}  />
           </Tabs>
 
           {/* Experience Tab */}
@@ -766,9 +763,7 @@ const mockVideos = [
                 </ExperienceCard>
               ))
             ) : (
-              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
-                No experience information available
-              </Typography>
+              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>{i18n.t('auto_no_experience_information_available')}</Typography>
             )}
           </TabPanel>
 
@@ -811,9 +806,7 @@ const mockVideos = [
                 </ExperienceCard>
               ))
             ) : (
-              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
-                No education information available
-              </Typography>
+              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>{i18n.t('auto_no_education_information_available')}</Typography>
             )}
           </TabPanel>
 
@@ -845,9 +838,7 @@ const mockVideos = [
                 ))
               ) : (
                 <Grid item xs={12}>
-                  <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
-                    No skills information available
-                  </Typography>
+                  <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>{i18n.t('auto_no_skills_information_available')}</Typography>
                 </Grid>
               )}
             </Grid>
@@ -857,9 +848,7 @@ const mockVideos = [
           <TabPanel value={tabValue} index={3}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Contact Information
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_contact_information')}</Typography>
                 <List>
                   {userData.email && (
                     <ListItem sx={{ px: 0 }}>
@@ -904,9 +893,7 @@ const mockVideos = [
                 </List>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Social Media
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_social_media')}</Typography>
                 <List>
                   {userData.social?.linkedin && (
                     <ListItem button component="a" href={userData.social.linkedin} target="_blank" sx={{ px: 0 }}>
@@ -953,9 +940,7 @@ const mockVideos = [
         {/* Videos Gallery */}
         {userVideos.length > 0 && (
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">
-              My Videos
-            </Typography>
+            <Typography variant="h5" component="h2" gutterBottom fontWeight="bold">{i18n.t('auto_my_videos')}</Typography>
             <Divider sx={{ mb: 3 }} />
 
             <Grid container spacing={3}>
@@ -982,7 +967,7 @@ const mockVideos = [
                         onEnded={() => handleVideoEnded(video.id)}
                       />
                       <VideoPlayButton 
-                        aria-label="play" 
+                        aria-label={i18n.t('auto_play')}  
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleVideoPlayback(video.id);

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Input } from '@/components/UI/input.jsx';
@@ -55,29 +56,27 @@ const SystemSettingsPage = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Platform Settings
-          </CardTitle>
+            <Settings className="h-5 w-5" />{i18n.t('auto_platform_settings')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div>Loading...</div>
+            <div>{i18n.t('auto_loading')}</div>
           ) : (
             <div className="space-y-4">
               <div>
-                <Label>Site Name</Label>
+                <Label>{i18n.t('auto_site_name')}</Label>
                 <Input value={settings.siteName || ''} onChange={(e) => setSettings({ ...settings, siteName: e.target.value })} />
               </div>
               <div>
-                <Label>Support Email</Label>
+                <Label>{i18n.t('auto_support_email')}</Label>
                 <Input value={settings.supportEmail || ''} onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })} />
               </div>
               <div>
-                <Label>Maintenance Mode</Label>
+                <Label>{i18n.t('auto_maintenance_mode')}</Label>
                 <div className="mt-2">
                   <label className="flex items-center gap-2">
                     <input type="checkbox" checked={!!settings.maintenanceMode} onChange={(e) => setSettings({ ...settings, maintenanceMode: e.target.checked })} />
-                    <span className="text-sm ml-1">Enable maintenance mode</span>
+                    <span className="text-sm ml-1">{i18n.t('auto_enable_maintenance_mode')}</span>
                   </label>
                 </div>
               </div>

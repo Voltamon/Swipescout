@@ -1,4 +1,5 @@
-﻿import React, { useContext } from 'react';
+import i18n from 'i18next';
+import React, { useContext } from 'react';
 import {
   Box,
   Container,
@@ -48,9 +49,7 @@ export default function HelpPageLinks() {
           fontSize: isMobile ? '1.75rem' : '2.125rem',
           color: "#3366ff",
         }}
-      >
-        Help Center
-      </Typography>
+      >{i18n.t('auto_help_center')}</Typography>
 
       {/* Introduction text */}
       <Typography variant="body1" sx={{ mb: 4, color: "text.secondary" }}>
@@ -78,9 +77,7 @@ export default function HelpPageLinks() {
           >
             <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <EmailIcon sx={{ fontSize: 60, color: "#3366ff", mb: 2 }} />
-              <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-                Email Support
-              </Typography>
+              <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>{i18n.t('auto_email_support')}</Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 For general inquiries and technical assistance, please send us an email.
               </Typography>
@@ -123,9 +120,7 @@ export default function HelpPageLinks() {
               <Box sx={{ color: "#7289DA", fontSize: 60, mb: 2 }}>
                 <DiscordIcon />
               </Box>
-              <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-                Join Our Discord
-              </Typography>
+              <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>{i18n.t('auto_join_our_discord')}</Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 Connect with the community, get real-time help, and stay updated on all things Swipscout.
               </Typography>
@@ -142,9 +137,7 @@ export default function HelpPageLinks() {
                     bgcolor: "#677bc4",
                   },
                 }}
-              >
-                Join Discord
-              </Button>
+              >{i18n.t('auto_join_discord')}</Button>
             </CardContent>
           </Card>
         </Grid>

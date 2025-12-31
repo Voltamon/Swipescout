@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useState } from 'react';
+import i18n from 'i18next';
+import React, { useEffect, useState } from 'react';
 import api from '@/services/api';
 import { Line } from 'react-chartjs-2';
 import {
@@ -82,28 +83,28 @@ export default function AnalyticsJobseeker() {
   return (
     <div className="p-4 md:p-8 space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">My Analytics</h2>
+        <h2 className="text-3xl font-bold">{i18n.t('auto_my_analytics')}</h2>
         <div className="flex items-center space-x-2">
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
             className="p-2 border rounded-md"
           >
-            <option value="week">Last 7 Days</option>
-            <option value="month">Last 30 Days</option>
-            <option value="year">Last Year</option>
+            <option value="week">{i18n.t('auto_last_7_days')}</option>
+            <option value="month">{i18n.t('auto_last_30_days')}</option>
+            <option value="year">{i18n.t('auto_last_year')}</option>
           </select>
         </div>
       </div>
 
-      {loading && <div className="text-center">Loading...</div>}
+      {loading && <div className="text-center">{i18n.t('auto_loading')}</div>}
       {error && <div className="text-center text-red-500">{error}</div>}
 
       {!loading && !error && stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Total Profile Views</CardTitle>
+              <CardTitle>{i18n.t('auto_total_profile_views')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold">{stats?.total_views ?? 0}</p>
@@ -111,7 +112,7 @@ export default function AnalyticsJobseeker() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Unique Viewers</CardTitle>
+              <CardTitle>{i18n.t('auto_unique_viewers')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold">{stats?.unique_viewers ?? 0}</p>
@@ -119,7 +120,7 @@ export default function AnalyticsJobseeker() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>AI-Powered Insight</CardTitle>
+              <CardTitle>{i18n.t('auto_ai_powered_insight')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm">
@@ -130,13 +131,13 @@ export default function AnalyticsJobseeker() {
 
           <Card className="md:col-span-2 lg:col-span-3">
             <CardHeader>
-              <CardTitle>Profile Views Over Time</CardTitle>
+              <CardTitle>{i18n.t('auto_profile_views_over_time')}</CardTitle>
             </CardHeader>
             <CardContent>
               {stats?.daily_stats?.length > 0 ? (
                 <Line data={lineChartData} />
               ) : (
-                <p>No daily data available for this period.</p>
+                <p>{i18n.t('auto_no_daily_data_available_for_this_period')}</p>
               )}
             </CardContent>
           </Card>

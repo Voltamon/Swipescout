@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -260,9 +261,7 @@ export default function ApplicationTrackingPage() {
 
           <Box mb={2}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-              <Typography variant="body2" color="text.secondary">
-                Application Progress
-              </Typography>
+              <Typography variant="body2" color="text.secondary">{i18n.t('auto_application_progress')}</Typography>
               <Typography variant="body2" color="text.secondary">
                 {Math.round(progress)}%
               </Typography>
@@ -284,18 +283,14 @@ export default function ApplicationTrackingPage() {
                 size="small"
                 startIcon={<Visibility />}
                 onClick={() => handleViewDetails(application)}
-              >
-                View Details
-              </Button>
+              >{i18n.t('auto_view_details_1')}</Button>
               {application.interviewId && (
                 <Button
                   size="small"
                   variant="outlined"
                   startIcon={<CalendarToday />}
                   onClick={() => window.open(`/interviews/${application.interviewId}`, '_blank')}
-                >
-                  Interview
-                </Button>
+                >{i18n.t('auto_interview')}</Button>
               )}
             </Box>
           </Box>
@@ -351,9 +346,7 @@ export default function ApplicationTrackingPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4}>
-        Application Tracking
-      </Typography>
+      <Typography variant="h4" fontWeight="bold" mb={4}>{i18n.t('auto_application_tracking')}</Typography>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -372,9 +365,7 @@ export default function ApplicationTrackingPage() {
                   <Typography variant="h4" fontWeight="bold">
                     {applications.length}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Applications
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_total_applications')}</Typography>
                 </Box>
               </Box>
             </CardContent>
@@ -392,9 +383,7 @@ export default function ApplicationTrackingPage() {
                       !['accepted', 'rejected', 'withdrawn'].includes(app.status)
                     ).length}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Active Applications
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_active_applications')}</Typography>
                 </Box>
               </Box>
             </CardContent>
@@ -412,9 +401,7 @@ export default function ApplicationTrackingPage() {
                       ['interview_scheduled', 'interview_completed'].includes(app.status)
                     ).length}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Interview Stage
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_interview_stage')}</Typography>
                 </Box>
               </Box>
             </CardContent>
@@ -430,9 +417,7 @@ export default function ApplicationTrackingPage() {
                   <Typography variant="h4" fontWeight="bold">
                     {applications.filter(app => app.status === 'accepted').length}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Offers Received
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_offers_received')}</Typography>
                 </Box>
               </Box>
             </CardContent>
@@ -447,7 +432,7 @@ export default function ApplicationTrackingPage() {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                placeholder="Search by job title or company..."
+                placeholder={i18n.t('auto_search_by_job_title_or_company')} 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 InputProps={{
@@ -459,11 +444,11 @@ export default function ApplicationTrackingPage() {
               <TextField
                 fullWidth
                 select
-                label="Status Filter"
+                label={i18n.t('auto_status_filter')} 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <MenuItem value="all">All Statuses</MenuItem>
+                <MenuItem value="all">{i18n.t('auto_all_statuses')}</MenuItem>
                 {Object.entries(applicationStatuses).map(([key, status]) => (
                   <MenuItem key={key} value={key}>
                     {status.label}
@@ -489,9 +474,7 @@ export default function ApplicationTrackingPage() {
       {/* Applications List */}
       {filteredApplications.length === 0 ? (
         <Box textAlign="center" py={8}>
-          <Typography variant="h6" color="text.secondary" mb={2}>
-            No applications found
-          </Typography>
+          <Typography variant="h6" color="text.secondary" mb={2}>{i18n.t('auto_no_applications_found')}</Typography>
           <Typography variant="body2" color="text.secondary" mb={3}>
             {applications.length === 0 
               ? "You haven't applied to any jobs yet. Start exploring opportunities!"
@@ -502,9 +485,7 @@ export default function ApplicationTrackingPage() {
             <Button
               variant="contained"
               onClick={() => window.location.href = '/job-search'}
-            >
-              Search Jobs
-            </Button>
+            >{i18n.t('auto_search_jobs')}</Button>
           )}
         </Box>
       ) : (
@@ -520,18 +501,12 @@ export default function ApplicationTrackingPage() {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={() => handleViewDetails(menuApplication)}>
-          <Visibility sx={{ mr: 1 }} />
-          View Details
-        </MenuItem>
+          <Visibility sx={{ mr: 1 }} />{i18n.t('auto_view_details_1')}</MenuItem>
         <MenuItem onClick={() => window.open(`/jobs/${menuApplication?.jobId}`, '_blank')}>
-          <Work sx={{ mr: 1 }} />
-          View Job Posting
-        </MenuItem>
+          <Work sx={{ mr: 1 }} />{i18n.t('auto_view_job_posting')}</MenuItem>
         {menuApplication?.interviewId && (
           <MenuItem onClick={() => window.open(`/interviews/${menuApplication.interviewId}`, '_blank')}>
-            <CalendarToday sx={{ mr: 1 }} />
-            View Interview
-          </MenuItem>
+            <CalendarToday sx={{ mr: 1 }} />{i18n.t('auto_view_interview')}</MenuItem>
         )}
         <Divider />
         {!['accepted', 'rejected', 'withdrawn'].includes(menuApplication?.status) && (
@@ -539,9 +514,7 @@ export default function ApplicationTrackingPage() {
             onClick={() => handleWithdraw(menuApplication?.id)}
             sx={{ color: 'error.main' }}
           >
-            <Cancel sx={{ mr: 1 }} />
-            Withdraw Application
-          </MenuItem>
+            <Cancel sx={{ mr: 1 }} />{i18n.t('auto_withdraw_application')}</MenuItem>
         )}
       </Menu>
 
@@ -552,9 +525,7 @@ export default function ApplicationTrackingPage() {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>
-          Application Details
-        </DialogTitle>
+        <DialogTitle>{i18n.t('auto_application_details')}</DialogTitle>
         <DialogContent>
           {selectedApplication && (
             <Box>
@@ -566,9 +537,7 @@ export default function ApplicationTrackingPage() {
               
               {selectedApplication.notes && (
                 <Box mt={3}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Application Notes
-                  </Typography>
+                  <Typography variant="subtitle1" gutterBottom>{i18n.t('auto_application_notes')}</Typography>
                   <Typography variant="body2">
                     {selectedApplication.notes}
                   </Typography>
@@ -578,9 +547,7 @@ export default function ApplicationTrackingPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDetailsDialog(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setDetailsDialog(false)}>{i18n.t('auto_close')}</Button>
         </DialogActions>
       </Dialog>
     </Container>

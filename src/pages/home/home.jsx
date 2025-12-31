@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -611,8 +612,8 @@ const Home = () => {
       {/* SwipeScout Header */}
       <div className="home-header">
         <div className="home-logo-container">
-          <img src="/swipescout.svg" alt="SwipeScout Logo" className="home-logo" />
-          <span className="home-brand-text">SwipeScout</span>
+          <img src="/swipescout.svg" alt={i18n.t('auto_swipescout_logo')}  className="home-logo" />
+          <span className="home-brand-text">{i18n.t('auto_swipescout')}</span>
         </div>
         
         {/* Language Switcher with SVG Flags */}
@@ -624,7 +625,7 @@ const Home = () => {
                 ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg border-2 border-cyan-400' 
                 : 'bg-white text-gray-700 border border-gray-300 hover:border-cyan-400'
             }`}
-            title="English"
+            title={i18n.t('auto_english')} 
           >
             <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="32" height="32" rx="16" fill="white"/>
@@ -641,7 +642,7 @@ const Home = () => {
                 <path fillRule="evenodd" clipRule="evenodd" d="M0 12.8V19.2H32V12.8H0ZM14.4 0V32H17.6V0H14.4Z" fill="#C8102E"/>
               </g>
             </svg>
-            <span>EN</span>
+            <span>{i18n.t('auto_en')}</span>
           </button>
           
           <button
@@ -651,7 +652,7 @@ const Home = () => {
                 ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg border-2 border-cyan-400' 
                 : 'bg-white text-gray-700 border border-gray-300 hover:border-cyan-400'
             }`}
-            title="العربية"
+            title={i18n.t('auto_text_9')} 
           >
             <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="32" height="32" rx="16" fill="white"/>
@@ -663,7 +664,7 @@ const Home = () => {
                 <path d="M8 11h16v3H8zm0 4h16v3H8zm3 4h10v2h2v-2h2v2h-2v2h-12v-2h-2v-2h2z" fill="white"/>
               </g>
             </svg>
-            <span className="font-arabic">AR</span>
+            <span className="font-arabic">{i18n.t('auto_ar')}</span>
           </button>
           
           <button
@@ -673,7 +674,7 @@ const Home = () => {
                 ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg border-2 border-cyan-400' 
                 : 'bg-white text-gray-700 border border-gray-300 hover:border-cyan-400'
             }`}
-            title="中文"
+            title={i18n.t('auto_text_10')} 
           >
             <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="32" height="32" rx="16" fill="white"/>
@@ -686,7 +687,7 @@ const Home = () => {
                 <path d="M14 6l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L14 6zm2 4l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L16 10zm-1 4l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L15 14zm-2 2l0.5 1.5h1.5l-1.2 0.9 0.5 1.5-1.3-0.9-1.2 0.9 0.5-1.5-1.2-0.9h1.5L13 16z" fill="#FFDE00"/>
               </g>
             </svg>
-            <span>ZH</span>
+            <span>{i18n.t('auto_zh')}</span>
           </button>
         </div>
       </div>
@@ -704,7 +705,7 @@ const Home = () => {
             {/* Centered brand in the hero area (visually aligned like the action buttons were) */}
             <div className="home-hero-brand" aria-hidden="true">
               <img src="/swipescout.svg" alt="" className="home-hero-logo" />
-              <span className="home-hero-brand-text">SwipeScout</span>
+              <span className="home-hero-brand-text">{i18n.t('auto_swipescout')}</span>
             </div>
 
             <div className="home-hero-section">
@@ -733,7 +734,7 @@ const Home = () => {
             type="button"
             className="home-feature-icon-button home-feature-clickable"
             onClick={(e) => { console.log('video-feature button DOM clicked', e); handleVideoFeatureClick(); }}
-            aria-label="Create a video resume"
+            aria-label={i18n.t('auto_create_a_video_resume')} 
           >
             <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
               <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"/>
@@ -750,7 +751,7 @@ const Home = () => {
             
             className="home-feature-icon-button home-feature-icon-button--secondary"
             onClick={handleSkillsClick}
-            aria-label="Show your skills"
+            aria-label={i18n.t('auto_show_your_skills')} 
           >
             <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"             style={{ cursor: 'normal !important' }}
 >
@@ -767,7 +768,7 @@ const Home = () => {
             type="button"
             className="home-feature-icon-button home-feature-icon-button--highlight"
             onClick={handleEmployersClick}
-            aria-label="Employers area"
+            aria-label={i18n.t('auto_employers_area')} 
           >
             <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -783,7 +784,7 @@ const Home = () => {
             type="button"
             className="home-feature-icon-button home-feature-icon-button--video home-feature-clickable"
             onClick={() => navigate('/videos')}
-            aria-label="Watch video feeds"
+            aria-label={i18n.t('auto_watch_video_feeds')} 
           >
             <svg className="home-feature-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
               <path d="M10 16.5l6-4.5-6-4.5v9zm12-4.5c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-2 0c0-4.418-3.582-8-8-8s-8 3.582-8 8 3.582 8 8 8 8-3.582 8-8z" />

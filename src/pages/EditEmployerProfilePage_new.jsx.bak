@@ -1,0 +1,776 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  getEmployerProfile, 
+  updateEmployerProfile, 
+  uploadCompanyLogo,
+  getEmployerCategories,
+  addEmployerCategory,
+  deleteEmployerCategory,
+  getCategories,
+  createEmployerProfile
+} from '@/services/api';
+
+// shadcn/ui components
+import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/input';
+import { Label } from '@/components/UI/label';
+import { Textarea } from '@/components/UI/textarea';
+import { Badge } from '@/components/UI/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/UI/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/UI/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/UI/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/tabs';
+import { useToast } from '@/hooks/use-toast';
+import {
+  Building2,
+  Mail,
+  Phone,
+  Globe,
+  MapPin,
+  Briefcase,
+  Users,
+  Calendar,
+  Camera,
+  Save,
+  Plus,
+  X,
+  Linkedin,
+  Facebook,
+  Twitter,
+  Loader2
+} from 'lucide-react';
+
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+export default function EditEmployerProfilePage() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const fileInputRef = useRef(null);
+
+  const [categories, setCategories] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+
+  const [profile, setProfile] = useState({
+    name: '',
+    industry: '',
+    location: '',
+    description: '',
+    email: '',
+    phone: '',
+    website: '',
+    logo: null,
+    establish_year: null,
+    size: '',
+    social: {
+      linkedin: '',
+      facebook: '',
+      twitter: ''
+    }
+  });
+
+  const [companyLogoPicture, setCompanyLogoPicture] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const verifyImageAvailability = (url) => {
+    return new Promise((resolve, reject) => {
+      if (!url) reject(new Error('Empty URL'));
+
+      const img = new Image();
+      let timer = setTimeout(() => {
+        img.onload = img.onerror = null;
+        reject(new Error('Image load timeout'));
+      }, 5000);
+
+      img.onload = () => {
+        clearTimeout(timer);
+        if (img.width > 0 && img.height > 0) {
+          resolve();
+        } else {
+          reject(new Error('Zero dimensions'));
+        }
+      };
+      img.onerror = () => {
+        clearTimeout(timer);
+        reject(new Error('Failed to load'));
+      };
+      img.src = url;
+    });
+  };
+
+  const createStarterProfile = async () => {
+    setSaving(true);
+    try {
+      await createEmployerProfile({
+        name: ' ',
+        industry: ' '
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchEmployerData = async () => {
+      try {
+        setLoading(true);
+        
+        let profileResponse;
+        try {
+          profileResponse = await getEmployerProfile();
+        } catch (error) {
+          if (error.status === 404) {
+            try {
+              await createStarterProfile();
+              profileResponse = await getEmployerProfile();
+              toast({
+                title: "Profile Created",
+                description: "Starter profile created successfully",
+              });
+            } catch (error) {
+              toast({
+                title: "Error",
+                description: "Failed to create starter profile",
+                variant: "destructive",
+              });
+              return;
+            }
+          } else {
+            throw error;
+          }
+        }
+
+        const [categoriesResponse, allCategoriesResponse] = await Promise.all([
+          getEmployerCategories(),
+          getCategories()
+        ]);
+
+        const employerData = profileResponse.data;
+        setProfile({
+          name: employerData.name || '',
+          industry: employerData.industry || '',
+          location: employerData.location || '',
+          description: employerData.description || '',
+          email: employerData.email || '',
+          phone: employerData.phone || '',
+          website: employerData.website || '',
+          logo: employerData.logo || null,
+          establish_year: employerData.establish_year || null,
+          size: employerData.size || '',
+          social: employerData.social || {
+            linkedin: '',
+            facebook: '',
+            twitter: ''
+          }
+        });
+
+        const companyCategoryIds = categoriesResponse.data?.categories?.map(c => c.id) || [];
+        const filteredAvailableCategories = allCategoriesResponse.data?.categories?.filter(
+          cat => !companyCategoryIds.includes(cat.id)
+        ) || [];
+
+        setCategories(categoriesResponse.data?.categories || []);
+        setAvailableCategories(filteredAvailableCategories);
+
+        if (employerData.logo) {
+          const logoUrl = `${VITE_API_BASE_URL}${employerData.logo}?t=${Date.now()}`;
+          try {
+            await verifyImageAvailability(logoUrl);
+            setCompanyLogoPicture(logoUrl);
+          } catch (error) {
+            console.error('Company logo image not available:', error);
+            setCompanyLogoPicture('');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching employer data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchEmployerData();
+  }, []);
+
+  const handleProfileChange = (e) => {
+    const { name, value } = e.target;
+    
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setProfile({
+        ...profile,
+        [parent]: {
+          ...profile[parent],
+          [child]: value
+        }
+      });
+    } else {
+      setProfile({
+        ...profile,
+        [name]: value
+      });
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      setSaving(true);
+      await updateEmployerProfile(profile);
+      
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setSaving(true);
+      
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const tempPreviewUrl = URL.createObjectURL(file);
+      setCompanyLogoPicture(tempPreviewUrl);
+
+      const response = await uploadCompanyLogo(formData);
+      const serverUrl = `${VITE_API_BASE_URL}${response.data.logo_url}?t=${Date.now()}`;
+
+      let loaded = false;
+      for (let i = 0; i < 3; i++) {
+        try {
+          await verifyImageAvailability(serverUrl);
+          loaded = true;
+          break;
+        } catch {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      if (loaded) {
+        setProfile(prev => ({ ...prev, logo: response.data.logo_url }));
+        setCompanyLogoPicture(serverUrl);
+        toast({
+          title: "Success",
+          description: "Company logo updated!",
+        });
+      } else {
+        toast({
+          title: "Uploaded",
+          description: "Refresh to see changes.",
+        });
+      }
+
+      URL.revokeObjectURL(tempPreviewUrl);
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      toast({
+        title: "Error",
+        description: "Upload failed. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveCategory = async () => {
+    if (!selectedCategory) return;
+    
+    try {
+      setSaving(true);
+      await addEmployerCategory(selectedCategory);
+      
+      const addedCategory = availableCategories.find(cat => cat.id === selectedCategory);
+      
+      if (addedCategory) {
+        setCategories([...categories, addedCategory]);
+        setAvailableCategories(availableCategories.filter(cat => cat.id !== selectedCategory));
+      }
+      
+      toast({
+        title: "Success",
+        description: "Category added successfully",
+      });
+      setSelectedCategory('');
+      setCategoryDialogOpen(false);
+    } catch (error) {
+      console.error('Error saving category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add category",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      setSaving(true);
+      await deleteEmployerCategory(categoryId);
+      
+      setCategories(categories.filter(cat => cat.id !== categoryId));
+      
+      const deletedCategory = categories.find(cat => cat.id === categoryId);
+      if (deletedCategory) {
+        setAvailableCategories([...availableCategories, deletedCategory]);
+      }
+      
+      toast({
+        title: "Success",
+        description: "Category removed successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove category",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto text-indigo-600" />
+          <p className="mt-4 text-slate-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+      <div className="container mx-auto px-4 max-w-5xl">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Edit Company Profile</h1>
+            <p className="text-slate-600 mt-1">Manage your company information and settings</p>
+          </div>
+          <Button
+            onClick={handleSaveProfile}
+            disabled={saving}
+            size="lg"
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Profile
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Logo Section */}
+        <Card className="mb-6 border-slate-200 shadow-lg">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center">
+              <div className="relative group">
+                <Avatar className="h-32 w-32 border-4 border-indigo-500">
+                  <AvatarImage src={companyLogoPicture} alt={profile.name} />
+                  <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-3xl">
+                    {profile.name?.charAt(0) || 'C'}
+                  </AvatarFallback>
+                </Avatar>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                />
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="absolute bottom-0 right-0 h-10 w-10 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Camera className="h-4 w-4" />
+                </Button>
+              </div>
+              <h2 className="mt-4 text-2xl font-bold text-slate-900">{profile.name || 'Company Name'}</h2>
+              <p className="text-slate-600">{profile.industry || 'Industry'}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tabs */}
+        <Tabs defaultValue="details" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 bg-white border border-slate-200 p-1">
+            <TabsTrigger value="details" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+              <Building2 className="h-4 w-4 mr-2" />
+              Company Details
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+              <Briefcase className="h-4 w-4 mr-2" />
+              Categories
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Company Details Tab */}
+          <TabsContent value="details" className="space-y-6">
+            <Card className="border-slate-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-indigo-600" />
+                  Basic Information
+                </CardTitle>
+                <CardDescription>Core details about your company</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center gap-2">
+                      <Building2 className="h-4 w-4 text-indigo-600" />
+                      Company Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={profile.name || ''}
+                      onChange={handleProfileChange}
+                      placeholder="Enter company name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="industry" className="flex items-center gap-2">
+                      <Briefcase className="h-4 w-4 text-indigo-600" />
+                      Industry *
+                    </Label>
+                    <Input
+                      id="industry"
+                      name="industry"
+                      value={profile.industry || ''}
+                      onChange={handleProfileChange}
+                      placeholder="e.g., Technology, Finance"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-indigo-600" />
+                    Location
+                  </Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    value={profile.location || ''}
+                    onChange={handleProfileChange}
+                    placeholder="City, Country"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-indigo-600" />
+                    Description
+                  </Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={profile.description || ''}
+                    onChange={handleProfileChange}
+                    placeholder="Tell job seekers about your company and what you do"
+                    rows={4}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-slate-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="h-5 w-5 text-indigo-600" />
+                  Contact Information
+                </CardTitle>
+                <CardDescription>How job seekers can reach you</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-indigo-600" />
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={profile.email || ''}
+                      onChange={handleProfileChange}
+                      placeholder="contact@company.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-indigo-600" />
+                      Phone
+                    </Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      value={profile.phone || ''}
+                      onChange={handleProfileChange}
+                      placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="website" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-indigo-600" />
+                    Website
+                  </Label>
+                  <Input
+                    id="website"
+                    name="website"
+                    value={profile.website || ''}
+                    onChange={handleProfileChange}
+                    placeholder="https://www.yourcompany.com"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="establish_year" className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-indigo-600" />
+                      Founded Year
+                    </Label>
+                    <Input
+                      id="establish_year"
+                      name="establish_year"
+                      type="number"
+                      value={profile.establish_year || ''}
+                      onChange={handleProfileChange}
+                      placeholder="2020"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="size" className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-indigo-600" />
+                      Company Size
+                    </Label>
+                    <Input
+                      id="size"
+                      name="size"
+                      value={profile.size || ''}
+                      onChange={handleProfileChange}
+                      placeholder="1-50, 51-200, 200+"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-slate-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+                <CardTitle>Social Media</CardTitle>
+                <CardDescription>Your company's social media presence</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="linkedin" className="flex items-center gap-2">
+                      <Linkedin className="h-4 w-4 text-blue-600" />
+                      LinkedIn
+                    </Label>
+                    <Input
+                      id="linkedin"
+                      name="social.linkedin"
+                      value={profile.social?.linkedin || ''}
+                      onChange={handleProfileChange}
+                      placeholder="LinkedIn URL"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="facebook" className="flex items-center gap-2">
+                      <Facebook className="h-4 w-4 text-blue-500" />
+                      Facebook
+                    </Label>
+                    <Input
+                      id="facebook"
+                      name="social.facebook"
+                      value={profile.social?.facebook || ''}
+                      onChange={handleProfileChange}
+                      placeholder="Facebook URL"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="twitter" className="flex items-center gap-2">
+                      <Twitter className="h-4 w-4 text-sky-500" />
+                      Twitter
+                    </Label>
+                    <Input
+                      id="twitter"
+                      name="social.twitter"
+                      value={profile.social?.twitter || ''}
+                      onChange={handleProfileChange}
+                      placeholder="Twitter URL"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Categories Tab */}
+          <TabsContent value="categories">
+            <Card className="border-slate-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Briefcase className="h-5 w-5 text-indigo-600" />
+                      Company Categories
+                    </CardTitle>
+                    <CardDescription>Select categories that describe your business</CardDescription>
+                  </div>
+                  <Button
+                    onClick={() => setCategoryDialogOpen(true)}
+                    disabled={availableCategories.length === 0}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Category
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                {categories.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category) => (
+                      <Badge
+                        key={category.id}
+                        variant="secondary"
+                        className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900 hover:from-indigo-200 hover:to-purple-200"
+                      >
+                        {category.name}
+                        <button
+                          onClick={() => handleDeleteCategory(category.id)}
+                          className="ml-2 hover:text-red-600"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-slate-500">
+                    <Briefcase className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                    <p>No categories added yet.</p>
+                    <p className="text-sm mt-1">Click "Add Category" to get started.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Category Dialog */}
+        <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Category to Company</DialogTitle>
+              <DialogDescription>
+                {availableCategories.length === 0 
+                  ? "No more categories available to add" 
+                  : "Select a category to add to your company"}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Label htmlFor="category-select">Available Categories</Label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableCategories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveCategory} 
+                disabled={saving || !selectedCategory}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  'Add Category'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+}

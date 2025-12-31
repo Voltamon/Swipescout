@@ -1,4 +1,5 @@
-﻿import { useNavigate } from 'react-router-dom';
+import i18n from 'i18next';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { 
   getUserProfile, 
@@ -304,14 +305,10 @@ export default function JobSeekerProfile() {
                             variant="outline"
                             className="hidden md:inline-flex items-center"
                           >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Preview
-                          </Button>
+                            <Eye className="h-4 w-4 mr-2" />{i18n.t('auto_preview')}</Button>
 
                           <Button onClick={handleEditProfile} className="bg-cyan-600 hover:bg-cyan-700">
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit Profile
-                          </Button>
+                          <Edit className="h-4 w-4 mr-2" />{i18n.t('auto_edit_profile')}</Button>
                         </div>
                         {/* Connect button intentionally omitted on the logged-in user's own JobSeeker profile */}
                       </div>
@@ -345,9 +342,7 @@ export default function JobSeekerProfile() {
                       {profile?.website && (
                         <div className="flex items-center gap-2 text-sm">
                           <Globe className="h-4 w-4 text-muted-foreground" />
-                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600">
-                            Website
-                          </a>
+                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600">{i18n.t('auto_website')}</a>
                         </div>
                       )}
                     </div>
@@ -384,7 +379,7 @@ export default function JobSeekerProfile() {
                 {/* About Me */}
                 {profile?.bio && (
                   <div>
-                    <h3 className="font-semibold text-lg mb-2">About Me</h3>
+                    <h3 className="font-semibold text-lg mb-2">{i18n.t('auto_about_me')}</h3>
                     <p className="text-muted-foreground whitespace-pre-line">{profile.bio}</p>
                   </div>
                 )}
@@ -395,7 +390,7 @@ export default function JobSeekerProfile() {
                 <div className="lg:w-[350px] flex-shrink-0">
                   <Card className="overflow-hidden">
                     <CardHeader className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white p-4">
-                      <CardTitle className="text-lg">Video Resume</CardTitle>
+                      <CardTitle className="text-lg">{i18n.t('auto_video_resume')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                       <div className="relative bg-black aspect-[9/16] max-h-[450px]">
@@ -467,10 +462,10 @@ export default function JobSeekerProfile() {
       {/* Tabs Section */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="experience">Experience</TabsTrigger>
-          <TabsTrigger value="education">Education</TabsTrigger>
-          <TabsTrigger value="skills">Skills</TabsTrigger>
+          <TabsTrigger value="overview">{i18n.t('auto_overview')}</TabsTrigger>
+          <TabsTrigger value="experience">{i18n.t('auto_experience')}</TabsTrigger>
+          <TabsTrigger value="education">{i18n.t('auto_education')}</TabsTrigger>
+          <TabsTrigger value="skills">{i18n.t('auto_skills_1')}</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -480,9 +475,7 @@ export default function JobSeekerProfile() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-cyan-600" />
-                  Top Skills
-                </CardTitle>
+                  <Award className="h-5 w-5 text-cyan-600" />{i18n.t('auto_top_skills')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -502,9 +495,7 @@ export default function JobSeekerProfile() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
-                  Latest Experience
-                </CardTitle>
+                  <Briefcase className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />{i18n.t('auto_latest_experience')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {experiences.slice(0, 2).map((exp, index) => (
@@ -531,9 +522,7 @@ export default function JobSeekerProfile() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-cyan-600" />
-                  Education
-                </CardTitle>
+                  <GraduationCap className="h-5 w-5 text-cyan-600" />{i18n.t('auto_education')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {education.slice(0, 2).map((edu, index) => (
@@ -580,7 +569,7 @@ export default function JobSeekerProfile() {
                       )}
                     </div>
                     {exp.current && (
-                      <Badge className="bg-green-100 text-green-800">Current</Badge>
+                      <Badge className="bg-green-100 text-green-800">{i18n.t('auto_current')}</Badge>
                     )}
                   </div>
                   {exp.description && (
@@ -593,16 +582,14 @@ export default function JobSeekerProfile() {
             <Card className="text-center py-12">
               <CardContent>
                 <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No experience added yet</h3>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_experience_added_yet')}</h3>
                 <p className="text-muted-foreground mb-4">
                   Add your work experience to showcase your professional journey
                 </p>
                 <Button 
                   onClick={() => handleEditProfile('experience', 'add')}
                   className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                >
-                  Add Experience
-                </Button>
+                >{i18n.t('auto_add_experience')}</Button>
               </CardContent>
             </Card>
           )}
@@ -644,16 +631,12 @@ export default function JobSeekerProfile() {
             <Card className="text-center py-12">
               <CardContent>
                 <GraduationCap className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No education added yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Add your educational background to complete your profile
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_education_added_yet')}</h3>
+                <p className="text-muted-foreground mb-4">{i18n.t('auto_add_your_educational_background_to_compl')}</p>
                 <Button 
                   onClick={() => handleEditProfile('education', 'add')}
                   className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                >
-                  Add Education
-                </Button>
+                >{i18n.t('auto_add_education')}</Button>
               </CardContent>
             </Card>
           )}
@@ -664,7 +647,7 @@ export default function JobSeekerProfile() {
           {skills.length > 0 ? (
             <Card>
               <CardHeader>
-                <CardTitle>All Skills</CardTitle>
+                <CardTitle>{i18n.t('auto_all_skills')}</CardTitle>
                 <CardDescription>
                   {skills.length} skill{skills.length !== 1 ? 's' : ''} listed
                 </CardDescription>
@@ -690,16 +673,12 @@ export default function JobSeekerProfile() {
             <Card className="text-center py-12">
               <CardContent>
                 <Award className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No skills added yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Add your skills to help employers find you
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_skills_added_yet')}</h3>
+                <p className="text-muted-foreground mb-4">{i18n.t('auto_add_your_skills_to_help_employers_find_y')}</p>
                 <Button 
                   onClick={() => handleEditProfile('skills', 'add')}
                   className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                >
-                  Add Skills
-                </Button>
+                >{i18n.t('auto_add_skills')}</Button>
               </CardContent>
             </Card>
           )}
@@ -711,9 +690,7 @@ export default function JobSeekerProfile() {
           onClick={handleGoToVideos}
           className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
         >
-          <Play className="h-4 w-4 mr-2" />
-          My Videos
-        </Button>
+          <Play className="h-4 w-4 mr-2" />{i18n.t('auto_my_videos')}</Button>
       </div>
       {/* Create profile preview warning dialog */}
       <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
@@ -736,12 +713,8 @@ export default function JobSeekerProfile() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={() => { setPreviewDialogOpen(false); handleEditProfile(); }} className="bg-cyan-600 hover:bg-cyan-700">
-              Complete profile
-            </Button>
-            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button onClick={() => { setPreviewDialogOpen(false); handleEditProfile(); }} className="bg-cyan-600 hover:bg-cyan-700">{i18n.t('auto_complete_profile_1')}</Button>
+            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

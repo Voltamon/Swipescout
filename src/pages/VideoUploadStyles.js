@@ -1,4 +1,4 @@
-﻿// VideoUploadStyles.js
+// VideoUploadStyles.js
 import { styled } from "@mui/material/styles";
 import {
   Box,

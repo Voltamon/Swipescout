@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   IconButton,
@@ -572,15 +573,13 @@ const JobseekerVideoFeed = () => {
           variant="contained"
           size="large"
           onClick={handleOpenDialog}
-        >
-          Connect
-        </ConnectButton>
+        >{i18n.t('auto_connect')}</ConnectButton>
       </VideoContainer>
 
       {/* Job Details Dialog */}
       <JobDetailDialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Job Details</Typography>
+          <Typography variant="h6">{i18n.t('auto_job_details')}</Typography>
           <IconButton onClick={handleCloseDialog}>
             <Close />
           </IconButton>
@@ -609,33 +608,23 @@ const JobseekerVideoFeed = () => {
           </Box>
 
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Location
-            </Typography>
+            <Typography variant="subtitle2" color="text.secondary">{i18n.t('auto_location')}</Typography>
             <Typography variant="body1">{currentVideo.location}</Typography>
           </Box>
 
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Salary Range
-            </Typography>
+            <Typography variant="subtitle2" color="text.secondary">{i18n.t('auto_salary_range')}</Typography>
             <Typography variant="body1">{currentVideo.salary}</Typography>
           </Box>
 
           <Box sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" color="text.secondary">
-              Posted
-            </Typography>
+            <Typography variant="subtitle2" color="text.secondary">{i18n.t('auto_posted')}</Typography>
             <Typography variant="body1">{currentVideo.posted}</Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
-            <Button variant="outlined" onClick={handleCloseDialog}>
-              Close
-            </Button>
-            <Button variant="contained" color="primary">
-              Apply Now
-            </Button>
+            <Button variant="outlined" onClick={handleCloseDialog}>{i18n.t('auto_close')}</Button>
+            <Button variant="contained" color="primary">{i18n.t('auto_apply_now')}</Button>
           </Box>
         </DialogContent>
       </JobDetailDialog>

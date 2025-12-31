@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -241,22 +242,20 @@ export default function SavedCandidatesPage() {
             startIcon={<Visibility />}
             onClick={() => window.open(`/candidate/${candidate.id}`, '_blank')}
             sx={{ flex: 1 }}
-          >
-            View Profile
-          </Button>
+          >{i18n.t('auto_view_profile')}</Button>
           {(() => {
             const c = connectionMap[candidate.id];
             if (c && c.status === 'accepted') {
-              return <Button disabled size="small" sx={{ flex: 1, bgcolor: 'green', color: 'white' }}>Connected</Button>;
+              return <Button disabled size="small" sx={{ flex: 1, bgcolor: 'green', color: 'white' }}>{i18n.t('auto_connected')}</Button>;
             }
             if (c && c.status === 'pending' && c.isSender) {
-              return <Button disabled size="small" sx={{ flex: 1 }}>Pending</Button>;
+              return <Button disabled size="small" sx={{ flex: 1 }}>{i18n.t('auto_pending')}</Button>;
             }
             if (c && c.status === 'pending' && !c.isSender) {
               return (
                 <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                  <Button size="small" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection accepted', severity: 'success' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to accept', severity: 'error' }); }}} sx={{ flex: 1, bgcolor: 'primary.main', color: 'white' }}>Accept</Button>
-                  <Button size="small" variant="outlined" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection declined', severity: 'info' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to decline', severity: 'error' }); }}} sx={{ flex: 1 }}>Decline</Button>
+                  <Button size="small" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection accepted', severity: 'success' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to accept', severity: 'error' }); }}} sx={{ flex: 1, bgcolor: 'primary.main', color: 'white' }}>{i18n.t('auto_accept')}</Button>
+                  <Button size="small" variant="outlined" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection declined', severity: 'info' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to decline', severity: 'error' }); }}} sx={{ flex: 1 }}>{i18n.t('auto_decline')}</Button>
                 </Box>
               );
             }
@@ -267,9 +266,7 @@ export default function SavedCandidatesPage() {
                 startIcon={<Connect />}
                 onClick={() => handleConnect(candidate)}
                 sx={{ flex: 1 }}
-              >
-                Connect
-              </Button>
+              >{i18n.t('auto_connect')}</Button>
             );
           })()}
         </Box>
@@ -295,9 +292,7 @@ export default function SavedCandidatesPage() {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4}>
-        Saved Candidates
-      </Typography>
+      <Typography variant="h4" fontWeight="bold" mb={4}>{i18n.t('auto_saved_candidates')}</Typography>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -307,18 +302,14 @@ export default function SavedCandidatesPage() {
 
       {candidates.length === 0 ? (
         <Box textAlign="center" py={8}>
-          <Typography variant="h6" color="text.secondary" mb={2}>
-            No saved candidates yet
-          </Typography>
+          <Typography variant="h6" color="text.secondary" mb={2}>{i18n.t('auto_no_saved_candidates_yet')}</Typography>
           <Typography variant="body2" color="text.secondary" mb={3}>
             Start saving candidates from the candidate search page to build your talent pool.
           </Typography>
           <Button
             variant="contained"
             onClick={() => window.location.href = '/candidate-search'}
-          >
-            Search Candidates
-          </Button>
+          >{i18n.t('auto_search_candidates_1')}</Button>
         </Box>
       ) : (
         <>
@@ -343,24 +334,16 @@ export default function SavedCandidatesPage() {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={() => handleConnect(selectedCandidate)}>
-          <Connect sx={{ mr: 1 }} />
-          Connect
-        </MenuItem>
+          <Connect sx={{ mr: 1 }} />{i18n.t('auto_connect')}</MenuItem>
         <MenuItem onClick={() => window.open(`/recruit/${selectedCandidate?.id}`, '_blank')}>
-          <PersonAdd sx={{ mr: 1 }} />
-          Recruit
-        </MenuItem>
+          <PersonAdd sx={{ mr: 1 }} />{i18n.t('auto_recruit')}</MenuItem>
         <MenuItem onClick={() => window.open(`/candidate/${selectedCandidate?.id}`, '_blank')}>
-          <Visibility sx={{ mr: 1 }} />
-          View Profile
-        </MenuItem>
+          <Visibility sx={{ mr: 1 }} />{i18n.t('auto_view_profile')}</MenuItem>
         <MenuItem 
           onClick={() => handleUnsave(selectedCandidate?.id)}
           sx={{ color: 'error.main' }}
         >
-          <BookmarkRemove sx={{ mr: 1 }} />
-          Remove from Saved
-        </MenuItem>
+          <BookmarkRemove sx={{ mr: 1 }} />{i18n.t('auto_remove_from_saved')}</MenuItem>
       </Menu>
 
       {/* Connect Dialog */}
@@ -378,24 +361,20 @@ export default function SavedCandidatesPage() {
             fullWidth
             multiline
             rows={4}
-            label="Message"
+            label={i18n.t('auto_message')} 
             value={connectMessage}
             onChange={(e) => setConnectMessage(e.target.value)}
-            placeholder="Write a personalized message..."
+            placeholder={i18n.t('auto_write_a_personalized_message')} 
             sx={{ mt: 2 }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConnectDialog({ open: false, candidate: null })}>
-            Cancel
-          </Button>
+          <Button onClick={() => setConnectDialog({ open: false, candidate: null })}>{i18n.t('auto_cancel')}</Button>
           <Button 
             variant="contained" 
             onClick={handleSendConnection}
             disabled={!connectMessage.trim()}
-          >
-            Send Connection Request
-          </Button>
+          >{i18n.t('auto_send_connection_request')}</Button>
         </DialogActions>
       </Dialog>
 

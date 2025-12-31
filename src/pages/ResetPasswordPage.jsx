@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useEffect  } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   Box, 
@@ -132,7 +133,7 @@ const ResetPasswordPage = () => {
   return (
     <LoginContainer>
       <LoginFormContainer>
-        <LoginFormTitle variant="h5">Reset Password</LoginFormTitle>
+        <LoginFormTitle variant="h5">{i18n.t('auto_reset_password')}</LoginFormTitle>
 
         {error && (
           <Alert severity="error" sx={{ mt: 2 }}>
@@ -148,7 +149,7 @@ const ResetPasswordPage = () => {
 
         <Box component="form" onSubmit={handleSubmit}>
           <InputField
-            label="New Password"
+            label={i18n.t('auto_new_password')} 
             type="password"
             name="newPassword"
             value={newPassword}
@@ -156,7 +157,7 @@ const ResetPasswordPage = () => {
             required
           />
           <InputField
-            label="Confirm New Password"
+            label={i18n.t('auto_confirm_new_password')} 
             type="password"
             name="confirmPassword"
             value={confirmPassword}

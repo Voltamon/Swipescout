@@ -1,4 +1,5 @@
-﻿//complete Chat.jsx file with all the requested enhancements, incorporating better contrast, improved message time display, distinct sent/read indicators, refined online status presentation, and clear background differentiation for conversation and user lists.
+import i18n from 'i18next';
+//complete Chat.jsx file with all the requested enhancements, incorporating better contrast, improved message time display, distinct sent/read indicators, refined online status presentation, and clear background differentiation for conversation and user lists.
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
@@ -816,7 +817,7 @@ const Chat = () => {
                             {userItem.display_name}
                           </Typography>
                           {onlineUsers.has(userItem.id) && (
-                            <UserStatusBadge>Online</UserStatusBadge>
+                            <UserStatusBadge>{i18n.t('auto_online_1')}</UserStatusBadge>
                           )}
                         </Box>
                       }
@@ -906,13 +907,11 @@ const Chat = () => {
                     <ArrowBackIcon    />
                   </IconButton>
                 )}
-                <Typography variant="h6" sx={{ ml:4,flexGrow: 1, fontWeight: 600 }}>
-                  Messages
-                </Typography>
+                <Typography variant="h6" sx={{ ml:4,flexGrow: 1, fontWeight: 600 }}>{i18n.t('messages')}</Typography>
               </Box>
               <TextField
                 fullWidth
-                placeholder="Search conversations..."
+                placeholder={i18n.t('auto_search_conversations')} 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 InputProps={{
@@ -1039,7 +1038,7 @@ const Chat = () => {
                                 {conversation.other_user?.display_name}
                               </Typography>
                               {onlineUsers.has(conversation.other_user?.id) && (
-                                <UserStatusBadge>Online</UserStatusBadge>
+                                <UserStatusBadge>{i18n.t('auto_online_1')}</UserStatusBadge>
                               )}
                             </Box>
                           }
@@ -1128,7 +1127,7 @@ const Chat = () => {
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                       {activeConversation.other_user?.display_name}
                       {onlineUsers.has(activeConversation.other_user?.id) && (
-                        <UserStatusBadge sx={{ ml: 1 }}>Online</UserStatusBadge>
+                        <UserStatusBadge sx={{ ml: 1 }}>{i18n.t('auto_online_1')}</UserStatusBadge>
                       )}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
@@ -1156,12 +1155,8 @@ const Chat = () => {
                       textAlign: 'center',
                       p: 3
                     }}>
-                      <Typography variant="body1" color="textSecondary" gutterBottom>
-                        No messages yet
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Start the conversation by sending a message
-                      </Typography>
+                      <Typography variant="body1" color="textSecondary" gutterBottom>{i18n.t('auto_no_messages_yet')}</Typography>
+                      <Typography variant="body2" color="textSecondary">{i18n.t('auto_start_the_conversation_by_sending_a_mess')}</Typography>
                     </Box>
                   ) : (
                     messages.map((message) => {
@@ -1204,7 +1199,7 @@ const Chat = () => {
                                 </MessageStatusIcon>
                               )}
                               {hasError && ( // Show retry icon for failed messages
-                                <Tooltip title="Failed to send. Click to retry">
+                                <Tooltip title={i18n.t('auto_failed_to_send_click_to_retry')} >
                                   <IconButton
                                     size="small"
                                     sx={{ 
@@ -1257,7 +1252,7 @@ const Chat = () => {
                 <MessageInput component="form" onSubmit={handleSendMessage}>
                   <TextField
                     fullWidth
-                    placeholder="Type a message..."
+                    placeholder={i18n.t('auto_type_a_message')} 
                     value={newMessage}
                     onChange={handleChange}
                     variant="outlined"
@@ -1301,12 +1296,8 @@ const Chat = () => {
                 p: 3,
                 textAlign: 'center'
               }}>
-                <Typography variant="h6" gutterBottom>
-                  Select a conversation
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Choose a conversation from the list to start chatting
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_select_a_conversation')}</Typography>
+                <Typography variant="body2" color="textSecondary">{i18n.t('auto_choose_a_conversation_from_the_list_to_s')}</Typography>
               </Box>
             )}
           </MessageArea>

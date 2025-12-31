@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { getEmployerJobs, getCategories } from '@/services/api';
@@ -197,7 +198,7 @@ export default function JobsListingPage() {
               />
                 {((Array.isArray(role) ? role.includes('employer') || role.includes('recruiter') : role === 'employer') || (user && String(user.id) === String(job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id))) && (
                 <div className="absolute top-3 right-3 z-20">
-                  <Button size="xs" variant="ghost" aria-label="Manage Video" onClick={() => navigate(`/employer-tabs?group=videoManagement&tab=video-editor&id=${job.id}`)}>
+                  <Button size="xs" variant="ghost" aria-label={i18n.t('auto_manage_video')}  onClick={() => navigate(`/employer-tabs?group=videoManagement&tab=video-editor&id=${job.id}`)}>
                     <Edit className="h-3 w-3" />
                   </Button>
                 </div>
@@ -213,7 +214,7 @@ export default function JobsListingPage() {
                 </div>
               </div>
                 <div className="absolute inset-0 flex items-end justify-end pr-6 pb-3">
-                <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">No Video</p>
+                <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">{i18n.t('auto_no_video')}</p>
               </div>
             </div>
           )}
@@ -294,18 +295,14 @@ export default function JobsListingPage() {
             className="flex-1"
             onClick={() => navigate(`/job/${job.id}`)}
           >
-            <Eye className="h-4 w-4 mr-1" />
-            View Details
-          </Button>
+            <Eye className="h-4 w-4 mr-1" />{i18n.t('auto_view_details_1')}</Button>
           <Button 
             variant="default" 
             size="sm"
             className={`${themeColors.buttons.primary} text-white flex-1  hover:from-purple-700 hover:to-cyan-700`}
             onClick={() => navigate(`/employer-tabs?group=jobManagement&tab=job-applicants&id=${job.id}`)}
           >
-            <Users className="h-4 w-4 mr-1" />
-            View Applications
-          </Button>
+            <Users className="h-4 w-4 mr-1" />{i18n.t('auto_view_applications')}</Button>
         </div>
 
         {job.createdAt && (
@@ -320,23 +317,19 @@ export default function JobsListingPage() {
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="`${themeColors.text.gradient} text-4xl font-bold ">
-          My Job Listings
-        </h1>
+        <h1 className="`${themeColors.text.gradient} text-4xl font-bold ">{i18n.t('auto_my_job_listings')}</h1>
         <Button
           onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
           className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Post New Job
-        </Button>
+          <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_post_new_job')}</Button>
       </div>
 
       {/* Stats Cards */}
   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_total_jobs')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{jobs.length}</div>
@@ -344,7 +337,7 @@ export default function JobsListingPage() {
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_active_jobs')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
@@ -364,7 +357,7 @@ export default function JobsListingPage() {
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Applicants</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_total_applicants')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -395,7 +388,7 @@ export default function JobsListingPage() {
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_total_views')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -410,12 +403,12 @@ export default function JobsListingPage() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="search">Search Jobs</Label>
+              <Label htmlFor="search">{i18n.t('auto_search_jobs')}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
-                  placeholder="Search by title or description..."
+                  placeholder={i18n.t('auto_search_by_title_or_description')} 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
@@ -424,25 +417,23 @@ export default function JobsListingPage() {
             </div>
 
             <div>
-              <Label htmlFor="status">Status Filter</Label>
+              <Label htmlFor="status">{i18n.t('auto_status_filter')}</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger id="status">
-                  <SelectValue placeholder="All Status" />
+                  <SelectValue placeholder={i18n.t('auto_all_status')}  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="all">{i18n.t('auto_all_status')}</SelectItem>
+                  <SelectItem value="active">{i18n.t('auto_active')}</SelectItem>
+                  <SelectItem value="closed">{i18n.t('auto_closed')}</SelectItem>
+                  <SelectItem value="draft">{i18n.t('auto_draft')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex items-end">
               <Button variant="outline" className="w-full">
-                <Filter className="h-4 w-4 mr-2" />
-                More Filters
-              </Button>
+                <Filter className="h-4 w-4 mr-2" />{i18n.t('auto_more_filters')}</Button>
             </div>
           </div>
         </CardContent>
@@ -463,7 +454,7 @@ export default function JobsListingPage() {
         <Card className="text-center py-12">
           <CardContent>
             <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No jobs found</h3>
+            <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_jobs_found')}</h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm || statusFilter !== 'all' 
                 ? "Try adjusting your filters"
@@ -473,9 +464,7 @@ export default function JobsListingPage() {
               onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
               className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Post a Job
-            </Button>
+              <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_post_a_job')}</Button>
           </CardContent>
         </Card>
       )}
@@ -484,22 +473,18 @@ export default function JobsListingPage() {
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Job Posting?</DialogTitle>
+            <DialogTitle>{i18n.t('auto_delete_job_posting')}</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete "{selectedJob?.title}"? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialog(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setDeleteDialog(false)}>{i18n.t('auto_cancel')}</Button>
             <Button 
               variant="destructive" 
               onClick={handleDelete}
             >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Job
-            </Button>
+              <Trash2 className="h-4 w-4 mr-2" />{i18n.t('auto_delete_job')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

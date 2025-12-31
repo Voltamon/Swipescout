@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useContext } from 'react';
 import { getCurrentUser, updateCurrentUser } from '@/services/api';
@@ -52,13 +53,13 @@ const Profile = () => {
   };
 
   if (!user) {
-    return <div>Please log in to view your profile.</div>;
+    return <div>{i18n.t('auto_please_log_in_to_view_your_profile')}</div>;
   }
 
   return (
     <div className="profile-page">
       <div className="profile-container">
-        <h1>My Profile</h1>
+        <h1>{i18n.t('auto_my_profile')}</h1>
         
         {message && (
           <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
@@ -68,7 +69,7 @@ const Profile = () => {
 
         <form onSubmit={handleSubmit} className="profile-form">
           <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
+            <label htmlFor="firstName">{i18n.t('auto_first_name')}</label>
             <input
               type="text"
               id="firstName"
@@ -80,7 +81,7 @@ const Profile = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
+            <label htmlFor="lastName">{i18n.t('auto_last_name')}</label>
             <input
               type="text"
               id="lastName"
@@ -92,7 +93,7 @@ const Profile = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{i18n.t('auto_email')}</label>
             <input
               type="email"
               id="email"
@@ -104,14 +105,14 @@ const Profile = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="bio">Bio</label>
+            <label htmlFor="bio">{i18n.t('auto_bio')}</label>
             <textarea
               id="bio"
               name="bio"
               value={profileData.bio}
               onChange={handleInputChange}
               rows="4"
-              placeholder="Tell us about yourself..."
+              placeholder={i18n.t('auto_tell_us_about_yourself')} 
             />
           </div>
 

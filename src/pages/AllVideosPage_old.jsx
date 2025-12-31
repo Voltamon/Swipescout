@@ -1,4 +1,5 @@
-﻿// AllVideosPage.jsx - Enhanced TikTok Style Vertical Video Feed
+import i18n from 'i18next';
+// AllVideosPage.jsx - Enhanced TikTok Style Vertical Video Feed
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { styled } from "@mui/material/styles";
@@ -604,7 +605,7 @@ const AllVideosPage = ({
           </Typography>
           {currentVideo?.isSample && (
             <Chip
-              label="Sample"
+              label={i18n.t('auto_sample')} 
               size="small"
               sx={{
                 backgroundColor: 'rgba(255, 193, 7, 0.8)',
@@ -691,7 +692,7 @@ const AllVideosPage = ({
                 </ActionButton>
               </Tooltip>
 
-              <Tooltip title="Comment" placement="left">
+              <Tooltip title={i18n.t('auto_comment')}  placement="left">
                 <ActionButton>
                   <Comment />
                 </ActionButton>
@@ -706,13 +707,13 @@ const AllVideosPage = ({
                 </ActionButton>
               </Tooltip>
 
-              <Tooltip title="Share" placement="left">
+              <Tooltip title={i18n.t('auto_share')}  placement="left">
                 <ActionButton onClick={() => handleShare(currentVideo)}>
                   <Share />
                 </ActionButton>
               </Tooltip>
 
-              <Tooltip title="Connect" placement="left">
+              <Tooltip title={i18n.t('auto_connect')}  placement="left">
                 <ActionButton onClick={() => handleConnect(currentVideo)}>
                   <PersonAdd />
                 </ActionButton>
@@ -724,7 +725,7 @@ const AllVideosPage = ({
 
       {/* Navigation Buttons */}
       <NavigationButtons>
-        <Tooltip title="Previous video (↑)" placement="left">
+        <Tooltip title={i18n.t('auto_previous_video')}  placement="left">
           <StyledIconButton
             onClick={() => goToVideo(currentVideoIndex - 1)}
             disabled={currentVideoIndex === 0}
@@ -752,7 +753,7 @@ const AllVideosPage = ({
           </StyledIconButton>
         </Tooltip>
 
-        <Tooltip title="Next video (↓)" placement="left">
+        <Tooltip title={i18n.t('auto_next_video')}  placement="left">
           <StyledIconButton
             onClick={() => goToVideo(currentVideoIndex + 1)}
             disabled={currentVideoIndex === allVideos.length - 1}

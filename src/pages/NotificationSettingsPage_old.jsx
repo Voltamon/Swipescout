@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -172,12 +173,8 @@ const NotificationSettingsPage = () => {
             mb: { xs: 2, md: 4 },
             fontSize: { xs: "1.5rem", md: "2rem" }, // Adjust font size for mobile
           }}
-        >
-          Notification Settings
-        </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Customize how and when you receive notifications
-        </Typography>
+        >{i18n.t('auto_notification_settings')}</Typography>
+        <Typography variant="body1" color="text.secondary" paragraph>{i18n.t('auto_customize_how_and_when_you_receive_notif')}</Typography>
 
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>
@@ -186,9 +183,7 @@ const NotificationSettingsPage = () => {
         )}
 
         {success && (
-          <Alert severity="success" sx={{ mb: 3 }}>
-            Settings saved successfully!
-          </Alert>
+          <Alert severity="success" sx={{ mb: 3 }}>{i18n.t('auto_settings_saved_successfully')}</Alert>
         )}
 
         <Grid container spacing={{ xs: 2, md: 4 }}>
@@ -197,9 +192,7 @@ const NotificationSettingsPage = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  <Notifications sx={{ mr: 1, verticalAlign: 'middle' }} />
-                  Delivery Methods
-                </Typography>
+                  <Notifications sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_delivery_methods')}</Typography>
                 
                 <FormGroup>
                   <FormControlLabel
@@ -211,9 +204,7 @@ const NotificationSettingsPage = () => {
                     }
                     label={
                       <Box display="flex" alignItems="center">
-                        <Email sx={{ mr: 1 }} />
-                        Email Notifications
-                      </Box>
+                        <Email sx={{ mr: 1 }} />{i18n.t('auto_email_notifications')}</Box>
                     }
                   />
                   
@@ -226,9 +217,7 @@ const NotificationSettingsPage = () => {
                     }
                     label={
                       <Box display="flex" alignItems="center">
-                        <Notifications sx={{ mr: 1 }} />
-                        Push Notifications
-                      </Box>
+                        <Notifications sx={{ mr: 1 }} />{i18n.t('auto_push_notifications')}</Box>
                     }
                   />
                   
@@ -241,9 +230,7 @@ const NotificationSettingsPage = () => {
                     }
                     label={
                       <Box display="flex" alignItems="center">
-                        <Sms sx={{ mr: 1 }} />
-                        SMS Notifications
-                        <Chip label="Premium" size="small" color="primary" sx={{ ml: 1 }} />
+                        <Sms sx={{ mr: 1 }} />{i18n.t('auto_sms_notifications')}<Chip label={i18n.t('auto_premium')}  size="small" color="primary" sx={{ ml: 1 }} />
                       </Box>
                     }
                   />
@@ -256,18 +243,14 @@ const NotificationSettingsPage = () => {
           <Grid item xs={12}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Notification Types
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_notification_types')}</Typography>
                 
                 <List>
                   <ListItem>
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center">
-                          <Work sx={{ mr: 1 }} />
-                          Job Alerts
-                        </Box>
+                          <Work sx={{ mr: 1 }} />{i18n.t('auto_job_alerts')}</Box>
                       }
                       secondary="New job postings matching your preferences"
                     />
@@ -285,9 +268,7 @@ const NotificationSettingsPage = () => {
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center">
-                          <VideoCall sx={{ mr: 1 }} />
-                          Interview Reminders
-                        </Box>
+                          <VideoCall sx={{ mr: 1 }} />{i18n.t('auto_interview_reminders')}</Box>
                       }
                       secondary="Reminders for upcoming interviews"
                     />
@@ -305,9 +286,7 @@ const NotificationSettingsPage = () => {
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center">
-                          <Message sx={{ mr: 1 }} />
-                          Messages
-                        </Box>
+                          <Message sx={{ mr: 1 }} />{i18n.t('messages')}</Box>
                       }
                       secondary="New messages and chat notifications"
                     />
@@ -325,9 +304,7 @@ const NotificationSettingsPage = () => {
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center">
-                          <Favorite sx={{ mr: 1 }} />
-                          Video Interactions
-                        </Box>
+                          <Favorite sx={{ mr: 1 }} />{i18n.t('auto_video_interactions')}</Box>
                       }
                       secondary="Likes, comments, and shares on your videos"
                     />
@@ -345,9 +322,7 @@ const NotificationSettingsPage = () => {
                     <ListItemText
                       primary={
                         <Box display="flex" alignItems="center">
-                          <PersonAdd sx={{ mr: 1 }} />
-                          Connection Requests
-                        </Box>
+                          <PersonAdd sx={{ mr: 1 }} />{i18n.t('auto_connection_requests')}</Box>
                       }
                       secondary="New connection requests and acceptances"
                     />
@@ -375,16 +350,16 @@ const NotificationSettingsPage = () => {
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <FormControl fullWidth>
-                      <InputLabel>Notification Frequency</InputLabel>
+                      <InputLabel>{i18n.t('auto_notification_frequency')}</InputLabel>
                       <Select
                         value={settings.notification_frequency}
                         onChange={(e) => handleSettingChange('notification_frequency', e.target.value)}
-                        label="Notification Frequency"
+                        label={i18n.t('auto_notification_frequency')} 
                       >
-                        <MenuItem value="immediate">Immediate</MenuItem>
-                        <MenuItem value="hourly">Hourly Digest</MenuItem>
-                        <MenuItem value="daily">Daily Digest</MenuItem>
-                        <MenuItem value="weekly">Weekly Digest</MenuItem>
+                        <MenuItem value="immediate">{i18n.t('auto_immediate')}</MenuItem>
+                        <MenuItem value="hourly">{i18n.t('auto_hourly_digest')}</MenuItem>
+                        <MenuItem value="daily">{i18n.t('auto_daily_digest')}</MenuItem>
+                        <MenuItem value="weekly">{i18n.t('auto_weekly_digest')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -397,7 +372,7 @@ const NotificationSettingsPage = () => {
                           onChange={(e) => handleSettingChange('weekly_digest', e.target.checked)}
                         />
                       }
-                      label="Weekly Activity Digest"
+                      label={i18n.t('auto_weekly_activity_digest')} 
                     />
                   </Grid>
                 </Grid>
@@ -410,7 +385,7 @@ const NotificationSettingsPage = () => {
                         onChange={(e) => handleSettingChange('quiet_hours_enabled', e.target.checked)}
                       />
                     }
-                    label="Enable Quiet Hours"
+                    label={i18n.t('auto_enable_quiet_hours')} 
                   />
                   
                   {settings.quiet_hours_enabled && (
@@ -418,7 +393,7 @@ const NotificationSettingsPage = () => {
                       <Grid item xs={6}>
                         <TextField
                           type="time"
-                          label="Start Time"
+                          label={i18n.t('auto_start_time')} 
                           value={settings.quiet_hours_start}
                           onChange={(e) => handleSettingChange('quiet_hours_start', e.target.value)}
                           fullWidth
@@ -428,7 +403,7 @@ const NotificationSettingsPage = () => {
                       <Grid item xs={6}>
                         <TextField
                           type="time"
-                          label="End Time"
+                          label={i18n.t('auto_end_time')} 
                           value={settings.quiet_hours_end}
                           onChange={(e) => handleSettingChange('quiet_hours_end', e.target.value)}
                           fullWidth
@@ -458,7 +433,7 @@ const NotificationSettingsPage = () => {
                         onChange={(e) => handleSettingChange('marketing_emails', e.target.checked)}
                       />
                     }
-                    label="Marketing Emails"
+                    label={i18n.t('auto_marketing_emails')} 
                   />
                 </FormGroup>
                 
@@ -479,16 +454,12 @@ const NotificationSettingsPage = () => {
                     startIcon={<RestoreFromTrash />}
                     onClick={resetToDefaults}
                     sx={{ mr: 2 }}
-                  >
-                    Reset to Defaults
-                  </Button>
+                  >{i18n.t('auto_reset_to_defaults')}</Button>
                   
                   <Button
                     variant="outlined"
                     onClick={() => setTestDialog(true)}
-                  >
-                    Test Notification
-                  </Button>
+                  >{i18n.t('auto_test_notification')}</Button>
                 </Box>
                 
                 <Button
@@ -506,32 +477,30 @@ const NotificationSettingsPage = () => {
 
         {/* Test Notification Dialog */}
         <Dialog open={testDialog} onClose={() => setTestDialog(false)}>
-          <DialogTitle>Test Notification</DialogTitle>
+          <DialogTitle>{i18n.t('auto_test_notification')}</DialogTitle>
           <DialogContent>
             <Typography paragraph>
               Send a test notification to verify your settings are working correctly.
             </Typography>
             
             <FormControl fullWidth>
-              <InputLabel>Notification Type</InputLabel>
+              <InputLabel>{i18n.t('auto_notification_type')}</InputLabel>
               <Select
                 value={testType}
                 onChange={(e) => setTestType(e.target.value)}
-                label="Notification Type"
+                label={i18n.t('auto_notification_type')} 
               >
-                <MenuItem value="email">Email</MenuItem>
-                <MenuItem value="push">Push Notification</MenuItem>
+                <MenuItem value="email">{i18n.t('auto_email')}</MenuItem>
+                <MenuItem value="push">{i18n.t('auto_push_notification')}</MenuItem>
                 {settings.sms_notifications && (
-                  <MenuItem value="sms">SMS</MenuItem>
+                  <MenuItem value="sms">{i18n.t('auto_sms')}</MenuItem>
                 )}
               </Select>
             </FormControl>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setTestDialog(false)}>Cancel</Button>
-            <Button onClick={handleTestNotification} variant="contained">
-              Send Test
-            </Button>
+            <Button onClick={() => setTestDialog(false)}>{i18n.t('auto_cancel')}</Button>
+            <Button onClick={handleTestNotification} variant="contained">{i18n.t('auto_send_test')}</Button>
           </DialogActions>
         </Dialog>
       </Container>

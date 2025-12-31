@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import './contactus.css';
 
 const ContactUs = ({ isOpen, onClose }) => {
@@ -15,7 +16,7 @@ const ContactUs = ({ isOpen, onClose }) => {
     <div className="contact-overlay" onClick={handleOverlayClick}>
       <div className="contact-popup">
         <div className="contact-header">
-          <h2>Contact Us</h2>
+          <h2>{i18n.t('auto_contact_us')}</h2>
           <button className="contact-close-btn" onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -33,8 +34,8 @@ const ContactUs = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <div className="contact-details">
-                <h3>Email Us</h3>
-                <p>For general questions or inquiries</p>
+                <h3>{i18n.t('auto_email_us')}</h3>
+                <p>{i18n.t('auto_for_general_questions_or_inquiries')}</p>
                 <a href="mailto:support@swipescout.xyz" className="contact-link">
                   support@swipescout.xyz
                 </a>
@@ -51,11 +52,9 @@ const ContactUs = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <div className="contact-details">
-                <h3>Join Our Discord</h3>
-                <p>Connect with us and the community</p>
-                <a href="https://discord.gg/mHcdMn6yMh" target="_blank" rel="noopener noreferrer" className="contact-link discord-link">
-                  Join Discord Server
-                </a>
+                <h3>{i18n.t('auto_join_our_discord')}</h3>
+                <p>{i18n.t('auto_connect_with_us_and_the_community')}</p>
+                <a href="https://discord.gg/mHcdMn6yMh" target="_blank" rel="noopener noreferrer" className="contact-link discord-link">{i18n.t('auto_join_discord_server')}</a>
               </div>
             </div>
           </div>

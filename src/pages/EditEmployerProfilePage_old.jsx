@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Container,
@@ -492,9 +493,7 @@ setAvailableCategories(filteredAvailableCategories);
       <Container maxWidth="lg">
         {/* Page Header */}
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" component="h1" fontWeight="bold">
-            Edit Company Profile
-          </Typography>
+          <Typography variant="h4" component="h1" fontWeight="bold">{i18n.t('auto_edit_company_profile')}</Typography>
           <Button
             variant="contained"
             color="primary"
@@ -570,8 +569,8 @@ setAvailableCategories(filteredAvailableCategories);
                 centered={!isMobile}
                 sx={{ '& .MuiTab-root': { minHeight: 64, ...(isMobile ? { minWidth: 'auto', px: 1 } : {}) } }}
               >
-                <Tab icon={<BusinessIcon />} label="Company Details" />
-                <Tab icon={<CategoryIcon />} label="Categories" />
+                <Tab icon={<BusinessIcon />} label={i18n.t('auto_company_details')}  />
+                <Tab icon={<CategoryIcon />} label={i18n.t('auto_categories')}  />
               </Tabs>
 
               {/* Company Details Tab */}
@@ -580,7 +579,7 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Company Name"
+                      label={i18n.t('auto_company_name_1')} 
                       name="name"
                       value={profile.name || ''}
                       onChange={handleProfileChange}
@@ -597,7 +596,7 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Industry"
+                      label={i18n.t('auto_industry_1')} 
                       name="industry"
                       value={profile.industry || ''}
                       onChange={handleProfileChange}
@@ -607,11 +606,11 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      label="Location"
+                      label={i18n.t('auto_location')} 
                       name="location"
                       value={profile.location || ''}
                       onChange={handleProfileChange}
-                      placeholder="City, Country"
+                      placeholder={i18n.t('auto_city_country')} 
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -624,19 +623,19 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      label="Description"
+                      label={i18n.t('auto_description')} 
                       name="description"
                       value={profile.description || ''}
                       onChange={handleProfileChange}
                       multiline
                       rows={4}
-                      placeholder="Tell job seekers about your company and what you do"
+                      placeholder={i18n.t('auto_tell_job_seekers_about_your_company_and_')} 
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Email"
+                      label={i18n.t('auto_email')} 
                       name="email"
                       type="email"
                       value={profile.email || ''}
@@ -653,7 +652,7 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Phone"
+                      label={i18n.t('auto_phone')} 
                       name="phone"
                       value={profile.phone || ''}
                       onChange={handleProfileChange}
@@ -669,7 +668,7 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      label="Website"
+                      label={i18n.t('auto_website')} 
                       name="website"
                       value={profile.website || ''}
                       onChange={handleProfileChange}
@@ -685,7 +684,7 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Founded Year"
+                      label={i18n.t('auto_founded_year')} 
                       name="establish_year"
                       value={profile.establish_year || ''}
                       onChange={handleProfileChange}
@@ -702,7 +701,7 @@ setAvailableCategories(filteredAvailableCategories);
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
-                      label="Company Size"
+                      label={i18n.t('auto_company_size')} 
                       name="size"
                       value={profile.size || ''}
                       onChange={handleProfileChange}
@@ -716,12 +715,12 @@ setAvailableCategories(filteredAvailableCategories);
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>Social Media</Typography>
+                    <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>{i18n.t('auto_social_media')}</Typography>
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={4}>
                         <TextField
                           fullWidth
-                          label="LinkedIn URL"
+                          label={i18n.t('auto_linkedin_url')} 
                           name="social.linkedin"
                           value={profile.social?.linkedin || ''}
                           onChange={handleProfileChange}
@@ -737,7 +736,7 @@ setAvailableCategories(filteredAvailableCategories);
                       <Grid item xs={12} sm={4}>
                         <TextField
                           fullWidth
-                          label="Facebook URL"
+                          label={i18n.t('auto_facebook_url')} 
                           name="social.facebook"
                           value={profile.social?.facebook || ''}
                           onChange={handleProfileChange}
@@ -753,7 +752,7 @@ setAvailableCategories(filteredAvailableCategories);
                       <Grid item xs={12} sm={4}>
                         <TextField
                           fullWidth
-                          label="Twitter URL"
+                          label={i18n.t('auto_twitter_url')} 
                           name="social.twitter"
                           value={profile.social?.twitter || ''}
                           onChange={handleProfileChange}
@@ -774,16 +773,14 @@ setAvailableCategories(filteredAvailableCategories);
               {/* Categories Tab */}
               <TabPanel value={tabValue} index={1}>
   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-    <Typography variant="h6">Company Categories</Typography>
+    <Typography variant="h6">{i18n.t('auto_company_categories')}</Typography>
     <Button
       variant="contained"
       color="primary"
       startIcon={<AddIcon />}
       onClick={handleOpenCategoryDialog}
       disabled={availableCategories.length === 0}
-    >
-      Add Category
-    </Button>
+    >{i18n.t('auto_add_category')}</Button>
   </Box>
   <Divider sx={{ mb: 2 }} />
   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -807,9 +804,7 @@ setAvailableCategories(filteredAvailableCategories);
         />
       ))
     ) : (
-      <Typography variant="body2" color="textSecondary">
-        No categories added yet.
-      </Typography>
+      <Typography variant="body2" color="textSecondary">{i18n.t('auto_no_categories_added_yet')}</Typography>
     )}
   </Box>
 </TabPanel>
@@ -819,15 +814,15 @@ setAvailableCategories(filteredAvailableCategories);
 
 
 <Dialog open={categoryDialogOpen} onClose={handleCloseCategoryDialog} fullWidth maxWidth="sm">
-  <DialogTitle>Add Category to Company</DialogTitle>
+  <DialogTitle>{i18n.t('auto_add_category_to_company')}</DialogTitle>
   <DialogContent>
     <FormControl fullWidth margin="normal">
-      <InputLabel id="select-category-label">Available Categories</InputLabel>
+      <InputLabel id="select-category-label">{i18n.t('auto_available_categories')}</InputLabel>
       <Select
         labelId="select-category-label"
         id="select-category"
         value={selectedCategory}
-        label="Available Categories"
+        label={i18n.t('auto_available_categories')} 
         onChange={(e) => setSelectedCategory(e.target.value)}
       >
         {availableCategories.map((cat) => (
@@ -844,9 +839,7 @@ setAvailableCategories(filteredAvailableCategories);
     </FormControl>
   </DialogContent>
   <DialogActions>
-    <Button onClick={handleCloseCategoryDialog} color="inherit">
-      Cancel
-    </Button>
+    <Button onClick={handleCloseCategoryDialog} color="inherit">{i18n.t('auto_cancel')}</Button>
     <Button 
       onClick={handleSaveCategory} 
       color="primary"

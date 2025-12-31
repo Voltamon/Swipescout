@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Card, CardContent } from "@/components/UI/card.jsx";
 import { Button } from "@/components/UI/button.jsx";
 import { Mail, MessageCircle } from "lucide-react";

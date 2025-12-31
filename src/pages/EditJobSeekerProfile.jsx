@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef  } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   getUserProfile,
@@ -989,8 +990,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className={`text-3xl font-bold mb-1 ${themeColors.text.gradient}`}>Edit My Profile</h1>
-          <p className="text-sm text-muted-foreground">Update your profile details, skills, experience and videos.</p>
+          <h1 className={`text-3xl font-bold mb-1 ${themeColors.text.gradient}`}>{i18n.t('auto_edit_my_profile')}</h1>
+          <p className="text-sm text-muted-foreground">{i18n.t('auto_update_your_profile_details_skills_exper')}</p>
         </div>
 
         <Button onClick={handleSaveProfile} className={`rounded-full px-4 ${themeColors.buttons.primary}`} disabled={saving}>
@@ -1039,41 +1040,41 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
           {/* Tabs */}
           <Tabs value={tabValue} onValueChange={handleTabChange} className="space-y-4">
             <TabsList className="grid grid-cols-5 gap-2">
-              <TabsTrigger value={0}>Basic Info</TabsTrigger>
-              <TabsTrigger value={1}>Skills</TabsTrigger>
-              <TabsTrigger value={2}>Experience</TabsTrigger>
-              <TabsTrigger value={3}>Education</TabsTrigger>
-              <TabsTrigger value={4}>Videos</TabsTrigger>
+              <TabsTrigger value={0}>{i18n.t('auto_basic_info')}</TabsTrigger>
+              <TabsTrigger value={1}>{i18n.t('auto_skills_1')}</TabsTrigger>
+              <TabsTrigger value={2}>{i18n.t('auto_experience')}</TabsTrigger>
+              <TabsTrigger value={3}>{i18n.t('auto_education')}</TabsTrigger>
+              <TabsTrigger value={4}>{i18n.t('auto_videos')}</TabsTrigger>
             </TabsList>
 
             {/* Basic Info */}
             <TabsContent value={0}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="first_name">First Name</Label>
+                  <Label htmlFor="first_name">{i18n.t('auto_first_name')}</Label>
                   <Input id="first_name" name="first_name" value={profile.first_name || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
-                  <Label htmlFor="second_name">Second Name</Label>
+                  <Label htmlFor="second_name">{i18n.t('auto_second_name')}</Label>
                   <Input id="second_name" name="second_name" value={profile.second_name || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
-                  <Label htmlFor="last_name">Last Name</Label>
+                  <Label htmlFor="last_name">{i18n.t('auto_last_name')}</Label>
                   <Input id="last_name" name="last_name" value={profile.last_name || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label htmlFor="title">Professional Title</Label>
+                  <Label htmlFor="title">{i18n.t('auto_professional_title')}</Label>
                   <Input id="title" name="title" value={profile.title || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label htmlFor="country_id">Country</Label>
+                  <Label htmlFor="country_id">{i18n.t('auto_country')}</Label>
                   <Select value={profile.country_id || ''} onValueChange={(val) => { setProfile({ ...profile, country_id: val, city_id: '' }); fetchCitiesForCountry(val); }}>
                     <SelectTrigger id="country_id">
-                      <SelectValue placeholder="Select country" />
+                      <SelectValue placeholder={i18n.t('auto_select_country')}  />
                     </SelectTrigger>
                     <SelectContent>
                       {(countries || []).map(c => (
@@ -1083,10 +1084,10 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                   </Select>
 
                   <div className="mt-2">
-                    <Label htmlFor="city_id">City</Label>
+                    <Label htmlFor="city_id">{i18n.t('auto_city')}</Label>
                     <Select value={profile.city_id || ''} onValueChange={(val) => setProfile({ ...profile, city_id: val })}>
                       <SelectTrigger id="city_id">
-                        <SelectValue placeholder="Select city" />
+                        <SelectValue placeholder={i18n.t('auto_select_city')}  />
                       </SelectTrigger>
                       <SelectContent>
                         {(cities || []).map(city => (
@@ -1097,48 +1098,48 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                   </div>
 
                   <div className="mt-2">
-                    <Label htmlFor="address">Address</Label>
-                    <Input id="address" name="address" value={profile.address || ''} onChange={handleProfileChange} placeholder="Street address" />
+                    <Label htmlFor="address">{i18n.t('auto_address')}</Label>
+                    <Input id="address" name="address" value={profile.address || ''} onChange={handleProfileChange} placeholder={i18n.t('auto_street_address')}  />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="preferred_job_title">Preferred Job Title</Label>
+                  <Label htmlFor="preferred_job_title">{i18n.t('auto_preferred_job_title')}</Label>
                   <Input id="preferred_job_title" name="preferred_job_title" value={profile.preferred_job_title || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
-                  <Label htmlFor="current_job_title">Current Job Title</Label>
+                  <Label htmlFor="current_job_title">{i18n.t('auto_current_job_title')}</Label>
                   <Input id="current_job_title" name="current_job_title" value={profile.current_job_title || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div className="md:col-span-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea id="bio" name="bio" value={profile.bio || ''} onChange={handleProfileChange} rows={4} placeholder="Tell employers about yourself" />
+                  <Label htmlFor="bio">{i18n.t('auto_bio')}</Label>
+                  <Textarea id="bio" name="bio" value={profile.bio || ''} onChange={handleProfileChange} rows={4} placeholder={i18n.t('auto_tell_employers_about_yourself')}  />
                 </div>
 
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{i18n.t('auto_email')}</Label>
                   <Input id="email" name="email" type="email" value={profile.email || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone">{i18n.t('auto_phone')}</Label>
                   <Input id="phone" name="phone" value={profile.phone || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
-                  <Label htmlFor="mobile">Mobile</Label>
+                  <Label htmlFor="mobile">{i18n.t('auto_mobile')}</Label>
                   <Input id="mobile" name="mobile" value={profile.mobile || ''} onChange={handleProfileChange} />
                 </div>
                 
                 <div>
-                  <Label htmlFor="website">Website</Label>
+                  <Label htmlFor="website">{i18n.t('auto_website')}</Label>
                   <Input id="website" name="website" value={profile.website || ''} onChange={handleProfileChange} />
                 </div>
 
                 <div>
-                  <Label htmlFor="social.linkedin_url">LinkedIn URL</Label>
+                  <Label htmlFor="social.linkedin_url">{i18n.t('auto_linkedin_url')}</Label>
                   <Input id="social.linkedin_url" name="social.linkedin_url" value={profile.social?.linkedin_url || ''} onChange={handleProfileChange} />
                 </div>
               </div>
@@ -1147,10 +1148,9 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
             {/* Skills */}
             <TabsContent value={1}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Your Skills</h3>
+                <h3 className="text-lg font-semibold">{i18n.t('auto_your_skills')}</h3>
                 <Button onClick={handleOpenSkillDialog} className={`rounded-full ${themeColors.buttons.secondary}`}>
-                  <Plus className="h-4 w-4 mr-2" /> Add Skill
-                </Button>
+                  <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_skill_1')}</Button>
               </div>
 
               {skills.length === 0 ? (
@@ -1170,10 +1170,9 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
             {/* Experience */}
             <TabsContent value={2}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Work Experience</h3>
+                <h3 className="text-lg font-semibold">{i18n.t('auto_work_experience')}</h3>
                 <Button onClick={() => handleOpenExperienceDialog()} className={`rounded-full ${themeColors.buttons.secondary}`}>
-                  <Plus className="h-4 w-4 mr-2" /> Add Experience
-                </Button>
+                  <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_experience')}</Button>
               </div>
 
               {experiences.length === 0 ? (
@@ -1206,10 +1205,9 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
             {/* Education */}
             <TabsContent value={3}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Education</h3>
+                <h3 className="text-lg font-semibold">{i18n.t('auto_education')}</h3>
                 <Button onClick={() => handleOpenEducationDialog()} className={`rounded-full ${themeColors.buttons.secondary}`}>
-                  <Plus className="h-4 w-4 mr-2" /> Add Education
-                </Button>
+                  <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_education')}</Button>
               </div>
 
               {education.length === 0 ? (
@@ -1242,10 +1240,9 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
             {/* Videos */}
             <TabsContent value={4}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Your Videos</h3>
+                <h3 className="text-lg font-semibold">{i18n.t('auto_your_videos')}</h3>
                 <Button onClick={handleUploadVideo} className={`rounded-full ${themeColors.buttons.secondary}`}>
-                  <Video className="h-4 w-4 mr-2" /> Upload Video
-                </Button>
+                  <Video className="h-4 w-4 mr-2" />{i18n.t('auto_upload_video')}</Button>
               </div>
 
               {console.debug('EditJobSeekerProfile: rendering Videos tab, videos length=', (videos || []).length)}
@@ -1275,8 +1272,8 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                         </div>
                       </CardContent>
                       <div className="flex justify-between p-3">
-                        <Button size="sm" onClick={() => handleEditVideo(video.id)} className="">Edit</Button>
-                        <Button size="sm" onClick={() => handleDeleteVideo(video.id)} className="text-red-600">Delete</Button>
+                        <Button size="sm" onClick={() => handleEditVideo(video.id)} className="">{i18n.t('auto_edit')}</Button>
+                        <Button size="sm" onClick={() => handleDeleteVideo(video.id)} className="text-red-600">{i18n.t('auto_delete')}</Button>
                       </div>
                     </Card>
                   ))}
@@ -1291,23 +1288,23 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
       <Dialog open={skillDialogOpen} onOpenChange={setSkillDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Skill</DialogTitle>
-            <DialogDescription>Select a skill to add to your profile.</DialogDescription>
+            <DialogTitle>{i18n.t('auto_add_new_skill')}</DialogTitle>
+            <DialogDescription>{i18n.t('auto_select_a_skill_to_add_to_your_profile')}</DialogDescription>
           </DialogHeader>
 
           <div className="mt-2">
-            <Label htmlFor="skill-search">Skill</Label>
+            <Label htmlFor="skill-search">{i18n.t('auto_skill')}</Label>
             <Input
               id="skill-search"
               value={selectedSkillName}
               onChange={(e) => { setSelectedSkillName(e.target.value); setSelectedSkill(''); }}
-              placeholder="Type to search or click a suggestion"
+              placeholder={i18n.t('auto_type_to_search_or_click_a_suggestion')} 
             />
 
             {/* Category filter */}
             {skillCategories.length > 0 && (
               <div className="flex gap-2 mt-2 flex-wrap">
-                <button type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === null ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(null)}>All</button>
+                <button type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === null ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(null)}>{i18n.t('auto_all')}</button>
                 {skillCategories.map(cat => (
                   <button key={cat} type="button" className={`px-2 py-1 text-xs rounded ${selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`} onClick={() => setSelectedCategory(cat)}>{cat}</button>
                 ))}
@@ -1337,40 +1334,40 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
                 </div>
               ))}
               {((availableSkills || []).filter(s => !isSkillAlreadyAdded(s)).length === 0) && !skillSearchLoading && (
-                <div className="px-3 py-2 text-sm text-gray-500">No suggestions available</div>
+                <div className="px-3 py-2 text-sm text-gray-500">{i18n.t('auto_no_suggestions_available')}</div>
               )}
             </div>
 
             {/* Level & Years inputs */}
             <div className="grid grid-cols-2 gap-3 mt-3">
               <div>
-                <Label htmlFor="skill-level">Level</Label>
+                <Label htmlFor="skill-level">{i18n.t('auto_level')}</Label>
                 <Select value={selectedSkillLevel} onValueChange={(val) => setSelectedSkillLevel(val)}>
                   <SelectTrigger id="skill-level">
-                    <SelectValue placeholder="Select level" />
+                    <SelectValue placeholder={i18n.t('auto_select_level')}  />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Beginner">Beginner</SelectItem>
-                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                    <SelectItem value="Advanced">Advanced</SelectItem>
-                    <SelectItem value="Expert">Expert</SelectItem>
+                    <SelectItem value="Beginner">{i18n.t('auto_beginner')}</SelectItem>
+                    <SelectItem value="Intermediate">{i18n.t('auto_intermediate')}</SelectItem>
+                    <SelectItem value="Advanced">{i18n.t('auto_advanced')}</SelectItem>
+                    <SelectItem value="Expert">{i18n.t('auto_expert')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="skill-years">Years of experience</Label>
+                <Label htmlFor="skill-years">{i18n.t('auto_years_of_experience')}</Label>
                 <Input id="skill-years" type="number" min={0} value={selectedSkillYears} onChange={(e) => setSelectedSkillYears(Number(e.target.value))} />
               </div>
             </div>
 
             {selectedSkillName && !selectedSkill && (
-              <div className="text-xs text-yellow-600 mt-1">Please select a skill from the suggestions to enable saving.</div>
+              <div className="text-xs text-yellow-600 mt-1">{i18n.t('auto_please_select_a_skill_from_the_suggestio')}</div>
             )}
           </div>
 
           <DialogFooter>
-            <Button variant="ghost" onClick={handleCloseSkillDialog}>Cancel</Button>
+            <Button variant="ghost" onClick={handleCloseSkillDialog}>{i18n.t('auto_cancel')}</Button>
             <Button onClick={handleSaveSkill} disabled={!selectedSkill || saving} className={themeColors.buttons.primary}>{saving ? 'Saving...' : 'Save'}</Button>
           </DialogFooter>
         </DialogContent>
@@ -1385,39 +1382,39 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
 
           <div className="grid grid-cols-1 gap-3 mt-2">
             <div>
-              <Label>Company Name</Label>
+              <Label>{i18n.t('auto_company_name_1')}</Label>
               <Input name="company_name" value={experienceForm.company_name} onChange={handleExperienceFormChange} />
             </div>
             <div>
-              <Label>Position</Label>
+              <Label>{i18n.t('auto_position')}</Label>
               <Input name="position" value={experienceForm.position} onChange={handleExperienceFormChange} />
             </div>
             <div>
-              <Label>Location</Label>
+              <Label>{i18n.t('auto_location')}</Label>
               <Input name="location" value={experienceForm.location} onChange={handleExperienceFormChange} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Start Date</Label>
+                <Label>{i18n.t('auto_start_date')}</Label>
                 <Input name="start_date" type="date" value={experienceForm.start_date} onChange={handleExperienceFormChange} />
               </div>
               <div>
-                <Label>End Date</Label>
+                <Label>{i18n.t('auto_end_date')}</Label>
                 <Input name="end_date" type="date" value={experienceForm.end_date} onChange={handleExperienceFormChange} disabled={experienceForm.currently_working} />
               </div>
             </div>
             <div className="flex items-center gap-2">
               <input id="currently_working" type="checkbox" name="currently_working" checked={experienceForm.currently_working} onChange={handleExperienceFormChange} />
-              <label htmlFor="currently_working">I currently work here</label>
+              <label htmlFor="currently_working">{i18n.t('auto_i_currently_work_here')}</label>
             </div>
             <div>
-              <Label>Description</Label>
+              <Label>{i18n.t('auto_description')}</Label>
               <Textarea name="description" rows={4} value={experienceForm.description} onChange={handleExperienceFormChange} />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="ghost" onClick={handleCloseExperienceDialog}>Cancel</Button>
+            <Button variant="ghost" onClick={handleCloseExperienceDialog}>{i18n.t('auto_cancel')}</Button>
             <Button onClick={handleSaveExperience} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
           </DialogFooter>
         </DialogContent>
@@ -1432,39 +1429,39 @@ const EditJobSeekerProfile = ({ initialProfile = null, onClose = () => {}, onSav
 
           <div className="grid grid-cols-1 gap-3 mt-2">
             <div>
-              <Label>Institution</Label>
+              <Label>{i18n.t('auto_institution')}</Label>
               <Input name="institution" value={educationForm.institution} onChange={handleEducationFormChange} />
             </div>
             <div>
-              <Label>Degree</Label>
+              <Label>{i18n.t('auto_degree')}</Label>
               <Input name="degree" value={educationForm.degree} onChange={handleEducationFormChange} />
             </div>
             <div>
-              <Label>Field of Study</Label>
+              <Label>{i18n.t('auto_field_of_study')}</Label>
               <Input name="field" value={educationForm.field} onChange={handleEducationFormChange} />
             </div>
             <div>
-              <Label>Location</Label>
+              <Label>{i18n.t('auto_location')}</Label>
               <Input name="location" value={educationForm.location} onChange={handleEducationFormChange} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Start Date</Label>
+                <Label>{i18n.t('auto_start_date')}</Label>
                 <Input name="startDate" type="date" value={educationForm.startDate} onChange={handleEducationFormChange} />
               </div>
               <div>
-                <Label>End Date</Label>
+                <Label>{i18n.t('auto_end_date')}</Label>
                 <Input name="endDate" type="date" value={educationForm.endDate} onChange={handleEducationFormChange} />
               </div>
             </div>
             <div>
-              <Label>Description</Label>
+              <Label>{i18n.t('auto_description')}</Label>
               <Textarea name="description" rows={4} value={educationForm.description} onChange={handleEducationFormChange} />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="ghost" onClick={handleCloseEducationDialog}>Cancel</Button>
+            <Button variant="ghost" onClick={handleCloseEducationDialog}>{i18n.t('auto_cancel')}</Button>
             <Button onClick={handleSaveEducation} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
           </DialogFooter>
         </DialogContent>

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -152,26 +153,20 @@ const EmployerDashboard = () => {
                         <h1 className={`text-3xl font-bold ${themeColors.text.gradient}`}>
                             Welcome {user?.displayName}
                         </h1>
-                        <p className={themeColors.text.secondary}>
-                            Here's what's happening with your job postings today
-                        </p>
+                        <p className={themeColors.text.secondary}>{i18n.t('auto_here_s_what_s_happening_with_your_job_po')}</p>
                     </div>
                     <div className="flex gap-3">
                         <Button 
                             className={`${themeColors.buttons.primary} text-white`}
                             onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
                         >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Post New Job
-                        </Button>
+                            <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_post_new_job')}</Button>
                         <Button 
                             variant="outline" 
                             className={themeColors.buttons.outline}
                             onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
                         >
-                            <Building2 className="h-4 w-4 mr-2" />
-                            Update Profile
-                        </Button>
+                            <Building2 className="h-4 w-4 mr-2" />{i18n.t('auto_update_profile')}</Button>
                     </div>
                 </div>
 
@@ -181,9 +176,7 @@ const EmployerDashboard = () => {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
-                                        Job Views
-                                    </p>
+                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{i18n.t('auto_job_views')}</p>
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.total_job_views || 0}
                                     </h3>
@@ -203,9 +196,7 @@ const EmployerDashboard = () => {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                     <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
-                                        New Applicants
-                                    </p>
+                                     <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{i18n.t('auto_new_applicants')}</p>
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.total_applicants || 0}
                                     </h3>
@@ -225,9 +216,7 @@ const EmployerDashboard = () => {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
-                                        Active Jobs
-                                    </p>
+                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{i18n.t('auto_active_jobs')}</p>
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.active_jobs || 0}
                                     </h3>
@@ -246,15 +235,11 @@ const EmployerDashboard = () => {
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>
-                                        Unread Messages
-                                    </p>
+                                    <p className={`text-sm font-medium ${themeColors.text.secondary}`}>{i18n.t('auto_unread_messages')}</p>
                                     <h3 className={`text-3xl font-bold mt-2 ${themeColors.text.primary}`}>
                                         {stats?.unread_messages || 0}
                                     </h3>
-                                    <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                                        From candidates
-                                    </p>
+                                    <p className={`text-xs mt-1 ${themeColors.text.muted}`}>{i18n.t('auto_from_candidates')}</p>
                                 </div>
                                 <div className={`p-3 rounded-full ${themeColors.iconBackgrounds.info}`}>
                                     <MessageSquare className="h-6 w-6 text-blue-600" />
@@ -272,20 +257,18 @@ const EmployerDashboard = () => {
                             <Tabs value={activeTab} onValueChange={setActiveTab}>
                                 <CardHeader>
                                     <div className="flex items-center justify-between">
-                                        <CardTitle>Job Management</CardTitle>
+                                        <CardTitle>{i18n.t('auto_job_management')}</CardTitle>
                                         <Button 
                                             variant="ghost" 
                                             size="sm" 
                                             className="text-indigo-600"
                                             onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}
                                         >
-                                            <BarChart3 className="h-4 w-4 mr-1" />
-                                            View Analytics
-                                        </Button>
+                                            <BarChart3 className="h-4 w-4 mr-1" />{i18n.t('auto_view_analytics')}</Button>
                                     </div>
                                     <TabsList className="grid w-full grid-cols-2 mt-4">
                                         <TabsTrigger value="jobs">Active Jobs ({jobs.length})</TabsTrigger>
-                                        <TabsTrigger value="applicants">Recent Applicants</TabsTrigger>
+                                        <TabsTrigger value="applicants">{i18n.t('auto_recent_applicants')}</TabsTrigger>
                                     </TabsList>
                                 </CardHeader>
                                 <CardContent>
@@ -293,16 +276,12 @@ const EmployerDashboard = () => {
                                         {jobs.length === 0 ? (
                                             <div className="text-center py-12">
                                                 <Briefcase className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                                                <p className={`text-sm ${themeColors.text.secondary} mb-4`}>
-                                                    No active jobs yet
-                                                </p>
+                                                <p className={`text-sm ${themeColors.text.secondary} mb-4`}>{i18n.t('auto_no_active_jobs_yet')}</p>
                                                 <Button 
                                                     className={`${themeColors.buttons.primary} text-white`}
                                                     onClick={() => navigate('/employer-tabs?group=jobManagement&tab=post-job')}
                                                 >
-                                                    <Plus className="h-4 w-4 mr-2" />
-                                                    Post Your First Job
-                                                </Button>
+                                                    <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_post_your_first_job')}</Button>
                                             </div>
                                         ) : (
                                             <>
@@ -310,12 +289,12 @@ const EmployerDashboard = () => {
                                                     <Table>
                                                         <TableHeader>
                                                             <TableRow>
-                                                                <TableHead>Job Title</TableHead>
-                                                                <TableHead>Posted</TableHead>
-                                                                <TableHead>Views</TableHead>
-                                                                <TableHead>Applicants</TableHead>
-                                                                <TableHead>Status</TableHead>
-                                                                <TableHead>Actions</TableHead>
+                                                                <TableHead>{i18n.t('auto_job_title')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_posted')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_views')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_applicants')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_status')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_actions')}</TableHead>
                                                             </TableRow>
                                                         </TableHeader>
                                                         <TableBody>
@@ -348,9 +327,7 @@ const EmployerDashboard = () => {
                                                                         {getStatusBadge(job.status)}
                                                                     </TableCell>
                                                                     <TableCell>
-                                                                        <Button variant="ghost" size="sm" className="text-purple-600">
-                                                                            Manage
-                                                                        </Button>
+                                                                        <Button variant="ghost" size="sm" className="text-purple-600">{i18n.t('auto_manage')}</Button>
                                                                     </TableCell>
                                                                 </TableRow>
                                                             ))}
@@ -362,9 +339,7 @@ const EmployerDashboard = () => {
                                                         variant="outline" 
                                                         className={themeColors.buttons.outline}
                                                         onClick={() => navigate('/employer/my-jobs')}
-                                                    >
-                                                        View All Jobs
-                                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                                    >{i18n.t('auto_view_all_jobs')}<ArrowRight className="ml-2 h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             </>
@@ -375,12 +350,8 @@ const EmployerDashboard = () => {
                                         {recommendations.length === 0 ? (
                                             <div className="text-center py-12">
                                                 <UserSearch className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                                                <p className={`text-sm ${themeColors.text.secondary}`}>
-                                                    No applicants yet
-                                                </p>
-                                                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                                                    Applicants will appear here once they apply to your jobs
-                                                </p>
+                                                <p className={`text-sm ${themeColors.text.secondary}`}>{i18n.t('auto_no_applicants_yet')}</p>
+                                                <p className={`text-xs mt-1 ${themeColors.text.muted}`}>{i18n.t('auto_applicants_will_appear_here_once_they_ap')}</p>
                                             </div>
                                         ) : (
                                             <>
@@ -388,12 +359,12 @@ const EmployerDashboard = () => {
                                                     <Table>
                                                         <TableHeader>
                                                             <TableRow>
-                                                                <TableHead>Candidate</TableHead>
-                                                                <TableHead>Job</TableHead>
-                                                                <TableHead>Applied</TableHead>
-                                                                <TableHead>Match</TableHead>
-                                                                <TableHead>Status</TableHead>
-                                                                <TableHead>Actions</TableHead>
+                                                                <TableHead>{i18n.t('auto_candidate')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_job')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_applied')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_match')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_status')}</TableHead>
+                                                                <TableHead>{i18n.t('auto_actions')}</TableHead>
                                                             </TableRow>
                                                         </TableHeader>
                                                         <TableBody>
@@ -425,9 +396,7 @@ const EmployerDashboard = () => {
                                                                         {getStatusBadge(candidate.status)}
                                                                     </TableCell>
                                                                     <TableCell>
-                                                                        <Button variant="ghost" size="sm" className="text-purple-600">
-                                                                            Review
-                                                                        </Button>
+                                                                        <Button variant="ghost" size="sm" className="text-purple-600">{i18n.t('auto_review')}</Button>
                                                                     </TableCell>
                                                                 </TableRow>
                                                             ))}
@@ -439,9 +408,7 @@ const EmployerDashboard = () => {
                                                         variant="outline" 
                                                         className={themeColors.buttons.outline}
                                                         onClick={() => navigate('/employer/find-candidates')}
-                                                    >
-                                                        View All Applicants
-                                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                                    >{i18n.t('auto_view_all_applicants')}<ArrowRight className="ml-2 h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             </>
@@ -457,19 +424,15 @@ const EmployerDashboard = () => {
                         {/* Recent Activities */}
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg font-semibold">Recent Activities</CardTitle>
+                                <CardTitle className="text-lg font-semibold">{i18n.t('auto_recent_activities')}</CardTitle>
                                 <Bell className="h-5 w-5 text-gray-500" />
                             </CardHeader>
                             <CardContent>
                                 <ScrollArea className="h-72">
                                     {activities.length === 0 ? (
                                         <div className="text-center py-8">
-                                            <p className={`text-sm ${themeColors.text.secondary}`}>
-                                                No recent activities
-                                            </p>
-                                            <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                                                Your activities will appear here
-                                            </p>
+                                            <p className={`text-sm ${themeColors.text.secondary}`}>{i18n.t('auto_no_recent_activities')}</p>
+                                            <p className={`text-xs mt-1 ${themeColors.text.muted}`}>{i18n.t('auto_your_activities_will_appear_here')}</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
@@ -497,27 +460,21 @@ const EmployerDashboard = () => {
                         {/* Recommended Candidates */}
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg font-semibold">Recommended Candidates</CardTitle>
+                                <CardTitle className="text-lg font-semibold">{i18n.t('auto_recommended_candidates')}</CardTitle>
                                 <Button 
                                     variant="ghost" 
                                     size="sm" 
                                     className="text-purple-600"
                                     onClick={() => navigate('/employer/find-candidates')}
-                                >
-                                    View All
-                                    <ArrowRight className="ml-1 h-4 w-4" />
+                                >{i18n.t('auto_view_all')}<ArrowRight className="ml-1 h-4 w-4" />
                                 </Button>
                             </CardHeader>
                             <CardContent>
                                 <ScrollArea className="h-80">
                                     {recommendations.length === 0 ? (
                                         <div className="text-center py-8">
-                                            <p className={`text-sm ${themeColors.text.secondary}`}>
-                                                No recommendations currently
-                                            </p>
-                                            <p className={`text-xs mt-1 ${themeColors.text.muted}`}>
-                                                Recommendations will appear based on your posted jobs
-                                            </p>
+                                            <p className={`text-sm ${themeColors.text.secondary}`}>{i18n.t('auto_no_recommendations_currently')}</p>
+                                            <p className={`text-xs mt-1 ${themeColors.text.muted}`}>{i18n.t('auto_recommendations_will_appear_based_on_you')}</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
@@ -559,12 +516,8 @@ const EmployerDashboard = () => {
                 {/* Tips Section */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-bold">
-                            Quick Actions to Improve Your Results
-                        </CardTitle>
-                        <CardDescription>
-                            Take these steps to attract more qualified candidates
-                        </CardDescription>
+                        <CardTitle className="text-xl font-bold">{i18n.t('auto_quick_actions_to_improve_your_results')}</CardTitle>
+                        <CardDescription>{i18n.t('auto_take_these_steps_to_attract_more_qualifi')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -573,9 +526,7 @@ const EmployerDashboard = () => {
                                     <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.primary}`}>
                                         <PlayCircle className="h-6 w-6 text-indigo-600" />
                                     </div>
-                                    <h3 className={`font-semibold ${themeColors.text.primary}`}>
-                                        Add Job Video
-                                    </h3>
+                                    <h3 className={`font-semibold ${themeColors.text.primary}`}>{i18n.t('auto_add_job_video')}</h3>
                                 </div>
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
                                     Jobs with videos receive 34% more applications and attract higher quality candidates.
@@ -584,9 +535,7 @@ const EmployerDashboard = () => {
                                     className={`w-full ${themeColors.buttons.primary} text-white`}
                                     onClick={() => navigate('/employer-tabs?group=videoManagement&tab=video-upload')}
                                 >
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Add Video
-                                </Button>
+                                    <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_video')}</Button>
                             </div>
 
                             <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`}>
@@ -594,9 +543,7 @@ const EmployerDashboard = () => {
                                     <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.secondary}`}>
                                         <Building2 className="h-6 w-6 text-purple-600" />
                                     </div>
-                                    <h3 className={`font-semibold ${themeColors.text.primary}`}>
-                                        Complete Profile
-                                    </h3>
+                                    <h3 className={`font-semibold ${themeColors.text.primary}`}>{i18n.t('auto_complete_profile')}</h3>
                                 </div>
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
                                     Complete profiles increase candidate trust and boost application acceptance rates by 45%.
@@ -605,9 +552,7 @@ const EmployerDashboard = () => {
                                     className={`w-full ${themeColors.buttons.secondary} text-white`}
                                     onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
                                 >
-                                    <CheckCircle className="h-4 w-4 mr-2" />
-                                    Update Now
-                                </Button>
+                                    <CheckCircle className="h-4 w-4 mr-2" />{i18n.t('auto_update_now')}</Button>
                             </div>
 
                             <div className={`p-6 rounded-lg border-2 ${themeColors.borders.default} hover:shadow-lg transition-all duration-200 cursor-pointer`} onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}>
@@ -615,17 +560,13 @@ const EmployerDashboard = () => {
                                     <div className={`p-3 rounded-lg ${themeColors.iconBackgrounds.info}`}>
                                         <BarChart3 className="h-6 w-6 text-blue-600" />
                                     </div>
-                                    <h3 className={`font-semibold ${themeColors.text.primary}`}>
-                                        View Analytics
-                                    </h3>
+                                    <h3 className={`font-semibold ${themeColors.text.primary}`}>{i18n.t('auto_view_analytics')}</h3>
                                 </div>
                                 <p className={`text-sm mb-4 ${themeColors.text.secondary}`}>
                                     Review detailed analytics to optimize your job postings and improve visibility.
                                 </p>
                                 <Button className={`w-full ${themeColors.buttons.success} text-white`} onClick={() => navigate('/employer-tabs?group=dashboard&tab=analytics')}>
-                                    <BarChart3 className="h-4 w-4 mr-2" />
-                                    View Details
-                                </Button>
+                                    <BarChart3 className="h-4 w-4 mr-2" />{i18n.t('auto_view_details_1')}</Button>
                             </div>
                         </div>
                     </CardContent>

@@ -1,4 +1,5 @@
-﻿/* eslint-disable react-refresh/only-export-components -- TODO: move non-component exports/constants to helpers */
+import i18n from 'i18next';
+/* eslint-disable react-refresh/only-export-components -- TODO: move non-component exports/constants to helpers */
 import React, { useState, useRef, useEffect } from "react"; // Corrected import statement for hooks
 import {
   Box,
@@ -543,9 +544,7 @@ const HomePage = () => {
                 mb: 3,
                 fontSize: { xs: '2.5rem', md: '3.5rem' },
               }}
-            >
-              Revolutionize Your Hiring with Video
-            </Typography>
+            >{i18n.t('auto_revolutionize_your_hiring_with_video')}</Typography>
             <Typography
               variant="h5"
               component="p"
@@ -572,9 +571,7 @@ const HomePage = () => {
                 }}
                 component={Link}
                 to="/signup"
-              >
-                Join as Job Seeker
-              </Button>
+              >{i18n.t('auto_join_as_job_seeker')}</Button>
               <Button
                 variant="outlined"
                 size="large"
@@ -589,9 +586,7 @@ const HomePage = () => {
                 }}
                 component={Link}
                 to="/employer-signup"
-              >
-                Hire Talent
-              </Button>
+              >{i18n.t('auto_hire_talent')}</Button>
             </Stack>
           </Container>
         </Box>
@@ -626,9 +621,7 @@ const HomePage = () => {
               align="center"
               gutterBottom
               sx={{ fontWeight: 'bold', mb: 6, color: theme.palette.text.primary }}
-            >
-              Why Choose SwipeScout?
-            </Typography>
+            >{i18n.t('auto_why_choose_swipescout')}</Typography>
             <Grid container spacing={4}>
               <Grid item xs={12} md={4}>
                 <StyledFeatureCard elevation={3}>
@@ -636,12 +629,10 @@ const HomePage = () => {
                     component="img"
                     height="200"
                     image="https://via.placeholder.com/400x200?text=Video+Resumes"
-                    alt="Video Resumes"
+                    alt={i18n.t('auto_video_resumes')} 
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Engaging Video Resumes
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_engaging_video_resumes')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Go beyond paper. Showcase personality, communication skills, and passion with dynamic video profiles that truly stand out.
                     </Typography>
@@ -654,12 +645,10 @@ const HomePage = () => {
                     component="img"
                     height="200"
                     image="https://via.placeholder.com/400x200?text=Smart+Matching"
-                    alt="Smart Matching"
+                    alt={i18n.t('auto_smart_matching')} 
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Smart Matching Algorithm
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_smart_matching_algorithm')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Our AI-powered system intelligently connects job seekers with relevant opportunities and employers with ideal candidates.
                     </Typography>
@@ -672,12 +661,10 @@ const HomePage = () => {
                     component="img"
                     height="200"
                     image="https://via.placeholder.com/400x200?text=Efficient+Hiring"
-                    alt="Efficient Hiring"
+                    alt={i18n.t('auto_efficient_hiring')} 
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Streamlined Hiring Process
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_streamlined_hiring_process')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Reduce time-to-hire and improve candidate quality with our intuitive platform designed for modern recruitment needs.
                     </Typography>
@@ -696,29 +683,25 @@ const HomePage = () => {
             align="center"
             gutterBottom
             sx={{ fontWeight: 'bold', mb: 6, color: theme.palette.text.primary }}
-          >
-            How SwipeScout Works
-          </Typography>
+          >{i18n.t('auto_how_swipescout_works')}</Typography>
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                For Job Seekers
-              </Typography>
+              <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_for_job_seekers')}</Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
                 Create a compelling video resume, explore personalized job recommendations, and apply with confidence.
               </Typography>
               <Stack spacing={2}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircle color="primary" />
-                  <Typography variant="body1">Record your unique video profile.</Typography>
+                  <Typography variant="body1">{i18n.t('auto_record_your_unique_video_profile')}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircle color="primary" />
-                  <Typography variant="body1">Get matched with top companies.</Typography>
+                  <Typography variant="body1">{i18n.t('auto_get_matched_with_top_companies')}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircle color="primary" />
-                  <Typography variant="body1">Apply directly with your video.</Typography>
+                  <Typography variant="body1">{i18n.t('auto_apply_directly_with_your_video')}</Typography>
                 </Box>
               </Stack>
             </Grid>
@@ -810,24 +793,22 @@ const HomePage = () => {
               </VideoShowcase>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                For Employers
-              </Typography>
+              <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_for_employers')}</Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
                 Discover top talent through authentic video introductions, streamline your hiring, and build your dream team.
               </Typography>
               <Stack spacing={2}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircle color="primary" />
-                  <Typography variant="body1">Post engaging video job descriptions.</Typography>
+                  <Typography variant="body1">{i18n.t('auto_post_engaging_video_job_descriptions')}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircle color="primary" />
-                  <Typography variant="body1">Efficiently screen candidates with video profiles.</Typography>
+                  <Typography variant="body1">{i18n.t('auto_efficiently_screen_candidates_with_video')}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircle color="primary" />
-                  <Typography variant="body1">Make faster, better hiring decisions.</Typography>
+                  <Typography variant="body1">{i18n.t('auto_make_faster_better_hiring_decisions')}</Typography>
                 </Box>
               </Stack>
             </Grid>
@@ -843,9 +824,7 @@ const HomePage = () => {
               align="center"
               gutterBottom
               sx={{ fontWeight: 'bold', mb: 6, color: theme.palette.text.primary }}
-            >
-              What Our Users Say
-            </Typography>
+            >{i18n.t('auto_what_our_users_say')}</Typography>
             <Grid container spacing={4}>
               {testimonials.map((testimonial, index) => (
                 <Grid item xs={12} md={6} key={index}>
@@ -883,17 +862,13 @@ const HomePage = () => {
               align="center"
               gutterBottom
               sx={{ fontWeight: 'bold', mb: 6, color: theme.palette.text.primary }}
-            >
-              Unlock More with Premium Features
-            </Typography>
+            >{i18n.t('auto_unlock_more_with_premium_features')}</Typography>
             <Grid container spacing={4} alignItems="stretch">
               <Grid item xs={12} md={4}>
                 <StyledFeatureCard elevation={3}>
                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                     <MonetizationOnIcon sx={{ fontSize: 60, color: theme.palette.success.main, mb: 2 }} />
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Advanced Analytics
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_advanced_analytics')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Gain deeper insights into your profile views, video performance, and application success rates.
                     </Typography>
@@ -904,9 +879,7 @@ const HomePage = () => {
                 <StyledFeatureCard elevation={3}>
                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                     <VideoCall sx={{ fontSize: 60, color: theme.palette.info.main, mb: 2 }} />
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Enhanced Video Tools
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_enhanced_video_tools')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Access professional video editing features, longer video uploads, and premium templates.
                     </Typography>
@@ -917,9 +890,7 @@ const HomePage = () => {
                 <StyledFeatureCard elevation={3}>
                   <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                     <TrendingUp sx={{ fontSize: 60, color: theme.palette.warning.main, mb: 2 }} />
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                      Priority Matching
-                    </Typography>
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>{i18n.t('auto_priority_matching')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Get prioritized in our matching algorithm and connect with exclusive job opportunities or top candidates faster.
                     </Typography>
@@ -942,9 +913,7 @@ const HomePage = () => {
                 }}
                 component={Link}
                 to="/pricing"
-              >
-                View Pricing Plans
-              </Button>
+              >{i18n.t('auto_view_pricing_plans')}</Button>
             </Box>
           </Container>
         </Box>
@@ -964,9 +933,7 @@ const HomePage = () => {
               component="h2"
               gutterBottom
               sx={{ fontWeight: 'bold', mb: 3 }}
-            >
-              Ready to Transform Your Career or Hiring?
-            </Typography>
+            >{i18n.t('auto_ready_to_transform_your_career_or_hiring')}</Typography>
             <Typography variant="h5" component="p" sx={{ mb: 4, opacity: 0.9 }}>
               Join SwipeScout today and experience the future of recruitment.
             </Typography>
@@ -985,9 +952,7 @@ const HomePage = () => {
                 }}
                 component={Link}
                 to="/signup"
-              >
-                Get Started Now
-              </Button>
+              >{i18n.t('auto_get_started_now')}</Button>
             </Stack>
           </Container>
         </Box>

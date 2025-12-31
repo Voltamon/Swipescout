@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import {
   Card,
   CardContent,
@@ -224,10 +225,8 @@ const BlogListPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>Blog Posts</h2>
-          <p className={themeColors.text.secondary}>
-            Manage all blog posts and articles
-          </p>
+          <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>{i18n.t('auto_blog_posts')}</h2>
+          <p className={themeColors.text.secondary}>{i18n.t('auto_manage_all_blog_posts_and_articles')}</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -235,32 +234,24 @@ const BlogListPage = () => {
             onClick={() => navigate('/admin-tabs?group=blog&tab=categories')}
             className="gap-2"
           >
-            <FolderCog className="h-4 w-4" />
-            Categories
-          </Button>
+            <FolderCog className="h-4 w-4" />{i18n.t('auto_categories')}</Button>
           <Button
             variant="outline"
             onClick={() => navigate('/admin-tabs?group=blog&tab=tags')}
             className="gap-2"
           >
-            <TagsIcon className="h-4 w-4" />
-            Tags
-          </Button>
+            <TagsIcon className="h-4 w-4" />{i18n.t('auto_tags')}</Button>
           <Button
             variant="outline"
             onClick={() => setImportDialogOpen(true)}
             className="gap-2"
           >
-            <Upload className="h-4 w-4" />
-            Import
-          </Button>
+            <Upload className="h-4 w-4" />{i18n.t('auto_import')}</Button>
           <Button
             onClick={() => navigate('/admin-tabs?group=blog&tab=blogs/new')}
             className={`${themeColors.buttons.primary} text-white`}
           >
-            <Plus className="mr-2 h-4 w-4" />
-            New Post
-          </Button>
+            <Plus className="mr-2 h-4 w-4" />{i18n.t('auto_new_post')}</Button>
         </div>
       </div>
 
@@ -271,7 +262,7 @@ const BlogListPage = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search posts by title or excerpt..."
+                placeholder={i18n.t('auto_search_posts_by_title_or_excerpt')} 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -282,23 +273,17 @@ const BlogListPage = () => {
                 variant={statusFilter === 'all' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('all')}
                 size="sm"
-              >
-                All
-              </Button>
+              >{i18n.t('auto_all')}</Button>
               <Button
                 variant={statusFilter === 'published' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('published')}
                 size="sm"
-              >
-                Published
-              </Button>
+              >{i18n.t('auto_published')}</Button>
               <Button
                 variant={statusFilter === 'draft' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('draft')}
                 size="sm"
-              >
-                Drafts
-              </Button>
+              >{i18n.t('auto_drafts')}</Button>
             </div>
           </div>
         </CardContent>
@@ -310,15 +295,15 @@ const BlogListPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead>Language</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Published</TableHead>
-                <TableHead>Views</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{i18n.t('auto_title')}</TableHead>
+                <TableHead>{i18n.t('auto_category')}</TableHead>
+                <TableHead>{i18n.t('auto_tags')}</TableHead>
+                <TableHead>{i18n.t('auto_language')}</TableHead>
+                <TableHead>{i18n.t('auto_status')}</TableHead>
+                <TableHead>{i18n.t('auto_author')}</TableHead>
+                <TableHead>{i18n.t('auto_published')}</TableHead>
+                <TableHead>{i18n.t('auto_views')}</TableHead>
+                <TableHead className="text-right">{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -326,9 +311,7 @@ const BlogListPage = () => {
                 <TableRow>
                   <TableCell colSpan={9} className="text-center py-8">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>
-                      Loading blogs...
-                    </div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>{i18n.t('auto_loading_blogs')}</div>
                   </TableCell>
                 </TableRow>
               ) : filteredBlogs.length === 0 ? (
@@ -336,7 +319,7 @@ const BlogListPage = () => {
                   <TableCell colSpan={9} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <FileText className="h-12 w-12 text-gray-300" />
-                      <p className={themeColors.text.muted}>No blog posts found</p>
+                      <p className={themeColors.text.muted}>{i18n.t('auto_no_blog_posts_found')}</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -347,7 +330,7 @@ const BlogListPage = () => {
                       <div>
                         <div className={`${themeColors.text.primary} flex items-center gap-2`}>
                           {blog.featured && (
-                            <Badge variant="secondary" className="text-xs">Featured</Badge>
+                            <Badge variant="secondary" className="text-xs">{i18n.t('auto_featured')}</Badge>
                           )}
                           <span className="line-clamp-1">{blog.title}</span>
                         </div>
@@ -401,7 +384,7 @@ const BlogListPage = () => {
                       {blog.author ? (
                         <span>{blog.author.firstName} {blog.author.lastName}</span>
                       ) : (
-                        <span className={themeColors.text.muted}>Unknown</span>
+                        <span className={themeColors.text.muted}>{i18n.t('auto_unknown')}</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -433,9 +416,7 @@ const BlogListPage = () => {
                               navigate(`/admin-tabs?group=blog&tab=blogs/edit&id=${blog.id}`)
                             }
                           >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" />{i18n.t('auto_edit')}</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handlePublishToggle(blog)}>
                             <Globe className="mr-2 h-4 w-4" />
                             {blog.status === 'published' ? 'Unpublish' : 'Publish'}
@@ -443,9 +424,7 @@ const BlogListPage = () => {
                           <DropdownMenuItem
                             onClick={() => window.open(`/blog/${blog.id}`, '_blank')}
                           >
-                            <Eye className="mr-2 h-4 w-4" />
-                            View
-                          </DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />{i18n.t('auto_view')}</DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
                               setSelectedBlog(blog);
@@ -453,9 +432,7 @@ const BlogListPage = () => {
                             }}
                             className="text-red-600"
                           >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                            <Trash2 className="mr-2 h-4 w-4" />{i18n.t('auto_delete')}</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -471,22 +448,18 @@ const BlogListPage = () => {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Blog Post</DialogTitle>
+            <DialogTitle>{i18n.t('auto_delete_blog_post')}</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete "{selectedBlog?.title}"? This action cannot be
               undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={handleDeleteBlog}
               className={`${themeColors.buttons.danger} text-white`}
-            >
-              Delete
-            </Button>
+            >{i18n.t('auto_delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -496,9 +469,7 @@ const BlogListPage = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" />
-              Bulk Import Blogs
-            </DialogTitle>
+              <Upload className="h-5 w-5" />{i18n.t('auto_bulk_import_blogs')}</DialogTitle>
             <DialogDescription>
               Import multiple blog posts from JSON format. Each blog can include multi-language content.
             </DialogDescription>
@@ -506,21 +477,19 @@ const BlogListPage = () => {
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-medium">JSON Data</label>
+                <label className="text-sm font-medium">{i18n.t('auto_json_data')}</label>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={downloadSampleJSON}
                   className="gap-2"
                 >
-                  <Download className="h-3 w-3" />
-                  Download Sample
-                </Button>
+                  <Download className="h-3 w-3" />{i18n.t('auto_download_sample')}</Button>
               </div>
               <Textarea
                 value={importData}
                 onChange={(e) => setImportData(e.target.value)}
-                placeholder='Paste your JSON array here, e.g.: [{"title": "Post 1", "content": "..."}, ...]'
+                placeholder={i18n.t('auto_paste_your_json_array_here_e_g_title_pos')} 
                 rows={12}
                 className="font-mono text-xs"
               />
@@ -537,9 +506,7 @@ const BlogListPage = () => {
                 setImportData('');
               }}
               disabled={importing}
-            >
-              Cancel
-            </Button>
+            >{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={handleImportBlogs}
               disabled={importing || !importData.trim()}

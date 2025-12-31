@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@mui/material';
 import { getAdminUsersPoints } from '@/services/points';
+import i18n from 'i18next';
 
 const UsersPointsPage = () => {
   const [rows, setRows] = useState([]);
@@ -20,9 +21,9 @@ const UsersPointsPage = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-semibold">Users Points</h1>
+      <h1 className="text-2xl font-semibold">{i18n.t('auto_users_points')}</h1>
       <div className="flex gap-2 items-center">
-        <input className="border p-1" placeholder="Search by userId" value={search} onChange={e => setSearch(e.target.value)} />
+        <input className="border p-1" placeholder={i18n.t('auto_search_by_userid')}  value={search} onChange={e => setSearch(e.target.value)} />
         <select className="border p-1" value={limit} onChange={e => setLimit(parseInt(e.target.value, 10))}>
           <option value={10}>10</option>
           <option value={20}>20</option>
@@ -41,9 +42,9 @@ const UsersPointsPage = () => {
         ))}
       </div>
       <div className="flex gap-2">
-        <button className="px-3 py-1 rounded bg-gray-100" onClick={() => load(Math.max(1, page - 1))}>Prev</button>
+        <button className="px-3 py-1 rounded bg-gray-100" onClick={() => load(Math.max(1, page - 1))}>{i18n.t('auto_prev')}</button>
         <div className="px-3 py-1">Page {page} of {Math.max(1, Math.ceil(total / limit))}</div>
-        <button className="px-3 py-1 rounded bg-gray-100" onClick={() => load(page + 1)}>Next</button>
+        <button className="px-3 py-1 rounded bg-gray-100" onClick={() => load(page + 1)}>{i18n.t('auto_next')}</button>
       </div>
     </div>
   );

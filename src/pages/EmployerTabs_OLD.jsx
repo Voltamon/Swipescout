@@ -1,4 +1,5 @@
-﻿import React, { useState, useCallback, useMemo, useEffect, startTransition } from 'react';
+import i18n from 'i18next';
+import React, { useState, useCallback, useMemo, useEffect, startTransition } from 'react';
 import {
   Box,
   CssBaseline,
@@ -327,9 +328,7 @@ const EmployerTabs = () => {
                       mt: 1,
                       fontSize: { xs: "0.8rem", md: "1rem" }, // Adjust font size for mobile
                     }}
-                  >
-                    Active Jobs
-                  </Typography>
+                  >{i18n.t('auto_active_jobs')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -339,9 +338,7 @@ const EmployerTabs = () => {
                   <Badge badgeContent={(stats.newApplications ?? 0) == 0 ? '0' : stats.newApplications} color="secondary">
                     <Person color="secondary" sx={{ fontSize: 40 }} />
                   </Badge>
-                  <Typography variant="h6" sx={{ mt: 1 }}>
-                    New Applications
-                  </Typography>
+                  <Typography variant="h6" sx={{ mt: 1 }}>{i18n.t('auto_new_applications')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -351,9 +348,7 @@ const EmployerTabs = () => {
                   <Badge badgeContent={(stats.companyVideos ?? 0) == 0 ? '0' : stats.companyVideos} color="info">
                     <VideoLibrary color="info" sx={{ fontSize: 40 }} />
                   </Badge>
-                  <Typography variant="h6" sx={{ mt: 1 }}>
-                    Company Videos
-                  </Typography>
+                  <Typography variant="h6" sx={{ mt: 1 }}>{i18n.t('auto_company_videos')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -363,9 +358,7 @@ const EmployerTabs = () => {
                   <Badge badgeContent={(stats.profileViews ?? 0) == 0 ? '0' : stats.profileViews} color="warning">
                     <Analytics color="warning" sx={{ fontSize: 40 }} />
                   </Badge>
-                  <Typography variant="h6" sx={{ mt: 1 }}>
-                    Profile Views
-                  </Typography>
+                  <Typography variant="h6" sx={{ mt: 1 }}>{i18n.t('auto_profile_views')}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -377,7 +370,7 @@ const EmployerTabs = () => {
               <Tabs
                 value={currentTab}
                 onChange={handleTabChange}
-                aria-label="Employer Dashboard Tabs"
+                aria-label={i18n.t('auto_employer_dashboard_tabs')} 
                 variant={isMobile ? "scrollable" : "standard"}
                 scrollButtons="auto"
                 allowScrollButtonsMobile

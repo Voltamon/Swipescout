@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Search, Send, ArrowLeft, MoreVertical, Check, CheckCheck,
   RefreshCw, Loader2
@@ -298,7 +299,7 @@ const Chat = () => {
         <div className="p-4 border-b">
           <div className="flex items-center gap-2 mb-3">
             <Input
-              placeholder="Search conversations..."
+              placeholder={i18n.t('auto_search_conversations')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1"
@@ -311,9 +312,7 @@ const Chat = () => {
               size="sm"
               onClick={() => setShowAllUsers(false)}
               className="flex-1"
-            >
-              Conversations
-            </Button>
+            >{i18n.t('auto_conversations')}</Button>
             <Button
               variant={showAllUsers ? "default" : "outline"}
               size="sm"
@@ -322,9 +321,7 @@ const Chat = () => {
                 if (allUsers.length === 0) fetchConnections();
               }}
               className="flex-1"
-            >
-              Connections
-            </Button>
+            >{i18n.t('auto_connections')}</Button>
           </div>
         </div>
 
@@ -499,7 +496,7 @@ const Chat = () => {
             {/* Input */}
             <form onSubmit={handleSendMessage} className="bg-white border-t p-4 flex items-center gap-2">
               <Input
-                placeholder="Type a message..."
+                placeholder={i18n.t('auto_type_a_message')} 
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 className="flex-1"
@@ -516,8 +513,8 @@ const Chat = () => {
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-500">
             <div className="text-center">
-              <p className="text-lg font-semibold mb-2">Select a conversation</p>
-              <p className="text-sm">Choose a conversation to start messaging</p>
+              <p className="text-lg font-semibold mb-2">{i18n.t('auto_select_a_conversation')}</p>
+              <p className="text-sm">{i18n.t('auto_choose_a_conversation_to_start_messaging')}</p>
             </div>
           </div>
         )}

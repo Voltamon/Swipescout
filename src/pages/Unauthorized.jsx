@@ -1,4 +1,5 @@
-﻿import React, { useContext } from 'react';
+import i18n from 'i18next';
+import React, { useContext } from 'react';
 import { 
   Box, 
   Typography, 
@@ -36,13 +37,9 @@ const UnauthorizedPage = () => {
           }} 
         />
         
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Access Denied
-        </Typography>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>{i18n.t('auto_access_denied')}</Typography>
         
-        <Typography variant="h6" color="textSecondary" paragraph>
-          You don't have permission to view this page
-        </Typography>
+        <Typography variant="h6" color="textSecondary" paragraph>{i18n.t('auto_you_don_t_have_permission_to_view_this_p')}</Typography>
         
         <Typography variant="body1" sx={{ mb: 3 }}>
           Please contact your administrator if you believe this is an error, 
@@ -60,9 +57,7 @@ const UnauthorizedPage = () => {
                 backgroundColor: theme.palette.primary.dark
               }
             }}
-          >
-            Go to Home
-          </Button>
+          >{i18n.t('auto_go_to_home')}</Button>
           
           <Button
             variant="outlined"
@@ -74,9 +69,7 @@ const UnauthorizedPage = () => {
                 backgroundColor: theme.palette.action.hover
               }
             }}
-          >
-            Go Back
-          </Button>
+          >{i18n.t('auto_go_back')}</Button>
         </Box>
       </Paper>
     </Container>

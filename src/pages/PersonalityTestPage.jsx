@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+import i18n from 'i18next';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import localize from '../utils/localize';
 import { analyzeUserPersonality, findCompatibleJobs } from '../services/analysisApi';
@@ -94,7 +95,7 @@ const PersonalityTestPage = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center mb-4">
             <User className="h-8 w-8 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-800">Personality Assessment</h1>
+            <h1 className="text-3xl font-bold text-gray-800">{i18n.t('auto_personality_assessment')}</h1>
           </div>
           <p className="text-gray-600">
             Understand your personality to discover career paths that align with your natural strengths and preferences.
@@ -103,7 +104,7 @@ const PersonalityTestPage = () => {
 
         {!results ? (
           <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-6 text-gray-700">Assessment Questions</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-gray-700">{i18n.t('auto_assessment_questions')}</h2>
             {assessmentQuestions.map((q, index) => (
               <div key={q.id} className="mb-6">
                 <p className="font-medium text-gray-800 mb-2">{index + 1}. {q.text}</p>
@@ -138,7 +139,7 @@ const PersonalityTestPage = () => {
           </form>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700">Your Personality Profile</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-700">{i18n.t('auto_your_personality_profile')}</h2>
             {results && results.personality_type ? (
               <>
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
@@ -153,13 +154,13 @@ const PersonalityTestPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="font-semibold text-lg mb-2 text-gray-800">Strengths</h3>
+                        <h3 className="font-semibold text-lg mb-2 text-gray-800">{i18n.t('auto_strengths')}</h3>
         <ul className="list-disc list-inside text-gray-600 space-y-1">
       {Array.isArray(results.personality_type.strengths) ? results.personality_type.strengths.map((s, i) => <li key={`strength-${i}-${JSON.stringify(s)}`}>{String(localize(s))}</li>) : <li key="strength-single">{String(localize(results.personality_type.strengths))}</li>}
         </ul>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="font-semibold text-lg mb-2 text-gray-800">Areas for Growth</h3>
+                        <h3 className="font-semibold text-lg mb-2 text-gray-800">{i18n.t('auto_areas_for_growth')}</h3>
             <ul className="list-disc list-inside text-gray-600 space-y-1">
               {Array.isArray(results.personality_type.weaknesses) ? results.personality_type.weaknesses.map((w, i) => <li key={`weakness-${i}-${JSON.stringify(w)}`}>{String(localize(w))}</li>) : <li key="weakness-single">{String(localize(results.personality_type.weaknesses))}</li>}
             </ul>
@@ -167,7 +168,7 @@ const PersonalityTestPage = () => {
                 </div>
               </>
             ) : (
-              <p className="text-red-600">Error loading personality profile data.</p>
+              <p className="text-red-600">{i18n.t('auto_error_loading_personality_profile_data')}</p>
             )}
             
             <div className="text-center">
@@ -178,16 +179,14 @@ const PersonalityTestPage = () => {
                 >
                     <span className="inline-flex items-center">
                       {loadingJobs ? <Loader className="animate-spin mr-2" /> : <Zap className="mr-2" />}
-                    </span>
-                    Find Compatible Jobs
-                </button>
+                    </span>{i18n.t('auto_find_compatible_jobs')}</button>
             </div>
           </div>
         )}
 
         {compatibleJobs.length > 0 && (
             <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-700">Recommended Career Paths</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-700">{i18n.t('auto_recommended_career_paths')}</h2>
                 <div className="space-y-4">
                     {compatibleJobs.map((jobMatch, index) => {
                       // Extract job name from various possible locations
@@ -235,31 +234,31 @@ const PersonalityTestPage = () => {
                               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 mt-3 text-xs">
                                 {jobMatch.matchingFactors.workStyleMatch !== undefined && (
                                   <div className="bg-blue-50 p-2 rounded">
-                                    <p className="text-gray-600">Work Style</p>
+                                    <p className="text-gray-600">{i18n.t('auto_work_style')}</p>
                                     <p className="font-semibold text-blue-700">{jobMatch.matchingFactors.workStyleMatch}%</p>
                                   </div>
                                 )}
                                 {jobMatch.matchingFactors.skillsAlignment !== undefined && (
                                   <div className="bg-green-50 p-2 rounded">
-                                    <p className="text-gray-600">Skills</p>
+                                    <p className="text-gray-600">{i18n.t('auto_skills_1')}</p>
                                     <p className="font-semibold text-green-700">{jobMatch.matchingFactors.skillsAlignment}%</p>
                                   </div>
                                 )}
                                 {jobMatch.matchingFactors.interestsAlignment !== undefined && (
                                   <div className="bg-purple-50 p-2 rounded">
-                                    <p className="text-gray-600">Interests</p>
+                                    <p className="text-gray-600">{i18n.t('auto_interests')}</p>
                                     <p className="font-semibold text-purple-700">{jobMatch.matchingFactors.interestsAlignment}%</p>
                                   </div>
                                 )}
                                 {jobMatch.matchingFactors.valuesAlignment !== undefined && (
                                   <div className="bg-yellow-50 p-2 rounded">
-                                    <p className="text-gray-600">Values</p>
+                                    <p className="text-gray-600">{i18n.t('auto_values')}</p>
                                     <p className="font-semibold text-yellow-700">{jobMatch.matchingFactors.valuesAlignment}%</p>
                                   </div>
                                 )}
                                 {jobMatch.matchingFactors.environmentMatch !== undefined && (
                                   <div className="bg-pink-50 p-2 rounded">
-                                    <p className="text-gray-600">Environment</p>
+                                    <p className="text-gray-600">{i18n.t('auto_environment')}</p>
                                     <p className="font-semibold text-pink-700">{jobMatch.matchingFactors.environmentMatch}%</p>
                                   </div>
                                 )}

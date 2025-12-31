@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';
@@ -38,14 +39,14 @@ const CreditsPage = () => {
                 {t('open_source', 'Open Source Libraries & Frameworks')}
               </h3>
               <ul className="list-disc list-inside space-y-2">
-                <li>React</li>
-                <li>Vite</li>
-                <li>Tailwind CSS</li>
+                <li>{i18n.t('auto_react')}</li>
+                <li>{i18n.t('auto_vite')}</li>
+                <li>{i18n.t('auto_tailwind_css')}</li>
                 <li>shadcn/ui</li>
-                <li>Lucide React</li>
-                <li>React Router</li>
-                <li>i18next</li>
-                <li>And many more...</li>
+                <li>{i18n.t('auto_lucide_react')}</li>
+                <li>{i18n.t('auto_react_router')}</li>
+                <li>{i18n.t('auto_i18next')}</li>
+                <li>{i18n.t('auto_and_many_more')}</li>
               </ul>
 
               <h3 className={`text-xl font-semibold ${homeThemeColors.titleText} mt-6 mb-3`}>

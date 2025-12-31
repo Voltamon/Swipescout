@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -351,7 +352,7 @@ const JobSeekerDashboard = () => {
     paddingBottom: 4,
 }}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h4">Dashboard</Typography>
+                <Typography variant="h4">{i18n.t('auto_dashboard')}</Typography>
 
                 <Box>
                     <Button
@@ -360,17 +361,13 @@ const JobSeekerDashboard = () => {
                         startIcon={<PlayCircleOutlineIcon />}
                         sx={{ mr: 1 }}
                         onClick={handleUploadVideoClick} // <--- navigate to tab
-                    >
-                        Upload Video CV
-                    </Button>
+                    >{i18n.t('auto_upload_video_cv')}</Button>
 
                     <Button
                         variant="outlined"
                         startIcon={<AddIcon />}
                         onClick={handleOpenAddSkill} // <--- open dialog
-                    >
-                        Add Skills
-                    </Button>
+                    >{i18n.t('auto_add_skills')}</Button>
                 </Box>
             </Box>
 
@@ -385,9 +382,7 @@ const JobSeekerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.profile_views ?? stats?.profileViews ?? 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Profile Views
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_profile_views')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -401,9 +396,7 @@ const JobSeekerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.matches || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Matches
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_matches')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -417,9 +410,7 @@ const JobSeekerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.applications || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Applications
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_applications')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -433,9 +424,7 @@ const JobSeekerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.unread_messages || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Unread Messages
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_unread_messages')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -445,9 +434,7 @@ const JobSeekerDashboard = () => {
             <Grid container spacing={3}>
                 <Grid item xs={12} md={8}>
                     <Paper sx={{ p: 3, mb: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Profile Activity
-                        </Typography>
+                        <Typography variant="h6" gutterBottom>{i18n.t('auto_profile_activity')}</Typography>
                         <Box sx={{ height: 300 }}>
                             <Line
                                 data={activityChartData}
@@ -467,9 +454,7 @@ const JobSeekerDashboard = () => {
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6}>
                             <Paper sx={{ p: 3 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Job Engagement
-                                </Typography>
+                                <Typography variant="h6" gutterBottom>{i18n.t('auto_job_engagement')}</Typography>
                                 <Box sx={{ height: 250 }}>
                                     <Doughnut
                                         data={swipeChartData}
@@ -484,9 +469,7 @@ const JobSeekerDashboard = () => {
 
                         <Grid item xs={12} sm={6}>
                             <Paper sx={{ p: 3 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Skill Level
-                                </Typography>
+                                <Typography variant="h6" gutterBottom>{i18n.t('auto_skill_level')}</Typography>
                                 <Box sx={{ height: 250 }}>
                                     <Bar
                                         data={skillsChartData}
@@ -510,9 +493,7 @@ const JobSeekerDashboard = () => {
                 <Grid item xs={12} md={4}>
                     <Paper sx={{ mb: 3 }}>
                         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="h6">
-                                Recent Activities
-                            </Typography>
+                            <Typography variant="h6">{i18n.t('auto_recent_activities')}</Typography>
                             <IconButton size="small">
                                 <NotificationsIcon />
                             </IconButton>
@@ -547,16 +528,12 @@ const JobSeekerDashboard = () => {
 
                     <Paper>
                         <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="h6">
-                                Recommended Jobs
-                            </Typography>
+                            <Typography variant="h6">{i18n.t('auto_recommended_jobs')}</Typography>
                             <Button
                                 endIcon={<ArrowForwardIcon />}
                                 size="small"
                                 onClick={() => setViewAllOpen(true)}
-                            >
-                                View All
-                            </Button>
+                            >{i18n.t('auto_view_all')}</Button>
                         </Box>
 
                         <List sx={{ maxHeight: 350, overflow: 'auto' }}>
@@ -613,9 +590,7 @@ const JobSeekerDashboard = () => {
 
             {/* Tips and Improvements Section */}
             <Paper sx={{ p: 3, mt: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                    Tips to Improve Your Chances
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_tips_to_improve_your_chances')}</Typography>
 
                 <Grid container spacing={2} sx={{ mt: 1 }}>
                     <Grid item xs={12} sm={4}>
@@ -623,13 +598,9 @@ const JobSeekerDashboard = () => {
                             <CardContent>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                     <TrendingUpIcon color="primary" sx={{ mr: 1 }} />
-                                    <Typography variant="subtitle1">
-                                        Complete Your Profile
-                                    </Typography>
+                                    <Typography variant="subtitle1">{i18n.t('auto_complete_your_profile_1')}</Typography>
                                 </Box>
-                                <Typography variant="body2" color="textSecondary">
-                                    Complete profiles get more attention from employers.
-                                </Typography>
+                                <Typography variant="body2" color="textSecondary">{i18n.t('auto_complete_profiles_get_more_attention_fro')}</Typography>
                                 <LinearProgress
                                     variant="determinate"
                                     value={stats?.profile_completion || 0}
@@ -647,9 +618,7 @@ const JobSeekerDashboard = () => {
                             <CardContent>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                     <PlayCircleOutlineIcon color="primary" sx={{ mr: 1 }} />
-                                    <Typography variant="subtitle1">
-                                        Add Video CV
-                                    </Typography>
+                                    <Typography variant="subtitle1">{i18n.t('auto_add_video_cv')}</Typography>
                                 </Box>
                                 <Typography variant="body2" color="textSecondary">
                                     A video increases matching chances by 70% and makes you stand out.
@@ -660,9 +629,7 @@ const JobSeekerDashboard = () => {
                                     fullWidth
                                     sx={{ mt: 2 }}
                                     onClick={handleUploadVideoClick}
-                                >
-                                    Upload Video
-                                </Button>
+                                >{i18n.t('auto_upload_video')}</Button>
                             </CardContent>
                         </Card>
                     </Grid>
@@ -672,9 +639,7 @@ const JobSeekerDashboard = () => {
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <WorkIcon color="primary" sx={{ mr: 1 }} />
-                                <Typography variant="subtitle1">
-                                    Update Your Skills
-                                </Typography>
+                                <Typography variant="subtitle1">{i18n.t('auto_update_your_skills')}</Typography>
                             </Box>
                             <Typography variant="body2" color="textSecondary">
                                 Add the most in-demand skills in your field to increase your visibility.
@@ -685,9 +650,7 @@ const JobSeekerDashboard = () => {
                                     fullWidth
                                     sx={{ mt: 2 }}
                                     onClick={handleOpenAddSkill}
-                                >
-                                    Add Skills
-                                </Button>
+                                >{i18n.t('auto_add_skills')}</Button>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -696,30 +659,30 @@ const JobSeekerDashboard = () => {
 
         {/* Add Skill Dialog */}
         <Dialog open={openAddSkillDialog} onClose={handleCloseAddSkill} maxWidth="sm" fullWidth>
-            <DialogTitle>Add a Skill</DialogTitle>
+            <DialogTitle>{i18n.t('auto_add_a_skill')}</DialogTitle>
             <DialogContent>
                 <TextField
-                    label="Skill name"
+                    label={i18n.t('auto_skill_name_1')} 
                     value={newSkillName}
                     onChange={(e) => setNewSkillName(e.target.value)}
                     fullWidth
                     sx={{ mb: 2 }}
                 />
                 <FormControl fullWidth sx={{ mb: 2 }}>
-                    <InputLabel>Level</InputLabel>
+                    <InputLabel>{i18n.t('auto_level')}</InputLabel>
                     <Select
                         value={newSkillLevel}
-                        label="Level"
+                        label={i18n.t('auto_level')} 
                         onChange={(e) => setNewSkillLevel(e.target.value)}
                     >
-                        <MenuItem value="Beginner">Beginner</MenuItem>
-                        <MenuItem value="Intermediate">Intermediate</MenuItem>
-                        <MenuItem value="Advanced">Advanced</MenuItem>
-                        <MenuItem value="Expert">Expert</MenuItem>
+                        <MenuItem value="Beginner">{i18n.t('auto_beginner')}</MenuItem>
+                        <MenuItem value="Intermediate">{i18n.t('auto_intermediate')}</MenuItem>
+                        <MenuItem value="Advanced">{i18n.t('auto_advanced')}</MenuItem>
+                        <MenuItem value="Expert">{i18n.t('auto_expert')}</MenuItem>
                     </Select>
                 </FormControl>
                 <TextField
-                    label="Years of experience"
+                    label={i18n.t('auto_years_of_experience')} 
                     type="number"
                     value={newSkillYears}
                     onChange={(e) => setNewSkillYears(e.target.value)}
@@ -727,7 +690,7 @@ const JobSeekerDashboard = () => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCloseAddSkill} disabled={addingSkill}>Cancel</Button>
+                <Button onClick={handleCloseAddSkill} disabled={addingSkill}>{i18n.t('auto_cancel')}</Button>
                 <Button onClick={handleConfirmAddSkill} variant="contained" disabled={addingSkill}>
                     {addingSkill ? <CircularProgress size={20} /> : "Add Skill"}
                 </Button>
@@ -735,7 +698,7 @@ const JobSeekerDashboard = () => {
         </Dialog>
         {/* View All Recommendations Dialog */}
         <Dialog open={viewAllOpen} onClose={() => setViewAllOpen(false)} maxWidth="md" fullWidth>
-            <DialogTitle>Recommended Jobs</DialogTitle>
+            <DialogTitle>{i18n.t('auto_recommended_jobs')}</DialogTitle>
             <DialogContent>
                 <List>
                     {recommendations.length === 0 ? (
@@ -758,11 +721,11 @@ const JobSeekerDashboard = () => {
             </DialogContent>
             <DialogActions sx={{ justifyContent: 'space-between', px: 3 }}> 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Button onClick={() => setViewAllPage(p => Math.max(1, p - 1))} disabled={viewAllPage === 1}>Previous</Button>
+                    <Button onClick={() => setViewAllPage(p => Math.max(1, p - 1))} disabled={viewAllPage === 1}>{i18n.t('auto_previous')}</Button>
                     <Typography variant="body2">Page {viewAllPage} of {Math.max(1, Math.ceil(recommendations.length / itemsPerPage))}</Typography>
-                    <Button onClick={() => setViewAllPage(p => Math.min(Math.ceil(recommendations.length / itemsPerPage), p + 1))} disabled={viewAllPage >= Math.ceil(recommendations.length / itemsPerPage)}>Next</Button>
+                    <Button onClick={() => setViewAllPage(p => Math.min(Math.ceil(recommendations.length / itemsPerPage), p + 1))} disabled={viewAllPage >= Math.ceil(recommendations.length / itemsPerPage)}>{i18n.t('auto_next')}</Button>
                 </Box>
-                <Button onClick={() => setViewAllOpen(false)}>Close</Button>
+                <Button onClick={() => setViewAllOpen(false)}>{i18n.t('auto_close')}</Button>
             </DialogActions>
         </Dialog>
     </DashboardContainer>

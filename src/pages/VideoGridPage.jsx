@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useEffect, useCallback, useMemo  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 import {
   Box,
   Container,
@@ -539,7 +540,7 @@ const sortOptions = [
                   p: 2,
                 }}
               >
-                {loading && <Typography>Loading more videos...</Typography>}
+                {loading && <Typography>{i18n.t('auto_loading_more_videos')}</Typography>}
               </Box>
             )}
 

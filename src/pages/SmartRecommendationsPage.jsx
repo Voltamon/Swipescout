@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -256,16 +257,12 @@ export default function SmartRecommendationsPage() {
               size="small"
               variant="outlined"
               onClick={() => window.open(`/jobs/${job.id}`, '_blank')}
-            >
-              View Job
-            </Button>
+            >{i18n.t('auto_view_job')}</Button>
             <Button
               size="small"
               variant="contained"
               onClick={() => window.open(`/jobs/${job.id}/apply`, '_blank')}
-            >
-              Apply Now
-            </Button>
+            >{i18n.t('auto_apply_now')}</Button>
           </Box>
         </Box>
       </CardContent>
@@ -366,16 +363,12 @@ export default function SmartRecommendationsPage() {
               size="small"
               variant="outlined"
               onClick={() => window.open(`/candidate/${candidate.id}`, '_blank')}
-            >
-              View Profile
-            </Button>
+            >{i18n.t('auto_view_profile')}</Button>
             <Button
               size="small"
               variant="contained"
               onClick={() => handleAnalyzeMatch(candidate.id, selectedJobId)}
-            >
-              Analyze Match
-            </Button>
+            >{i18n.t('auto_analyze_match')}</Button>
           </Box>
         </Box>
       </CardContent>
@@ -388,18 +381,14 @@ export default function SmartRecommendationsPage() {
       <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Market Overview
-            </Typography>
+            <Typography variant="h6" gutterBottom>{i18n.t('auto_market_overview')}</Typography>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6} md={3}>
                 <Box textAlign="center">
                   <Typography variant="h4" color="primary.main" fontWeight="bold">
                     {marketInsights?.marketStats?.totalJobs || 0}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Active Jobs
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_active_jobs')}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -407,9 +396,7 @@ export default function SmartRecommendationsPage() {
                   <Typography variant="h4" color="success.main" fontWeight="bold">
                     ${(marketInsights?.marketStats?.avgSalary || 0).toLocaleString()}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Average Salary
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_average_salary')}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -417,9 +404,7 @@ export default function SmartRecommendationsPage() {
                   <Typography variant="h4" color="info.main" fontWeight="bold">
                     {marketInsights?.marketStats?.remoteJobsPercentage || 0}%
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Remote Jobs
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_remote_jobs')}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -427,9 +412,7 @@ export default function SmartRecommendationsPage() {
                   <Typography variant="h4" color="warning.main" fontWeight="bold">
                     {marketInsights?.trendingSkills?.length || 0}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Trending Skills
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_trending_skills')}</Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -442,9 +425,7 @@ export default function SmartRecommendationsPage() {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              <TrendingUp sx={{ mr: 1, verticalAlign: 'middle' }} />
-              Trending Skills
-            </Typography>
+              <TrendingUp sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_trending_skills')}</Typography>
             <List dense>
               {marketInsights?.trendingSkills?.slice(0, 10).map((skill, index) => (
                 <ListItem key={index}>
@@ -469,9 +450,7 @@ export default function SmartRecommendationsPage() {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              <AttachMoney sx={{ mr: 1, verticalAlign: 'middle' }} />
-              Salary Trends by Role
-            </Typography>
+              <AttachMoney sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_salary_trends_by_role')}</Typography>
             <List dense>
               {marketInsights?.salaryTrends?.slice(0, 10).map((trend, index) => (
                 <ListItem key={index}>
@@ -494,9 +473,7 @@ export default function SmartRecommendationsPage() {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              <LocationOn sx={{ mr: 1, verticalAlign: 'middle' }} />
-              Top Job Markets
-            </Typography>
+              <LocationOn sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_top_job_markets')}</Typography>
             <Grid container spacing={2}>
               {marketInsights?.topLocations?.map((location, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
@@ -521,9 +498,7 @@ export default function SmartRecommendationsPage() {
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box display="flex" alignItems="center" mb={4}>
         <Psychology sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
-        <Typography variant="h4" fontWeight="bold">
-          Smart Recommendations
-        </Typography>
+        <Typography variant="h4" fontWeight="bold">{i18n.t('auto_smart_recommendations')}</Typography>
       </Box>
 
       <Tabs 
@@ -532,17 +507,17 @@ export default function SmartRecommendationsPage() {
         sx={{ mb: 3 }}
       >
         <Tab 
-          label="Job Recommendations" 
+          label={i18n.t('auto_job_recommendations')}  
           icon={<Work />} 
           iconPosition="start"
         />
         <Tab 
-          label="Candidate Recommendations" 
+          label={i18n.t('auto_candidate_recommendations')}  
           icon={<Person />} 
           iconPosition="start"
         />
         <Tab 
-          label="Market Insights" 
+          label={i18n.t('auto_market_insights')}  
           icon={<Insights />} 
           iconPosition="start"
         />
@@ -576,16 +551,16 @@ export default function SmartRecommendationsPage() {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <FormControl fullWidth>
-                    <InputLabel>Results Limit</InputLabel>
+                    <InputLabel>{i18n.t('auto_results_limit')}</InputLabel>
                     <Select
                       value={jobLimit}
                       onChange={(e) => setJobLimit(e.target.value)}
-                      label="Results Limit"
+                      label={i18n.t('auto_results_limit')} 
                     >
-                      <MenuItem value={5}>5 jobs</MenuItem>
-                      <MenuItem value={10}>10 jobs</MenuItem>
-                      <MenuItem value={20}>20 jobs</MenuItem>
-                      <MenuItem value={50}>50 jobs</MenuItem>
+                      <MenuItem value={5}>{i18n.t('auto_5_jobs')}</MenuItem>
+                      <MenuItem value={10}>{i18n.t('auto_10_jobs')}</MenuItem>
+                      <MenuItem value={20}>{i18n.t('auto_20_jobs')}</MenuItem>
+                      <MenuItem value={50}>{i18n.t('auto_50_jobs')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -596,9 +571,7 @@ export default function SmartRecommendationsPage() {
                     onClick={fetchJobRecommendations}
                     disabled={loading}
                     fullWidth
-                  >
-                    Refresh Recommendations
-                  </Button>
+                  >{i18n.t('auto_refresh_recommendations')}</Button>
                 </Grid>
               </Grid>
             </CardContent>
@@ -611,18 +584,14 @@ export default function SmartRecommendationsPage() {
           ) : jobRecommendations.length === 0 ? (
             <Box textAlign="center" py={8}>
               <EmojiObjects sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary" mb={2}>
-                No job recommendations found
-              </Typography>
+              <Typography variant="h6" color="text.secondary" mb={2}>{i18n.t('auto_no_job_recommendations_found')}</Typography>
               <Typography variant="body2" color="text.secondary" mb={3}>
                 Try lowering the minimum match score or update your profile for better recommendations.
               </Typography>
               <Button
                 variant="contained"
                 onClick={() => window.location.href = '/profile'}
-              >
-                Update Profile
-              </Button>
+              >{i18n.t('auto_update_profile')}</Button>
             </Box>
           ) : (
             <Box>
@@ -645,13 +614,13 @@ export default function SmartRecommendationsPage() {
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={3}>
                   <FormControl fullWidth>
-                    <InputLabel>Select Job</InputLabel>
+                    <InputLabel>{i18n.t('auto_select_job')}</InputLabel>
                     <Select
                       value={selectedJobId}
                       onChange={(e) => setSelectedJobId(e.target.value)}
-                      label="Select Job"
+                      label={i18n.t('auto_select_job')} 
                     >
-                      <MenuItem value="">Select a job...</MenuItem>
+                      <MenuItem value="">{i18n.t('auto_select_a_job_1')}</MenuItem>
                       {/* This would be populated with user's job postings */}
                     </Select>
                   </FormControl>
@@ -672,16 +641,16 @@ export default function SmartRecommendationsPage() {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <FormControl fullWidth>
-                    <InputLabel>Results Limit</InputLabel>
+                    <InputLabel>{i18n.t('auto_results_limit')}</InputLabel>
                     <Select
                       value={candidateLimit}
                       onChange={(e) => setCandidateLimit(e.target.value)}
-                      label="Results Limit"
+                      label={i18n.t('auto_results_limit')} 
                     >
-                      <MenuItem value={5}>5 candidates</MenuItem>
-                      <MenuItem value={10}>10 candidates</MenuItem>
-                      <MenuItem value={20}>20 candidates</MenuItem>
-                      <MenuItem value={50}>50 candidates</MenuItem>
+                      <MenuItem value={5}>{i18n.t('auto_5_candidates')}</MenuItem>
+                      <MenuItem value={10}>{i18n.t('auto_10_candidates')}</MenuItem>
+                      <MenuItem value={20}>{i18n.t('auto_20_candidates')}</MenuItem>
+                      <MenuItem value={50}>{i18n.t('auto_50_candidates')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -692,9 +661,7 @@ export default function SmartRecommendationsPage() {
                     onClick={fetchCandidateRecommendations}
                     disabled={loading || !selectedJobId}
                     fullWidth
-                  >
-                    Find Candidates
-                  </Button>
+                  >{i18n.t('auto_find_candidates')}</Button>
                 </Grid>
               </Grid>
             </CardContent>
@@ -703,9 +670,7 @@ export default function SmartRecommendationsPage() {
           {!selectedJobId ? (
             <Box textAlign="center" py={8}>
               <Business sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary" mb={2}>
-                Select a job to find matching candidates
-              </Typography>
+              <Typography variant="h6" color="text.secondary" mb={2}>{i18n.t('auto_select_a_job_to_find_matching_candidates')}</Typography>
               <Typography variant="body2" color="text.secondary">
                 Choose one of your job postings to get AI-powered candidate recommendations.
               </Typography>
@@ -717,9 +682,7 @@ export default function SmartRecommendationsPage() {
           ) : candidateRecommendations.length === 0 ? (
             <Box textAlign="center" py={8}>
               <Person sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary" mb={2}>
-                No matching candidates found
-              </Typography>
+              <Typography variant="h6" color="text.secondary" mb={2}>{i18n.t('auto_no_matching_candidates_found')}</Typography>
               <Typography variant="body2" color="text.secondary">
                 Try lowering the minimum match score or check back later for new candidates.
               </Typography>
@@ -749,9 +712,7 @@ export default function SmartRecommendationsPage() {
               startIcon={<Refresh />}
               onClick={fetchMarketInsights}
               disabled={loading}
-            >
-              Refresh Data
-            </Button>
+            >{i18n.t('auto_refresh_data')}</Button>
           </Box>
 
           {loading ? (
@@ -763,9 +724,7 @@ export default function SmartRecommendationsPage() {
           ) : (
             <Box textAlign="center" py={8}>
               <Assessment sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary" mb={2}>
-                No market data available
-              </Typography>
+              <Typography variant="h6" color="text.secondary" mb={2}>{i18n.t('auto_no_market_data_available')}</Typography>
               <Typography variant="body2" color="text.secondary">
                 Market insights will be available once there's sufficient data.
               </Typography>
@@ -781,18 +740,14 @@ export default function SmartRecommendationsPage() {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>
-          Match Analysis
-        </DialogTitle>
+        <DialogTitle>{i18n.t('auto_match_analysis')}</DialogTitle>
         <DialogContent>
           {matchAnalysis && (
             <Box>
               <Grid container spacing={3} mb={3}>
                 <Grid item xs={12} md={6}>
                   <Paper sx={{ p: 2 }}>
-                    <Typography variant="h6" gutterBottom>
-                      Candidate
-                    </Typography>
+                    <Typography variant="h6" gutterBottom>{i18n.t('auto_candidate')}</Typography>
                     <Typography variant="body1" fontWeight="bold">
                       {matchAnalysis.candidate.name}
                     </Typography>
@@ -806,9 +761,7 @@ export default function SmartRecommendationsPage() {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Paper sx={{ p: 2 }}>
-                    <Typography variant="h6" gutterBottom>
-                      Job Position
-                    </Typography>
+                    <Typography variant="h6" gutterBottom>{i18n.t('auto_job_position')}</Typography>
                     <Typography variant="body1" fontWeight="bold">
                       {matchAnalysis.job.title}
                     </Typography>
@@ -826,9 +779,7 @@ export default function SmartRecommendationsPage() {
                 <Typography variant="h4" color="primary.main" fontWeight="bold">
                   {matchAnalysis.analysis.compatibilityScore}%
                 </Typography>
-                <Typography variant="h6" color="text.secondary">
-                  Compatibility Score
-                </Typography>
+                <Typography variant="h6" color="text.secondary">{i18n.t('auto_compatibility_score')}</Typography>
                 <LinearProgress
                   variant="determinate"
                   value={matchAnalysis.analysis.compatibilityScore}
@@ -840,9 +791,7 @@ export default function SmartRecommendationsPage() {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
                   <Typography variant="h6" gutterBottom color="success.main">
-                    <Lightbulb sx={{ mr: 1, verticalAlign: 'middle' }} />
-                    Strengths
-                  </Typography>
+                    <Lightbulb sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_strengths')}</Typography>
                   <List dense>
                     {matchAnalysis.analysis.strengths.map((strength, index) => (
                       <ListItem key={index}>
@@ -854,9 +803,7 @@ export default function SmartRecommendationsPage() {
                 
                 <Grid item xs={12} md={4}>
                   <Typography variant="h6" gutterBottom color="warning.main">
-                    <Assessment sx={{ mr: 1, verticalAlign: 'middle' }} />
-                    Concerns
-                  </Typography>
+                    <Assessment sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_concerns')}</Typography>
                   <List dense>
                     {matchAnalysis.analysis.concerns.map((concern, index) => (
                       <ListItem key={index}>
@@ -868,9 +815,7 @@ export default function SmartRecommendationsPage() {
                 
                 <Grid item xs={12} md={4}>
                   <Typography variant="h6" gutterBottom color="info.main">
-                    <EmojiObjects sx={{ mr: 1, verticalAlign: 'middle' }} />
-                    Recommendations
-                  </Typography>
+                    <EmojiObjects sx={{ mr: 1, verticalAlign: 'middle' }} />{i18n.t('auto_recommendations')}</Typography>
                   <List dense>
                     {matchAnalysis.analysis.recommendations.map((recommendation, index) => (
                       <ListItem key={index}>
@@ -884,9 +829,7 @@ export default function SmartRecommendationsPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAnalysisDialog(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setAnalysisDialog(false)}>{i18n.t('auto_close')}</Button>
         </DialogActions>
       </Dialog>
     </Container>

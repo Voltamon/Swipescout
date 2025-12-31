@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   getLikedVideos, 
@@ -243,9 +244,7 @@ export default function LikedVideosPage() {
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-          Liked Videos
-        </h1>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">{i18n.t('auto_liked_videos')}</h1>
         <p className="text-muted-foreground">
           Videos you've liked ({likedVideos.length} videos)
         </p>
@@ -256,7 +255,7 @@ export default function LikedVideosPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search liked videos..."
+            placeholder={i18n.t('auto_search_liked_videos')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -269,9 +268,9 @@ export default function LikedVideosPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Videos</SelectItem>
-            <SelectItem value="jobseeker">Job Seekers</SelectItem>
-            <SelectItem value="employer">Employers</SelectItem>
+            <SelectItem value="all">{i18n.t('auto_all_videos')}</SelectItem>
+            <SelectItem value="jobseeker">{i18n.t('auto_job_seekers')}</SelectItem>
+            <SelectItem value="employer">{i18n.t('auto_employers')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -281,9 +280,9 @@ export default function LikedVideosPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="liked_date">Recently Liked</SelectItem>
-            <SelectItem value="upload_date">Recently Uploaded</SelectItem>
-            <SelectItem value="title">Title (A-Z)</SelectItem>
+            <SelectItem value="liked_date">{i18n.t('auto_recently_liked')}</SelectItem>
+            <SelectItem value="upload_date">{i18n.t('auto_recently_uploaded')}</SelectItem>
+            <SelectItem value="title">{i18n.t('auto_title_a_z')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -313,9 +312,7 @@ export default function LikedVideosPage() {
                 {/* Liked Badge */}
                 <div className="absolute top-3 right-3">
                   <Badge className="bg-pink-100 text-pink-800">
-                    <Heart className="h-3 w-3 mr-1 fill-current" />
-                    Liked
-                  </Badge>
+                    <Heart className="h-3 w-3 mr-1 fill-current" />{i18n.t('auto_liked')}</Badge>
                 </div>
 
                 {/* Hover Play Icon */}
@@ -352,9 +349,7 @@ export default function LikedVideosPage() {
                     className="flex-1"
                     onClick={() => handleVideoClick(video)}
                   >
-                    <Eye className="h-3 w-3 mr-1" />
-                    Watch
-                  </Button>
+                    <Eye className="h-3 w-3 mr-1" />{i18n.t('auto_watch')}</Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -399,9 +394,7 @@ export default function LikedVideosPage() {
                 : 'Start liking videos to build your collection'}
             </p>
             {!searchQuery && (
-              <Button onClick={() => navigate('/jobseeker-tabs?group=discovery&tab=all-videos')}>
-                Discover Videos
-              </Button>
+              <Button onClick={() => navigate('/jobseeker-tabs?group=discovery&tab=all-videos')}>{i18n.t('auto_discover_videos')}</Button>
             )}
           </CardContent>
         </Card>

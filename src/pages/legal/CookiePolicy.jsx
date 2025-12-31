@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Headers/Header';
@@ -84,9 +85,7 @@ const CookiePolicy = () => {
             to="/"
             className={`inline-flex items-center mb-4 ${homeThemeColors.text.secondary} hover:text-blue-500 transition-colors`}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Link>
+            <ArrowLeft className="w-4 h-4 mr-2" />{i18n.t('auto_back_to_home')}</Link>
           <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
             <h1 className={`text-4xl sm:text-5xl font-extrabold ${homeThemeColors.text.gradient}`}>
               {t("legal.cookiePolicy.title")}

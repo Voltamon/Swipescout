@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from "react";
+import i18n from 'i18next';
+import React, { useState, useEffect } from "react";
 import { Bell, Briefcase, MessageSquare, Heart, UserPlus, Calendar, Check, Trash2, Loader2, RotateCw } from "lucide-react";
 import { Card, CardContent } from "@/components/UI/card.jsx";
 import { Button } from "@/components/UI/button.jsx";
@@ -168,9 +169,7 @@ const NotificationsPage = () => {
     <div className="container mx-auto py-6 px-4 max-w-4xl">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-            Notifications
-          </h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">{i18n.t('auto_notifications')}</h1>
           {unreadCount > 0 && (
             <p className="text-sm text-gray-600 mt-1">{unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</p>
           )}
@@ -182,8 +181,7 @@ const NotificationsPage = () => {
             variant="outline"
             className="border-purple-600 text-purple-600 hover:bg-purple-50"
           >
-            <Check className="h-4 w-4 mr-2" />
-            Mark all as read
+            <Check className="h-4 w-4 mr-2" />{i18n.t('auto_mark_all_as_read')}
           </Button>
         ) : (
           notifications.length > 0 && (
@@ -192,9 +190,7 @@ const NotificationsPage = () => {
               variant="outline"
               className="border-gray-600 text-gray-600 hover:bg-gray-50"
             >
-              <RotateCw className="h-4 w-4 mr-2" />
-              Mark all as unread
-            </Button>
+              <RotateCw className="h-4 w-4 mr-2" />{i18n.t('auto_mark_all_as_unread')}</Button>
           )
         )}
       </div>
@@ -229,7 +225,7 @@ const NotificationsPage = () => {
         <Card>
           <CardContent className="py-12 text-center">
             <Bell className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-lg font-semibold mb-2">No notifications</h3>
+            <h3 className="text-lg font-semibold mb-2">{i18n.t('auto_no_notifications')}</h3>
             <p className="text-gray-600">
               {filter === 'unread' 
                 ? "You're all caught up! No unread notifications." 
@@ -289,7 +285,7 @@ const NotificationsPage = () => {
                     <div className="flex items-center gap-2">
                     {!notification.read ? (
                       <>
-                        <Badge className="bg-purple-600">New</Badge>
+                        <Badge className="bg-purple-600">{i18n.t('auto_new')}</Badge>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -305,7 +301,7 @@ const NotificationsPage = () => {
                         size="icon"
                         onClick={(e) => { e.stopPropagation(); handleMarkAsUnread(notification.id); }}
                         className="hover:bg-gray-100"
-                        title="Mark as unread"
+                        title={i18n.t('auto_mark_as_unread')} 
                       >
                         <RotateCw className="h-4 w-4" />
                       </Button>
@@ -313,12 +309,8 @@ const NotificationsPage = () => {
 
                     {notification.type === 'connection_request' && (
                       <div className="flex items-center gap-2">
-                        <Button variant="default" size="sm" onClick={(e) => { e.stopPropagation(); handleAccept(notification); }}>
-                          Accept
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleRejectNotification(notification); }}>
-                          Decline
-                        </Button>
+                        <Button variant="default" size="sm" onClick={(e) => { e.stopPropagation(); handleAccept(notification); }}>{i18n.t('auto_accept')}</Button>
+                        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleRejectNotification(notification); }}>{i18n.t('auto_decline')}</Button>
                       </div>
                     )}
                     <Button

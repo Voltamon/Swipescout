@@ -1,4 +1,5 @@
-﻿import React, { useContext } from "react";
+import i18n from 'i18next';
+import React, { useContext } from "react";
 import {
   Box,
   useTheme,
@@ -42,9 +43,7 @@ const MyApplications = () => {
       }}
     >
 
-      <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2 }}>
-        My Applications
-      </Typography>
+      <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2 }}>{i18n.t('auto_my_applications')}</Typography>
 
       <Stack spacing={3} alignItems="center">
         {appliedJobs.map((job, index) => (

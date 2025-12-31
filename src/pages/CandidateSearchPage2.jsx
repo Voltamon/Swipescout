@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+import i18n from 'i18next';
+import React, { useState } from 'react';
 import { 
   AppBar, 
   Toolbar, 
@@ -152,22 +153,21 @@ const Header = () => {
     <AppBar position="sticky" color="default" elevation={1}>
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <Typography variant="h6" className={classes.logo}>
-            Swip<span>scout</span>
+          <Typography variant="h6" className={classes.logo}>{i18n.t('auto_swip')}<span>{i18n.t('auto_scout')}</span>
           </Typography>
           
           <Box sx={{ flexGrow: 1 }} />
           
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Button color="inherit">Home</Button>
-            <Button color="inherit">Jobs</Button>
-            <Button color="inherit">Candidates</Button>
-            <Button color="inherit">Profile</Button>
-            <Button color="inherit">Logout</Button>
+            <Button color="inherit">{i18n.t('auto_home')}</Button>
+            <Button color="inherit">{i18n.t('auto_jobs')}</Button>
+            <Button color="inherit">{i18n.t('auto_candidates')}</Button>
+            <Button color="inherit">{i18n.t('auto_profile')}</Button>
+            <Button color="inherit">{i18n.t('auto_logout')}</Button>
           </Box>
           
           <IconButton onClick={handleMenuOpen} sx={{ ml: 2 }}>
-            <Avatar sx={{ bgcolor: 'primary.main' }}>JD</Avatar>
+            <Avatar sx={{ bgcolor: 'primary.main' }}>{i18n.t('auto_jd')}</Avatar>
           </IconButton>
           
           <Menu
@@ -183,11 +183,11 @@ const Header = () => {
               horizontal: 'right',
             }}
           >
-            <MenuItem onClick={handleMenuClose}>Profile Settings</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Account</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Help Center</MenuItem>
+            <MenuItem onClick={handleMenuClose}>{i18n.t('auto_profile_settings')}</MenuItem>
+            <MenuItem onClick={handleMenuClose}>{i18n.t('auto_account')}</MenuItem>
+            <MenuItem onClick={handleMenuClose}>{i18n.t('auto_help_center')}</MenuItem>
             <Divider />
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={handleMenuClose}>{i18n.t('auto_logout')}</MenuItem>
           </Menu>
         </Toolbar>
       </Container>
@@ -202,15 +202,13 @@ const SearchSection = () => {
 
   return (
     <Paper className={classes.searchSection} elevation={1}>
-      <Typography variant="h6" color="primary" gutterBottom>
-        Find the Right Candidate
-      </Typography>
+      <Typography variant="h6" color="primary" gutterBottom>{i18n.t('auto_find_the_right_candidate')}</Typography>
       
       <Box className={classes.searchBar}>
         <TextField
           className={classes.searchInput}
           variant="outlined"
-          placeholder="Search for candidates..."
+          placeholder={i18n.t('auto_search_for_candidates')} 
           size={isMobile ? "small" : "medium"}
           InputProps={{
             style: isMobile ? { borderRadius: 4 } : { borderTopRightRadius: 0, borderBottomRightRadius: 0 }
@@ -230,49 +228,49 @@ const SearchSection = () => {
       
       <Box className={classes.filtersGrid}>
         <FormControl variant="outlined" size="small">
-          <InputLabel htmlFor="skills">Skills</InputLabel>
+          <InputLabel htmlFor="skills">{i18n.t('auto_skills_1')}</InputLabel>
           <TextField
             id="skills"
-            label="Skills"
-            placeholder="Select skills"
+            label={i18n.t('auto_skills_1')} 
+            placeholder={i18n.t('auto_select_skills')} 
           />
         </FormControl>
         
         <FormControl variant="outlined" size="small">
-          <InputLabel htmlFor="experience">Experience Level</InputLabel>
+          <InputLabel htmlFor="experience">{i18n.t('auto_experience_level')}</InputLabel>
           <Select
             native
             id="experience"
-            label="Experience Level"
+            label={i18n.t('auto_experience_level')} 
           >
-            <option value="">Any</option>
-            <option value="entry">Entry Level</option>
-            <option value="mid">Mid Level</option>
-            <option value="senior">Senior Level</option>
+            <option value="">{i18n.t('auto_any')}</option>
+            <option value="entry">{i18n.t('auto_entry_level')}</option>
+            <option value="mid">{i18n.t('auto_mid_level')}</option>
+            <option value="senior">{i18n.t('auto_senior_level')}</option>
           </Select>
         </FormControl>
         
         <FormControl variant="outlined" size="small">
-          <InputLabel htmlFor="location">Location</InputLabel>
+          <InputLabel htmlFor="location">{i18n.t('auto_location')}</InputLabel>
           <TextField
             id="location"
-            label="Location"
-            placeholder="Select location"
+            label={i18n.t('auto_location')} 
+            placeholder={i18n.t('auto_select_location')} 
           />
         </FormControl>
         
         <FormControl variant="outlined" size="small">
-          <InputLabel htmlFor="education">Education Level</InputLabel>
+          <InputLabel htmlFor="education">{i18n.t('auto_education_level')}</InputLabel>
           <Select
             native
             id="education"
-            label="Education Level"
+            label={i18n.t('auto_education_level')} 
           >
-            <option value="">Any</option>
-            <option value="high-school">High School</option>
-            <option value="bachelor">Bachelor's Degree</option>
-            <option value="master">Master's Degree</option>
-            <option value="phd">PhD</option>
+            <option value="">{i18n.t('auto_any')}</option>
+            <option value="high-school">{i18n.t('auto_high_school')}</option>
+            <option value="bachelor">{i18n.t('auto_bachelor_s_degree')}</option>
+            <option value="master">{i18n.t('auto_master_s_degree')}</option>
+            <option value="phd">{i18n.t('auto_phd')}</option>
           </Select>
         </FormControl>
       </Box>
@@ -281,9 +279,7 @@ const SearchSection = () => {
         fullWidth
         variant="contained"
         color="secondary"
-      >
-        Apply Filters
-      </Button>
+      >{i18n.t('auto_apply_filters')}</Button>
     </Paper>
   );
 };
@@ -329,9 +325,7 @@ const CandidateCard = ({ candidate }) => {
           variant="contained"
           color="primary"
           sx={{ mt: 2 }}
-        >
-          View Profile
-        </Button>
+        >{i18n.t('auto_view_profile')}</Button>
       </CardContent>
     </Card>
   );
@@ -344,10 +338,10 @@ const Footer = () => {
     <footer className={classes.footer}>
       <Container maxWidth="lg">
         <Box className={classes.footerLinks}>
-          <Link href="#" color="inherit">About Us</Link>
-          <Link href="#" color="inherit">Contact Us</Link>
-          <Link href="#" color="inherit">Privacy Policy</Link>
-          <Link href="#" color="inherit">Terms and Conditions</Link>
+          <Link href="#" color="inherit">{i18n.t('auto_about_us')}</Link>
+          <Link href="#" color="inherit">{i18n.t('auto_contact_us')}</Link>
+          <Link href="#" color="inherit">{i18n.t('auto_privacy_policy')}</Link>
+          <Link href="#" color="inherit">{i18n.t('auto_terms_and_conditions')}</Link>
         </Box>
         
         <Box className={classes.socialIcons}>
@@ -412,9 +406,7 @@ const CandidateSearchPage2 = () => {
         <SearchSection />
         
         <Box mb={5}>
-          <Typography variant="h6" color="primary" gutterBottom>
-            Candidate Listings
-          </Typography>
+          <Typography variant="h6" color="primary" gutterBottom>{i18n.t('auto_candidate_listings')}</Typography>
           
           <Grid container spacing={3}>
             {candidates.map((candidate) => (

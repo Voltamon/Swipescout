@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef } from 'react';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { useNavigate } from 'react-router-dom';
 import api, { deleteVideo } from '@/services/api';
@@ -379,9 +380,7 @@ export default function VideosPage({ setVideoTab }) {
         <div className="flex items-center gap-2">
           {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
           <Badge className="bg-yellow-100 text-yellow-800">
-            <Clock className="h-3 w-3 mr-1" />
-            Processing
-          </Badge>
+            <Clock className="h-3 w-3 mr-1" />{i18n.t('auto_processing_1')}</Badge>
         </div>
       );
     }
@@ -390,9 +389,7 @@ export default function VideosPage({ setVideoTab }) {
         <div className="flex items-center gap-2">
           {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
           <Badge variant="destructive">
-            <AlertCircle className="h-3 w-3 mr-1" />
-            Failed
-          </Badge>
+            <AlertCircle className="h-3 w-3 mr-1" />{i18n.t('auto_failed')}</Badge>
         </div>
       );
     }
@@ -401,9 +398,7 @@ export default function VideosPage({ setVideoTab }) {
       <div className="flex items-center gap-2">
         {privacyLabel && <span className="text-xs text-muted-foreground">{privacyLabel}</span>}
         <Badge className="bg-green-100 text-green-800">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          Ready
-        </Badge>
+          <CheckCircle className="h-3 w-3 mr-1" />{i18n.t('auto_ready')}</Badge>
       </div>
     );
 
@@ -424,12 +419,8 @@ export default function VideosPage({ setVideoTab }) {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h1 className={`${themeColors.text.gradient} text-4xl font-bold  mb-2`}>
-              My Videos
-            </h1>
-            <p className="text-muted-foreground">
-              Manage your video content
-            </p>
+            <h1 className={`${themeColors.text.gradient} text-4xl font-bold  mb-2`}>{i18n.t('auto_my_videos')}</h1>
+            <p className="text-muted-foreground">{i18n.t('auto_manage_your_video_content')}</p>
           </div>
           <div className="flex gap-3">
             <Button
@@ -444,9 +435,7 @@ export default function VideosPage({ setVideoTab }) {
               disabled={uploadLimitReached}
               className={`${themeColors.buttons.primary} text-white `}
             >
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Video
-            </Button>
+              <Upload className="h-4 w-4 mr-2" />{i18n.t('auto_upload_video')}</Button>
           </div>
         </div>
 
@@ -454,7 +443,7 @@ export default function VideosPage({ setVideoTab }) {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
             <div>
-              <p className="font-medium text-yellow-900">Upload Limit Reached</p>
+              <p className="font-medium text-yellow-900">{i18n.t('auto_upload_limit_reached')}</p>
               <p className="text-sm text-yellow-700">
                 You have reached your daily upload limit. Please try again tomorrow.
               </p>
@@ -496,9 +485,7 @@ export default function VideosPage({ setVideoTab }) {
                 variant="outline"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-              >
-                Previous
-              </Button>
+              >{i18n.t('auto_previous')}</Button>
               <div className="flex items-center gap-2 px-4">
                 <span className="text-sm text-muted-foreground">
                   Page {page} of {totalPages}
@@ -508,9 +495,7 @@ export default function VideosPage({ setVideoTab }) {
                 variant="outline"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-              >
-                Next
-              </Button>
+              >{i18n.t('auto_next')}</Button>
             </div>
           )}
         </>
@@ -518,17 +503,13 @@ export default function VideosPage({ setVideoTab }) {
         <Card className="text-center py-12">
           <CardContent>
             <Video className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No videos yet</h3>
-            <p className="text-muted-foreground mb-4">
-              Upload your first video to get started
-            </p>
+            <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_videos_yet')}</h3>
+            <p className="text-muted-foreground mb-4">{i18n.t('auto_upload_your_first_video_to_get_started')}</p>
             <Button
               onClick={handleUploadClick}
               className={`${themeColors.buttons.primary} text-white `}
             >
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Video
-            </Button>
+              <Upload className="h-4 w-4 mr-2" />{i18n.t('auto_upload_video')}</Button>
           </CardContent>
         </Card>
       )}
@@ -537,19 +518,17 @@ export default function VideosPage({ setVideoTab }) {
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Video</AlertDialogTitle>
+            <AlertDialogTitle>{i18n.t('auto_delete_video')}</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete "{videoToDelete?.title}"? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{i18n.t('auto_cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteVideo}
               className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
+            >{i18n.t('auto_delete')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -558,10 +537,8 @@ export default function VideosPage({ setVideoTab }) {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Video</DialogTitle>
-            <DialogDescription>
-              Update video information and settings
-            </DialogDescription>
+            <DialogTitle>{i18n.t('auto_edit_video')}</DialogTitle>
+            <DialogDescription>{i18n.t('auto_update_video_information_and_settings')}</DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
@@ -579,75 +556,71 @@ export default function VideosPage({ setVideoTab }) {
 
             {/* Title */}
             <div>
-              <label className="text-sm font-medium mb-1 block">Title</label>
+              <label className="text-sm font-medium mb-1 block">{i18n.t('auto_title')}</label>
               <input
                 type="text"
                 value={editFormData.title}
                 onChange={(e) => setEditFormData(prev => ({ ...prev, title: e.target.value }))}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                placeholder="Video title"
+                placeholder={i18n.t('auto_video_title_1')} 
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
+              <label className="text-sm font-medium mb-1 block">{i18n.t('auto_description')}</label>
               <textarea
                 value={editFormData.description}
                 onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 min-h-[100px]"
-                placeholder="Video description"
+                placeholder={i18n.t('auto_video_description')} 
               />
             </div>
 
             {/* Video Position */}
             <div>
-              <label className="text-sm font-medium mb-1 block">Video Position</label>
+              <label className="text-sm font-medium mb-1 block">{i18n.t('auto_video_position')}</label>
               <select
                 value={editFormData.video_position}
                 onChange={(e) => setEditFormData(prev => ({ ...prev, video_position: e.target.value }))}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               >
-                <option value="">None</option>
-                <option value="main">Main</option>
-                <option value="secondary">Secondary</option>
-                <option value="portfolio">Portfolio</option>
+                <option value="">{i18n.t('auto_none')}</option>
+                <option value="main">{i18n.t('auto_main')}</option>
+                <option value="secondary">{i18n.t('auto_secondary')}</option>
+                <option value="portfolio">{i18n.t('auto_portfolio')}</option>
               </select>
             </div>
 
             {/* Hashtags */}
             <div>
-              <label className="text-sm font-medium mb-1 block">Hashtags</label>
+              <label className="text-sm font-medium mb-1 block">{i18n.t('auto_hashtags')}</label>
               <input
                 type="text"
                 value={editFormData.hashtags}
                 onChange={(e) => setEditFormData(prev => ({ ...prev, hashtags: e.target.value }))}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                placeholder="#tag1 #tag2 #tag3"
+                placeholder={i18n.t('auto_tag1_tag2_tag3')} 
               />
             </div>
 
             {/* Privacy */}
             <div>
-              <label className="text-sm font-medium mb-1 block">Privacy</label>
+              <label className="text-sm font-medium mb-1 block">{i18n.t('auto_privacy')}</label>
               <select
                 value={editFormData.privacy}
                 onChange={(e) => setEditFormData(prev => ({ ...prev, privacy: e.target.value }))}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               >
-                <option value="public">Public</option>
-                <option value="private">Private</option>
+                <option value="public">{i18n.t('auto_public')}</option>
+                <option value="private">{i18n.t('auto_private')}</option>
               </select>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveEdit} className="bg-cyan-600 hover:bg-cyan-700">
-              Save Changes
-            </Button>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
+            <Button onClick={handleSaveEdit} className="bg-cyan-600 hover:bg-cyan-700">{i18n.t('auto_save_changes')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -733,7 +706,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
         {isServerProcessing && (
           <div className="absolute bottom-0 left-0 right-0 bg-yellow-400/90 text-yellow-900 text-xs font-medium py-1.5 px-2 flex items-center gap-1.5">
             <Loader2 className="h-3 w-3 animate-spin" />
-            <span>Uploading to server...</span>
+            <span>{i18n.t('auto_uploading_to_server_1')}</span>
           </div>
         )}
 
@@ -754,7 +727,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="text-center text-white">
               <AlertCircle className="h-12 w-12 mx-auto mb-2 text-red-500" />
-              <p className="text-sm">Upload Failed</p>
+              <p className="text-sm">{i18n.t('auto_upload_failed')}</p>
               <Button
                 size="sm"
                 variant="outline"
@@ -764,9 +737,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                   onRetry(video);
                 }}
               >
-                <RefreshCw className="h-3 w-3 mr-1" />
-                Retry
-              </Button>
+                <RefreshCw className="h-3 w-3 mr-1" />{i18n.t('auto_retry')}</Button>
             </div>
           </div>
         )}
@@ -807,7 +778,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
         {isServerProcessing && (
           <div className="mb-3 flex items-center gap-1.5 text-xs text-yellow-600">
             <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />
-            <span>Processing on server</span>
+            <span>{i18n.t('auto_processing_on_server')}</span>
           </div>
         )}
 
@@ -824,9 +795,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                   onClick(video);
                 }}
               >
-                <Eye className="h-3 w-3 mr-1" />
-                View
-              </Button>
+                <Eye className="h-3 w-3 mr-1" />{i18n.t('auto_view')}</Button>
               
               <Button
                 variant="outline"
@@ -860,9 +829,7 @@ function VideoCard({ video, videoRefs, hoveredVideo, isMuted, onHover, onClick, 
                 onRetry(video);
               }}
             >
-              <RefreshCw className="h-3 w-3 mr-1" />
-              Retry Upload
-            </Button>
+              <RefreshCw className="h-3 w-3 mr-1" />{i18n.t('auto_retry_upload')}</Button>
           )}
         </div>
       </CardContent>

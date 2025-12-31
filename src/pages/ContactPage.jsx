@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Mail, MessageSquare } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import Header from "../components/Headers/Header";

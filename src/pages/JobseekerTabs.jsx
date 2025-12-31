@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,11 +39,11 @@ const LockedFeature = ({ requiredPlan, navigate, role }) => (
     <div className="bg-gray-100 p-4 rounded-full mb-4">
       <Lock className="h-8 w-8 text-gray-500" />
     </div>
-    <h3 className="text-xl font-bold mb-2">Feature Locked</h3>
+    <h3 className="text-xl font-bold mb-2">{i18n.t('auto_feature_locked')}</h3>
     <p className="text-gray-600 mb-6 max-w-md">
       This feature requires the {requiredPlan} plan. Upgrade your subscription to access this feature.
     </p>
-    <Button onClick={() => navigate('/jobseeker-tabs?group=activities&tab=pricing', { state: { role } })}>View Plans</Button>
+    <Button onClick={() => navigate('/jobseeker-tabs?group=activities&tab=pricing', { state: { role } })}>{i18n.t('auto_view_plans')}</Button>
   </div>
 );
 

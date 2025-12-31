@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { 
     getEmployerPublicVideos, 
     likeVideo, 
@@ -274,11 +275,9 @@ export default function CompanyVideos() {
             <div className="space-y-6">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-4xl font-bold">Company Videos</h1>
+                    <h1 className="text-4xl font-bold">{i18n.t('auto_company_videos')}</h1>
                     <Button variant="outline" onClick={() => setDrawerOpen(true)}>
-                        <Filter className="mr-2 h-4 w-4" />
-                        Filters
-                    </Button>
+                        <Filter className="mr-2 h-4 w-4" />{i18n.t('auto_filters')}</Button>
                 </div>
 
                 {/* Search */}
@@ -286,7 +285,7 @@ export default function CompanyVideos() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                         className="pl-10 w-full"
-                        placeholder="Search companies, videos, or descriptions..."
+                        placeholder={i18n.t('auto_search_companies_videos_or_descriptions')} 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -399,16 +398,16 @@ export default function CompanyVideos() {
                                             const ownerId = video.userId || video.user_id || video.ownerId || (video.user && video.user.id);
                                             const c = connectionMap[ownerId];
                                             if (c && c.status === 'accepted') {
-                                                return <Button size="sm" disabled className="bg-green-600 text-white">Connected</Button>;
+                                                return <Button size="sm" disabled className="bg-green-600 text-white">{i18n.t('auto_connected')}</Button>;
                                             }
                                             if (c && c.status === 'pending' && c.isSender) {
-                                                return <Button size="sm" disabled>Pending</Button>;
+                                                return <Button size="sm" disabled>{i18n.t('auto_pending')}</Button>;
                                             }
                                             if (c && c.status === 'pending' && !c.isSender) {
                                                 return (
                                                     <div className="flex gap-2">
-                                                        <Button size="sm" onClick={async () => { try { const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection accepted', severity: 'success' }); if (data?.conversation) { setOpenConversation(data.conversation); setOpenChat(true); } } catch (err) { setSnackbar({ open: true, message: 'Failed to accept', severity: 'error' }); } }} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
-                                                        <Button size="sm" variant="outline" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection declined', severity: 'info' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to decline', severity: 'error' }); } }}>Decline</Button>
+                                                        <Button size="sm" onClick={async () => { try { const { data } = await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection accepted', severity: 'success' }); if (data?.conversation) { setOpenConversation(data.conversation); setOpenChat(true); } } catch (err) { setSnackbar({ open: true, message: 'Failed to accept', severity: 'error' }); } }} className="bg-gradient-to-r from-cyan-600 to-purple-600">{i18n.t('auto_accept')}</Button>
+                                                        <Button size="sm" variant="outline" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); setSnackbar({ open: true, message: 'Connection declined', severity: 'info' }); } catch (err) { setSnackbar({ open: true, message: 'Failed to decline', severity: 'error' }); } }}>{i18n.t('auto_decline')}</Button>
                                                     </div>
                                                 );
                                             }
@@ -420,9 +419,7 @@ export default function CompanyVideos() {
                                                         handleConnect(video);
                                                     }}
                                                 >
-                                                    <Handshake className="h-4 w-4 mr-1" />
-                                                    Connect
-                                                </Button>
+                                                    <Handshake className="h-4 w-4 mr-1" />{i18n.t('auto_connect')}</Button>
                                             );
                                         })()}
                                     </div>
@@ -455,12 +452,8 @@ export default function CompanyVideos() {
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <Button variant="outline" onClick={() => setVideoDialog(false)}>
-                                        Close
-                                    </Button>
-                                    <Button onClick={() => handleConnect(selectedVideo)}>
-                                        Connect with Company
-                                    </Button>
+                                    <Button variant="outline" onClick={() => setVideoDialog(false)}>{i18n.t('auto_close')}</Button>
+                                    <Button onClick={() => handleConnect(selectedVideo)}>{i18n.t('auto_connect_with_company')}</Button>
                                 </DialogFooter>
                             </>
                         )}
@@ -478,7 +471,7 @@ export default function CompanyVideos() {
                                 <Textarea
                                     className="w-full"
                                     rows={3}
-                                    placeholder="Add a comment..."
+                                    placeholder={i18n.t('auto_add_a_comment')} 
                                     value={newComment}
                                     onChange={(e) => setNewComment(e.target.value)}
                                 />
@@ -486,9 +479,7 @@ export default function CompanyVideos() {
                                     className="mt-2"
                                     onClick={handleAddComment}
                                     disabled={!newComment.trim()}
-                                >
-                                    Add Comment
-                                </Button>
+                                >{i18n.t('auto_add_comment')}</Button>
                             </div>
                             
                             <div className="border-t pt-4">
@@ -508,9 +499,7 @@ export default function CompanyVideos() {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setCommentDialog({ open: false, video: null })}>
-                                Close
-                            </Button>
+                            <Button variant="outline" onClick={() => setCommentDialog({ open: false, video: null })}>{i18n.t('auto_close')}</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

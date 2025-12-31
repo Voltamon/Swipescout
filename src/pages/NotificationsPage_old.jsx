@@ -1,4 +1,5 @@
-﻿import React, { useContext } from "react";
+import i18n from 'i18next';
+import React, { useContext } from "react";
 import {
   Box,
   useTheme,
@@ -42,9 +43,7 @@ const NotificationsPage = () => {
       }}
     >
 
-      <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2 }}>
-        Notifications
-      </Typography>
+      <Typography variant="h4" align="center" sx={{ mt: 4, mb: 2 }}>{i18n.t('auto_notifications')}</Typography>
 
 
     </Box>

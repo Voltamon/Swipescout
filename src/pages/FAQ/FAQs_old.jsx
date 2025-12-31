@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState  } from 'react';
 import Header from "../../components/Headers/Header";
 import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
@@ -151,7 +152,7 @@ const FAQPage = () => {
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search FAQs..."
+            placeholder={i18n.t('auto_search_faqs')} 
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             InputProps={{
@@ -256,7 +257,7 @@ const FAQPage = () => {
             Our support team is happy to help
           </Typography>
           <Chip
-            label="Contact Support"
+            label={i18n.t('auto_contact_support')} 
             variant="outlined"
             sx={{
               px: 3,

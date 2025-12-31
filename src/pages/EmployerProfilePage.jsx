@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEmployerProfile, getEmployerJobs, getMyProfileViewStats } from '@/services/api';
 import { getEmployerDashboardStats } from '@/services/dashboardService';
@@ -167,12 +168,12 @@ export default function EmployerProfilePage() {
               <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <div className="font-semibold">Complete your profile</div>
+              <div className="font-semibold">{i18n.t('auto_complete_your_profile')}</div>
               <div className="text-sm text-muted-foreground">Provide a company name and at least one additional detail like a description, logo, website, or social link to preview and post jobs.</div>
             </div>
           </div>
           <div>
-            <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white`}>Edit Profile</Button>
+            <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white`}>{i18n.t('auto_edit_profile')}</Button>
           </div>
         </div>
       )}
@@ -246,14 +247,10 @@ export default function EmployerProfilePage() {
                       variant="outline"
                       className="hidden md:inline-flex items-center"
                     >
-                      <Eye className="h-4 w-4 mr-2" />
-                      Preview
-                    </Button>
+                      <Eye className="h-4 w-4 mr-2" />{i18n.t('auto_preview')}</Button>
 
                     <Button onClick={handleEditProfile} className={`${themeColors.buttons.primary} text-white  hover:bg-purple-700`}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit Profile
-                    </Button>
+                      <Edit className="h-4 w-4 mr-2" />{i18n.t('auto_edit_profile')}</Button>
                   </div>
                 </div>
 
@@ -297,9 +294,7 @@ export default function EmployerProfilePage() {
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="hover:text-cyan-600 flex items-center gap-1"
-                      >
-                        Visit Website
-                        <ExternalLink className="h-3 w-3" />
+                      >{i18n.t('auto_visit_website')}<ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
                   )}
@@ -347,10 +342,10 @@ export default function EmployerProfilePage() {
       {/* Tabs Section */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="overview">{i18n.t('auto_overview')}</TabsTrigger>
+          <TabsTrigger value="about">{i18n.t('auto_about')}</TabsTrigger>
           <TabsTrigger value="jobs">Jobs ({jobs.length})</TabsTrigger>
-          <TabsTrigger value="videos">Videos</TabsTrigger>
+          <TabsTrigger value="videos">{i18n.t('auto_videos')}</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -358,29 +353,29 @@ export default function EmployerProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_active_jobs')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
-                <p className="text-xs text-muted-foreground mt-1">Job postings</p>
+                <p className="text-xs text-muted-foreground mt-1">{i18n.t('auto_job_postings')}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_total_applications')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
                   {jobs.reduce((sum, j) => sum + ((j.applicationsCount ?? j.applicants_count) || 0), 0)}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Candidates applied</p>
+                <p className="text-xs text-muted-foreground mt-1">{i18n.t('auto_candidates_applied')}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_profile_views')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">{(profile?.profileViews ?? profile?.profileViewsTotal ?? profile?.profileViewsLast30) || 0}</div>
@@ -397,7 +392,7 @@ export default function EmployerProfilePage() {
           {profile?.description && (
             <Card>
               <CardHeader>
-                <CardTitle>Company Overview</CardTitle>
+                <CardTitle>{i18n.t('auto_company_overview')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground whitespace-pre-line">{profile.description}</p>
@@ -415,21 +410,21 @@ export default function EmployerProfilePage() {
             <CardContent className="space-y-6">
               {profile?.description && (
                 <div>
-                  <h3 className="font-semibold mb-2">Company Description</h3>
+                  <h3 className="font-semibold mb-2">{i18n.t('auto_company_description')}</h3>
                   <p className="text-muted-foreground whitespace-pre-line">{profile.description}</p>
                 </div>
               )}
 
               {profile?.mission && (
                 <div>
-                  <h3 className="font-semibold mb-2">Our Mission</h3>
+                  <h3 className="font-semibold mb-2">{i18n.t('auto_our_mission')}</h3>
                   <p className="text-muted-foreground">{profile.mission}</p>
                 </div>
               )}
 
               {profile?.values && (
                 <div>
-                  <h3 className="font-semibold mb-2">Company Values</h3>
+                  <h3 className="font-semibold mb-2">{i18n.t('auto_company_values')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.values.split(',').map((value, index) => (
                       <Badge key={index} variant="secondary">
@@ -489,9 +484,7 @@ export default function EmployerProfilePage() {
                         variant="outline" 
                         className="w-full"
                         onClick={() => navigate(`/job/${job.id}`)}
-                      >
-                        View Details
-                      </Button>
+                      >{i18n.t('auto_view_details_1')}</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -501,16 +494,12 @@ export default function EmployerProfilePage() {
             <Card className="text-center py-12">
               <CardContent>
                 <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No jobs posted yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Start attracting candidates by posting your first job
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_jobs_posted_yet')}</h3>
+                <p className="text-muted-foreground mb-4">{i18n.t('auto_start_attracting_candidates_by_posting_y')}</p>
                 <Button 
                   onClick={handlePostJobClick}
                   className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
-                >
-                  Post a Job
-                </Button>
+                >{i18n.t('auto_post_a_job')}</Button>
               </CardContent>
             </Card>
           )}
@@ -521,16 +510,12 @@ export default function EmployerProfilePage() {
           <Card className="text-center py-12">
             <CardContent>
               <PlayCircle className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Company Videos</h3>
-              <p className="text-muted-foreground mb-4">
-                Showcase your company culture and values through videos
-              </p>
+              <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_company_videos')}</h3>
+              <p className="text-muted-foreground mb-4">{i18n.t('auto_showcase_your_company_culture_and_values')}</p>
               <Button 
                 onClick={() => navigate('/employer-tabs?group=companyContent&tab=company-videos')}
                 className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
-              >
-                Manage Videos
-              </Button>
+              >{i18n.t('auto_manage_videos')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -539,7 +524,7 @@ export default function EmployerProfilePage() {
       <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Profile incomplete</DialogTitle>
+            <DialogTitle>{i18n.t('auto_profile_incomplete')}</DialogTitle>
             <DialogDescription>
               To preview your public employer profile you must provide a company name and at least one additional detail (such as description, logo, website, social link, or contact).
             </DialogDescription>
@@ -548,19 +533,19 @@ export default function EmployerProfilePage() {
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     {profileCompleteness.name ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Company name (required)</span>
+                    <span>{i18n.t('auto_company_name_required')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.description ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Company description (min 10 characters)</span>
+                    <span>{i18n.t('auto_company_description_min_10_characters')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.logo ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Company logo</span>
+                    <span>{i18n.t('auto_company_logo')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.website ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Website</span>
+                    <span>{i18n.t('auto_website')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.social ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
@@ -568,7 +553,7 @@ export default function EmployerProfilePage() {
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.contact ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Contact email or phone</span>
+                    <span>{i18n.t('auto_contact_email_or_phone')}</span>
                   </li>
                 </ul>
               ) : (
@@ -580,9 +565,7 @@ export default function EmployerProfilePage() {
             <Button onClick={() => { setPreviewDialogOpen(false); handleEditProfile(); }} className={`${themeColors.buttons.primary} text-white  hover:bg-purple-700`}>
               Create / Edit profile
             </Button>
-            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -590,14 +573,14 @@ export default function EmployerProfilePage() {
       <Dialog open={videoRequiredDialogOpen} onOpenChange={setVideoRequiredDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Company video required</DialogTitle>
+            <DialogTitle>{i18n.t('auto_company_video_required')}</DialogTitle>
             <DialogDescription>
               You need to upload at least one company video before posting jobs. Company videos help candidates learn about your culture and role expectations.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={() => { setVideoRequiredDialogOpen(false); navigate('/employer-tabs?group=companyContent&tab=company-videos'); }} className={`${themeColors.buttons.primary} text-white`}>Manage videos</Button>
-            <Button variant="outline" onClick={() => setVideoRequiredDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => { setVideoRequiredDialogOpen(false); navigate('/employer-tabs?group=companyContent&tab=company-videos'); }} className={`${themeColors.buttons.primary} text-white`}>{i18n.t('auto_manage_videos_1')}</Button>
+            <Button variant="outline" onClick={() => setVideoRequiredDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

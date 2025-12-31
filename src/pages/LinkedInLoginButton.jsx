@@ -1,4 +1,5 @@
-﻿import React, { useContext, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useEffect  } from 'react';
 import { LinkedIn } from 'react-linkedin-login-oauth2';
 import { Button, Box } from '@mui/material';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -34,9 +35,7 @@ const LinkedInLoginButton = () => {
             variant="contained"
             color="primary"
             startIcon={<LinkedInIcon />}
-          >
-            Login with LinkedIn
-          </Button>
+          >{i18n.t('auto_login_with_linkedin')}</Button>
         )}
       </LinkedIn>
     </Box>

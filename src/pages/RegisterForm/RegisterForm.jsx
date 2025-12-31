@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from "react";
+import i18n from 'i18next';
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -485,8 +486,8 @@ const RegisterForm = () => {
   return (
     <RegisterContainer>
       <RegisterFormContainer>
-        <RegisterFormTitle variant="h5">Create Your Account</RegisterFormTitle>
-        <RegisterFormSubtitle>Join our platform to find your perfect job match</RegisterFormSubtitle>
+        <RegisterFormTitle variant="h5">{i18n.t('auto_create_your_account')}</RegisterFormTitle>
+        <RegisterFormSubtitle>{i18n.t('auto_join_our_platform_to_find_your_perfect_j')}</RegisterFormSubtitle>
 
         <Box component="form" onSubmit={(e) => {
           e.preventDefault();
@@ -495,10 +496,10 @@ const RegisterForm = () => {
         }}>
           {/* Form fields remain the same */}
           <InputField
-            label="Full Name"
+            label={i18n.t('auto_full_name')} 
             type="text"
             name="fullName"
-            placeholder="Enter your full name"
+            placeholder={i18n.t('auto_enter_your_full_name')} 
             value={formData.fullName}
             onChange={handleChange}
             required
@@ -506,10 +507,10 @@ const RegisterForm = () => {
           />
 
           <InputField
-            label="Email Address"
+            label={i18n.t('auto_email_address')} 
             type="email"
             name="email"
-            placeholder="Enter your email address"
+            placeholder={i18n.t('auto_enter_your_email_address')} 
             value={formData.email}
             onChange={handleChange}
             required
@@ -517,10 +518,10 @@ const RegisterForm = () => {
           />
 
           <InputField
-            label="Password"
+            label={i18n.t('auto_password')} 
             type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Create a password"
+            placeholder={i18n.t('auto_create_a_password')} 
             value={formData.password}
             onChange={handleChange}
             required
@@ -540,10 +541,10 @@ const RegisterForm = () => {
           />
 
           <InputField
-            label="Confirm Password"
+            label={i18n.t('auto_confirm_password')} 
             type="password"
             name="confirmPassword"
-            placeholder="Confirm your password"
+            placeholder={i18n.t('auto_confirm_your_password')} 
             value={formData.confirmPassword}
             onChange={handleChange}
             required
@@ -556,9 +557,7 @@ const RegisterForm = () => {
             fontWeight: 600, 
             color: '#374151',
             textAlign: 'center'
-          }}>
-            Select your role
-          </Typography>
+          }}>{i18n.t('auto_select_your_role')}</Typography>
           <Stack direction="row" spacing={2}>
             <Button
               variant={formData.role === "job_seeker" ? "contained" : "outlined"}
@@ -588,9 +587,7 @@ const RegisterForm = () => {
                   }
                 })
               }}
-            >
-              Job Seeker
-            </Button>
+            >{i18n.t('auto_job_seeker')}</Button>
             <Button
               variant={formData.role === "employer" ? "contained" : "outlined"}
               fullWidth
@@ -619,18 +616,14 @@ const RegisterForm = () => {
                   }
                 })
               }}
-            >
-              Employer
-            </Button>
+            >{i18n.t('auto_employer')}</Button>
           </Stack>
 
           {/* The main RegisterButton is now only disabled by loading states */}
           <RegisterButton type="submit" disabled={loading.normal || authLoading}>
             {loading.normal ? (
               <>
-                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                Signing Up...
-              </>
+                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />{i18n.t('auto_signing_up')}</>
             ) : (
               "Sign Up"
             )}
@@ -638,7 +631,7 @@ const RegisterForm = () => {
         </Box>
 
         <SocialDivider>
-          <Typography variant="body2">Or sign up with</Typography>
+          <Typography variant="body2">{i18n.t('auto_or_sign_up_with')}</Typography>
         </SocialDivider>
 
         <Stack direction="row" spacing={2} justifyContent="center">
@@ -680,13 +673,9 @@ const RegisterForm = () => {
           onClose={handleMenuClose}
         >
           <MenuItem onClick={() => handleRoleSelect('job_seeker', providerForMenu)}>
-            <UserIcon className="mr-2 h-4 w-4" />
-            Sign up as Job Seeker
-          </MenuItem>
+            <UserIcon className="mr-2 h-4 w-4" />{i18n.t('auto_sign_up_as_job_seeker')}</MenuItem>
           <MenuItem onClick={() => handleRoleSelect('employer', providerForMenu)}>
-            <BriefcaseIcon className="mr-2 h-4 w-4" />
-            Sign up as Employer
-          </MenuItem>
+            <BriefcaseIcon className="mr-2 h-4 w-4" />{i18n.t('auto_sign_up_as_employer')}</MenuItem>
         </Menu>
 
         {error && (
@@ -704,9 +693,7 @@ const RegisterForm = () => {
           </Alert>
         )}
 
-        <LoginLink onClick={() => navigate("/login")}>
-          Already have an account? Log in
-        </LoginLink>
+        <LoginLink onClick={() => navigate("/login")}>{i18n.t('auto_already_have_an_account_log_in')}</LoginLink>
       </RegisterFormContainer>
 
       {/* How SwipeScout Works Dialog */}
@@ -717,9 +704,7 @@ const RegisterForm = () => {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle id="how-it-works-dialog-title" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
-          How SwipeScout Works
-        </DialogTitle>
+        <DialogTitle id="how-it-works-dialog-title" sx={{ textAlign: 'center', fontWeight: 'bold' }}>{i18n.t('auto_how_swipescout_works')}</DialogTitle>
         <DialogContent dividers>
          
           <Grid container spacing={4} justifyContent="center">
@@ -809,7 +794,7 @@ const RegisterForm = () => {
                   color="primary"
                 />
               }
-              label="I have read and understood how SwipeScout works."
+              label={i18n.t('auto_i_have_read_and_understood_how_swipescou')} 
             />
           </Box>
         </DialogContent>
@@ -824,7 +809,7 @@ const RegisterForm = () => {
                   color="primary"
                 />
               }
-              label="I have read and understood how SwipeScout works."
+              label={i18n.t('auto_i_have_read_and_understood_how_swipescou')} 
             />
             {/* If you want a second checkbox, just duplicate this block, but use the same state */}
             {/* 
@@ -836,7 +821,7 @@ const RegisterForm = () => {
                   color="primary"
                 />
               }
-              label="I have read and understood how SwipeScout works."
+              label={i18n.t('auto_i_have_read_and_understood_how_swipescou')} 
             />
             */}
           </Box>
@@ -854,9 +839,7 @@ const RegisterForm = () => {
                 bgcolor: "#2563eb",
               },
             }}
-          >
-            Proceed to Sign Up
-          </Button>
+          >{i18n.t('auto_proceed_to_sign_up')}</Button>
         </DialogActions>
       </Dialog>
     </RegisterContainer>

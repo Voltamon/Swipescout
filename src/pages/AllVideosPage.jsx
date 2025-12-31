@@ -1,4 +1,5 @@
-﻿// AllVideosPage.jsx - TikTok Style Vertical Video Feed with Tailwind
+import i18n from 'i18next';
+// AllVideosPage.jsx - TikTok Style Vertical Video Feed with Tailwind
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useVideoContext } from '@/contexts/VideoContext';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
@@ -661,9 +662,7 @@ const AllVideosPage = ({
                 {pagetype === 'all' ? 'All Videos' :
                  pagetype === 'jobseekers' ? 'Employer'  : 'Job Seekers Videos' }
               </h1>
-              <p className="text-muted-foreground">
-                Discover and explore video content
-              </p>
+              <p className="text-muted-foreground">{i18n.t('auto_discover_and_explore_video_content')}</p>
             </div>
             <div className="flex gap-3">
               <Button
@@ -704,17 +703,13 @@ const AllVideosPage = ({
           <Card className="text-center py-12">
             <CardContent>
               <Video className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No videos yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Be the first to share your video content
-              </p>
+              <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_videos_yet')}</h3>
+              <p className="text-muted-foreground mb-4">{i18n.t('auto_be_the_first_to_share_your_video_content')}</p>
               <Button
                 onClick={() => navigate('/video-upload')}
                 className={`${themeColors.buttons.primary} text-white `}
               >
-                <Play className="h-4 w-4 mr-2" />
-                Upload Video
-              </Button>
+                <Play className="h-4 w-4 mr-2" />{i18n.t('auto_upload_video')}</Button>
             </CardContent>
           </Card>
         )}
@@ -795,7 +790,7 @@ const AllVideosPage = ({
              pagetype === 'jobseekers' ? 'Job Seekers' : 'Employers'}
           </h2>
           {currentVideo?.isSample && (
-            <Badge className="bg-yellow-500 text-black">Sample</Badge>
+            <Badge className="bg-yellow-500 text-black">{i18n.t('auto_sample')}</Badge>
           )}
         </div>
         <p className="text-sm opacity-80">
@@ -847,9 +842,7 @@ const AllVideosPage = ({
                   onClick={() => navigate(`/profile/${currentVideo.user.id}`)}
                   className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20"
                 >
-                  <User className="h-4 w-4 mr-1" />
-                  View Profile
-                </Button>
+                  <User className="h-4 w-4 mr-1" />{i18n.t('auto_view_profile')}</Button>
               )}
             </div>
 
@@ -1110,7 +1103,7 @@ function VideoCard({ video, videoRefs, isMuted, onClick, onLike, onSave, onShare
             </div>
           </div>
           {video.isSample && (
-            <Badge className="bg-yellow-500 text-black text-xs">Sample</Badge>
+            <Badge className="bg-yellow-500 text-black text-xs">{i18n.t('auto_sample')}</Badge>
           )}
         </div>
 
@@ -1240,7 +1233,7 @@ function VirtualSlider({ allVideos, currentIndex, dragDelta, isDragging, isMuted
 
                 {/* Comments placeholder */}
                 <div className="mt-6 p-3 bg-black/40 rounded-lg max-w-md">
-                  <p className="text-sm text-muted-foreground">Comments area (placeholder)</p>
+                  <p className="text-sm text-muted-foreground">{i18n.t('auto_comments_area_placeholder')}</p>
                 </div>
               </div>
             </div>

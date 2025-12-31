@@ -1,4 +1,5 @@
-﻿// VideosPage.jsx
+import i18n from 'i18next';
+// VideosPage.jsx
 import React, { useContext, useState, useEffect, useRef  } from 'react';
 import { useVideoContext } from '@/contexts/VideoContext'; // Correct import
 import { styled } from "@mui/material/styles";
@@ -231,17 +232,13 @@ const VideosPage = ({setVideoTab}) => {
       pb: 4,
     }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary', fontFamily: 'arial' }}>
-          My Videos
-        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary', fontFamily: 'arial' }}>{i18n.t('auto_my_videos')}</Typography>
         <Button 
           variant="contained" 
           onClick={handleUploadClick}
           startIcon={<CloudUpload />}
           disabled={uploadLimitReached}
-        >
-          Upload New Video
-        </Button>
+        >{i18n.t('auto_upload_new_video')}</Button>
       </Box>
 
       {uploadLimitReached && (
@@ -262,18 +259,14 @@ const VideosPage = ({setVideoTab}) => {
         </Box>
       ) : filteredVideos.length === 0 ? (
         <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            No videos uploaded yet
-          </Typography>
+          <Typography variant="h6" gutterBottom>{i18n.t('auto_no_videos_uploaded_yet')}</Typography>
           <Button 
             variant="contained" 
             onClick={handleUploadClick}
             sx={{ mt: 2 }}
             startIcon={<CloudUpload />}
             disabled={uploadLimitReached}
-          >
-            Upload Your First Video
-          </Button>
+          >{i18n.t('auto_upload_your_first_video')}</Button>
         </Box>
       ) : (
         <>
@@ -360,7 +353,7 @@ const VideosPage = ({setVideoTab}) => {
                     </IconButton>
 
                     {/* Delete button */}
-                    <Tooltip title="Delete video">
+                    <Tooltip title={i18n.t('auto_delete_video_1')} >
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
@@ -475,16 +468,14 @@ const VideosPage = ({setVideoTab}) => {
                             handleRetry(video);
                           }}
                           sx={{ mt: 1 }}
-                        >
-                          Retry Upload
-                        </Button>
+                        >{i18n.t('auto_retry_upload')}</Button>
                       )}
 
                       {/* If not local and completed, show check mark */}
                       {!video.isLocal && video.status === 'completed' && (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <CheckCircle color="success" />
-                          <Typography variant="caption" color="text.secondary">Ready</Typography>
+                          <Typography variant="caption" color="text.secondary">{i18n.t('auto_ready')}</Typography>
                         </Box>
                       )}
                     </Box>
@@ -523,21 +514,19 @@ const VideosPage = ({setVideoTab}) => {
         open={deleteConfirmOpen}
         onClose={() => setDeleteConfirmOpen(false)}
       >
-        <DialogTitle>Delete Video</DialogTitle>
+        <DialogTitle>{i18n.t('auto_delete_video')}</DialogTitle>
         <DialogContent>
           <Typography>
             Are you sure you want to delete this video? This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>{i18n.t('auto_cancel')}</Button>
           <Button 
             onClick={handleDeleteVideo} 
             color="error"
             variant="contained"
-          >
-            Delete
-          </Button>
+          >{i18n.t('auto_delete')}</Button>
         </DialogActions>
       </Dialog>
     </Container>

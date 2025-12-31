@@ -9,6 +9,7 @@ import { Input } from '@/components/UI/input.jsx';
 import { Label } from '@/components/UI/label.jsx';
 import { Alert, AlertDescription } from '@/components/UI/alert.jsx';
 import { CheckCircle2, XCircle, Radio } from 'lucide-react';
+import i18n from 'i18next';
 
 const NotificationDebugPage = () => {
   const { user } = useAuth();
@@ -54,27 +55,25 @@ const NotificationDebugPage = () => {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-        Notification System Debug
-      </h1>
+      <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">{i18n.t('auto_notification_system_debug')}</h1>
 
       {/* System Status */}
       <div className="grid gap-4 md:grid-cols-3 mb-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Socket Connection</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_socket_connection')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
               {isConnected ? (
                 <>
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className="text-sm">Connected</span>
+                  <span className="text-sm">{i18n.t('auto_connected')}</span>
                 </>
               ) : (
                 <>
                   <XCircle className="h-5 w-5 text-red-500" />
-                  <span className="text-sm">Disconnected</span>
+                  <span className="text-sm">{i18n.t('auto_disconnected')}</span>
                 </>
               )}
             </div>
@@ -86,7 +85,7 @@ const NotificationDebugPage = () => {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Current Role</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_current_role')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -101,17 +100,17 @@ const NotificationDebugPage = () => {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Notifications</CardTitle>
+            <CardTitle className="text-sm font-medium">{i18n.t('auto_notifications')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Badge>{notifications.length}</Badge>
-                <span className="text-sm">Total</span>
+                <span className="text-sm">{i18n.t('auto_total')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="destructive">{unreadCount}</Badge>
-                <span className="text-sm">Unread</span>
+                <span className="text-sm">{i18n.t('auto_unread')}</span>
               </div>
             </div>
           </CardContent>
@@ -121,7 +120,7 @@ const NotificationDebugPage = () => {
       {/* User Info */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>User Information</CardTitle>
+          <CardTitle>{i18n.t('auto_user_information')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm">
@@ -136,31 +135,31 @@ const NotificationDebugPage = () => {
       {/* Test Notification Sender */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Send Test Notification</CardTitle>
+          <CardTitle>{i18n.t('auto_send_test_notification')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="message">Message</Label>
+              <Label htmlFor="message">{i18n.t('auto_message')}</Label>
               <Input
                 id="message"
                 value={testMessage}
                 onChange={(e) => setTestMessage(e.target.value)}
-                placeholder="Enter test message"
+                placeholder={i18n.t('auto_enter_test_message')} 
               />
             </div>
 
             <div>
-              <Label htmlFor="role">Role Filter</Label>
+              <Label htmlFor="role">{i18n.t('auto_role_filter')}</Label>
               <select
                 id="role"
                 value={testRole}
                 onChange={(e) => setTestRole(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                <option value="employer">Employer Only</option>
-                <option value="job_seeker">Job Seeker Only</option>
-                <option value="none">Global (All Roles)</option>
+                <option value="employer">{i18n.t('auto_employer_only')}</option>
+                <option value="job_seeker">{i18n.t('auto_job_seeker_only')}</option>
+                <option value="none">{i18n.t('auto_global_all_roles')}</option>
               </select>
               <p className="text-xs text-gray-500 mt-1">
                 Current page role: <strong>{getCurrentRole() || 'None'}</strong>
@@ -172,9 +171,7 @@ const NotificationDebugPage = () => {
               </p>
             </div>
 
-            <Button onClick={sendTestNotification} className="w-full">
-              Send Test Notification
-            </Button>
+            <Button onClick={sendTestNotification} className="w-full">{i18n.t('auto_send_test_notification')}</Button>
           </div>
         </CardContent>
       </Card>
@@ -202,7 +199,7 @@ const NotificationDebugPage = () => {
         </CardHeader>
         <CardContent>
           {notifications.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No notifications</p>
+            <p className="text-gray-500 text-center py-4">{i18n.t('auto_no_notifications')}</p>
           ) : (
             <div className="space-y-2">
               {notifications.map((notif) => (
@@ -224,7 +221,7 @@ const NotificationDebugPage = () => {
                       </div>
                     </div>
                     {!notif.read && (
-                      <Badge className="bg-purple-600">New</Badge>
+                      <Badge className="bg-purple-600">{i18n.t('auto_new')}</Badge>
                     )}
                   </div>
                 </div>
@@ -237,7 +234,7 @@ const NotificationDebugPage = () => {
       {/* Console Instructions */}
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Console Debugging</CardTitle>
+          <CardTitle>{i18n.t('auto_console_debugging')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-sm space-y-2">

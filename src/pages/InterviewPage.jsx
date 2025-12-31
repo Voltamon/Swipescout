@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -266,9 +267,7 @@ export default function InterviewPage() {
         <h1 className="`${themeColors.text.gradient} text-4xl font-bold  mb-2">
           {t('interviews.pageTitle', 'Interviews')}
         </h1>
-        <p className="text-muted-foreground">
-          Manage and join your scheduled interviews
-        </p>
+        <p className="text-muted-foreground">{i18n.t('auto_manage_and_join_your_scheduled_interview')}</p>
       </div>
 
       {/* Tabs */}
@@ -312,10 +311,8 @@ export default function InterviewPage() {
             <Card className="text-center py-12">
               <CardContent>
                 <Calendar className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No upcoming interviews</h3>
-                <p className="text-muted-foreground">
-                  Your scheduled interviews will appear here
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_upcoming_interviews')}</h3>
+                <p className="text-muted-foreground">{i18n.t('auto_your_scheduled_interviews_will_appear_he')}</p>
               </CardContent>
             </Card>
           )}
@@ -339,10 +336,8 @@ export default function InterviewPage() {
             <Card className="text-center py-12">
               <CardContent>
                 <Clock className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No past interviews</h3>
-                <p className="text-muted-foreground">
-                  Completed and cancelled interviews will appear here
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_past_interviews')}</h3>
+                <p className="text-muted-foreground">{i18n.t('auto_completed_and_cancelled_interviews_will_')}</p>
               </CardContent>
             </Card>
           )}
@@ -375,10 +370,8 @@ export default function InterviewPage() {
             <Card className="text-center py-12">
               <CardContent>
                 <Video className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No interviews yet</h3>
-                <p className="text-muted-foreground">
-                  Your interviews will appear here once scheduled
-                </p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_interviews_yet')}</h3>
+                <p className="text-muted-foreground">{i18n.t('auto_your_interviews_will_appear_here_once_sc')}</p>
               </CardContent>
             </Card>
           )}
@@ -389,10 +382,8 @@ export default function InterviewPage() {
       <Dialog open={rescheduleDialog} onOpenChange={setRescheduleDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reschedule Interview</DialogTitle>
-            <DialogDescription>
-              Select a new date and time for the interview
-            </DialogDescription>
+            <DialogTitle>{i18n.t('auto_reschedule_interview')}</DialogTitle>
+            <DialogDescription>{i18n.t('auto_select_a_new_date_and_time_for_the_inter')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -406,15 +397,11 @@ export default function InterviewPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRescheduleDialog(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setRescheduleDialog(false)}>{i18n.t('auto_cancel')}</Button>
             <Button 
               onClick={handleReschedule}
               className={`${themeColors.buttons.primary} text-white  hover:from-purple-700 hover:to-cyan-700`}
-            >
-              Reschedule
-            </Button>
+            >{i18n.t('auto_reschedule')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -423,33 +410,27 @@ export default function InterviewPage() {
       <Dialog open={cancelDialog} onOpenChange={setCancelDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel Interview</DialogTitle>
-            <DialogDescription>
-              Please provide a reason for cancelling this interview
-            </DialogDescription>
+            <DialogTitle>{i18n.t('auto_cancel_interview')}</DialogTitle>
+            <DialogDescription>{i18n.t('auto_please_provide_a_reason_for_cancelling_t')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="cancelReason">Reason for Cancellation</Label>
+              <Label htmlFor="cancelReason">{i18n.t('auto_reason_for_cancellation')}</Label>
               <Textarea
                 id="cancelReason"
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                placeholder="Please explain why you need to cancel..."
+                placeholder={i18n.t('auto_please_explain_why_you_need_to_cancel')} 
                 rows={4}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCancelDialog(false)}>
-              Keep Interview
-            </Button>
+            <Button variant="outline" onClick={() => setCancelDialog(false)}>{i18n.t('auto_keep_interview')}</Button>
             <Button 
               variant="destructive"
               onClick={handleCancel}
-            >
-              Cancel Interview
-            </Button>
+            >{i18n.t('auto_cancel_interview')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -502,9 +483,7 @@ function InterviewCard({ interview, user, canJoin, onJoin, onReschedule, onCance
               className={`${themeColors.buttons.primary} text-white w-full  hover:from-purple-700 hover:to-cyan-700`}
               onClick={() => onJoin(interview)}
             >
-              <Video className="h-4 w-4 mr-2" />
-              Join Interview
-            </Button>
+              <Video className="h-4 w-4 mr-2" />{i18n.t('auto_join_interview')}</Button>
           )}
           
           {interview.status === 'scheduled' && !canJoin && (
@@ -515,9 +494,7 @@ function InterviewCard({ interview, user, canJoin, onJoin, onReschedule, onCance
                   className="flex-1"
                   onClick={() => onReschedule(interview)}
                 >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Reschedule
-                </Button>
+                  <Edit className="h-4 w-4 mr-2" />{i18n.t('auto_reschedule')}</Button>
               )}
               {onCancel && (
                 <Button 
@@ -525,9 +502,7 @@ function InterviewCard({ interview, user, canJoin, onJoin, onReschedule, onCance
                   className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                   onClick={() => onCancel(interview)}
                 >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
+                  <XCircle className="h-4 w-4 mr-2" />{i18n.t('auto_cancel')}</Button>
               )}
             </div>
           )}

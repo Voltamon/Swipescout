@@ -1,4 +1,5 @@
-﻿import React, { useState, useRef, useEffect, useContext } from 'react';
+import i18n from 'i18next';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   Box,
   IconButton,
@@ -267,7 +268,7 @@ const VideoFeed = () => {
   if (!currentVideo) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Typography variant="h6">No videos available</Typography>
+        <Typography variant="h6">{i18n.t('auto_no_videos_available')}</Typography>
       </Box>
     );
   }
@@ -453,14 +454,12 @@ const VideoFeed = () => {
           variant="contained"
           size="large"
           onClick={handleOpenDialog}
-        >
-          Connect
-        </ConnectButton>
+        >{i18n.t('auto_connect')}</ConnectButton>
       </VideoContainer>
 
       <CompanyDetailDialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Company Details</Typography>
+          <Typography variant="h6">{i18n.t('auto_company_details')}</Typography>
           <IconButton onClick={handleCloseDialog} sx={{ color: '#fff' }}>
             <Close />
           </IconButton>
@@ -483,32 +482,24 @@ const VideoFeed = () => {
           </Box>
 
           <Stack direction="column" spacing={1} sx={{ mb: 3 }}>
-            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
-              Industry
-            </Typography>
+            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">{i18n.t('auto_industry_1')}</Typography>
             <Typography variant="body1" sx={{ color: '#fff' }}>
               {currentVideo.industry}
             </Typography>
 
-            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
-              Founded
-            </Typography>
+            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">{i18n.t('auto_founded')}</Typography>
             <Typography variant="body1" sx={{ color: '#fff' }}>
               {currentVideo.foundedYear}
             </Typography>
 
-            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
-              Employees
-            </Typography>
+            <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">{i18n.t('auto_employees')}</Typography>
             <Typography variant="body1" sx={{ color: '#fff' }}>
               {currentVideo.employeeCount}
             </Typography>
 
             {currentVideo.benefits && currentVideo.benefits.length > 0 && (
               <>
-                <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">
-                  Benefits
-                </Typography>
+                <Typography variant="subtitle2" color="rgba(255, 255, 255, 0.6)">{i18n.t('auto_benefits')}</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {currentVideo.benefits.map((benefit, index) => (
                     <Chip 
@@ -529,12 +520,8 @@ const VideoFeed = () => {
               variant="outlined" 
               onClick={handleCloseDialog}
               sx={{ color: '#fff', borderColor: '#fff' }}
-            >
-              Close
-            </Button>
-            <Button variant="contained" color="primary">
-              Visit Website
-            </Button>
+            >{i18n.t('auto_close')}</Button>
+            <Button variant="contained" color="primary">{i18n.t('auto_visit_website')}</Button>
           </Box>
         </DialogContent>
       </CompanyDetailDialog>

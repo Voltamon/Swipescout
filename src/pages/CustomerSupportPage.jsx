@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, LifeBuoy, MessageSquare } from 'lucide-react';
 import Header from "../components/Headers/Header";
@@ -58,9 +59,7 @@ export default function CustomerSupportPage() {
       <Header />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="text-center mb-12">
-          <h1 className={`text-4xl sm:text-5xl font-extrabold mb-4 ${homeThemeColors.titleText}`}>
-            Customer Support
-          </h1>
+          <h1 className={`text-4xl sm:text-5xl font-extrabold mb-4 ${homeThemeColors.titleText}`}>{i18n.t('auto_customer_support')}</h1>
           <p className={`max-w-3xl mx-auto text-lg sm:text-xl ${homeThemeColors.secondaryText}`}>
             Need help? Our team is here to provide you with the best support. Find the answers you need or connect with us directly.
           </p>

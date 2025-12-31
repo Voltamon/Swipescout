@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useMemo } from "react";
+import i18n from 'i18next';
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Container,
@@ -275,7 +276,7 @@ const HomePage = () => {
             </Box>
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
               <TextField
-                label="Your Email"
+                label={i18n.t('auto_your_email')} 
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -314,9 +315,7 @@ const HomePage = () => {
               </Button>
             </Box>
             {submitted && (
-              <Alert severity="success" sx={{ mt: 2 }}>
-                Thank you! You'll be notified when we launch.
-              </Alert>
+              <Alert severity="success" sx={{ mt: 2 }}>{i18n.t('auto_thank_you_you_ll_be_notified_when_we_lau')}</Alert>
             )}
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>

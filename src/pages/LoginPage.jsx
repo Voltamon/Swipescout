@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from "react";
+import i18n from 'i18next';
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation ,Link} from 'react-router-dom';
 import {
   AppBar,
@@ -338,12 +339,12 @@ const LoginPage = () => {
   return (
     <LoginContainer>
       <LoginFormContainer>
-        <LoginFormTitle variant="h5">Welcome Back</LoginFormTitle>
-        <LoginFormSubtitle>Log in to your account</LoginFormSubtitle>
+        <LoginFormTitle variant="h5">{i18n.t('auto_welcome_back')}</LoginFormTitle>
+        <LoginFormSubtitle>{i18n.t('auto_log_in_to_your_account')}</LoginFormSubtitle>
         
         <Box component="form" onSubmit={handleEmailSignIn}>
           <InputField
-            label="Enter your email address"
+            label={i18n.t('auto_enter_your_email_address')} 
             type="email"
             name="email"
             value={formData.email}
@@ -352,7 +353,7 @@ const LoginPage = () => {
             variant="outlined"
           />
           <InputField
-            label="Enter your password"
+            label={i18n.t('auto_enter_your_password')} 
             type={showPassword ? "text" : "password"}
             name="password"
             value={formData.password}
@@ -386,9 +387,7 @@ const LoginPage = () => {
                   color: '#5a67d8',
                 }
               }}
-            >
-              Forgot Password?
-            </Link>
+            >{i18n.t('auto_forgot_password')}</Link>
           </Box>
           <LoginButton type="submit" disabled={loading.email}>
             {loading.email ? <CircularProgress size={24} color="inherit" /> : "Log In"}
@@ -396,7 +395,7 @@ const LoginPage = () => {
         </Box>
 
         <SocialDivider>
-          <Typography variant="body2">Or log in with</Typography>
+          <Typography variant="body2">{i18n.t('auto_or_log_in_with')}</Typography>
         </SocialDivider>
 
         <Stack direction="row" spacing={1}>
@@ -432,9 +431,7 @@ const LoginPage = () => {
           </Alert>
         )}
 
-        <SignupLink onClick={navigateToRegister}>
-          Don't have an account? Sign Up
-        </SignupLink>
+        <SignupLink onClick={navigateToRegister}>{i18n.t('auto_don_t_have_an_account_sign_up')}</SignupLink>
       </LoginFormContainer>
     </LoginContainer>
   );

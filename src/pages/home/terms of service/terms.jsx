@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -17,7 +18,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
         <DialogHeader className={`px-4 sm:px-6 pt-6 pb-4 ${homeThemeColors.borders.default} border-b sticky top-0 ${homeThemeColors.backgrounds.dialog} z-10`}>
           <DialogTitle className={`text-xl sm:text-2xl md:text-3xl font-bold ${homeThemeColors.text.gradient} flex items-center gap-2 sm:gap-3`}>
             <FileText className={`h-6 w-6 sm:h-8 sm:w-8 ${homeThemeColors.icons.primary}`} />
-            <span>Terms of Service</span>
+            <span>{i18n.t('auto_terms_of_service')}</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -27,11 +28,11 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <div className={`flex flex-wrap gap-2 sm:gap-3 p-3 sm:p-4 bg-gradient-to-r ${homeThemeColors.gradients.card} rounded-lg border ${homeThemeColors.borders.primary}`}>
               <Badge variant="outline" className={`flex items-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-2 sm:px-3 text-xs sm:text-sm ${homeThemeColors.components.badge.outline}`}>
                 <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span><strong>Effective Date:</strong> 19 August 2025</span>
+                <span><strong>Effective Date:</strong>{i18n.t('auto_19_august_2025')}</span>
               </Badge>
               <Badge variant="outline" className={`flex items-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-2 sm:px-3 text-xs sm:text-sm ${homeThemeColors.components.badge.outline}`}>
                 <Building2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span><strong>Company:</strong> SwipeScout Ltd, United Kingdom</span>
+                <span><strong>Company:</strong>{i18n.t('auto_swipescout_ltd_united_kingdom')}</span>
               </Badge>
             </div>
 
@@ -39,7 +40,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-3">
                 <FileText className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.primary} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>1. Acceptance of Terms</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_1_acceptance_of_terms')}</h3>
               </div>
               <p className={`${homeThemeColors.components.section.text} text-sm sm:text-base`}>
                 By creating an account or using SwipeScout ("we", "our", "us"), you agree to these Terms of Service. If you do not agree, do not use the platform.
@@ -50,12 +51,12 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-3">
                 <UserCheck className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.secondary} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>2. Who Can Use SwipeScout</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_2_who_can_use_swipescout')}</h3>
               </div>
               <ul className={`space-y-1.5 ${homeThemeColors.text.secondary} text-sm sm:text-base`}>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
-                  <span>You must be at least 16 years old.</span>
+                  <span>{i18n.t('auto_you_must_be_at_least_16_years_old')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
@@ -72,7 +73,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-3">
                 <Video className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.accent} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>3. What SwipeScout Provides</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_3_what_swipescout_provides')}</h3>
               </div>
               <p className={`${homeThemeColors.components.section.text} mb-3 text-sm sm:text-base`}>
                 SwipeScout is a hiring platform that allows:
@@ -84,7 +85,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.accent} mt-1`}>•</span>
-                  <span>Employers to post jobs and discover candidates via video.</span>
+                  <span>{i18n.t('auto_employers_to_post_jobs_and_discover_cand')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.accent} mt-1`}>•</span>
@@ -97,34 +98,34 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-4">
                 <ShieldAlert className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.primary} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>4. User Responsibilities</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_4_user_responsibilities')}</h3>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <h4 className={`${homeThemeColors.components.section.subheading} mb-2 text-sm sm:text-base`}>For Job Seekers</h4>
+                  <h4 className={`${homeThemeColors.components.section.subheading} mb-2 text-sm sm:text-base`}>{i18n.t('auto_for_job_seekers')}</h4>
                   <ul className={`space-y-1.5 ${homeThemeColors.text.secondary} text-sm sm:text-base`}>
                     <li className="flex items-start gap-2">
                       <span className={`${homeThemeColors.icons.primary} mt-1`}>•</span>
-                      <span>Only upload truthful, accurate video resumes and profiles.</span>
+                      <span>{i18n.t('auto_only_upload_truthful_accurate_video_resu')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className={`${homeThemeColors.icons.primary} mt-1`}>•</span>
-                      <span>Do not misrepresent your skills, experience, or identity.</span>
+                      <span>{i18n.t('auto_do_not_misrepresent_your_skills_experien')}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className={`${homeThemeColors.components.section.subheading} mb-2 text-sm sm:text-base`}>For Employers</h4>
+                  <h4 className={`${homeThemeColors.components.section.subheading} mb-2 text-sm sm:text-base`}>{i18n.t('auto_for_employers')}</h4>
                   <ul className={`space-y-1.5 ${homeThemeColors.text.secondary} text-sm sm:text-base`}>
                     <li className="flex items-start gap-2">
                       <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
-                      <span>Only post real job opportunities.</span>
+                      <span>{i18n.t('auto_only_post_real_job_opportunities')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
-                      <span>No fake postings, spam, or phishing attempts.</span>
+                      <span>{i18n.t('auto_no_fake_postings_spam_or_phishing_attemp')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
@@ -134,7 +135,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className={`p-3 sm:p-4 bg-gradient-to-r ${homeThemeColors.gradients.subtle} rounded-lg border ${homeThemeColors.borders.primary}`}>
-                  <h4 className={`${homeThemeColors.components.section.subheading} mb-2 text-sm sm:text-base`}>For Everyone</h4>
+                  <h4 className={`${homeThemeColors.components.section.subheading} mb-2 text-sm sm:text-base`}>{i18n.t('auto_for_everyone')}</h4>
                   <p className={`${homeThemeColors.components.section.text} mb-2 text-sm sm:text-base`}>
                     You must NOT upload, share, or promote:
                   </p>
@@ -169,7 +170,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
               <ul className={`space-y-1.5 ${homeThemeColors.text.secondary} text-sm sm:text-base`}>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
-                  <span>You retain ownership of the content you upload.</span>
+                  <span>{i18n.t('auto_you_retain_ownership_of_the_content_you_')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
@@ -177,7 +178,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.secondary} mt-1`}>•</span>
-                  <span className="font-semibold">We will never sell your content.</span>
+                  <span className="font-semibold">{i18n.t('auto_we_will_never_sell_your_content')}</span>
                 </li>
               </ul>
             </section>
@@ -195,7 +196,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.accent} mt-1`}>•</span>
-                  <span>Messages must remain professional and relevant to hiring.</span>
+                  <span>{i18n.t('auto_messages_must_remain_professional_and_re')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.accent} mt-1`}>•</span>
@@ -208,7 +209,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-3">
                 <XCircle className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.primary} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>7. Prohibited Uses</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_7_prohibited_uses')}</h3>
               </div>
               <p className={`${homeThemeColors.components.section.text} mb-3 text-sm sm:text-base`}>
                 You may not:
@@ -232,7 +233,7 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-3">
                 <Server className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.secondary} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>8. Service Availability</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_8_service_availability')}</h3>
               </div>
               <p className={`${homeThemeColors.components.section.text} text-sm sm:text-base`}>
                 SwipeScout is an early-stage service. We do not guarantee continuous uptime, bug-free performance, or specific outcomes (employment, hires, offers).
@@ -245,12 +246,12 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`${homeThemeColors.backgrounds.card} p-4 sm:p-6 rounded-lg ${homeThemeColors.borders.default} border ${homeThemeColors.shadows.sm}`}>
               <div className="flex items-start gap-3 mb-3">
                 <Scale className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.accent} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>13. Dispute Resolution</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_13_dispute_resolution')}</h3>
               </div>
               <ul className={`space-y-1.5 ${homeThemeColors.text.secondary} text-sm sm:text-base`}>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.accent} mt-1`}>•</span>
-                  <span>These Terms are governed by the laws of England and Wales.</span>
+                  <span>{i18n.t('auto_these_terms_are_governed_by_the_laws_of_')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={`${homeThemeColors.icons.accent} mt-1`}>•</span>
@@ -267,11 +268,11 @@ const TermsOfService = ({ isOpen, onClose }) => {
             <section className={`bg-gradient-to-r ${homeThemeColors.gradients.card} p-4 sm:p-6 rounded-lg border ${homeThemeColors.borders.primary} ${homeThemeColors.shadows.md}`}>
               <div className="flex items-start gap-3 mb-3">
                 <Building2 className={`h-5 w-5 sm:h-6 sm:w-6 ${homeThemeColors.icons.primary} flex-shrink-0 mt-1`} />
-                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>14. Contact Us</h3>
+                <h3 className={`${homeThemeColors.components.section.heading} text-base sm:text-lg`}>{i18n.t('auto_14_contact_us')}</h3>
               </div>
               <div className={`${homeThemeColors.backgrounds.card} p-3 sm:p-4 rounded-lg space-y-1 text-sm sm:text-base`}>
-                <p className={`font-semibold ${homeThemeColors.text.primary}`}>SwipeScout Ltd</p>
-                <p className={homeThemeColors.text.secondary}>London, United Kingdom</p>
+                <p className={`font-semibold ${homeThemeColors.text.primary}`}>{i18n.t('auto_swipescout_ltd')}</p>
+                <p className={homeThemeColors.text.secondary}>{i18n.t('auto_london_united_kingdom')}</p>
                 <p className={homeThemeColors.text.secondary}>
                   <strong className={homeThemeColors.text.primary}>Email:</strong>{' '}
                   <a href="mailto:support@swipescout.xyz" className={homeThemeColors.text.link}>

@@ -1,4 +1,5 @@
-﻿// This component renders the main content area, including tabs and content
+import i18n from 'i18next';
+// This component renders the main content area, including tabs and content
 // for each "page" of the application for employers.
 
 import React, { useContext, useMemo, useState, useEffect  } from 'react';
@@ -183,9 +184,7 @@ const MainContent = ({
       case 'analytics':
         return (
           <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-              Advanced Analytics Dashboard
-            </Typography>
+            <Typography variant="h4" gutterBottom>{i18n.t('auto_advanced_analytics_dashboard')}</Typography>
             <Typography variant="body1">
               Comprehensive analytics about your hiring performance, candidate engagement, and recruitment ROI.
             </Typography>
@@ -202,9 +201,7 @@ const MainContent = ({
       case 'settings':
         return (
           <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-              Company Settings
-            </Typography>
+            <Typography variant="h4" gutterBottom>{i18n.t('auto_company_settings')}</Typography>
             <Typography variant="body1">
               Manage your company account settings, team permissions, and billing preferences.
             </Typography>
@@ -215,9 +212,7 @@ const MainContent = ({
       default:
         return (
           <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography variant="h5" gutterBottom>
-              Welcome to SwipeScout Employer Dashboard
-            </Typography>
+            <Typography variant="h5" gutterBottom>{i18n.t('auto_welcome_to_swipescout_employer_dashboard')}</Typography>
             <Typography variant="body1">
               Select a section from the navigation panel to start finding great candidates.
             </Typography>

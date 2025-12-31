@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -187,7 +188,7 @@ export default function CompanyVideoPreviewPage() {
                   justifyContent="center"
                   sx={{ bgcolor: 'grey.900' }}
                 >
-                  <Typography color="white">Video not available</Typography>
+                  <Typography color="white">{i18n.t('auto_video_not_available')}</Typography>
                 </Box>
               )}
             </Box>
@@ -277,9 +278,7 @@ export default function CompanyVideoPreviewPage() {
                           href={video.website}
                           target="_blank"
                           sx={{ textDecoration: 'none', color: 'primary.main' }}
-                        >
-                          Company Website
-                        </Typography>
+                        >{i18n.t('auto_company_website')}</Typography>
                       </Box>
                     </Grid>
                   )}
@@ -334,14 +333,10 @@ export default function CompanyVideoPreviewPage() {
           {/* Company Stats */}
           <Card sx={{ mb: 3 }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Company Highlights
-              </Typography>
+              <Typography variant="h6" gutterBottom>{i18n.t('auto_company_highlights')}</Typography>
               
               <Box mb={2}>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Company Rating
-                </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{i18n.t('auto_company_rating')}</Typography>
                 <Box display="flex" alignItems="center">
                   <Star sx={{ color: '#ffc107', mr: 0.5 }} />
                   <Typography variant="h6">
@@ -357,9 +352,7 @@ export default function CompanyVideoPreviewPage() {
 
               {video.benefits && video.benefits.length > 0 && (
                 <Box mb={2}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Benefits
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>{i18n.t('auto_benefits')}</Typography>
                   <Box display="flex" flexWrap="wrap" gap={0.5}>
                     {video.benefits.slice(0, 3).map((benefit, index) => (
                       <Chip
@@ -386,9 +379,7 @@ export default function CompanyVideoPreviewPage() {
                 fullWidth
                 startIcon={<Work />}
                 onClick={() => window.open(`/company/${video.companyId}/jobs`, '_blank')}
-              >
-                View Open Positions
-              </Button>
+              >{i18n.t('auto_view_open_positions')}</Button>
             </CardContent>
           </Card>
 
@@ -431,9 +422,7 @@ export default function CompanyVideoPreviewPage() {
           {/* Similar Companies */}
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Similar Companies
-              </Typography>
+              <Typography variant="h6" gutterBottom>{i18n.t('auto_similar_companies')}</Typography>
               
               <Typography variant="body2" color="text.secondary">
                 Discover more companies in {video.industry || 'this industry'}
@@ -444,9 +433,7 @@ export default function CompanyVideoPreviewPage() {
                 fullWidth
                 sx={{ mt: 2 }}
                 onClick={() => window.open('/company-videos', '_blank')}
-              >
-                Explore Companies
-              </Button>
+              >{i18n.t('auto_explore_companies')}</Button>
             </CardContent>
           </Card>
         </Grid>

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Card,
@@ -147,7 +148,7 @@ const UserManagementPage = () => {
 
   const getRoleBadge = (role) => {
     // Normalize role which may be stored as a string, an array, or null
-    let label = 'no role';
+    let label = i18n.t('auto_no_role');
     if (Array.isArray(role)) {
       label = role.join(', ');
     } else if (role) {
@@ -168,10 +169,8 @@ const UserManagementPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>User Management</h2>
-        <p className={themeColors.text.secondary}>
-          Manage all platform users and their access
-        </p>
+        <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>{i18n.t('auto_user_management')}</h2>
+        <p className={themeColors.text.secondary}>{i18n.t('auto_manage_all_platform_users_and_their_acce')}</p>
       </div>
 
       {/* Filters */}
@@ -181,7 +180,7 @@ const UserManagementPage = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search users..."
+                placeholder={i18n.t('auto_search_users')} 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -192,30 +191,22 @@ const UserManagementPage = () => {
                 variant={roleFilter === 'all' ? 'default' : 'outline'}
                 onClick={() => setRoleFilter('all')}
                 size="sm"
-              >
-                All
-              </Button>
+              >{i18n.t('auto_all')}</Button>
               <Button
                 variant={roleFilter === 'job_seeker' ? 'default' : 'outline'}
                 onClick={() => setRoleFilter('job_seeker')}
                 size="sm"
-              >
-                Job Seekers
-              </Button>
+              >{i18n.t('auto_job_seekers')}</Button>
               <Button
                 variant={roleFilter === 'employer' ? 'default' : 'outline'}
                 onClick={() => setRoleFilter('employer')}
                 size="sm"
-              >
-                Employers
-              </Button>
+              >{i18n.t('auto_employers')}</Button>
               <Button
                 variant={roleFilter === 'admin' ? 'default' : 'outline'}
                 onClick={() => setRoleFilter('admin')}
                 size="sm"
-              >
-                Admins
-              </Button>
+              >{i18n.t('auto_admins')}</Button>
             </div>
           </div>
         </CardContent>
@@ -227,12 +218,12 @@ const UserManagementPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{i18n.t('auto_user')}</TableHead>
+                <TableHead>{i18n.t('auto_email')}</TableHead>
+                <TableHead>{i18n.t('auto_role')}</TableHead>
+                <TableHead>{i18n.t('auto_status')}</TableHead>
+                <TableHead>{i18n.t('auto_joined')}</TableHead>
+                <TableHead className="text-right">{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -240,15 +231,13 @@ const UserManagementPage = () => {
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>
-                      Loading users...
-                    </div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-700"></div>{i18n.t('auto_loading_users')}</div>
                   </TableCell>
                 </TableRow>
               ) : filteredUsers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
-                    <p className={themeColors.text.muted}>No users found</p>
+                    <p className={themeColors.text.muted}>{i18n.t('auto_no_users_found')}</p>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -279,9 +268,7 @@ const UserManagementPage = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Profile
-                          </DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />{i18n.t('auto_view_profile')}</DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleAction(user, 'ban')}
                             disabled={user.status === 'suspended'}
@@ -300,9 +287,7 @@ const UserManagementPage = () => {
                             onClick={() => handleAction(user, 'delete')}
                             className="text-red-600"
                           >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                            <Trash2 className="mr-2 h-4 w-4" />{i18n.t('auto_delete')}</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -329,9 +314,7 @@ const UserManagementPage = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActionDialog({ open: false, type: null })}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setActionDialog({ open: false, type: null })}>{i18n.t('auto_cancel')}</Button>
             <Button
               onClick={executeAction}
               className={`${actionButtonClass} text-white`}

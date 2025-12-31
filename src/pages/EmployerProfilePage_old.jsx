@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useEffect, useRef, useCallback  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useEffect, useRef, useCallback  } from 'react';
 import {
   Box,
   Container,
@@ -435,7 +436,7 @@ const EmployerProfile = () => {
   }}>
         <Container maxWidth="lg">
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <Typography variant="h6">Loading profile...</Typography>
+            <Typography variant="h6">{i18n.t('auto_loading_profile')}</Typography>
           </Box>
         </Container>
       </ProfileContainer>
@@ -491,9 +492,7 @@ const EmployerProfile = () => {
                  }
                 }
                 sx={{ boxShadow: 2 }}
-              >
-                Edit Profile
-              </Button>
+              >{i18n.t('auto_edit_profile')}</Button>
               <Button
                 variant="outlined"
                 color="primary"
@@ -506,9 +505,7 @@ const EmployerProfile = () => {
                 }
                 }
                 sx={{ boxShadow: 1 }}
-              >
-                Post Job
-              </Button>
+              >{i18n.t('auto_post_job')}</Button>
             </Box>
 
             <Typography variant="body1" paragraph sx={{ mb: 3, lineHeight: 1.8 }}>
@@ -516,9 +513,7 @@ const EmployerProfile = () => {
             </Typography>
 
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                Categories
-              </Typography>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">{i18n.t('auto_categories')}</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 {employerData.categories?.map((category, index) => (
                   <CategoryChip key={index} label={category.name || category} sx={{ mb: 1, mr: 1 }} />
@@ -573,10 +568,10 @@ const EmployerProfile = () => {
 
             <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
               {employerData.social?.linkedin && (
-                <Tooltip title="LinkedIn">
+                <Tooltip title={i18n.t('auto_linkedin')} >
                   <IconButton 
                     color="primary" 
-                    aria-label="LinkedIn" 
+                    aria-label={i18n.t('auto_linkedin')}  
                     href={employerData.social.linkedin} 
                     target="_blank"
                   >
@@ -585,10 +580,10 @@ const EmployerProfile = () => {
                 </Tooltip>
               )}
               {employerData.social?.facebook && (
-                <Tooltip title="Facebook">
+                <Tooltip title={i18n.t('auto_facebook')} >
                   <IconButton 
                     color="primary" 
-                    aria-label="Facebook" 
+                    aria-label={i18n.t('auto_facebook')}  
                     href={employerData.social.facebook} 
                     target="_blank"
                   >
@@ -597,10 +592,10 @@ const EmployerProfile = () => {
                 </Tooltip>
               )}
               {employerData.social?.twitter && (
-                <Tooltip title="Twitter">
+                <Tooltip title={i18n.t('auto_twitter')} >
                   <IconButton 
                     color="primary" 
-                    aria-label="Twitter" 
+                    aria-label={i18n.t('auto_twitter')}  
                     href={employerData.social.twitter} 
                     target="_blank"
                   >
@@ -640,17 +635,17 @@ const EmployerProfile = () => {
               </VideoControls>
 
               <VideoActions>
-                <Tooltip title="Like">
+                <Tooltip title={i18n.t('auto_like')} >
                   <IconButton color="inherit">
                     <FavoriteIcon />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Share">
+                <Tooltip title={i18n.t('auto_share')} >
                   <IconButton color="inherit">
                     <ShareIcon />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Save">
+                <Tooltip title={i18n.t('auto_save')} >
                   <IconButton color="inherit">
                     <BookmarkIcon />
                   </IconButton>
@@ -678,51 +673,39 @@ const EmployerProfile = () => {
               }
             }}
           >
-            <Tab label="About" icon={isMobile ? null : <WorkIcon />} iconPosition="start" />
-            <Tab label="Jobs" icon={isMobile ? null : <WorkIcon />} iconPosition="start" />
-            <Tab label="Videos" icon={isMobile ? null : <PlayArrowIcon />} iconPosition="start" />
-            <Tab label="Contact" icon={isMobile ? null : <EmailIcon />} iconPosition="start" />
+            <Tab label={i18n.t('auto_about')}  icon={isMobile ? null : <WorkIcon />} iconPosition="start" />
+            <Tab label={i18n.t('auto_jobs')}  icon={isMobile ? null : <WorkIcon />} iconPosition="start" />
+            <Tab label={i18n.t('auto_videos')}  icon={isMobile ? null : <PlayArrowIcon />} iconPosition="start" />
+            <Tab label={i18n.t('auto_contact')}  icon={isMobile ? null : <EmailIcon />} iconPosition="start" />
           </Tabs>
 
           {/* About Tab */}
           <TabPanel value={tabValue} index={0}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Company Overview
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_company_overview')}</Typography>
                 <Typography variant="body1" paragraph sx={{ lineHeight: 1.8 }}>
                   {employerData.description}
                 </Typography>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Industry
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_industry_1')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.industry}
                 </Typography>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Company Size
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_company_size')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.size}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Founded
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_founded')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.founded}
                 </Typography>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Headquarters
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_headquarters')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.location}
                 </Typography>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Categories
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_categories')}</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                   {employerData.categories?.map((category, index) => (
                     <CategoryChip key={index} label={category.name || category} sx={{ mb: 1, mr: 1 }} />
@@ -735,18 +718,14 @@ const EmployerProfile = () => {
           {/* Jobs Tab */}
           <TabPanel value={tabValue} index={1}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-              <Typography variant="h6" fontWeight="medium">
-                Open Positions
-              </Typography>
+              <Typography variant="h6" fontWeight="medium">{i18n.t('auto_open_positions')}</Typography>
               <Button
                 variant="contained"
                 color="primary"
                 startIcon={<WorkIcon />}
                 onClick={() => navigate('/Post-job-page')}
                 sx={{ boxShadow: 2 }}
-              >
-                Post New Job
-              </Button>
+              >{i18n.t('auto_post_new_job')}</Button>
             </Box>
 
             {employerJobs.length > 0 ? (
@@ -925,9 +904,7 @@ const EmployerProfile = () => {
                             
                             {/* Optional: Additional info below video if needed */}
                             {/* <CardContent>
-                              <Typography variant="body2" color="textSecondary">
-                                Additional information here
-                              </Typography>
+                              <Typography variant="body2" color="textSecondary">{i18n.t('auto_additional_information_here')}</Typography>
                             </CardContent> */}
                           </VideoCard>
                         </Grid>                         </Grid>
@@ -942,17 +919,13 @@ const EmployerProfile = () => {
                         color="primary"
                         onClick={() => navigate(`/job/${job.id}`)}
                         sx={{ boxShadow: 2 }}
-                      >
-                        View Details
-                      </Button>
+                      >{i18n.t('auto_view_details_1')}</Button>
                     </Box>
                   </CardContent>
                 </JobCard>
               ))
             ) : (
-              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
-                No job postings available
-              </Typography>
+              <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>{i18n.t('auto_no_job_postings_available')}</Typography>
             )}
           </TabPanel>
 
@@ -1074,18 +1047,14 @@ const EmployerProfile = () => {
     
     {/* Optional: Additional info below video if needed */}
     {/* <CardContent>
-      <Typography variant="body2" color="textSecondary">
-        Additional information here
-      </Typography>
+      <Typography variant="body2" color="textSecondary">{i18n.t('auto_additional_information_here')}</Typography>
     </CardContent> */}
   </VideoCard>
 </Grid>
               ))
             ) : (
               <Grid item xs={12}>
-                <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>
-                  No videos available
-                </Typography>
+                <Typography variant="body1" color="textSecondary" sx={{ textAlign: 'center', py: 4 }}>{i18n.t('auto_no_videos_available')}</Typography>
               </Grid>
             )}
           </Grid>
@@ -1095,9 +1064,7 @@ const EmployerProfile = () => {
           <TabPanel value={tabValue} index={3}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Contact Information
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_contact_information')}</Typography>
                 <List>
                   {employerData.email && (
                     <ListItem sx={{ px: 0 }}>
@@ -1142,9 +1109,7 @@ const EmployerProfile = () => {
                 </List>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom fontWeight="medium">
-                  Social Media
-                </Typography>
+                <Typography variant="h6" gutterBottom fontWeight="medium">{i18n.t('auto_social_media')}</Typography>
                 <List>
                   {employerData.social?.linkedin && (
                     <ListItem button component="a" href={employerData.social.linkedin} target="_blank" sx={{ px: 0 }}>

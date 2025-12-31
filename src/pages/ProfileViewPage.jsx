@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Card, CardContent, CardHeader, CardTitle 
+import {
+  Card, CardContent, CardHeader, CardTitle
 } from '@/components/UI/card.jsx';
+import i18n from 'i18next';
 import ReportButton from '@/components/ReportButton.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
@@ -158,9 +159,9 @@ export default function ProfileViewPage() {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen">
         <User className="h-24 w-24 text-gray-400 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Profile Not Found</h2>
-        <p className="text-gray-600 mb-4">The user profile you're looking for doesn't exist.</p>
-        <Button onClick={() => navigate(-1)}>Go Back</Button>
+        <h2 className="text-2xl font-bold mb-2">{i18n.t('auto_profile_not_found')}</h2>
+        <p className="text-gray-600 mb-4">{i18n.t('auto_the_user_profile_you_re_looking_for_does')}</p>
+        <Button onClick={() => navigate(-1)}>{i18n.t('auto_go_back')}</Button>
       </div>
     );
   }
@@ -178,9 +179,7 @@ export default function ProfileViewPage() {
         onClick={() => navigate(-1)}
         className="mb-4"
       >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
-      </Button>
+        <ArrowLeft className="h-4 w-4 mr-2" />{i18n.t('auto_back')}</Button>
 
       {/* Header Section */}
       <div className="mb-8">
@@ -223,21 +222,19 @@ export default function ProfileViewPage() {
                         {/* Show Connect when viewing another user's profile */}
                         {profile?.id && profile.id !== user?.id && (
                           (connection && connection.status === 'accepted') ? (
-                            <Badge className="bg-green-600">Connected</Badge>
+                            <Badge className="bg-green-600">{i18n.t('auto_connected')}</Badge>
                           ) : (connection && connection.status === 'pending' && connection.isSender) ? (
-                            <Button disabled>Pending</Button>
+                            <Button disabled>{i18n.t('auto_pending')}</Button>
                           ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
                             <div className="flex gap-2">
-                              <Button onClick={() => import('@/services/connectionService.js').then(m => m.acceptConnection(connection.id)).then(() => { setConnection({ ...connection, status: 'accepted' }); toast({ description: 'Connection accepted' }); }).catch(err => toast({ description: 'Failed to accept', variant: 'destructive' }))} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
-                              <Button variant="outline" onClick={() => import('@/services/connectionService.js').then(m => m.rejectConnection(connection.id)).then(() => { setConnection(null); toast({ description: 'Connection declined' }); }).catch(err => toast({ description: 'Failed to decline', variant: 'destructive' }))}>Decline</Button>
+                              <Button onClick={() => import('@/services/connectionService.js').then(m => m.acceptConnection(connection.id)).then(() => { setConnection({ ...connection, status: 'accepted' }); toast({ description: 'Connection accepted' }); }).catch(err => toast({ description: 'Failed to accept', variant: 'destructive' }))} className="bg-gradient-to-r from-cyan-600 to-purple-600">{i18n.t('auto_accept')}</Button>
+                              <Button variant="outline" onClick={() => import('@/services/connectionService.js').then(m => m.rejectConnection(connection.id)).then(() => { setConnection(null); toast({ description: 'Connection declined' }); }).catch(err => toast({ description: 'Failed to decline', variant: 'destructive' }))}>{i18n.t('auto_decline')}</Button>
                             </div>
                           ) : (
                             <Button
                               variant="outline"
                               onClick={handleConnect}
-                            >
-                              Connect
-                            </Button>
+                            >{i18n.t('auto_connect')}</Button>
                           )
                         )}
                       </div>
@@ -271,9 +268,7 @@ export default function ProfileViewPage() {
                       {profile.website && (
                         <div className="flex items-center gap-2 text-sm">
                           <Globe className="h-4 w-4 text-muted-foreground" />
-                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600">
-                            Website
-                          </a>
+                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600">{i18n.t('auto_website')}</a>
                         </div>
                       )}
 
@@ -430,12 +425,12 @@ export default function ProfileViewPage() {
       {/* Tabs Section */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className={isJobSeeker ? "grid w-full grid-cols-4" : "grid w-full grid-cols-3"}>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          {isJobSeeker && <TabsTrigger value="experience">Experience</TabsTrigger>}
-          {isJobSeeker && <TabsTrigger value="education">Education</TabsTrigger>}
-          {isJobSeeker && <TabsTrigger value="skills">Skills</TabsTrigger>}
-          <TabsTrigger value="videos">All Videos</TabsTrigger>
-          {isEmployer && <TabsTrigger value="company">Company Info</TabsTrigger>}
+          <TabsTrigger value="overview">{i18n.t('auto_overview')}</TabsTrigger>
+          {isJobSeeker && <TabsTrigger value="experience">{i18n.t('auto_experience')}</TabsTrigger>}
+          {isJobSeeker && <TabsTrigger value="education">{i18n.t('auto_education')}</TabsTrigger>}
+          {isJobSeeker && <TabsTrigger value="skills">{i18n.t('auto_skills_1')}</TabsTrigger>}
+          <TabsTrigger value="videos">{i18n.t('auto_all_videos')}</TabsTrigger>
+          {isEmployer && <TabsTrigger value="company">{i18n.t('auto_company_info')}</TabsTrigger>}
         </TabsList>
 
         {/* Overview Tab */}
@@ -448,9 +443,7 @@ export default function ProfileViewPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Award className="h-5 w-5 text-cyan-600" />
-                      Top Skills
-                    </CardTitle>
+                      <Award className="h-5 w-5 text-cyan-600" />{i18n.t('auto_top_skills')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
@@ -470,9 +463,7 @@ export default function ProfileViewPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Briefcase className="h-5 w-5 text-purple-600" />
-                      Latest Experience
-                    </CardTitle>
+                      <Briefcase className="h-5 w-5 text-purple-600" />{i18n.t('auto_latest_experience')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {profile.experiences.slice(0, 2).map((exp, index) => (
@@ -499,9 +490,7 @@ export default function ProfileViewPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <GraduationCap className="h-5 w-5 text-cyan-600" />
-                      Education
-                    </CardTitle>
+                      <GraduationCap className="h-5 w-5 text-cyan-600" />{i18n.t('auto_education')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {profile.education.slice(0, 2).map((edu, index) => (
@@ -530,9 +519,7 @@ export default function ProfileViewPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-green-600" />
-                  Company Information
-                </CardTitle>
+                  <Building2 className="h-5 w-5 text-green-600" />{i18n.t('auto_company_information')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {profile.industry && (
@@ -590,7 +577,7 @@ export default function ProfileViewPage() {
                         )}
                       </div>
                       {exp.current && (
-                        <Badge className="bg-green-100 text-green-800">Current</Badge>
+                        <Badge className="bg-green-100 text-green-800">{i18n.t('auto_current')}</Badge>
                       )}
                     </div>
                     {exp.description && (
@@ -603,7 +590,7 @@ export default function ProfileViewPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No experience listed</h3>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_experience_listed')}</h3>
                 </CardContent>
               </Card>
             )}
@@ -647,7 +634,7 @@ export default function ProfileViewPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <GraduationCap className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No education listed</h3>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_education_listed')}</h3>
                 </CardContent>
               </Card>
             )}
@@ -660,7 +647,7 @@ export default function ProfileViewPage() {
             {profile.skills && profile.skills.length > 0 ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>All Skills</CardTitle>
+                  <CardTitle>{i18n.t('auto_all_skills')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-3">
@@ -686,7 +673,7 @@ export default function ProfileViewPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Award className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No skills listed</h3>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_skills_listed')}</h3>
                 </CardContent>
               </Card>
             )}
@@ -710,7 +697,7 @@ export default function ProfileViewPage() {
                       <Play className="h-12 w-12 text-white" />
                     </div>
                     {video.isMainVideo && (
-                      <Badge className="absolute top-2 right-2 bg-cyan-600">Main</Badge>
+                      <Badge className="absolute top-2 right-2 bg-cyan-600">{i18n.t('auto_main')}</Badge>
                     )}
                   </div>
                   <CardContent className="p-4">
@@ -730,8 +717,8 @@ export default function ProfileViewPage() {
             <Card className="text-center py-12">
               <CardContent>
                 <Play className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No videos</h3>
-                <p className="text-muted-foreground">This user hasn't uploaded any videos yet.</p>
+                <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_videos')}</h3>
+                <p className="text-muted-foreground">{i18n.t('auto_this_user_hasn_t_uploaded_any_videos_yet')}</p>
               </CardContent>
             </Card>
           )}
@@ -742,7 +729,7 @@ export default function ProfileViewPage() {
           <TabsContent value="company" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Company Details</CardTitle>
+                <CardTitle>{i18n.t('auto_company_details')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {profile.companyName && (
@@ -796,9 +783,7 @@ export default function ProfileViewPage() {
       {profile?.id && profile.id !== user?.id && (
         <div className="mt-6 flex justify-end">
           <Button onClick={handleConnect} className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700">
-            <Heart className="h-4 w-4 mr-2" />
-            Connect
-          </Button>
+            <Heart className="h-4 w-4 mr-2" />{i18n.t('auto_connect')}</Button>
         </div>
       )}
     </div>

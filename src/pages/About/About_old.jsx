@@ -1,4 +1,5 @@
-﻿import React, { useContext } from "react";
+import i18n from 'i18next';
+import React, { useContext } from "react";
 import Header from "../../components/Headers/Header";
 import HeroSection from "../../components/HeroSection/HeroSection";
 import { Helmet } from "react-helmet";
@@ -272,7 +273,7 @@ const AboutUs = () => {
             <Grid item xs={12} md={4}>
               <Box display="flex" alignItems="center" mb={2}>
                 <LocationOn sx={{ color: "#0D47A1", mr: 2 }} /> {/* Darker, strong blue */}
-                <Typography sx={{ color: "#424242" }}>Doha Qatar</Typography> {/* Dark gray */}
+                <Typography sx={{ color: "#424242" }}>{i18n.t('auto_doha_qatar')}</Typography> {/* Dark gray */}
               </Box>
             </Grid>
             <Grid item xs={12} md={4}>

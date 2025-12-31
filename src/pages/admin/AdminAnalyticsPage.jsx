@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import i18n from 'i18next';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import themeColors from '@/config/theme-colors-admin';
@@ -157,39 +158,39 @@ const AdminAnalyticsPage = () => {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div>Loading analytics...</div>
+            <div>{i18n.t('auto_loading_analytics')}</div>
           ) : analytics ? (
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold">User Growth</h4>
+                <h4 className="font-semibold">{i18n.t('auto_user_growth')}</h4>
                 <div className="mt-3 h-48">
-                  {userGrowthData ? <Line data={userGrowthData} options={commonLineOptions} /> : <div className="text-sm text-muted">No data</div>}
+                  {userGrowthData ? <Line data={userGrowthData} options={commonLineOptions} /> : <div className="text-sm text-muted">{i18n.t('auto_no_data')}</div>}
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold">Video Trends</h4>
+                <h4 className="font-semibold">{i18n.t('auto_video_trends')}</h4>
                 <div className="mt-3 h-48">
-                  {videoTrendsData ? <Line data={videoTrendsData} options={commonLineOptions} /> : <div className="text-sm text-muted">No data</div>}
+                  {videoTrendsData ? <Line data={videoTrendsData} options={commonLineOptions} /> : <div className="text-sm text-muted">{i18n.t('auto_no_data')}</div>}
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold">Job Trends</h4>
+                <h4 className="font-semibold">{i18n.t('auto_job_trends')}</h4>
                 <div className="mt-3 h-48">
-                  {jobTrendsData ? <Line data={jobTrendsData} options={commonLineOptions} /> : <div className="text-sm text-muted">No data</div>}
+                  {jobTrendsData ? <Line data={jobTrendsData} options={commonLineOptions} /> : <div className="text-sm text-muted">{i18n.t('auto_no_data')}</div>}
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold">Role Distribution</h4>
+                <h4 className="font-semibold">{i18n.t('auto_role_distribution')}</h4>
                 <div className="mt-3 h-56">
-                  {roleDistributionData ? <Doughnut data={roleDistributionData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }} /> : <div className="text-sm text-muted">No data</div>}
+                  {roleDistributionData ? <Doughnut data={roleDistributionData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }} /> : <div className="text-sm text-muted">{i18n.t('auto_no_data')}</div>}
                 </div>
               </div>
             </div>
           ) : (
-            <div>No analytics available</div>
+            <div>{i18n.t('auto_no_analytics_available')}</div>
           )}
         </CardContent>
       </Card>

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { getCareerAdvice } from '../services/api';
 import {
   BookOpen,
@@ -119,7 +120,7 @@ const CareerAdvicePage = () => {
               <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
-                placeholder="ابحث عن النصائح والمقالات..."
+                placeholder={i18n.t('auto_text_7')} 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pr-12 pl-4 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white focus:ring-opacity-50"
@@ -153,7 +154,7 @@ const CareerAdvicePage = () => {
           </div>
         </div>
 
-        {loading && <div className="text-center py-12">Loading content...</div>}
+        {loading && <div className="text-center py-12">{i18n.t('auto_loading_content')}</div>}
         {error && <div className="text-center py-12 text-red-500">{error}</div>}
 
         {!loading && !error && (
@@ -392,7 +393,7 @@ const CareerAdvicePage = () => {
               <div className="max-w-md mx-auto flex gap-4">
                 <input
                   type="email"
-                  placeholder="بريدك الإلكتروني"
+                  placeholder={i18n.t('auto_text_8')} 
                   className="flex-1 px-4 py-2 rounded-md text-gray-900"
                 />
                 <button className="bg-white text-blue-600 px-6 py-2 rounded-md hover:bg-gray-100 transition-colors font-medium">

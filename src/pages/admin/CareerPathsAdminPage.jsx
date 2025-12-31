@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCareerPaths, createCareerPath, deleteCareerPath, updateCareerPath } from '@/services/api';
+import i18n from 'i18next';
 
 const CareerPathsAdminPage = () => {
   const [paths, setPaths] = useState([]);
@@ -29,7 +30,7 @@ const CareerPathsAdminPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const nextErrors = {};
-    if (!form.title || !String(form.title).trim()) nextErrors.title = 'Title is required';
+    if (!form.title || !String(form.title).trim()) nextErrors.title = i18n.t('auto_title_is_required');
     if (!form.description || !String(form.description).trim()) nextErrors.description = 'Description is required';
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
@@ -93,32 +94,32 @@ const CareerPathsAdminPage = () => {
 
   return (
     <div>
-      <h2 className="text-lg font-bold mb-4">Career Paths Admin</h2>
+      <h2 className="text-lg font-bold mb-4">{i18n.t('auto_career_paths_admin')}</h2>
       <form onSubmit={handleSubmit} className="space-y-2 mb-4">
         <div>
-          <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Title" className={`w-full p-2 border ${errors.title ? 'border-red-500' : ''}`} />
+          <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={i18n.t('auto_title')}  className={`w-full p-2 border ${errors.title ? 'border-red-500' : ''}`} />
           {errors.title && <div className="text-xs text-red-600">{errors.title}</div>}
         </div>
         <div>
-          <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" className={`w-full p-2 border ${errors.description ? 'border-red-500' : ''}`} />
+          <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder={i18n.t('auto_description')}  className={`w-full p-2 border ${errors.description ? 'border-red-500' : ''}`} />
           {errors.description && <div className="text-xs text-red-600">{errors.description}</div>}
         </div>
-        <input value={form.steps} onChange={(e) => setForm({ ...form, steps: e.target.value })} placeholder="Steps (plain text)" className="w-full p-2 border" />
-        <input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="Duration" className="w-full p-2 border" />
-        <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} placeholder="Skills (comma separated)" className="w-full p-2 border" />
-        <input value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} placeholder="Salary" className="w-full p-2 border" />
-        <input value={form.demand} onChange={(e) => setForm({ ...form, demand: e.target.value })} placeholder="Demand" className="w-full p-2 border" />
-        <input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="Icon" className="w-full p-2 border" />
+        <input value={form.steps} onChange={(e) => setForm({ ...form, steps: e.target.value })} placeholder={i18n.t('auto_steps_plain_text')}  className="w-full p-2 border" />
+        <input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder={i18n.t('auto_duration')}  className="w-full p-2 border" />
+        <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} placeholder={i18n.t('auto_skills_comma_separated')}  className="w-full p-2 border" />
+        <input value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} placeholder={i18n.t('auto_salary')}  className="w-full p-2 border" />
+        <input value={form.demand} onChange={(e) => setForm({ ...form, demand: e.target.value })} placeholder={i18n.t('auto_demand')}  className="w-full p-2 border" />
+        <input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder={i18n.t('auto_icon')}  className="w-full p-2 border" />
         <div className="flex gap-2">
           <button type="submit" disabled={isSaving} className={`px-3 py-1 text-white rounded ${isSaving ? 'bg-gray-400' : 'bg-blue-600'}`}>{isSaving ? 'Saving...' : (editingId ? 'Save' : 'Create')}</button>
-          {editingId && <button type="button" onClick={handleCancelEdit} className="px-3 py-1 bg-gray-300 rounded">Cancel</button>}
+          {editingId && <button type="button" onClick={handleCancelEdit} className="px-3 py-1 bg-gray-300 rounded">{i18n.t('auto_cancel')}</button>}
         </div>
       </form>
   {message && <div className="text-sm text-green-600 mb-4">{message}</div>}
 
       <div>
-        <h3 className="font-semibold mb-2">Existing Paths</h3>
-        {loading ? <div>Loading...</div> : (
+        <h3 className="font-semibold mb-2">{i18n.t('auto_existing_paths')}</h3>
+        {loading ? <div>{i18n.t('auto_loading')}</div> : (
           <ul className="space-y-2">
             {paths.map((p) => (
               <li key={p.id} className="p-2 border rounded flex justify-between items-start">
@@ -128,8 +129,8 @@ const CareerPathsAdminPage = () => {
                   <div className="text-xs text-gray-500">{p.skills && p.skills.join(', ')}</div>
                 </div>
                 <div className="flex flex-col gap-1 text-right">
-                  <button onClick={() => handleEdit(p)} className="text-blue-600">Edit</button>
-                  <button onClick={() => handleDelete(p.id)} className="text-red-600">Delete</button>
+                  <button onClick={() => handleEdit(p)} className="text-blue-600">{i18n.t('auto_edit')}</button>
+                  <button onClick={() => handleDelete(p.id)} className="text-red-600">{i18n.t('auto_delete')}</button>
                 </div>
               </li>
             ))}

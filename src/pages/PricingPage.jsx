@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
@@ -544,9 +545,7 @@ export default function PricingPage() {
             <Button
               onClick={() => handlePurchaseService(service)}
               className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
-            >
-              Purchase
-            </Button>
+            >{i18n.t('auto_purchase')}</Button>
           </CardContent>
         </Card>
       ))}
@@ -572,16 +571,13 @@ export default function PricingPage() {
 
         {/* Annual/Monthly Toggle */}
         <div className="flex items-center justify-center gap-4 mb-12">
-          <Label htmlFor="billing-toggle" className={`font-medium ${!isAnnual ? 'text-purple-600' : 'text-gray-500'}`}>
-            Monthly
-          </Label>
+          <Label htmlFor="billing-toggle" className={`font-medium ${!isAnnual ? 'text-purple-600' : 'text-gray-500'}`}>{i18n.t('auto_monthly')}</Label>
           <Switch
             id="billing-toggle"
             checked={isAnnual}
             onCheckedChange={setIsAnnual}
           />
-          <Label htmlFor="billing-toggle" className={`font-medium ${isAnnual ? 'text-purple-600' : 'text-gray-500'}`}>
-            Annual <Badge variant="outline" className="ml-2 border-green-500 text-green-600">Save up to 17%</Badge>
+          <Label htmlFor="billing-toggle" className={`font-medium ${isAnnual ? 'text-purple-600' : 'text-gray-500'}`}>{i18n.t('auto_annual')}<Badge variant="outline" className="ml-2 border-green-500 text-green-600">{i18n.t('auto_save_up_to_17')}</Badge>
           </Label>
         </div>
 

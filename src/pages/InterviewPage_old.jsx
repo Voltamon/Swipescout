@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material';
 import {
@@ -296,9 +297,7 @@ const InterviewPage = () => {
                         startIcon={<VideoCall />}
                         onClick={() => handleJoinInterview(interview)}
                         size="small"
-                      >
-                        Join Interview
-                      </Button>
+                      >{i18n.t('auto_join_interview')}</Button>
                     )}
                   </Box>
                 </CardContent>

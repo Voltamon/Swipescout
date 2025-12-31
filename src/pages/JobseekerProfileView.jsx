@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -239,7 +240,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-lg text-center p-6 bg-white rounded shadow">
-          <h3 className="text-xl font-semibold mb-2">Error loading profile</h3>
+          <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_error_loading_profile')}</h3>
           <p className="text-sm text-red-600 mb-4">{String(error)}</p>
           <p className="text-sm text-slate-600">If you see a connection refused error, make sure your backend is running on {VITE_API_BASE_URL} and accepts requests.</p>
         </div>
@@ -250,7 +251,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">No profile found</div>
+        <div className="text-center">{i18n.t('auto_no_profile_found')}</div>
       </div>
     );
   }
@@ -399,9 +400,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
           }}
           className="mb-6 hover:bg-white/50"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
+          <ArrowLeft className="h-4 w-4 mr-2" />{i18n.t('auto_back')}</Button>
 
         {/* Header Section */}
         <Card className="mb-8 border-l-4 border-l-cyan-500 shadow-xl">
@@ -434,22 +433,20 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       {/* Connect Button / state */}
                       {(!user?.id || !isOwnProfile) && (
                         (connection && connection.status === 'accepted') ? (
-                          <Badge className="bg-green-600">Connected</Badge>
+                          <Badge className="bg-green-600">{i18n.t('auto_connected')}</Badge>
                         ) : (connection && connection.status === 'pending' && connection.isSender) ? (
-                          <Button disabled className="bg-gray-300">Pending</Button>
+                          <Button disabled className="bg-gray-300">{i18n.t('auto_pending')}</Button>
                         ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
                           <div className="flex gap-2">
-                            <Button onClick={() => handleAcceptConnection(connection.id)} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
-                            <Button onClick={() => handleRejectConnection(connection.id)} variant="outline">Decline</Button>
+                            <Button onClick={() => handleAcceptConnection(connection.id)} className="bg-gradient-to-r from-cyan-600 to-purple-600">{i18n.t('auto_accept')}</Button>
+                            <Button onClick={() => handleRejectConnection(connection.id)} variant="outline">{i18n.t('auto_decline')}</Button>
                           </div>
                         ) : (
                           <Button 
                             onClick={handleConnect}
                             className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 shadow-lg"
                           >
-                            <Heart className="h-4 w-4 mr-2" />
-                            Connect
-                          </Button>
+                            <Heart className="h-4 w-4 mr-2" />{i18n.t('auto_connect')}</Button>
                         )
                       )}
                     </div>
@@ -471,11 +468,9 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                           </a>
                           {isOwnProfile && (
                             profile.user?.isVerified ? (
-                              <Badge variant="outline" className="text-green-600 border-green-600 ml-2">Verified</Badge>
+                              <Badge variant="outline" className="text-green-600 border-green-600 ml-2">{i18n.t('auto_verified')}</Badge>
                             ) : (
-                              <Button variant="link" size="sm" onClick={handleVerifyEmail} className="text-orange-500 h-auto p-0 ml-2">
-                                Verify
-                              </Button>
+                              <Button variant="link" size="sm" onClick={handleVerifyEmail} className="text-orange-500 h-auto p-0 ml-2">{i18n.t('auto_verify')}</Button>
                             )
                           )}
                         </div>
@@ -491,9 +486,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                       {profile?.website && (
                         <div className="flex items-center gap-2 text-sm">
                           <Globe className="h-4 w-4 text-cyan-600" />
-                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600">
-                            Website
-                          </a>
+                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-600">{i18n.t('auto_website')}</a>
                         </div>
                       )}
                     </div>
@@ -531,9 +524,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                 {profile?.bio && (
                   <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                      <Briefcase className="h-5 w-5 text-cyan-600" />
-                      About Me
-                    </h3>
+                      <Briefcase className="h-5 w-5 text-cyan-600" />{i18n.t('auto_about_me')}</h3>
                         <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{localize(profile.bio)}</p>
                   </div>
                 )}
@@ -544,7 +535,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                 <div className="lg:w-[380px] flex-shrink-0">
                   <Card className="overflow-hidden shadow-xl">
                     <CardHeader className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white p-4">
-                      <CardTitle className="text-lg">Video Resume</CardTitle>
+                      <CardTitle className="text-lg">{i18n.t('auto_video_resume')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                       <div className="relative bg-black aspect-[9/16] max-h-[500px]">
@@ -601,10 +592,10 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
         {/* Tabs Section */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 bg-white shadow-md">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="experience">Experience</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="skills">Skills</TabsTrigger>
+            <TabsTrigger value="overview">{i18n.t('auto_overview')}</TabsTrigger>
+            <TabsTrigger value="experience">{i18n.t('auto_experience')}</TabsTrigger>
+            <TabsTrigger value="education">{i18n.t('auto_education')}</TabsTrigger>
+            <TabsTrigger value="skills">{i18n.t('auto_skills_1')}</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -614,9 +605,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Award className="h-5 w-5 text-cyan-600" />
-                    Top Skills
-                  </CardTitle>
+                    <Award className="h-5 w-5 text-cyan-600" />{i18n.t('auto_top_skills')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
@@ -636,9 +625,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-purple-600" />
-                    Latest Experience
-                  </CardTitle>
+                    <Briefcase className="h-5 w-5 text-purple-600" />{i18n.t('auto_latest_experience')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {experiences.slice(0, 2).map((exp, index) => (
@@ -671,9 +658,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-cyan-600" />
-                    Education
-                  </CardTitle>
+                    <GraduationCap className="h-5 w-5 text-cyan-600" />{i18n.t('auto_education')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {education.slice(0, 2).map((edu, index) => (
@@ -723,7 +708,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
                               )}
                       </div>
                       {exp.currently_working && (
-                        <Badge className="bg-green-100 text-green-800">Current</Badge>
+                        <Badge className="bg-green-100 text-green-800">{i18n.t('auto_current')}</Badge>
                       )}
                     </div>
                     {exp.description && (
@@ -736,8 +721,8 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               <Card className="text-center py-12 shadow-lg">
                 <CardContent>
                   <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No experience listed</h3>
-                  <p className="text-muted-foreground">This user hasn't added their work experience yet.</p>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_experience_listed')}</h3>
+                  <p className="text-muted-foreground">{i18n.t('auto_this_user_hasn_t_added_their_work_experi')}</p>
                 </CardContent>
               </Card>
             )}
@@ -777,8 +762,8 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               <Card className="text-center py-12 shadow-lg">
                 <CardContent>
                   <GraduationCap className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No education listed</h3>
-                  <p className="text-muted-foreground">This user hasn't added their educational background yet.</p>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_education_listed')}</h3>
+                  <p className="text-muted-foreground">{i18n.t('auto_this_user_hasn_t_added_their_educational')}</p>
                 </CardContent>
               </Card>
             )}
@@ -789,7 +774,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
             {skills.length > 0 ? (
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle>All Skills</CardTitle>
+                  <CardTitle>{i18n.t('auto_all_skills')}</CardTitle>
                   <CardDescription>{skills.length} skill{skills.length !== 1 ? 's' : ''} listed</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -812,8 +797,8 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
               <Card className="text-center py-12 shadow-lg">
                 <CardContent>
                   <Award className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No skills listed</h3>
-                  <p className="text-muted-foreground">This user hasn't added their skills yet.</p>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_skills_listed')}</h3>
+                  <p className="text-muted-foreground">{i18n.t('auto_this_user_hasn_t_added_their_skills_yet')}</p>
                 </CardContent>
               </Card>
             )}
@@ -825,9 +810,7 @@ const JobSeekerProfileView = ({ userId: propUserId }) => {
           <Card className="mt-8 shadow-xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Play className="h-5 w-5 text-cyan-600" />
-                All Videos
-              </CardTitle>
+                <Play className="h-5 w-5 text-cyan-600" />{i18n.t('auto_all_videos')}</CardTitle>
               <CardDescription>{gridVideos.length} video{gridVideos.length !== 1 ? 's' : ''} available</CardDescription>
             </CardHeader>
             <CardContent>

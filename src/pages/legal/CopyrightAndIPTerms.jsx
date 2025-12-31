@@ -1,4 +1,5 @@
-﻿import React, { useContext } from 'react';
+import i18n from 'i18next';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -35,9 +36,7 @@ const CopyrightAndIPTerms = () => {
               to="/"
               startIcon={<ArrowBack />}
               sx={{ mb: 2 }}
-            >
-              Back to Home
-            </Button>
+            >{i18n.t('auto_back_to_home')}</Button>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h3" component="h1" gutterBottom>
                 {t("legal.copyrightAndIPTerms.title")}

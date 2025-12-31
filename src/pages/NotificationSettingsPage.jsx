@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Bell, Mail, Smartphone, Briefcase, Video, MessageSquare,
   Heart, UserPlus, Clock, Save, RotateCcw, Loader2
@@ -213,20 +214,16 @@ const NotificationSettingsPage = () => {
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-4xl">
-      <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-        Notification Settings
-      </h1>
-      <p className="text-gray-600 mb-6">Customize how and when you receive notifications</p>
+      <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-2">{i18n.t('auto_notification_settings')}</h1>
+      <p className="text-gray-600 mb-6">{i18n.t('auto_customize_how_and_when_you_receive_notif')}</p>
 
       <div className="space-y-6">
         {/* Delivery Methods */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-purple-600" />
-              Delivery Methods
-            </CardTitle>
-            <CardDescription>Choose how you want to receive notifications</CardDescription>
+              <Bell className="h-5 w-5 text-purple-600" />{i18n.t('auto_delivery_methods')}</CardTitle>
+            <CardDescription>{i18n.t('auto_choose_how_you_want_to_receive_notificat')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -234,8 +231,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-cyan-600" />
                 <div>
-                  <Label className="font-medium">Email Notifications</Label>
-                  <p className="text-sm text-gray-600">Receive notifications via email</p>
+                  <Label className="font-medium">{i18n.t('auto_email_notifications')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_receive_notifications_via_email')}</p>
                 </div>
               </div>
               <Switch
@@ -246,8 +243,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <Bell className="h-5 w-5 text-purple-600" />
                 <div>
-                  <Label className="font-medium">Push Notifications</Label>
-                  <p className="text-sm text-gray-600">Receive push notifications</p>
+                  <Label className="font-medium">{i18n.t('auto_push_notifications')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_receive_push_notifications')}</p>
                 </div>
               </div>
               <Switch
@@ -272,8 +269,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <Bell className="h-5 w-5 text-purple-600" />
                 <div>
-                  <Label className="font-medium">Desktop Notifications</Label>
-                  <p className="text-sm text-gray-600">Enable desktop (native) notifications</p>
+                  <Label className="font-medium">{i18n.t('auto_desktop_notifications')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_enable_desktop_native_notifications')}</p>
                 </div>
               </div>
               <Switch
@@ -328,10 +325,10 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <Smartphone className="h-5 w-5 text-green-600" />
                 <div className="flex items-center gap-2">
-                  <Label className="font-medium">SMS Notifications</Label>
-                  <Badge className="bg-gradient-to-r from-purple-600 to-cyan-600">Premium</Badge>
+                  <Label className="font-medium">{i18n.t('auto_sms_notifications')}</Label>
+                  <Badge className="bg-gradient-to-r from-purple-600 to-cyan-600">{i18n.t('auto_premium')}</Badge>
                 </div>
-                <p className="text-sm text-gray-600">Receive notifications via SMS</p>
+                <p className="text-sm text-gray-600">{i18n.t('auto_receive_notifications_via_sms')}</p>
               </div>
               <Switch
                 checked={settings.sms_notifications}
@@ -344,16 +341,16 @@ const NotificationSettingsPage = () => {
         {/* Notification Types */}
         <Card>
           <CardHeader>
-            <CardTitle>Notification Types</CardTitle>
-            <CardDescription>Select which types of notifications you want to receive</CardDescription>
+            <CardTitle>{i18n.t('auto_notification_types')}</CardTitle>
+            <CardDescription>{i18n.t('auto_select_which_types_of_notifications_you_')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between py-3 border-b last:border-0">
               <div className="flex items-center gap-3">
                 <Briefcase className="h-5 w-5 text-purple-600" />
                 <div>
-                  <Label className="font-medium">Job Alerts</Label>
-                  <p className="text-sm text-gray-600">New job postings matching your preferences</p>
+                  <Label className="font-medium">{i18n.t('auto_job_alerts')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_new_job_postings_matching_your_preferenc')}</p>
                 </div>
               </div>
               <Switch
@@ -366,8 +363,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <Video className="h-5 w-5 text-cyan-600" />
                 <div>
-                  <Label className="font-medium">Interview Reminders</Label>
-                  <p className="text-sm text-gray-600">Reminders for upcoming interviews</p>
+                  <Label className="font-medium">{i18n.t('auto_interview_reminders')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_reminders_for_upcoming_interviews')}</p>
                 </div>
               </div>
               <Switch
@@ -380,8 +377,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <MessageSquare className="h-5 w-5 text-blue-600" />
                 <div>
-                  <Label className="font-medium">Messages</Label>
-                  <p className="text-sm text-gray-600">New messages and chat notifications</p>
+                  <Label className="font-medium">{i18n.t('messages')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_new_messages_and_chat_notifications')}</p>
                 </div>
               </div>
               <Switch
@@ -394,8 +391,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <Heart className="h-5 w-5 text-pink-600" />
                 <div>
-                  <Label className="font-medium">Video Interactions</Label>
-                  <p className="text-sm text-gray-600">Likes, comments, and shares on your videos</p>
+                  <Label className="font-medium">{i18n.t('auto_video_interactions')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_likes_comments_and_shares_on_your_videos')}</p>
                 </div>
               </div>
               <Switch
@@ -408,8 +405,8 @@ const NotificationSettingsPage = () => {
               <div className="flex items-center gap-3">
                 <UserPlus className="h-5 w-5 text-green-600" />
                 <div>
-                  <Label className="font-medium">Connection Requests</Label>
-                  <p className="text-sm text-gray-600">New connection requests and acceptances</p>
+                  <Label className="font-medium">{i18n.t('auto_connection_requests')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_new_connection_requests_and_acceptances')}</p>
                 </div>
               </div>
               <Switch
@@ -427,11 +424,11 @@ const NotificationSettingsPage = () => {
               <Clock className="h-5 w-5 text-purple-600" />
               Frequency & Timing
             </CardTitle>
-            <CardDescription>Control when and how often you receive notifications</CardDescription>
+            <CardDescription>{i18n.t('auto_control_when_and_how_often_you_receive_n')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label>Notification Frequency</Label>
+              <Label>{i18n.t('auto_notification_frequency')}</Label>
               <Select
                 value={settings.notification_frequency}
                 onValueChange={(value) => handleSettingChange('notification_frequency', value)}
@@ -440,18 +437,18 @@ const NotificationSettingsPage = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="immediate">Immediate</SelectItem>
-                  <SelectItem value="hourly">Hourly Digest</SelectItem>
-                  <SelectItem value="daily">Daily Digest</SelectItem>
-                  <SelectItem value="weekly">Weekly Digest</SelectItem>
+                  <SelectItem value="immediate">{i18n.t('auto_immediate')}</SelectItem>
+                  <SelectItem value="hourly">{i18n.t('auto_hourly_digest')}</SelectItem>
+                  <SelectItem value="daily">{i18n.t('auto_daily_digest')}</SelectItem>
+                  <SelectItem value="weekly">{i18n.t('auto_weekly_digest')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium">Weekly Activity Digest</Label>
-                <p className="text-sm text-gray-600">Receive a weekly summary of your activity</p>
+                <Label className="font-medium">{i18n.t('auto_weekly_activity_digest')}</Label>
+                <p className="text-sm text-gray-600">{i18n.t('auto_receive_a_weekly_summary_of_your_activit')}</p>
               </div>
               <Switch
                 checked={settings.weekly_digest}
@@ -462,8 +459,8 @@ const NotificationSettingsPage = () => {
             <div className="space-y-4 pt-4 border-t">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="font-medium">Enable Quiet Hours</Label>
-                  <p className="text-sm text-gray-600">Mute notifications during specific times</p>
+                  <Label className="font-medium">{i18n.t('auto_enable_quiet_hours')}</Label>
+                  <p className="text-sm text-gray-600">{i18n.t('auto_mute_notifications_during_specific_times')}</p>
                 </div>
                 <Switch
                   checked={settings.quiet_hours_enabled}
@@ -474,7 +471,7 @@ const NotificationSettingsPage = () => {
               {settings.quiet_hours_enabled && (
                 <div className="grid grid-cols-2 gap-4 pl-8">
                   <div className="space-y-2">
-                    <Label htmlFor="start-time">Start Time</Label>
+                    <Label htmlFor="start-time">{i18n.t('auto_start_time')}</Label>
                     <Input
                       id="start-time"
                       type="time"
@@ -483,7 +480,7 @@ const NotificationSettingsPage = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="end-time">End Time</Label>
+                    <Label htmlFor="end-time">{i18n.t('auto_end_time')}</Label>
                     <Input
                       id="end-time"
                       type="time"
@@ -501,12 +498,12 @@ const NotificationSettingsPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Marketing & Promotional</CardTitle>
-            <CardDescription>Manage marketing and promotional communications</CardDescription>
+            <CardDescription>{i18n.t('auto_manage_marketing_and_promotional_communi')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <Label className="font-medium">Marketing Emails</Label>
+                <Label className="font-medium">{i18n.t('auto_marketing_emails')}</Label>
                 <p className="text-sm text-gray-600">Receive updates about new features, tips, and promotional offers</p>
               </div>
               <Switch
@@ -527,18 +524,14 @@ const NotificationSettingsPage = () => {
                   onClick={resetToDefaults}
                   className="border-gray-300"
                 >
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Reset to Defaults
-                </Button>
+                  <RotateCcw className="h-4 w-4 mr-2" />{i18n.t('auto_reset_to_defaults')}</Button>
 
                 <Button
                   variant="outline"
                   onClick={() => setTestDialog(true)}
                   className="border-purple-600 text-purple-600 hover:bg-purple-50"
                 >
-                  <Bell className="h-4 w-4 mr-2" />
-                  Test Notification
-                </Button>
+                  <Bell className="h-4 w-4 mr-2" />{i18n.t('auto_test_notification')}</Button>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -548,9 +541,7 @@ const NotificationSettingsPage = () => {
                     if (ok) toast({ description: 'Desktop notifications enabled' });
                     else toast({ description: 'Desktop notification permission not granted', variant: 'destructive' });
                   }}
-                >
-                  Enable Desktop Notifications
-                </Button>
+                >{i18n.t('auto_enable_desktop_notifications')}</Button>
               </div>
               <Button
                 onClick={handleSaveSettings}
@@ -559,14 +550,10 @@ const NotificationSettingsPage = () => {
               >
                 {saving ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />{i18n.t('auto_saving')}</>
                 ) : (
                   <>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Settings
-                  </>
+                    <Save className="h-4 w-4 mr-2" />{i18n.t('auto_save_settings')}</>
                 )}
               </Button>
             </div>
@@ -578,7 +565,7 @@ const NotificationSettingsPage = () => {
       <Dialog open={testDialog} onOpenChange={setTestDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Test Notification</DialogTitle>
+            <DialogTitle>{i18n.t('auto_test_notification')}</DialogTitle>
             <DialogDescription>
               Send a test notification to verify your settings are working correctly
             </DialogDescription>
@@ -586,16 +573,16 @@ const NotificationSettingsPage = () => {
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Notification Type</Label>
+              <Label>{i18n.t('auto_notification_type')}</Label>
               <Select value={testType} onValueChange={setTestType}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="email">Email</SelectItem>
-                  <SelectItem value="push">Push Notification</SelectItem>
+                  <SelectItem value="email">{i18n.t('auto_email')}</SelectItem>
+                  <SelectItem value="push">{i18n.t('auto_push_notification')}</SelectItem>
                   {settings.sms_notifications && (
-                    <SelectItem value="sms">SMS</SelectItem>
+                    <SelectItem value="sms">{i18n.t('auto_sms')}</SelectItem>
                   )}
                 </SelectContent>
               </Select>
@@ -603,12 +590,8 @@ const NotificationSettingsPage = () => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setTestDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleTestNotification} className="bg-gradient-to-r from-purple-600 to-cyan-600">
-              Send Test
-            </Button>
+            <Button variant="outline" onClick={() => setTestDialog(false)}>{i18n.t('auto_cancel')}</Button>
+            <Button onClick={handleTestNotification} className="bg-gradient-to-r from-purple-600 to-cyan-600">{i18n.t('auto_send_test')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

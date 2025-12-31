@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -112,7 +113,7 @@ const AIAnalysisPage = () => {
         {t('aiAnalysis.title', 'AI Analysis Dashboard')}
       </Typography>
 
-      <Tabs value={tabValue} onChange={handleTabChange} aria-label="AI analysis tabs">
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label={i18n.t('auto_ai_analysis_tabs')} >
         <Tab 
           label={t('aiAnalysis.profileAnalysis', 'Profile Analysis')} 
           icon={<Person />} 

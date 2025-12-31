@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 const SavedBlogsPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -27,7 +28,7 @@ const SavedBlogsPage = () => {
     load();
   }, []);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">{i18n.t('auto_loading')}</div>;
 
   if (!blogs.length) return (
     <div className="min-h-screen flex flex-col items-center justify-center">

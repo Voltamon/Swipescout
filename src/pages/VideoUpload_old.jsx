@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   Typography,
@@ -658,12 +659,8 @@ const startRecording = async () => {
   // Render different steps
   const renderInitialStep = () => (
     <>
-      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
-        Upload Your Video Resume
-      </Typography>
-      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
-        Show employers who you are in 15-45 seconds
-      </Typography>
+      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>{i18n.t('auto_upload_your_video_resume')}</Typography>
+      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>{i18n.t('auto_show_employers_who_you_are_in_15_45_seco')}</Typography>
 
       <UploadBox component="label" htmlFor="video-upload">
         <input 
@@ -678,9 +675,7 @@ const startRecording = async () => {
         <Typography variant="body1" sx={{ fontWeight: "medium", mb: 0.5 }}>
           Drag & drop video here
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          or click to browse files (15-45 seconds)
-        </Typography>
+        <Typography variant="body2" color="textSecondary">{i18n.t('auto_or_click_to_browse_files_15_45_seconds')}</Typography>
       </UploadBox>
 
       <Stack spacing={1.5} sx={{ mt: "20px" }}>
@@ -689,29 +684,21 @@ const startRecording = async () => {
           disableElevation 
           startIcon={<CloudUploadIcon />}
           onClick={() => fileInputRef.current?.click()}
-        >
-          Select Video
-        </VideoButton>
+        >{i18n.t('auto_select_video')}</VideoButton>
         <SecondaryButton 
           variant="outlined" 
           disableElevation 
           startIcon={<VideocamIcon />}
           onClick={() => setShowRecordDialog(true)}
-        >
-          Record New Video
-        </SecondaryButton>
+        >{i18n.t('auto_record_new_video')}</SecondaryButton>
       </Stack>
     </>
   );
   
   const renderPreviewStep = () => (
     <>
-      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
-        Preview Your Video
-      </Typography>
-      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
-        Make sure your video looks and sounds good
-      </Typography>
+      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>{i18n.t('auto_preview_your_video')}</Typography>
+      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>{i18n.t('auto_make_sure_your_video_looks_and_sounds_go')}</Typography>
 
       <VideoPreviewContainer>
         <video
@@ -739,101 +726,91 @@ const startRecording = async () => {
           disableElevation 
           startIcon={<CheckCircleIcon />}
           onClick={() => setRecordingStep(2)}
-        >
-          Use This Video
-        </VideoButton>
+        >{i18n.t('auto_use_this_video')}</VideoButton>
         <SecondaryButton 
           variant="outlined" 
           disableElevation 
           startIcon={<RefreshIcon />}
           onClick={resetForm}
-        >
-          Start Over
-        </SecondaryButton>
+        >{i18n.t('auto_start_over')}</SecondaryButton>
       </Stack>
     </>
   );
   
   const renderMetadataStep = () => (
     <>
-      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>
-        Video Details
-      </Typography>
-      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>
-        Add information about your video resume
-      </Typography>
+      <Typography variant="h5" component="h1" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 0.5 }}>{i18n.t('auto_video_details')}</Typography>
+      <Typography variant="body2" align="center" color="textSecondary" sx={{ mb: 2 }}>{i18n.t('auto_add_information_about_your_video_resume')}</Typography>
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Video Title"
+            label={i18n.t('auto_video_title')} 
             variant="outlined"
             value={videoTitle}
             onChange={(e) => setVideoTitle(e.target.value)}
             required
-            placeholder="e.g., My Professional Introduction"
+            placeholder={i18n.t('auto_e_g_my_professional_introduction')} 
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Category"
+            label={i18n.t('auto_category')} 
             variant="outlined"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g., Engineering, Design"
+            placeholder={i18n.t('auto_e_g_engineering_design')} 
           />
         </Grid>
 
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Source / Page"
+            label={i18n.t('auto_source_page')} 
             variant="outlined"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            placeholder="e.g., Profile, Job Post"
+            placeholder={i18n.t('auto_e_g_profile_job_post')} 
           />
         </Grid>
         
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel>Video Position</InputLabel>
+            <InputLabel>{i18n.t('auto_video_position')}</InputLabel>
             <Select
               value={videoPosition}
               onChange={(e) => setVideoPosition(e.target.value)}
-              label="Video Position"
+              label={i18n.t('auto_video_position')} 
             >
-              <MenuItem value="main">Main</MenuItem>
-              <MenuItem value="intro">Intro</MenuItem>
-              <MenuItem value="outro">Outro</MenuItem>
+              <MenuItem value="main">{i18n.t('auto_main')}</MenuItem>
+              <MenuItem value="intro">{i18n.t('auto_intro')}</MenuItem>
+              <MenuItem value="outro">{i18n.t('auto_outro')}</MenuItem>
             </Select>
           </FormControl>
         </Grid>
         
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel>Video Type</InputLabel>
+            <InputLabel>{i18n.t('auto_video_type')}</InputLabel>
             <Select
               value={videoType}
               onChange={(e) => setVideoType(e.target.value)}
-              label="Video Type"
+              label={i18n.t('auto_video_type')} 
             >
-              <MenuItem value="intro">Introduction</MenuItem>
-              <MenuItem value="skills">Skills Showcase</MenuItem>
-              <MenuItem value="experience">Work Experience</MenuItem>
-              <MenuItem value="portfolio">Portfolio</MenuItem>
-              <MenuItem value="personal">Personal Statement</MenuItem>
+              <MenuItem value="intro">{i18n.t('auto_introduction')}</MenuItem>
+              <MenuItem value="skills">{i18n.t('auto_skills_showcase')}</MenuItem>
+              <MenuItem value="experience">{i18n.t('auto_work_experience')}</MenuItem>
+              <MenuItem value="portfolio">{i18n.t('auto_portfolio')}</MenuItem>
+              <MenuItem value="personal">{i18n.t('auto_personal_statement')}</MenuItem>
             </Select>
           </FormControl>
         </Grid>
         
         <Grid item xs={12}>
           <Box sx={{ mb: 1 }}>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
-              Add Hashtags (skills, industries, etc.)
-            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>{i18n.t('auto_add_hashtags_skills_industries_etc')}</Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: 1 }}>
               {hashtags.map((tag) => (
                 <HashtagChip
@@ -850,7 +827,7 @@ const startRecording = async () => {
                 fullWidth
                 variant="outlined"
                 size="small"
-                placeholder="Add a hashtag (e.g., #webdesign)"
+                placeholder={i18n.t('auto_add_a_hashtag_e_g_webdesign')} 
                 value={newHashtag}
                 onChange={(e) => setNewHashtag(e.target.value)}
                 onKeyPress={handleHashtagKeyPress}
@@ -885,9 +862,7 @@ const startRecording = async () => {
             }
           />
           {uploadStatus === 'processing' && (
-            <Typography variant="caption" display="block" align="center" sx={{ mt: 1 }}>
-              This may take a few minutes. You can check back later.
-            </Typography>
+            <Typography variant="caption" display="block" align="center" sx={{ mt: 1 }}>{i18n.t('auto_this_may_take_a_few_minutes_you_can_chec')}</Typography>
           )}
         </Box>
       )}
@@ -908,9 +883,7 @@ const startRecording = async () => {
           startIcon={<ArrowBackIcon />}
           onClick={() => setRecordingStep(1)}
           disabled={isUploading}
-        >
-          Back to Preview
-        </SecondaryButton>
+        >{i18n.t('auto_back_to_preview')}</SecondaryButton>
       </Stack>
     </>
   );
@@ -927,7 +900,7 @@ const startRecording = async () => {
         Record Video
         {!isRecording && (
           <IconButton
-            aria-label="close"
+            aria-label={i18n.t('auto_close_1')} 
             onClick={() => {
               if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop());
@@ -976,7 +949,7 @@ const startRecording = async () => {
               backgroundColor: '#f0f0f0',
               color: '#555'
             }}>
-              <Typography variant="body1">Camera preview will appear here</Typography>
+              <Typography variant="body1">{i18n.t('auto_camera_preview_will_appear_here')}</Typography>
             </Box>
           )}
           
@@ -1039,9 +1012,7 @@ const startRecording = async () => {
                 variant="contained"
                 startIcon={<VideocamIcon />}
                 fullWidth
-              >
-                Start Recording
-              </Button>
+              >{i18n.t('auto_start_recording')}</Button>
             ) : (
               <Button 
                 onClick={stopRecording}

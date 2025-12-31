@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   Grid,
@@ -151,28 +152,22 @@ const JobSeekerExplore = () => {
         //backgroundclr
         backgroundSize: "auto", backgroundRepeat: "no-repeat", backgroundPosition: "top right", padding: theme.spacing(2), height: "100vh", mt: 2, mb: 0, paddingBottom: 4 }}>
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Explore Jobs
-        </Typography>
-        <Typography color="text.secondary">
-          Discover opportunities that match your skills
-        </Typography>
+        <Typography variant="h4" fontWeight="bold" gutterBottom>{i18n.t('auto_explore_jobs')}</Typography>
+        <Typography color="text.secondary">{i18n.t('auto_discover_opportunities_that_match_your_s')}</Typography>
       </Box>
 
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-        <TextField placeholder="Search jobs, companies, or skills" variant="outlined" size="small" sx={{ width: "50%" }} InputProps={{ startAdornment: <InputAdornment position="start">
+        <TextField placeholder={i18n.t('auto_search_jobs_companies_or_skills')}  variant="outlined" size="small" sx={{ width: "50%" }} InputProps={{ startAdornment: <InputAdornment position="start">
                 <Search />
               </InputAdornment> }} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-        <Button variant="outlined" startIcon={<FilterList />}>
-          Filters
-        </Button>
+        <Button variant="outlined" startIcon={<FilterList />}>{i18n.t('auto_filters')}</Button>
       </Box>
 
       <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
-        <Tab label="Recommended" />
-        <Tab label="Recent" />
-        <Tab label="Remote" />
-        <Tab label="Saved" />
+        <Tab label={i18n.t('auto_recommended')}  />
+        <Tab label={i18n.t('auto_recent')}  />
+        <Tab label={i18n.t('auto_remote')}  />
+        <Tab label={i18n.t('auto_saved')}  />
       </Tabs>
 
       <Grid container spacing={3}>
@@ -271,7 +266,7 @@ const JobSeekerExplore = () => {
       {/* Job Details Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="h6">Job Details</Typography>
+          <Typography variant="h6">{i18n.t('auto_job_details')}</Typography>
           <IconButton onClick={() => setOpenDialog(false)}>
             <Close />
           </IconButton>
@@ -345,12 +340,8 @@ const JobSeekerExplore = () => {
                 </Grid>
 
                 <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
-                  <Button variant="contained" color="primary" size="large" fullWidth>
-                    Apply Now
-                  </Button>
-                  <Button variant="outlined" size="large" fullWidth>
-                    Save for Later
-                  </Button>
+                  <Button variant="contained" color="primary" size="large" fullWidth>{i18n.t('auto_apply_now')}</Button>
+                  <Button variant="outlined" size="large" fullWidth>{i18n.t('auto_save_for_later')}</Button>
                 </Box>
               </Box>
             </Box>}

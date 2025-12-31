@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -257,16 +258,12 @@ const EmployerDashboard = () => {
                         color="primary"
                         startIcon={<AddIcon />}
                         sx={{ mr: 1 }}
-                    >
-                        Post New Job
-                    </Button>
+                    >{i18n.t('auto_post_new_job')}</Button>
 
                     <Button
                         variant="outlined"
                         startIcon={<BusinessIcon />}
-                    >
-                        Update Company Profile
-                    </Button>
+                    >{i18n.t('auto_update_company_profile')}</Button>
                 </Box>
             </Box>
 
@@ -281,9 +278,7 @@ const EmployerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.total_job_views || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Job Views
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_job_views')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -297,9 +292,7 @@ const EmployerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.total_applicants || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Applicants
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_applicants')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -313,9 +306,7 @@ const EmployerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.active_jobs || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Active Jobs
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_active_jobs')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -329,9 +320,7 @@ const EmployerDashboard = () => {
                             <Typography variant="h4" gutterBottom>
                                 {stats?.unread_messages || 0}
                             </Typography>
-                            <Typography variant="subtitle1" color="textSecondary">
-                                Unread Messages
-                            </Typography>
+                            <Typography variant="subtitle1" color="textSecondary">{i18n.t('auto_unread_messages')}</Typography>
                         </StatsCardContent>
                     </StatsCard>
                 </Grid>
@@ -348,16 +337,14 @@ const EmployerDashboard = () => {
                             textColor="primary"
                             centered
                         >
-                            <Tab label="Overview" />
-                            <Tab label="Active Jobs" />
-                            <Tab label="Applicants" />
+                            <Tab label={i18n.t('auto_overview')}  />
+                            <Tab label={i18n.t('auto_active_jobs')}  />
+                            <Tab label={i18n.t('auto_applicants')}  />
                         </Tabs>
 
                         <TabPanel value={tabValue} index={0}>
                             <Box sx={{ height: 300, mb: 4 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Job Views
-                                </Typography>
+                                <Typography variant="h6" gutterBottom>{i18n.t('auto_job_views')}</Typography>
                                 <Line
                                     data={viewsChartData}
                                     options={{
@@ -375,9 +362,7 @@ const EmployerDashboard = () => {
                             <Grid container spacing={3}>
                                 <Grid item xs={12} sm={6}>
                                     <Box sx={{ height: 250 }}>
-                                        <Typography variant="h6" gutterBottom>
-                                            Applicants Per Job
-                                        </Typography>
+                                        <Typography variant="h6" gutterBottom>{i18n.t('auto_applicants_per_job')}</Typography>
                                         <Bar
                                             data={applicantsChartData}
                                             options={{
@@ -395,9 +380,7 @@ const EmployerDashboard = () => {
 
                                 <Grid item xs={12} sm={6}>
                                     <Box sx={{ height: 250 }}>
-                                        <Typography variant="h6" gutterBottom>
-                                            Applicant Sources
-                                        </Typography>
+                                        <Typography variant="h6" gutterBottom>{i18n.t('auto_applicant_sources')}</Typography>
                                         <Doughnut
                                             data={applicantSourcesChartData}
                                             options={{
@@ -411,20 +394,18 @@ const EmployerDashboard = () => {
                         </TabPanel>
 
                         <TabPanel value={tabValue} index={1}>
-                            <Typography variant="h6" gutterBottom>
-                                Active Jobs
-                            </Typography>
+                            <Typography variant="h6" gutterBottom>{i18n.t('auto_active_jobs')}</Typography>
 
                             <TableContainer>
                                 <Table>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Job Title</TableCell>
-                                            <TableCell>Posted Date</TableCell>
-                                            <TableCell>Views</TableCell>
-                                            <TableCell>Applicants</TableCell>
-                                            <TableCell>Status</TableCell>
-                                            <TableCell>Actions</TableCell>
+                                            <TableCell>{i18n.t('auto_job_title')}</TableCell>
+                                            <TableCell>{i18n.t('auto_posted_date')}</TableCell>
+                                            <TableCell>{i18n.t('auto_views')}</TableCell>
+                                            <TableCell>{i18n.t('auto_applicants')}</TableCell>
+                                            <TableCell>{i18n.t('auto_status')}</TableCell>
+                                            <TableCell>{i18n.t('auto_actions')}</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -442,9 +423,7 @@ const EmployerDashboard = () => {
                                                     />
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Button size="small" color="primary">
-                                                        View
-                                                    </Button>
+                                                    <Button size="small" color="primary">{i18n.t('auto_view')}</Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -457,27 +436,23 @@ const EmployerDashboard = () => {
                                     variant="outlined"
                                     color="primary"
                                     endIcon={<ArrowForwardIcon />}
-                                >
-                                    View All Jobs
-                                </Button>
+                                >{i18n.t('auto_view_all_jobs')}</Button>
                             </Box>
                         </TabPanel>
 
                         <TabPanel value={tabValue} index={2}>
-                            <Typography variant="h6" gutterBottom>
-                                Latest Applicants
-                            </Typography>
+                            <Typography variant="h6" gutterBottom>{i18n.t('auto_latest_applicants')}</Typography>
 
                             <TableContainer>
                                 <Table>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Candidate</TableCell>
-                                            <TableCell>Job</TableCell>
-                                            <TableCell>Applied Date</TableCell>
-                                            <TableCell>Match Percentage</TableCell>
-                                            <TableCell>Status</TableCell>
-                                            <TableCell>Actions</TableCell>
+                                            <TableCell>{i18n.t('auto_candidate')}</TableCell>
+                                            <TableCell>{i18n.t('auto_job')}</TableCell>
+                                            <TableCell>{i18n.t('auto_applied_date')}</TableCell>
+                                            <TableCell>{i18n.t('auto_match_percentage')}</TableCell>
+                                            <TableCell>{i18n.t('auto_status')}</TableCell>
+                                            <TableCell>{i18n.t('auto_actions')}</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -517,9 +492,7 @@ const EmployerDashboard = () => {
                                                     />
                                                 </TableCell>
                                             <TableCell>
-                                            <Button size="small" color="primary">
-                                            View
-                                        </Button>
+                                            <Button size="small" color="primary">{i18n.t('auto_view')}</Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -532,9 +505,7 @@ const EmployerDashboard = () => {
                         variant="outlined"
                         color="primary"
                         endIcon={<ArrowForwardIcon />}
-                    >
-                        View All Applicants
-                    </Button>
+                    >{i18n.t('auto_view_all_applicants')}</Button>
                 </Box>
             </TabPanel>
         </Paper>
@@ -543,9 +514,7 @@ const EmployerDashboard = () => {
     <Grid item xs={12} md={4}>
         <Paper sx={{ mb: 3 }}>
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6">
-                    Recent Activities
-                </Typography>
+                <Typography variant="h6">{i18n.t('auto_recent_activities')}</Typography>
                 <IconButton size="small">
                     <NotificationsIcon />
                 </IconButton>
@@ -580,15 +549,11 @@ const EmployerDashboard = () => {
 
         <Paper>
             <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6">
-                    Recommended Candidates
-                </Typography>
+                <Typography variant="h6">{i18n.t('auto_recommended_candidates')}</Typography>
                 <Button
                     endIcon={<ArrowForwardIcon />}
                     size="small"
-                >
-                    View All
-                </Button>
+                >{i18n.t('auto_view_all')}</Button>
             </Box>
 
             <List sx={{ maxHeight: 350, overflow: 'auto' }}>
@@ -648,9 +613,7 @@ const EmployerDashboard = () => {
 
 {/* Tips and Improvements Section */}
 <Paper sx={{ p: 3, mt: 3 }}>
-    <Typography variant="h6" gutterBottom>
-        Tips to Attract More Qualified Candidates
-    </Typography>
+    <Typography variant="h6" gutterBottom>{i18n.t('auto_tips_to_attract_more_qualified_candidate')}</Typography>
 
     <Grid container spacing={2} sx={{ mt: 1 }}>
         <Grid item xs={12} sm={4}>
@@ -658,9 +621,7 @@ const EmployerDashboard = () => {
                 <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <PlayCircleOutlineIcon color="primary" sx={{ mr: 1 }} />
-                        <Typography variant="subtitle1">
-                            Add a Video to Your Job Posting
-                        </Typography>
+                        <Typography variant="subtitle1">{i18n.t('auto_add_a_video_to_your_job_posting')}</Typography>
                     </Box>
                     <Typography variant="body2" color="textSecondary">
                         Jobs with videos receive 34% more applications than traditional text-based job posts.
@@ -670,9 +631,7 @@ const EmployerDashboard = () => {
                         color="primary"
                         fullWidth
                         sx={{ mt: 2 }}
-                    >
-                        Add Video
-                    </Button>
+                    >{i18n.t('auto_add_video')}</Button>
                 </CardContent>
             </Card>
         </Grid>
@@ -682,9 +641,7 @@ const EmployerDashboard = () => {
                 <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <BusinessIcon color="primary" sx={{ mr: 1 }} />
-                        <Typography variant="subtitle1">
-                            Complete Your Company Profile
-                        </Typography>
+                        <Typography variant="subtitle1">{i18n.t('auto_complete_your_company_profile')}</Typography>
                     </Box>
                     <Typography variant="body2" color="textSecondary">
                         Companies with complete profiles attract higher quality candidates and increase acceptance rates.
@@ -694,9 +651,7 @@ const EmployerDashboard = () => {
                         color="primary"
                         fullWidth
                         sx={{ mt: 2 }}
-                    >
-                        Update Profile
-                    </Button>
+                    >{i18n.t('auto_update_profile')}</Button>
                 </CardContent>
             </Card>
         </Grid>
@@ -706,9 +661,7 @@ const EmployerDashboard = () => {
                 <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                         <AssessmentIcon color="primary" sx={{ mr: 1 }} />
-                        <Typography variant="subtitle1">
-                            Analyze Job Performance
-                        </Typography>
+                        <Typography variant="subtitle1">{i18n.t('auto_analyze_job_performance')}</Typography>
                     </Box>
                     <Typography variant="body2" color="textSecondary">
                         Review your job performance analytics to improve visibility and application rates for future postings.
@@ -718,9 +671,7 @@ const EmployerDashboard = () => {
                         color="primary"
                         fullWidth
                         sx={{ mt: 2 }}
-                    >
-                        View Analytics
-                    </Button>
+                    >{i18n.t('auto_view_analytics')}</Button>
                 </CardContent>
             </Card>
         </Grid>

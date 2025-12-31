@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   postJob, 
@@ -87,15 +88,9 @@ class VideoUploadErrorBoundary extends React.Component {
       return (
         <div className="p-6 text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">
-            Video Upload Error
-          </h3>
-          <p className="text-slate-600 mb-4">
-            There was an issue loading the video upload component.
-          </p>
-          <Button onClick={() => this.setState({ hasError: false })}>
-            Try Again
-          </Button>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">{i18n.t('auto_video_upload_error')}</h3>
+          <p className="text-slate-600 mb-4">{i18n.t('auto_there_was_an_issue_loading_the_video_upl')}</p>
+          <Button onClick={() => this.setState({ hasError: false })}>{i18n.t('auto_try_again')}</Button>
         </div>
       );
     }
@@ -558,7 +553,7 @@ const PostJobPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
-          <p className="text-slate-600 text-lg">Loading...</p>
+          <p className="text-slate-600 text-lg">{i18n.t('auto_loading')}</p>
         </div>
       </div>
     );
@@ -570,9 +565,7 @@ const PostJobPage = () => {
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
             <CardTitle className="text-red-700 flex items-center gap-2">
-              <AlertCircle className="h-6 w-6" />
-              Job Posting Limit Reached
-            </CardTitle>
+              <AlertCircle className="h-6 w-6" />{i18n.t('auto_job_posting_limit_reached')}</CardTitle>
             <CardDescription className="text-red-600">
               You have reached the maximum number of job posts allowed for your current plan ({jobLimit?.limit}).
             </CardDescription>
@@ -584,9 +577,7 @@ const PostJobPage = () => {
             <Button 
               onClick={() => navigate('/pricing')} 
               className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Upgrade Plan
-            </Button>
+            >{i18n.t('auto_upgrade_plan')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -623,10 +614,8 @@ const PostJobPage = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Post a New Job
-              </h1>
-              <p className="text-slate-600 mt-2">Create an amazing job opportunity</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">{i18n.t('auto_post_a_new_job')}</h1>
+              <p className="text-slate-600 mt-2">{i18n.t('auto_create_an_amazing_job_opportunity')}</p>
             </div>
             <div className="flex gap-3">
               <Button
@@ -634,9 +623,7 @@ const PostJobPage = () => {
                 onClick={handleCancel}
                 disabled={saving}
               >
-                <X className="mr-2 h-4 w-4" />
-                Cancel
-              </Button>
+                <X className="mr-2 h-4 w-4" />{i18n.t('auto_cancel')}</Button>
               <Button
                 onClick={handleSubmit}
                 disabled={saving || hasEmployerProfile !== true || hasEmployerVideo !== true}
@@ -644,14 +631,10 @@ const PostJobPage = () => {
               >
                 {saving ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Posting...
-                  </>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{i18n.t('auto_posting')}</>
                 ) : (
                   <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Post Job
-                  </>
+                    <Save className="mr-2 h-4 w-4" />{i18n.t('auto_post_job')}</>
                 )}
               </Button>
             </div>
@@ -663,33 +646,29 @@ const PostJobPage = () => {
           <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
               <CardTitle className="flex items-center gap-2 text-slate-900">
-                <Briefcase className="h-5 w-5 text-indigo-600" />
-                Basic Information
-              </CardTitle>
-              <CardDescription>Provide the core details about this position</CardDescription>
+                <Briefcase className="h-5 w-5 text-indigo-600" />{i18n.t('auto_basic_information')}</CardTitle>
+              <CardDescription>{i18n.t('auto_provide_the_core_details_about_this_posi')}</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div>
-                <Label htmlFor="title" className="text-slate-700 font-medium">
-                  Job Title <span className="text-red-500">*</span>
+                <Label htmlFor="title" className="text-slate-700 font-medium">{i18n.t('auto_job_title')}<span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="title"
                   name="title"
                   value={jobForm.title}
                   onChange={handleFormChange}
-                  placeholder="e.g., Senior Frontend Developer"
+                  placeholder={i18n.t('auto_e_g_senior_frontend_developer')} 
                   className={`mt-1.5 ${errors.title ? 'border-red-500' : ''}`}
                 />
                 {errors.title && (
-                  <p className="text-red-500 text-sm mt-1">This field is required</p>
+                  <p className="text-red-500 text-sm mt-1">{i18n.t('auto_this_field_is_required')}</p>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="location" className="text-slate-700 font-medium">
-                    Location <span className="text-red-500">*</span>
+                  <Label htmlFor="location" className="text-slate-700 font-medium">{i18n.t('auto_location')}<span className="text-red-500">*</span>
                   </Label>
                   <div className="relative mt-1.5">
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -698,32 +677,30 @@ const PostJobPage = () => {
                       name="location"
                       value={jobForm.location}
                       onChange={handleFormChange}
-                      placeholder="e.g., San Francisco, CA"
+                      placeholder={i18n.t('auto_e_g_san_francisco_ca')} 
                       className={`pl-10 ${errors.location ? 'border-red-500' : ''}`}
                     />
                   </div>
                   {errors.location && (
-                    <p className="text-red-500 text-sm mt-1">This field is required</p>
+                    <p className="text-red-500 text-sm mt-1">{i18n.t('auto_this_field_is_required')}</p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="employment_type" className="text-slate-700 font-medium">
-                    Employment Type
-                  </Label>
+                  <Label htmlFor="employment_type" className="text-slate-700 font-medium">{i18n.t('auto_employment_type')}</Label>
                   <Select
                     value={jobForm.employment_type}
                     onValueChange={(value) => handleSelectChange('employment_type', value)}
                   >
                     <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select employment type" />
+                      <SelectValue placeholder={i18n.t('auto_select_employment_type')}  />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="full-time">Full-time</SelectItem>
-                      <SelectItem value="part-time">Part-time</SelectItem>
-                      <SelectItem value="contract">Contract</SelectItem>
-                      <SelectItem value="internship">Internship</SelectItem>
-                      <SelectItem value="temporary">Temporary</SelectItem>
+                      <SelectItem value="full-time">{i18n.t('auto_full_time')}</SelectItem>
+                      <SelectItem value="part-time">{i18n.t('auto_part_time')}</SelectItem>
+                      <SelectItem value="contract">{i18n.t('auto_contract')}</SelectItem>
+                      <SelectItem value="internship">{i18n.t('auto_internship')}</SelectItem>
+                      <SelectItem value="temporary">{i18n.t('auto_temporary')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -735,9 +712,7 @@ const PostJobPage = () => {
                   checked={jobForm.remote_ok}
                   onCheckedChange={(checked) => handleSelectChange('remote_ok', checked)}
                 />
-                <Label htmlFor="remote_ok" className="text-slate-700 font-medium cursor-pointer">
-                  Remote position available
-                </Label>
+                <Label htmlFor="remote_ok" className="text-slate-700 font-medium cursor-pointer">{i18n.t('auto_remote_position_available')}</Label>
               </div>
 
               <div className="border-t border-slate-200 pt-6">
@@ -748,9 +723,7 @@ const PostJobPage = () => {
                       checked={jobForm.videoRequired}
                       onCheckedChange={(checked) => handleSelectChange('videoRequired', checked)}
                     />
-                    <Label htmlFor="videoRequired" className="text-slate-700 font-medium cursor-pointer">
-                      Add a video to this job post
-                    </Label>
+                    <Label htmlFor="videoRequired" className="text-slate-700 font-medium cursor-pointer">{i18n.t('auto_add_a_video_to_this_job_post')}</Label>
                   </div>
                   {jobForm.videoRequired && (
                     <Button
@@ -773,27 +746,24 @@ const PostJobPage = () => {
           <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
               <CardTitle className="flex items-center gap-2 text-slate-900">
-                <FileText className="h-5 w-5 text-indigo-600" />
-                Job Description
-              </CardTitle>
-              <CardDescription>Describe what this position entails</CardDescription>
+                <FileText className="h-5 w-5 text-indigo-600" />{i18n.t('auto_job_description')}</CardTitle>
+              <CardDescription>{i18n.t('auto_describe_what_this_position_entails')}</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <div>
-                <Label htmlFor="description" className="text-slate-700 font-medium">
-                  Description <span className="text-red-500">*</span>
+                <Label htmlFor="description" className="text-slate-700 font-medium">{i18n.t('auto_description')}<span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   id="description"
                   name="description"
                   value={jobForm.description}
                   onChange={handleFormChange}
-                  placeholder="Provide a detailed description of the job position..."
+                  placeholder={i18n.t('auto_provide_a_detailed_description_of_the_jo')} 
                   rows={8}
                   className={`mt-1.5 ${errors.description ? 'border-red-500' : ''}`}
                 />
                 {errors.description && (
-                  <p className="text-red-500 text-sm mt-1">This field is required</p>
+                  <p className="text-red-500 text-sm mt-1">{i18n.t('auto_this_field_is_required')}</p>
                 )}
               </div>
             </CardContent>
@@ -806,11 +776,11 @@ const PostJobPage = () => {
                 <Award className="h-5 w-5 text-indigo-600" />
                 Categories & Skills
               </CardTitle>
-              <CardDescription>Select relevant categories and required skills</CardDescription>
+              <CardDescription>{i18n.t('auto_select_relevant_categories_and_required_')}</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               <div>
-                <Label className="text-slate-700 font-medium mb-3 block">Categories</Label>
+                <Label className="text-slate-700 font-medium mb-3 block">{i18n.t('auto_categories')}</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableCategories.map((category) => (
                     <Badge
@@ -830,7 +800,7 @@ const PostJobPage = () => {
               </div>
 
               <div>
-                <Label className="text-slate-700 font-medium mb-3 block">Required Skills</Label>
+                <Label className="text-slate-700 font-medium mb-3 block">{i18n.t('auto_required_skills')}</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableSkills.map((skill) => (
                     <Badge
@@ -855,17 +825,13 @@ const PostJobPage = () => {
           <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
               <CardTitle className="flex items-center gap-2 text-slate-900">
-                <DollarSign className="h-5 w-5 text-indigo-600" />
-                Salary Information
-              </CardTitle>
-              <CardDescription>Define the salary range for this position</CardDescription>
+                <DollarSign className="h-5 w-5 text-indigo-600" />{i18n.t('auto_salary_information')}</CardTitle>
+              <CardDescription>{i18n.t('auto_define_the_salary_range_for_this_positio')}</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="salary_min" className="text-slate-700 font-medium">
-                    Minimum Salary
-                  </Label>
+                  <Label htmlFor="salary_min" className="text-slate-700 font-medium">{i18n.t('auto_minimum_salary')}</Label>
                   <div className="relative mt-1.5">
                     <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
@@ -874,16 +840,14 @@ const PostJobPage = () => {
                       type="number"
                       value={jobForm.salary_min || ''}
                       onChange={handleFormChange}
-                      placeholder="50000"
+                      placeholder={i18n.t('auto_50000')} 
                       className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="salary_max" className="text-slate-700 font-medium">
-                    Maximum Salary
-                  </Label>
+                  <Label htmlFor="salary_max" className="text-slate-700 font-medium">{i18n.t('auto_maximum_salary')}</Label>
                   <div className="relative mt-1.5">
                     <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
@@ -892,14 +856,14 @@ const PostJobPage = () => {
                       type="number"
                       value={jobForm.salary_max || ''}
                       onChange={handleFormChange}
-                      placeholder="80000"
+                      placeholder={i18n.t('auto_80000')} 
                       className={`pl-10 ${errors.salary ? 'border-red-500' : ''}`}
                     />
                   </div>
                 </div>
               </div>
               {errors.salary && (
-                <p className="text-red-500 text-sm mt-2">Maximum salary must be greater than minimum salary</p>
+                <p className="text-red-500 text-sm mt-2">{i18n.t('auto_maximum_salary_must_be_greater_than_mini')}</p>
               )}
             </CardContent>
           </Card>
@@ -910,10 +874,8 @@ const PostJobPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-slate-900">
-                    <CheckCircle2 className="h-5 w-5 text-indigo-600" />
-                    Requirements
-                  </CardTitle>
-                  <CardDescription>List the requirements for this position</CardDescription>
+                    <CheckCircle2 className="h-5 w-5 text-indigo-600" />{i18n.t('auto_requirements_1')}</CardTitle>
+                  <CardDescription>{i18n.t('auto_list_the_requirements_for_this_position')}</CardDescription>
                 </div>
                 <Button
                   type="button"
@@ -922,9 +884,7 @@ const PostJobPage = () => {
                   onClick={() => addListItem('requirements')}
                   className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
                 >
-                  <Plus className="mr-1 h-4 w-4" />
-                  Add
-                </Button>
+                  <Plus className="mr-1 h-4 w-4" />{i18n.t('auto_add')}</Button>
               </div>
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
@@ -956,10 +916,8 @@ const PostJobPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-slate-900">
-                    <CheckCircle2 className="h-5 w-5 text-indigo-600" />
-                    Responsibilities
-                  </CardTitle>
-                  <CardDescription>Define the key responsibilities</CardDescription>
+                    <CheckCircle2 className="h-5 w-5 text-indigo-600" />{i18n.t('auto_responsibilities')}</CardTitle>
+                  <CardDescription>{i18n.t('auto_define_the_key_responsibilities')}</CardDescription>
                 </div>
                 <Button
                   type="button"
@@ -968,9 +926,7 @@ const PostJobPage = () => {
                   onClick={() => addListItem('responsibilities')}
                   className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
                 >
-                  <Plus className="mr-1 h-4 w-4" />
-                  Add
-                </Button>
+                  <Plus className="mr-1 h-4 w-4" />{i18n.t('auto_add')}</Button>
               </div>
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
@@ -1000,17 +956,13 @@ const PostJobPage = () => {
           <Card className="border-slate-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-slate-200">
               <CardTitle className="flex items-center gap-2 text-slate-900">
-                <GraduationCap className="h-5 w-5 text-indigo-600" />
-                Additional Information
-              </CardTitle>
-              <CardDescription>Add more details about the position</CardDescription>
+                <GraduationCap className="h-5 w-5 text-indigo-600" />{i18n.t('auto_additional_information')}</CardTitle>
+              <CardDescription>{i18n.t('auto_add_more_details_about_the_position')}</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <Label htmlFor="deadline" className="text-slate-700 font-medium">
-                    Application Deadline
-                  </Label>
+                  <Label htmlFor="deadline" className="text-slate-700 font-medium">{i18n.t('auto_application_deadline')}</Label>
                   <div className="relative mt-1.5">
                     <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
@@ -1025,42 +977,38 @@ const PostJobPage = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="experience_level" className="text-slate-700 font-medium">
-                    Experience Level
-                  </Label>
+                  <Label htmlFor="experience_level" className="text-slate-700 font-medium">{i18n.t('auto_experience_level')}</Label>
                   <Select
                     value={jobForm.experience_level}
                     onValueChange={(value) => handleSelectChange('experience_level', value)}
                   >
                     <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select level" />
+                      <SelectValue placeholder={i18n.t('auto_select_level')}  />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="entry">Entry Level</SelectItem>
-                      <SelectItem value="mid">Mid Level</SelectItem>
-                      <SelectItem value="senior">Senior Level</SelectItem>
-                      <SelectItem value="executive">Executive</SelectItem>
+                      <SelectItem value="entry">{i18n.t('auto_entry_level')}</SelectItem>
+                      <SelectItem value="mid">{i18n.t('auto_mid_level')}</SelectItem>
+                      <SelectItem value="senior">{i18n.t('auto_senior_level')}</SelectItem>
+                      <SelectItem value="executive">{i18n.t('auto_executive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="education_level" className="text-slate-700 font-medium">
-                    Education Level
-                  </Label>
+                  <Label htmlFor="education_level" className="text-slate-700 font-medium">{i18n.t('auto_education_level')}</Label>
                   <Select
                     value={jobForm.education_level}
                     onValueChange={(value) => handleSelectChange('education_level', value)}
                   >
                     <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select level" />
+                      <SelectValue placeholder={i18n.t('auto_select_level')}  />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="high_school">High School</SelectItem>
-                      <SelectItem value="associate">Associate Degree</SelectItem>
-                      <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
-                      <SelectItem value="master">Master's Degree</SelectItem>
-                      <SelectItem value="phd">PhD</SelectItem>
+                      <SelectItem value="high_school">{i18n.t('auto_high_school')}</SelectItem>
+                      <SelectItem value="associate">{i18n.t('auto_associate_degree')}</SelectItem>
+                      <SelectItem value="bachelor">{i18n.t('auto_bachelor_s_degree')}</SelectItem>
+                      <SelectItem value="master">{i18n.t('auto_master_s_degree')}</SelectItem>
+                      <SelectItem value="phd">{i18n.t('auto_phd')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1076,9 +1024,7 @@ const PostJobPage = () => {
               onClick={handleCancel}
               disabled={saving}
             >
-              <X className="mr-2 h-4 w-4" />
-              Cancel
-            </Button>
+              <X className="mr-2 h-4 w-4" />{i18n.t('auto_cancel')}</Button>
             <Button
               type="submit"
               disabled={saving || hasEmployerProfile !== true || hasEmployerVideo !== true}
@@ -1086,14 +1032,10 @@ const PostJobPage = () => {
             >
               {saving ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Posting...
-                </>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{i18n.t('auto_posting')}</>
               ) : (
                 <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Post Job
-                </>
+                  <Save className="mr-2 h-4 w-4" />{i18n.t('auto_post_job')}</>
               )}
             </Button>
           </div>
@@ -1109,7 +1051,7 @@ const PostJobPage = () => {
                 <AlertCircle className="h-8 w-8 text-amber-500" />
               </div>
             </div>
-            <DialogTitle className="text-center text-2xl">Profile Needed</DialogTitle>
+            <DialogTitle className="text-center text-2xl">{i18n.t('auto_profile_needed')}</DialogTitle>
             <CardDescription className="text-center">
               You need to create an employer profile and have at least one uploaded video to post job listings.
             </CardDescription>
@@ -1118,19 +1060,19 @@ const PostJobPage = () => {
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     {profileCompleteness.name ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Company name (required)</span>
+                    <span>{i18n.t('auto_company_name_required')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.description ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Company description (min 10 characters)</span>
+                    <span>{i18n.t('auto_company_description_min_10_characters')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.logo ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Company logo</span>
+                    <span>{i18n.t('auto_company_logo')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.website ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Website</span>
+                    <span>{i18n.t('auto_website')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.social ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
@@ -1138,7 +1080,7 @@ const PostJobPage = () => {
                   </li>
                   <li className="flex items-center gap-2">
                     {profileCompleteness.contact ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                    <span>Contact email or phone</span>
+                    <span>{i18n.t('auto_contact_email_or_phone')}</span>
                   </li>
                 </ul>
               </div>
@@ -1146,7 +1088,7 @@ const PostJobPage = () => {
             <div className="mt-4 text-center">
               <div className="inline-flex items-center gap-2">
                 {hasEmployerVideo ? <Check className="h-4 w-4 text-green-600" /> : <CloseIcon className="h-4 w-4 text-red-500" />}
-                <span>At least one company video uploaded</span>
+                <span>{i18n.t('auto_at_least_one_company_video_uploaded')}</span>
               </div>
             </div>
           </DialogHeader>
@@ -1159,21 +1101,15 @@ const PostJobPage = () => {
                 <Button
                   variant="outline"
                   onClick={() => setPermissionError(false)}
-                >
-                  Go Back
-                </Button>
+                >{i18n.t('auto_go_back')}</Button>
                 <Button
                   onClick={() => navigate('/employer-tabs?group=companyContent&tab=edit-employer-profile')}
                   className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
-                >
-                  Create Employer Profile
-                </Button>
+                >{i18n.t('auto_create_employer_profile')}</Button>
                 <Button
                   onClick={() => navigate('/employer-tabs?group=companyContent&tab=company-videos')}
                   className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700"
-                >
-                  Upload Videos
-                </Button>
+                >{i18n.t('auto_upload_videos')}</Button>
               </div>
           </div>
         </DialogContent>
@@ -1184,14 +1120,14 @@ const PostJobPage = () => {
         <Dialog open={showVideoUpload} onOpenChange={handleDialogOpenChange}>
           <DialogContent className="max-w-4xl">
             <DialogHeader>
-              <DialogTitle>Upload Job Video</DialogTitle>
+              <DialogTitle>{i18n.t('auto_upload_job_video')}</DialogTitle>
             </DialogHeader>
             <VideoUploadErrorBoundary>
               <React.Suspense 
                 fallback={
                   <div className="p-6 text-center">
                     <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mx-auto mb-4" />
-                    <p className="text-slate-600">Loading video uploader...</p>
+                    <p className="text-slate-600">{i18n.t('auto_loading_video_uploader')}</p>
                   </div>
                 }
               >
@@ -1206,7 +1142,7 @@ const PostJobPage = () => {
                 ) : (
                   <div className="p-6 text-center">
                     <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mx-auto mb-4" />
-                    <p className="text-slate-600">Preparing video upload...</p>
+                    <p className="text-slate-600">{i18n.t('auto_preparing_video_upload')}</p>
                   </div>
                 )}
               </React.Suspense>
@@ -1220,9 +1156,7 @@ const PostJobPage = () => {
                   setTimeout(() => setVideoDialogMounted(false), 300);
                 }}
                 disabled={isChildRecording} // Only disable if actively recording
-              >
-                Cancel
-              </Button>
+              >{i18n.t('auto_cancel')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

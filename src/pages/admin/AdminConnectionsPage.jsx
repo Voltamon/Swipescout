@@ -3,6 +3,7 @@ import { getAdminConnections, purgeRemovedConnections } from '@/services/adminSe
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
 import { useToast } from '@/hooks/use-toast';
+import i18n from 'i18next';
 
 const AdminConnectionsPage = () => {
   const [connections, setConnections] = useState([]);
@@ -38,19 +39,19 @@ const AdminConnectionsPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Connections Audit</h1>
-        <p className="text-sm text-muted-foreground">Review connection events and purge removed connections.</p>
+        <h1 className="text-3xl font-bold">{i18n.t('auto_connections_audit')}</h1>
+        <p className="text-sm text-muted-foreground">{i18n.t('auto_review_connection_events_and_purge_remov')}</p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Removed Connections</CardTitle>
+          <CardTitle>{i18n.t('auto_removed_connections')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2 mb-4">
-            <Button onClick={handlePurge} className="bg-red-600">Purge removed connections older than 30 days</Button>
+            <Button onClick={handlePurge} className="bg-red-600">{i18n.t('auto_purge_removed_connections_older_than_30_')}</Button>
           </div>
           {connections.length === 0 ? (
-            <div className="text-sm text-muted-foreground">No removed connections</div>
+            <div className="text-sm text-muted-foreground">{i18n.t('auto_no_removed_connections')}</div>
           ) : (
             <div className="grid grid-cols-1 gap-2">
               {connections.map(c => (
@@ -63,11 +64,11 @@ const AdminConnectionsPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Audit Events</CardTitle>
+          <CardTitle>{i18n.t('auto_audit_events')}</CardTitle>
         </CardHeader>
         <CardContent>
           {audits.length === 0 ? (
-            <div className="text-sm text-muted-foreground">No audit events</div>
+            <div className="text-sm text-muted-foreground">{i18n.t('auto_no_audit_events')}</div>
           ) : (
             <div className="grid grid-cols-1 gap-2">
               {audits.map(a => (

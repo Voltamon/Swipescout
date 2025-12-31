@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -168,9 +169,7 @@ const SavedVideosPage = () => {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4" gutterBottom>
-          Saved Videos
-        </Typography>
+        <Typography variant="h4" gutterBottom>{i18n.t('auto_saved_videos')}</Typography>
         <Chip 
           label={`${savedVideos.length} videos saved`} 
           color="primary" 
@@ -190,7 +189,7 @@ const SavedVideosPage = () => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              placeholder="Search saved videos..."
+              placeholder={i18n.t('auto_search_saved_videos')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
@@ -230,16 +229,13 @@ const SavedVideosPage = () => {
               fullWidth
               variant="contained"
               onClick={() => navigate('/videos/all')}
-            >
-              Browse Videos
-            </Button>
+            >{i18n.t('auto_browse_videos')}</Button>
           </Grid>
         </Grid>
       </Box>
 
       {/* Videos Grid */}
-      {sortedVideos.length > 0 ? (
-        <Grid container spacing={3}>
+      {sortedVideos.length >{i18n.t('auto_0_2')}<Grid container spacing={3}>
           {sortedVideos.map((video) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={video.id}>
               <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -344,17 +340,13 @@ const SavedVideosPage = () => {
                     size="small"
                     startIcon={<PlayArrow />}
                     onClick={() => handlePlayVideo(video)}
-                  >
-                    Watch
-                  </Button>
+                  >{i18n.t('auto_watch')}</Button>
                   
                   <Button
                     size="small"
                     startIcon={<Share />}
                     onClick={() => handleShareVideo(video)}
-                  >
-                    Share
-                  </Button>
+                  >{i18n.t('auto_share')}</Button>
                   
                   <IconButton
                     size="small"
@@ -373,19 +365,13 @@ const SavedVideosPage = () => {
       ) : (
         <Box textAlign="center" py={8}>
           <Bookmark sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
-          <Typography variant="h5" gutterBottom color="text.secondary">
-            No saved videos yet
-          </Typography>
-          <Typography variant="body1" color="text.secondary" mb={3}>
-            Start saving videos you like to watch them later
-          </Typography>
+          <Typography variant="h5" gutterBottom color="text.secondary">{i18n.t('auto_no_saved_videos_yet')}</Typography>
+          <Typography variant="body1" color="text.secondary" mb={3}>{i18n.t('auto_start_saving_videos_you_like_to_watch_th')}</Typography>
           <Button
             variant="contained"
             size="large"
             onClick={() => navigate('/videos/all')}
-          >
-            Browse Videos
-          </Button>
+          >{i18n.t('auto_browse_videos')}</Button>
         </Box>
       )}
 
@@ -395,28 +381,14 @@ const SavedVideosPage = () => {
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
       >
-        <MenuItem onClick={() => { setFilterType('all'); setAnchorEl(null); }}>
-          All Videos
-        </MenuItem>
-        <MenuItem onClick={() => { setFilterType('jobseeker'); setAnchorEl(null); }}>
-          Job Seekers
-        </MenuItem>
-        <MenuItem onClick={() => { setFilterType('employer'); setAnchorEl(null); }}>
-          Employers
-        </MenuItem>
+        <MenuItem onClick={() => { setFilterType('all'); setAnchorEl(null); }}>{i18n.t('auto_all_videos')}</MenuItem>
+        <MenuItem onClick={() => { setFilterType('jobseeker'); setAnchorEl(null); }}>{i18n.t('auto_job_seekers')}</MenuItem>
+        <MenuItem onClick={() => { setFilterType('employer'); setAnchorEl(null); }}>{i18n.t('auto_employers')}</MenuItem>
         <Divider />
-        <MenuItem onClick={() => { setSortBy('saved_date'); setAnchorEl(null); }}>
-          Sort by Saved Date
-        </MenuItem>
-        <MenuItem onClick={() => { setSortBy('title'); setAnchorEl(null); }}>
-          Sort by Title
-        </MenuItem>
-        <MenuItem onClick={() => { setSortBy('views'); setAnchorEl(null); }}>
-          Sort by Views
-        </MenuItem>
-        <MenuItem onClick={() => { setSortBy('likes'); setAnchorEl(null); }}>
-          Sort by Likes
-        </MenuItem>
+        <MenuItem onClick={() => { setSortBy('saved_date'); setAnchorEl(null); }}>{i18n.t('auto_sort_by_saved_date')}</MenuItem>
+        <MenuItem onClick={() => { setSortBy('title'); setAnchorEl(null); }}>{i18n.t('auto_sort_by_title')}</MenuItem>
+        <MenuItem onClick={() => { setSortBy('views'); setAnchorEl(null); }}>{i18n.t('auto_sort_by_views')}</MenuItem>
+        <MenuItem onClick={() => { setSortBy('likes'); setAnchorEl(null); }}>{i18n.t('auto_sort_by_likes')}</MenuItem>
         {selectedVideo && (
           <>
             <Divider />
@@ -425,30 +397,26 @@ const SavedVideosPage = () => {
               setDeleteDialog(true);
               setAnchorEl(null);
             }}>
-              <Delete sx={{ mr: 1 }} />
-              Remove from Saved
-            </MenuItem>
+              <Delete sx={{ mr: 1 }} />{i18n.t('auto_remove_from_saved')}</MenuItem>
           </>
         )}
       </Menu>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
-        <DialogTitle>Remove from Saved Videos</DialogTitle>
+        <DialogTitle>{i18n.t('auto_remove_from_saved_videos')}</DialogTitle>
         <DialogContent>
           <Typography>
             Are you sure you want to remove "{videoToDelete?.video_title}" from your saved videos?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialog(false)}>Cancel</Button>
+          <Button onClick={() => setDeleteDialog(false)}>{i18n.t('auto_cancel')}</Button>
           <Button 
             onClick={() => handleUnsaveVideo(videoToDelete?.id)} 
             color="error"
             variant="contained"
-          >
-            Remove
-          </Button>
+          >{i18n.t('auto_remove')}</Button>
         </DialogActions>
       </Dialog>
     </Container>

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Badge } from '@/components/UI/badge.jsx';
 import localize from '@/utils/localize';
@@ -44,12 +45,12 @@ const ContentModerationPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>Content Moderation</h2>
+      <h2 className={`text-2xl font-bold ${themeColors.text.primary}`}>{i18n.t('auto_content_moderation')}</h2>
       {error && (
         <div className="p-3 rounded bg-red-50 border border-red-100 text-red-700 flex items-center justify-between">
           <div>{error}</div>
           <div className="ml-4">
-            <Button variant="ghost" onClick={fetchReports}>Retry</Button>
+            <Button variant="ghost" onClick={fetchReports}>{i18n.t('auto_retry')}</Button>
           </div>
         </div>
       )}
@@ -58,11 +59,11 @@ const ContentModerationPage = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Type</TableHead>
-                <TableHead>Reason</TableHead>
-                <TableHead>Reporter</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{i18n.t('auto_type')}</TableHead>
+                <TableHead>{i18n.t('auto_reason')}</TableHead>
+                <TableHead>{i18n.t('auto_reporter')}</TableHead>
+                <TableHead>{i18n.t('auto_status')}</TableHead>
+                <TableHead>{i18n.t('auto_actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

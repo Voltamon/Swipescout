@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -451,9 +452,7 @@ jobsResponse = await getAllJobsPosted({
       <Container maxWidth="lg" sx={{ width: '100%', padding: 0 }}>
         {/* Page Header */}
         <Box sx={{ mb: 4, width: '100%' }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Job Listings
-          </Typography>
+          <Typography variant="h4" component="h1" gutterBottom>{i18n.t('auto_job_listings')}</Typography>
           <Typography variant="body1" color="textSecondary">
             Find your next career opportunity with video previews of companies and positions
           </Typography>
@@ -465,10 +464,10 @@ jobsResponse = await getAllJobsPosted({
             <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
-                label="Search Jobs"
+                label={i18n.t('auto_search_jobs')} 
                 value={searchQuery}
                 onChange={handleSearch}
-                placeholder="Job title, company, or keywords"
+                placeholder={i18n.t('auto_job_title_company_or_keywords')} 
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -480,19 +479,19 @@ jobsResponse = await getAllJobsPosted({
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <FormControl fullWidth>
-                <InputLabel id="location-filter-label">Location</InputLabel>
+                <InputLabel id="location-filter-label">{i18n.t('auto_location')}</InputLabel>
                 <Select
                   labelId="location-filter-label"
                   value={locationFilter}
                   onChange={handleLocationFilter}
-                  label="Location"
+                  label={i18n.t('auto_location')} 
                   startAdornment={
                     <InputAdornment position="start">
                       <LocationIcon />
                     </InputAdornment>
                   }
                 >
-                  <MenuItem value="">All Locations</MenuItem>
+                  <MenuItem value="">{i18n.t('auto_all_locations')}</MenuItem>
                   {locations.map((location) => (
                     <MenuItem key={location} value={location}>
                       {location}
@@ -503,19 +502,19 @@ jobsResponse = await getAllJobsPosted({
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <FormControl fullWidth>
-                <InputLabel id="category-filter-label">Category</InputLabel>
+                <InputLabel id="category-filter-label">{i18n.t('auto_category')}</InputLabel>
                 <Select
                   labelId="category-filter-label"
                   value={categoryFilter}
                   onChange={handleCategoryFilter}
-                  label="Category"
+                  label={i18n.t('auto_category')} 
                   startAdornment={
                     <InputAdornment position="start">
                       <FilterListIcon />
                     </InputAdornment>
                   }
                 >
-                  <MenuItem value="">All Categories</MenuItem>
+                  <MenuItem value="">{i18n.t('auto_all_categories')}</MenuItem>
                   {categories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
                       {category.name}
@@ -526,21 +525,21 @@ jobsResponse = await getAllJobsPosted({
             </Grid>
             <Grid item xs={12} md={2}>
               <FormControl fullWidth>
-                <InputLabel id="sort-by-label">Sort By</InputLabel>
+                <InputLabel id="sort-by-label">{i18n.t('auto_sort_by')}</InputLabel>
                 <Select
                   labelId="sort-by-label"
                   value={sortBy}
                   onChange={handleSortChange}
-                  label="Sort By"
+                  label={i18n.t('auto_sort_by')} 
                   startAdornment={
                     <InputAdornment position="start">
                       <SortIcon />
                     </InputAdornment>
                   }
                 >
-                  <MenuItem value="newest">Newest</MenuItem>
-                  <MenuItem value="salary-high">Highest Salary</MenuItem>
-                  <MenuItem value="salary-low">Lowest Salary</MenuItem>
+                  <MenuItem value="newest">{i18n.t('auto_newest')}</MenuItem>
+                  <MenuItem value="salary-high">{i18n.t('auto_highest_salary')}</MenuItem>
+                  <MenuItem value="salary-low">{i18n.t('auto_lowest_salary')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -573,12 +572,8 @@ jobsResponse = await getAllJobsPosted({
           </Box>
         ) : filteredJobs.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 5, width: '100%' }}>
-            <Typography variant="h6" color="textSecondary">
-              No jobs found matching your criteria
-            </Typography>
-            <Typography variant="body1" color="textSecondary" sx={{ mt: 1 }}>
-              Try adjusting your search or filters
-            </Typography>
+            <Typography variant="h6" color="textSecondary">{i18n.t('auto_no_jobs_found_matching_your_criteria')}</Typography>
+            <Typography variant="body1" color="textSecondary" sx={{ mt: 1 }}>{i18n.t('auto_try_adjusting_your_search_or_filters')}</Typography>
           </Box>
         ) : (
           <Box sx={{ width: '100%' }}>
@@ -622,7 +617,7 @@ jobsResponse = await getAllJobsPosted({
                         loop
                         playsInline
                       />
-                      <VideoPlayButton aria-label="play" className="video-overlay">
+                      <VideoPlayButton aria-label={i18n.t('auto_play')}  className="video-overlay">
                         <PlayArrowIcon />
                       </VideoPlayButton>
                     </Box>
@@ -687,7 +682,7 @@ jobsResponse = await getAllJobsPosted({
                       />
                       {job.remote_ok && (
                         <Chip
-                          label="Remote"
+                          label={i18n.t('auto_remote')} 
                           size="small"
                           color="secondary"
                           variant="outlined"
@@ -741,9 +736,7 @@ jobsResponse = await getAllJobsPosted({
                       size="small"
                       color="primary"
                       onClick={() => navigateToJobDetails(job.id)}
-                    >
-                      View Details
-                    </Button>
+                    >{i18n.t('auto_view_details_1')}</Button>
                     <Box sx={{ flexGrow: 1 }} />
                     <IconButton
                       size="small"
@@ -790,7 +783,7 @@ jobsResponse = await getAllJobsPosted({
         <DialogTitle>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h6">{videoDialog.title}</Typography>
-            <IconButton edge="end" color="inherit" onClick={closeVideoDialog} aria-label="close">
+            <IconButton edge="end" color="inherit" onClick={closeVideoDialog} aria-label={i18n.t('auto_close_1')} >
               <CloseIcon />
             </IconButton>
           </Box>

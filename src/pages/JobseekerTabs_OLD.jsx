@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useMemo, useCallback } from "react";
+import i18n from 'i18next';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Box,
   CssBaseline,
@@ -369,9 +370,7 @@ const JobseekerTabs = () => {
                         mt: 1,
                         fontSize: { xs: "0.8rem", md: "1rem" },
                       }}
-                    >
-                      Profile Views
-                    </Typography>
+                    >{i18n.t('auto_profile_views')}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -394,9 +393,7 @@ const JobseekerTabs = () => {
                         mt: 1,
                         fontSize: { xs: "0.8rem", md: "1rem" },
                       }}
-                    >
-                      Matches
-                    </Typography>
+                    >{i18n.t('auto_matches')}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -419,9 +416,7 @@ const JobseekerTabs = () => {
                         mt: 1,
                         fontSize: { xs: "0.8rem", md: "1rem" },
                       }}
-                    >
-                      Applications
-                    </Typography>
+                    >{i18n.t('auto_applications')}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -444,9 +439,7 @@ const JobseekerTabs = () => {
                         mt: 1,
                         fontSize: { xs: "0.8rem", md: "1rem" },
                       }}
-                    >
-                      Unread Messages
-                    </Typography>
+                    >{i18n.t('auto_unread_messages')}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -458,7 +451,7 @@ const JobseekerTabs = () => {
               <Tabs
                 value={currentTab}
                 onChange={handleTabChange}
-                aria-label="Job Seeker Dashboard Tabs"
+                aria-label={i18n.t('auto_job_seeker_dashboard_tabs')} 
                 variant={isMobile ? "scrollable" : "standard"}
                 scrollButtons="auto"
                 allowScrollButtonsMobile

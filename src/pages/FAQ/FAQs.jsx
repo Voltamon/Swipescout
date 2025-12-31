@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+import i18n from 'i18next';
+import React, { useState } from 'react';
 import Header from "../../components/Headers/Header";
 import Footer from "../../components/Headers/Footer";
 import { Helmet } from "react-helmet";
@@ -124,19 +125,15 @@ const FAQPage = () => {
           <CardContent className="p-8">
             {/* Header Section */}
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                Frequently Asked Questions
-              </h1>
-              <p className="text-gray-600 text-lg">
-                Find answers to common questions about SwipeScout
-              </p>
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">{i18n.t('auto_frequently_asked_questions')}</h1>
+              <p className="text-gray-600 text-lg">{i18n.t('auto_find_answers_to_common_questions_about_s')}</p>
             </div>
 
             {/* Search Box */}
             <div className="mb-6 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search FAQs..."
+                placeholder={i18n.t('auto_search_faqs')} 
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10 h-12 rounded-lg shadow-sm"
@@ -189,12 +186,8 @@ const FAQPage = () => {
               ) : (
                 <div className="text-center py-12">
                   <HelpCircle className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                    No FAQs found matching your search
-                  </h3>
-                  <p className="text-gray-500">
-                    Try different keywords or browse all categories
-                  </p>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">{i18n.t('auto_no_faqs_found_matching_your_search')}</h3>
+                  <p className="text-gray-500">{i18n.t('auto_try_different_keywords_or_browse_all_cat')}</p>
                 </div>
               )}
             </div>
@@ -204,18 +197,12 @@ const FAQPage = () => {
 
             {/* Contact Support Section */}
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
-                Still have questions?
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Our support team is happy to help
-              </p>
+              <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">{i18n.t('auto_still_have_questions')}</h2>
+              <p className="text-gray-600 mb-6">{i18n.t('auto_our_support_team_is_happy_to_help')}</p>
               <button
                 onClick={() => (window.location.href = "/contact")}
                 className="px-8 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-cyan-700 transition-all duration-200 shadow-md hover:shadow-lg"
-              >
-                Contact Support
-              </button>
+              >{i18n.t('auto_contact_support')}</button>
             </div>
           </CardContent>
         </Card>

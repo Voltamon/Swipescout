@@ -1,4 +1,5 @@
-﻿import React, { useState } from "react";
+import i18n from 'i18next';
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -228,10 +229,8 @@ const SignupPage = () => {
     <SignupContainer>
       <Container maxWidth="md">
         <SignupFormContainer>
-          <SignupTitle variant="h3">Join SwipeScout Today!</SignupTitle>
-          <SignupSubtitle>
-            Connect with opportunities through the power of video
-          </SignupSubtitle>
+          <SignupTitle variant="h3">{i18n.t('auto_join_swipescout_today')}</SignupTitle>
+          <SignupSubtitle>{i18n.t('auto_connect_with_opportunities_through_the_p')}</SignupSubtitle>
           
           <Box sx={{ mb: 4 }}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -254,7 +253,7 @@ const SignupPage = () => {
 
           <Box component="form">
             <InputField
-              label="Full Name"
+              label={i18n.t('auto_full_name')} 
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
@@ -263,7 +262,7 @@ const SignupPage = () => {
             />
             
             <InputField
-              label="Email Address"
+              label={i18n.t('auto_email_address')} 
               type="email"
               name="email"
               value={formData.email}
@@ -273,7 +272,7 @@ const SignupPage = () => {
             />
             
             <InputField
-              label="Password"
+              label={i18n.t('auto_password')} 
               type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
@@ -295,7 +294,7 @@ const SignupPage = () => {
             />
             
             <InputField
-              label="Confirm Password"
+              label={i18n.t('auto_confirm_password')} 
               type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               value={formData.confirmPassword}
@@ -316,9 +315,7 @@ const SignupPage = () => {
               }}
             />
             
-            <SignupButton type="submit">
-              Create Account
-            </SignupButton>
+            <SignupButton type="submit">{i18n.t('auto_create_account_1')}</SignupButton>
             
             <Divider sx={{ my: 3 }}>
               <Typography variant="body2" sx={{ 
@@ -326,28 +323,21 @@ const SignupPage = () => {
                 px: 2,
                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 fontWeight: 500,
-              }}>
-                Or sign up with
-              </Typography>
+              }}>{i18n.t('auto_or_sign_up_with')}</Typography>
             </Divider>
             
             <Stack direction="row" spacing={2}>
               <GoogleButton
                 startIcon={<GoogleIcon />}
                 fullWidth
-              >
-                Google
-              </GoogleButton>
+              >{i18n.t('auto_google')}</GoogleButton>
               <LinkedInButton
                 startIcon={<LinkedInIcon />}
                 fullWidth
-              >
-                LinkedIn
-              </LinkedInButton>
+              >{i18n.t('auto_linkedin')}</LinkedInButton>
             </Stack>
             
-            <LoginLink>
-              Already have an account? <Link to="/login">Sign In</Link>
+            <LoginLink>{i18n.t('auto_already_have_an_account')}<Link to="/login">{i18n.t('auto_sign_in')}</Link>
             </LoginLink>
           </Box>
         </SignupFormContainer>

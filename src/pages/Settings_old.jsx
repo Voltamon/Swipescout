@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Container,
@@ -238,9 +239,7 @@ const Settings = () => {
 
     return (
         <SettingsContainer maxWidth="lg" sx={{ mt: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Settings
-            </Typography>
+            <Typography variant="h4" gutterBottom>{i18n.t('auto_settings')}</Typography>
 
             <Grid container spacing={3} sx={{ mt: 1 , mb: 3 }}>
                 <Grid item xs={12} md={3}>
@@ -328,7 +327,7 @@ const Settings = () => {
                         {activeSection === 'profile' && (
                             <Box>
                                 <SettingsHeader>
-                                    <Typography variant="h6">Profile Settings</Typography>
+                                    <Typography variant="h6">{i18n.t('auto_profile_settings')}</Typography>
                                 </SettingsHeader>
 
                                 <SettingsContent>
@@ -336,9 +335,7 @@ const Settings = () => {
                                         <LargeAvatar src={user?.photoUrl}>
                                             {!user?.photoUrl && user?.name?.charAt(0)}
                                         </LargeAvatar>
-                                        <Button variant="outlined" component="label">
-                                            Change Photo
-                                            <input type="file" hidden accept="image/*" />
+                                        <Button variant="outlined" component="label">{i18n.t('auto_change_photo')}<input type="file" hidden accept="image/*" />
                                         </Button>
                                     </AvatarUpload>
 
@@ -346,7 +343,7 @@ const Settings = () => {
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 fullWidth
-                                                label="Name"
+                                                label={i18n.t('auto_name')} 
                                                 name="name"
                                                 value={formData.name}
                                                 onChange={handleInputChange}
@@ -357,7 +354,7 @@ const Settings = () => {
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 fullWidth
-                                                label="Email"
+                                                label={i18n.t('auto_email')} 
                                                 name="email"
                                                 value={formData.email}
                                                 onChange={handleInputChange}
@@ -368,7 +365,7 @@ const Settings = () => {
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 fullWidth
-                                                label="Mobile Number"
+                                                label={i18n.t('auto_mobile_number')} 
                                                 name="mobile"
                                                 value={formData.mobile}
                                                 onChange={handleInputChange}
@@ -379,7 +376,7 @@ const Settings = () => {
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 fullWidth
-                                                label="Location"
+                                                label={i18n.t('auto_location')} 
                                                 name="location"
                                                 value={formData.location}
                                                 onChange={handleInputChange}
@@ -390,7 +387,7 @@ const Settings = () => {
                                         <Grid item xs={12}>
                                             <TextField
                                                 fullWidth
-                                                label="Bio"
+                                                label={i18n.t('auto_bio')} 
                                                 name="bio"
                                                 value={formData.bio}
                                                 onChange={handleInputChange}
@@ -418,7 +415,7 @@ const Settings = () => {
                         {activeSection === 'notifications' && (
                             <Box>
                                 <SettingsHeader>
-                                    <Typography variant="h6">Notification Settings</Typography>
+                                    <Typography variant="h6">{i18n.t('auto_notification_settings')}</Typography>
                                 </SettingsHeader>
 
                                 <SettingsContent>
@@ -484,21 +481,21 @@ const Settings = () => {
                         {activeSection === 'privacy' && (
                             <Box>
                                 <SettingsHeader>
-                                    <Typography variant="h6">Privacy Settings</Typography>
+                                    <Typography variant="h6">{i18n.t('auto_privacy_settings')}</Typography>
                                 </SettingsHeader>
 
                                 <SettingsContent>
                                     <FormControl fullWidth margin="normal">
-                                        <InputLabel>Profile Visibility</InputLabel>
+                                        <InputLabel>{i18n.t('auto_profile_visibility')}</InputLabel>
                                         <Select
                                             name="profileVisibility"
                                             value={formData.profileVisibility}
                                             onChange={handleInputChange}
-                                            label="Profile Visibility"
+                                            label={i18n.t('auto_profile_visibility')} 
                                         >
-                                            <MenuItem value="public">Public</MenuItem>
-                                            <MenuItem value="connections">Only Connections</MenuItem>
-                                            <MenuItem value="private">Private</MenuItem>
+                                            <MenuItem value="public">{i18n.t('auto_public')}</MenuItem>
+                                            <MenuItem value="connections">{i18n.t('auto_only_connections')}</MenuItem>
+                                            <MenuItem value="private">{i18n.t('auto_private')}</MenuItem>
                                         </Select>
                                     </FormControl>
 
@@ -519,7 +516,7 @@ const Settings = () => {
                         {activeSection === 'security' && (
                             <Box>
                                 <SettingsHeader>
-                                    <Typography variant="h6">Security Settings</Typography>
+                                    <Typography variant="h6">{i18n.t('auto_security_settings')}</Typography>
                                 </SettingsHeader>
 
                                 <SettingsContent>
@@ -546,17 +543,13 @@ const Settings = () => {
                                             color="primary"
                                             fullWidth
                                             sx={{ mb: 2 }}
-                                        >
-                                            Change Password
-                                        </Button>
+                                        >{i18n.t('auto_change_password')}</Button>
 
                                         <Button
                                             variant="outlined"
                                             color="primary"
                                             fullWidth
-                                        >
-                                            Active Login Sessions
-                                        </Button>
+                                        >{i18n.t('auto_active_login_sessions')}</Button>
                                     </Box>
 
                                     <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
@@ -575,20 +568,20 @@ const Settings = () => {
                             {activeSection === 'language' && (
                                 <Box>
                                     <SettingsHeader>
-                                        <Typography variant="h6">Language Settings</Typography>
+                                        <Typography variant="h6">{i18n.t('auto_language_settings')}</Typography>
                                     </SettingsHeader>
     
                                     <SettingsContent>
                                         <FormControl fullWidth margin="normal">
-                                            <InputLabel>Language</InputLabel>
+                                            <InputLabel>{i18n.t('auto_language')}</InputLabel>
                                             <Select
                                                 name="language"
                                                 value={formData.language}
                                                 onChange={handleInputChange}
-                                                label="Language"
+                                                label={i18n.t('auto_language')} 
                                             >
-                                                <MenuItem value="ar">Arabic</MenuItem>
-                                                <MenuItem value="en">English</MenuItem>
+                                                <MenuItem value="ar">{i18n.t('auto_arabic')}</MenuItem>
+                                                <MenuItem value="en">{i18n.t('auto_english')}</MenuItem>
                                             </Select>
                                         </FormControl>
     
@@ -623,9 +616,7 @@ const Settings = () => {
                                                     primary="Help Center"
                                                     secondary="Browse frequently asked questions and tutorial articles"
                                                 />
-                                                <Button variant="outlined" size="small">
-                                                    Open
-                                                </Button>
+                                                <Button variant="outlined" size="small">{i18n.t('auto_open')}</Button>
                                             </ListItem>
     
                                             <Divider />
@@ -635,9 +626,7 @@ const Settings = () => {
                                                     primary="Technical Support"
                                                     secondary="Contact our technical support team"
                                                 />
-                                                <Button variant="outlined" size="small">
-                                                    Contact
-                                                </Button>
+                                                <Button variant="outlined" size="small">{i18n.t('auto_contact')}</Button>
                                             </ListItem>
     
                                             <Divider />
@@ -647,9 +636,7 @@ const Settings = () => {
                                                     primary="Report a Problem"
                                                     secondary="Report an issue or bug in the application"
                                                 />
-                                                <Button variant="outlined" size="small">
-                                                    Report
-                                                </Button>
+                                                <Button variant="outlined" size="small">{i18n.t('auto_report_1')}</Button>
                                             </ListItem>
                                         </List>
                                     </SettingsContent>
@@ -679,10 +666,8 @@ const Settings = () => {
                         <Typography>{confirmDialog.message}</Typography>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseConfirmDialog}>Cancel</Button>
-                        <Button color="error" onClick={handleCloseConfirmDialog}>
-                            Delete Account
-                        </Button>
+                        <Button onClick={handleCloseConfirmDialog}>{i18n.t('auto_cancel')}</Button>
+                        <Button color="error" onClick={handleCloseConfirmDialog}>{i18n.t('auto_delete_account')}</Button>
                     </DialogActions>
                 </Dialog>
             </SettingsContainer>

@@ -1,4 +1,4 @@
-﻿// VideoUploadLogic.js
+// VideoUploadLogic.js
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -247,7 +247,6 @@ const useVideoUploadLogic = () => {
         // Attach uploaderRole if available; choose employer if multiple
         const defaultUploaderRole = Array.isArray(role) ? (role.includes('employer') ? 'employer' : role[0]) : role;
         if (defaultUploaderRole) metadata.uploaderRole = defaultUploaderRole;
-        };
         await saveVideoMetadata(metadata, user.token);
 
         // Navigate to a video processing page or a dashboard

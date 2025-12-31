@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 import {
   ArrowLeft,
   Save,
@@ -396,9 +397,7 @@ const BlogEditorPageEnhanced = () => {
             onClick={() => handleSubmit('draft')}
             disabled={saving}
           >
-            <Save className="mr-2 h-4 w-4" />
-            Save Draft
-          </Button>
+            <Save className="mr-2 h-4 w-4" />{i18n.t('auto_save_draft')}</Button>
           <Button
             onClick={() => handleSubmit('published')}
             disabled={saving}
@@ -419,13 +418,11 @@ const BlogEditorPageEnhanced = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Globe className="h-5 w-5" />
-                  <CardTitle>Content</CardTitle>
+                  <CardTitle>{i18n.t('auto_content')}</CardTitle>
                 </div>
                 <Tabs value={currentLanguage} onValueChange={setCurrentLanguage}>
                   <TabsList>
-                    <TabsTrigger value="en" className={currentLanguage === 'en' ? 'bg-blue-100' : ''}>
-                      English
-                    </TabsTrigger>
+                    <TabsTrigger value="en" className={currentLanguage === 'en' ? 'bg-blue-100' : ''}>{i18n.t('auto_english')}</TabsTrigger>
                     <TabsTrigger value="ar" className={currentLanguage === 'ar' ? 'bg-blue-100' : ''}>
                       العربية
                     </TabsTrigger>
@@ -445,7 +442,7 @@ const BlogEditorPageEnhanced = () => {
                 <Label htmlFor={getTitleField()}>
                   Title *
                   {currentLanguage !== 'en' && formData[getTitleField()] && (
-                    <Badge variant="outline" className="ml-2 bg-green-50">Connected</Badge>
+                    <Badge variant="outline" className="ml-2 bg-green-50">{i18n.t('auto_connected')}</Badge>
                   )}
                 </Label>
                 <Input
@@ -462,14 +459,14 @@ const BlogEditorPageEnhanced = () => {
                 <Label htmlFor={getExcerptField()}>
                   Excerpt
                   {currentLanguage !== 'en' && formData[getExcerptField()] && (
-                    <Badge variant="outline" className="ml-2 bg-green-50">Connected</Badge>
+                    <Badge variant="outline" className="ml-2 bg-green-50">{i18n.t('auto_connected')}</Badge>
                   )}
                 </Label>
                 <Textarea
                   id={getExcerptField()}
                   value={formData[getExcerptField()]}
                   onChange={(e) => handleChange(getExcerptField(), e.target.value)}
-                  placeholder="Brief description..."
+                  placeholder={i18n.t('auto_brief_description')} 
                   rows={3}
                   className="mt-1"
                   dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
@@ -480,21 +477,19 @@ const BlogEditorPageEnhanced = () => {
                 <Label htmlFor={getContentField()}>
                   Content *
                   {currentLanguage !== 'en' && formData[getContentField()] && (
-                    <Badge variant="outline" className="ml-2 bg-green-50">Connected</Badge>
+                    <Badge variant="outline" className="ml-2 bg-green-50">{i18n.t('auto_connected')}</Badge>
                   )}
                 </Label>
                 <Textarea
                   id={getContentField()}
                   value={formData[getContentField()]}
                   onChange={(e) => handleChange(getContentField(), e.target.value)}
-                  placeholder="Write your blog post content here... (Markdown supported)"
+                  placeholder={i18n.t('auto_write_your_blog_post_content_here_markdo')} 
                   rows={15}
                   className="mt-1 font-mono text-sm"
                   dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Supports Markdown formatting
-                </p>
+                <p className="text-xs text-gray-500 mt-1">{i18n.t('auto_supports_markdown_formatting')}</p>
               </div>
             </CardContent>
           </Card>
@@ -502,7 +497,7 @@ const BlogEditorPageEnhanced = () => {
           {/* SEO Settings with Language Tabs */}
           <Card>
             <CardHeader>
-              <CardTitle>SEO Settings</CardTitle>
+              <CardTitle>{i18n.t('auto_seo_settings')}</CardTitle>
               <CardDescription>Optimize for search engines in {currentLanguage === 'en' ? 'English' : currentLanguage === 'ar' ? 'Arabic' : 'Chinese'}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -510,14 +505,14 @@ const BlogEditorPageEnhanced = () => {
                 <Label htmlFor={getMetaTitleField()}>
                   Meta Title
                   {currentLanguage !== 'en' && formData[getMetaTitleField()] && (
-                    <Badge variant="outline" className="ml-2 bg-green-50">Connected</Badge>
+                    <Badge variant="outline" className="ml-2 bg-green-50">{i18n.t('auto_connected')}</Badge>
                   )}
                 </Label>
                 <Input
                   id={getMetaTitleField()}
                   value={formData[getMetaTitleField()]}
                   onChange={(e) => handleChange(getMetaTitleField(), e.target.value)}
-                  placeholder="SEO title (defaults to post title)"
+                  placeholder={i18n.t('auto_seo_title_defaults_to_post_title')} 
                   className="mt-1"
                   dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
                 />
@@ -527,14 +522,14 @@ const BlogEditorPageEnhanced = () => {
                 <Label htmlFor={getMetaDescField()}>
                   Meta Description
                   {currentLanguage !== 'en' && formData[getMetaDescField()] && (
-                    <Badge variant="outline" className="ml-2 bg-green-50">Connected</Badge>
+                    <Badge variant="outline" className="ml-2 bg-green-50">{i18n.t('auto_connected')}</Badge>
                   )}
                 </Label>
                 <Textarea
                   id={getMetaDescField()}
                   value={formData[getMetaDescField()]}
                   onChange={(e) => handleChange(getMetaDescField(), e.target.value)}
-                  placeholder="SEO description (defaults to excerpt)"
+                  placeholder={i18n.t('auto_seo_description_defaults_to_excerpt')} 
                   rows={3}
                   className="mt-1"
                   dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
@@ -544,16 +539,16 @@ const BlogEditorPageEnhanced = () => {
               {currentLanguage === 'en' && (
                 <>
                   <div>
-                    <Label htmlFor="metaKeywords">Meta Keywords</Label>
+                    <Label htmlFor="metaKeywords">{i18n.t('auto_meta_keywords')}</Label>
                     <div className="flex gap-2 mt-1">
                       <Input
                         id="metaKeywords"
                         value={formData.keywordInput}
                         onChange={(e) => handleChange('keywordInput', e.target.value)}
-                        placeholder="Add keyword and press Enter"
+                        placeholder={i18n.t('auto_add_keyword_and_press_enter')} 
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addKeyword())}
                       />
-                      <Button type="button" onClick={addKeyword}>Add</Button>
+                      <Button type="button" onClick={addKeyword}>{i18n.t('auto_add')}</Button>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {formData.metaKeywords.map((keyword, index) => (
@@ -566,12 +561,12 @@ const BlogEditorPageEnhanced = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="canonicalUrl">Canonical URL</Label>
+                    <Label htmlFor="canonicalUrl">{i18n.t('auto_canonical_url')}</Label>
                     <Input
                       id="canonicalUrl"
                       value={formData.canonicalUrl}
                       onChange={(e) => handleChange('canonicalUrl', e.target.value)}
-                      placeholder="https://example.com/canonical-url"
+                      placeholder={i18n.t('auto_https_example_com_canonical_url')} 
                       className="mt-1"
                     />
                   </div>
@@ -586,22 +581,22 @@ const BlogEditorPageEnhanced = () => {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Briefcase className="h-5 w-5" />
-                  <CardTitle>Career Information</CardTitle>
+                  <CardTitle>{i18n.t('auto_career_information')}</CardTitle>
                 </div>
-                <CardDescription>Link this post to jobs and skills</CardDescription>
+                <CardDescription>{i18n.t('auto_link_this_post_to_jobs_and_skills')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="relatedJobTitles">Related Job Titles</Label>
+                  <Label htmlFor="relatedJobTitles">{i18n.t('auto_related_job_titles')}</Label>
                   <div className="flex gap-2 mt-1">
                     <Input
                       id="relatedJobTitles"
                       value={formData.jobTitleInput}
                       onChange={(e) => handleChange('jobTitleInput', e.target.value)}
-                      placeholder="Add job title"
+                      placeholder={i18n.t('auto_add_job_title')} 
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addJobTitle())}
                     />
-                    <Button type="button" onClick={addJobTitle}>Add</Button>
+                    <Button type="button" onClick={addJobTitle}>{i18n.t('auto_add')}</Button>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {formData.relatedJobTitles.map((title, index) => (
@@ -614,16 +609,16 @@ const BlogEditorPageEnhanced = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="relatedSkills">Related Skills</Label>
+                  <Label htmlFor="relatedSkills">{i18n.t('auto_related_skills')}</Label>
                   <div className="flex gap-2 mt-1">
                     <Input
                       id="relatedSkills"
                       value={formData.skillInput}
                       onChange={(e) => handleChange('skillInput', e.target.value)}
-                      placeholder="Add skill"
+                      placeholder={i18n.t('auto_add_skill')} 
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
                     />
-                    <Button type="button" onClick={addSkill}>Add</Button>
+                    <Button type="button" onClick={addSkill}>{i18n.t('auto_add')}</Button>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {formData.relatedSkills.map((skill, index) => (
@@ -636,7 +631,7 @@ const BlogEditorPageEnhanced = () => {
                 </div>
 
                 <div>
-                  <Label>Target Audience</Label>
+                  <Label>{i18n.t('auto_target_audience')}</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {['job_seekers', 'employers', 'both'].map((audience) => (
                       <Badge
@@ -652,21 +647,21 @@ const BlogEditorPageEnhanced = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="experienceLevel">Experience Level</Label>
+                  <Label htmlFor="experienceLevel">{i18n.t('auto_experience_level')}</Label>
                   <Select
                     value={formData.experienceLevel}
                     onValueChange={(value) => handleChange('experienceLevel', value === '__none' ? '' : value)}
                   >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select level" />
+                      <SelectValue placeholder={i18n.t('auto_select_level')}  />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__none">None</SelectItem>
-                      <SelectItem value="entry">Entry Level</SelectItem>
-                      <SelectItem value="junior">Junior</SelectItem>
-                      <SelectItem value="mid">Mid Level</SelectItem>
-                      <SelectItem value="senior">Senior</SelectItem>
-                      <SelectItem value="executive">Executive</SelectItem>
+                      <SelectItem value="__none">{i18n.t('auto_none')}</SelectItem>
+                      <SelectItem value="entry">{i18n.t('auto_entry_level')}</SelectItem>
+                      <SelectItem value="junior">{i18n.t('auto_junior')}</SelectItem>
+                      <SelectItem value="mid">{i18n.t('auto_mid_level')}</SelectItem>
+                      <SelectItem value="senior">{i18n.t('auto_senior')}</SelectItem>
+                      <SelectItem value="executive">{i18n.t('auto_executive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -678,26 +673,26 @@ const BlogEditorPageEnhanced = () => {
           {currentLanguage === 'en' && (
             <Card>
               <CardHeader>
-                <CardTitle>Social Media Preview</CardTitle>
-                <CardDescription>Customize how your post appears on social media</CardDescription>
+                <CardTitle>{i18n.t('auto_social_media_preview')}</CardTitle>
+                <CardDescription>{i18n.t('auto_customize_how_your_post_appears_on_socia')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Open Graph (Facebook, LinkedIn)</h4>
+                  <h4 className="font-semibold mb-2">{i18n.t('auto_open_graph_facebook_linkedin')}</h4>
                   <div className="space-y-2">
                     <Input
-                      placeholder="OG Title"
+                      placeholder={i18n.t('auto_og_title')} 
                       value={formData.ogTitle}
                       onChange={(e) => handleChange('ogTitle', e.target.value)}
                     />
                     <Textarea
-                      placeholder="OG Description"
+                      placeholder={i18n.t('auto_og_description')} 
                       value={formData.ogDescription}
                       onChange={(e) => handleChange('ogDescription', e.target.value)}
                       rows={2}
                     />
                     <Input
-                      placeholder="OG Image URL"
+                      placeholder={i18n.t('auto_og_image_url')} 
                       value={formData.ogImage}
                       onChange={(e) => handleChange('ogImage', e.target.value)}
                     />
@@ -707,21 +702,21 @@ const BlogEditorPageEnhanced = () => {
                 <Separator />
 
                 <div>
-                  <h4 className="font-semibold mb-2">Twitter Card</h4>
+                  <h4 className="font-semibold mb-2">{i18n.t('auto_twitter_card')}</h4>
                   <div className="space-y-2">
                     <Input
-                      placeholder="Twitter Title"
+                      placeholder={i18n.t('auto_twitter_title')} 
                       value={formData.twitterTitle}
                       onChange={(e) => handleChange('twitterTitle', e.target.value)}
                     />
                     <Textarea
-                      placeholder="Twitter Description"
+                      placeholder={i18n.t('auto_twitter_description')} 
                       value={formData.twitterDescription}
                       onChange={(e) => handleChange('twitterDescription', e.target.value)}
                       rows={2}
                     />
                     <Input
-                      placeholder="Twitter Image URL"
+                      placeholder={i18n.t('auto_twitter_image_url')} 
                       value={formData.twitterImage}
                       onChange={(e) => handleChange('twitterImage', e.target.value)}
                     />
@@ -738,12 +733,12 @@ const BlogEditorPageEnhanced = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Settings className="h-5 w-5" />
-                <CardTitle>Settings</CardTitle>
+                <CardTitle>{i18n.t('auto_settings')}</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status">{i18n.t('auto_status')}</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => handleChange('status', value)}
@@ -752,15 +747,15 @@ const BlogEditorPageEnhanced = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value="draft">{i18n.t('auto_draft')}</SelectItem>
+                    <SelectItem value="published">{i18n.t('auto_published')}</SelectItem>
+                    <SelectItem value="archived">{i18n.t('auto_archived')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="language">Primary Language</Label>
+                <Label htmlFor="language">{i18n.t('auto_primary_language')}</Label>
                 <Select
                   value={formData.language}
                   onValueChange={(value) => handleChange('language', value)}
@@ -769,15 +764,15 @@ const BlogEditorPageEnhanced = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="ar">Arabic</SelectItem>
-                    <SelectItem value="zh">Chinese</SelectItem>
+                    <SelectItem value="en">{i18n.t('auto_english')}</SelectItem>
+                    <SelectItem value="ar">{i18n.t('auto_arabic')}</SelectItem>
+                    <SelectItem value="zh">{i18n.t('auto_chinese')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="featured">Featured Post</Label>
+                <Label htmlFor="featured">{i18n.t('auto_featured_post')}</Label>
                 <Switch
                   id="featured"
                   checked={formData.featured}
@@ -791,7 +786,7 @@ const BlogEditorPageEnhanced = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Folder className="h-5 w-5" />
-                <CardTitle>Category</CardTitle>
+                <CardTitle>{i18n.t('auto_category')}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -800,10 +795,10 @@ const BlogEditorPageEnhanced = () => {
                 onValueChange={(value) => handleChange('categoryId', value === '__none' ? '' : value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={i18n.t('auto_select_category')}  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__none">None</SelectItem>
+                  <SelectItem value="__none">{i18n.t('auto_none')}</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -818,7 +813,7 @@ const BlogEditorPageEnhanced = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <TagIcon className="h-5 w-5" />
-                <CardTitle>Tags</CardTitle>
+                <CardTitle>{i18n.t('auto_tags')}</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -828,15 +823,15 @@ const BlogEditorPageEnhanced = () => {
                     onValueChange={(value) => handleChange('experienceLevel', value === '__none' ? '' : value)}
                   >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select level" />
+                      <SelectValue placeholder={i18n.t('auto_select_level')}  />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="__none">None</SelectItem>
-                      <SelectItem value="entry">Entry Level</SelectItem>
-                      <SelectItem value="junior">Junior</SelectItem>
-                      <SelectItem value="mid">Mid Level</SelectItem>
-                      <SelectItem value="senior">Senior</SelectItem>
-                      <SelectItem value="executive">Executive</SelectItem>
+                      <SelectItem value="__none">{i18n.t('auto_none')}</SelectItem>
+                      <SelectItem value="entry">{i18n.t('auto_entry_level')}</SelectItem>
+                      <SelectItem value="junior">{i18n.t('auto_junior')}</SelectItem>
+                      <SelectItem value="mid">{i18n.t('auto_mid_level')}</SelectItem>
+                      <SelectItem value="senior">{i18n.t('auto_senior')}</SelectItem>
+                      <SelectItem value="executive">{i18n.t('auto_executive')}</SelectItem>
                     </SelectContent>
                   </Select>
               </div>
@@ -857,17 +852,17 @@ const BlogEditorPageEnhanced = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <ImageIcon className="h-5 w-5" />
-                <CardTitle>Featured Image</CardTitle>
+                <CardTitle>{i18n.t('auto_featured_image')}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <div>
-                <Label htmlFor="featuredImage">Image URL</Label>
+                <Label htmlFor="featuredImage">{i18n.t('auto_image_url')}</Label>
                 <Input
                   id="featuredImage"
                   value={formData.featuredImage}
                   onChange={(e) => handleChange('featuredImage', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder={i18n.t('auto_https_example_com_image_jpg')} 
                   className="mt-1"
                 />
               </div>
@@ -875,7 +870,7 @@ const BlogEditorPageEnhanced = () => {
                 <div className="mt-3">
                   <img
                     src={formData.featuredImage}
-                    alt="Featured"
+                    alt={i18n.t('auto_featured')} 
                     className="w-full h-40 object-cover rounded-md"
                     onError={(e) => {
                       e.target.style.display = 'none';

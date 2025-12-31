@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,7 @@ const ContactUs = ({ isOpen, onClose }) => {
         <DialogHeader className={`px-4 sm:px-6 pt-6 pb-4 ${homeThemeColors.borders.default} border-b sticky top-0 ${homeThemeColors.backgrounds.dialog} z-10`}>
           <DialogTitle className={`text-xl sm:text-2xl md:text-3xl font-bold ${homeThemeColors.text.gradient} flex items-center gap-2 sm:gap-3`}>
             <Mail className={`h-6 w-6 sm:h-8 sm:w-8 ${homeThemeColors.icons.primary}`} />
-            <span>Contact Us</span>
+            <span>{i18n.t('auto_contact_us')}</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -29,12 +30,8 @@ const ContactUs = ({ isOpen, onClose }) => {
                   <Mail className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                 </div>
                 <div className="flex-1 space-y-2 w-full sm:w-auto">
-                  <h3 className={`text-base sm:text-lg font-semibold ${homeThemeColors.text.primary}`}>
-                    Email Us
-                  </h3>
-                  <p className={`text-xs sm:text-sm ${homeThemeColors.text.muted}`}>
-                    For general questions or inquiries
-                  </p>
+                  <h3 className={`text-base sm:text-lg font-semibold ${homeThemeColors.text.primary}`}>{i18n.t('auto_email_us')}</h3>
+                  <p className={`text-xs sm:text-sm ${homeThemeColors.text.muted}`}>{i18n.t('auto_for_general_questions_or_inquiries')}</p>
                   <a 
                     href="mailto:support@swipescout.xyz" 
                     className={`inline-block ${homeThemeColors.text.link} font-medium transition-colors duration-200 hover:underline text-sm sm:text-base break-all sm:break-normal`}
@@ -54,21 +51,15 @@ const ContactUs = ({ isOpen, onClose }) => {
                   <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                 </div>
                 <div className="flex-1 space-y-2 w-full sm:w-auto">
-                  <h3 className={`text-base sm:text-lg font-semibold ${homeThemeColors.text.primary}`}>
-                    Join Our Discord
-                  </h3>
-                  <p className={`text-xs sm:text-sm ${homeThemeColors.text.muted}`}>
-                    Connect with us and the community
-                  </p>
+                  <h3 className={`text-base sm:text-lg font-semibold ${homeThemeColors.text.primary}`}>{i18n.t('auto_join_our_discord')}</h3>
+                  <p className={`text-xs sm:text-sm ${homeThemeColors.text.muted}`}>{i18n.t('auto_connect_with_us_and_the_community')}</p>
                   <a 
                     href="https://discord.gg/mHcdMn6yMh" 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className={`inline-flex items-center justify-center sm:justify-start gap-2 px-4 py-2 ${homeThemeColors.components.contact.discord.button} text-white font-medium rounded-lg transition-all duration-200 ${homeThemeColors.shadows.md} hover:${homeThemeColors.shadows.lg} w-full sm:w-auto text-sm sm:text-base`}
                   >
-                    <MessageCircle className="h-4 w-4" />
-                    Join Discord Server
-                  </a>
+                    <MessageCircle className="h-4 w-4" />{i18n.t('auto_join_discord_server')}</a>
                 </div>
               </div>
             </CardContent>
@@ -78,9 +69,7 @@ const ContactUs = ({ isOpen, onClose }) => {
           <div className={`mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r ${homeThemeColors.gradients.card} rounded-lg border ${homeThemeColors.borders.primary}`}>
             <div className="flex items-center justify-center gap-2">
               <Clock className={`h-4 w-4 ${homeThemeColors.icons.primary} flex-shrink-0`} />
-              <p className={`text-xs sm:text-sm ${homeThemeColors.text.secondary} text-center`}>
-                We typically respond within <span className={`font-semibold ${homeThemeColors.text.link}`}>24 hours</span> during business days
-              </p>
+              <p className={`text-xs sm:text-sm ${homeThemeColors.text.secondary} text-center`}>{i18n.t('auto_we_typically_respond_within')}<span className={`font-semibold ${homeThemeColors.text.link}`}>{i18n.t('auto_24_hours')}</span>{i18n.t('auto_during_business_days')}</p>
             </div>
           </div>
         </div>

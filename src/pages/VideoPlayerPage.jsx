@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Box,
   IconButton,
@@ -428,7 +429,7 @@ const VideoPlayerPage = () => {
           justifyContent: 'center' 
         }}
       >
-        <Typography>Video not found</Typography>
+        <Typography>{i18n.t('auto_video_not_found')}</Typography>
       </Box>
     );
   }
@@ -557,12 +558,12 @@ const VideoPlayerPage = () => {
           <>
             <SwipeIndicator sx={{ top: 100 }}>
               <ArrowUpward />
-              <Typography variant="caption">Previous</Typography>
+              <Typography variant="caption">{i18n.t('auto_previous')}</Typography>
             </SwipeIndicator>
             
             <SwipeIndicator sx={{ bottom: 100 }}>
               <ArrowDownward />
-              <Typography variant="caption">Next</Typography>
+              <Typography variant="caption">{i18n.t('auto_next')}</Typography>
             </SwipeIndicator>
           </>
         )}
@@ -629,12 +630,8 @@ const VideoPlayerPage = () => {
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
       >
-        <MenuItem onClick={() => {/* Report video */}}>
-          Report Video
-        </MenuItem>
-        <MenuItem onClick={() => {/* Not interested */}}>
-          Not Interested
-        </MenuItem>
+        <MenuItem onClick={() => {/* Report video */}}>{i18n.t('auto_report_video')}</MenuItem>
+        <MenuItem onClick={() => {/* Not interested */}}>{i18n.t('auto_not_interested')}</MenuItem>
       </Menu>
     </PlayerContainer>
   );
@@ -691,9 +688,7 @@ const CommentsContent = ({ comments, newComment, setNewComment, onSubmit, onClos
           
           {comments.length === 0 && (
             <Box sx={{ p: 4, textAlign: 'center' }}>
-              <Typography color="text.secondary">
-                No comments yet. Be the first to comment!
-              </Typography>
+              <Typography color="text.secondary">{i18n.t('auto_no_comments_yet_be_the_first_to_comment')}</Typography>
             </Box>
           )}
         </List>
@@ -704,7 +699,7 @@ const CommentsContent = ({ comments, newComment, setNewComment, onSubmit, onClos
         <TextField
           fullWidth
           size="small"
-          placeholder="Add a comment..."
+          placeholder={i18n.t('auto_add_a_comment')} 
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && onSubmit()}

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios'; // ADDED
 import {
   Box,
@@ -246,9 +247,7 @@ const VideoCard = React.memo(({
                     </Box>
                   ))
                 ) : (
-                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', color: isMaximized ? '#fff' : undefined }}>
-                    No comments yet — be the first to comment!
-                  </Typography>
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', color: isMaximized ? '#fff' : undefined }}>{i18n.t('auto_no_comments_yet_be_the_first_to_comment_1')}</Typography>
                 )}
               </Box>
             )}
@@ -258,12 +257,12 @@ const VideoCard = React.memo(({
               {commentSubmitting ? (
                 <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, px: 2, py: '8px', borderRadius: 1, bgcolor: 'background.default' }}>
                   <CircularProgress size={20} />
-                  <Typography variant="body2" color="text.secondary">Submitting...</Typography>
+                  <Typography variant="body2" color="text.secondary">{i18n.t('auto_submitting')}</Typography>
                 </Box>
               ) : (
                 <>
                   <input
-                    aria-label="comment-input"
+                    aria-label={i18n.t('auto_comment_input')} 
                     placeholder={'Add a comment...'}
                     style={{ flex: 1, padding: '8px 10px', borderRadius: 6, border: '1px solid #ccc' }}
                     id={`comment-input-${video.id}`}
@@ -281,7 +280,7 @@ const VideoCard = React.memo(({
                       if (!input) return;
                       handleSubmitComment(input);
                     }}
-                    aria-label="post-comment"
+                    aria-label={i18n.t('auto_post_comment')} 
                   >
                     <Comment />
                   </IconButton>
@@ -380,7 +379,7 @@ const VideoCard = React.memo(({
               <IconButton
                 sx={{ position: 'absolute', bottom: 12, left: 12, color: 'white', opacity: 0.85 }}
                 onClick={handleMuteClick}
-                aria-label="mute"
+                aria-label={i18n.t('auto_mute')} 
               >
                 {isMuted ? <VolumeOff /> : <VolumeUp />}
               </IconButton>
@@ -422,31 +421,31 @@ const VideoCard = React.memo(({
           }}
         >
           <Stack spacing={1} alignItems="center" sx={{ justifyContent: 'center', width: '100%' }}>
-            <IconButton onClick={onPrev} size="large" aria-label="previous" sx={{ bgcolor: 'background.paper' }}>
+            <IconButton onClick={onPrev} size="large" aria-label={i18n.t('auto_previous_1')}  sx={{ bgcolor: 'background.paper' }}>
               <KeyboardArrowUp />
             </IconButton>
 
-            <IconButton color={video.isLiked ? 'error' : 'default'} onClick={() => onLike(video.id)} aria-label="like">
+            <IconButton color={video.isLiked ? 'error' : 'default'} onClick={() => onLike(video.id)} aria-label={i18n.t('auto_like_1')} >
               <Favorite />
             </IconButton>
             <Typography variant="caption">{video.likes ?? 0}</Typography>
 
-            <IconButton onClick={() => onCommentToggle(video.id)} aria-label="comment">
+            <IconButton onClick={() => onCommentToggle(video.id)} aria-label={i18n.t('auto_comment_1')} >
               <Comment />
             </IconButton>
             <Typography variant="caption">{commentCount ?? (video.comments ?? 0)}</Typography>
 
-            <IconButton onClick={() => onShare(video.id)} aria-label="share">
+            <IconButton onClick={() => onShare(video.id)} aria-label={i18n.t('auto_share_1')} >
               <Share />
             </IconButton>
             <Typography variant="caption">{video.shares ?? 0}</Typography>
 
-            <IconButton onClick={() => onSave(video.id)} aria-label="save" color={video.saved ? 'primary' : 'default'}>
+            <IconButton onClick={() => onSave(video.id)} aria-label={i18n.t('auto_save_2')}  color={video.saved ? 'primary' : 'default'}>
               <Bookmark />
             </IconButton>
             <Typography variant="caption">{video.saved ? t('homePage.saved','Saved') : t('homePage.save','Save')}</Typography>
 
-            <IconButton onClick={onNext} size="large" aria-label="next" sx={{ bgcolor: 'background.paper' }}>
+            <IconButton onClick={onNext} size="large" aria-label={i18n.t('auto_next_1')}  sx={{ bgcolor: 'background.paper' }}>
               <KeyboardArrowDown />
             </IconButton>
           </Stack>

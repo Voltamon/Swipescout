@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useRef, useEffect  } from 'react';
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -275,7 +276,7 @@ const JobseekerExplorePage = () => {
       {/*{isMobile && (
         <IconButton
           color="#ffffff"
-          aria-label="open drawer"
+          aria-label={i18n.t('auto_open_drawer')} 
           onClick={toggleDrawer}
           sx={{
             position: "fixed",

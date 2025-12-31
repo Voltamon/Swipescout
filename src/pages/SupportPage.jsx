@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/UI/badge';
 import { Loader2, MessageSquare, Star, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import i18n from 'i18next';
 
 export default function SupportPage() {
   const { user } = useAuth();
@@ -70,14 +71,12 @@ export default function SupportPage() {
     <div className="container mx-auto p-6 max-w-5xl">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Support Center</h1>
-          <p className="text-slate-600">Get help with your account or report issues.</p>
+          <h1 className="text-3xl font-bold text-slate-900">{i18n.t('auto_support_center')}</h1>
+          <p className="text-slate-600">{i18n.t('auto_get_help_with_your_account_or_report_iss')}</p>
         </div>
         {isPriority && (
           <Badge className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 text-sm flex items-center gap-1">
-            <Star className="h-4 w-4 fill-current" />
-            Priority Support Active
-          </Badge>
+            <Star className="h-4 w-4 fill-current" />{i18n.t('auto_priority_support_active')}</Badge>
         )}
       </div>
 
@@ -85,7 +84,7 @@ export default function SupportPage() {
         <div className="md:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>New Support Request</CardTitle>
+              <CardTitle>{i18n.t('auto_new_support_request')}</CardTitle>
               <CardDescription>
                 {isPriority 
                   ? "Your ticket will be flagged for priority handling." 
@@ -96,27 +95,27 @@ export default function SupportPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Category</label>
+                    <label className="text-sm font-medium">{i18n.t('auto_category')}</label>
                     <Select 
                       value={formData.category} 
                       onValueChange={(val) => setFormData({...formData, category: val})}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder={i18n.t('auto_select_category')}  />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="general">General Inquiry</SelectItem>
-                        <SelectItem value="technical">Technical Issue</SelectItem>
+                        <SelectItem value="general">{i18n.t('auto_general_inquiry')}</SelectItem>
+                        <SelectItem value="technical">{i18n.t('auto_technical_issue')}</SelectItem>
                         <SelectItem value="billing">Billing & Subscription</SelectItem>
-                        <SelectItem value="feature">Feature Request</SelectItem>
-                        <SelectItem value="bug">Report a Bug</SelectItem>
+                        <SelectItem value="feature">{i18n.t('auto_feature_request')}</SelectItem>
+                        <SelectItem value="bug">{i18n.t('auto_report_a_bug')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Subject</label>
+                    <label className="text-sm font-medium">{i18n.t('subject')}</label>
                     <Input 
-                      placeholder="Brief summary of the issue"
+                      placeholder={i18n.t('auto_brief_summary_of_the_issue')} 
                       value={formData.subject}
                       onChange={(e) => setFormData({...formData, subject: e.target.value})}
                       required
@@ -124,9 +123,9 @@ export default function SupportPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Message</label>
+                  <label className="text-sm font-medium">{i18n.t('auto_message')}</label>
                   <Textarea 
-                    placeholder="Describe your issue in detail..."
+                    placeholder={i18n.t('auto_describe_your_issue_in_detail')} 
                     className="min-h-[150px]"
                     value={formData.message}
                     onChange={(e) => setFormData({...formData, message: e.target.value})}
@@ -145,7 +144,7 @@ export default function SupportPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Your Tickets</CardTitle>
+              <CardTitle>{i18n.t('auto_your_tickets')}</CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -153,9 +152,7 @@ export default function SupportPage() {
                   <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
                 </div>
               ) : tickets.length === 0 ? (
-                <div className="text-center p-4 text-slate-500">
-                  No tickets found.
-                </div>
+                <div className="text-center p-4 text-slate-500">{i18n.t('auto_no_tickets_found')}</div>
               ) : (
                 <div className="space-y-4">
                   {tickets.map((ticket) => (
@@ -170,8 +167,7 @@ export default function SupportPage() {
                         <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
                         {ticket.priority === 'high' || ticket.priority === 'urgent' ? (
                           <span className="text-amber-600 font-medium flex items-center">
-                            <Star className="h-3 w-3 mr-1" /> Priority
-                          </span>
+                            <Star className="h-3 w-3 mr-1" />{i18n.t('auto_priority_1')}</span>
                         ) : null}
                       </div>
                     </div>

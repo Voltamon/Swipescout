@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useRef, useEffect  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useRef, useEffect  } from 'react';
 import {
   Box,
   Container,
@@ -143,9 +144,7 @@ const FeedPage = () => {
             color: 'common.white',
             ml: 1
           }}
-        >
-          SwipeScout
-        </Typography>
+        >{i18n.t('auto_swipescout')}</Typography>
         <Box>
           <IconButton color="inherit">
             <Search sx={{ color: 'common.white' }} />
@@ -306,9 +305,7 @@ const FeedPage = () => {
               }
             }}
           >
-            <Typography variant="body2" fontWeight={700}>
-              Apply
-            </Typography>
+            <Typography variant="body2" fontWeight={700}>{i18n.t('auto_apply')}</Typography>
           </IconButton>
         </Box>
 
@@ -329,7 +326,7 @@ const FeedPage = () => {
               }}
             >
               <ArrowUpward fontSize="large" />
-              <Typography variant="caption">Next job</Typography>
+              <Typography variant="caption">{i18n.t('auto_next_job')}</Typography>
             </Box>
             <Box
               sx={{
@@ -345,7 +342,7 @@ const FeedPage = () => {
               }}
             >
               <ArrowDownward fontSize="large" />
-              <Typography variant="caption">Previous job</Typography>
+              <Typography variant="caption">{i18n.t('auto_previous_job')}</Typography>
             </Box>
           </>
         )}
@@ -368,21 +365,19 @@ const FeedPage = () => {
         <IconButton color="primary">
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={{ fontSize: '1.5rem' }}>ًںژ¥</span>
-            <Typography variant="caption" color="primary">
-              Feed
-            </Typography>
+            <Typography variant="caption" color="primary">{i18n.t('auto_feed')}</Typography>
           </Box>
         </IconButton>
         <IconButton color="inherit">
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={{ fontSize: '1.5rem' }}>ًں’¬</span>
-            <Typography variant="caption">Inbox</Typography>
+            <Typography variant="caption">{i18n.t('inbox')}</Typography>
           </Box>
         </IconButton>
         <IconButton color="inherit">
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={{ fontSize: '1.5rem' }}>ًں‘¤</span>
-            <Typography variant="caption">Profile</Typography>
+            <Typography variant="caption">{i18n.t('auto_profile')}</Typography>
           </Box>
         </IconButton>
       </Box>

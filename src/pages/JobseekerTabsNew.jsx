@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
@@ -164,7 +165,7 @@ const JobseekerTabs = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className="border-l-4 border-l-purple-500">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_profile_views')}</CardTitle>
                 <Eye className="h-4 w-4 text-purple-600" />
               </CardHeader>
               <CardContent>
@@ -178,40 +179,34 @@ const JobseekerTabs = () => {
 
             <Card className="border-l-4 border-l-cyan-500">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Matches</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_matches')}</CardTitle>
                 <ThumbUp className="h-4 w-4 text-cyan-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats?.matches ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Companies interested in you
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">{i18n.t('auto_companies_interested_in_you')}</p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-orange-500">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Applications</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_applications')}</CardTitle>
                 <Briefcase className="h-4 w-4 text-orange-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats?.applications ?? stats?.applications_count ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Active job applications
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">{i18n.t('auto_active_job_applications')}</p>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-blue-500">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Unread Messages</CardTitle>
+                <CardTitle className="text-sm font-medium">{i18n.t('auto_unread_messages')}</CardTitle>
                 <Mail className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats?.unreadMessages ?? stats?.unread_messages ?? 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  New messages waiting
-                </p>
+                <p className="text-xs text-muted-foreground mt-1">{i18n.t('auto_new_messages_waiting')}</p>
               </CardContent>
             </Card>
           </div>

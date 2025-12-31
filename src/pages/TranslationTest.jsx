@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState  } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   Container, 
@@ -35,9 +36,7 @@ const TranslationTest = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h3" component="h1" gutterBottom align="center">
-        Translation Test Page
-      </Typography>
+      <Typography variant="h3" component="h1" gutterBottom align="center">{i18n.t('auto_translation_test_page')}</Typography>
       
       <Typography variant="h6" gutterBottom align="center">
         Current Language: {currentLanguage}
@@ -58,9 +57,7 @@ const TranslationTest = () => {
 
       {/* Common Translations */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Common Translations
-        </Typography>
+        <Typography variant="h5" gutterBottom>{i18n.t('auto_common_translations')}</Typography>
         <Typography>Home: {t('common.home', 'Home')}</Typography>
         <Typography>Dashboard: {t('common.dashboard', 'Dashboard')}</Typography>
         <Typography>Settings: {t('common.settings', 'Settings')}</Typography>
@@ -70,9 +67,7 @@ const TranslationTest = () => {
 
       {/* Jobseeker Tabs */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Jobseeker Tab Categories
-        </Typography>
+        <Typography variant="h5" gutterBottom>{i18n.t('auto_jobseeker_tab_categories')}</Typography>
         <List>
           {jobseekerCategories.map((category) => (
             <div key={category.key}>
@@ -100,9 +95,7 @@ const TranslationTest = () => {
 
       {/* Employer Tabs */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Employer Tab Categories
-        </Typography>
+        <Typography variant="h5" gutterBottom>{i18n.t('auto_employer_tab_categories')}</Typography>
         <List>
           {employerCategories.map((category) => (
             <div key={category.key}>

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import { searchJobs, applyToJob, getFilterOptions, saveVideo, unsaveVideo } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/UI/card.jsx';
@@ -197,9 +198,7 @@ export default function JobSearchPage() {
                 {localize(job.company)}
                 {job.companyVideoId && (
                   <Badge variant="outline" className="ml-1 text-xs h-5">
-                    <PlayCircle className="h-3 w-3 mr-1" />
-                    Video
-                  </Badge>
+                    <PlayCircle className="h-3 w-3 mr-1" />{i18n.t('auto_video')}</Badge>
                 )}
               </p>
             </div>
@@ -243,7 +242,7 @@ export default function JobSearchPage() {
                 </div>
               </div>
               <div className="absolute inset-0 flex items-end justify-end pr-6 pb-3">
-                <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">No Video</p>
+                <p className="text-white font-medium bg-black/30 px-3 py-1 rounded">{i18n.t('auto_no_video')}</p>
               </div>
             </div>
           )}
@@ -316,18 +315,14 @@ export default function JobSearchPage() {
             size="sm"
             className="flex-1"
             onClick={() => window.open(`/job/${job.id}`, '_blank')}
-          >
-            View Details
-          </Button>
+          >{i18n.t('auto_view_details_1')}</Button>
           <Button
             variant="default"
             size="sm"
             className={`${themeColors.buttons.primary} text-white flex-1 `}
             onClick={() => handleApply(job)}
           >
-            <CheckCircle className="h-4 w-4 mr-1" />
-            Apply Now
-          </Button>
+            <CheckCircle className="h-4 w-4 mr-1" />{i18n.t('auto_apply_now')}</Button>
         </div>
 
         {job.posted_at && (
@@ -341,21 +336,19 @@ export default function JobSearchPage() {
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
-      <h1 className={`${themeColors.text.gradient} text-4xl font-bold mb-6 `}>
-        Find Your Dream Job
-      </h1>
+      <h1 className={`${themeColors.text.gradient} text-4xl font-bold mb-6 `}>{i18n.t('auto_find_your_dream_job')}</h1>
 
       {/* Search Filters */}
       <Card className="mb-6">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <div className="md:col-span-2">
-              <Label htmlFor="search">Search jobs</Label>
+              <Label htmlFor="search">{i18n.t('auto_search_jobs_1')}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
-                  placeholder="Job title, company, keywords..."
+                  placeholder={i18n.t('auto_job_title_company_keywords')} 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
@@ -364,20 +357,20 @@ export default function JobSearchPage() {
             </div>
 
             <div>
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{i18n.t('auto_location')}</Label>
               <Input
                 id="location"
-                placeholder="City, State, Country"
+                placeholder={i18n.t('auto_city_state_country')} 
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="experience">Experience Level</Label>
+              <Label htmlFor="experience">{i18n.t('auto_experience_level')}</Label>
               <Select value={experienceLevel} onValueChange={setExperienceLevel}>
                 <SelectTrigger id="experience">
-                  <SelectValue placeholder="Any Experience" />
+                  <SelectValue placeholder={i18n.t('auto_any_experience')}  />
                 </SelectTrigger>
                 <SelectContent>
                   {experienceLevelOptions.map((option) => (
@@ -390,22 +383,22 @@ export default function JobSearchPage() {
             </div>
 
             <div>
-              <Label htmlFor="minSalary">Min Salary</Label>
+              <Label htmlFor="minSalary">{i18n.t('auto_min_salary')}</Label>
               <Input
                 id="minSalary"
                 type="number"
-                placeholder="50000"
+                placeholder={i18n.t('auto_50000')} 
                 value={minSalary}
                 onChange={(e) => setMinSalary(e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="maxSalary">Max Salary</Label>
+              <Label htmlFor="maxSalary">{i18n.t('auto_max_salary')}</Label>
               <Input
                 id="maxSalary"
                 type="number"
-                placeholder="100000"
+                placeholder={i18n.t('auto_100000')} 
                 value={maxSalary}
                 onChange={(e) => setMaxSalary(e.target.value)}
               />
@@ -443,14 +436,10 @@ export default function JobSearchPage() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Searching...
-                </>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{i18n.t('auto_searching')}</>
               ) : (
                 <>
-                  <Search className="mr-2 h-4 w-4" />
-                  Search Jobs
-                </>
+                  <Search className="mr-2 h-4 w-4" />{i18n.t('auto_search_jobs')}</>
               )}
             </Button>
           </div>
@@ -492,9 +481,7 @@ export default function JobSearchPage() {
                 variant="outline"
                 onClick={() => handlePageChange(null, page - 1)}
                 disabled={page === 1}
-              >
-                Previous
-              </Button>
+              >{i18n.t('auto_previous')}</Button>
               <span className="flex items-center px-4 text-sm text-muted-foreground">
                 Page {page} of {totalPages}
               </span>
@@ -502,9 +489,7 @@ export default function JobSearchPage() {
                 variant="outline"
                 onClick={() => handlePageChange(null, page + 1)}
                 disabled={page === totalPages}
-              >
-                Next
-              </Button>
+              >{i18n.t('auto_next')}</Button>
             </div>
           )}
         </>
@@ -520,15 +505,13 @@ export default function JobSearchPage() {
             <DialogTitle>
               Apply for {applyDialog.job?.title} at {applyDialog.job?.company}
             </DialogTitle>
-            <DialogDescription>
-              Submit your application with a personalized cover letter.
-            </DialogDescription>
+            <DialogDescription>{i18n.t('auto_submit_your_application_with_a_personali')}</DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <Label htmlFor="coverLetter">Cover Letter</Label>
+            <Label htmlFor="coverLetter">{i18n.t('auto_cover_letter')}</Label>
             <Textarea
               id="coverLetter"
-              placeholder="Write your cover letter..."
+              placeholder={i18n.t('auto_write_your_cover_letter')} 
               value={applicationMessage}
               onChange={(e) => setApplicationMessage(e.target.value)}
               rows={8}
@@ -539,16 +522,12 @@ export default function JobSearchPage() {
             <Button 
               variant="outline" 
               onClick={() => setApplyDialog({ open: false, job: null })}
-            >
-              Cancel
-            </Button>
+            >{i18n.t('auto_cancel')}</Button>
             <Button 
               onClick={handleSendApplication}
               disabled={!applicationMessage.trim()}
               className={`${themeColors.buttons.primary} text-white `}
-            >
-              Send Application
-            </Button>
+            >{i18n.t('auto_send_application')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

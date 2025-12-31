@@ -16,6 +16,7 @@ const Footer = () => {
       { label: t('faq'), href: '/FAQs' },
       { label: t('contactUs'), href: '/contact' },
       { label: t('customerSupport'), href: '/customer-support' },
+      { label: 'Download App', href: '/stores' },
       { label: t('credits'), href: '/credits' },
     ],
     legal: [

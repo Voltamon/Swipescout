@@ -1,4 +1,5 @@
-﻿import React from "react";
+import i18n from 'i18next';
+import React from "react";
 import Header from "../../components/Headers/Header";
 import { Helmet } from "react-helmet";
 import Footer from "../../components/Headers/Footer";
@@ -190,7 +191,7 @@ const AboutUs = () => {
                   className={`flex items-center gap-4 ${homeThemeColors.backgrounds.card} p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow`}
                 >
                   <MapPin className="h-6 w-6 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
-                  <span className="text-gray-700 dark:text-gray-300 font-medium">Doha Qatar</span>
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">{i18n.t('auto_doha_qatar')}</span>
                 </a>
                 <a
                   href="mailto:info@swipescout.xyz"

@@ -1,4 +1,5 @@
-﻿// src/components/VideoFeedViewer.jsx
+import i18n from 'i18next';
+// src/components/VideoFeedViewer.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -128,9 +129,7 @@ const ProfileDialog = ({ open, onClose, role, userId }) => {
           variant="contained"
           onClick={handleViewFullProfile}
           sx={{ mt: 2 ,p:1  ,width:180, height: 26, fontSize: 11, fontWeight: "bold" ,color: "rgb(182, 211, 245)", backgroundColor: "#1976d2", "&:hover": { backgroundColor: "#1565c0" }}}
-        >
-          View Full Page
-        </Button>
+        >{i18n.t('auto_view_full_page')}</Button>
       </Box>
     </Dialog>
   );
@@ -141,10 +140,8 @@ const MoreOptionsDialog = ({ open, onClose }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogContent>
-        <Typography variant="h6">More Options</Typography>
-        <Button onClick={onClose} sx={{ mt: 2 }}>
-          Close
-        </Button>
+        <Typography variant="h6">{i18n.t('auto_more_options')}</Typography>
+        <Button onClick={onClose} sx={{ mt: 2 }}>{i18n.t('auto_close')}</Button>
         {/* Add more options here like "Report", "Share" etc. */}
       </DialogContent>
     </Dialog>
@@ -524,9 +521,7 @@ const VideoFeedViewer = () => {
             variant="contained"
             size="large"
             onClick={handleOpenDialog}
-          >
-            Connect
-          </ConnectButton>
+          >{i18n.t('auto_connect')}</ConnectButton>
         </Box>
       )}
 

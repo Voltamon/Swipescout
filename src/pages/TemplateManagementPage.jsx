@@ -1,4 +1,4 @@
-﻿import React, { useContext, useState, useEffect  } from 'react';
+import React, { useContext, useState, useEffect  } from 'react';
 import { useTranslation } from 'react-i18next';
 import localize from '../utils/localize';
 import { 

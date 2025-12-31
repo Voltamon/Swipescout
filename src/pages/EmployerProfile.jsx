@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -471,25 +472,19 @@ const EmployerProfile = () => {
                 color="primary"
                 startIcon={<EditIcon />}
                 onClick={handleEditProfile}
-              >
-                Edit Profile
-              </Button>
+              >{i18n.t('auto_edit_profile')}</Button>
               <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<WorkIcon />}
                 onClick={handlePostJob}
-              >
-                Post Job
-              </Button>
+              >{i18n.t('auto_post_job')}</Button>
             </Box>
             <Typography variant="body1" paragraph>
               {employerData.description}
             </Typography>
             <Box sx={{ mb: 2 }}>
-              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                Categories
-              </Typography>
+              <Typography variant="subtitle1" gutterBottom fontWeight="bold">{i18n.t('auto_categories')}</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 {employerData.categories.map((category, index) => (
                   <CategoryChip key={index} label={category} />
@@ -543,13 +538,13 @@ const EmployerProfile = () => {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', mt: 2, gap: 1 }}>
-              <IconButton color="primary" aria-label="LinkedIn">
+              <IconButton color="primary" aria-label={i18n.t('auto_linkedin')} >
                 <LinkedInIcon />
               </IconButton>
-              <IconButton color="primary" aria-label="Facebook">
+              <IconButton color="primary" aria-label={i18n.t('auto_facebook')} >
                 <FacebookIcon />
               </IconButton>
-              <IconButton color="primary" aria-label="Twitter">
+              <IconButton color="primary" aria-label={i18n.t('auto_twitter')} >
                 <TwitterIcon />
               </IconButton>
             </Box>
@@ -573,9 +568,7 @@ const EmployerProfile = () => {
               >
                 {(isPlaying['main'] ? <PauseIcon /> : <PlayArrowIcon />)}
               </IconButton>
-              <Typography variant="caption" color="inherit">
-                Company Introduction
-              </Typography>
+              <Typography variant="caption" color="inherit">{i18n.t('auto_company_introduction')}</Typography>
             </VideoControls>
             <VideoActions>
               <IconButton 
@@ -608,51 +601,39 @@ const EmployerProfile = () => {
             scrollButtons={isMobile ? "auto" : false}
             centered={!isMobile}
           >
-            <Tab label="About" />
-            <Tab label="Jobs" />
-            <Tab label="Videos" />
-            <Tab label="Contact" />
+            <Tab label={i18n.t('auto_about')}  />
+            <Tab label={i18n.t('auto_jobs')}  />
+            <Tab label={i18n.t('auto_videos')}  />
+            <Tab label={i18n.t('auto_contact')}  />
           </Tabs>
           
           {/* About Tab */}
           <TabPanel value={tabValue} index={0}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>
-                  Company Overview
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_company_overview')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.description}
                 </Typography>
-                <Typography variant="h6" gutterBottom>
-                  Industry
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_industry_1')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.industry}
                 </Typography>
-                <Typography variant="h6" gutterBottom>
-                  Company Size
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_company_size')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.size}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>
-                  Founded
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_founded')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.establish_year}
                 </Typography>
-                <Typography variant="h6" gutterBottom>
-                  Headquarters
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_headquarters')}</Typography>
                 <Typography variant="body1" paragraph>
                   {employerData.location}
                 </Typography>
-                <Typography variant="h6" gutterBottom>
-                  Categories
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_categories')}</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                   {employerData.categories.map((category, index) => (
                     <CategoryChip key={index} label={category} />
@@ -665,17 +646,13 @@ const EmployerProfile = () => {
           {/* Jobs Tab */}
           <TabPanel value={tabValue} index={1}>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6">
-                Open Positions
-              </Typography>
+              <Typography variant="h6">{i18n.t('auto_open_positions')}</Typography>
               <Button
                 variant="contained"
                 color="primary"
                 startIcon={<WorkIcon />}
                 onClick={handlePostJob}
-              >
-                Post New Job
-              </Button>
+              >{i18n.t('auto_post_new_job')}</Button>
             </Box>
             {employerJobs.map((job) => (
               <JobCard key={job.id}>
@@ -723,9 +700,7 @@ const EmployerProfile = () => {
                       variant="contained"
                       color="primary"
                       onClick={() => navigate(`/jobs/${job.id}`)}
-                    >
-                      View Details
-                    </Button>
+                    >{i18n.t('auto_view_details_1')}</Button>
                   </Box>
                 </CardContent>
               </JobCard>
@@ -743,7 +718,7 @@ const EmployerProfile = () => {
                       title={video.title}
                     >
                       <VideoPlayButton 
-                        aria-label="play"
+                        aria-label={i18n.t('auto_play')} 
                         onClick={() => togglePlayback(video.id)}
                       >
                         {isPlaying[video.id] ? <PauseIcon /> : <PlayArrowIcon />}
@@ -807,9 +782,7 @@ const EmployerProfile = () => {
           <TabPanel value={tabValue} index={3}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>
-                  Contact Information
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_contact_information')}</Typography>
                 <List>
                   <ListItem>
                     <ListItemIcon>
@@ -838,9 +811,7 @@ const EmployerProfile = () => {
                 </List>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>
-                  Social Media
-                </Typography>
+                <Typography variant="h6" gutterBottom>{i18n.t('auto_social_media')}</Typography>
                 <List>
                   <ListItem button component="a" href={employerData.social?.linkedin} target="_blank">
                     <ListItemIcon>

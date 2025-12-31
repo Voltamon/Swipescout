@@ -4,6 +4,7 @@ import { verifyEmail } from '@/services/api';
 import { Button } from '@/components/UI/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import i18n from 'i18next';
 
 const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
@@ -37,13 +38,13 @@ const VerifyEmailPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md text-center">
         <CardHeader>
-          <CardTitle>Email Verification</CardTitle>
+          <CardTitle>{i18n.t('auto_email_verification')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {status === 'verifying' && (
             <div className="flex flex-col items-center gap-4">
               <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-              <p>Verifying your email...</p>
+              <p>{i18n.t('auto_verifying_your_email')}</p>
             </div>
           )}
 
@@ -51,9 +52,7 @@ const VerifyEmailPage = () => {
             <div className="flex flex-col items-center gap-4">
               <CheckCircle className="h-12 w-12 text-green-500" />
               <p className="text-lg font-medium text-green-700">{message}</p>
-              <Button onClick={() => navigate('/login')} className="w-full">
-                Go to Login
-              </Button>
+              <Button onClick={() => navigate('/login')} className="w-full">{i18n.t('auto_go_to_login')}</Button>
             </div>
           )}
 
@@ -61,9 +60,7 @@ const VerifyEmailPage = () => {
             <div className="flex flex-col items-center gap-4">
               <XCircle className="h-12 w-12 text-red-500" />
               <p className="text-lg font-medium text-red-700">{message}</p>
-              <Button onClick={() => navigate('/login')} variant="outline" className="w-full">
-                Back to Login
-              </Button>
+              <Button onClick={() => navigate('/login')} variant="outline" className="w-full">{i18n.t('auto_back_to_login')}</Button>
             </div>
           )}
         </CardContent>

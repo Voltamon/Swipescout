@@ -1,4 +1,5 @@
-﻿import React from 'react';
+import i18n from 'i18next';
+import React from 'react';
 import { Video, Users, TrendingUp } from 'lucide-react';
 import Header from '../components/Headers/Header';
 import Footer from '../components/Headers/Footer';
@@ -30,16 +31,14 @@ const HowItWorksPage = () => {
   return (
     <>
       <Helmet>
-        <title>How SwipeScout Works</title>
+        <title>{i18n.t('auto_how_swipescout_works')}</title>
         <meta name="description" content="Learn how SwipeScout revolutionizes recruitment with video profiles." />
       </Helmet>
       <div className={`min-h-screen flex flex-col ${homeThemeColors.background} ${homeThemeColors.text}`}>
         <Header />
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-16">
-            <h1 className={`text-4xl sm:text-5xl font-extrabold mb-4 ${homeThemeColors.titleText}`}>
-              How SwipeScout Works
-            </h1>
+            <h1 className={`text-4xl sm:text-5xl font-extrabold mb-4 ${homeThemeColors.titleText}`}>{i18n.t('auto_how_swipescout_works')}</h1>
             <p className={`max-w-3xl mx-auto text-lg sm:text-xl ${homeThemeColors.secondaryText}`}>
               A simple, intuitive, and modern way to connect talent with opportunity.
             </p>

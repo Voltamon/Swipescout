@@ -1,4 +1,5 @@
-﻿// This component renders the main content area, including tabs and content
+import i18n from 'i18next';
+// This component renders the main content area, including tabs and content
 // for each "page" of the application.
 
 import React, { useContext, useMemo, useState, useEffect  } from 'react';
@@ -81,13 +82,11 @@ const MainContent = ({
       label: "Explore", 
       content: (
         <Box sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Discover Employers and Companies
-          </Typography>
+          <Typography variant="h6" gutterBottom>{i18n.t('auto_discover_employers_and_companies')}</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
             Browse through company profiles and see what they're looking for.
           </Typography>
-          <button onClick={handleOpenVideos}>Show Company Videos</button>
+          <button onClick={handleOpenVideos}>{i18n.t('auto_show_company_videos')}</button>
         </Box>
       )
     },
@@ -95,9 +94,7 @@ const MainContent = ({
       label: "Detailed Search", 
       content: (
         <Box sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Advanced Employer Search
-          </Typography>
+          <Typography variant="h6" gutterBottom>{i18n.t('auto_advanced_employer_search')}</Typography>
           <Typography variant="body1">
             Use advanced filters to find companies that match your career goals and values.
           </Typography>
@@ -254,12 +251,8 @@ const MainContent = ({
       case 'settings':
         return (
           <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-              Account Settings
-            </Typography>
-            <Typography variant="body1">
-              Manage your account preferences, privacy settings, and more.
-            </Typography>
+            <Typography variant="h4" gutterBottom>{i18n.t('auto_account_settings')}</Typography>
+            <Typography variant="body1">{i18n.t('auto_manage_your_account_preferences_privacy_')}</Typography>
             {/* Add settings components here */}
           </Box>
         );
@@ -267,9 +260,7 @@ const MainContent = ({
       case 'analytics':
         return (
           <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-              Analytics Dashboard
-            </Typography>
+            <Typography variant="h4" gutterBottom>{i18n.t('auto_analytics_dashboard')}</Typography>
             <Typography variant="body1">
               View detailed analytics about your profile performance, video views, and application success rates.
             </Typography>
@@ -280,12 +271,8 @@ const MainContent = ({
       default:
         return (
           <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography variant="h5" gutterBottom>
-              Welcome to SwipeScout
-            </Typography>
-            <Typography variant="body1">
-              Select a section from the navigation panel to get started.
-            </Typography>
+            <Typography variant="h5" gutterBottom>{i18n.t('auto_welcome_to_swipescout')}</Typography>
+            <Typography variant="body1">{i18n.t('auto_select_a_section_from_the_navigation_pan')}</Typography>
           </Box>
         );
     }

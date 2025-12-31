@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Grid,
@@ -173,11 +174,11 @@ const JobVideos = () => {
             <Box sx={{ display: 'flex', mb: 3, justifyContent: 'space-between', alignItems: 'center' ,
     paddingBottom: 4,
 }}>
-                <Typography variant="h4">Job Videos</Typography>
+                <Typography variant="h4">{i18n.t('auto_job_videos_1')}</Typography>
 
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     <TextField
-                        placeholder="Search for jobs..."
+                        placeholder={i18n.t('auto_search_for_jobs')} 
                         variant="outlined"
                         size="small"
                         value={searchQuery}
@@ -195,9 +196,7 @@ const JobVideos = () => {
                         variant="outlined"
                         startIcon={<FilterListIcon />}
                         onClick={toggleFilterDrawer}
-                    >
-                        Filter
-                    </Button>
+                    >{i18n.t('auto_filter')}</Button>
                 </Box>
             </Box>
 
@@ -205,9 +204,7 @@ const JobVideos = () => {
                 <Grid item xs={12} md={3}>
                     <Card sx={{ mb: 3 }}>
                         <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                Categories
-                            </Typography>
+                            <Typography variant="h6" gutterBottom>{i18n.t('auto_categories')}</Typography>
                             <Divider sx={{ mb: 2 }} />
 
                             <List disablePadding>
@@ -233,18 +230,16 @@ const JobVideos = () => {
 
                     <Card>
                         <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                Popular Skills
-                            </Typography>
+                            <Typography variant="h6" gutterBottom>{i18n.t('auto_popular_skills')}</Typography>
                             <Divider sx={{ mb: 2 }} />
 
                             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                <SkillChip label="React" onClick={() => setSearchQuery('React')} />
-                                <SkillChip label="JavaScript" onClick={() => setSearchQuery('JavaScript')} />
-                                <SkillChip label="Node.js" onClick={() => setSearchQuery('Node.js')} />
-                                <SkillChip label="UI/UX" onClick={() => setSearchQuery('UI/UX')} />
-                                <SkillChip label="Digital Marketing" onClick={() => setSearchQuery('Digital Marketing')} />
-                                <SkillChip label="Project Management" onClick={() => setSearchQuery('Project Management')} />
+                                <SkillChip label={i18n.t('auto_react')}  onClick={() => setSearchQuery('React')} />
+                                <SkillChip label={i18n.t('auto_javascript')}  onClick={() => setSearchQuery('JavaScript')} />
+                                <SkillChip label={i18n.t('auto_node_js')}  onClick={() => setSearchQuery('Node.js')} />
+                                <SkillChip label={i18n.t('auto_ui_ux')}  onClick={() => setSearchQuery('UI/UX')} />
+                                <SkillChip label={i18n.t('auto_digital_marketing')}  onClick={() => setSearchQuery('Digital Marketing')} />
+                                <SkillChip label={i18n.t('auto_project_management')}  onClick={() => setSearchQuery('Project Management')} />
                             </Box>
                         </CardContent>
                     </Card>
@@ -257,12 +252,8 @@ const JobVideos = () => {
                         </Box>
                     ) : filteredVideos.length === 0 ? (
                         <Box sx={{ textAlign: 'center', p: 5 }}>
-                            <Typography variant="h6" color="textSecondary">
-                                No job videos found
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                                Try changing your search or filter criteria
-                            </Typography>
+                            <Typography variant="h6" color="textSecondary">{i18n.t('auto_no_job_videos_found')}</Typography>
+                            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>{i18n.t('auto_try_changing_your_search_or_filter_crite')}</Typography>
                         </Box>
                     ) : (
                         <Grid container spacing={3}>
@@ -273,7 +264,7 @@ const JobVideos = () => {
                                             image={video.thumbnail_url || '/placeholder-thumbnail.jpg'}
                                             title={video.job.title}
                                         >
-                                            <PlayButton aria-label="play">
+                                            <PlayButton aria-label={i18n.t('auto_play')} >
                                                 <PlayArrowIcon fontSize="large" />
                                             </PlayButton>
                                         </VideoCardMedia>
@@ -409,9 +400,7 @@ const JobVideos = () => {
                             </Grid>
 
                             <Box sx={{ mt: 2 }}>
-                                <Button variant="contained" color="primary" fullWidth>
-                                    Apply for Job
-                                </Button>
+                                <Button variant="contained" color="primary" fullWidth>{i18n.t('auto_apply_for_job')}</Button>
                             </Box>
                         </Box>
                     </Box>
@@ -425,14 +414,10 @@ const JobVideos = () => {
                 onClose={toggleFilterDrawer}
             >
                 <Box sx={{ p: 2 }}>
-                    <Typography variant="h6" gutterBottom>
-                        Filter Jobs
-                    </Typography>
+                    <Typography variant="h6" gutterBottom>{i18n.t('auto_filter_jobs')}</Typography>
                     <Divider sx={{ mb: 2 }} />
 
-                    <Typography variant="subtitle2" gutterBottom>
-                        Job Type
-                    </Typography>
+                    <Typography variant="subtitle2" gutterBottom>{i18n.t('auto_job_type')}</Typography>
                     <List>
                         <ListItem button>
                             <ListItemText primary="Full-time" />
@@ -450,9 +435,7 @@ const JobVideos = () => {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="subtitle2" gutterBottom>
-                        Level
-                    </Typography>
+                    <Typography variant="subtitle2" gutterBottom>{i18n.t('auto_level')}</Typography>
                     <List>
                         <ListItem button>
                             <ListItemText primary="Entry-level" />
@@ -467,9 +450,7 @@ const JobVideos = () => {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="subtitle2" gutterBottom>
-                        Salary
-                    </Typography>
+                    <Typography variant="subtitle2" gutterBottom>{i18n.t('auto_salary')}</Typography>
                     <List>
                         <ListItem button>
                             <ListItemText primary="Less than $5,000" />
@@ -486,12 +467,8 @@ const JobVideos = () => {
                     </List>
 
                     <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
-                        <Button variant="outlined" onClick={toggleFilterDrawer}>
-                            Cancel
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={toggleFilterDrawer}>
-                            Apply
-                        </Button>
+                        <Button variant="outlined" onClick={toggleFilterDrawer}>{i18n.t('auto_cancel')}</Button>
+                        <Button variant="contained" color="primary" onClick={toggleFilterDrawer}>{i18n.t('auto_apply')}</Button>
                     </Box>
                 </Box>
             </FilterDrawer>

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/card.jsx';
 import { Button } from '@/components/UI/button.jsx';
@@ -243,8 +244,8 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <h2 className="text-2xl font-semibold">Employer not found</h2>
-        <p className="text-muted-foreground">The requested employer profile doesn't exist.</p>
+        <h2 className="text-2xl font-semibold">{i18n.t('auto_employer_not_found')}</h2>
+        <p className="text-muted-foreground">{i18n.t('auto_the_requested_employer_profile_doesn_t_e')}</p>
       </div>
     );
   }
@@ -278,7 +279,7 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                   <a href={`mailto:${profile.email}`} className="text-sm underline opacity-90">{profile.email}</a>
                 )}
                 {profile.website && (
-                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="ml-2 text-sm font-medium underline">Visit website</a>
+                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="ml-2 text-sm font-medium underline">{i18n.t('auto_visit_website_1')}</a>
                 )}
               </div>
 
@@ -286,24 +287,22 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                 {profile?.id && !isOwnProfile && (
                   (connection && connection.status === 'accepted') ? (
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-green-600">Connected</Badge>
-                      <Button onClick={handleDisconnect} variant="outline" size="sm">Disconnect</Button>
+                      <Badge className="bg-green-600">{i18n.t('auto_connected')}</Badge>
+                      <Button onClick={handleDisconnect} variant="outline" size="sm">{i18n.t('auto_disconnect')}</Button>
                     </div>
                   ) : (connection && connection.status === 'pending' && connection.isSender) ? (
-                      <Button onClick={handleDisconnect} className="bg-gray-300">Cancel request</Button>
+                      <Button onClick={handleDisconnect} className="bg-gray-300">{i18n.t('auto_cancel_request')}</Button>
                   ) : (connection && connection.status === 'pending' && !connection.isSender) ? (
-                    <Button disabled className="bg-gray-200 text-gray-600">Pending</Button>
+                    <Button disabled className="bg-gray-200 text-gray-600">{i18n.t('auto_pending')}</Button>
                   ) : (
                     <Button
                       onClick={handleConnect}
                       className="px-5 py-2"
-                    >
-                      Connect
-                    </Button>
+                    >{i18n.t('auto_connect')}</Button>
                   )
                 )}
 
-                <Button variant="outline" onClick={() => setActiveTab('jobs')} className="px-5 py-2">View Jobs</Button>
+                <Button variant="outline" onClick={() => setActiveTab('jobs')} className="px-5 py-2">{i18n.t('auto_view_jobs')}</Button>
                 <ReportButton contentType="user" contentId={profile.id} className="ml-2" />
               </div>
             </div>
@@ -312,11 +311,11 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
             <div className="hidden lg:flex flex-col items-end gap-3">
               <div className="text-right">
                 <div className="text-2xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
-                <div className="text-sm opacity-90">Open roles</div>
+                <div className="text-sm opacity-90">{i18n.t('auto_open_roles')}</div>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold">{profile.profileViews || 0}</div>
-                <div className="text-sm opacity-90">Profile views</div>
+                <div className="text-sm opacity-90">{i18n.t('auto_profile_views_1')}</div>
               </div>
             </div>
           </div>
@@ -332,9 +331,9 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-white rounded-lg shadow-sm">
             <TabsList className="grid grid-cols-3">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="jobs">Jobs <span className="ml-2 text-sm text-muted-foreground">({jobs.length})</span></TabsTrigger>
-              <TabsTrigger value="videos">Videos</TabsTrigger>
+              <TabsTrigger value="overview">{i18n.t('auto_overview')}</TabsTrigger>
+              <TabsTrigger value="jobs">{i18n.t('auto_jobs')}<span className="ml-2 text-sm text-muted-foreground">({jobs.length})</span></TabsTrigger>
+              <TabsTrigger value="videos">{i18n.t('auto_videos')}</TabsTrigger>
             </TabsList>
 
             <div className="p-6">
@@ -342,21 +341,21 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <Card>
                     <CardContent>
-                      <div className="text-sm text-muted-foreground">Open Roles</div>
+                      <div className="text-sm text-muted-foreground">{i18n.t('auto_open_roles_1')}</div>
                       <div className="text-3xl font-bold">{jobs.filter(j => j.status === 'active').length}</div>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardContent>
-                      <div className="text-sm text-muted-foreground">Profile Views</div>
+                      <div className="text-sm text-muted-foreground">{i18n.t('auto_profile_views')}</div>
                       <div className="text-3xl font-bold">{profile.profileViews || 0}</div>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardContent>
-                      <div className="text-sm text-muted-foreground">Company Size</div>
+                      <div className="text-sm text-muted-foreground">{i18n.t('auto_company_size')}</div>
                       <div className="text-3xl font-bold">{profile.companySize || '—'}</div>
                     </CardContent>
                   </Card>
@@ -380,15 +379,13 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                           </div>
                           {job.description && <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{job.description}</p>}
                           <div className="mt-4 flex gap-2">
-                            <Button variant="outline" onClick={() => navigate(`/job/${job.id}`)}>View</Button>
+                            <Button variant="outline" onClick={() => navigate(`/job/${job.id}`)}>{i18n.t('auto_view')}</Button>
                             {(() => {
                               const ownerUserId = job?.employer?.userId || job?.employer?.user?.id || job?.employerProfile?.userId || job?.employerProfile?.user_id;
                               const isJobOwner = Boolean(user?.id && ownerUserId && String(user?.id) === String(ownerUserId));
                               if (isJobOwner) {
                                 return (
-                                  <Button disabled variant="default" size="sm" className="flex-1">
-                                    You posted this job
-                                  </Button>
+                                  <Button disabled variant="default" size="sm" className="flex-1">{i18n.t('auto_you_posted_this_job')}</Button>
                                 );
                               }
                               return (
@@ -452,8 +449,8 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                   <Card className="text-center py-12">
                     <CardContent>
                       <Briefcase className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">No jobs posted yet</h3>
-                      <p className="text-muted-foreground mb-4">This employer hasn't posted jobs yet.</p>
+                      <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_jobs_posted_yet')}</h3>
+                      <p className="text-muted-foreground mb-4">{i18n.t('auto_this_employer_hasn_t_posted_jobs_yet')}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -498,8 +495,8 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
                   <Card className="text-center py-12">
                     <CardContent>
                       <Play className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">No videos</h3>
-                      <p className="text-muted-foreground">This employer hasn't uploaded any videos yet.</p>
+                      <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_videos')}</h3>
+                      <p className="text-muted-foreground">{i18n.t('auto_this_employer_hasn_t_uploaded_any_videos')}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -512,20 +509,20 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
         <aside className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Quick info</CardTitle>
+              <CardTitle className="text-sm">{i18n.t('auto_quick_info')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {profile.location && <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{profile.location}</div>}
                 {profile.size && <div className="flex items-center gap-2"><Briefcase className="h-4 w-4" />{profile.companySize}</div>}
-                {profile.website && <a href={profile.website} target="_blank" rel="noreferrer" className="underline">Visit website</a>}
+                {profile.website && <a href={profile.website} target="_blank" rel="noreferrer" className="underline">{i18n.t('auto_visit_website_1')}</a>}
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">About</CardTitle>
+              <CardTitle className="text-sm">{i18n.t('auto_about')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground line-clamp-4">{profile.shortBio || profile.description || 'No summary available.'}</p>
@@ -537,14 +534,14 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
       <Dialog open={createProfileDialogOpen} onOpenChange={setCreateProfileDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Profile incomplete</DialogTitle>
+            <DialogTitle>{i18n.t('auto_profile_incomplete')}</DialogTitle>
             <DialogDescription>
               You need to create and complete your profile before previewing it or applying to jobs.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={() => { setCreateProfileDialogOpen(false); navigate('/jobseeker-tabs?group=profileContent&tab=my-profile&mode=edit'); }} className="bg-cyan-600 hover:bg-cyan-700 text-white">Create profile</Button>
-            <Button variant="outline" onClick={() => setCreateProfileDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => { setCreateProfileDialogOpen(false); navigate('/jobseeker-tabs?group=profileContent&tab=my-profile&mode=edit'); }} className="bg-cyan-600 hover:bg-cyan-700 text-white">{i18n.t('auto_create_profile')}</Button>
+            <Button variant="outline" onClick={() => setCreateProfileDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -552,14 +549,14 @@ export default function EmployerPublicProfile({ userId: propUserId }) {
       <Dialog open={uploadVideoDialogOpen} onOpenChange={setUploadVideoDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Upload a video</DialogTitle>
+            <DialogTitle>{i18n.t('auto_upload_a_video')}</DialogTitle>
             <DialogDescription>
               You need to upload at least one video before applying to jobs. Video resumes help you stand out.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={() => { setUploadVideoDialogOpen(false); navigate('/jobseeker-tabs?group=profileContent&tab=my-videos'); }} className="bg-cyan-600 hover:bg-cyan-700 text-white">Upload a video</Button>
-            <Button variant="outline" onClick={() => setUploadVideoDialogOpen(false)}>Cancel</Button>
+            <Button onClick={() => { setUploadVideoDialogOpen(false); navigate('/jobseeker-tabs?group=profileContent&tab=my-videos'); }} className="bg-cyan-600 hover:bg-cyan-700 text-white">{i18n.t('auto_upload_a_video')}</Button>
+            <Button variant="outline" onClick={() => setUploadVideoDialogOpen(false)}>{i18n.t('auto_cancel')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

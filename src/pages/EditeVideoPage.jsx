@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useEffect, useRef  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useEffect, useRef  } from 'react';
 import {
   Box,
   Container,
@@ -219,9 +220,7 @@ const EditVideoPage = () => {
     <EditVideoContainer>
       <Container maxWidth="lg">
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Edit Video
-          </Typography>
+          <Typography variant="h4" component="h1">{i18n.t('auto_edit_video')}</Typography>
           <Box>
             <Button
               variant="contained"
@@ -229,18 +228,14 @@ const EditVideoPage = () => {
               startIcon={<CancelIcon />}
               onClick={handleCancel}
               sx={{ mr: 2 }}
-            >
-              Cancel
-            </Button>
+            >{i18n.t('auto_cancel')}</Button>
             <Button
               variant="contained"
               color="primary"
               startIcon={<SaveIcon />}
               onClick={handleSubmit}
               disabled={loading}
-            >
-              Save Changes
-            </Button>
+            >{i18n.t('auto_save_changes')}</Button>
           </Box>
         </Box>
         
@@ -249,15 +244,13 @@ const EditVideoPage = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={8}>
             <FormCard>
-              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                Video Information
-              </Typography>
+              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>{i18n.t('auto_video_information')}</Typography>
               
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Video Title"
+                    label={i18n.t('auto_video_title')} 
                     name="video_title"
                     value={video.video_title}
                     onChange={handleInputChange}
@@ -267,34 +260,34 @@ const EditVideoPage = () => {
                 
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
-                    <InputLabel>Video Position</InputLabel>
+                    <InputLabel>{i18n.t('auto_video_position')}</InputLabel>
                     <Select
                       name="video_position"
                       value={video.video_position}
                       onChange={handleInputChange}
-                      label="Video Position"
+                      label={i18n.t('auto_video_position')} 
                     >
-                      <MenuItem value="main">Main Video</MenuItem>
-                      <MenuItem value="intro">Introduction</MenuItem>
-                      <MenuItem value="outro">Outro</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
+                      <MenuItem value="main">{i18n.t('auto_main_video')}</MenuItem>
+                      <MenuItem value="intro">{i18n.t('auto_introduction')}</MenuItem>
+                      <MenuItem value="outro">{i18n.t('auto_outro')}</MenuItem>
+                      <MenuItem value="other">{i18n.t('auto_other')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
                 
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
-                    <InputLabel>Video Type</InputLabel>
+                    <InputLabel>{i18n.t('auto_video_type')}</InputLabel>
                     <Select
                       name="video_type"
                       value={video.video_type}
                       onChange={handleInputChange}
-                      label="Video Type"
+                      label={i18n.t('auto_video_type')} 
                     >
-                      <MenuItem value="interview">Interview</MenuItem>
-                      <MenuItem value="presentation">Presentation</MenuItem>
-                      <MenuItem value="demo">Demo</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
+                      <MenuItem value="interview">{i18n.t('auto_interview')}</MenuItem>
+                      <MenuItem value="presentation">{i18n.t('auto_presentation')}</MenuItem>
+                      <MenuItem value="demo">{i18n.t('auto_demo')}</MenuItem>
+                      <MenuItem value="other">{i18n.t('auto_other')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -302,7 +295,7 @@ const EditVideoPage = () => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Video Duration (seconds)"
+                    label={i18n.t('auto_video_duration_seconds')} 
                     name="video_duration"
                     type="number"
                     value={video.video_duration}
@@ -314,7 +307,7 @@ const EditVideoPage = () => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Views"
+                    label={i18n.t('auto_views')} 
                     name="views"
                     type="number"
                     value={video.views}
@@ -326,7 +319,7 @@ const EditVideoPage = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Video URL"
+                    label={i18n.t('auto_video_url')} 
                     name="video_url"
                     value={video.video_url}
                     onChange={handleInputChange}
@@ -336,16 +329,16 @@ const EditVideoPage = () => {
                 
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel>Status</InputLabel>
+                    <InputLabel>{i18n.t('auto_status')}</InputLabel>
                     <Select
                       name="status"
                       value={video.status}
                       onChange={handleInputChange}
-                      label="Status"
+                      label={i18n.t('auto_status')} 
                     >
-                      <MenuItem value="new">New</MenuItem>
-                      <MenuItem value="old">Old</MenuItem>
-                      <MenuItem value="archived">Archived</MenuItem>
+                      <MenuItem value="new">{i18n.t('auto_new')}</MenuItem>
+                      <MenuItem value="old">{i18n.t('auto_old')}</MenuItem>
+                      <MenuItem value="archived">{i18n.t('auto_archived')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -353,14 +346,12 @@ const EditVideoPage = () => {
             </FormCard>
             
             <FormCard>
-              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                Hashtags
-              </Typography>
+              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>{i18n.t('auto_hashtags')}</Typography>
               
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <TextField
                   fullWidth
-                  label="Add Hashtag"
+                  label={i18n.t('auto_add_hashtag')} 
                   value={newHashtag}
                   onChange={(e) => setNewHashtag(e.target.value)}
                   variant="outlined"
@@ -392,9 +383,7 @@ const EditVideoPage = () => {
           
           <Grid item xs={12} md={4}>
             <FormCard>
-              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                Video Preview
-              </Typography>
+              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>{i18n.t('auto_video_preview')}</Typography>
               
               <VideoPreviewContainer>
                 <video
@@ -424,9 +413,7 @@ const EditVideoPage = () => {
               </VideoPreviewContainer>
               
               <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Video Details
-                </Typography>
+                <Typography variant="subtitle1" gutterBottom>{i18n.t('auto_video_details')}</Typography>
                 <Typography variant="body2" color="textSecondary">
                   Duration: {video.video_duration} seconds
                 </Typography>
@@ -452,9 +439,7 @@ const EditVideoPage = () => {
               onClick={handleDelete}
               fullWidth
               sx={{ mt: 2 }}
-            >
-              Delete Video
-            </Button>
+            >{i18n.t('auto_delete_video')}</Button>
           </Grid>
         </Grid>
       </Container>

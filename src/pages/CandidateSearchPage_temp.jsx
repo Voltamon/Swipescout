@@ -1,4 +1,5 @@
-﻿// This temporary file was replaced by CandidateSearchPage.jsx
+import i18n from 'i18next';
+// This temporary file was replaced by CandidateSearchPage.jsx
 // Please use CandidateSearchPage.jsx instead. Kept for reference only.
 import React from 'react';
 import { searchCandidates, connectWithCandidate, getFilterOptions } from '@/services/api';
@@ -217,22 +218,20 @@ export default function CandidateSearchPageTemp() {
             className="flex-1"
             onClick={() => window.open(`/candidate/${candidate.id}`, '_blank')}
           >
-            <Eye className="h-4 w-4 mr-1" />
-            View
-          </Button>
+            <Eye className="h-4 w-4 mr-1" />{i18n.t('auto_view')}</Button>
           {(() => {
             const c = connectionMap[candidate.id];
             if (c && c.status === 'accepted') {
-              return <Button size="sm" disabled className="bg-green-600 text-white">Connected</Button>;
+              return <Button size="sm" disabled className="bg-green-600 text-white">{i18n.t('auto_connected')}</Button>;
             }
             if (c && c.status === 'pending' && c.isSender) {
-              return <Button size="sm" disabled className="bg-gray-300">Pending</Button>;
+              return <Button size="sm" disabled className="bg-gray-300">{i18n.t('auto_pending')}</Button>;
             }
             if (c && c.status === 'pending' && !c.isSender) {
               return (
                 <div className="flex gap-2">
-                <Button size="sm" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); toast({ description: 'Connection accepted' }); } catch (err) { toast({ description: 'Failed to accept', variant: 'destructive' }); } }} className="bg-gradient-to-r from-cyan-600 to-purple-600">Accept</Button>
-                <Button size="sm" variant="outline" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); toast({ description: 'Connection declined' }); } catch (err) { toast({ description: 'Failed to decline', variant: 'destructive' }); } }}>Decline</Button>
+                <Button size="sm" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.acceptConnection(c.id)); await refreshConnections(); toast({ description: 'Connection accepted' }); } catch (err) { toast({ description: 'Failed to accept', variant: 'destructive' }); } }} className="bg-gradient-to-r from-cyan-600 to-purple-600">{i18n.t('auto_accept')}</Button>
+                <Button size="sm" variant="outline" onClick={async () => { try { await import('@/services/connectionService.js').then(m => m.rejectConnection(c.id)); await refreshConnections(); toast({ description: 'Connection declined' }); } catch (err) { toast({ description: 'Failed to decline', variant: 'destructive' }); } }}>{i18n.t('auto_decline')}</Button>
                 </div>
               );
             }
@@ -243,9 +242,7 @@ export default function CandidateSearchPageTemp() {
                 className={`${themeColors.buttons.primary} text-white flex-1 `}
                 onClick={() => handleConnect(candidate)}
               >
-                <Handshake className="h-4 w-4 mr-1" />
-                Connect
-              </Button>
+                <Handshake className="h-4 w-4 mr-1" />{i18n.t('auto_connect')}</Button>
             );
           })()}
           <Button
@@ -254,9 +251,7 @@ export default function CandidateSearchPageTemp() {
             className="flex-1"
             onClick={() => window.open(`/recruit/${candidate.id}`, '_blank')}
           >
-            <UserPlus className="h-4 w-4 mr-1" />
-            Recruit
-          </Button>
+            <UserPlus className="h-4 w-4 mr-1" />{i18n.t('auto_recruit')}</Button>
         </div>
 
         {candidate.videoResume && (
@@ -266,9 +261,7 @@ export default function CandidateSearchPageTemp() {
             className="w-full mt-2"
             onClick={() => window.open(candidate.videoResume, '_blank')}
           >
-            <Play className="h-4 w-4 mr-1" />
-            Watch Video Resume
-          </Button>
+            <Play className="h-4 w-4 mr-1" />{i18n.t('auto_watch_video_resume')}</Button>
         )}
       </CardContent>
     </Card>
@@ -276,21 +269,19 @@ export default function CandidateSearchPageTemp() {
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
-      <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r `+themeColors.gradients.primary+` bg-clip-text text-transparent">
-        Find Talented Candidates
-      </h1>
+      <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r `+themeColors.gradients.primary+` bg-clip-text text-transparent">{i18n.t('auto_find_talented_candidates')}</h1>
 
       {/* Search Filters */}
       <Card className="mb-6">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <div className="md:col-span-2">
-              <Label htmlFor="search">Search candidates</Label>
+              <Label htmlFor="search">{i18n.t('auto_search_candidates')}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
-                  placeholder="Job title, company, keywords..."
+                  placeholder={i18n.t('auto_job_title_company_keywords')} 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
@@ -299,20 +290,20 @@ export default function CandidateSearchPageTemp() {
             </div>
 
             <div>
-              <Label htmlFor="skills">Skills</Label>
+              <Label htmlFor="skills">{i18n.t('auto_skills_1')}</Label>
               <Input
                 id="skills"
-                placeholder="React, Python, etc."
+                placeholder={i18n.t('auto_react_python_etc')} 
                 value={skills}
                 onChange={(e) => setSkills(e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="experience">Experience Level</Label>
+              <Label htmlFor="experience">{i18n.t('auto_experience_level')}</Label>
               <Select value={experienceLevel} onValueChange={setExperienceLevel}>
                 <SelectTrigger id="experience">
-                  <SelectValue placeholder="Any Experience" />
+                  <SelectValue placeholder={i18n.t('auto_any_experience')}  />
                 </SelectTrigger>
                 <SelectContent>
                   {experienceLevelOptions.map((option) => (
@@ -325,20 +316,20 @@ export default function CandidateSearchPageTemp() {
             </div>
 
             <div>
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{i18n.t('auto_location')}</Label>
               <Input
                 id="location"
-                placeholder="City, State, Country"
+                placeholder={i18n.t('auto_city_state_country')} 
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="education">Education</Label>
+              <Label htmlFor="education">{i18n.t('auto_education')}</Label>
               <Select value={educationLevel} onValueChange={setEducationLevel}>
                 <SelectTrigger id="education">
-                  <SelectValue placeholder="Any Education" />
+                  <SelectValue placeholder={i18n.t('auto_any_education')}  />
                 </SelectTrigger>
                 <SelectContent>
                   {educationLevelOptions.map((option) => (
@@ -359,14 +350,10 @@ export default function CandidateSearchPageTemp() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Searching...
-                </>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{i18n.t('auto_searching')}</>
               ) : (
                 <>
-                  <Search className="mr-2 h-4 w-4" />
-                  Search Candidates
-                </>
+                  <Search className="mr-2 h-4 w-4" />{i18n.t('auto_search_candidates_1')}</>
               )}
             </Button>
           </div>
@@ -408,9 +395,7 @@ export default function CandidateSearchPageTemp() {
                 variant="outline"
                 onClick={() => handlePageChange(null, page - 1)}
                 disabled={page === 1}
-              >
-                Previous
-              </Button>
+              >{i18n.t('auto_previous')}</Button>
               <span className="flex items-center px-4 text-sm text-muted-foreground">
                 Page {page} of {totalPages}
               </span>
@@ -418,9 +403,7 @@ export default function CandidateSearchPageTemp() {
                 variant="outline"
                 onClick={() => handlePageChange(null, page + 1)}
                 disabled={page === totalPages}
-              >
-                Next
-              </Button>
+              >{i18n.t('auto_next')}</Button>
             </div>
           )}
         </>
@@ -436,15 +419,13 @@ export default function CandidateSearchPageTemp() {
             <DialogTitle>
               Connect with {connectDialog.candidate?.firstName} {connectDialog.candidate?.lastName}
             </DialogTitle>
-            <DialogDescription>
-              Send a personalized message to start the conversation.
-            </DialogDescription>
+            <DialogDescription>{i18n.t('auto_send_a_personalized_message_to_start_the')}</DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <Label htmlFor="message">Message</Label>
+            <Label htmlFor="message">{i18n.t('auto_message')}</Label>
             <Textarea
               id="message"
-              placeholder="Write a personalized message..."
+              placeholder={i18n.t('auto_write_a_personalized_message')} 
               value={connectMessage}
               onChange={(e) => setConnectMessage(e.target.value)}
               rows={4}
@@ -455,16 +436,12 @@ export default function CandidateSearchPageTemp() {
             <Button 
               variant="outline" 
               onClick={() => setConnectDialog({ open: false, candidate: null })}
-            >
-              Cancel
-            </Button>
+            >{i18n.t('auto_cancel')}</Button>
             <Button 
               onClick={handleSendConnection}
               disabled={!connectMessage.trim()}
               className="`+themeColors.buttons.primary.replace('bg-gradient-to-r ', '')+` "
-            >
-              Send Connection Request
-            </Button>
+            >{i18n.t('auto_send_connection_request')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

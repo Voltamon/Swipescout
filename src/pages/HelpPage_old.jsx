@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState  } from 'react';
 import {
     Box,
     Container,
@@ -314,9 +315,7 @@ const HelpPage = () => {
         <HelpContainer maxWidth="lg">
             {/* Header */}
             <HelpHeader elevation={3}>
-                <Typography variant="h3" gutterBottom>
-                    Help Center
-                </Typography>
+                <Typography variant="h3" gutterBottom>{i18n.t('auto_help_center')}</Typography>
                 <Typography variant="h6" sx={{ opacity: 0.9, mb: 3 }}>
                     Find answers, get support, and learn how to make the most of SwipeScout
                 </Typography>
@@ -324,7 +323,7 @@ const HelpPage = () => {
                 {/* Search Bar */}
                 <TextField
                     fullWidth
-                    placeholder="Search for help articles, tutorials, or FAQs..."
+                    placeholder={i18n.t('auto_search_for_help_articles_tutorials_or_fa')} 
                     value={searchQuery}
                     onChange={handleSearchChange}
                     InputProps={{
@@ -352,10 +351,10 @@ const HelpPage = () => {
                     scrollButtons="auto"
                     sx={{ borderBottom: 1, borderColor: 'divider' }}
                 >
-                    <Tab label="FAQs" />
-                    <Tab label="Video Tutorials" />
-                    <Tab label="Contact Support" />
-                    <Tab label="Downloads" />
+                    <Tab label={i18n.t('auto_faqs')}  />
+                    <Tab label={i18n.t('auto_video_tutorials')}  />
+                    <Tab label={i18n.t('auto_contact_support')}  />
+                    <Tab label={i18n.t('auto_downloads')}  />
                 </Tabs>
             </Paper>
 
@@ -434,9 +433,7 @@ const HelpPage = () => {
             {/* Video Tutorials Tab */}
             {activeTab === 1 && (
                 <Box>
-                    <Typography variant="h5" gutterBottom>
-                        Video Tutorials
-                    </Typography>
+                    <Typography variant="h5" gutterBottom>{i18n.t('auto_video_tutorials')}</Typography>
                     <Grid container spacing={3}>
                         {tutorials.map((tutorial, index) => (
                             <Grid item xs={12} md={6} lg={4} key={index}>
@@ -477,9 +474,7 @@ const HelpPage = () => {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small" startIcon={<PlayCircleOutlineIcon />}>
-                                            Watch Tutorial
-                                        </Button>
+                                        <Button size="small" startIcon={<PlayCircleOutlineIcon />}>{i18n.t('auto_watch_tutorial')}</Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -491,9 +486,7 @@ const HelpPage = () => {
             {/* Contact Support Tab */}
             {activeTab === 2 && (
                 <Box>
-                    <Typography variant="h5" gutterBottom>
-                        Contact Support
-                    </Typography>
+                    <Typography variant="h5" gutterBottom>{i18n.t('auto_contact_support')}</Typography>
                     <Grid container spacing={3}>
                         {supportOptions.map((option, index) => (
                             <Grid item xs={12} md={6} key={index}>
@@ -543,19 +536,11 @@ const HelpPage = () => {
                         <Grid item xs={12} md={6}>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        Mobile App
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mb: 2 }}>
-                                        Download the SwipeScout mobile app for iOS and Android
-                                    </Typography>
+                                    <Typography variant="h6" gutterBottom>{i18n.t('auto_mobile_app')}</Typography>
+                                    <Typography variant="body2" sx={{ mb: 2 }}>{i18n.t('auto_download_the_swipescout_mobile_app_for_i')}</Typography>
                                     <Box sx={{ display: 'flex', gap: 1 }}>
-                                        <Button variant="outlined" startIcon={<GetAppIcon />}>
-                                            iOS App
-                                        </Button>
-                                        <Button variant="outlined" startIcon={<GetAppIcon />}>
-                                            Android App
-                                        </Button>
+                                        <Button variant="outlined" startIcon={<GetAppIcon />}>{i18n.t('auto_ios_app')}</Button>
+                                        <Button variant="outlined" startIcon={<GetAppIcon />}>{i18n.t('auto_android_app')}</Button>
                                     </Box>
                                 </CardContent>
                             </Card>
@@ -564,15 +549,11 @@ const HelpPage = () => {
                         <Grid item xs={12} md={6}>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6" gutterBottom>
-                                        Resume Templates
-                                    </Typography>
+                                    <Typography variant="h6" gutterBottom>{i18n.t('auto_resume_templates')}</Typography>
                                     <Typography variant="body2" sx={{ mb: 2 }}>
                                         Professional resume templates to complement your video resume
                                     </Typography>
-                                    <Button variant="outlined" startIcon={<GetAppIcon />}>
-                                        Download Templates
-                                    </Button>
+                                    <Button variant="outlined" startIcon={<GetAppIcon />}>{i18n.t('auto_download_templates')}</Button>
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -587,13 +568,13 @@ const HelpPage = () => {
                 maxWidth="md"
                 fullWidth
             >
-                <DialogTitle>Contact Support</DialogTitle>
+                <DialogTitle>{i18n.t('auto_contact_support')}</DialogTitle>
                 <DialogContent>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Name"
+                                label={i18n.t('auto_name')} 
                                 value={contactForm.name}
                                 onChange={(e) => handleContactFormChange('name', e.target.value)}
                             />
@@ -601,7 +582,7 @@ const HelpPage = () => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Email"
+                                label={i18n.t('auto_email')} 
                                 type="email"
                                 value={contactForm.email}
                                 onChange={(e) => handleContactFormChange('email', e.target.value)}
@@ -609,24 +590,24 @@ const HelpPage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth>
-                                <InputLabel>Category</InputLabel>
+                                <InputLabel>{i18n.t('auto_category')}</InputLabel>
                                 <Select
                                     value={contactForm.category}
                                     onChange={(e) => handleContactFormChange('category', e.target.value)}
-                                    label="Category"
+                                    label={i18n.t('auto_category')} 
                                 >
-                                    <MenuItem value="general">General Question</MenuItem>
-                                    <MenuItem value="technical">Technical Issue</MenuItem>
-                                    <MenuItem value="billing">Billing</MenuItem>
-                                    <MenuItem value="feature">Feature Request</MenuItem>
-                                    <MenuItem value="bug">Bug Report</MenuItem>
+                                    <MenuItem value="general">{i18n.t('auto_general_question')}</MenuItem>
+                                    <MenuItem value="technical">{i18n.t('auto_technical_issue')}</MenuItem>
+                                    <MenuItem value="billing">{i18n.t('auto_billing')}</MenuItem>
+                                    <MenuItem value="feature">{i18n.t('auto_feature_request')}</MenuItem>
+                                    <MenuItem value="bug">{i18n.t('auto_bug_report')}</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Subject"
+                                label={i18n.t('subject')} 
                                 value={contactForm.subject}
                                 onChange={(e) => handleContactFormChange('subject', e.target.value)}
                             />
@@ -634,21 +615,19 @@ const HelpPage = () => {
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
-                                label="Message"
+                                label={i18n.t('auto_message')} 
                                 multiline
                                 rows={6}
                                 value={contactForm.message}
                                 onChange={(e) => handleContactFormChange('message', e.target.value)}
-                                placeholder="Please describe your question or issue in detail..."
+                                placeholder={i18n.t('auto_please_describe_your_question_or_issue_i')} 
                             />
                         </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setContactDialog(false)}>Cancel</Button>
-                    <Button onClick={handleSubmitContact} variant="contained">
-                        Send Message
-                    </Button>
+                    <Button onClick={() => setContactDialog(false)}>{i18n.t('auto_cancel')}</Button>
+                    <Button onClick={handleSubmitContact} variant="contained">{i18n.t('sendMessage')}</Button>
                 </DialogActions>
             </Dialog>
         </HelpContainer>

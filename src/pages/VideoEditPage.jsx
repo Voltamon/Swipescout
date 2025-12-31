@@ -1,4 +1,5 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import i18n from 'i18next';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Play, Pause, Volume2, VolumeX, Upload, Trash2, Video as VideoIcon,
@@ -1139,17 +1140,15 @@ export default function VideoEditPage() {
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
-      <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-6">
-        Video Editor
-      </h1>
+      <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent mb-6">{i18n.t('auto_video_editor')}</h1>
 
       {loadingFFmpeg && (
         <Card className="mb-6 border-l-4 border-l-purple-600">
           <CardContent className="pt-6 flex items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
             <div>
-              <p className="font-semibold">Loading video editor...</p>
-              <p className="text-sm text-gray-600">Please wait while we initialize FFmpeg</p>
+              <p className="font-semibold">{i18n.t('auto_loading_video_editor')}</p>
+              <p className="text-sm text-gray-600">{i18n.t('auto_please_wait_while_we_initialize_ffmpeg')}</p>
             </div>
           </CardContent>
         </Card>
@@ -1157,18 +1156,16 @@ export default function VideoEditPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 max-w-md">
-          <TabsTrigger value="upload">Upload New</TabsTrigger>
-          <TabsTrigger value="library">My Videos</TabsTrigger>
+          <TabsTrigger value="upload">{i18n.t('auto_upload_new')}</TabsTrigger>
+          <TabsTrigger value="library">{i18n.t('auto_my_videos')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="upload" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Upload className="h-5 w-5 text-purple-600" />
-                Upload Video
-              </CardTitle>
-              <CardDescription>Upload a video file to start editing</CardDescription>
+                <Upload className="h-5 w-5 text-purple-600" />{i18n.t('auto_upload_video')}</CardTitle>
+              <CardDescription>{i18n.t('auto_upload_a_video_file_to_start_editing')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-8 hover:border-purple-600 transition-colors">
@@ -1177,9 +1174,7 @@ export default function VideoEditPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Select Video File
-                </Button>
+                  <Upload className="h-4 w-4 mr-2" />{i18n.t('auto_select_video_file')}</Button>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -1187,7 +1182,7 @@ export default function VideoEditPage() {
                   onChange={handleFileUpload}
                   className="hidden"
                 />
-                <p className="text-sm text-gray-600 mt-2">MP4, MOV, AVI, WebM supported</p>
+                <p className="text-sm text-gray-600 mt-2">{i18n.t('auto_mp4_mov_avi_webm_supported')}</p>
               </div>
             </CardContent>
           </Card>
@@ -1197,16 +1192,14 @@ export default function VideoEditPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <VideoIcon className="h-5 w-5 text-cyan-600" />
-                My Videos
-              </CardTitle>
-              <CardDescription>Select a video from your library to edit</CardDescription>
+                <VideoIcon className="h-5 w-5 text-cyan-600" />{i18n.t('auto_my_videos')}</CardTitle>
+              <CardDescription>{i18n.t('auto_select_a_video_from_your_library_to_edit')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {myVideos.length === 0 ? (
                   <div className="col-span-full text-center py-8 text-gray-500">
-                    <p>No videos found</p>
+                    <p>{i18n.t('auto_no_videos_found')}</p>
                   </div>
                 ) : (
                   myVideos.map((video) => {
@@ -1238,23 +1231,19 @@ export default function VideoEditPage() {
                           {video.serverProcessing && (
                             <div className="absolute bottom-0 left-0 right-0 bg-yellow-400/90 text-yellow-900 text-xs font-medium py-1 px-2 flex items-center gap-1">
                               <Loader2 className="h-3 w-3 animate-spin" />
-                              <span>Processing...</span>
+                              <span>{i18n.t('auto_processing')}</span>
                             </div>
                           )}
                           {isJustUploaded && (
                             <div className="absolute top-2 right-2">
                               <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg animate-bounce">
-                                <Sparkles className="h-4 w-4 mr-1" />
-                                Just Uploaded!
-                              </Badge>
+                                <Sparkles className="h-4 w-4 mr-1" />{i18n.t('auto_just_uploaded')}</Badge>
                             </div>
                           )}
                           {!isJustUploaded && isRecentlyUpdated && !video.serverProcessing && (
                             <div className="absolute top-2 right-2">
                               <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg">
-                                <Sparkles className="h-3 w-3 mr-1" />
-                                Updated
-                              </Badge>
+                                <Sparkles className="h-3 w-3 mr-1" />{i18n.t('auto_updated')}</Badge>
                             </div>
                           )}
                         </div>
@@ -1264,7 +1253,7 @@ export default function VideoEditPage() {
                           {video.serverProcessing && (
                             <div className="mt-2 flex items-center gap-1 text-xs text-yellow-600">
                               <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />
-                              <span>Uploading to server</span>
+                              <span>{i18n.t('auto_uploading_to_server')}</span>
                             </div>
                           )}
                           {isJustUploaded && (
@@ -1276,7 +1265,7 @@ export default function VideoEditPage() {
                           {!isJustUploaded && isRecentlyUpdated && !video.serverProcessing && (
                             <div className="mt-2 flex items-center gap-1 text-xs text-amber-600">
                               <RotateCw className="h-3 w-3" />
-                              <span>Recently updated</span>
+                              <span>{i18n.t('auto_recently_updated')}</span>
                             </div>
                           )}
                         </CardContent>
@@ -1296,9 +1285,7 @@ export default function VideoEditPage() {
           <Card ref={previewRef} className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-600" />
-                Video Preview
-              </CardTitle>
+                <Sparkles className="h-5 w-5 text-purple-600" />{i18n.t('auto_video_preview')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-black rounded-lg overflow-hidden">
@@ -1353,9 +1340,7 @@ export default function VideoEditPage() {
                 {selectedVideoFromList && (
                   <div className="md:col-span-2 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
                     <div className="flex flex-col gap-1">
-                      <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 w-fit">
-                        Editing Mode
-                      </Badge>
+                      <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 w-fit">{i18n.t('auto_editing_mode')}</Badge>
                       <p className="text-xs text-blue-600 dark:text-blue-400">
                         Saving will replace the video file and metadata while making original one as Old
                       </p>
@@ -1363,30 +1348,30 @@ export default function VideoEditPage() {
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Label htmlFor="title">Video Title</Label>
+                  <Label htmlFor="title">{i18n.t('auto_video_title')}</Label>
                   <Input
                     id="title"
                     value={videoTitle}
                     onChange={(e) => setVideoTitle(e.target.value)}
-                    placeholder="Enter video title"
+                    placeholder={i18n.t('auto_enter_video_title')} 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">{i18n.t('auto_description')}</Label>
                   <Textarea
                     id="description"
                     value={videoDescription}
                     onChange={(e) => setVideoDescription(e.target.value)}
-                    placeholder="Enter video description"
+                    placeholder={i18n.t('auto_enter_video_description')} 
                     rows={1}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Processing Mode</Label>
+                  <Label>{i18n.t('auto_processing_mode')}</Label>
                   <div className="flex items-center gap-3">
                     <label className="flex items-center gap-2 text-sm">
                       <input type="checkbox" checked={useServerProcessing} onChange={(e) => setUseServerProcessing(e.target.checked)} />
-                      Use server processing {isPro ? <Badge className="ml-2">PRO</Badge> : <Badge variant="secondary" className="ml-2">Basic</Badge>}
+                      Use server processing {isPro ? <Badge className="ml-2">{i18n.t('auto_pro')}</Badge> : <Badge variant="secondary" className="ml-2">{i18n.t('auto_basic')}</Badge>}
                     </label>
                   </div>
                 </div>
@@ -1509,16 +1494,16 @@ export default function VideoEditPage() {
                 </div>
                 <div className="pt-2 border-t">
                   <div className="flex items-center justify-between mb-2">
-                    <Label>Segments {isPro ? <Badge className="ml-2">PRO</Badge> : <Badge variant="secondary" className="ml-2">PRO</Badge>}</Label>
+                    <Label>Segments {isPro ? <Badge className="ml-2">{i18n.t('auto_pro')}</Badge> : <Badge variant="secondary" className="ml-2">{i18n.t('auto_pro')}</Badge>}</Label>
                     <Button variant="outline" size="sm" onClick={() => {
                       if (!isPro) { toast({ description: 'Multi-segment editing is a PRO feature', variant: 'default' }); return; }
                       const start = Math.max(0, currentTime - 2);
                       const end = Math.min(duration, currentTime + 2);
                       setSegments([...segments, { start, end }]);
-                    }}>Add segment at playhead</Button>
+                    }}>{i18n.t('auto_add_segment_at_playhead')}</Button>
                   </div>
                   {segments.length === 0 ? (
-                    <p className="text-xs text-gray-500">No segments added.</p>
+                    <p className="text-xs text-gray-500">{i18n.t('auto_no_segments_added')}</p>
                   ) : (
                     <div className="space-y-2">
                       {segments.map((s, idx) => (
@@ -1527,7 +1512,7 @@ export default function VideoEditPage() {
                           <Input className="w-24" type="number" step="0.1" value={s.start} onChange={(e) => {
                             const v = [...segments]; v[idx] = { ...v[idx], start: Number(e.target.value) }; setSegments(v);
                           }} />
-                          <span>to</span>
+                          <span>{i18n.t('auto_to')}</span>
                           <Input className="w-24" type="number" step="0.1" value={s.end} onChange={(e) => {
                             const v = [...segments]; v[idx] = { ...v[idx], end: Number(e.target.value) }; setSegments(v);
                           }} />
@@ -1544,9 +1529,7 @@ export default function VideoEditPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Sliders className="h-5 w-5 text-purple-600" />
-                  Visual Adjustments
-                </CardTitle>
+                  <Sliders className="h-5 w-5 text-purple-600" />{i18n.t('auto_visual_adjustments')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -1572,13 +1555,11 @@ export default function VideoEditPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <RotateCw className="h-5 w-5 text-pink-600" />
-                  Transform
-                </CardTitle>
+                  <RotateCw className="h-5 w-5 text-pink-600" />{i18n.t('auto_transform')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Rotation</Label>
+                  <Label>{i18n.t('auto_rotation')}</Label>
                   <Select value={rotation.toString()} onValueChange={(val) => setRotation(Number(val))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -1590,20 +1571,20 @@ export default function VideoEditPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Playback Speed</Label>
+                  <Label>{i18n.t('auto_playback_speed')}</Label>
                   <Select value={playbackSpeed.toString()} onValueChange={(val) => setPlaybackSpeed(Number(val))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="0.5">0.5x (Slow)</SelectItem>
-                      <SelectItem value="1">1x (Normal)</SelectItem>
-                      <SelectItem value="1.5">1.5x (Fast)</SelectItem>
-                      <SelectItem value="2">2x (Very Fast)</SelectItem>
+                      <SelectItem value="0.5">{i18n.t('auto_0_5x_slow')}</SelectItem>
+                      <SelectItem value="1">{i18n.t('auto_1x_normal')}</SelectItem>
+                      <SelectItem value="1.5">{i18n.t('auto_1_5x_fast')}</SelectItem>
+                      <SelectItem value="2">{i18n.t('auto_2x_very_fast')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label>Crop (x,y,w,h)</Label>
+                    <Label>{i18n.t('auto_crop_x_y_w_h')}</Label>
                     <div className="grid grid-cols-4 gap-2">
                       <Input type="number" placeholder="x" value={crop.x} onChange={(e) => setCrop({ ...crop, x: Number(e.target.value) })} />
                       <Input type="number" placeholder="y" value={crop.y} onChange={(e) => setCrop({ ...crop, y: Number(e.target.value) })} />
@@ -1612,10 +1593,10 @@ export default function VideoEditPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Target Resolution</Label>
+                    <Label>{i18n.t('auto_target_resolution')}</Label>
                     <div className="grid grid-cols-2 gap-2">
-                      <Input type="number" placeholder="width" value={targetRes.w} onChange={(e) => setTargetRes({ ...targetRes, w: Number(e.target.value) })} />
-                      <Input type="number" placeholder="height" value={targetRes.h} onChange={(e) => setTargetRes({ ...targetRes, h: Number(e.target.value) })} />
+                      <Input type="number" placeholder={i18n.t('auto_width')}  value={targetRes.w} onChange={(e) => setTargetRes({ ...targetRes, w: Number(e.target.value) })} />
+                      <Input type="number" placeholder={i18n.t('auto_height')}  value={targetRes.h} onChange={(e) => setTargetRes({ ...targetRes, h: Number(e.target.value) })} />
                     </div>
                   </div>
                 </div>
@@ -1627,21 +1608,21 @@ export default function VideoEditPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sliders className="h-5 w-5 text-green-600" />
-                  Overlays & Audio {isPro ? <Badge className="ml-2">PRO</Badge> : <Badge variant="secondary" className="ml-2">PRO</Badge>}
+                  Overlays & Audio {isPro ? <Badge className="ml-2">{i18n.t('auto_pro')}</Badge> : <Badge variant="secondary" className="ml-2">{i18n.t('auto_pro')}</Badge>}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Watermark (image)</Label>
+                  <Label>{i18n.t('auto_watermark_image')}</Label>
                   <Input type="file" accept="image/*" onChange={(e) => setWatermarkFile(e.target.files?.[0] || null)} />
                   <div className="grid grid-cols-3 gap-2">
                     <Select value={watermarkPos} onValueChange={setWatermarkPos}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="top-left">Top Left</SelectItem>
-                        <SelectItem value="top-right">Top Right</SelectItem>
-                        <SelectItem value="bottom-left">Bottom Left</SelectItem>
-                        <SelectItem value="bottom-right">Bottom Right</SelectItem>
+                        <SelectItem value="top-left">{i18n.t('auto_top_left')}</SelectItem>
+                        <SelectItem value="top-right">{i18n.t('auto_top_right')}</SelectItem>
+                        <SelectItem value="bottom-left">{i18n.t('auto_bottom_left')}</SelectItem>
+                        <SelectItem value="bottom-right">{i18n.t('auto_bottom_right')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <div className="space-y-1">
@@ -1667,8 +1648,8 @@ export default function VideoEditPage() {
                 <div className="mb-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg flex items-center gap-3">
                   <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-blue-300">Loading FFmpeg...</p>
-                    <p className="text-xs text-blue-400/70">Client-side video processing is being initialized</p>
+                    <p className="text-sm font-medium text-blue-300">{i18n.t('auto_loading_ffmpeg')}</p>
+                    <p className="text-xs text-blue-400/70">{i18n.t('auto_client_side_video_processing_is_being_in')}</p>
                   </div>
                 </div>
               )}
@@ -1676,7 +1657,7 @@ export default function VideoEditPage() {
                 <div className="mb-4 p-3 bg-amber-900/20 border border-amber-500/30 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-amber-300">FFmpeg Not Available</p>
+                      <p className="text-sm font-medium text-amber-300">{i18n.t('auto_ffmpeg_not_available')}</p>
                       <p className="text-xs text-amber-400/70">Client-side processing unavailable. Use "Process on Server" or retry loading.</p>
                     </div>
                   </div>
@@ -1690,17 +1671,15 @@ export default function VideoEditPage() {
                     variant="outline"
                     className="border-amber-500/50 text-amber-300 hover:bg-amber-900/30"
                   >
-                    <RotateCw className="h-4 w-4 mr-2" />
-                    Retry Loading FFmpeg
-                  </Button>
+                    <RotateCw className="h-4 w-4 mr-2" />{i18n.t('auto_retry_loading_ffmpeg')}</Button>
                 </div>
               )}
               {!loadingFFmpeg && ffmpeg?.loaded && (
                 <div className="mb-4 p-3 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
                   <Sparkles className="h-5 w-5 text-green-400" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-green-300">FFmpeg Ready</p>
-                    <p className="text-xs text-green-400/70">Client-side video processing is available</p>
+                    <p className="text-sm font-medium text-green-300">{i18n.t('auto_ffmpeg_ready')}</p>
+                    <p className="text-xs text-green-400/70">{i18n.t('auto_client_side_video_processing_is_availabl')}</p>
                   </div>
                 </div>
               )}
@@ -1708,12 +1687,12 @@ export default function VideoEditPage() {
               <div className="flex justify-center gap-3 flex-wrap">
                 {!useServerProcessing && (
                   <Button onClick={handleProcessVideo} disabled={processing || loadingFFmpeg} className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 px-8 py-6 text-lg">
-                    {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing {processingProgress}%</>) : (<><Sparkles className="h-5 w-5 mr-2" />Process Locally</>)}
+                    {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing {processingProgress}%</>) : (<><Sparkles className="h-5 w-5 mr-2" />{i18n.t('auto_process_locally')}</>)}
                   </Button>
                 )}
                 {useServerProcessing && (
                   <Button onClick={handleProcessOnServer} disabled={processing} className="bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-700 hover:to-emerald-700 px-8 py-6 text-lg">
-                    {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Sending to server...</>) : (<><Upload className="h-5 w-5 mr-2" />Process on Server</>)}
+                    {processing ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />{i18n.t('auto_sending_to_server')}</>) : (<><Upload className="h-5 w-5 mr-2" />{i18n.t('auto_process_on_server')}</>)}
                   </Button>
                 )}
                 {selectedVideoFromList && (
@@ -1723,9 +1702,7 @@ export default function VideoEditPage() {
                     variant="outline"
                     className="px-4 py-6 text-sm border-blue-500 text-blue-400 hover:bg-blue-900/20"
                   >
-                    <RotateCw className="h-4 w-4 mr-2" />
-                    Update Metadata Only
-                  </Button>
+                    <RotateCw className="h-4 w-4 mr-2" />{i18n.t('auto_update_metadata_only')}</Button>
                 )}
               </div>
               {processing && (<Progress value={processingProgress} className="mt-4" />)}
@@ -1738,8 +1715,8 @@ export default function VideoEditPage() {
       <Dialog open={previewDialog} onOpenChange={setPreviewDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Preview Processed Video</DialogTitle>
-            <DialogDescription>Review your edited video before uploading</DialogDescription>
+            <DialogTitle>{i18n.t('auto_preview_processed_video')}</DialogTitle>
+            <DialogDescription>{i18n.t('auto_review_your_edited_video_before_uploadin')}</DialogDescription>
           </DialogHeader>
           {console.log('=== PREVIEW DIALOG STATE ===')}
           {console.log('processedVideoUrl:', processedVideoUrl)}
@@ -1781,7 +1758,7 @@ export default function VideoEditPage() {
                       </svg>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-blue-800">Preview with Live Edits</h3>
+                      <h3 className="text-sm font-medium text-blue-800">{i18n.t('auto_preview_with_live_edits')}</h3>
                       <p className="mt-1 text-sm text-blue-700">
                         You're viewing a live preview with CSS filters applied. To create a permanent processed video file, click "Process Locally" or "Process on Server" first, then upload.
                       </p>
@@ -1829,7 +1806,7 @@ export default function VideoEditPage() {
               </div>
             ) : (
               <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <p className="text-gray-600">No processed video available for preview</p>
+                <p className="text-gray-600">{i18n.t('auto_no_processed_video_available_for_preview')}</p>
               </div>
             ))
           )}
@@ -1837,7 +1814,7 @@ export default function VideoEditPage() {
             <div className="px-6 pb-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Upload Progress</span>
+                  <span>{i18n.t('auto_upload_progress')}</span>
                   <span>{processingProgress}%</span>
                 </div>
                 <Progress value={processingProgress} />
@@ -1848,7 +1825,7 @@ export default function VideoEditPage() {
             <Button variant="outline" onClick={() => {
               setPreviewDialog(false);
               setWasJustProcessed(false);
-            }} disabled={exporting}>Cancel</Button>
+            }} disabled={exporting}>{i18n.t('auto_cancel')}</Button>
             {selectedVideoFromList ? (
               <Button onClick={handleUploadProcessedVideo} disabled={exporting} className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
                 {exporting ? (
@@ -1858,9 +1835,7 @@ export default function VideoEditPage() {
                   </>
                 ) : (
                   <>
-                    <RotateCw className="h-4 w-4 mr-2" />
-                    Upload and Update Video
-                  </>
+                    <RotateCw className="h-4 w-4 mr-2" />{i18n.t('auto_upload_and_update_video')}</>
                 )}
               </Button>
             ) : (
@@ -1872,9 +1847,7 @@ export default function VideoEditPage() {
                   </>
                 ) : (
                   <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload as New Video
-                  </>
+                    <Upload className="h-4 w-4 mr-2" />{i18n.t('auto_upload_as_new_video')}</>
                 )}
               </Button>
             )}

@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+import i18n from 'i18next';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/UI/card.jsx";
 import { Input } from "@/components/UI/input.jsx";
 import { Button } from "@/components/UI/button.jsx";
@@ -263,7 +264,7 @@ const HelpPage = () => {
         {/* Header */}
         <Card className="mb-6 bg-gradient-to-r from-purple-600 to-cyan-600 text-white border-none shadow-xl">
           <CardContent className="p-8 text-center">
-            <h1 className="text-4xl font-bold mb-4">Help Center</h1>
+            <h1 className="text-4xl font-bold mb-4">{i18n.t('auto_help_center')}</h1>
             <p className="text-lg mb-6 opacity-90">
               Find answers, get support, and learn how to make the most of SwipeScout
             </p>
@@ -272,7 +273,7 @@ const HelpPage = () => {
             <div className="relative max-w-2xl mx-auto">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search for help articles, tutorials, or FAQs..."
+                placeholder={i18n.t('auto_search_for_help_articles_tutorials_or_fa')} 
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="pl-10 h-12 bg-white text-gray-900"
@@ -284,10 +285,10 @@ const HelpPage = () => {
         {/* Navigation Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
           <TabsList className="grid grid-cols-4 w-full max-w-3xl mx-auto">
-            <TabsTrigger value="faqs">FAQs</TabsTrigger>
-            <TabsTrigger value="tutorials">Video Tutorials</TabsTrigger>
-            <TabsTrigger value="support">Contact Support</TabsTrigger>
-            <TabsTrigger value="downloads">Downloads</TabsTrigger>
+            <TabsTrigger value="faqs">{i18n.t('auto_faqs')}</TabsTrigger>
+            <TabsTrigger value="tutorials">{i18n.t('auto_video_tutorials')}</TabsTrigger>
+            <TabsTrigger value="support">{i18n.t('auto_contact_support')}</TabsTrigger>
+            <TabsTrigger value="downloads">{i18n.t('auto_downloads')}</TabsTrigger>
           </TabsList>
 
           {/* FAQ Tab */}
@@ -366,9 +367,7 @@ const HelpPage = () => {
                             <Clock className="h-3 w-3 mr-1" />
                             {tutorial.duration}
                           </Badge>
-                          <Button size="sm" className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-                            Watch Now
-                          </Button>
+                          <Button size="sm" className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">{i18n.t('auto_watch_now')}</Button>
                         </div>
                       </div>
                     </div>
@@ -416,15 +415,9 @@ const HelpPage = () => {
                   Download helpful guides, templates, and resources to enhance your SwipeScout experience
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                  <Button variant="outline" className="border-purple-600 text-purple-600 hover:bg-purple-50">
-                    User Guide (PDF)
-                  </Button>
-                  <Button variant="outline" className="border-cyan-600 text-cyan-600 hover:bg-cyan-50">
-                    Video Resume Tips
-                  </Button>
-                  <Button variant="outline" className="border-pink-600 text-pink-600 hover:bg-pink-50">
-                    Mobile App
-                  </Button>
+                  <Button variant="outline" className="border-purple-600 text-purple-600 hover:bg-purple-50">{i18n.t('auto_user_guide_pdf')}</Button>
+                  <Button variant="outline" className="border-cyan-600 text-cyan-600 hover:bg-cyan-50">{i18n.t('auto_video_resume_tips')}</Button>
+                  <Button variant="outline" className="border-pink-600 text-pink-600 hover:bg-pink-50">{i18n.t('auto_mobile_app')}</Button>
                 </div>
               </CardContent>
             </Card>
@@ -435,78 +428,74 @@ const HelpPage = () => {
         <Dialog open={contactDialog} onOpenChange={setContactDialog}>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Contact Support</DialogTitle>
+              <DialogTitle>{i18n.t('auto_contact_support')}</DialogTitle>
               <DialogDescription>
                 Fill out the form below and our team will get back to you as soon as possible.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">{i18n.t('auto_name')}</Label>
                 <Input
                   id="name"
                   value={contactForm.name}
                   onChange={e => setContactForm({ ...contactForm, name: e.target.value })}
-                  placeholder="Your name"
+                  placeholder={i18n.t('auto_your_name')} 
                 />
               </div>
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{i18n.t('auto_email')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={contactForm.email}
                   onChange={e => setContactForm({ ...contactForm, email: e.target.value })}
-                  placeholder="your@email.com"
+                  placeholder={i18n.t('auto_your_email_com')} 
                 />
               </div>
               <div>
-                <Label htmlFor="category">Category</Label>
+                <Label htmlFor="category">{i18n.t('auto_category')}</Label>
                 <Select
                   value={contactForm.category}
                   onValueChange={value => setContactForm({ ...contactForm, category: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={i18n.t('auto_select_category')}  />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="general">General</SelectItem>
-                    <SelectItem value="technical">Technical Support</SelectItem>
-                    <SelectItem value="billing">Billing</SelectItem>
-                    <SelectItem value="feedback">Feedback</SelectItem>
+                    <SelectItem value="general">{i18n.t('auto_general')}</SelectItem>
+                    <SelectItem value="technical">{i18n.t('auto_technical_support')}</SelectItem>
+                    <SelectItem value="billing">{i18n.t('auto_billing')}</SelectItem>
+                    <SelectItem value="feedback">{i18n.t('auto_feedback')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label htmlFor="subject">Subject</Label>
+                <Label htmlFor="subject">{i18n.t('subject')}</Label>
                 <Input
                   id="subject"
                   value={contactForm.subject}
                   onChange={e => setContactForm({ ...contactForm, subject: e.target.value })}
-                  placeholder="Brief description"
+                  placeholder={i18n.t('auto_brief_description_1')} 
                 />
               </div>
               <div>
-                <Label htmlFor="message">Message</Label>
+                <Label htmlFor="message">{i18n.t('auto_message')}</Label>
                 <Textarea
                   id="message"
                   value={contactForm.message}
                   onChange={e => setContactForm({ ...contactForm, message: e.target.value })}
-                  placeholder="Describe your issue or question..."
+                  placeholder={i18n.t('auto_describe_your_issue_or_question')} 
                   rows={4}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setContactDialog(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setContactDialog(false)}>{i18n.t('auto_cancel')}</Button>
               <Button
                 onClick={handleSubmitContact}
                 className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
-              >
-                Send Message
-              </Button>
+              >{i18n.t('sendMessage')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

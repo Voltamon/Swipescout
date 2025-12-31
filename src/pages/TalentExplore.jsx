@@ -1,4 +1,5 @@
-﻿import React, { useContext, useState, useRef  } from 'react';
+import i18n from 'i18next';
+import React, { useContext, useState, useRef  } from 'react';
 import {
   Box,
   Grid,
@@ -158,17 +159,13 @@ const EmployerExplorePublic = () => {
    
     >
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Discover Talent
-        </Typography>
-        <Typography color="text.secondary">
-          Find candidates that match your job requirements
-        </Typography> 
+        <Typography variant="h4" fontWeight="bold" gutterBottom>{i18n.t('auto_discover_talent')}</Typography>
+        <Typography color="text.secondary">{i18n.t('auto_find_candidates_that_match_your_job_requ')}</Typography> 
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <TextField
-          placeholder="Search candidates, skills, or roles"
+          placeholder={i18n.t('auto_search_candidates_skills_or_roles')} 
           variant="outlined"
           size="small"
           sx={{ width: '50%' }}
@@ -182,16 +179,14 @@ const EmployerExplorePublic = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button variant="outlined" startIcon={<FilterList />}>
-          Filters
-        </Button>
+        <Button variant="outlined" startIcon={<FilterList />}>{i18n.t('auto_filters')}</Button>
       </Box>
 
       <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
-        <Tab label="Recommended" />
-        <Tab label="Recent" />
-        <Tab label="Saved" />
-        <Tab label="Local" />
+        <Tab label={i18n.t('auto_recommended')}  />
+        <Tab label={i18n.t('auto_recent')}  />
+        <Tab label={i18n.t('auto_saved')}  />
+        <Tab label={i18n.t('auto_local')}  />
       </Tabs>
 
       <Grid container spacing={3}>
@@ -277,7 +272,7 @@ const EmployerExplorePublic = () => {
       {/* Candidate Details Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Candidate Profile</Typography>
+          <Typography variant="h6">{i18n.t('auto_candidate_profile')}</Typography>
           <IconButton onClick={() => setOpenDialog(false)}>
             <Close />
           </IconButton>
@@ -294,7 +289,7 @@ const EmployerExplorePublic = () => {
                 />
                 
                 <Box sx={{ mt: 3 }}>
-                  <Typography variant="h6" gutterBottom>Skills</Typography>
+                  <Typography variant="h6" gutterBottom>{i18n.t('auto_skills_1')}</Typography>
                   <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
                     {selectedCandidate.skills.map((skill, index) => (
                       <Chip key={index} label={skill} color="primary" />
@@ -352,7 +347,7 @@ const EmployerExplorePublic = () => {
                 <Divider sx={{ my: 3 }} />
                 
                 <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" gutterBottom>About</Typography>
+                  <Typography variant="h6" gutterBottom>{i18n.t('auto_about')}</Typography>
                   <Typography>
                     Experienced frontend developer with a passion for creating intuitive user interfaces.
                     Specialized in React and TypeScript with a strong focus on performance and accessibility.
@@ -360,15 +355,11 @@ const EmployerExplorePublic = () => {
                 </Box>
                 
                 <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" gutterBottom>Experience</Typography>
+                  <Typography variant="h6" gutterBottom>{i18n.t('auto_experience')}</Typography>
                   <Box sx={{ pl: 2 }}>
-                    <Typography fontWeight="bold">Senior Frontend Developer</Typography>
+                    <Typography fontWeight="bold">{i18n.t('auto_senior_frontend_developer')}</Typography>
                     <Typography color="text.secondary">TechCorp â€¢ 2020-Present</Typography>
-                    <Typography>
-                      - Led the migration from Angular to React<br />
-                      - Improved page load performance by 40%<br />
-                      - Mentored junior developers
-                    </Typography>
+                    <Typography>{i18n.t('auto_led_the_migration_from_angular_to_react')}<br />{i18n.t('auto_improved_page_load_performance_by_40')}<br />{i18n.t('auto_mentored_junior_developers')}</Typography>
                   </Box>
                 </Box>
                 
@@ -378,16 +369,12 @@ const EmployerExplorePublic = () => {
                     color="primary"
                     size="large"
                     fullWidth
-                  >
-                    Connect
-                  </Button>
+                  >{i18n.t('auto_connect')}</Button>
                   <Button
                     variant="outlined"
                     size="large"
                     fullWidth
-                  >
-                    Shortlist
-                  </Button>
+                  >{i18n.t('auto_shortlist')}</Button>
                 </Box>
               </Box>
             </Box>

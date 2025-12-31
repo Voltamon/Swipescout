@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect, useMemo, useRef } from 'react';
+import i18n from 'i18next';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   extractCVData,
   generateResume,
@@ -1663,19 +1664,15 @@ export default function ResumeBuilderPage() {
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-2">
-          Resume Builder
-        </h1>
-        <p className="text-muted-foreground">
-          Create a professional resume with our AI-powered builder
-        </p>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent mb-2">{i18n.t('auto_resume_builder')}</h1>
+        <p className="text-muted-foreground">{i18n.t('auto_create_a_professional_resume_with_our_ai')}</p>
       </div>
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="build">Build Resume</TabsTrigger>
-          <TabsTrigger value="upload">Upload CV</TabsTrigger>
+          <TabsTrigger value="build">{i18n.t('auto_build_resume')}</TabsTrigger>
+          <TabsTrigger value="upload">{i18n.t('auto_upload_cv')}</TabsTrigger>
           <TabsTrigger value="saved">Saved Resumes ({savedResumes.length})</TabsTrigger>
         </TabsList>
 
@@ -1687,7 +1684,7 @@ export default function ResumeBuilderPage() {
               <div className="flex items-center gap-3">
                 <Edit className="h-5 w-5 text-amber-600" />
                 <div>
-                  <p className="font-semibold text-amber-900">Editing Resume Snapshot</p>
+                  <p className="font-semibold text-amber-900">{i18n.t('auto_editing_resume_snapshot')}</p>
                   <p className="text-sm text-amber-700">{editingResumeTitle}</p>
                 </div>
               </div>
@@ -1700,9 +1697,7 @@ export default function ResumeBuilderPage() {
                 }}
                 variant="outline"
                 size="sm"
-              >
-                Cancel Editing
-              </Button>
+              >{i18n.t('auto_cancel_editing')}</Button>
             </div>
           )}
 
@@ -1713,9 +1708,7 @@ export default function ResumeBuilderPage() {
               variant="outline"
               className="gap-2"
             >
-              <Eye className="h-4 w-4" />
-              Preview
-            </Button>
+              <Eye className="h-4 w-4" />{i18n.t('auto_preview')}</Button>
 
             {/* Template Selector */}
             <div className="flex items-center gap-2">
@@ -1726,10 +1719,10 @@ export default function ResumeBuilderPage() {
                 onChange={(e) => setSelectedTemplate(e.target.value)}
                 className="border rounded px-3 py-2 text-sm"
               >
-                <option value="modern">Modern</option>
-                <option value="classic">Classic</option>
-                <option value="minimal">Minimal</option>
-                <option value="creative">Creative</option>
+                <option value="modern">{i18n.t('auto_modern')}</option>
+                <option value="classic">{i18n.t('auto_classic')}</option>
+                <option value="minimal">{i18n.t('auto_minimal')}</option>
+                <option value="creative">{i18n.t('auto_creative')}</option>
               </select>
             </div>
 
@@ -1764,9 +1757,7 @@ export default function ResumeBuilderPage() {
                     variant="outline"
                     className="gap-2"
                     disabled={loading}
-                  >
-                    New
-                  </Button>
+                  >{i18n.t('auto_new')}</Button>
 
                   <Button
                     onClick={handleSaveResume}
@@ -1804,15 +1795,13 @@ export default function ResumeBuilderPage() {
           <Card className="border-l-4 border-l-cyan-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-cyan-600" />
-                Personal Information
-              </CardTitle>
+                <FileText className="h-5 w-5 text-cyan-600" />{i18n.t('auto_personal_information')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid grid-cols-3 gap-2">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First name</Label>
+                    <Label htmlFor="firstName">{i18n.t('auto_first_name_2')}</Label>
                     <Input
                       id="firstName"
                       value={resumeData.personalInfo.first_name}
@@ -1820,11 +1809,11 @@ export default function ResumeBuilderPage() {
                         ...prev,
                         personalInfo: { ...prev.personalInfo, first_name: e.target.value }
                       }))}
-                      placeholder="First"
+                      placeholder={i18n.t('auto_first')} 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="secondName">Second name</Label>
+                    <Label htmlFor="secondName">{i18n.t('auto_second_name_1')}</Label>
                     <Input
                       id="secondName"
                       value={resumeData.personalInfo.second_name}
@@ -1832,11 +1821,11 @@ export default function ResumeBuilderPage() {
                         ...prev,
                         personalInfo: { ...prev.personalInfo, second_name: e.target.value }
                       }))}
-                      placeholder="Second"
+                      placeholder={i18n.t('auto_second')} 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Family name</Label>
+                    <Label htmlFor="lastName">{i18n.t('auto_family_name')}</Label>
                     <Input
                       id="lastName"
                       value={resumeData.personalInfo.last_name}
@@ -1844,7 +1833,7 @@ export default function ResumeBuilderPage() {
                         ...prev,
                         personalInfo: { ...prev.personalInfo, last_name: e.target.value }
                       }))}
-                      placeholder="Family"
+                      placeholder={i18n.t('auto_family')} 
                     />
                   </div>
                 </div>
@@ -1858,11 +1847,11 @@ export default function ResumeBuilderPage() {
                       ...prev,
                       personalInfo: { ...prev.personalInfo, email: e.target.value }
                     }))}
-                    placeholder="john@example.com"
+                    placeholder={i18n.t('auto_john_example_com')} 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone">{i18n.t('auto_phone')}</Label>
                   <Input
                     id="phone"
                     value={resumeData.personalInfo.phone}
@@ -1870,11 +1859,11 @@ export default function ResumeBuilderPage() {
                       ...prev,
                       personalInfo: { ...prev.personalInfo, phone: e.target.value }
                     }))}
-                    placeholder="+1 234 567 8900"
+                    placeholder={i18n.t('auto_1_234_567_8900')} 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location">{i18n.t('auto_location')}</Label>
                   <Input
                     id="location"
                     value={resumeData.personalInfo.location}
@@ -1882,11 +1871,11 @@ export default function ResumeBuilderPage() {
                       ...prev,
                       personalInfo: { ...prev.personalInfo, location: e.target.value }
                     }))}
-                    placeholder="City, Country"
+                    placeholder={i18n.t('auto_city_country')} 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="linkedin">LinkedIn</Label>
+                  <Label htmlFor="linkedin">{i18n.t('auto_linkedin')}</Label>
                   <Input
                     id="linkedin"
                     value={resumeData.personalInfo.linkedin}
@@ -1894,7 +1883,7 @@ export default function ResumeBuilderPage() {
                       ...prev,
                       personalInfo: { ...prev.personalInfo, linkedin: e.target.value }
                     }))}
-                    placeholder="linkedin.com/in/yourprofile"
+                    placeholder={i18n.t('auto_linkedin_com_in_yourprofile')} 
                   />
                 </div>
                 <div className="space-y-2">
@@ -1906,7 +1895,7 @@ export default function ResumeBuilderPage() {
                       ...prev,
                       personalInfo: { ...prev.personalInfo, website: e.target.value }
                     }))}
-                    placeholder="www.yourwebsite.com"
+                    placeholder={i18n.t('auto_www_yourwebsite_com')} 
                   />
                 </div>
               </div>
@@ -1916,16 +1905,14 @@ export default function ResumeBuilderPage() {
           {/* Professional Summary */}
           <Card className="border-l-4 border-l-purple-500">
             <CardHeader>
-              <CardTitle>Professional Summary</CardTitle>
-              <CardDescription>
-                Write a brief overview of your professional background
-              </CardDescription>
+              <CardTitle>{i18n.t('auto_professional_summary')}</CardTitle>
+              <CardDescription>{i18n.t('auto_write_a_brief_overview_of_your_professio')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
                 value={resumeData.summary}
                 onChange={(e) => setResumeData(prev => ({ ...prev, summary: e.target.value }))}
-                placeholder="Experienced professional with..."
+                placeholder={i18n.t('auto_experienced_professional_with')} 
                 rows={5}
               />
             </CardContent>
@@ -1936,13 +1923,9 @@ export default function ResumeBuilderPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-cyan-600" />
-                  Work Experience
-                </div>
+                  <Briefcase className="h-5 w-5 text-cyan-600" />{i18n.t('auto_work_experience')}</div>
                 <Button onClick={handleAddExperience} size="sm" variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Experience
-                </Button>
+                  <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_experience')}</Button>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1969,7 +1952,7 @@ export default function ResumeBuilderPage() {
                           <Input
                             value={exp.title}
                             onChange={(e) => handleExperienceChange(index, 'title', e.target.value)}
-                            placeholder="Software Engineer"
+                            placeholder={i18n.t('auto_software_engineer')} 
                           />
                         </div>
                         <div className="space-y-2">
@@ -1977,19 +1960,19 @@ export default function ResumeBuilderPage() {
                           <Input
                             value={exp.company}
                             onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                            placeholder="Tech Corp"
+                            placeholder={i18n.t('auto_tech_corp')} 
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Location</Label>
+                          <Label>{i18n.t('auto_location')}</Label>
                           <Input
                             value={exp.location}
                             onChange={(e) => handleExperienceChange(index, 'location', e.target.value)}
-                            placeholder="New York, NY"
+                            placeholder={i18n.t('auto_new_york_ny')} 
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Start Date</Label>
+                          <Label>{i18n.t('auto_start_date')}</Label>
                           <Input
                             type="month"
                             value={exp.startDate}
@@ -1997,7 +1980,7 @@ export default function ResumeBuilderPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>End Date</Label>
+                          <Label>{i18n.t('auto_end_date')}</Label>
                           <Input
                             type="month"
                             value={exp.endDate}
@@ -2013,15 +1996,15 @@ export default function ResumeBuilderPage() {
                             onChange={(e) => handleExperienceChange(index, 'current', e.target.checked)}
                             className="rounded border-gray-300"
                           />
-                          <Label htmlFor={`current-${index}`}>I currently work here</Label>
+                          <Label htmlFor={`current-${index}`}>{i18n.t('auto_i_currently_work_here')}</Label>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label>Description</Label>
+                        <Label>{i18n.t('auto_description')}</Label>
                         <Textarea
                           value={exp.description}
                           onChange={(e) => handleExperienceChange(index, 'description', e.target.value)}
-                          placeholder="Describe your responsibilities and achievements..."
+                          placeholder={i18n.t('auto_describe_your_responsibilities_and_achie')} 
                           rows={4}
                         />
                       </div>
@@ -2030,9 +2013,7 @@ export default function ResumeBuilderPage() {
                         variant="destructive"
                         size="sm"
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Remove
-                      </Button>
+                        <Trash2 className="h-4 w-4 mr-2" />{i18n.t('auto_remove')}</Button>
                     </AccordionContent>
                       </div>
                     </AccordionItem>
@@ -2052,17 +2033,13 @@ export default function ResumeBuilderPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
-                  Education
-                </div>
+                  <GraduationCap className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />{i18n.t('auto_education')}</div>
                 <Button onClick={handleAddEducation} size="sm" variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Education
-                </Button>
+                  <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add_education')}</Button>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                  {resumeData.education.length > 0 ? (
+                  {resumeData.education.length > 0 && (
                     <Accordion type="single" collapsible value={openEdu} onValueChange={setOpenEdu}>
                       {resumeData.education.map((edu, index) => (
                         <AccordionItem key={index} value={`edu-${index}`}>
@@ -2085,7 +2062,7 @@ export default function ResumeBuilderPage() {
                                   <Input
                                     value={edu.degree}
                                     onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                                    placeholder="Bachelor of Science"
+                                    placeholder={i18n.t('auto_bachelor_of_science')} 
                                   />
                                 </div>
                                 <div className="space-y-2">
@@ -2093,50 +2070,50 @@ export default function ResumeBuilderPage() {
                                   <Input
                                     value={edu.institution}
                                     onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
-                                    placeholder="University Name"
+                                    placeholder={i18n.t('auto_university_name')} 
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label>Location</Label>
+                                  <Label>{i18n.t('auto_location')}</Label>
                                   <Input
                                     value={edu.location}
                                     onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
-                                    placeholder="City, Country"
+                                    placeholder={i18n.t('auto_city_country')} 
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label>Start Year</Label>
+                                  <Label>{i18n.t('auto_start_year')}</Label>
                                   <Input
                                     type="number"
                                     value={edu.startYear}
                                     onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
-                                    placeholder="2018"
+                                    placeholder={i18n.t('auto_2018')} 
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label>End Year</Label>
+                                  <Label>{i18n.t('auto_end_year')}</Label>
                                   <Input
                                     type="number"
                                     value={edu.endYear}
                                     onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
-                                    placeholder="2022"
+                                    placeholder={i18n.t('auto_2022')} 
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label>GPA (Optional)</Label>
+                                  <Label>{i18n.t('auto_gpa_optional')}</Label>
                                   <Input
                                     value={edu.gpa}
                                     onChange={(e) => handleEducationChange(index, 'gpa', e.target.value)}
-                                    placeholder="3.8/4.0"
+                                    placeholder={i18n.t('auto_3_8_4_0')} 
                                   />
                                 </div>
                               </div>
                               <div className="space-y-2">
-                                <Label>Additional Details</Label>
+                                <Label>{i18n.t('auto_additional_details')}</Label>
                                 <Textarea
                                   value={edu.description}
                                   onChange={(e) => handleEducationChange(index, 'description', e.target.value)}
-                                  placeholder="Relevant coursework, honors, etc..."
+                                  placeholder={i18n.t('auto_relevant_coursework_honors_etc')} 
                                   rows={3}
                                 />
                               </div>
@@ -2145,15 +2122,13 @@ export default function ResumeBuilderPage() {
                                 variant="destructive"
                                 size="sm"
                               >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Remove
-                              </Button>
+                                <Trash2 className="h-4 w-4 mr-2" />{i18n.t('auto_remove')}</Button>
                             </AccordionContent>
                           </div>
                         </AccordionItem>
                       ))}
                     </Accordion>
-                  ) : null}
+                  )}
             </CardContent>
           </Card>
 
@@ -2161,9 +2136,7 @@ export default function ResumeBuilderPage() {
           <Card className="border-l-4 border-l-cyan-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-cyan-600" />
-                Skills
-              </CardTitle>
+                <Award className="h-5 w-5 text-cyan-600" />{i18n.t('auto_skills_1')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2 items-center">
@@ -2172,12 +2145,12 @@ export default function ResumeBuilderPage() {
                   value={skillCategoryFilter}
                   onChange={(e) => setSkillCategoryFilter(e.target.value)}
                   className="border rounded px-2 py-1 text-sm"
-                  aria-label="Filter skills by category"
+                  aria-label={i18n.t('auto_filter_skills_by_category')} 
                   disabled={availableSkillCategories.length === 0}
                 >
-                  <option value="">All categories</option>
+                  <option value="">{i18n.t('auto_all_categories_1')}</option>
                   {availableSkillCategories.length === 0 ? (
-                    <option value="" disabled>— no categories —</option>
+                    <option value="" disabled>{i18n.t('auto_no_categories')}</option>
                   ) : (
                     availableSkillCategories.map((c, i) => <option key={i} value={c}>{c}</option>)
                   )}
@@ -2213,7 +2186,7 @@ export default function ResumeBuilderPage() {
                           onClick={() => { setSkillTypeFilter(''); setTypeDropdownOpen(false); }}
                           className={`text-left px-3 py-2 hover:bg-gray-50 ${skillTypeFilter === '' ? 'bg-gray-100' : ''} text-xs`}
                         >
-                          <span className="text-xs">All types</span>
+                          <span className="text-xs">{i18n.t('auto_all_types')}</span>
                         </button>
                         {allSkillTypes.map((t, i) => {
                           const Icon = getTypeIcon(t);
@@ -2246,10 +2219,10 @@ export default function ResumeBuilderPage() {
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
                     className="border rounded px-3 py-1 text-sm"
-                    aria-label="Select a skill"
+                    aria-label={i18n.t('auto_select_a_skill')} 
                     disabled={fetchingSkills || !Array.isArray(availableSkills) || availableSkills.length === 0}
                   >
-                    <option value="">Select a skill</option>
+                    <option value="">{i18n.t('auto_select_a_skill')}</option>
                     {Array.isArray(availableSkills) ? availableSkills
                       .filter(s => {
                         // exclude already-added skills by name
@@ -2299,9 +2272,7 @@ export default function ResumeBuilderPage() {
                   </Button>
                 </div>
                 <Button size="sm" onClick={() => { if (skillInput) { handleAddSkill(skillInput); setSkillInput(''); } }}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add
-                </Button>
+                  <Plus className="h-4 w-4 mr-2" />{i18n.t('auto_add')}</Button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {Array.isArray(resumeData.skills) && resumeData.skills.map((skill, index) => {
@@ -2327,9 +2298,7 @@ export default function ResumeBuilderPage() {
                 </div>
               )}
               {resumeData.skills.length === 0 && (
-                <div className="text-center py-4 text-muted-foreground text-sm">
-                  No skills added yet. Type a skill above and press Enter.
-                </div>
+                <div className="text-center py-4 text-muted-foreground text-sm">{i18n.t('auto_no_skills_added_yet_type_a_skill_above_a')}</div>
               )}
             </CardContent>
           </Card>
@@ -2340,9 +2309,7 @@ export default function ResumeBuilderPage() {
           <Card className="border-l-4 border-l-purple-500">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Upload className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />
-                Upload Existing CV
-              </CardTitle>
+                <Upload className="h-5 w-5 ${themeColors.iconBackgrounds.primary.split(' ')[1]}" />{i18n.t('auto_upload_existing_cv')}</CardTitle>
               <CardDescription>
                 Upload your CV and we'll extract the information automatically
               </CardDescription>
@@ -2388,9 +2355,7 @@ export default function ResumeBuilderPage() {
                           e.preventDefault();
                           try { if (fileInputRef && fileInputRef.current) { fileInputRef.current.value = ''; fileInputRef.current.click(); } } catch (err) { console.warn('file input click failed', err); }
                         }}
-                      >
-                        Choose File
-                      </Button>
+                      >{i18n.t('auto_choose_file')}</Button>
                     )}
                   </div>
                 </label>
@@ -2412,7 +2377,7 @@ export default function ResumeBuilderPage() {
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
-                  <Badge variant="secondary">Uploaded</Badge>
+                  <Badge variant="secondary">{i18n.t('auto_uploaded')}</Badge>
                 </div>
               )}
             </CardContent>
@@ -2439,18 +2404,14 @@ export default function ResumeBuilderPage() {
                         className="flex-1"
                         onClick={() => handlePreviewSaved(resume)}
                       >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View
-                      </Button>
+                        <Eye className="h-4 w-4 mr-2" />{i18n.t('auto_view')}</Button>
                       <Button 
                         variant="outline" 
                         size="sm" 
                         className="flex-1"
                         onClick={() => handleEditResume(resume)}
                       >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
+                        <Edit className="h-4 w-4 mr-2" />{i18n.t('auto_edit')}</Button>
                     </div>
                     <div className="flex gap-2">
                       <Button 
@@ -2459,18 +2420,14 @@ export default function ResumeBuilderPage() {
                         className="flex-1"
                         onClick={() => handleDownloadSaved(resume)}
                       >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </Button>
+                        <Download className="h-4 w-4 mr-2" />{i18n.t('auto_download')}</Button>
                       <Button 
                         variant="destructive" 
                         size="sm" 
                         className="flex-1"
                         onClick={() => handleDeleteResume(resume)}
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </Button>
+                        <Trash2 className="h-4 w-4 mr-2" />{i18n.t('auto_delete')}</Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -2479,16 +2436,12 @@ export default function ResumeBuilderPage() {
               <Card className="col-span-full text-center py-12">
                 <CardContent>
                   <FileText className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No saved resumes</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Create and save your first resume to get started
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2">{i18n.t('auto_no_saved_resumes')}</h3>
+                  <p className="text-muted-foreground mb-4">{i18n.t('auto_create_and_save_your_first_resume_to_get')}</p>
                   <Button 
                     onClick={() => setActiveTab('build')}
                     className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                  >
-                    Build Resume
-                  </Button>
+                  >{i18n.t('auto_build_resume')}</Button>
                 </CardContent>
               </Card>
             )}
@@ -2500,7 +2453,7 @@ export default function ResumeBuilderPage() {
       <Dialog open={extractionDialogOpen} onOpenChange={setExtractionDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>CV Extraction Results</DialogTitle>
+            <DialogTitle>{i18n.t('auto_cv_extraction_results')}</DialogTitle>
             <DialogDescription>
               Review and edit the extracted information. Changes apply only when you confirm.
             </DialogDescription>
@@ -2510,7 +2463,7 @@ export default function ResumeBuilderPage() {
             <div className="space-y-8">
               {/* Extraction Summary */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-sm text-blue-900 mb-2">Extraction Summary</h4>
+                <h4 className="font-semibold text-sm text-blue-900 mb-2">{i18n.t('auto_extraction_summary')}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-blue-600" />
@@ -2551,8 +2504,8 @@ export default function ResumeBuilderPage() {
                 <div className="mt-3 text-xs text-blue-700 bg-blue-100 border border-blue-300 rounded p-2">
                   💡 <strong>Tips:</strong>
                   <ul className="list-disc ml-4 mt-1 space-y-1">
-                    <li>Fields marked with <span className="text-red-600">*</span> are required (Title for Experience, Degree & Institution for Education)</li>
-                    <li>Dates must be in <code className="bg-white px-1 py-0.5 rounded">YYYY-MM</code> format (e.g., 2020-01)</li>
+                    <li>{i18n.t('auto_fields_marked_with')}<span className="text-red-600">*</span> are required (Title for Experience, Degree & Institution for Education)</li>
+                    <li>{i18n.t('auto_dates_must_be_in')}<code className="bg-white px-1 py-0.5 rounded">{i18n.t('auto_yyyy_mm')}</code>{i18n.t('auto_format_e_g_2020_01')}</li>
                     <li>Required fields with 🟠 light red borders must be filled before syncing to profile</li>
                     <li>Date fields with 🟡 amber borders need format correction</li>
                     <li>Company name is optional - leave blank if self-employed or not applicable</li>
@@ -2563,55 +2516,54 @@ export default function ResumeBuilderPage() {
               {/* Editable Personal Info */}
               <section className="space-y-4">
                 <h3 className="font-semibold text-lg flex items-center gap-2">
-                  <FileText className="h-5 w-5" /> Personal Information
-                </h3>
+                  <FileText className="h-5 w-5" />{i18n.t('auto_personal_information')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     value={extractionWorkingCopy.personalInfo.first_name}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, first_name: e.target.value } }))}
-                    placeholder="First name"
+                    placeholder={i18n.t('auto_first_name_2')} 
                   />
                   <Input
                     value={extractionWorkingCopy.personalInfo.second_name}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, second_name: e.target.value } }))}
-                    placeholder="Second name"
+                    placeholder={i18n.t('auto_second_name_1')} 
                   />
                   <Input
                     value={extractionWorkingCopy.personalInfo.last_name}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, last_name: e.target.value } }))}
-                    placeholder="Family name"
+                    placeholder={i18n.t('auto_family_name')} 
                   />
                   <Input
                     type="email"
                     value={extractionWorkingCopy.personalInfo.email}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, email: e.target.value } }))}
-                    placeholder="Email"
+                    placeholder={i18n.t('auto_email')} 
                   />
                   <Input
                     value={extractionWorkingCopy.personalInfo.phone}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, phone: e.target.value } }))}
-                    placeholder="Phone"
+                    placeholder={i18n.t('auto_phone')} 
                   />
                   <Input
                     value={extractionWorkingCopy.personalInfo.location}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, location: e.target.value } }))}
-                    placeholder="Location"
+                    placeholder={i18n.t('auto_location')} 
                   />
                   <Input
                     value={extractionWorkingCopy.personalInfo.linkedin}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, linkedin: e.target.value } }))}
-                    placeholder="LinkedIn"
+                    placeholder={i18n.t('auto_linkedin')} 
                   />
                   <Input
                     value={extractionWorkingCopy.personalInfo.website}
                     onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, personalInfo: { ...w.personalInfo, website: e.target.value } }))}
-                    placeholder="Website"
+                    placeholder={i18n.t('auto_website')} 
                   />
                 </div>
                 <Textarea
                   value={extractionWorkingCopy.summary}
                   onChange={(e) => setExtractionWorkingCopy(w => ({ ...w, summary: e.target.value }))}
-                  placeholder="Professional summary"
+                  placeholder={i18n.t('auto_professional_summary_1')} 
                   rows={4}
                 />
               </section>
@@ -2619,10 +2571,9 @@ export default function ResumeBuilderPage() {
               {/* Editable Experiences */}
               <section className="space-y-4">
                 <h3 className="font-semibold text-lg flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" /> Experience
-                </h3>
+                  <Briefcase className="h-5 w-5" />{i18n.t('auto_experience')}</h3>
                 {extractionWorkingCopy.experiences.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No experiences extracted.</p>
+                  <p className="text-sm text-muted-foreground">{i18n.t('auto_no_experiences_extracted')}</p>
                 )}
                 <div className="space-y-4">
                   {extractionWorkingCopy.experiences.map((exp, idx) => (
@@ -2631,7 +2582,7 @@ export default function ResumeBuilderPage() {
                         <div className="space-y-1">
                           <Input 
                             value={exp.title} 
-                            placeholder="Title *" 
+                            placeholder={i18n.t('auto_title_2')}  
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], title:e.target.value}; return { ...w, experiences: arr }; })}
                             className={!exp.title?.trim() ? 'border-red-400' : ''}
                           />
@@ -2642,17 +2593,17 @@ export default function ResumeBuilderPage() {
                         <div className="space-y-1">
                           <Input 
                             value={exp.company} 
-                            placeholder="Company" 
+                            placeholder={i18n.t('auto_company')}  
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], company:e.target.value}; return { ...w, experiences: arr }; })}
                           />
                         </div>
-                        <Input value={exp.location} placeholder="Location" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, experiences: arr }; })} />
+                        <Input value={exp.location} placeholder={i18n.t('auto_location')}  onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, experiences: arr }; })} />
                         <div className="space-y-1">
                           <Input 
                             type="month" 
                             value={exp.startDate} 
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], startDate:e.target.value}; return { ...w, experiences: arr }; })}
-                            title="Format: YYYY-MM (e.g., 2020-01 for January 2020)"
+                            title={i18n.t('auto_format_yyyy_mm_e_g_2020_01_for_january_2')} 
                             className={!exp.startDate || !/^\d{4}-\d{2}$/.test(exp.startDate) ? 'border-amber-400' : ''}
                           />
                           {exp.startDate && !/^\d{4}-\d{2}$/.test(exp.startDate) && (
@@ -2665,7 +2616,7 @@ export default function ResumeBuilderPage() {
                             value={exp.endDate} 
                             disabled={exp.current} 
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], endDate:e.target.value}; return { ...w, experiences: arr }; })}
-                            title="Format: YYYY-MM (e.g., 2023-12 for December 2023)"
+                            title={i18n.t('auto_format_yyyy_mm_e_g_2023_12_for_december_')} 
                             className={!exp.current && exp.endDate && !/^\d{4}-\d{2}$/.test(exp.endDate) ? 'border-amber-400' : ''}
                           />
                           {!exp.current && exp.endDate && !/^\d{4}-\d{2}$/.test(exp.endDate) && (
@@ -2674,10 +2625,10 @@ export default function ResumeBuilderPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <input type="checkbox" checked={exp.current} onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], current:e.target.checked}; return { ...w, experiences: arr }; })} />
-                          <span className="text-xs">Current</span>
+                          <span className="text-xs">{i18n.t('auto_current')}</span>
                         </div>
                       </div>
-                      <Textarea value={exp.description} rows={3} placeholder="Description" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, experiences: arr }; })} />
+                      <Textarea value={exp.description} rows={3} placeholder={i18n.t('auto_description')}  onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.experiences]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, experiences: arr }; })} />
                     </div>
                   ))}
                 </div>
@@ -2686,10 +2637,9 @@ export default function ResumeBuilderPage() {
               {/* Editable Education */}
               <section className="space-y-4">
                 <h3 className="font-semibold text-lg flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5" /> Education
-                </h3>
+                  <GraduationCap className="h-5 w-5" />{i18n.t('auto_education')}</h3>
                 {extractionWorkingCopy.education.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No education entries extracted.</p>
+                  <p className="text-sm text-muted-foreground">{i18n.t('auto_no_education_entries_extracted')}</p>
                 )}
                 <div className="space-y-4">
                   {extractionWorkingCopy.education.map((ed, idx) => (
@@ -2698,7 +2648,7 @@ export default function ResumeBuilderPage() {
                         <div className="space-y-1">
                           <Input 
                             value={ed.degree} 
-                            placeholder="Degree *" 
+                            placeholder={i18n.t('auto_degree_1')}  
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], degree:e.target.value}; return { ...w, education: arr }; })}
                             className={!ed.degree?.trim() ? 'border-red-400' : ''}
                           />
@@ -2709,7 +2659,7 @@ export default function ResumeBuilderPage() {
                         <div className="space-y-1">
                           <Input 
                             value={ed.institution} 
-                            placeholder="Institution *" 
+                            placeholder={i18n.t('auto_institution_1')}  
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], institution:e.target.value}; return { ...w, education: arr }; })}
                             className={!ed.institution?.trim() ? 'border-red-400' : ''}
                           />
@@ -2717,13 +2667,13 @@ export default function ResumeBuilderPage() {
                             <p className="text-xs text-red-600">⚠️ Institution is required</p>
                           )}
                         </div>
-                        <Input value={ed.location} placeholder="Location" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.location} placeholder={i18n.t('auto_location')}  onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], location:e.target.value}; return { ...w, education: arr }; })} />
                         <div className="space-y-1">
                           <Input 
                             value={ed.startYear} 
-                            placeholder="Start Year/Date (YYYY-MM or YYYY)" 
+                            placeholder={i18n.t('auto_start_year_date_yyyy_mm_or_yyyy')}  
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], startYear:e.target.value}; return { ...w, education: arr }; })}
-                            title="Format: YYYY-MM (e.g., 2015-09) or YYYY (e.g., 2015)"
+                            title={i18n.t('auto_format_yyyy_mm_e_g_2015_09_or_yyyy_e_g_2')} 
                             className={ed.startYear && !/^\d{4}(-\d{2})?$/.test(ed.startYear) ? 'border-amber-400' : ''}
                           />
                           {ed.startYear && !/^\d{4}(-\d{2})?$/.test(ed.startYear) && (
@@ -2733,18 +2683,18 @@ export default function ResumeBuilderPage() {
                         <div className="space-y-1">
                           <Input 
                             value={ed.endYear} 
-                            placeholder="End/Grad Year/Date (YYYY-MM or YYYY)" 
+                            placeholder={i18n.t('auto_end_grad_year_date_yyyy_mm_or_yyyy')}  
                             onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], endYear:e.target.value}; return { ...w, education: arr }; })}
-                            title="Format: YYYY-MM (e.g., 2019-06) or YYYY (e.g., 2019)"
+                            title={i18n.t('auto_format_yyyy_mm_e_g_2019_06_or_yyyy_e_g_2')} 
                             className={ed.endYear && !/^\d{4}(-\d{2})?$/.test(ed.endYear) ? 'border-amber-400' : ''}
                           />
                           {ed.endYear && !/^\d{4}(-\d{2})?$/.test(ed.endYear) && (
                             <p className="text-xs text-amber-600">⚠️ Use YYYY-MM or YYYY format</p>
                           )}
                         </div>
-                        <Input value={ed.gpa} placeholder="GPA" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], gpa:e.target.value}; return { ...w, education: arr }; })} />
+                        <Input value={ed.gpa} placeholder={i18n.t('auto_gpa')}  onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], gpa:e.target.value}; return { ...w, education: arr }; })} />
                       </div>
-                      <Textarea value={ed.description} rows={3} placeholder="Description" onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, education: arr }; })} />
+                      <Textarea value={ed.description} rows={3} placeholder={i18n.t('auto_description')}  onChange={(e) => setExtractionWorkingCopy(w => { const arr=[...w.education]; arr[idx]={...arr[idx], description:e.target.value}; return { ...w, education: arr }; })} />
                     </div>
                   ))}
                 </div>
@@ -2753,19 +2703,18 @@ export default function ResumeBuilderPage() {
               {/* Editable Skills */}
               <section className="space-y-4">
                 <h3 className="font-semibold text-lg flex items-center gap-2">
-                  <Award className="h-5 w-5" /> Skills
-                </h3>
+                  <Award className="h-5 w-5" />{i18n.t('auto_skills_1')}</h3>
                 <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-800">
                   <strong>Skill Validation:</strong> Skills highlighted in amber don't exist in the database and won't be synced to your profile (but will appear in the generated resume).
                 </div>
                 <div className="flex gap-2">
                   <Input
                     value={extractionSkillInput}
-                    placeholder="Add skill"
+                    placeholder={i18n.t('auto_add_skill')} 
                     onChange={(e) => setExtractionSkillInput(e.target.value)}
                     className="flex-1"
                   />
-                  <Button size="sm" onClick={() => { if (extractionSkillInput.trim()) { setExtractionWorkingCopy(w => ({ ...w, skills: [...w.skills, extractionSkillInput.trim()] })); setExtractionSkillInput(''); } }}>Add</Button>
+                  <Button size="sm" onClick={() => { if (extractionSkillInput.trim()) { setExtractionWorkingCopy(w => ({ ...w, skills: [...w.skills, extractionSkillInput.trim()] })); setExtractionSkillInput(''); } }}>{i18n.t('auto_add')}</Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {extractionWorkingCopy.skills.map((sk, i) => {
@@ -2780,7 +2729,7 @@ export default function ResumeBuilderPage() {
                         className={`gap-2 ${!isValid ? 'border-amber-400 bg-amber-50 text-amber-800' : ''}`}
                       >
                         {skillName}
-                        {!isValid && <span className="ml-1" title="Not in database">⚠️</span>}
+                        {!isValid && <span className="ml-1" title={i18n.t('auto_not_in_database')} >⚠️</span>}
                         <button onClick={() => setExtractionWorkingCopy(w => ({ ...w, skills: w.skills.filter((_, idx) => idx !== i) }))}>
                           <Trash2 className="h-3 w-3" />
                         </button>
@@ -2808,9 +2757,7 @@ export default function ResumeBuilderPage() {
                     variant="outline"
                     onClick={() => setExtractionDialogOpen(false)}
                     className="flex-1"
-                  >
-                    Cancel
-                  </Button>
+                  >{i18n.t('auto_cancel')}</Button>
                 </div>
                 <div className="flex gap-3">
                   <Button onClick={handlePopulateToProfile} disabled={loading} className="flex-1" variant="secondary">
@@ -2833,16 +2780,12 @@ export default function ResumeBuilderPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-600">
-              <Trash2 className="h-5 w-5" />
-              Delete Resume
-            </DialogTitle>
+              <Trash2 className="h-5 w-5" />{i18n.t('auto_delete_resume')}</DialogTitle>
             <DialogDescription className="pt-2">
               Are you sure you want to delete{' '}
               <span className="font-semibold text-foreground">
                 "{resumeToDelete?.title || 'Untitled Resume'}"
-              </span>
-              ? This action cannot be undone.
-            </DialogDescription>
+              </span>{i18n.t('auto_this_action_cannot_be_undone')}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
@@ -2852,9 +2795,7 @@ export default function ResumeBuilderPage() {
                 setResumeToDelete(null);
               }}
               disabled={isDeleting}
-            >
-              Cancel
-            </Button>
+            >{i18n.t('auto_cancel')}</Button>
             <Button
               variant="destructive"
               onClick={confirmDeleteResume}
@@ -2863,14 +2804,10 @@ export default function ResumeBuilderPage() {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
+                  <Loader2 className="h-4 w-4 animate-spin" />{i18n.t('auto_deleting')}</>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </>
+                  <Trash2 className="h-4 w-4" />{i18n.t('auto_delete')}</>
               )}
             </Button>
           </DialogFooter>
