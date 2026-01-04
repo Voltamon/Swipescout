@@ -1,10 +1,5 @@
 {
-  "routes": [
-    { "src": "/\\.gitignore", "status": 404 },
-    { "src": "/\\.git(/.*)?", "status": 404 },
-    { "src": "/\\.svn(/.*)?", "status": 404 },
-    { "src": "/\\.env", "status": 404 },
-   
-    { "src": "/(.*)", "dest": "/" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
