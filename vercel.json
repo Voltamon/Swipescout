@@ -1,5 +1,25 @@
 {
-
+  "headers": [
+    {
+      "source": "/.git/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
+    },
+    {
+      "source": "/.svn/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ]
+  ,
   
   "routes": [
     { "src": "/\\.gitignore", "status": 404 },
