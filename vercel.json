@@ -1,5 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+  "routes": [
+    { "src": "/\\.git(/.*)?", "status": 404 },
+    { "src": "/\\.svn(/.*)?", "status": 404 },
+    { "src": "/(.*)", "dest": "/" }
   ]
 }
