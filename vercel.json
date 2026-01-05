@@ -1,33 +1,20 @@
 {
-  "headers": [
+  "routes": [
     {
-      "source": "/.git/(.*)",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain"
-        }
-      ]
+      "src": "/(.*\\.git.*)",
+      "dest": "/404",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "X-Robots-Tag": "noindex, nofollow"
+      }
     },
     {
-      "source": "/.svn/(.*)",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain"
-        }
-      ]
+      "src": "/(.*\\.svn.*)",
+      "dest": "/404",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "X-Robots-Tag": "noindex, nofollow"
+      }
     }
-  ]
-  ,
-  
-  "routes": [
-    { "src": "/\\.gitignore", "status": 404 },
-    { "src": "/\\.git(/.*)?", "status": 404 },
-    { "src": "/\\.svn(/.*)?", "status": 404 }
-  ],
-
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
   ]
 }

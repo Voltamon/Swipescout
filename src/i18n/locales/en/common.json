@@ -39,5 +39,19 @@
   "darkMode": "Dark",
   "lightMode": "Light",
   "notifications": "Notifications",
-  "welcome": "Welcome"
-}
+  "welcome": "Welcome",
+
+  "auto_swipescout_logo": "SwipeScout logo",
+  "auto_swipescout": "SwipeScout",
+  "auto_english": "English",
+  "auto_en": "EN",
+  "auto_text_9": "Arabic",
+  "auto_ar": "Arabic",
+  "auto_text_10": "Chinese",
+  "auto_zh": "Chinese",
+
+  "auto_create_a_video_resume": "Create a video resume",
+  "auto_show_your_skills": "Show your skills",
+  "auto_employers_area": "Employers area",
+  "auto_watch_video_feeds": "Watch video feeds"
+} 

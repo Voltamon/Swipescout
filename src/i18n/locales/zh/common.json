@@ -39,5 +39,19 @@
   "darkMode": "深色模式",
   "lightMode": "浅色模式",
   "notifications": "通知",
-  "welcome": "欢迎"
-}
+  "welcome": "欢迎",
+
+  "auto_swipescout_logo": "SwipeScout 徽标",
+  "auto_swipescout": "SwipeScout",
+  "auto_english": "英语",
+  "auto_en": "EN",
+  "auto_text_9": "阿拉伯语",
+  "auto_ar": "阿拉伯语",
+  "auto_text_10": "中文",
+  "auto_zh": "中文",
+
+  "auto_create_a_video_resume": "创建视频简历",
+  "auto_show_your_skills": "展示你的技能",
+  "auto_employers_area": "雇主区",
+  "auto_watch_video_feeds": "观看视频动态"
+} 

@@ -39,5 +39,19 @@
   "darkMode": "الوضع الداكن",
   "lightMode": "الوضع الفاتح",
   "notifications": "الإشعارات",
-  "welcome": "أهلاً بك"
-}
+  "welcome": "أهلاً بك",
+
+  "auto_swipescout_logo": "شعار SwipeScout",
+  "auto_swipescout": "SwipeScout",
+  "auto_english": "الإنجليزية",
+  "auto_en": "EN",
+  "auto_text_9": "العربية",
+  "auto_ar": "العربية",
+  "auto_text_10": "الصينية",
+  "auto_zh": "الصينية",
+
+  "auto_create_a_video_resume": "إنشاء سيرة ذاتية بالفيديو",
+  "auto_show_your_skills": "اعرض مهاراتك",
+  "auto_employers_area": "منطقة أصحاب العمل",
+  "auto_watch_video_feeds": "مشاهدة خلاصات الفيديو"
+} 
