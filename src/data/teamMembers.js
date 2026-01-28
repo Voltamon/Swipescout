@@ -40,8 +40,8 @@ export const teamMembers = [
         size: "normal"
     },
     {
-        id: "yuki-solvee",
-        name: "Yuki Solvee",
+        id: "yuki-sovlee",
+        name: "Yuki Sovlee",
         role: "COO",
         image: "/members/yuki.webp",
         bio: "Operational excellence and cross-functional leadership.",
