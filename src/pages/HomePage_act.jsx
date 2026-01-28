@@ -8,7 +8,7 @@ import {
   Typography,
   Button,
   Card,
-  
+
   CardMedia,
   CardContent,
   Avatar,
@@ -20,10 +20,10 @@ import {
   Alert,
   TextField,
   InputAdornment,
-  Stack,Paper,
+  Stack, Paper,
   Fade,
   Zoom,
-  Slide,Chip,
+  Slide, Chip,
   useTheme
 } from "@mui/material";
 import {
@@ -53,55 +53,56 @@ import VolumeOff from "@mui/icons-material/VolumeOff";
 import { useAuth } from "../hooks/useAuth";
 import { AlertCircle as AlertCircleIcon } from "lucide-react";
 import { bold } from "@cloudinary/url-gen/qualifiers/fontWeight";
+import FloatingLines from "./Teams/FloatingLines";
 
 
 const stats = [
-    { number: "50K+", label: "Active Users", icon: <People /> },
-    { number: "15K+", label: "Successful Hires", icon: <Work /> },
-    { number: "2.5M+", label: "Video Views", icon: <PlayCircle /> },
-    { number: "95%", label: "Satisfaction Rate", icon: <Star /> }
+  { number: "50K+", label: "Active Users", icon: <People /> },
+  { number: "15K+", label: "Successful Hires", icon: <Work /> },
+  { number: "2.5M+", label: "Video Views", icon: <PlayCircle /> },
+  { number: "95%", label: "Satisfaction Rate", icon: <Star /> }
 ];
 
 const VideoShowcase = styled(Box)(({ theme }) => ({
-    position: 'relative',
-    borderRadius: '24px',
-    overflow: 'hidden',
-    boxShadow: '0 30px 60px rgba(0, 0, 0, 0.2)',
-    transform: 'perspective(1000px) rotateY(-8deg) rotateX(5deg)',
-    transition: 'all 0.6s ease',
-    '&:hover': {
-        transform: 'perspective(1000px) rotateY(-4deg) rotateX(2deg) scale(1.05)'
-    }
+  position: 'relative',
+  borderRadius: '24px',
+  overflow: 'hidden',
+  boxShadow: '0 30px 60px rgba(0, 0, 0, 0.2)',
+  transform: 'perspective(1000px) rotateY(-8deg) rotateX(5deg)',
+  transition: 'all 0.6s ease',
+  '&:hover': {
+    transform: 'perspective(1000px) rotateY(-4deg) rotateX(2deg) scale(1.05)'
+  }
 }));
 
 const FloatingCard = styled(Card)(({ theme }) => ({
-    position: 'relative',
-    zIndex: 2,
-    backdropFilter: 'blur(20px)',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: '24px',
-    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-        transform: 'translateY(-5px)',
-        boxShadow: '0 30px 80px rgba(0, 0, 0, 0.15)'
-    }
+  position: 'relative',
+  zIndex: 2,
+  backdropFilter: 'blur(20px)',
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  borderRadius: '24px',
+  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 30px 80px rgba(0, 0, 0, 0.15)'
+  }
 }));
 
 
 
 const StatsCard = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(3),
-    textAlign: 'center',
-    borderRadius: '16px',
-    background: 'linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%)',
-    border: '1px solid rgba(102, 126, 234, 0.1)',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: '0 15px 30px rgba(102, 126, 234, 0.1)'
-    }
+  padding: theme.spacing(3),
+  textAlign: 'center',
+  borderRadius: '16px',
+  background: 'linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%)',
+  border: '1px solid rgba(102, 126, 234, 0.1)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-4px)',
+    boxShadow: '0 15px 30px rgba(102, 126, 234, 0.1)'
+  }
 }));
 
 const LoginFormTitle = styled(Typography)(({ theme }) => ({
@@ -271,8 +272,8 @@ const StatusBorder = ({ status }) => (
         status === "uploading"
           ? "#f97316"
           : status === "processing"
-          ? "#3b82f6"
-          : "transparent",
+            ? "#3b82f6"
+            : "transparent",
       zIndex: 3,
     }}
   />
@@ -529,19 +530,13 @@ const HomePage = () => {
             py: { xs: 8, md: 12 },
             position: "relative",
             overflow: "hidden",
-            // Blurred background image
-            "&:before": {
-              content: '""',
+            // FloatingLines background
+            "& .floating-lines-bg": {
               position: "absolute",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundImage: `url(${VITE_BASE_URL}/public/backgrounds/meeting_room2.jpg)`, // Placeholder for meeting room image
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "blur(5px)", // Apply blur effect
-              opacity: 0.8, // Adjust opacity as needed
               zIndex: 0,
             },
             flexGrow: 1, // Allow hero section to grow and push footer down
@@ -549,44 +544,58 @@ const HomePage = () => {
             alignItems: 'center', // Center content vertically
           }}
         >
+          {/* Floating Lines Background */}
+          <Box className="floating-lines-bg">
+            <FloatingLines
+              enabledWaves={["bottom"]}
+              lineCount={20}
+              lineDistance={100}
+              bendRadius={20}
+              bendStrength={0}
+              interactive={true}
+              parallax={true}
+            />
+          </Box>
           <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
             <Grid container spacing={6} alignItems="center">
               <Grid item xs={12} md={6}>
-                  <Chip sx={{ backgroundColor: 'rgba(66, 81, 107, 0.2)', color: 'white' , mt:-6,
-                                                             backdropFilter: 'blur(10px)',
-                                                             border: '1px solid rgba(255, 255, 255, 0.3) '}}
-                                                         label={i18n.t('auto_ai_powered_recruitment_platform')} 
-                                                        
-                                                     />
-                                                     <Typography
-                                                         variant="h1"
-                                                         sx={{
-                                                             fontWeight: 800,
-                                                             mb: 3,
-                                                             fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
-                                                             lineHeight: 1.1,
-                                                             color: 'white',
-                                                             textShadow: '0 4px 20px rgba(0,0,0,0.3)'
-                                                         }}
-                                                     >{i18n.t('auto_the_future_of')}<Box component="span" sx={{ 
-                                                             background: 'linear-gradient(45deg, #FFD700, #FFA500)',
-                                                             WebkitBackgroundClip: 'text',
-                                                             WebkitTextFillColor: 'transparent',
-                                                             display: 'block'
-                                                         }}>{i18n.t('auto_video_recruitment')}</Box>
-                                                     </Typography>
-                                                     <Typography
-                                                         variant="h5"
-                                                         sx={{
-                                                             mb: 4,
-                                                             color: 'rgba(255, 255, 255, 0.9)',
-                                                             fontWeight: 400,
-                                                             maxWidth: '600px'
-                                                         }}
-                                                     >
-                                                         Connect talent with opportunities through AI-powered video matching. 
-                                                         Experience recruitment that's personal, efficient, and revolutionary.
-                                                     </Typography>
+                <Chip sx={{
+                  backgroundColor: 'rgba(66, 81, 107, 0.2)', color: 'white', mt: -6,
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3) '
+                }}
+                  label={i18n.t('auto_ai_powered_recruitment_platform')}
+
+                />
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontWeight: 800,
+                    mb: 3,
+                    fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
+                    lineHeight: 1.1,
+                    color: 'white',
+                    textShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                  }}
+                >{i18n.t('auto_the_future_of')}<Box component="span" sx={{
+                  background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: 'block'
+                }}>{i18n.t('auto_video_recruitment')}</Box>
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    mb: 4,
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontWeight: 400,
+                    maxWidth: '600px'
+                  }}
+                >
+                  Connect talent with opportunities through AI-powered video matching.
+                  Experience recruitment that's personal, efficient, and revolutionary.
+                </Typography>
                 <Box
                   sx={{
                     display: "flex",
@@ -659,7 +668,7 @@ const HomePage = () => {
                   >{i18n.t('auto_log_in_to_your_account')}</LoginFormTitle>
                   <Box component="form" onSubmit={handleEmailSignIn}>
                     <InputField
-                      label={i18n.t('auto_enter_your_email_address')} 
+                      label={i18n.t('auto_enter_your_email_address')}
                       type="email"
                       name="email"
                       value={formData.email}
@@ -669,7 +678,7 @@ const HomePage = () => {
                       size="small"
                     />
                     <InputField
-                      label={i18n.t('auto_enter_your_password')} 
+                      label={i18n.t('auto_enter_your_password')}
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
@@ -863,8 +872,8 @@ const HomePage = () => {
                   >
                     {(video.status === "uploading" ||
                       video.status === "processing") && (
-                      <StatusBorder status={video.status} />
-                    )}
+                        <StatusBorder status={video.status} />
+                      )}
                     <CardMedia
                       component="div"
                       sx={{
@@ -908,8 +917,8 @@ const HomePage = () => {
                           justifyContent: "center",
                           opacity:
                             playingVideoId === video.id ||
-                            video.status === "uploading" ||
-                            video.status === "processing"
+                              video.status === "uploading" ||
+                              video.status === "processing"
                               ? 0
                               : 1,
                           transition: "opacity 0.3s",
@@ -1003,7 +1012,7 @@ const HomePage = () => {
           </Container>
         </Box>
 
-         {/* Premium Features Section */}
+        {/* Premium Features Section */}
         <Box sx={{ background: theme.palette.background.paper, py: 8 }}>
           <Container maxWidth="lg">
             <Typography
@@ -1130,7 +1139,7 @@ const HomePage = () => {
           </Container>
         </Box>
 
-        
+
 
         {/* Call to Action Section */}
         <Box
@@ -1216,13 +1225,13 @@ const HomePage = () => {
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
               }}
             >{i18n.t('auto_get_started_free')}<Box
-                component="span"
-                sx={{
-                  ml: 1,
-                  animation: 'pulse 2s infinite',
-                  display: 'inline-block'
-                }}
-              >
+              component="span"
+              sx={{
+                ml: 1,
+                animation: 'pulse 2s infinite',
+                display: 'inline-block'
+              }}
+            >
                 â†’
               </Box>
             </Button>

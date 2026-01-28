@@ -1,12 +1,45 @@
-# React + Vite
+# SwipeScout Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SwipeScout is an AI-powered recruitment platform that aims to revolutionize the hiring process by converting resumes into engaging video profiles. Think "TikTok for Hiring".
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   **Video Resumes**: Automatically convert text resumes to video scripts and record them with a teleprompter.
+-   **Swipe Matching**: Employers swipe left/right on candidate videos.
+-   **AI Analysis**: Smart matching based on skills and personality.
+-   **Modern Landing Page**: High-conversion landing page with fluid GSAP animations.
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+-   **Frontend**: React (Vite)
+-   **Styling**: Tailwind CSS
+-   **Animations**: GSAP (GreenSock), Framer Motion
+-   **Icons**: Lucide React
+-   **State Management**: React Context (Auth, Video, Socket)
+
+## 🏃‍♂️ Getting Started
+
+1.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+2.  **Start Development Server**
+    ```bash
+    npm run dev
+    ```
+
+3.  **Build for Production**
+    ```bash
+    npm run build
+    ```
+
+## 📚 Documentation
+
+-   [Landing Page Redesign](/docs/LANDING_PAGE_REDESIGN.md)
+-   [Videos Component Hierarchy](/VIDEOS_COMPONENT_HIERARCHY.md)
+
+## 🎨 Recent Updates
+
+-   **New Landing Page**: A complete redesign of the home page (`src/pages/LandingPage`) to align with modern AI startup aesthetics.
+-   **GSAP Integration**: Added `gsap` for high-performance animations.
