@@ -125,6 +125,5 @@
   "main": "index.js",
   "repository": "https://github.com/obaidofj/SwipeScout_Frontend.git",
   "author": "obaid <obaidofj@gmail.com>",
-  "license": "MIT",
-  "packageManager": "yarn@4.9.4"
+  "license": "MIT"
 }
