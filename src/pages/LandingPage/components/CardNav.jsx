@@ -37,10 +37,7 @@ const CardNav = () => {
         <>
             {/* Desktop Floating Nav */}
             <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 hidden md:block">
-                <motion.div
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                <div
                     className="flex items-center gap-2 p-2 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]"
                 >
                     {navItems.map((item) => (
@@ -73,7 +70,7 @@ const CardNav = () => {
                     <button className="px-6 py-3 rounded-xl bg-kinetic-primary text-black text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-kinetic-primary/90 transition-colors">
                         Get Started
                     </button>
-                </motion.div>
+                </div>
             </div>
 
             {/* Mobile Top Nav */}

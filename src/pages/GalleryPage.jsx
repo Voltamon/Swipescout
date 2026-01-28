@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, ArrowUpRight, Calendar, User, Lock, X, Check } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Footer from "../components/Headers/Footer";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -174,6 +175,8 @@ const GalleryPage = () => {
     const [showUpload, setShowUpload] = useState(false);
 
     useEffect(() => {
+        document.documentElement.classList.add('dark');
+
         const ctx = gsap.context(() => {
             gsap.from(headerRef.current, {
                 opacity: 0,
@@ -280,6 +283,7 @@ const GalleryPage = () => {
                     ))}
                 </div>
             </div>
+            <Footer />
         </main>
     );
 };
