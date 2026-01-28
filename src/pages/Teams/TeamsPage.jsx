@@ -34,12 +34,12 @@ const TeamCard = ({ children, className = '', name, role, social, image, delay =
         <div className="relative z-10 h-full flex flex-col">
 
             {/* Image Section */}
-            <div className={`relative overflow-hidden ${size === 'large' ? 'h-96' : 'h-64'} w-full bg-black/50`}>
+            <div className={`relative overflow-hidden w-full bg-black/50 ${size === 'medium' ? 'h-[80%]' : 'aspect-square'}`}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80" />
                 <img
                     src={image}
                     alt={name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter grayscale group-hover:grayscale-0"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter grayscale-0 group-hover:grayscale"
                 />
 
 
@@ -129,9 +129,9 @@ const TeamsPage = () => {
                 </div>
 
                 {/* Bento Grid Layout - Builders */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(300px,auto)]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(300px,auto)]">
 
-                    {/* CEO - Large Card (2x2) */}
+                    {/* Member 0: CEO (2x2) - Top Left */}
                     <TeamCard
                         {...teamMembers[0]}
                         className="md:col-span-2 md:row-span-2 min-h-[500px]"
@@ -140,27 +140,27 @@ const TeamsPage = () => {
                         {teamMembers[0].bio}
                     </TeamCard>
 
-                    {/* CTO - Tall Card (1x2) */}
+                    {/* Member 1: CFO (1x1) - Top Right */}
                     <TeamCard
                         {...teamMembers[1]}
-                        className="md:col-span-1 md:row-span-2 min-h-[500px]"
+                        className="md:col-span-1 md:row-span-1"
                         delay={0.1}
                         onClick={() => navigate(`/teams/${teamMembers[1].id}`)}
                     >
                         {teamMembers[1].bio}
                     </TeamCard>
 
-                    {/* Head of Design - Standard (1x1) */}
+                    {/* Member 2: CTO (1x2) - Middle Right (Under CFO) */}
                     <TeamCard
                         {...teamMembers[2]}
-                        className="md:col-span-1 md:row-span-1"
+                        className="md:col-span-1 md:row-span-2"
                         delay={0.2}
                         onClick={() => navigate(`/teams/${teamMembers[2].id}`)}
                     >
                         {teamMembers[2].bio}
                     </TeamCard>
 
-                    {/* Member 3 - Lead Engineer - Standard (1x1) */}
+                    {/* Member 3: CMO (1x1) - Bottom Left */}
                     <TeamCard
                         {...teamMembers[3]}
                         className="md:col-span-1 md:row-span-1"
@@ -168,6 +168,16 @@ const TeamsPage = () => {
                         onClick={() => navigate(`/teams/${teamMembers[3].id}`)}
                     >
                         {teamMembers[3].bio}
+                    </TeamCard>
+
+                    {/* Member 4: COO (1x1) - Bottom Middle */}
+                    <TeamCard
+                        {...teamMembers[4]}
+                        className="md:col-span-1 md:row-span-1"
+                        delay={0.4}
+                        onClick={() => navigate(`/teams/${teamMembers[4].id}`)}
+                    >
+                        {teamMembers[4].bio}
                     </TeamCard>
 
                 </div>
@@ -184,7 +194,7 @@ const TeamsPage = () => {
                 {/* Network Members Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(300px,auto)]">
                     {/* Remaining Members */}
-                    {teamMembers.slice(4).map((member, i) => (
+                    {teamMembers.slice(5).map((member, i) => (
                         <TeamCard
                             key={i}
                             {...member}
