@@ -7,17 +7,35 @@ const WaitlistPage = () => {
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!email) return;
 
         setStatus('loading');
 
-        // Simulate API call
-        setTimeout(() => {
-            setStatus('success');
-            setEmail('');
-        }, 1500);
+        try {
+            const response = await fetch('/api/waitlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setStatus('success');
+                setEmail('');
+            } else {
+                console.error('Waitlist error:', data);
+                setStatus('error');
+                // You might want to show a toast or error message here
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            setStatus('error');
+        }
     };
 
     return (
