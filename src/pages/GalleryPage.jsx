@@ -283,7 +283,7 @@ const ArticleCTA = () => (
                     Candidates: Show your meaningful signal. Employers: Hire faster with video intros.
                 </p>
                 <div className="flex items-center gap-3 font-bold text-lg uppercase tracking-wider group-hover:gap-6 transition-all">
-                    Get Started <ArrowUpRight size={24} />
+                    Join Waitlist <ArrowUpRight size={24} />
                 </div>
             </div>
         </div>
@@ -452,7 +452,7 @@ const GalleryPage = () => {
                 />
             )}
 
-            <div className="container mx-auto px-6 pt-32">
+            <div className="container mx-auto px-6 pt-32 pb-28">
                 {/* Header */}
                 <div ref={headerRef} className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/10 pb-12 gap-8">
                     <div>

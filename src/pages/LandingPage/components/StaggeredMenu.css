@@ -1,0 +1,251 @@
+.staggered-menu-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.staggered-menu-wrapper[data-open="true"] {
+    pointer-events: auto;
+}
+
+/* Header / Toggle Area */
+.staggered-menu-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1002;
+    pointer-events: auto;
+    /* Allow clicking toggle even when menu closed */
+}
+
+/* Hide logo if handled elsewhere, or style it */
+.sm-logo {
+    opacity: 0;
+    /* Hidden by default if we use main app header */
+    pointer-events: none;
+}
+
+.sm-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 10px;
+    position: relative;
+    z-index: 1003;
+}
+
+.sm-toggle-textWrap {
+    overflow: hidden;
+    height: 1.2em;
+    position: relative;
+    display: inline-block;
+    line-height: 1.2;
+}
+
+.sm-toggle-textInner {
+    display: flex;
+    flex-direction: column;
+}
+
+.sm-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.sm-icon-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+    margin-top: -1px;
+}
+
+.sm-icon-line-v {
+    transform: rotate(90deg);
+}
+
+/* Panel */
+.staggered-menu-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80%;
+    /* Width 80% */
+    max-width: 400px;
+    /* Adjust for mobile/tablet */
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    /* Glassy background */
+    backdrop-filter: blur(24px);
+    /* Blur */
+    z-index: 1001;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateX(100%);
+    /* Initial state handled by GSAP */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+}
+
+.sm-panel-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Prelayers for staggered background */
+.sm-prelayers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.sm-prelayer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 400px;
+    height: 100%;
+    transform: translateX(100%);
+}
+
+/* List Items */
+.sm-panel-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sm-panel-itemWrap {
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.sm-panel-item {
+    display: block;
+    text-decoration: none;
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    transform-origin: left center;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    padding: 0;
+}
+
+.sm-panel-item:hover {
+    color: var(--sm-accent, #34D399);
+}
+
+.sm-panel-itemLabel {
+    display: block;
+}
+
+/* Numbering if enabled */
+.sm-panel-list[data-numbering] .sm-panel-item::before {
+    content: "0" attr(data-index);
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.3);
+    display: block;
+    margin-bottom: 5px;
+    opacity: var(--sm-num-opacity, 0);
+    transform: translateY(10px);
+}
+
+/* Socials */
+.sm-socials {
+    margin-top: 60px;
+}
+
+.sm-socials-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 20px;
+}
+
+.sm-socials-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.sm-socials-link {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.sm-socials-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.3s ease;
+}
+
+.sm-socials-link:hover::after {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+
+    .staggered-menu-panel,
+    .sm-prelayer {
+        width: 80%;
+        max-width: none;
+    }
+
+    .sm-panel-item {
+        font-size: 2.5rem;
+    }
+}

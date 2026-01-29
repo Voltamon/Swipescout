@@ -27,7 +27,7 @@ const AboutSwipeScout = () => {
 
             // Manifesto Strip Scroll Animation
             gsap.to(stripRef.current, {
-                xPercent: -23, // Move towards left
+                xPercent: -60, // Move towards left (Increased speed)
                 ease: "none",
                 scrollTrigger: {
                     trigger: containerRef.current,

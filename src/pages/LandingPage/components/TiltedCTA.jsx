@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 const TiltedCTA = ({
     title = "Ready to \n Revolutionize?",
     description = "Join thousands of companies and builders who are changing the way they connect.",
-    ctaText = "Get Started Now",
+    ctaText = "Join Waitlist",
     onClick
 }) => {
     const ref = useRef(null);

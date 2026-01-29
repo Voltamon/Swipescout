@@ -34,7 +34,7 @@ const TeamCard = ({ children, className = '', name, role, social, image, delay =
         <div className="relative z-10 h-full flex flex-col">
 
             {/* Image Section */}
-            <div className={`relative overflow-hidden w-full bg-black/50 ${size === 'medium' ? 'h-[80%]' : 'aspect-square'}`}>
+            <div className={`relative overflow-hidden w-full bg-black/50 aspect-square md:aspect-auto ${size === 'medium' ? 'md:h-[80%]' : 'md:aspect-square'}`}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-80" />
                 <img
                     src={image}
@@ -134,7 +134,7 @@ const TeamsPage = () => {
                     {/* Member 0: CEO (2x2) - Top Left */}
                     <TeamCard
                         {...teamMembers[0]}
-                        className="md:col-span-2 md:row-span-2 min-h-[500px]"
+                        className="md:col-span-2 md:row-span-2 md:min-h-[500px]"
                         onClick={() => navigate(`/teams/${teamMembers[0].id}`)}
                     >
                         {teamMembers[0].bio}

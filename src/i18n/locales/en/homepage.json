@@ -2,7 +2,7 @@
   "title": "SwipeScout - The Future of Video Recruitment",
   "subtitle": "Connecting talent with opportunities through engaging video profiles",
   "heroDescription": "Video resumes made fast, hiring made smarter.",
-  "getStarted": "Get Started",
+  "getStarted": "Join Waitlist",
   "learnMore": "Learn More",
   "findJobs": "Find Jobs",
   "findTalent": "Find Talent",
@@ -23,6 +23,6 @@
     "smartMatching": "Smart Matching",
     "smartMatchingDesc": "Show your skills in 15 seconds",
     "realTimeChat": "Real-time Chat",
-    "realTimeChatDesc": "Employers are already swiping" 
+    "realTimeChatDesc": "Employers are already swiping"
   }
 }

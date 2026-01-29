@@ -249,7 +249,7 @@ const ContactPage = () => {
               </a>
 
               {/* Email */}
-              <a href="mailto:hello@swipescout.com" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
+              <a href="mailto:swipescout@gmail.com" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
                 <div className="flex items-center gap-4">
                   <Mail size={24} className="text-emerald-400" />
                   <span className="text-xl font-medium text-gray-300 group-hover:text-white transition-colors">Email</span>
