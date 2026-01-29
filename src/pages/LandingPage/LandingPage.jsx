@@ -1,5 +1,6 @@
 import Footer from '@/components/Headers/Footer';
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Hero from './components/Hero';
 import BentoGrid from './components/BentoGrid';
 import HowItWorks from './components/HowItWorks';
@@ -15,6 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const LandingPage = () => {
     const dividerRef = useRef(null);
+    const navigate = useNavigate();
 
     // Force dark mode on mount and setup animations
     useEffect(() => {
@@ -77,7 +79,7 @@ const LandingPage = () => {
                 <div className="h-px bg-gradient-to-l from-transparent via-white/40 to-white/10 flex-1" />
             </div>
 
-            <TiltedCTA />
+            <TiltedCTA onClick={() => navigate('/waitlist')} />
 
             {/* Footer */}
             <footer className="py-12 border-t border-white/10 text-center text-gray-500 text-sm">

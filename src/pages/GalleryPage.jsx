@@ -456,19 +456,9 @@ const GalleryPage = () => {
                 {/* Header */}
                 <div ref={headerRef} className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/10 pb-12 gap-8">
                     <div>
-                        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#34D399] mb-4">
-                            <div className="w-2 h-2 bg-[#34D399] rounded-full animate-pulse" />
-                            SwipeScout Gallery
-                        </div>
                         <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
-                            Our <span className="text-gray-500">Stories.</span>
+                            Our <span className="text-[#34D399]">Stories.</span>
                         </h1>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <p className="text-white/60 max-w-sm text-right leading-relaxed text-sm md:text-base">
-                            Read our latest stories and insights from the SwipeScout team.
-                        </p>
                     </div>
                 </div>
 

@@ -8,6 +8,7 @@ import GalleryPage from "./pages/GalleryPage";
 import ContactPage from "./pages/ContactPage";
 import TeamsPage from "./pages/Teams/TeamsPage";
 import TeamMemberBioPage from "./pages/Teams/TeamMemberBioPage";
+import WaitlistPage from "./pages/WaitlistPage";
 
 // Layouts & Components
 import PublicLayout from "./layouts/PublicLayout";
@@ -34,6 +35,8 @@ function App() {
             <Route path="/teams" element={<TeamsPage />} />
             <Route path="/teams/:id" element={<TeamMemberBioPage />} />
           </Route>
+
+          <Route path="/waitlist" element={<WaitlistPage />} />
 
           {/* Catch all route */}
           <Route path="*" element={<Navigate to="/" replace />} />

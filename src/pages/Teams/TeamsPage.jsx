@@ -113,18 +113,9 @@ const TeamsPage = () => {
                 {/* Editorial Header */}
                 <div ref={headerRef} className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end border-b border-white/10 pb-12 mb-16">
                     <div className="md:col-span-8">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest text-gray-400 mb-6">
-                            <span className="w-2 h-2 rounded-full bg-kinetic-primary animate-pulse"></span>
-                            SwipeScout Team
-                        </div>
                         <h1 className="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter leading-[0.9]">
                             <span className="text-white">The</span> <span className="text-kinetic-primary">Builders.</span>
                         </h1>
-                    </div>
-                    <div className="md:col-span-4 text-left md:text-right pb-2">
-                        <p className="text-lg text-gray-400 max-w-xs ml-auto">
-                            A diverse group of visionaries, engineers, and creatives united by a single mission.
-                        </p>
                     </div>
                 </div>
 

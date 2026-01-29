@@ -213,7 +213,7 @@ const ContactPage = () => {
             {/* Social Links List */}
             <div className="flex flex-col border-t border-white/10">
               {/* LinkedIn */}
-              <a href="#" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
+              <a href="https://www.linkedin.com/company/swipescout/" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
                 <div className="flex items-center gap-4">
                   <Linkedin size={24} className="text-blue-600" />
                   <span className="text-xl font-medium text-gray-300 group-hover:text-white transition-colors">LinkedIn</span>
@@ -222,7 +222,7 @@ const ContactPage = () => {
               </a>
 
               {/* Twitter */}
-              <a href="#" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
+              <a href="https://x.com/swipescout" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
                 <div className="flex items-center gap-4">
                   <Twitter size={24} className="text-blue-400" />
                   <span className="text-xl font-medium text-gray-300 group-hover:text-white transition-colors">Twitter</span>
@@ -240,7 +240,7 @@ const ContactPage = () => {
               </a>
 
               {/* TikTok */}
-              <a href="#" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
+              <a href="https://www.tiktok.com/@swipecout" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-6 border-b border-white/10 hover:pl-4 transition-all duration-300">
                 <div className="flex items-center gap-4">
                   <FaTiktok size={24} className="text-white" />
                   <span className="text-xl font-medium text-gray-300 group-hover:text-white transition-colors">TikTok</span>
@@ -331,7 +331,7 @@ const ContactPage = () => {
         title="Build the Future with Us."
         description="We're always looking for exceptional talent to join our mission. Revolutionize hiring with us."
         ctaText="View Openings"
-        onClick={() => window.open('https://linkedin.com', '_blank')}
+        onClick={() => window.open('https://www.linkedin.com/company/swipescout/', '_blank')}
       />
 
       {/* FAQ Section */}

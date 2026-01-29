@@ -71,7 +71,10 @@ const CardNav = () => {
 
                     <div className="w-px h-6 bg-white/10 mx-1 md:mx-2" />
 
-                    <button className="px-4 md:px-6 py-2 md:py-3 rounded-xl bg-kinetic-primary text-black text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-kinetic-primary/90 transition-colors whitespace-nowrap">
+                    <button
+                        onClick={() => navigate('/waitlist')}
+                        className="px-4 md:px-6 py-2 md:py-3 rounded-xl bg-kinetic-primary text-black text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-kinetic-primary/90 transition-colors whitespace-nowrap"
+                    >
                         Join Waitlist
                     </button>
                 </div>
