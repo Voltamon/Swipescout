@@ -2,7 +2,7 @@ export const teamMembers = [
     {
         id: "tareq-alsharif",
         name: "Tareq Alsharif",
-        role: "Founder",
+        role: "Founder / CEO",
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         bio: "Visionary leader with a passion for disrupting traditional hiring paradigms.",
         fullBio: "Tareq Alsharif is the Founder of SwipeScout. His vision for SwipeScout was born out of frustration with the archaic hiring process—he believed that in an era of TikTok and Instagram, hiring should be just as dynamic and engaging.",
@@ -12,11 +12,11 @@ export const teamMembers = [
     {
         id: "yuki-sovlee",
         name: "Yuki Sovlee",
-        role: "Operations Manager",
+        role: "COO",
         image: "/members/yuki.webp",
         bio: "Operational excellence and cross-functional leadership.",
         fullBio: "Yuki ensures the SwipeScout machine runs smoothly. With a background in scale-up operations and engineering management, she bridges the gap between technical execution and business goals.",
-        social: { linkedin: "#" },
+        social: { linkedin: "#", twitter: "https://x.com/yukisovlee" },
         size: "normal"
     },
     {
@@ -31,18 +31,18 @@ export const teamMembers = [
     },
     {
         id: "gavin-kesselring",
-        name: "Gavin Kesselring",
-        role: "Marketing Lead",
+        name: "Galvin Kesselring",
+        role: "CMO",
         image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // reused David Kim's image
         bio: "Data-driven strategist ensuring SwipeScout reaches the right audience.",
-        fullBio: "Gavin is a marketing strategist who knows how to cut through the noise. He leads brand initiatives, focusing on organic community building and viral content loops.",
+        fullBio: "Galvin is a marketing strategist who knows how to cut through the noise. He leads brand initiatives, focusing on organic community building and viral content loops.",
         social: { linkedin: "#" },
         size: "normal"
     },
     {
         id: "obaid-nieroukh",
         name: "Obaid Nieroukh",
-        role: "Technical Head",
+        role: "CTO",
         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // reused Marcus's image
         bio: "Architecting the future of AI-driven recruitment.",
         fullBio: "Obaid Nieroukh oversees the engineering team and is the architect behind SwipeScout's proprietary matching algorithm. He is dedicated to building robust, scalable technical infrastructure.",

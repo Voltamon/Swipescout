@@ -73,10 +73,11 @@ const AboutSwipeScout = () => {
 
                 <div className="p-6 md:p-12 lg:p-20 flex flex-col justify-center">
                     <p ref={textRef} className="text-2xl lg:text-4xl leading-tight font-light text-white/60">
-                        <span className="text-white">SwipeScout</span> is not just a platform; it's a <span className="text-white font-medium">paradigm shift</span>.
-                        We are stripping away the noise of traditional recruiting to focus on what matters: <span className="text-white font-medium">Human Potential</span>.
-                        Powered by advanced AI, we connect talent to opportunity with the simplicity of a swipe.
-                    </p>
+                        <span className="text-white">SwipeScout is where <span className="text-white font-medium">TikTok meets LinkedIn. </span>
+Job seekers upload <span className="text-white font-medium">15–60 second video resumes. </span>
+Recruiters swipe through real people, not PDFs.<br/><br/>
+If there’s interest, you connect. <br/> Simple as that.</span>
+                    </p>    
 
                     <div className="mt-12 flex gap-8">
                         <div className="flex flex-col">
