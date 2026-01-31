@@ -3,7 +3,7 @@ export const teamMembers = [
         id: "tareq-alsharif",
         name: "Tareq Alsharif",
         role: "Founder / CEO",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        image: "/members/tareq.jpeg",
         bio: "Visionary leader with a passion for disrupting traditional hiring paradigms.",
         fullBio: "Tareq Alsharif is the Founder of SwipeScout. His vision for SwipeScout was born out of frustration with the archaic hiring process—he believed that in an era of TikTok and Instagram, hiring should be just as dynamic and engaging.",
         social: { twitter: "#", linkedin: "#", github: "#" },
@@ -33,7 +33,7 @@ export const teamMembers = [
         id: "gavin-kesselring",
         name: "Galvin Kesselring",
         role: "CMO",
-        image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // reused David Kim's image
+        image: "/members/galvin.jpg",
         bio: "Data-driven strategist ensuring SwipeScout reaches the right audience.",
         fullBio: "Galvin is a marketing strategist who knows how to cut through the noise. He leads brand initiatives, focusing on organic community building and viral content loops.",
         social: { linkedin: "#" },

@@ -8,7 +8,7 @@ const KineticButton = ({ children, className = '', onClick }) => {
             whileTap={{ scale: 0.95 }}
             onClick={onClick}
             className={`
-        relative overflow-hidden px-8 py-3 rounded-full font-bold text-black
+        relative overflow-hidden px-8 py-3 rounded-xl font-bold text-black
         bg-kinetic-primary group transition-all duration-300
         hover:shadow-[0_0_30px_rgba(255,255,255,0.6)]
         border border-white/10 ${className}

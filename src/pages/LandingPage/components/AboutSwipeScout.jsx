@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, Zap, Target, Users, ArrowUpRight, Briefcase } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -10,6 +11,7 @@ const AboutSwipeScout = () => {
     const containerRef = useRef(null);
     const textRef = useRef(null);
     const stripRef = useRef(null); // Reference for the manifesto strip
+    const navigate = useNavigate();
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -65,7 +67,10 @@ const AboutSwipeScout = () => {
                         </h2>
                     </div>
                     <div className="mt-12">
-                        <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors cursor-pointer group">
+                        <div
+                            onClick={() => navigate('/waitlist')}
+                            className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors cursor-pointer group"
+                        >
                             <ArrowUpRight className="w-8 h-8 transition-transform group-hover:rotate-45 duration-500" />
                         </div>
                     </div>
@@ -74,10 +79,10 @@ const AboutSwipeScout = () => {
                 <div className="p-6 md:p-12 lg:p-20 flex flex-col justify-center">
                     <p ref={textRef} className="text-2xl lg:text-4xl leading-tight font-light text-white/60">
                         <span className="text-white">SwipeScout is where <span className="text-white font-medium">TikTok meets LinkedIn. </span>
-Job seekers upload <span className="text-white font-medium">15–60 second video resumes. </span>
-Recruiters swipe through real people, not PDFs.<br/><br/>
-If there’s interest, you connect. <br/> Simple as that.</span>
-                    </p>    
+                            Job seekers upload <span className="text-white font-medium">15–60 second video resumes. </span>
+                            Recruiters swipe through real people, not PDFs.<br /><br />
+                            If there’s interest, you connect. <br /> Simple as that.</span>
+                    </p>
 
                     <div className="mt-12 flex gap-8">
                         <div className="flex flex-col">

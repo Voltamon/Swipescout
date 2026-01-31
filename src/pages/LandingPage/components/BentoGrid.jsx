@@ -102,6 +102,7 @@ const BentoGrid = () => {
                                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png"
                                     alt="World Map"
                                     className="w-[120%] h-auto object-cover invert"
+                                    loading="lazy"
                                 />
                             </div>
 
@@ -254,7 +255,7 @@ const BentoGrid = () => {
 
                                 {/* Fingerprint Image */}
                                 <div className="w-24 h-24 opacity-80 invert filter mix-blend-screen">
-                                    <img src={fingerprintImg} alt="Fingerprint" className="w-full h-full object-contain" />
+                                    <img src={fingerprintImg} alt="Fingerprint" className="w-full h-full object-contain" loading="lazy" />
                                 </div>
 
                                 {/* Scan Line */}

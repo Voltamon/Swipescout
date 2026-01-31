@@ -9,9 +9,6 @@ const Footer = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-16">
                     <div>
                         <div className="flex items-center gap-2 mb-4">
-                            <div className="w-8 h-8 rounded-full bg-kinetic-primary/20 flex items-center justify-center">
-                                <span className="w-2 h-2 rounded-full bg-kinetic-primary animate-pulse" />
-                            </div>
                             <span className="font-bold text-white tracking-tight text-xl">SwipeScout</span>
                         </div>
                         <p className="text-gray-400 max-w-xs text-sm leading-relaxed">

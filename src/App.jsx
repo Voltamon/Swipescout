@@ -3,12 +3,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LinearProgress } from "@mui/material";
 
 // Pages
-import LandingPage from "./pages/LandingPage/LandingPage";
-import GalleryPage from "./pages/GalleryPage";
-import ContactPage from "./pages/ContactPage";
-import TeamsPage from "./pages/Teams/TeamsPage";
-import TeamMemberBioPage from "./pages/Teams/TeamMemberBioPage";
-import WaitlistPage from "./pages/WaitlistPage";
+// Pages
+const LandingPage = React.lazy(() => import("./pages/LandingPage/LandingPage"));
+const GalleryPage = React.lazy(() => import("./pages/GalleryPage"));
+const ContactPage = React.lazy(() => import("./pages/ContactPage"));
+const TeamsPage = React.lazy(() => import("./pages/Teams/TeamsPage"));
+const TeamMemberBioPage = React.lazy(() => import("./pages/Teams/TeamMemberBioPage"));
+const WaitlistPage = React.lazy(() => import("./pages/WaitlistPage"));
 
 // Layouts & Components
 import PublicLayout from "./layouts/PublicLayout";
